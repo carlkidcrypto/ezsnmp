@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>exceptions module &mdash; Ez SNMP V1.0.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=f2281d4f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ez module" href="ez.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,21 +44,26 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">exceptions module</a><ul>
-<li><a class="reference internal" href="#exceptions.EzSNMPConnectionError"><code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPError"><code class="docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPNoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchInstanceError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPNoSuchNameError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchNameError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPNoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchObjectError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPTimeoutError"><code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPUndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUndeterminedTypeError</span></code></a></li>
-<li><a class="reference internal" href="#exceptions.EzSNMPUnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUnknownObjectIDError</span></code></a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">exceptions module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPConnectionError"><code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPError"><code class="docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPNoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchInstanceError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPNoSuchNameError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchNameError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPNoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchObjectError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPTimeoutError"><code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPUndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUndeterminedTypeError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EzSNMPUnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUnknownObjectIDError</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="ez.html">ez module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">helpers module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session.html">session module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables.html">variables module</a></li>
 </ul>
-</div>
+
         </div>
       </div>
     </nav>
@@ -69,6 +78,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">&lt;no title&gt;</a></li>
       <li class="breadcrumb-item active">exceptions module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/exceptions.rst.txt" rel="nofollow"> View page source</a>
@@ -80,31 +90,31 @@
            <div itemprop="articleBody">
              
   <section id="module-exceptions">
-<span id="exceptions-module"></span><h1>exceptions module<a class="headerlink" href="#module-exceptions" title="Permalink to this heading"></a></h1>
+<span id="exceptions-module"></span><h1>exceptions module<a class="headerlink" href="#module-exceptions" title="Link to this heading"></a></h1>
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPConnectionError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPConnectionError</span></span><a class="headerlink" href="#exceptions.EzSNMPConnectionError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPConnectionError</span></span><a class="headerlink" href="#exceptions.EzSNMPConnectionError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPError" title="exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
 <p>Indicates a problem connecting to the remote host.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPError</span></span><a class="headerlink" href="#exceptions.EzSNMPError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPError</span></span><a class="headerlink" href="#exceptions.EzSNMPError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>The base Easy SNMP exception which covers all exceptions raised.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPNoSuchInstanceError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchInstanceError</span></span><a class="headerlink" href="#exceptions.EzSNMPNoSuchInstanceError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchInstanceError</span></span><a class="headerlink" href="#exceptions.EzSNMPNoSuchInstanceError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPError" title="exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
 <p>Raised when a particular OID index requested from Net-SNMP doesn’t exist.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPNoSuchNameError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchNameError</span></span><a class="headerlink" href="#exceptions.EzSNMPNoSuchNameError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchNameError</span></span><a class="headerlink" href="#exceptions.EzSNMPNoSuchNameError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPError" title="exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
 <p>Raised when an OID is requested which may be an invalid object name
 or invalid instance (only applies to SNMPv1).</p>
@@ -112,7 +122,7 @@ or invalid instance (only applies to SNMPv1).</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPNoSuchObjectError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchObjectError</span></span><a class="headerlink" href="#exceptions.EzSNMPNoSuchObjectError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchObjectError</span></span><a class="headerlink" href="#exceptions.EzSNMPNoSuchObjectError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPError" title="exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
 <p>Raised when an OID is requested which may have some form of existence but
 is an invalid object name.</p>
@@ -120,21 +130,21 @@ is an invalid object name.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPTimeoutError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPTimeoutError</span></span><a class="headerlink" href="#exceptions.EzSNMPTimeoutError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPTimeoutError</span></span><a class="headerlink" href="#exceptions.EzSNMPTimeoutError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPConnectionError" title="exceptions.EzSNMPConnectionError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code></a></p>
 <p>Raised when an SNMP request times out.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPUndeterminedTypeError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPUndeterminedTypeError</span></span><a class="headerlink" href="#exceptions.EzSNMPUndeterminedTypeError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPUndeterminedTypeError</span></span><a class="headerlink" href="#exceptions.EzSNMPUndeterminedTypeError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPError" title="exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
 <p>Raised when the type cannot be determined when setting the value of an OID.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.EzSNMPUnknownObjectIDError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPUnknownObjectIDError</span></span><a class="headerlink" href="#exceptions.EzSNMPUnknownObjectIDError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPUnknownObjectIDError</span></span><a class="headerlink" href="#exceptions.EzSNMPUnknownObjectIDError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#exceptions.EzSNMPError" title="exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
 <p>Raised when a nonexistent OID is requested.</p>
 </dd></dl>
@@ -144,7 +154,10 @@ is an invalid object name.</p>
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ez.html" class="btn btn-neutral float-right" title="ez module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

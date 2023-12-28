@@ -1,5 +1,5 @@
 exceptions module
-=============================
+=================
 
 .. automodule:: exceptions
    :members:

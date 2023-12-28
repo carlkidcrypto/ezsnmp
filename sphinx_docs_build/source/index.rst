@@ -11,6 +11,7 @@ Welcome to Ez SNMP's documentation!
    :caption: Contents:
 
 
+   modules
 
 Indices and tables
 ==================
