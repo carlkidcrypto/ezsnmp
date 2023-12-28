@@ -1,10 +1,11 @@
-name: tests
+name: Tests
+
 on:
   push:
-    branches: [ feature/integration_v3.0.0 ]
+    branches: [ main ]
 
   pull_request:
-    branches: [ feature/integration_v3.0.0 ]
+    branches: [ main ]
 
 jobs:
   check-source-changes:
