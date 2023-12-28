@@ -1,0 +1,33 @@
+# Python byte-compiled, optimized and DLL files
+*.py[cod]
+
+# Cache
+.cache
+
+# Compiled libraries
+*.so
+
+# Nosetests and coverage information
+.coverage
+nosetests.xml
+coverage.xml
+
+# Distribution & packaging
+build/
+develop-eggs/
+.eggs/
+dist/
+*.egg-info/
+*.egg
+
+# Documentation builds
+docs/_build/
+
+# vim stuff
+.ropeproject
+
+# Local development
+dev/
+.vscode
+*/*.log
+*.log
