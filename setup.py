@@ -152,7 +152,7 @@ class RelinkLibraries(BuildCommand):
             linked = (
                 check_output(
                     (
-                        "otool -L {0}/easysnmp/interface{1} | "
+                        "otool -L {0}/ezsnmp/interface{1} | "
                         r"egrep 'libnetsnmp\.' | "
                         "tr -s '\t' ' ' | "
                         "cut -d' ' -f2"
@@ -166,7 +166,7 @@ class RelinkLibraries(BuildCommand):
                 check_output("net-snmp-config --prefix", shell=True).decode().strip()
             )
             _ = check_output(
-                "install_name_tool -change {0} {1} {2}/easysnmp/interface{3}".format(
+                "install_name_tool -change {0} {1} {2}/ezsnmp/interface{3}".format(
                     linked, lib_dir, b.build_platlib, ext
                 ),
                 shell=True,
@@ -178,8 +178,8 @@ setup(
     cmdclass={"test": PyTest, "build_ext": RelinkLibraries},
     ext_modules=[
         Extension(
-            "easysnmp.interface",
-            ["easysnmp/interface.c"],
+            "ezsnmp.interface",
+            ["ezsnmp/interface.c"],
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,

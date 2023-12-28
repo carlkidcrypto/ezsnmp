@@ -9,9 +9,9 @@ if not os.environ.get("READTHEDOCS", False):  # noqa
     from . import interface
 
 from .exceptions import (
-    EasySNMPError,
-    EasySNMPNoSuchObjectError,
-    EasySNMPNoSuchInstanceError,
+    EzSNMPError,
+    EzSNMPNoSuchObjectError,
+    EzSNMPNoSuchInstanceError,
 )
 from .variables import SNMPVariable, SNMPVariableList
 
@@ -78,11 +78,11 @@ def validate_results(varlist):
             varstr += " with index {0}".format(variable.oid_index)
 
         if variable.snmp_type == "NOSUCHOBJECT":
-            raise EasySNMPNoSuchObjectError(
+            raise EzSNMPNoSuchObjectError(
                 "no such object {0} could be found".format(varstr)
             )
         if variable.snmp_type == "NOSUCHINSTANCE":
-            raise EasySNMPNoSuchInstanceError(
+            raise EzSNMPNoSuchInstanceError(
                 "no such instance {0} could be found".format(varstr)
             )
 
@@ -411,7 +411,7 @@ class Session(object):
         """
 
         if self.version == 1:
-            raise EasySNMPError(
+            raise EzSNMPError(
                 "you cannot perform a bulk GET operation for SNMP version 1"
             )
 
@@ -469,7 +469,7 @@ class Session(object):
         """
 
         if self.version == 1:
-            raise EasySNMPError("BULKWALK is not available for SNMP version 1")
+            raise EzSNMPError("BULKWALK is not available for SNMP version 1")
 
         # Build our variable bindings for the C interface
         varlist, _ = build_varlist(oids)

@@ -5,7 +5,7 @@ import pytest
 from sys import version_info
 from subprocess import Popen, DEVNULL
 
-import easysnmp
+import ezsnmp
 
 assert version_info[0] == 3 and version_info[1] >= 8
 
@@ -80,7 +80,7 @@ def sess_args(request):
 
 @pytest.fixture
 def sess(sess_args):
-    return easysnmp.Session(**sess_args)
+    return ezsnmp.Session(**sess_args)
 
 
 @pytest.fixture

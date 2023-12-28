@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import platform
 
 import pytest
-from easysnmp.easy import (
+from ezsnmp.easy import (
     snmp_get,
     snmp_set,
     snmp_set_multiple,
@@ -12,12 +12,12 @@ from easysnmp.easy import (
     snmp_walk,
     snmp_bulkwalk,
 )
-from easysnmp.exceptions import (
-    EasySNMPError,
-    EasySNMPUnknownObjectIDError,
-    EasySNMPNoSuchObjectError,
-    EasySNMPNoSuchInstanceError,
-    EasySNMPNoSuchNameError,
+from ezsnmp.exceptions import (
+    EzSNMPError,
+    EzSNMPUnknownObjectIDError,
+    EzSNMPNoSuchObjectError,
+    EzSNMPNoSuchInstanceError,
+    EzSNMPNoSuchNameError,
 )
 
 
@@ -87,7 +87,7 @@ def test_snmp_get_numeric_tuple(sess_args):
 
 
 def test_snmp_get_unknown(sess_args):
-    with pytest.raises(EasySNMPUnknownObjectIDError):
+    with pytest.raises(EzSNMPUnknownObjectIDError):
         snmp_get("sysDescripto.0", **sess_args)
 
 
@@ -119,7 +119,7 @@ def test_snmp_get_invalid_instance(sess_args):
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             snmp_get("sysContact.1", **sess_args)
     else:
         res = snmp_get("sysContact.1", **sess_args)
@@ -130,16 +130,16 @@ def test_snmp_get_invalid_instance_with_abort_enabled(sess_args):
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, so it raises the same exception for both
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             snmp_get("sysContact.1", abort_on_nonexistent=True, **sess_args)
     else:
-        with pytest.raises(EasySNMPNoSuchInstanceError):
+        with pytest.raises(EzSNMPNoSuchInstanceError):
             snmp_get("sysContact.1", abort_on_nonexistent=True, **sess_args)
 
 
 def test_snmp_get_invalid_object(sess_args):
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             snmp_get("iso", **sess_args)
     else:
         res = snmp_get("iso", **sess_args)
@@ -148,10 +148,10 @@ def test_snmp_get_invalid_object(sess_args):
 
 def test_snmp_get_invalid_object_with_abort_enabled(sess_args):
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             snmp_get("iso", abort_on_nonexistent=True, **sess_args)
     else:
-        with pytest.raises(EasySNMPNoSuchObjectError):
+        with pytest.raises(EzSNMPNoSuchObjectError):
             snmp_get("iso", abort_on_nonexistent=True, **sess_args)
 
 
@@ -204,7 +204,7 @@ def test_snmp_get_next_with_retry_no_such(sess_args):
 
 def test_snmp_get_next_end_of_mib_view(sess_args):
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             snmp_get_next(["iso.9", "sysDescr", "iso.9"], **sess_args)
     else:
         res = snmp_get_next(["iso.9", "sysDescr", "iso.9"], **sess_args)
@@ -227,7 +227,7 @@ def test_snmp_get_next_end_of_mib_view(sess_args):
 
 
 def test_snmp_get_next_unknown(sess_args):
-    with pytest.raises(EasySNMPUnknownObjectIDError):
+    with pytest.raises(EzSNMPUnknownObjectIDError):
         snmp_get_next("sysDescripto.0", **sess_args)
 
 
@@ -320,7 +320,7 @@ def test_snmp_set_integer_short_type(sess_args, reset_values):
 
 
 def test_snmp_set_unknown(sess_args):
-    with pytest.raises(EasySNMPUnknownObjectIDError):
+    with pytest.raises(EzSNMPUnknownObjectIDError):
         snmp_set("nsCacheTimeoooout", 1234, **sess_args)
 
 
@@ -345,7 +345,7 @@ def test_snmp_set_multiple(sess_args, reset_values):
 
 def test_snmp_get_bulk(sess_args):
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPError):
+        with pytest.raises(EzSNMPError):
             snmp_get_bulk(
                 [
                     "sysUpTime",
@@ -425,7 +425,7 @@ def test_snmp_walk_with_retry_no_such(sess_args):
 
 def test_snmp_bulkwalk_res(sess_args):
     if sess_args["version"] == 1:
-        with pytest.raises(EasySNMPError):
+        with pytest.raises(EzSNMPError):
             snmp_bulkwalk("system", **sess_args)
     else:
         res = snmp_bulkwalk("system", **sess_args)
@@ -454,5 +454,5 @@ def test_snmp_bulkwalk_res(sess_args):
 
 
 def test_snmp_walk_unknown(sess_args):
-    with pytest.raises(EasySNMPUnknownObjectIDError):
+    with pytest.raises(EzSNMPUnknownObjectIDError):
         snmp_walk("systemo", **sess_args)

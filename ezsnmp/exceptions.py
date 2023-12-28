@@ -1,31 +1,31 @@
 from __future__ import unicode_literals
 
 
-class EasySNMPError(Exception):
+class EzSNMPError(Exception):
     """The base Easy SNMP exception which covers all exceptions raised."""
 
     pass
 
 
-class EasySNMPConnectionError(EasySNMPError):
+class EzSNMPConnectionError(EzSNMPError):
     """Indicates a problem connecting to the remote host."""
 
     pass
 
 
-class EasySNMPTimeoutError(EasySNMPConnectionError):
+class EzSNMPTimeoutError(EzSNMPConnectionError):
     """Raised when an SNMP request times out."""
 
     pass
 
 
-class EasySNMPUnknownObjectIDError(EasySNMPError):
+class EzSNMPUnknownObjectIDError(EzSNMPError):
     """Raised when a nonexistent OID is requested."""
 
     pass
 
 
-class EasySNMPNoSuchNameError(EasySNMPError):
+class EzSNMPNoSuchNameError(EzSNMPError):
     """
     Raised when an OID is requested which may be an invalid object name
     or invalid instance (only applies to SNMPv1).
@@ -34,7 +34,7 @@ class EasySNMPNoSuchNameError(EasySNMPError):
     pass
 
 
-class EasySNMPNoSuchObjectError(EasySNMPError):
+class EzSNMPNoSuchObjectError(EzSNMPError):
     """
     Raised when an OID is requested which may have some form of existence but
     is an invalid object name.
@@ -43,7 +43,7 @@ class EasySNMPNoSuchObjectError(EasySNMPError):
     pass
 
 
-class EasySNMPNoSuchInstanceError(EasySNMPError):
+class EzSNMPNoSuchInstanceError(EzSNMPError):
     """
     Raised when a particular OID index requested from Net-SNMP doesn't exist.
     """
@@ -51,7 +51,7 @@ class EasySNMPNoSuchInstanceError(EasySNMPError):
     pass
 
 
-class EasySNMPUndeterminedTypeError(EasySNMPError):
+class EzSNMPUndeterminedTypeError(EzSNMPError):
     """
     Raised when the type cannot be determined when setting the value of an OID.
     """

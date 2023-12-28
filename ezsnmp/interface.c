@@ -1,4 +1,4 @@
-/* This is the main interface for the EasySNMP python module.
+/* This is the main interface for the EzSNMP python module.
  */
 
 #include <Python.h>
@@ -60,13 +60,13 @@ static PyObject *easysnmp_exceptions_import = NULL;
 static PyObject *easysnmp_compat_import = NULL;
 static PyObject *logging_import = NULL;
 static PyObject *PyLogger = NULL;
-static PyObject *EasySNMPError = NULL;
-static PyObject *EasySNMPConnectionError = NULL;
-static PyObject *EasySNMPTimeoutError = NULL;
-static PyObject *EasySNMPNoSuchNameError = NULL;
-static PyObject *EasySNMPUnknownObjectIDError = NULL;
-static PyObject *EasySNMPNoSuchObjectError = NULL;
-static PyObject *EasySNMPUndeterminedTypeError = NULL;
+static PyObject *EzSNMPError = NULL;
+static PyObject *EzSNMPConnectionError = NULL;
+static PyObject *EzSNMPTimeoutError = NULL;
+static PyObject *EzSNMPNoSuchNameError = NULL;
+static PyObject *EzSNMPUnknownObjectIDError = NULL;
+static PyObject *EzSNMPNoSuchObjectError = NULL;
+static PyObject *EzSNMPUndeterminedTypeError = NULL;
 
 /*
  * Ripped wholesale from library/tools.h from Net-SNMP 5.7.3
@@ -1307,7 +1307,7 @@ retry:
             }
             else /* !retry_nosuch */
             {
-                PyErr_SetString(EasySNMPNoSuchNameError,
+                PyErr_SetString(EzSNMPNoSuchNameError,
                                 "no such name error encountered");
             }
 
@@ -1341,7 +1341,7 @@ retry:
             *err_ind = (*response)->errindex;
             py_log_msg(DEBUG, "sync PDU: %s", err_str);
 
-            PyErr_SetString(EasySNMPError, err_str);
+            PyErr_SetString(EzSNMPError, err_str);
             break;
         }
         break;
@@ -1355,12 +1355,12 @@ retry:
         // SNMP v3 doesn't quite raise timeouts correctly, so we correct it
         if (strncmp(err_str, "Timeout", 7) == 0)
         {
-            PyErr_SetString(EasySNMPTimeoutError,
+            PyErr_SetString(EzSNMPTimeoutError,
                             "timed out while connecting to remote host");
         }
         else
         {
-            PyErr_SetString(EasySNMPError, tmp_err_str);
+            PyErr_SetString(EzSNMPError, tmp_err_str);
         }
         break;
 
@@ -1556,7 +1556,7 @@ static PyObject *create_session_capsule(SnmpSession *session)
     /* create a long lived handle from throwaway session object */
     if (!(handle = snmp_sess_open(session)))
     {
-        PyErr_SetString(EasySNMPConnectionError,
+        PyErr_SetString(EzSNMPConnectionError,
                         "couldn't create SNMP handle");
         goto done;
     }
@@ -1781,7 +1781,7 @@ static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                             session.securityAuthKey,
                             &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
             {
-                PyErr_SetString(EasySNMPConnectionError,
+                PyErr_SetString(EzSNMPConnectionError,
                                 "error generating Ku from authentication "
                                 "password");
                 goto done;
@@ -1805,7 +1805,7 @@ static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                         session.securityPrivKey,
                         &session.securityPrivKeyLen) != SNMPERR_SUCCESS)
         {
-            PyErr_SetString(EasySNMPConnectionError,
+            PyErr_SetString(EzSNMPConnectionError,
                             "couldn't gen Ku from priv pass phrase");
             goto done;
         }
@@ -2040,7 +2040,7 @@ static PyObject *netsnmp_get(PyObject *self, PyObject *args)
         }
         else
         {
-            PyErr_Format(EasySNMPUnknownObjectIDError,
+            PyErr_Format(EzSNMPUnknownObjectIDError,
                          "unknown object id (%s)",
                          (tag ? tag : "<null>"));
             error = 1;
@@ -2390,7 +2390,7 @@ static PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
                 }
                 else
                 {
-                    PyErr_Format(EasySNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError,
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -2780,7 +2780,7 @@ static PyObject *netsnmp_walk(PyObject *self, PyObject *args)
             }
             else
             {
-                PyErr_Format(EasySNMPUnknownObjectIDError,
+                PyErr_Format(EzSNMPUnknownObjectIDError,
                              "unknown object id (%s)",
                              (tag ? tag : "<null>"));
                 error = 1;
@@ -3183,7 +3183,7 @@ static PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
                 }
                 else
                 {
-                    PyErr_Format(EasySNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError,
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -3553,7 +3553,7 @@ static PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
 
             if (!oid_arr_len[varlist_ind])
             {
-                PyErr_Format(EasySNMPUnknownObjectIDError,
+                PyErr_Format(EzSNMPUnknownObjectIDError,
                              "unknown object id (%s)",
                              (oid_str_arr[varlist_ind] ? oid_str_arr[varlist_ind] : "<null>"));
                 error = 1;
@@ -3921,7 +3921,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
 
                 if (oid_arr_len == 0)
                 {
-                    PyErr_Format(EasySNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError,
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -3943,7 +3943,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
                          * Not sure why original author did not raise an error
                          * here before. Keep an eye out for edge cases!
                          */
-                        PyErr_SetString(EasySNMPUndeterminedTypeError,
+                        PyErr_SetString(EzSNMPUndeterminedTypeError,
                                         "a type could not be determine for "
                                         "the object");
                         error = 1;
@@ -3959,7 +3959,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
                     type = __translate_appl_type(type_str);
                     if (type == TYPE_UNKNOWN)
                     {
-                        PyErr_SetString(EasySNMPUndeterminedTypeError,
+                        PyErr_SetString(EzSNMPUndeterminedTypeError,
                                         "a type could not be determine for "
                                         "the object");
                         error = 1;
@@ -4301,19 +4301,19 @@ PyMODINIT_FUNC initinterface(void)
         goto done;
     }
 
-    EasySNMPError = PyObject_GetAttrString(easysnmp_exceptions_import, "EasySNMPError");
-    EasySNMPConnectionError = PyObject_GetAttrString(easysnmp_exceptions_import,
-                                                     "EasySNMPConnectionError");
-    EasySNMPTimeoutError = PyObject_GetAttrString(easysnmp_exceptions_import,
-                                                  "EasySNMPTimeoutError");
-    EasySNMPNoSuchNameError = PyObject_GetAttrString(easysnmp_exceptions_import,
-                                                     "EasySNMPNoSuchNameError");
-    EasySNMPUnknownObjectIDError = PyObject_GetAttrString(easysnmp_exceptions_import,
-                                                          "EasySNMPUnknownObjectIDError");
-    EasySNMPNoSuchObjectError = PyObject_GetAttrString(easysnmp_exceptions_import,
-                                                       "EasySNMPNoSuchObjectError");
-    EasySNMPUndeterminedTypeError = PyObject_GetAttrString(easysnmp_exceptions_import,
-                                                           "EasySNMPUndeterminedTypeError");
+    EzSNMPError = PyObject_GetAttrString(easysnmp_exceptions_import, "EzSNMPError");
+    EzSNMPConnectionError = PyObject_GetAttrString(easysnmp_exceptions_import,
+                                                     "EzSNMPConnectionError");
+    EzSNMPTimeoutError = PyObject_GetAttrString(easysnmp_exceptions_import,
+                                                  "EzSNMPTimeoutError");
+    EzSNMPNoSuchNameError = PyObject_GetAttrString(easysnmp_exceptions_import,
+                                                     "EzSNMPNoSuchNameError");
+    EzSNMPUnknownObjectIDError = PyObject_GetAttrString(easysnmp_exceptions_import,
+                                                          "EzSNMPUnknownObjectIDError");
+    EzSNMPNoSuchObjectError = PyObject_GetAttrString(easysnmp_exceptions_import,
+                                                       "EzSNMPNoSuchObjectError");
+    EzSNMPUndeterminedTypeError = PyObject_GetAttrString(easysnmp_exceptions_import,
+                                                           "EzSNMPUndeterminedTypeError");
 
     /* Initialise logging (note: automatically has refcount 1) */
     PyLogger = py_get_logger("easysnmp.interface");
@@ -4340,13 +4340,13 @@ done:
     Py_XDECREF(easysnmp_import);
     Py_XDECREF(easysnmp_exceptions_import);
     Py_XDECREF(easysnmp_compat_import);
-    Py_XDECREF(EasySNMPError);
-    Py_XDECREF(EasySNMPConnectionError);
-    Py_XDECREF(EasySNMPTimeoutError);
-    Py_XDECREF(EasySNMPNoSuchNameError);
-    Py_XDECREF(EasySNMPUnknownObjectIDError);
-    Py_XDECREF(EasySNMPNoSuchObjectError);
-    Py_XDECREF(EasySNMPUndeterminedTypeError);
+    Py_XDECREF(EzSNMPError);
+    Py_XDECREF(EzSNMPConnectionError);
+    Py_XDECREF(EzSNMPTimeoutError);
+    Py_XDECREF(EzSNMPNoSuchNameError);
+    Py_XDECREF(EzSNMPUnknownObjectIDError);
+    Py_XDECREF(EzSNMPNoSuchObjectError);
+    Py_XDECREF(EzSNMPUndeterminedTypeError);
     Py_XDECREF(PyLogger);
 
 #if PY_MAJOR_VERSION >= 3
