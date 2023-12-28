@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-            brew install easysnmp/netsnmp-easysnmp/net-snmp
+            brew install ezsnmp/netsnmp-ezsnmp/net-snmp
             echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> /Users/runner/.bash_profile
             export PATH="/usr/local/opt/net-snmp/bin:$PATH"
             echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> /Users/runner/.bash_profile

@@ -44,7 +44,7 @@ def snmp_set_via_cli(oid, value, type):
 
 
 # Disable logging for the C interface
-snmp_logger = logging.getLogger("easysnmp.interface")
+snmp_logger = logging.getLogger("ezsnmp.interface")
 snmp_logger.disabled = True
 
 

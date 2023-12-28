@@ -1,12 +1,12 @@
 Exceptions
 ----------
 
-.. currentmodule:: easysnmp
+.. currentmodule:: ezsnmp
 
-.. autoclass:: EasySNMPError
-.. autoclass:: EasySNMPConnectionError
-.. autoclass:: EasySNMPTimeoutError
-.. autoclass:: EasySNMPUnknownObjectIDError
-.. autoclass:: EasySNMPNoSuchObjectError
-.. autoclass:: EasySNMPNoSuchInstanceError
-.. autoclass:: EasySNMPUndeterminedTypeError
+.. autoclass:: EzSNMPError
+.. autoclass:: EzSNMPConnectionError
+.. autoclass:: EzSNMPTimeoutError
+.. autoclass:: EzSNMPUnknownObjectIDError
+.. autoclass:: EzSNMPNoSuchObjectError
+.. autoclass:: EzSNMPNoSuchInstanceError
+.. autoclass:: EzSNMPUndeterminedTypeError

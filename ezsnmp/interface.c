@@ -55,9 +55,9 @@
  * PyObjects used in the 'interface.c' file are listed below
  *
  ******************************************************************************/
-static PyObject *easysnmp_import = NULL;
-static PyObject *easysnmp_exceptions_import = NULL;
-static PyObject *easysnmp_compat_import = NULL;
+static PyObject *ezsnmp_import = NULL;
+static PyObject *ezsnmp_exceptions_import = NULL;
+static PyObject *ezsnmp_compat_import = NULL;
 static PyObject *logging_import = NULL;
 static PyObject *PyLogger = NULL;
 static PyObject *EzSNMPError = NULL;
@@ -1407,7 +1407,7 @@ static void __remove_user_from_cache(struct session_list *ss)
 
 static PyObject *py_netsnmp_construct_varbind(void)
 {
-    return PyObject_CallMethod(easysnmp_import, "SNMPVariable", NULL);
+    return PyObject_CallMethod(ezsnmp_import, "SNMPVariable", NULL);
 }
 
 /*
@@ -4264,9 +4264,9 @@ PyMODINIT_FUNC initinterface(void)
      * Perform global imports:
      *
      * import logging
-     * import easysnmp
-     * import easysnmp.exceptions
-     * import easysnmp.compat
+     * import ezsnmp
+     * import ezsnmp.exceptions
+     * import ezsnmp.compat
      *
      */
     logging_import = PyImport_ImportModule("logging");
@@ -4277,46 +4277,46 @@ PyMODINIT_FUNC initinterface(void)
         goto done;
     }
 
-    easysnmp_import = PyImport_ImportModule("easysnmp");
-    if (easysnmp_import == NULL)
+    ezsnmp_import = PyImport_ImportModule("ezsnmp");
+    if (ezsnmp_import == NULL)
     {
-        const char *err_msg = "failed to import 'easysnmp'";
+        const char *err_msg = "failed to import 'ezsnmp'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    easysnmp_exceptions_import = PyImport_ImportModule("easysnmp.exceptions");
-    if (easysnmp_exceptions_import == NULL)
+    ezsnmp_exceptions_import = PyImport_ImportModule("ezsnmp.exceptions");
+    if (ezsnmp_exceptions_import == NULL)
     {
-        const char *err_msg = "failed to import 'easysnmp.exceptions'";
+        const char *err_msg = "failed to import 'ezsnmp.exceptions'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    easysnmp_compat_import = PyImport_ImportModule("easysnmp.compat");
-    if (easysnmp_compat_import == NULL)
+    ezsnmp_compat_import = PyImport_ImportModule("ezsnmp.compat");
+    if (ezsnmp_compat_import == NULL)
     {
-        const char *err_msg = "failed to import 'easysnmp.compat'";
+        const char *err_msg = "failed to import 'ezsnmp.compat'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    EzSNMPError = PyObject_GetAttrString(easysnmp_exceptions_import, "EzSNMPError");
-    EzSNMPConnectionError = PyObject_GetAttrString(easysnmp_exceptions_import,
+    EzSNMPError = PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError");
+    EzSNMPConnectionError = PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                      "EzSNMPConnectionError");
-    EzSNMPTimeoutError = PyObject_GetAttrString(easysnmp_exceptions_import,
+    EzSNMPTimeoutError = PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                   "EzSNMPTimeoutError");
-    EzSNMPNoSuchNameError = PyObject_GetAttrString(easysnmp_exceptions_import,
+    EzSNMPNoSuchNameError = PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                      "EzSNMPNoSuchNameError");
-    EzSNMPUnknownObjectIDError = PyObject_GetAttrString(easysnmp_exceptions_import,
+    EzSNMPUnknownObjectIDError = PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                           "EzSNMPUnknownObjectIDError");
-    EzSNMPNoSuchObjectError = PyObject_GetAttrString(easysnmp_exceptions_import,
+    EzSNMPNoSuchObjectError = PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                        "EzSNMPNoSuchObjectError");
-    EzSNMPUndeterminedTypeError = PyObject_GetAttrString(easysnmp_exceptions_import,
+    EzSNMPUndeterminedTypeError = PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                            "EzSNMPUndeterminedTypeError");
 
     /* Initialise logging (note: automatically has refcount 1) */
-    PyLogger = py_get_logger("easysnmp.interface");
+    PyLogger = py_get_logger("ezsnmp.interface");
 
     if (PyLogger == NULL)
     {
@@ -4326,7 +4326,7 @@ PyMODINIT_FUNC initinterface(void)
     /* initialise the netsnmp library */
     __libraries_init();
 
-    py_log_msg(DEBUG, "initialised easysnmp.interface");
+    py_log_msg(DEBUG, "initialised ezsnmp.interface");
 
 #if PY_MAJOR_VERSION >= 3
     return interface_module;
@@ -4337,9 +4337,9 @@ PyMODINIT_FUNC initinterface(void)
 done:
     Py_XDECREF(interface_module);
     Py_XDECREF(logging_import);
-    Py_XDECREF(easysnmp_import);
-    Py_XDECREF(easysnmp_exceptions_import);
-    Py_XDECREF(easysnmp_compat_import);
+    Py_XDECREF(ezsnmp_import);
+    Py_XDECREF(ezsnmp_exceptions_import);
+    Py_XDECREF(ezsnmp_compat_import);
     Py_XDECREF(EzSNMPError);
     Py_XDECREF(EzSNMPConnectionError);
     Py_XDECREF(EzSNMPTimeoutError);

@@ -1,7 +1,7 @@
 Easy API
 --------
 
-.. currentmodule:: easysnmp
+.. currentmodule:: ezsnmp
 
 .. autofunction:: snmp_get
 .. autofunction:: snmp_set

@@ -14,7 +14,7 @@ templates_path = ["_templates"]
 master_doc = "index"
 
 # General information about the project.
-project = "Easy SNMP"
+project = "Ez SNMP"
 copyright = "2015-2022, Fotis Gimian, Kent Coble"
 author = "Fotis Gimian, Kent Coble"
 
@@ -29,10 +29,10 @@ html_theme = "alabaster"
 # further.  For a list of options available for each theme, see the Alabaster
 # documentation at https://github.com/bitprophet/alabaster.
 html_theme_options = {
-    "github_user": "kamakazikamikaze",
-    "github_repo": "easysnmp",
+    "github_user": "carlkidcrypto",
+    "github_repo": "ezsnmp",
     "github_banner": True,
-    "logo": "easysnmp.svg",
+    "logo": "ezsnmp.svg",
     "logo_name": True,
     "font_family": "'Hiragino Mincho Pro', Georgia, serif",
 }

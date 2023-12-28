@@ -20,9 +20,9 @@ jobs:
         uses: tj-actions/changed-files@v40.2.3
         with:
           files: |
-            easysnmp/*.py
-            easysnmp/*.c
-            easysnmp/*.h
+            ezsnmp/*.py
+            ezsnmp/*.c
+            ezsnmp/*.h
             tests/*.py
             tests/*.conf
             setup.py
@@ -58,7 +58,7 @@ jobs:
             sudo download-mibs
           elif [ "$RUNNER_OS" == "macOS" ]
           then
-            brew install easysnmp/netsnmp-easysnmp/net-snmp
+            brew install ezsnmp/netsnmp-ezsnmp/net-snmp
             echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> /Users/runner/.bash_profile
             export PATH="/usr/local/opt/net-snmp/bin:$PATH"
             echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> /Users/runner/.bash_profile
@@ -112,7 +112,7 @@ jobs:
         continue-on-error: true
         with:
           max-line-length: "88"
-          path: "easysnmp tests"
+          path: "ezsnmp tests"
 
       - name: Run Tests
         run: |

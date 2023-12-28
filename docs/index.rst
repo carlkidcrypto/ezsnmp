@@ -34,7 +34,7 @@ Why Another Library?
 
 Installation
 ------------
-EasySNMP has been tested and is supported on systems running Net-SNMP
+EzSNMP has been tested and is supported on systems running Net-SNMP
 5.7.x and newer. All non-EOL versions of Python 3 are fully supported, with 2.7
 and recent EOL versions of Python 3 receiving partial support.
 
@@ -88,7 +88,7 @@ Install Easy SNMP via pip as follows:
 
 .. code-block:: bash
 
-    pip install easysnmp
+    pip install ezsnmp
 
 Quick Start
 -----------
@@ -99,7 +99,7 @@ are planning on requesting multiple pieces of SNMP data from a source.
 
 .. code-block:: python
 
-    from easysnmp import Session
+    from ezsnmp import Session
 
     # Create an SNMP session to be used for all our requests
     session = Session(hostname='localhost', community='public', version=2)
@@ -136,7 +136,7 @@ one-off operations where you wish to specify all details in the request:
 
 .. code-block:: python
 
-    from easysnmp import snmp_get, snmp_set, snmp_walk
+    from ezsnmp import snmp_get, snmp_set, snmp_walk
 
     # Grab a single piece of information using an SNMP GET
     snmp_get('sysDescr.0', hostname='localhost', community='public', version=1)

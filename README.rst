@@ -5,15 +5,15 @@ Easy SNMP
 
 .. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
-.. |Build Status| image:: https://img.shields.io/github/workflow/status/easysnmp/easysnmp/build
-   :target: https://github.com/easysnmp/easysnmp/actions
+.. |Build Status| image:: https://img.shields.io/github/workflow/status/ezsnmp/ezsnmp/build
+   :target: https://github.com/ezsnmp/ezsnmp/actions
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
-   :target: https://github.com/kamakazikamikaze/easysnmp/blob/master/LICENSE
-.. |Discussions| image:: https://img.shields.io/github/discussions/easysnmp/easysnmp
+   :target: https://github.com/kamakazikamikaze/ezsnmp/blob/master/LICENSE
+.. |Discussions| image:: https://img.shields.io/github/discussions/ezsnmp/ezsnmp
    :alt: Join the Discussions!
-   :target: https://github.com/easysnmp/easysnmp
+   :target: https://github.com/ezsnmp/ezsnmp
 
-.. image:: https://raw.githubusercontent.com/easysnmp/easysnmp/master/images/easysnmp-logo.png
+.. image:: https://raw.githubusercontent.com/ezsnmp/ezsnmp/master/images/ezsnmp-logo.png
     :alt: Easy SNMP Logo
 
 Artwork courtesy of `Open Clip Art
@@ -54,7 +54,7 @@ source:
 
 .. code:: python
 
-    from easysnmp import Session
+    from ezsnmp import Session
 
     # Create an SNMP session to be used for all our requests
     session = Session(hostname='localhost', community='public', version=2)
@@ -92,7 +92,7 @@ request):
 
 .. code:: python
 
-    from easysnmp import snmp_get, snmp_set, snmp_walk
+    from ezsnmp import snmp_get, snmp_set, snmp_walk
 
     # Grab a single piece of information using an SNMP GET
     snmp_get('sysDescr.0', hostname='localhost', community='public', version=1)
@@ -110,7 +110,7 @@ Documentation
 -------------
 
 Please check out the `Easy SNMP documentation at Read the
-Docs <http://easysnmp.readthedocs.org/>`_. This includes installation
+Docs <http://ezsnmp.readthedocs.org/>`_. This includes installation
 instructions for various operating systems.
 
 You may generate the documentation as follows:
@@ -149,8 +149,8 @@ them with the following:
 
 .. code:: bash
 
-    git clone https://github.com/easysnmp/easysnmp.git
-    cd easysnmp
+    git clone https://github.com/ezsnmp/ezsnmp.git
+    cd ezsnmp
     pip install pytest
     pytest
 
@@ -158,7 +158,7 @@ License
 -------
 
 Easy SNMP is released under the **BSD** license. Please see the
-`LICENSE <https://github.com/easysnmp/easysnmp/blob/master/LICENSE>`_
+`LICENSE <https://github.com/ezsnmp/ezsnmp/blob/master/LICENSE>`_
 file for more details.
 
 Copyright

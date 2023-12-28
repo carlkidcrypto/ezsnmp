@@ -64,7 +64,7 @@ struct session_list
 
 typedef netsnmp_session SnmpSession;
 /*
- * This structure is attached to the easysnmp.Session
+ * This structure is attached to the ezsnmp.Session
  * object as a Python Capsule (or CObject).
  *
  * This allows a one time allocation of large buffers
