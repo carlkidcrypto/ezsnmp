@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import platform
 
 import pytest
-from ezsnmp.easy import (
+from ezsnmp.ez import (
     snmp_get,
     snmp_set,
     snmp_set_multiple,

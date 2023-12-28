@@ -1,4 +1,4 @@
-from .easy import (  # noqa
+from .ez import (  # noqa
     snmp_get,
     snmp_set,
     snmp_set_multiple,
