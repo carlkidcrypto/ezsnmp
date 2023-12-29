@@ -50,27 +50,22 @@ jobs:
   
     steps:
       - name: Set up dependencies
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]
-          then
-            sudo apt-get update
-            sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind
-            sudo systemctl stop snmpd
-            sudo download-mibs
-          elif [ "$RUNNER_OS" == "macOS" ]
-          then
-            brew install ezsnmp/netsnmp-ezsnmp/net-snmp
-            echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> /Users/runner/.bash_profile
-            export PATH="/usr/local/opt/net-snmp/bin:$PATH"
-            echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> /Users/runner/.bash_profile
-            export PATH="/usr/local/opt/net-snmp/sbin:$PATH"
-          else
-            echo "$RUNNER_OS not currently supported"
-            exit 1
-          fi
-          mkdir -m 0755 ~/.snmp
-          echo 'mibs +ALL' > ~/.snmp/snmp.conf
-        shell: bash
+        uses: carlkidcrypto/os-specific-runner@v2.0.0
+          with:
+            linux: sudo apt-get update;
+                   sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+                   sudo systemctl stop snmpd;
+                   sudo download-mibs;
+                   mkdir -m 0755 ~/.snmp;
+                   echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+            
+            macos: brew install net-snmp;
+                   echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> /Users/runner/.bash_profile;
+                   export PATH="/usr/local/opt/net-snmp/bin:$PATH";
+                   echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> /Users/runner/.bash_profile;
+                   export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
+                   mkdir -m 0755 ~/.snmp;
+                   echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
         uses: actions/checkout@v4
