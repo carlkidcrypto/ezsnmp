@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from easysnmp.session import build_varlist
+from ezsnmp.session import build_varlist
 
 
 def test_build_varlist():

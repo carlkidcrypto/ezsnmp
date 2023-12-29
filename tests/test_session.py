@@ -4,16 +4,16 @@ import platform
 import re
 
 import pytest
-from easysnmp.exceptions import (
-    EasySNMPError,
-    EasySNMPConnectionError,
-    EasySNMPTimeoutError,
-    EasySNMPNoSuchObjectError,
-    EasySNMPNoSuchInstanceError,
-    EasySNMPNoSuchNameError,
+from ezsnmp.exceptions import (
+    EzSNMPError,
+    EzSNMPConnectionError,
+    EzSNMPTimeoutError,
+    EzSNMPNoSuchObjectError,
+    EzSNMPNoSuchInstanceError,
+    EzSNMPNoSuchNameError,
 )
 
-from easysnmp.session import Session
+from ezsnmp.session import Session
 
 
 def test_session_invalid_snmp_version():
@@ -23,7 +23,7 @@ def test_session_invalid_snmp_version():
 
 @pytest.mark.parametrize("version", [1, 2, 3])
 def test_session_invalid_hostname(version):
-    with pytest.raises(EasySNMPConnectionError):
+    with pytest.raises(EzSNMPConnectionError):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
 
@@ -43,7 +43,7 @@ def test_session_hostname_and_remote_port_split(version):
 
 @pytest.mark.parametrize("version", [1, 2, 3])
 def test_session_invalid_port(version):
-    with pytest.raises(EasySNMPTimeoutError):
+    with pytest.raises(EzSNMPTimeoutError):
         session = Session(remote_port=1234, version=version, timeout=0.2, retries=1)
         session.get("sysContact.0")
 
@@ -211,7 +211,7 @@ def test_session_set_multiple(sess, reset_values):
 
 def test_session_get_bulk(sess):  # noqa
     if sess.version == 1:
-        with pytest.raises(EasySNMPError):
+        with pytest.raises(EzSNMPError):
             sess.get_bulk(
                 [
                     "sysUpTime",
@@ -247,7 +247,7 @@ def test_session_get_invalid_instance(sess):
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess.version == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
@@ -259,16 +259,16 @@ def test_session_get_invalid_instance_with_abort_enabled(sess):
     # invalid object ID, instead it excepts with noSuchName
     sess.abort_on_nonexistent = True
     if sess.version == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             sess.get("sysDescr.100")
     else:
-        with pytest.raises(EasySNMPNoSuchInstanceError):
+        with pytest.raises(EzSNMPNoSuchInstanceError):
             sess.get("sysDescr.100")
 
 
 def test_session_get_invalid_object(sess):
     if sess.version == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             sess.get("iso")
     else:
         res = sess.get("iso")
@@ -278,10 +278,10 @@ def test_session_get_invalid_object(sess):
 def test_session_get_invalid_object_with_abort_enabled(sess):
     sess.abort_on_nonexistent = True
     if sess.version == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             sess.get("iso")
     else:
-        with pytest.raises(EasySNMPNoSuchObjectError):
+        with pytest.raises(EzSNMPNoSuchObjectError):
             sess.get("iso")
 
 
@@ -313,7 +313,7 @@ def test_session_walk(sess):
 
 def test_session_bulkwalk(sess):
     if sess.version == 1:
-        with pytest.raises(EasySNMPError):
+        with pytest.raises(EzSNMPError):
             sess.bulkwalk("system")
     else:
         res = sess.walk("system")
@@ -347,7 +347,7 @@ def test_session_walk_all(sess):
     # appears to return a noSuchName error when using v1, but not with v2c.
     # This may be a Net-SNMP snmpd bug.
     if sess.version == 1:
-        with pytest.raises(EasySNMPNoSuchNameError):
+        with pytest.raises(EzSNMPNoSuchNameError):
             sess.walk(".")
     else:
         res = sess.walk(".")

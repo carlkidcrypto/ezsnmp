@@ -5,7 +5,7 @@ import pytest
 from sys import version_info
 from subprocess import Popen, DEVNULL
 
-import easysnmp
+import ezsnmp
 
 assert version_info[0] == 3 and version_info[1] >= 8
 
@@ -44,7 +44,7 @@ def snmp_set_via_cli(oid, value, type):
 
 
 # Disable logging for the C interface
-snmp_logger = logging.getLogger("easysnmp.interface")
+snmp_logger = logging.getLogger("ezsnmp.interface")
 snmp_logger.disabled = True
 
 
@@ -80,7 +80,7 @@ def sess_args(request):
 
 @pytest.fixture
 def sess(sess_args):
-    return easysnmp.Session(**sess_args)
+    return ezsnmp.Session(**sess_args)
 
 
 @pytest.fixture

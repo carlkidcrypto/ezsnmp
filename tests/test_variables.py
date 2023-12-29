@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-from easysnmp.compat import ub
-from easysnmp.variables import SNMPVariable, SNMPVariableList
+from ezsnmp.compat import ub
+from ezsnmp.variables import SNMPVariable, SNMPVariableList
 
 
 def test_snmp_variable_regular():

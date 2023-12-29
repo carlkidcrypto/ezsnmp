@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-from easysnmp.compat import ub
-from easysnmp.utils import strip_non_printable, tostr
+from ezsnmp.compat import ub
+from ezsnmp.utils import strip_non_printable, tostr
 
 
 def test_strip_non_printable_regular():

@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**EasySNMP release version OR commit number**
+**EzSNMP release version OR commit number**
 ex. 0.2.5 OR ecf5b3f
 
 **Operating System and Version**

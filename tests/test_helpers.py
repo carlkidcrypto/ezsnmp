@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from easysnmp.helpers import normalize_oid
+from ezsnmp.helpers import normalize_oid
 
 
 def test_normalize_oid_regular():

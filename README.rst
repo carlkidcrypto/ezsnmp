@@ -1,20 +1,20 @@
-Easy SNMP
+Ez SNMP
 =========
 
 |Python Code Style| |Build Status| |Discussions| |License|
 
 .. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
-.. |Build Status| image:: https://img.shields.io/github/workflow/status/easysnmp/easysnmp/build
-   :target: https://github.com/easysnmp/easysnmp/actions
+.. |Build Status| image:: https://img.shields.io/github/workflow/status/ezsnmp/ezsnmp/build
+   :target: https://github.com/ezsnmp/ezsnmp/actions
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
-   :target: https://github.com/kamakazikamikaze/easysnmp/blob/master/LICENSE
-.. |Discussions| image:: https://img.shields.io/github/discussions/easysnmp/easysnmp
+   :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
+.. |Discussions| image:: https://img.shields.io/github/discussions/ezsnmp/ezsnmp
    :alt: Join the Discussions!
-   :target: https://github.com/easysnmp/easysnmp
+   :target: https://github.com/ezsnmp/ezsnmp
 
-.. image:: https://raw.githubusercontent.com/easysnmp/easysnmp/master/images/easysnmp-logo.png
-    :alt: Easy SNMP Logo
+.. image:: https://raw.githubusercontent.com/ezsnmp/ezsnmp/master/images/ezsnmp-logo.png
+    :alt: Ez SNMP Logo
 
 Artwork courtesy of `Open Clip Art
 Library <https://openclipart.org/detail/154453/network>`_
@@ -23,30 +23,19 @@ Library <https://openclipart.org/detail/154453/network>`_
 Introduction
 ------------
 
-Easy SNMP is a fork of `Net-SNMP Python
-Bindings <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`_
-that attempts to bring a more Pythonic interface to the library. Check
-out the `Net-SNMP website <http://www.net-snmp.org/>`_ for more
-information about SNMP.
-
-This module provides a full-featured SNMP client API and supports all
-dialects of the SNMP protocol.
+Ez SNMP is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`_
 
 Why Another Library?
 --------------------
 
-- The `original Net-SNMP Python
-  library <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`_
-  is a great starting point but is quite un-Pythonic and lacks proper unit tests and documentation.
-- `PySNMP <http://pysnmp.sourceforge.net/>`_ is entirely written in Python
-  and therefore has a huge performance hit. In some brief tests, I
-  estimate that both the Net-SNMP Python bindings and Easy SNMP are more than 4 times faster than PySNMP. Further to this, PySNMP has an even less Pythonic interface than the official Net-SNMP bindings.
-- Many other libraries like `Snimpy <https://snimpy.readthedocs.org/en/latest/>`_ are sadly based on PySNMP, so they also suffer performance penalty.
+- Simple, because maintainer of `Easy SNMP` seems to have abandonded project and or isn't actively working on it.
+- This version (Ez SNMP) will attempt to remain upto date with: Python versions that are supported by `Python <https://devguide.python.org/versions/>`_
+and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`_
 
 Quick Start
 -----------
 
-There are primarily two ways you can use the Easy SNMP library:
+There are primarily two ways you can use the Ez SNMP library:
 
 1. By using a Session object which is most suitable
 when you want to request multiple pieces of SNMP data from a
@@ -54,7 +43,7 @@ source:
 
 .. code:: python
 
-    from easysnmp import Session
+    from ezsnmp import Session
 
     # Create an SNMP session to be used for all our requests
     session = Session(hostname='localhost', community='public', version=2)
@@ -86,13 +75,13 @@ source:
             value=item.value
         )
 
-2. By using Easy SNMP via its simple interface which is intended
+2. By using Ez SNMP via its simple interface which is intended
 for one-off operations (where you wish to specify all details in the
 request):
 
 .. code:: python
 
-    from easysnmp import snmp_get, snmp_set, snmp_walk
+    from ezsnmp import snmp_get, snmp_set, snmp_walk
 
     # Grab a single piece of information using an SNMP GET
     snmp_get('sysDescr.0', hostname='localhost', community='public', version=1)
@@ -109,8 +98,8 @@ request):
 Documentation
 -------------
 
-Please check out the `Easy SNMP documentation at Read the
-Docs <http://easysnmp.readthedocs.org/>`_. This includes installation
+Please check out the `Ez SNMP documentation at Read the
+Docs <http://ezsnmp.readthedocs.org/>`_. This includes installation
 instructions for various operating systems.
 
 You may generate the documentation as follows:
@@ -149,16 +138,16 @@ them with the following:
 
 .. code:: bash
 
-    git clone https://github.com/easysnmp/easysnmp.git
-    cd easysnmp
+    git clone https://github.com/ezsnmp/ezsnmp.git
+    cd ezsnmp
     pip install pytest
     pytest
 
 License
 -------
 
-Easy SNMP is released under the **BSD** license. Please see the
-`LICENSE <https://github.com/easysnmp/easysnmp/blob/master/LICENSE>`_
+Ez SNMP is released under the **BSD** license. Please see the
+`LICENSE <https://github.com/ezsnmp/ezsnmp/blob/master/LICENSE>`_
 file for more details.
 
 Copyright
@@ -171,5 +160,9 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Net-SNMP itself.
 
 Copyright (c) 2006 SPARTA, Inc. All Rights Reserved. This program is
+free software; you can redistribute it and/or modify it under the same
+terms as Net-SNMP itself.
+
+Copyright (c) 2023 carlkidcrypto All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
