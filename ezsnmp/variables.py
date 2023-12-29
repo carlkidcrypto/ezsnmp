@@ -1,8 +1,8 @@
 from __future__ import unicode_literals, absolute_import
 
-from ezsnmp.compat import urepr
-from ezsnmp.helpers import normalize_oid
-from ezsnmp.utils import strip_non_printable, tostr
+from .compat import urepr
+from .helpers import normalize_oid
+from .utils import strip_non_printable, tostr
 
 
 class SNMPVariable(object):
