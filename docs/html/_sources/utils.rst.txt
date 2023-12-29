@@ -1,7 +1,7 @@
-utils module
-============
+ezsnmp.utils module
+===================
 
-.. automodule:: utils
+.. automodule:: ezsnmp.utils
    :members:
    :undoc-members:
    :show-inheritance:

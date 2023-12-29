@@ -1,7 +1,7 @@
-helpers module
-==============
+ezsnmp.helpers module
+=====================
 
-.. automodule:: helpers
+.. automodule:: ezsnmp.helpers
    :members:
    :undoc-members:
    :show-inheritance:

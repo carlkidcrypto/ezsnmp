@@ -13,7 +13,8 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../../ezsnmp/"))
+# This doesn't work, but if we install it via pip install sphinx can find stuff.
+#sys.path.insert(0, os.path.abspath("../../ezsnmp/"))
 
 
 # -- Project information -----------------------------------------------------
