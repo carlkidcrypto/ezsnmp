@@ -39,8 +39,10 @@ jobs:
       - name: Run sphinx...
         uses: carlkidcrypto/os-specific-runner@v2.0.0
         with:
-          linux: cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build ;
-                 make html SPHINXOPTS="-W"
+          linux: cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
+                 mkdir source/_static;
+                 mkdir source/_templates;
+                 make clean && make html SPHINXOPTS="-W"
 
       - uses: actions/upload-artifact@v4
         with:

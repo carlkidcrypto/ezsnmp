@@ -28,8 +28,6 @@ jobs:
             tests/*.conf
             setup.py
             setup.cfg
-            .github/*.yml
-            .github/*.md
   
   lint-black-formatting:
     runs-on: ubuntu-latest
