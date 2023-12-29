@@ -17,7 +17,7 @@ Ez SNMP
     :alt: Ez SNMP Logo
 
 Artwork courtesy of `Open Clip Art
-Library <https://openclipart.org/detail/154453/network>`_
+Library <https://openclipart.org/detail/251135/simple-network>`_
 
 
 Introduction
@@ -98,8 +98,7 @@ request):
 Documentation
 -------------
 
-Please check out the `Ez SNMP documentation at Read the
-Docs <http://ezsnmp.readthedocs.org/>`_. This includes installation
+Please check out the `Ez SNMP documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
 
 You may generate the documentation as follows:
@@ -107,14 +106,10 @@ You may generate the documentation as follows:
 .. code:: bash
 
     # Install Sphinx
-    pip install sphinx
-
-    # You may optionally export the READTHEDOCS environment variable to build docs
-    # on systems where you haven't built the C interface
-    export READTHEDOCS=1
+    # See this website for install instructions https://www.sphinx-doc.org/en/master/usage/installation.html
 
     # Build the documentation into static HTML pages
-    cd docs
+    cd sphinx_docs_build
     make html
 
 Acknowledgments
@@ -129,6 +124,7 @@ possible:
 -  **Wes Hardaker and the net-snmp-coders**: for their hard work and
    dedication
 - **fgimian and nnathan**: the original contributors to this codebase
+- **Kent Coble**: who as the most recent maintainer. `Easy SNMP <https://github.com/easysnmp/easysnmp>`_
 
 Running Tests
 -------------
