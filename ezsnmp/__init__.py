@@ -8,13 +8,13 @@ from .ez import (  # noqa
     snmp_bulkwalk,
 )
 from .exceptions import (  # noqa
-    EasySNMPError,
-    EasySNMPConnectionError,
-    EasySNMPTimeoutError,
-    EasySNMPUnknownObjectIDError,
-    EasySNMPNoSuchObjectError,
-    EasySNMPNoSuchInstanceError,
-    EasySNMPUndeterminedTypeError,
+    EzSNMPError,
+    EzSNMPConnectionError,
+    EzSNMPTimeoutError,
+    EzSNMPUnknownObjectIDError,
+    EzSNMPNoSuchObjectError,
+    EzSNMPNoSuchInstanceError,
+    EzSNMPUndeterminedTypeError,
 )
 from .session import Session  # noqa
 from .variables import SNMPVariable  # noqa
