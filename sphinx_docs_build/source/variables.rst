@@ -1,7 +1,7 @@
-variables module
-================
+ezsnmp.variables module
+=======================
 
-.. automodule:: variables
+.. automodule:: ezsnmp.variables
    :members:
    :undoc-members:
    :show-inheritance:

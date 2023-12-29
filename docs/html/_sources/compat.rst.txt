@@ -1,7 +1,7 @@
-compat module
-=============
+ezsnmp.compat module
+====================
 
-.. automodule:: compat
+.. automodule:: ezsnmp.compat
    :members:
    :undoc-members:
    :show-inheritance:

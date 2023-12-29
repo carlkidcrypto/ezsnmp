@@ -1,7 +1,7 @@
-session module
-==============
+ezsnmp.session module
+=====================
 
-.. automodule:: session
+.. automodule:: ezsnmp.session
    :members:
    :undoc-members:
    :show-inheritance:

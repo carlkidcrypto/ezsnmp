@@ -1,7 +1,7 @@
-exceptions module
-=================
+ezsnmp.exceptions module
+========================
 
-.. automodule:: exceptions
+.. automodule:: ezsnmp.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

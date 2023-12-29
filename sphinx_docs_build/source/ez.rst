@@ -1,7 +1,7 @@
-ez module
-=========
+ezsnmp.ez module
+================
 
-.. automodule:: ez
+.. automodule:: ezsnmp.ez
    :members:
    :undoc-members:
    :show-inheritance:

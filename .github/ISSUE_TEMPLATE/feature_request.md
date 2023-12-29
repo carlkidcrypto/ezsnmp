@@ -18,3 +18,7 @@ A clear and concise description of any alternative solutions or features you've 
 
 **Additional context**
 Add any other context or screenshots about the feature request here.
+
+**Do you have a fix already with working code**
+Consider opening a PR with your fix. Ensure test coverage has been
+added and that all Github actions pass.
