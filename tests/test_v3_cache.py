@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import pytest
-from ezsnmp import Session
+from ezsnmp.session import Session
 from ezsnmp.exceptions import EzSNMPConnectionError
 
 
