@@ -3,12 +3,12 @@ from __future__ import unicode_literals, absolute_import
 import re
 from warnings import warn
 
-from exceptions import (
+from ezsnmp.exceptions import (
     EzSNMPError,
     EzSNMPNoSuchObjectError,
     EzSNMPNoSuchInstanceError,
 )
-from variables import SNMPVariable, SNMPVariableList
+from ezsnmp.variables import SNMPVariable, SNMPVariableList
 
 # Mapping between security level strings and their associated integer values.
 # Here we provide camelCase naming as per the original spec but also more
