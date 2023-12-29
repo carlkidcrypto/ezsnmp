@@ -26,7 +26,7 @@ SECURITY_LEVEL_MAPPING = {
 def build_varlist(oids):
     """
     Prepare the variable binding list which will be used by the
-    C interface.
+    C ezsnmp.interface.
 
     :param oids: an individual or list of strings or tuples representing
                  one or more OIDs
@@ -290,7 +290,7 @@ class Session(object):
         varlist, is_list = build_varlist(oids)
 
         # Perform the SNMP GET operation
-        interface.get(self, varlist)
+        ezsnmp.interface.get(self, varlist)
 
         # Validate the variable list returned
         if self.abort_on_nonexistent:
@@ -323,7 +323,7 @@ class Session(object):
             varlist.append(SNMPVariable(oid, value=value, snmp_type=snmp_type))
 
         # Perform the set operation and return whether or not it worked
-        success = interface.set(self, varlist)
+        success = ezsnmp.interface.set(self, varlist)
         return bool(success)
 
     def set_multiple(self, oid_values):
@@ -355,7 +355,7 @@ class Session(object):
                 varlist.append(SNMPVariable(oid, value=value, snmp_type=snmp_type))
 
         # Perform the set operation and return whether or not it worked
-        success = interface.set(self, varlist)
+        success = ezsnmp.interface.set(self, varlist)
         return bool(success)
 
     def get_next(self, oids):
@@ -377,7 +377,7 @@ class Session(object):
         varlist, is_list = build_varlist(oids)
 
         # Perform the SNMP GET operation
-        interface.getnext(self, varlist)
+        ezsnmp.interface.getnext(self, varlist)
 
         # Validate the variable list returned
         if self.abort_on_nonexistent:
@@ -413,7 +413,7 @@ class Session(object):
         # Build our variable bindings for the C interface
         varlist, _ = build_varlist(oids)
 
-        interface.getbulk(self, non_repeaters, max_repetitions, varlist)
+        ezsnmp.interface.getbulk(self, non_repeaters, max_repetitions, varlist)
 
         # Validate the variable list returned
         if self.abort_on_nonexistent:
@@ -440,7 +440,7 @@ class Session(object):
         varlist, _ = build_varlist(oids)
 
         # Perform the SNMP walk using GETNEXT operations
-        interface.walk(self, varlist)
+        ezsnmp.interface.walk(self, varlist)
 
         # Validate the variable list returned
         if self.abort_on_nonexistent:
@@ -470,7 +470,7 @@ class Session(object):
         varlist, _ = build_varlist(oids)
 
         # Perform the SNMP walk using GETNEXT operations
-        interface.bulkwalk(self, non_repeaters, max_repetitions, varlist)
+        ezsnmp.interface.bulkwalk(self, non_repeaters, max_repetitions, varlist)
 
         # Validate the variable list returned
         if self.abort_on_nonexistent:
@@ -510,7 +510,7 @@ class Session(object):
         # Tunneled
         if self.tunneled:
             # TODO: Determine the best way to test this
-            self.sess_ptr = interface.session_tunneled(
+            self.sess_ptr = ezsnmp.interface.session_tunneled(
                 self.version,
                 self.connect_hostname,
                 self.local_port,
@@ -528,7 +528,7 @@ class Session(object):
 
         # SNMP v3
         elif self.version == 3:
-            self.sess_ptr = interface.session_v3(
+            self.sess_ptr = ezsnmp.interface.session_v3(
                 self.version,
                 self.connect_hostname,
                 self.local_port,
@@ -549,7 +549,7 @@ class Session(object):
 
         # SNMP v1 & v2
         else:
-            self.sess_ptr = interface.session(
+            self.sess_ptr = ezsnmp.interface.session(
                 self.version,
                 self.community,
                 self.connect_hostname,
