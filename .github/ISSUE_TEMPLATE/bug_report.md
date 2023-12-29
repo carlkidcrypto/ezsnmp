@@ -8,20 +8,23 @@ assignees: ''
 ---
 
 **EzSNMP release version OR commit number**
-ex. 0.2.5 OR ecf5b3f
+ex. 1.0.0 OR abcd1234
 
 **Operating System and Version**
- - OS: [e.g. macOS, Ubuntu, RHEL, CentOS, Fedora, etc.]
- - Version [e.g. 22]
+
+- OS: [e.g. macOS, Ubuntu, RHEL, CentOS, Fedora, etc.]
+- Version [e.g. 22]
 
 **Net-SNMP Library Version**
- - 5.x.x
+
+- 5.x.x
 
 **Describe the bug**
 A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -35,3 +38,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+
+**Do you have a fix already with working code**
+Consider opening a PR with your fix. Ensure test coverage has been
+added and that all Github actions pass.

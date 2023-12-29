@@ -10,11 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
+# import os
+# import sys
 
 # This doesn't work, but if we install it via pip install sphinx can find stuff.
-#sys.path.insert(0, os.path.abspath("../../ezsnmp/"))
+# sys.path.insert(0, os.path.abspath("../../ezsnmp/"))
 
 
 # -- Project information -----------------------------------------------------
@@ -24,7 +24,7 @@ copyright = "2023, carlkidcrypto"
 author = "carlkidcrypto"
 
 # The full version, including alpha/beta/rc tags
-release = "V1.0.0"
+release = "V0.1.0a"
 
 
 # -- General configuration ---------------------------------------------------
