@@ -1,4 +1,4 @@
-from .ez import (  # noqa
+from ez import (  # noqa
     snmp_get,
     snmp_set,
     snmp_set_multiple,
@@ -7,7 +7,7 @@ from .ez import (  # noqa
     snmp_walk,
     snmp_bulkwalk,
 )
-from .exceptions import (  # noqa
+from exceptions import (  # noqa
     EzSNMPError,
     EzSNMPConnectionError,
     EzSNMPTimeoutError,
@@ -16,5 +16,5 @@ from .exceptions import (  # noqa
     EzSNMPNoSuchInstanceError,
     EzSNMPUndeterminedTypeError,
 )
-from .session import Session  # noqa
-from .variables import SNMPVariable  # noqa
+from session import Session  # noqa
+from variables import SNMPVariable  # noqa

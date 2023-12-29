@@ -1,19 +1,14 @@
 from __future__ import unicode_literals, absolute_import
 
-import os
 import re
 from warnings import warn
 
-# Don't attempt to import the C interface if building docs on RTD
-if not os.environ.get("READTHEDOCS", False):  # noqa
-    from . import interface
-
-from .exceptions import (
+from exceptions import (
     EzSNMPError,
     EzSNMPNoSuchObjectError,
     EzSNMPNoSuchInstanceError,
 )
-from .variables import SNMPVariable, SNMPVariableList
+from variables import SNMPVariable, SNMPVariableList
 
 # Mapping between security level strings and their associated integer values.
 # Here we provide camelCase naming as per the original spec but also more

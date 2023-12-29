@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 import string
 
-from .compat import ub, text_type
+from compat import ub, text_type
 
 
 def strip_non_printable(value):
