@@ -80,6 +80,101 @@
              
   <section id="welcome-to-ez-snmp-s-documentation">
 <h1>Welcome to Ez SNMP’s documentation!<a class="headerlink" href="#welcome-to-ez-snmp-s-documentation" title="Link to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>EzSNMP has been tested and is supported on systems running Net-SNMP
+5.9.x and newer. All non-EOL versions of Python 3 are fully supported.</p>
+<p>If your OS ships with a supported version of Net-SNMP, then you can install it
+without compiling it via your package manager:</p>
+<p>On RHEL / CentOS systems:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>net-snmp-devel
+</pre></div>
+</div>
+<p>On Debian / Ubuntu systems:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>libsnmp-dev<span class="w"> </span>snmp-mibs-downloader
+</pre></div>
+</div>
+<p>On macOS systems:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>net-snmp
+</pre></div>
+</div>
+<p>If your OS doesn’t ship with Net-SNMP 5.9.x or newer, please follow instructions
+provided on the <a class="reference external" href="http://www.net-snmp.org/docs/INSTALL.html">Net-SNMP install page</a>
+to build and install Net-SNMP on your system.</p>
+<p>You’ll also need to ensure that you have the following packages installed so
+that Easy SNMP installs correctly:</p>
+<p>On RHEL / CentOS systems:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>gcc<span class="w"> </span>python-devel
+</pre></div>
+</div>
+<p>On Debian / Ubuntu systems:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>gcc<span class="w"> </span>python-dev
+</pre></div>
+</div>
+<p>On macOS systems:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>gcc
+</pre></div>
+</div>
+<p>Install Easy SNMP via pip as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ezsnmp
+</pre></div>
+</div>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p>There are primarily two ways you can use the Easy SNMP library.</p>
+<p>The first is with the use of a Session object which is most suitable when you
+are planning on requesting multiple pieces of SNMP data from a source.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">Session</span>
+
+<span class="c1"># Create an SNMP session to be used for all our requests</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># You may retrieve an individual OID using an SNMP GET</span>
+<span class="n">location</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysLocation.0&#39;</span><span class="p">)</span>
+
+<span class="c1"># You may also specify the OID as a tuple (name, index)</span>
+<span class="c1"># Note: the index is specified as a string as it can be of other types than</span>
+<span class="c1"># just a regular integer</span>
+<span class="n">contact</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="s1">&#39;sysContact&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">))</span>
+
+<span class="c1"># And of course, you may use the numeric OID too</span>
+<span class="n">description</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;.1.3.6.1.2.1.1.1.0&#39;</span><span class="p">)</span>
+
+<span class="c1"># Set a variable using an SNMP SET</span>
+<span class="n">session</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;sysLocation.0&#39;</span><span class="p">,</span> <span class="s1">&#39;The SNMP Lab&#39;</span><span class="p">)</span>
+
+<span class="c1"># Perform an SNMP walk</span>
+<span class="n">system_items</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s1">&#39;system&#39;</span><span class="p">)</span>
+
+<span class="c1"># Each returned item can be used normally as its related type (str or int)</span>
+<span class="c1"># but also has several extended attributes with SNMP-specific information</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">system_items</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s1">&#39;</span><span class="si">{oid}</span><span class="s1">.</span><span class="si">{oid_index}</span><span class="s1"> </span><span class="si">{snmp_type}</span><span class="s1"> = </span><span class="si">{value}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">oid</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">,</span>
+        <span class="n">oid_index</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">oid_index</span><span class="p">,</span>
+        <span class="n">snmp_type</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">snmp_type</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">value</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>You may also use Easy SNMP via its simple interface which is intended for
+one-off operations where you wish to specify all details in the request:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">snmp_get</span><span class="p">,</span> <span class="n">snmp_set</span><span class="p">,</span> <span class="n">snmp_walk</span>
+
+<span class="c1"># Grab a single piece of information using an SNMP GET</span>
+<span class="n">snmp_get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Perform an SNMP SET to update data</span>
+<span class="n">snmp_set</span><span class="p">(</span>
+    <span class="s1">&#39;sysLocation.0&#39;</span><span class="p">,</span> <span class="s1">&#39;My Cool Place&#39;</span><span class="p">,</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># Perform an SNMP walk</span>
+<span class="n">snmp_walk</span><span class="p">(</span><span class="s1">&#39;system&#39;</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -131,6 +226,7 @@
 </li>
 </ul>
 </div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
