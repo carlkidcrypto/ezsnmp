@@ -58,7 +58,8 @@
  ******************************************************************************/
 void PyObject_deleter(PyObject *obj)
 {
-    Py_DECREF(obj);
+    Py_XDECREF(obj);
+
 }
 
 static std::shared_ptr<PyObject> ezsnmp_import = std::make_shared<PyObject>();
@@ -4245,9 +4246,10 @@ static struct PyModuleDef moduledef = {
 PyMODINIT_FUNC PyInit_interface(void)
 {
     /* Initialise the module */
-    PyObject *interface_module = PyModule_Create(&moduledef);
+    std::shared_ptr<PyObject> interface_module = NULL;
+    interface_module.reset(PyModule_Create(&moduledef), PyObject_deleter);
 
-    if (interface_module == NULL)
+    if (interface_module.get() == NULL)
     {
         goto done;
     }
@@ -4295,17 +4297,23 @@ PyMODINIT_FUNC PyInit_interface(void)
 
     EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(), "EzSNMPError"), PyObject_deleter);
     EzSNMPConnectionError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
-                                                   "EzSNMPConnectionError"), PyObject_deleter);
+                                                       "EzSNMPConnectionError"),
+                                PyObject_deleter);
     EzSNMPTimeoutError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
-                                                "EzSNMPTimeoutError"), PyObject_deleter);
+                                                    "EzSNMPTimeoutError"),
+                             PyObject_deleter);
     EzSNMPNoSuchNameError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
-                                                   "EzSNMPNoSuchNameError"), PyObject_deleter);
+                                                       "EzSNMPNoSuchNameError"),
+                                PyObject_deleter);
     EzSNMPUnknownObjectIDError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
-                                                        "EzSNMPUnknownObjectIDError"), PyObject_deleter);
+                                                            "EzSNMPUnknownObjectIDError"),
+                                     PyObject_deleter);
     EzSNMPNoSuchObjectError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
-                                                     "EzSNMPNoSuchObjectError"), PyObject_deleter);
+                                                         "EzSNMPNoSuchObjectError"),
+                                  PyObject_deleter);
     EzSNMPUndeterminedTypeError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
-                                                         "EzSNMPUndeterminedTypeError"), PyObject_deleter);
+                                                             "EzSNMPUndeterminedTypeError"),
+                                      PyObject_deleter);
 
     /* Initialise logging (note: automatically has refcount 1) */
     PyLogger.reset(py_get_logger("ezsnmp.interface"), PyObject_deleter);
@@ -4320,10 +4328,9 @@ PyMODINIT_FUNC PyInit_interface(void)
 
     py_log_msg(DEBUG, "initialised ezsnmp.interface");
 
-    return interface_module;
+    return interface_module.get();
 
 done:
-    Py_XDECREF(interface_module);
 
     return NULL;
 }
