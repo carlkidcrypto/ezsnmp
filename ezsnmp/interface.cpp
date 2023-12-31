@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <memory>
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
@@ -55,18 +56,23 @@
  * PyObjects used in the 'interface.c' file are listed below
  *
  ******************************************************************************/
-static PyObject *ezsnmp_import = NULL;
-static PyObject *ezsnmp_exceptions_import = NULL;
-static PyObject *ezsnmp_compat_import = NULL;
-static PyObject *logging_import = NULL;
-static PyObject *PyLogger = NULL;
-static PyObject *EzSNMPError = NULL;
-static PyObject *EzSNMPConnectionError = NULL;
-static PyObject *EzSNMPTimeoutError = NULL;
-static PyObject *EzSNMPNoSuchNameError = NULL;
-static PyObject *EzSNMPUnknownObjectIDError = NULL;
-static PyObject *EzSNMPNoSuchObjectError = NULL;
-static PyObject *EzSNMPUndeterminedTypeError = NULL;
+void PyObject_deleter(PyObject *obj)
+{
+    Py_DECREF(obj);
+}
+
+static std::shared_ptr<PyObject> ezsnmp_import = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> ezsnmp_exceptions_import = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> ezsnmp_compat_import = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> logging_import = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> PyLogger = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPError = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPConnectionError = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPTimeoutError = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPNoSuchNameError = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPUnknownObjectIDError = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPNoSuchObjectError = std::make_shared<PyObject>();
+static std::shared_ptr<PyObject> EzSNMPUndeterminedTypeError = std::make_shared<PyObject>();
 
 /*
  * Ripped wholesale from library/tools.h from Net-SNMP 5.7.3
@@ -1307,7 +1313,7 @@ retry:
             }
             else /* !retry_nosuch */
             {
-                PyErr_SetString(EzSNMPNoSuchNameError,
+                PyErr_SetString(EzSNMPNoSuchNameError.get(),
                                 "no such name error encountered");
             }
 
@@ -1341,7 +1347,7 @@ retry:
             *err_ind = (*response)->errindex;
             py_log_msg(DEBUG, "sync PDU: %s", err_str);
 
-            PyErr_SetString(EzSNMPError, err_str);
+            PyErr_SetString(EzSNMPError.get(), err_str);
             break;
         }
         break;
@@ -1355,12 +1361,12 @@ retry:
         // SNMP v3 doesn't quite raise timeouts correctly, so we correct it
         if (strncmp(err_str, "Timeout", 7) == 0)
         {
-            PyErr_SetString(EzSNMPTimeoutError,
+            PyErr_SetString(EzSNMPTimeoutError.get(),
                             "timed out while connecting to remote host");
         }
         else
         {
-            PyErr_SetString(EzSNMPError, tmp_err_str);
+            PyErr_SetString(EzSNMPError.get(), tmp_err_str);
         }
         break;
 
@@ -1407,7 +1413,7 @@ static void __remove_user_from_cache(struct session_list *ss)
 
 static PyObject *py_netsnmp_construct_varbind(void)
 {
-    return PyObject_CallMethod(ezsnmp_import, "SNMPVariable", NULL);
+    return PyObject_CallMethod(ezsnmp_import.get(), "SNMPVariable", NULL);
 }
 
 /*
@@ -1436,7 +1442,6 @@ static int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
                 return -1;
             }
             retval = PyBytes_AsStringAndSize(*attr_bytes, val, len);
-
 
             Py_DECREF(attr);
             return retval;
@@ -1553,7 +1558,7 @@ static PyObject *create_session_capsule(SnmpSession *session)
     /* create a long lived handle from throwaway session object */
     if (!(handle = snmp_sess_open(session)))
     {
-        PyErr_SetString(EzSNMPConnectionError,
+        PyErr_SetString(EzSNMPConnectionError.get(),
                         "couldn't create SNMP handle");
         goto done;
     }
@@ -1778,7 +1783,7 @@ static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                             session.securityAuthKey,
                             &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
             {
-                PyErr_SetString(EzSNMPConnectionError,
+                PyErr_SetString(EzSNMPConnectionError.get(),
                                 "error generating Ku from authentication "
                                 "password");
                 goto done;
@@ -1802,7 +1807,7 @@ static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                         session.securityPrivKey,
                         &session.securityPrivKeyLen) != SNMPERR_SUCCESS)
         {
-            PyErr_SetString(EzSNMPConnectionError,
+            PyErr_SetString(EzSNMPConnectionError.get(),
                             "couldn't gen Ku from priv pass phrase");
             goto done;
         }
@@ -2037,7 +2042,7 @@ static PyObject *netsnmp_get(PyObject *self, PyObject *args)
         }
         else
         {
-            PyErr_Format(EzSNMPUnknownObjectIDError,
+            PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                          "unknown object id (%s)",
                          (tag ? tag : "<null>"));
             error = 1;
@@ -2387,7 +2392,7 @@ static PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
                 }
                 else
                 {
-                    PyErr_Format(EzSNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -2777,7 +2782,7 @@ static PyObject *netsnmp_walk(PyObject *self, PyObject *args)
             }
             else
             {
-                PyErr_Format(EzSNMPUnknownObjectIDError,
+                PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                              "unknown object id (%s)",
                              (tag ? tag : "<null>"));
                 error = 1;
@@ -3180,7 +3185,7 @@ static PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
                 }
                 else
                 {
-                    PyErr_Format(EzSNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -3550,7 +3555,7 @@ static PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
 
             if (!oid_arr_len[varlist_ind])
             {
-                PyErr_Format(EzSNMPUnknownObjectIDError,
+                PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                              "unknown object id (%s)",
                              (oid_str_arr[varlist_ind] ? oid_str_arr[varlist_ind] : "<null>"));
                 error = 1;
@@ -3918,7 +3923,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
 
                 if (oid_arr_len == 0)
                 {
-                    PyErr_Format(EzSNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -3940,7 +3945,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
                          * Not sure why original author did not raise an error
                          * here before. Keep an eye out for edge cases!
                          */
-                        PyErr_SetString(EzSNMPUndeterminedTypeError,
+                        PyErr_SetString(EzSNMPUndeterminedTypeError.get(),
                                         "a type could not be determine for "
                                         "the object");
                         error = 1;
@@ -3956,7 +3961,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
                     type = __translate_appl_type(type_str);
                     if (type == TYPE_UNKNOWN)
                     {
-                        PyErr_SetString(EzSNMPUndeterminedTypeError,
+                        PyErr_SetString(EzSNMPUndeterminedTypeError.get(),
                                         "a type could not be determine for "
                                         "the object");
                         error = 1;
@@ -4075,7 +4080,7 @@ static PyObject *py_get_logger(char *logger_name)
     PyObject *logger = NULL;
     PyObject *null_handler = NULL;
 
-    logger = PyObject_CallMethod(logging_import, "getLogger", "s", logger_name);
+    logger = PyObject_CallMethod(logging_import.get(), "getLogger", "s", logger_name);
     if (logger == NULL)
     {
         const char *err_msg = "failed to call logging.getLogger";
@@ -4092,7 +4097,7 @@ static PyObject *py_get_logger(char *logger_name)
      *
      */
 
-    null_handler = PyObject_CallMethod(logging_import, "NullHandler", NULL);
+    null_handler = PyObject_CallMethod(logging_import.get(), "NullHandler", NULL);
     if (null_handler == NULL)
     {
         const char *err_msg = "failed to call logging.NullHandler()";
@@ -4141,23 +4146,23 @@ static void py_log_msg(int log_level, char *printf_fmt, ...)
     switch (log_level)
     {
     case INFO:
-        pval = PyObject_CallMethod(PyLogger, "info", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "info", "O", log_msg);
         break;
 
     case WARNING:
-        pval = PyObject_CallMethod(PyLogger, "warn", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "warn", "O", log_msg);
         break;
 
     case ERROR:
-        pval = PyObject_CallMethod(PyLogger, "error", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "error", "O", log_msg);
         break;
 
     case DEBUG:
-        pval = PyObject_CallMethod(PyLogger, "debug", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "debug", "O", log_msg);
         break;
 
     case EXCEPTION:
-        pval = PyObject_CallMethod(PyLogger, "exception", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "exception", "O", log_msg);
         break;
 
     default:
@@ -4256,56 +4261,56 @@ PyMODINIT_FUNC PyInit_interface(void)
      * import ezsnmp.compat
      *
      */
-    logging_import = PyImport_ImportModule("logging");
-    if (logging_import == NULL)
+    logging_import.reset(PyImport_ImportModule("logging"), PyObject_deleter);
+    if (logging_import.get() == NULL)
     {
         const char *err_msg = "failed to import 'logging'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    ezsnmp_import = PyImport_ImportModule("ezsnmp");
-    if (ezsnmp_import == NULL)
+    ezsnmp_import.reset(PyImport_ImportModule("ezsnmp"), PyObject_deleter);
+    if (ezsnmp_import.get() == NULL)
     {
         const char *err_msg = "failed to import 'ezsnmp'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    ezsnmp_exceptions_import = PyImport_ImportModule("ezsnmp.exceptions");
-    if (ezsnmp_exceptions_import == NULL)
+    ezsnmp_exceptions_import.reset(PyImport_ImportModule("ezsnmp.exceptions"), PyObject_deleter);
+    if (ezsnmp_exceptions_import.get() == NULL)
     {
         const char *err_msg = "failed to import 'ezsnmp.exceptions'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    ezsnmp_compat_import = PyImport_ImportModule("ezsnmp.compat");
-    if (ezsnmp_compat_import == NULL)
+    ezsnmp_compat_import.reset(PyImport_ImportModule("ezsnmp.compat"), PyObject_deleter);
+    if (ezsnmp_compat_import.get() == NULL)
     {
         const char *err_msg = "failed to import 'ezsnmp.compat'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    EzSNMPError = PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError");
-    EzSNMPConnectionError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                   "EzSNMPConnectionError");
-    EzSNMPTimeoutError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                "EzSNMPTimeoutError");
-    EzSNMPNoSuchNameError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                   "EzSNMPNoSuchNameError");
-    EzSNMPUnknownObjectIDError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                        "EzSNMPUnknownObjectIDError");
-    EzSNMPNoSuchObjectError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                     "EzSNMPNoSuchObjectError");
-    EzSNMPUndeterminedTypeError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                         "EzSNMPUndeterminedTypeError");
+    EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(), "EzSNMPError"), PyObject_deleter);
+    EzSNMPConnectionError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+                                                   "EzSNMPConnectionError"), PyObject_deleter);
+    EzSNMPTimeoutError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+                                                "EzSNMPTimeoutError"), PyObject_deleter);
+    EzSNMPNoSuchNameError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+                                                   "EzSNMPNoSuchNameError"), PyObject_deleter);
+    EzSNMPUnknownObjectIDError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+                                                        "EzSNMPUnknownObjectIDError"), PyObject_deleter);
+    EzSNMPNoSuchObjectError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+                                                     "EzSNMPNoSuchObjectError"), PyObject_deleter);
+    EzSNMPUndeterminedTypeError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+                                                         "EzSNMPUndeterminedTypeError"), PyObject_deleter);
 
     /* Initialise logging (note: automatically has refcount 1) */
-    PyLogger = py_get_logger("ezsnmp.interface");
+    PyLogger.reset(py_get_logger("ezsnmp.interface"), PyObject_deleter);
 
-    if (PyLogger == NULL)
+    if (PyLogger.get() == NULL)
     {
         goto done;
     }
@@ -4319,18 +4324,6 @@ PyMODINIT_FUNC PyInit_interface(void)
 
 done:
     Py_XDECREF(interface_module);
-    Py_XDECREF(logging_import);
-    Py_XDECREF(ezsnmp_import);
-    Py_XDECREF(ezsnmp_exceptions_import);
-    Py_XDECREF(ezsnmp_compat_import);
-    Py_XDECREF(EzSNMPError);
-    Py_XDECREF(EzSNMPConnectionError);
-    Py_XDECREF(EzSNMPTimeoutError);
-    Py_XDECREF(EzSNMPNoSuchNameError);
-    Py_XDECREF(EzSNMPUnknownObjectIDError);
-    Py_XDECREF(EzSNMPNoSuchObjectError);
-    Py_XDECREF(EzSNMPUndeterminedTypeError);
-    Py_XDECREF(PyLogger);
 
     return NULL;
 }

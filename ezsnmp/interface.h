@@ -1,4 +1,4 @@
-/* This is the header file to the 'interface.c' file. Will include things like
+/* This is the header file to the 'interface.cpp' file. Will include things like
  * function definitions, enums, etc.
  */
 
@@ -110,7 +110,7 @@ enum
 
 /******************************************************************************
  *
- * Function definitions for the 'interface.c' file are listed below
+ * Function definitions for the 'interface.cpp' file are listed below
  *
  ******************************************************************************/
 
