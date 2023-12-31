@@ -136,8 +136,7 @@ them with the following:
 
     git clone https://github.com/ezsnmp/ezsnmp.git
     cd ezsnmp
-    pip install pytest
-    pytest
+    python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .
 
 License
 -------

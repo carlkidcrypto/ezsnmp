@@ -1248,7 +1248,7 @@ retry:
                  * When using retry, we expect the agent to behave
                  * in two ways:
                  *
-                 *  (1) provide error index in descending order (easy case)
+                 *  (1) provide error index in descending order (ez case)
                  *  (2) provide error index in ascending order (hard case)
                  *
                  *  The reason (2) is hard, is because everytime an OID
@@ -1427,7 +1427,6 @@ static int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
         {
             int retval;
 
-#if PY_MAJOR_VERSION >= 3
             // Encode the provided attribute using latin-1 into bytes and
             // retrieve its value and length
             *attr_bytes = PyUnicode_AsEncodedString(attr, "latin-1", "surrogateescape");
@@ -1437,9 +1436,7 @@ static int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
                 return -1;
             }
             retval = PyBytes_AsStringAndSize(*attr_bytes, val, len);
-#else
-            retval = PyString_AsStringAndSize(attr, val, len);
-#endif
+
 
             Py_DECREF(attr);
             return retval;
@@ -4229,8 +4226,6 @@ static PyMethodDef interface_methods[] =
 };
 
 /* entry point when importing the module */
-#if PY_MAJOR_VERSION >= 3
-
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "interface",
@@ -4247,14 +4242,6 @@ PyMODINIT_FUNC PyInit_interface(void)
     /* Initialise the module */
     PyObject *interface_module = PyModule_Create(&moduledef);
 
-#else
-
-PyMODINIT_FUNC initinterface(void)
-{
-    /* Initialise the module */
-    PyObject *interface_module = Py_InitModule("interface", interface_methods);
-
-#endif
     if (interface_module == NULL)
     {
         goto done;
@@ -4303,17 +4290,17 @@ PyMODINIT_FUNC initinterface(void)
 
     EzSNMPError = PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError");
     EzSNMPConnectionError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                     "EzSNMPConnectionError");
+                                                   "EzSNMPConnectionError");
     EzSNMPTimeoutError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                  "EzSNMPTimeoutError");
+                                                "EzSNMPTimeoutError");
     EzSNMPNoSuchNameError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                     "EzSNMPNoSuchNameError");
+                                                   "EzSNMPNoSuchNameError");
     EzSNMPUnknownObjectIDError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                          "EzSNMPUnknownObjectIDError");
+                                                        "EzSNMPUnknownObjectIDError");
     EzSNMPNoSuchObjectError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                       "EzSNMPNoSuchObjectError");
+                                                     "EzSNMPNoSuchObjectError");
     EzSNMPUndeterminedTypeError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                           "EzSNMPUndeterminedTypeError");
+                                                         "EzSNMPUndeterminedTypeError");
 
     /* Initialise logging (note: automatically has refcount 1) */
     PyLogger = py_get_logger("ezsnmp.interface");
@@ -4328,11 +4315,7 @@ PyMODINIT_FUNC initinterface(void)
 
     py_log_msg(DEBUG, "initialised ezsnmp.interface");
 
-#if PY_MAJOR_VERSION >= 3
     return interface_module;
-#else
-    return;
-#endif
 
 done:
     Py_XDECREF(interface_module);
@@ -4349,9 +4332,5 @@ done:
     Py_XDECREF(EzSNMPUndeterminedTypeError);
     Py_XDECREF(PyLogger);
 
-#if PY_MAJOR_VERSION >= 3
     return NULL;
-#else
-    return;
-#endif
 }
