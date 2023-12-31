@@ -13,7 +13,7 @@ from setuptools import dist
 basedir = None
 in_tree = False
 # Add compiler flags if debug is set
-compile_args = []
+compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
 link_args = []
 for arg in argv:
     if arg.startswith("--debug"):
@@ -104,6 +104,10 @@ else:
             libdirs += [flag[2:] for flag in buildvars if flag[:2] == "-L"]
             incdirs += [flag[2:] for flag in buildvars if flag[:2] == "-I"]
 
+print(f"in_tree: {in_tree}\n")
+print(f"compile_args: {compile_args}\n")
+print(f"link_args: {link_args}\n")
+
 
 # Setup the py.test class for use with the test command
 class PyTest(TestCommand):
@@ -172,14 +176,13 @@ class RelinkLibraries(BuildCommand):
                 shell=True,
             )
 
-
 setup(
     tests_require=["pytest-cov", "pytest-sugar", "pytest"],
     cmdclass={"test": PyTest, "build_ext": RelinkLibraries},
     ext_modules=[
         Extension(
             "ezsnmp.interface",
-            ["ezsnmp/interface.c"],
+            ["ezsnmp/interface.cpp"],
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,
