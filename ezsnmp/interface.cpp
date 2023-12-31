@@ -59,21 +59,20 @@
 void PyObject_deleter(PyObject *obj)
 {
     Py_XDECREF(obj);
-
 }
 
-static std::shared_ptr<PyObject> ezsnmp_import = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> ezsnmp_exceptions_import = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> ezsnmp_compat_import = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> logging_import = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> PyLogger = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPError = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPConnectionError = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPTimeoutError = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPNoSuchNameError = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPUnknownObjectIDError = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPNoSuchObjectError = std::make_shared<PyObject>();
-static std::shared_ptr<PyObject> EzSNMPUndeterminedTypeError = std::make_shared<PyObject>();
+std::shared_ptr<PyObject> ezsnmp_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> ezsnmp_exceptions_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> ezsnmp_compat_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> logging_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> PyLogger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPConnectionError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPTimeoutError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPNoSuchNameError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPUnknownObjectIDError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPNoSuchObjectError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPUndeterminedTypeError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 
 /*
  * Ripped wholesale from library/tools.h from Net-SNMP 5.7.3
