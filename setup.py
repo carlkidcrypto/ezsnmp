@@ -69,44 +69,45 @@ else:
             brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
         except CalledProcessError:
             pass
-        else:
-            lines = brew.splitlines()
-            include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
-            incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
-            lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
-            libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
-            # The homebrew version also depends on the Openssl keg
-            brew = check_output("brew info net-snmp", shell=True).decode()
-            openssl_ver = list(
-                filter(
-                    lambda o: "openssl" in o,
-                    *map(
-                        str.split,
-                        filter(
-                            lambda l: "openssl" in l,
-                            str(brew.replace("'", "")).split("\n"),
-                        ),
-                    )
-                )
-            )[0]
-            brew = check_output(
-                "brew info {0}".format(openssl_ver), shell=True
-            ).decode()
-            # /usr/local/opt is the default brew `opt` prefix, however the user
-            # may have installed it elsewhere. The `brew info <pkg>` includes
-            # an apostrophe, which breaks shlex. We'll simply replace it
-            buildvars = list(
-                map(
-                    lambda e: e.split('"', 1)[1].strip('"'),
-                    filter(lambda var: '="' in var, brew.split()),
+        
+        lines = brew.splitlines()
+        include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
+        incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
+        lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
+        libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+        # The homebrew version also depends on the Openssl keg
+        brew = check_output("brew info net-snmp", shell=True).decode()
+        openssl_ver = list(
+            filter(
+                lambda o: "openssl" in o,
+                *map(
+                    str.split,
+                    filter(
+                        lambda l: "openssl" in l,
+                        str(brew.replace("'", "")).split("\n"),
+                    ),
                 )
             )
-            libdirs += [flag[2:] for flag in buildvars if flag[:2] == "-L"]
-            incdirs += [flag[2:] for flag in buildvars if flag[:2] == "-I"]
+        )[0]
+        brew = check_output(
+            "brew info {0}".format(openssl_ver), shell=True
+        ).decode()
+        # /usr/local/opt is the default brew `opt` prefix, however the user
+        # may have installed it elsewhere. The `brew info <pkg>` includes
+        # an apostrophe, which breaks shlex. We'll simply replace it
+        buildvars = list(
+            map(
+                lambda e: e.split('"', 1)[1].strip('"'),
+                filter(lambda var: '="' in var, brew.split()),
+            )
+        )
+        libdirs += [flag[2:] for flag in buildvars if flag[:2] == "-L"]
+        incdirs += [flag[2:] for flag in buildvars if flag[:2] == "-I"]
 
 print(f"in_tree: {in_tree}\n")
 print(f"compile_args: {compile_args}\n")
 print(f"link_args: {link_args}\n")
+print(f"platform: {platform}\n")
 
 
 # Setup the py.test class for use with the test command
