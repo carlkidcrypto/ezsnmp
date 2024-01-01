@@ -115,6 +115,11 @@ enum
  ******************************************************************************/
 
 static PyObject *create_session_capsule(SnmpSession *ss);
+static PyObject *netsnmp_create_session(PyObject *self, PyObject *args);
+static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args);
+static PyObject *netsnmp_create_session_tunneled(PyObject *self, PyObject *args);
+static PyObject *py_get_logger(char *logger_name);
+
 static void *get_session_handle_from_capsule(PyObject *session_capsule);
 #ifdef USE_DEPRECATED_COBJECT_API
 static void delete_session_capsule(void *session_ptr);
