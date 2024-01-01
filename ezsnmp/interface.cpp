@@ -61,9 +61,12 @@ void PyObject_deleter(PyObject *obj)
     Py_XDECREF(obj);
 }
 
-std::shared_ptr<PyObject> ezsnmp_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-std::shared_ptr<PyObject> ezsnmp_exceptions_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-std::shared_ptr<PyObject> ezsnmp_compat_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+/* This can't be shared_ptr's for some reason. They'll need more work and investigation */
+PyObject *ezsnmp_import = NULL;
+PyObject *ezsnmp_exceptions_import = NULL;
+PyObject *ezsnmp_compat_import = NULL;
+
+/* This can be shared_ptr's :), they get auto decremented when they go out of scope. */
 std::shared_ptr<PyObject> logging_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> PyLogger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
@@ -1413,7 +1416,7 @@ static void __remove_user_from_cache(struct session_list *ss)
 
 static PyObject *py_netsnmp_construct_varbind(void)
 {
-    return PyObject_CallMethod(ezsnmp_import.get(), "SNMPVariable", NULL);
+    return PyObject_CallMethod(ezsnmp_import, "SNMPVariable", NULL);
 }
 
 /*
@@ -1428,22 +1431,21 @@ static int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
     *val = NULL;
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
-        if (attr)
+        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
+        if (attr.get())
         {
             int retval;
 
             // Encode the provided attribute using latin-1 into bytes and
             // retrieve its value and length
-            *attr_bytes = PyUnicode_AsEncodedString(attr, "latin-1", "surrogateescape");
+            *attr_bytes = PyUnicode_AsEncodedString(attr.get(), "latin-1", "surrogateescape");
             if (!(*attr_bytes))
             {
-                Py_DECREF(attr);
                 return -1;
             }
             retval = PyBytes_AsStringAndSize(*attr_bytes, val, len);
 
-            Py_DECREF(attr);
             return retval;
         }
     }
@@ -1457,11 +1459,11 @@ static long long py_netsnmp_attr_long(PyObject *obj, char *attr_name)
 
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
-        if (attr)
+        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
+        if (attr.get())
         {
-            val = PyLong_AsLong(attr);
-            Py_DECREF(attr);
+            val = PyLong_AsLong(attr.get());
         }
     }
 
@@ -1474,14 +1476,15 @@ static int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
     int ret = -1;
     if (obj && attr_name)
     {
-        PyObject *val_obj = PyUnicode_Decode(val, len, "latin-1",
-                                             "surrogateescape");
-        if (!val_obj)
+        std::shared_ptr<PyObject> val_obj = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+        val_obj.reset(PyUnicode_Decode(val, len, "latin-1",
+                                       "surrogateescape"),
+                      PyObject_deleter);
+        if (!val_obj.get())
         {
             return -1;
         }
-        ret = PyObject_SetAttrString(obj, attr_name, val_obj);
-        Py_DECREF(val_obj);
+        ret = PyObject_SetAttrString(obj, attr_name, val_obj.get());
     }
     return ret;
 }
@@ -4077,8 +4080,8 @@ done:
  */
 static PyObject *py_get_logger(char *logger_name)
 {
-    std::shared_ptr<PyObject> logger = NULL;
-    std::shared_ptr<PyObject> null_handler = NULL;
+    std::shared_ptr<PyObject> logger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    std::shared_ptr<PyObject> null_handler = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 
     logger.reset(PyObject_CallMethod(logging_import.get(), "getLogger", "s", logger_name), PyObject_deleter);
     if (logger.get() == NULL)
@@ -4239,7 +4242,7 @@ static struct PyModuleDef moduledef = {
 PyMODINIT_FUNC PyInit_interface(void)
 {
     /* Initialise the module */
-    std::shared_ptr<PyObject> interface_module = NULL;
+    std::shared_ptr<PyObject> interface_module = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
     interface_module.reset(PyModule_Create(&moduledef), PyObject_deleter);
 
     if (interface_module.get() == NULL)
@@ -4264,47 +4267,47 @@ PyMODINIT_FUNC PyInit_interface(void)
         goto done;
     }
 
-    ezsnmp_import.reset(PyImport_ImportModule("ezsnmp"), PyObject_deleter);
-    if (ezsnmp_import.get() == NULL)
+    ezsnmp_import = PyImport_ImportModule("ezsnmp");
+    if (ezsnmp_import == NULL)
     {
         const char *err_msg = "failed to import 'ezsnmp'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    ezsnmp_exceptions_import.reset(PyImport_ImportModule("ezsnmp.exceptions"), PyObject_deleter);
-    if (ezsnmp_exceptions_import.get() == NULL)
+    ezsnmp_exceptions_import = PyImport_ImportModule("ezsnmp.exceptions");
+    if (ezsnmp_exceptions_import == NULL)
     {
         const char *err_msg = "failed to import 'ezsnmp.exceptions'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    ezsnmp_compat_import.reset(PyImport_ImportModule("ezsnmp.compat"), PyObject_deleter);
-    if (ezsnmp_compat_import.get() == NULL)
+    ezsnmp_compat_import = PyImport_ImportModule("ezsnmp.compat");
+    if (ezsnmp_compat_import == NULL)
     {
         const char *err_msg = "failed to import 'ezsnmp.compat'";
         PyErr_SetString(PyExc_ImportError, err_msg);
         goto done;
     }
 
-    EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(), "EzSNMPError"), PyObject_deleter);
-    EzSNMPConnectionError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+    EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError"), PyObject_deleter);
+    EzSNMPConnectionError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                        "EzSNMPConnectionError"),
                                 PyObject_deleter);
-    EzSNMPTimeoutError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+    EzSNMPTimeoutError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                     "EzSNMPTimeoutError"),
                              PyObject_deleter);
-    EzSNMPNoSuchNameError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+    EzSNMPNoSuchNameError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                        "EzSNMPNoSuchNameError"),
                                 PyObject_deleter);
-    EzSNMPUnknownObjectIDError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+    EzSNMPUnknownObjectIDError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                             "EzSNMPUnknownObjectIDError"),
                                      PyObject_deleter);
-    EzSNMPNoSuchObjectError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+    EzSNMPNoSuchObjectError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                          "EzSNMPNoSuchObjectError"),
                                   PyObject_deleter);
-    EzSNMPUndeterminedTypeError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import.get(),
+    EzSNMPUndeterminedTypeError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
                                                              "EzSNMPUndeterminedTypeError"),
                                       PyObject_deleter);
 
