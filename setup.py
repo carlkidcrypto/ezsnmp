@@ -13,7 +13,7 @@ from setuptools import dist
 basedir = None
 in_tree = False
 # Add compiler flags if debug is set
-compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
+compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive", "-ferror-limit=250"]
 link_args = []
 for arg in argv:
     if arg.startswith("--debug"):
@@ -67,9 +67,10 @@ else:
         # Check if net-snmp is installed via Brew
         try:
             brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
+
         except CalledProcessError:
             pass
-        
+
         lines = brew.splitlines()
         include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
         incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
@@ -86,23 +87,22 @@ else:
                         lambda l: "openssl" in l,
                         str(brew.replace("'", "")).split("\n"),
                     ),
-                )
+                ),
             )
         )[0]
-        brew = check_output(
-            "brew info {0}".format(openssl_ver), shell=True
-        ).decode()
+
+        brew = check_output("brew info {0}".format(openssl_ver), shell=True).decode()
         # /usr/local/opt is the default brew `opt` prefix, however the user
         # may have installed it elsewhere. The `brew info <pkg>` includes
         # an apostrophe, which breaks shlex. We'll simply replace it
-        buildvars = list(
-            map(
-                lambda e: e.split('"', 1)[1].strip('"'),
-                filter(lambda var: '="' in var, brew.split()),
-            )
-        )
-        libdirs += [flag[2:] for flag in buildvars if flag[:2] == "-L"]
-        incdirs += [flag[2:] for flag in buildvars if flag[:2] == "-I"]
+        temp = brew.split("\n")
+        temp_path = str(temp[3].split("(")[0]).strip()
+
+        libdirs.append(temp_path + "/lib")
+        incdirs.append(temp_path + "/include")
+        print(f"libdirs: {libdirs}\n")
+        print(f"incdirs: {incdirs}\n")
+        print(f"openssl_ver: {openssl_ver}\n")
 
 print(f"in_tree: {in_tree}\n")
 print(f"compile_args: {compile_args}\n")
@@ -176,6 +176,7 @@ class RelinkLibraries(BuildCommand):
                 ),
                 shell=True,
             )
+
 
 setup(
     tests_require=["pytest-cov", "pytest-sugar", "pytest"],
