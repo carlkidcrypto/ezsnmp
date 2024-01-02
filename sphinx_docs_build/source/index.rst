@@ -43,13 +43,13 @@ On RHEL / CentOS systems:
 
 .. code-block:: bash
 
-    sudo yum install gcc python-devel
+    sudo yum install gcc python3-devel
 
 On Debian / Ubuntu systems:
 
 .. code-block:: bash
 
-    sudo apt-get install gcc python-dev
+    sudo apt-get install gcc python3-dev
 
 On macOS systems:
 
