@@ -1081,7 +1081,7 @@ int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
     case TYPE_INTEGER:
     case TYPE_INTEGER32:
         vars->type = ASN_INTEGER;
-        vars->val.integer = malloc(sizeof(long));
+        vars->val.integer = static_cast<long *>(malloc(sizeof(long)));
         if (val)
         {
             *(vars->val.integer) = strtol(val, NULL, 0);
@@ -1109,7 +1109,7 @@ int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
 
     UINT:
 
-        vars->val.integer = malloc(sizeof(long));
+        vars->val.integer = static_cast<long *>(malloc(sizeof(long)));
         if (val)
         {
             sscanf(val, "%lu", vars->val.integer);
@@ -1135,7 +1135,7 @@ int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
 
     OCT:
 
-        vars->val.string = malloc(len);
+        vars->val.string = static_cast<u_char *>(malloc(len));
         vars->val_len = len;
         if (val && len)
         {
@@ -1163,7 +1163,7 @@ int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
                 ret = FAILURE;
                 addr = 0;
             }
-            vars->val.integer = compat_netsnmp_memdup(&addr, sizeof(addr));
+            vars->val.integer = static_cast<long *>(compat_netsnmp_memdup(&addr, sizeof(addr)));
             vars->val_len = sizeof(addr);
         }
         break;
@@ -1568,7 +1568,7 @@ PyObject *create_session_capsule(SnmpSession *session)
      * does not use our instance. In fact, it creates a carbon copy. The call is as follows:
      * snmp_sess_open -> _sess_open -> snmp_sess_add -> snmp_sess_add_ex -> snmp_sess_copy -> _sess_copy
      */
-    if (!(ctx = malloc(sizeof *ctx)))
+    if (!(ctx = static_cast<struct session_capsule_ctx *>(malloc(sizeof *ctx))))
     {
         PyErr_SetString(PyExc_RuntimeError,
                         "could not malloc() session_capsule_ctx");
@@ -1588,7 +1588,7 @@ PyObject *create_session_capsule(SnmpSession *session)
     free(session->securityEngineID);
     free(session->contextEngineID);
     /* init session context variables */
-    ctx->handle = handle;
+    ctx->handle = static_cast<netsnmp_session *>(handle);
     ctx->invalid_oids = (bitarray *)ctx->invalid_oids_buf;
     bitarray_buf_init(ctx->invalid_oids, sizeof(ctx->invalid_oids_buf));
     return capsule;
@@ -1637,7 +1637,7 @@ void delete_session_capsule(void *session_ptr)
 void delete_session_capsule(PyObject *session_capsule)
 {
     /* PyCapsule_GetPointer will raise an exception if it fails. */
-    struct session_capsule_ctx *ctx = PyCapsule_GetPointer(session_capsule, NULL);
+    struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
     {
         // clear_user_list(); // Too dangerous, may disrupt other valid sessions
@@ -1972,7 +1972,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
     }
 
     sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-    session_ctx = get_session_handle_from_capsule(sess_ptr);
+    session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
     if (!session_ctx)
     {
@@ -2315,7 +2315,7 @@ PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
     BITARRAY_DECLARE(snmpv1_invalid_oids, DEFAULT_NUM_BAD_OIDS);
     bitarray *invalid_oids = snmpv1_invalid_oids;
 
-    oid_arr = calloc(MAX_OID_LEN, sizeof(oid));
+    oid_arr = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
 
     if (oid_arr && args)
     {
@@ -2325,7 +2325,7 @@ PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
         }
 
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -2691,7 +2691,7 @@ PyObject *netsnmp_walk(PyObject *self, PyObject *args)
             goto done;
         }
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -2740,17 +2740,17 @@ PyObject *netsnmp_walk(PyObject *self, PyObject *args)
         }
         Py_XDECREF(varlist_iter);
 
-        oid_arr_len = calloc(varlist_len, sizeof(size_t));
-        oid_arr_broken_check_len = calloc(varlist_len, sizeof(int));
+        oid_arr_len = static_cast<size_t *>(calloc(varlist_len, sizeof(size_t)));
+        oid_arr_broken_check_len = static_cast<int *>(calloc(varlist_len, sizeof(int)));
 
-        oid_arr = calloc(varlist_len, sizeof(oid *));
-        oid_arr_broken_check = calloc(varlist_len, sizeof(oid *));
+        oid_arr = static_cast<oid **>(calloc(varlist_len, sizeof(oid *)));
+        oid_arr_broken_check = static_cast<oid **>(calloc(varlist_len, sizeof(oid *)));
 
         for (varlist_ind = 0; varlist_ind < varlist_len; varlist_ind++)
         {
-            oid_arr[varlist_ind] = calloc(MAX_OID_LEN, sizeof(oid));
-            oid_arr_broken_check[varlist_ind] = calloc(MAX_OID_LEN,
-                                                       sizeof(oid));
+            oid_arr[varlist_ind] = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
+            oid_arr_broken_check[varlist_ind] = static_cast<oid *>(calloc(MAX_OID_LEN,
+                                                       sizeof(oid)));
 
             oid_arr_len[varlist_ind] = MAX_OID_LEN;
             oid_arr_broken_check_len[varlist_ind] = MAX_OID_LEN;
@@ -3110,7 +3110,7 @@ PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
     Py_ssize_t tmplen;
     int error = 0;
 
-    oid_arr = calloc(MAX_OID_LEN, sizeof(oid));
+    oid_arr = static_cast< oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
 
     if (oid_arr && args)
     {
@@ -3124,7 +3124,7 @@ PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
             (varbinds = PyObject_GetAttrString(varlist, "varbinds")))
         {
             sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-            session_ctx = get_session_handle_from_capsule(sess_ptr);
+            session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
             if (!session_ctx)
             {
@@ -3461,7 +3461,7 @@ PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
         }
 
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -3508,15 +3508,15 @@ PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
         }
         Py_XDECREF(varlist_iter);
 
-        oid_arr_len = calloc(varlist_len, sizeof(size_t));
-        oid_arr = calloc(varlist_len, sizeof(oid *));
+        oid_arr_len = static_cast<size_t *>(calloc(varlist_len, sizeof(size_t)));
+        oid_arr = static_cast<oid **>(calloc(varlist_len, sizeof(oid *)));
         // initial_oid_str_arr = calloc(varlist_len, sizeof(char *));
-        oid_str_arr = calloc(varlist_len, sizeof(char *));
-        oid_idx_str_arr = calloc(varlist_len, sizeof(char *));
+        oid_str_arr = static_cast<char **>(calloc(varlist_len, sizeof(char *)));
+        oid_idx_str_arr = static_cast<char **>(calloc(varlist_len, sizeof(char *)));
 
         for (varlist_ind = 0; varlist_ind < varlist_len; varlist_ind++)
         {
-            oid_arr[varlist_ind] = calloc(MAX_OID_LEN, sizeof(oid));
+            oid_arr[varlist_ind] = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
             oid_arr_len[varlist_ind] = MAX_OID_LEN;
         }
 
@@ -3861,7 +3861,7 @@ PyObject *netsnmp_set(PyObject *self, PyObject *args)
     char *val = NULL;
     char *type_str;
     int len;
-    oid *oid_arr = calloc(MAX_OID_LEN, sizeof(oid));
+    oid *oid_arr = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
     size_t oid_arr_len = MAX_OID_LEN;
     int type;
     u_char tmp_val_str[STR_BUF_SIZE];
@@ -3884,7 +3884,7 @@ PyObject *netsnmp_set(PyObject *self, PyObject *args)
         }
 
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -4235,7 +4235,7 @@ struct PyModuleDef moduledef = {
     NULL,
     NULL,
     NULL,
-    __libraries_free};
+    (void (*)(void *)) __libraries_free};
 
 PyMODINIT_FUNC PyInit_interface(void)
 {

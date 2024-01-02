@@ -130,13 +130,28 @@ Running Tests
 -------------
 
 Tests use `Pytest <https://github.com/pytest-dev/pytest>`_. You can run
-them with the following:
+them with the following on Linux:
 
 .. code:: bash
 
-    git clone https://github.com/ezsnmp/ezsnmp.git
-    cd ezsnmp
-    python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .
+    git clone https://github.com/ezsnmp/ezsnmp.git;
+    cd ezsnmp;
+    cd ezsnmp;
+    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
+    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo systemctl start snmpd;
+    python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
+
+
+On MacOS
+
+.. code:: bash
+    git clone https://github.com/ezsnmp/ezsnmp.git;
+    cd ezsnmp;
+    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
+    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
+    sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
 
 License
 -------
