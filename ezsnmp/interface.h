@@ -114,37 +114,57 @@ enum
  *
  ******************************************************************************/
 
-static PyObject *create_session_capsule(SnmpSession *ss);
-static PyObject *netsnmp_create_session(PyObject *self, PyObject *args);
-static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args);
-static PyObject *netsnmp_create_session_tunneled(PyObject *self, PyObject *args);
-static PyObject *py_get_logger(char *logger_name);
-
-static void *get_session_handle_from_capsule(PyObject *session_capsule);
+void PyObject_deleter(PyObject *obj);
+void *compat_netsnmp_memdup(const void *from, size_t size);
+int __match_algo(int is_auth, char *algo, oid **output, size_t *len);
+void __libraries_init();
+void __libraries_free();
+int __is_leaf(struct tree *tp);
+int __translate_appl_type(char *typestr);
+int __translate_asn_type(int type);
+int __snprint_value(char *buf, size_t buf_len,
+                    netsnmp_variable_list *var,
+                    struct tree *tp, int type, int flag);
+int __sprint_num_objid(char *buf, oid *objid, int len);
+int __scan_num_objid(char *buf, oid *objid, size_t *len);
+int __get_type_str(int type, char *str, int log_error);
+int __get_label_iid(char *name, char **last_label, char **iid,
+                    int flag);
+struct tree *__tag2oid(char *tag, char *iid, oid *oid_arr,
+                       size_t *oid_arr_len, int *type, int best_guess);
+int __concat_oid_str(oid *doid_arr, size_t *doid_arr_len, char *soid_str);
+int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
+                      char *val, int len, int type);
+int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
+                    netsnmp_pdu **response, int retry_nosuch,
+                    char *err_str, int *err_num, int *err_ind,
+                    bitarray *invalid_oids);
+void __remove_user_from_cache(struct session_list *ss);
+PyObject *py_netsnmp_construct_varbind(void);
+int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
+                           Py_ssize_t *len, PyObject **attr_bytes);
+long long py_netsnmp_attr_long(PyObject *obj, char *attr_name);
+int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
+                               char *val, size_t len);
+void __py_netsnmp_update_session_errors(PyObject *session,
+                                        char *err_str, int err_num,
+                                        int err_ind);
+PyObject *create_session_capsule(SnmpSession *session);
+void *get_session_handle_from_capsule(PyObject *session_capsule);
 #ifdef USE_DEPRECATED_COBJECT_API
-static void delete_session_capsule(void *session_ptr);
+void delete_session_capsule(void *session_ptr);
 #else
-static void delete_session_capsule(PyObject *session_capsule);
+void delete_session_capsule(PyObject *session_capsule);
 #endif
-
-static int __is_numeric_oid(char *oidstr);
-static int __is_leaf(struct tree *tp);
-static int __translate_appl_type(char *typestr);
-static int __translate_asn_type(int type);
-static int __snprint_value(char *buf, size_t buf_len,
-                           netsnmp_variable_list *var,
-                           struct tree *tp, int type, int flag);
-static int __sprint_num_objid(char *buf, oid *objid, int len);
-static int __scan_num_objid(char *buf, oid *objid, size_t *len);
-static int __get_type_str(int type, char *str, int log_error);
-static int __get_label_iid(char *name, char **last_label, char **iid,
-                           int flag);
-static struct tree *__tag2oid(char *tag, char *iid, oid *oid_arr,
-                              size_t *oid_arr_len, int *type, int best_guess);
-static int __concat_oid_str(oid *doid_arr, size_t *doid_arr_len, char *soid_str);
-static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
-                             char *val, int len, int type);
-
-static void py_log_msg(int log_level, char *printf_fmt, ...);
-static int __match_algo(int is_auth, char *algo, oid **output, size_t *len);
-static void __remove_user_from_cache(struct session_list *ss);
+PyObject *netsnmp_create_session(PyObject *self, PyObject *args);
+PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args);
+PyObject *netsnmp_create_session_tunneled(PyObject *self,
+                                          PyObject *args);
+PyObject *netsnmp_get(PyObject *self, PyObject *args);
+PyObject *netsnmp_getnext(PyObject *self, PyObject *args);
+PyObject *netsnmp_walk(PyObject *self, PyObject *args);
+PyObject *netsnmp_getbulk(PyObject *self, PyObject *args);
+PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args);
+PyObject *netsnmp_set(PyObject *self, PyObject *args);
+PyObject *py_get_logger(char *logger_name);
+void py_log_msg(int log_level, char *printf_fmt, ...);

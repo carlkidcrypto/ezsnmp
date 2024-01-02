@@ -13,7 +13,7 @@ from setuptools import dist
 basedir = None
 in_tree = False
 # Add compiler flags if debug is set
-compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive", "-ferror-limit=250"]
+compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
 link_args = []
 for arg in argv:
     if arg.startswith("--debug"):
@@ -100,6 +100,7 @@ else:
 
         libdirs.append(temp_path + "/lib")
         incdirs.append(temp_path + "/include")
+
         print(f"libdirs: {libdirs}\n")
         print(f"incdirs: {incdirs}\n")
         print(f"openssl_ver: {openssl_ver}\n")
