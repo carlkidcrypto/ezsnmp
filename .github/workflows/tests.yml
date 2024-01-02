@@ -62,7 +62,6 @@ jobs:
                  brew upgrade;
                  brew install net-snmp;
                  brew install openssl@3;
-                 brew uninstall openssl@1.1;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
