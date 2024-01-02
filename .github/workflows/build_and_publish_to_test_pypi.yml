@@ -10,7 +10,7 @@ on:
 jobs:
   build-n-publish-test-pypi:
     name: Build and Publish
-    runs-on: ubuntu-latest
+    runs-on: Linux
 
     steps:
       - uses: actions/checkout@v4
