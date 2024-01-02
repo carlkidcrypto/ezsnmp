@@ -55,7 +55,7 @@ jobs:
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
-                 mkdir -m 0755 ~/.snmp;
+                 mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
           
           macos: brew update;
@@ -66,7 +66,7 @@ jobs:
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
-                 mkdir -m 0755 ~/.snmp;
+                 mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
