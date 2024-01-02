@@ -92,13 +92,13 @@ jobs:
       - name: Start SNMP daemon
         uses: carlkidcrypto/os-specific-runner@v2.0.0
         with:
-          linux: mibdir="-M +/var/lib/snmp/mibs"
-                 SNMPD=$(which snmpd)
-                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+          linux: mibdir="-M +/var/lib/snmp/mibs";
+                 SNMPD=$(which snmpd);
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
           
-          macos: mibdir=""
-                 SNMPD=/usr/local/opt/net-snmp/sbin/snmpd
-                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+          macos: mibdir="";
+                 SNMPD=/usr/local/opt/net-snmp/sbin/snmpd;
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
 
       - name: Lint with flake8
         uses: py-actions/flake8@v2
