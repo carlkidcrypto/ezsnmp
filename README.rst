@@ -1,17 +1,22 @@
 Ez SNMP
 =========
 
-|Python Code Style| |Build Status| |Discussions| |License|
+|Python Code Style| |Black| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests| |License|
 
 .. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
-.. |Build Status| image:: https://img.shields.io/github/workflow/status/ezsnmp/ezsnmp/build
-   :target: https://github.com/ezsnmp/ezsnmp/actions
+.. |Black| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml
+.. |Pull Request Sphinx Docs Check| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml
+.. |PyPI Distributions| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml
+.. |TestPyPI Distributions| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml
+.. |Tests| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests.yml
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
-   :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
-.. |Discussions| image:: https://img.shields.io/github/discussions/ezsnmp/ezsnmp
-   :alt: Join the Discussions!
-   :target: https://github.com/ezsnmp/ezsnmp
+    :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
 
 .. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp-logo.png
     :alt: Ez SNMP Logo
@@ -137,21 +142,25 @@ them with the following on Linux:
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
     cd ezsnmp;
-    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
-    sudo systemctl start snmpd;
+    mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
+    cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    systemctl start snmpd;
+    rm -drf build/ ezsnmp.egg-info;
     python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
 
 
 On MacOS
 
 .. code:: bash
+
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
-    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
-    sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
+    mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
+    cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
+    launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
+    rm -drf build/ ezsnmp.egg-info;
+    python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
 
 License
 -------
