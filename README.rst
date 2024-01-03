@@ -5,13 +5,18 @@ Ez SNMP
 
 .. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
-.. |Build Status| image:: https://img.shields.io/github/workflow/status/ezsnmp/ezsnmp/build
-   :target: https://github.com/ezsnmp/ezsnmp/actions
+.. |Black | image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml/badge.svg
+   :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml
+.. |Pull Request Sphinx Docs Check | image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml/badge.svg
+   :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml
+.. |PyPI Distributions | image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml/badge.svg
+   :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml
+.. |TestPyPI Distributions | image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml/badge.svg
+   :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml
+.. |Tests | image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests.yml/badge.svg
+   :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests.yml
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
    :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
-.. |Discussions| image:: https://img.shields.io/github/discussions/ezsnmp/ezsnmp
-   :alt: Join the Discussions!
-   :target: https://github.com/ezsnmp/ezsnmp
 
 .. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp-logo.png
     :alt: Ez SNMP Logo
