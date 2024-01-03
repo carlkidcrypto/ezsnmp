@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <memory>
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
@@ -55,24 +56,32 @@
  * PyObjects used in the 'interface.c' file are listed below
  *
  ******************************************************************************/
-static PyObject *ezsnmp_import = NULL;
-static PyObject *ezsnmp_exceptions_import = NULL;
-static PyObject *ezsnmp_compat_import = NULL;
-static PyObject *logging_import = NULL;
-static PyObject *PyLogger = NULL;
-static PyObject *EzSNMPError = NULL;
-static PyObject *EzSNMPConnectionError = NULL;
-static PyObject *EzSNMPTimeoutError = NULL;
-static PyObject *EzSNMPNoSuchNameError = NULL;
-static PyObject *EzSNMPUnknownObjectIDError = NULL;
-static PyObject *EzSNMPNoSuchObjectError = NULL;
-static PyObject *EzSNMPUndeterminedTypeError = NULL;
+void PyObject_deleter(PyObject *obj)
+{
+    Py_XDECREF(obj);
+}
+
+/* This can't be shared_ptr's for some reason. They'll need more work and investigation */
+PyObject *ezsnmp_import = NULL;
+PyObject *ezsnmp_exceptions_import = NULL;
+PyObject *ezsnmp_compat_import = NULL;
+
+/* These can be shared_ptr's :), they get auto decremented when they go out of scope. */
+std::shared_ptr<PyObject> logging_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> PyLogger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPConnectionError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPTimeoutError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPNoSuchNameError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPUnknownObjectIDError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPNoSuchObjectError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+std::shared_ptr<PyObject> EzSNMPUndeterminedTypeError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 
 /*
  * Ripped wholesale from library/tools.h from Net-SNMP 5.7.3
  * to remain compatible with versions 5.7.2 and earlier.
  */
-static void *compat_netsnmp_memdup(const void *from, size_t size)
+void *compat_netsnmp_memdup(const void *from, size_t size)
 {
     void *to = NULL;
 
@@ -98,7 +107,7 @@ static void *compat_netsnmp_memdup(const void *from, size_t size)
  * @param size_t len: Pointer to assign the algorithm output size to.
  * @returns int: 0 on success, non-zero if no match found
  */
-static int __match_algo(int is_auth, char *algo, oid **output, size_t *len)
+int __match_algo(int is_auth, char *algo, oid **output, size_t *len)
 {
     int found = -1;
     *output = NULL;
@@ -266,7 +275,7 @@ void __libraries_free()
     snmp_shutdown(APPNAME);
 }
 
-static int __is_numeric_oid(char *oidstr)
+int __is_numeric_oid(char *oidstr)
 {
     if (!oidstr)
     {
@@ -282,14 +291,14 @@ static int __is_numeric_oid(char *oidstr)
     return 1;
 }
 
-static int __is_leaf(struct tree *tp)
+int __is_leaf(struct tree *tp)
 {
     char buf[MAX_TYPE_NAME_LEN];
     return (tp && (__get_type_str(tp->type, buf, 0) ||
                    (tp->parent && __get_type_str(tp->parent->type, buf, 0))));
 }
 
-static int __translate_appl_type(char *typestr)
+int __translate_appl_type(char *typestr)
 {
     if (typestr == NULL || *typestr == '\0')
     {
@@ -410,7 +419,7 @@ static int __translate_appl_type(char *typestr)
     return TYPE_UNKNOWN;
 }
 
-static int __translate_asn_type(int type)
+int __translate_asn_type(int type)
 {
     switch (type)
     {
@@ -454,9 +463,9 @@ static int __translate_asn_type(int type)
 #define USE_BASIC (0)
 #define USE_ENUMS (1)
 #define USE_SPRINT_VALUE (2)
-static int __snprint_value(char *buf, size_t buf_len,
-                           netsnmp_variable_list *var,
-                           struct tree *tp, int type, int flag)
+int __snprint_value(char *buf, size_t buf_len,
+                    netsnmp_variable_list *var,
+                    struct tree *tp, int type, int flag)
 {
     size_t len = 0;
     u_char *ip;
@@ -585,7 +594,7 @@ static int __snprint_value(char *buf, size_t buf_len,
     return len;
 }
 
-static int __sprint_num_objid(char *buf, oid *objid, int len)
+int __sprint_num_objid(char *buf, oid *objid, int len)
 {
     int i;
     buf[0] = '\0';
@@ -597,7 +606,7 @@ static int __sprint_num_objid(char *buf, oid *objid, int len)
     return SUCCESS;
 }
 
-static int __scan_num_objid(char *buf, oid *objid, size_t *len)
+int __scan_num_objid(char *buf, oid *objid, size_t *len)
 {
     char *cp;
     *len = 0;
@@ -629,7 +638,7 @@ static int __scan_num_objid(char *buf, oid *objid, size_t *len)
     return SUCCESS;
 }
 
-static int __get_type_str(int type, char *str, int log_error)
+int __get_type_str(int type, char *str, int log_error)
 {
     switch (type)
     {
@@ -710,8 +719,8 @@ static int __get_type_str(int type, char *str, int log_error)
 /* does a destructive disection of <label1>...<labeln>.<iid> returning
    <labeln> and <iid> in seperate strings (note: will destructively
    alter input string, 'name') */
-static int __get_label_iid(char *name, char **last_label, char **iid,
-                           int flag)
+int __get_label_iid(char *name, char **last_label, char **iid,
+                    int flag)
 {
     char *lcp;
     char *icp;
@@ -846,8 +855,8 @@ static int __get_label_iid(char *name, char **last_label, char **iid,
 
 /* Convert a tag (string) to an OID array              */
 /* Tag can be either a symbolic name, or an OID string */
-static struct tree *__tag2oid(char *tag, char *iid, oid *oid_arr,
-                              size_t *oid_arr_len, int *type, int best_guess)
+struct tree *__tag2oid(char *tag, char *iid, oid *oid_arr,
+                       size_t *oid_arr_len, int *type, int best_guess)
 {
     struct tree *tp = NULL;
     struct tree *rtp = NULL;
@@ -1006,7 +1015,7 @@ done:
  *
  * returns : SUCCESS, FAILURE
  */
-static int __concat_oid_str(oid *doid_arr, size_t *doid_arr_len, char *soid_str)
+int __concat_oid_str(oid *doid_arr, size_t *doid_arr_len, char *soid_str)
 {
     char *soid_buf;
     char *cp;
@@ -1037,8 +1046,8 @@ static int __concat_oid_str(oid *doid_arr, size_t *doid_arr_len, char *soid_str)
 }
 
 /* add a varbind to PDU */
-static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
-                             char *val, int len, int type)
+int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
+                      char *val, int len, int type)
 {
     netsnmp_variable_list *vars;
     oid oidbuf[MAX_OID_LEN];
@@ -1072,7 +1081,7 @@ static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
     case TYPE_INTEGER:
     case TYPE_INTEGER32:
         vars->type = ASN_INTEGER;
-        vars->val.integer = malloc(sizeof(long));
+        vars->val.integer = static_cast<long *>(malloc(sizeof(long)));
         if (val)
         {
             *(vars->val.integer) = strtol(val, NULL, 0);
@@ -1100,7 +1109,7 @@ static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
 
     UINT:
 
-        vars->val.integer = malloc(sizeof(long));
+        vars->val.integer = static_cast<long *>(malloc(sizeof(long)));
         if (val)
         {
             sscanf(val, "%lu", vars->val.integer);
@@ -1126,7 +1135,7 @@ static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
 
     OCT:
 
-        vars->val.string = malloc(len);
+        vars->val.string = static_cast<u_char *>(malloc(len));
         vars->val_len = len;
         if (val && len)
         {
@@ -1154,7 +1163,7 @@ static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
                 ret = FAILURE;
                 addr = 0;
             }
-            vars->val.integer = compat_netsnmp_memdup(&addr, sizeof(addr));
+            vars->val.integer = static_cast<long *>(compat_netsnmp_memdup(&addr, sizeof(addr)));
             vars->val_len = sizeof(addr);
         }
         break;
@@ -1188,10 +1197,10 @@ static int __add_var_val_str(netsnmp_pdu *pdu, oid *name, int name_length,
 
 /* takes ss and pdu as input and updates the 'response' argument */
 /* the input 'pdu' argument will be freed */
-static int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
-                           netsnmp_pdu **response, int retry_nosuch,
-                           char *err_str, int *err_num, int *err_ind,
-                           bitarray *invalid_oids)
+int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
+                    netsnmp_pdu **response, int retry_nosuch,
+                    char *err_str, int *err_num, int *err_ind,
+                    bitarray *invalid_oids)
 {
     int status = 0;
     long command = (*pdu)->command;
@@ -1248,7 +1257,7 @@ retry:
                  * When using retry, we expect the agent to behave
                  * in two ways:
                  *
-                 *  (1) provide error index in descending order (easy case)
+                 *  (1) provide error index in descending order (ez case)
                  *  (2) provide error index in ascending order (hard case)
                  *
                  *  The reason (2) is hard, is because everytime an OID
@@ -1307,7 +1316,7 @@ retry:
             }
             else /* !retry_nosuch */
             {
-                PyErr_SetString(EzSNMPNoSuchNameError,
+                PyErr_SetString(EzSNMPNoSuchNameError.get(),
                                 "no such name error encountered");
             }
 
@@ -1341,7 +1350,7 @@ retry:
             *err_ind = (*response)->errindex;
             py_log_msg(DEBUG, "sync PDU: %s", err_str);
 
-            PyErr_SetString(EzSNMPError, err_str);
+            PyErr_SetString(EzSNMPError.get(), err_str);
             break;
         }
         break;
@@ -1355,12 +1364,12 @@ retry:
         // SNMP v3 doesn't quite raise timeouts correctly, so we correct it
         if (strncmp(err_str, "Timeout", 7) == 0)
         {
-            PyErr_SetString(EzSNMPTimeoutError,
+            PyErr_SetString(EzSNMPTimeoutError.get(),
                             "timed out while connecting to remote host");
         }
         else
         {
-            PyErr_SetString(EzSNMPError, tmp_err_str);
+            PyErr_SetString(EzSNMPError.get(), tmp_err_str);
         }
         break;
 
@@ -1385,7 +1394,7 @@ done:
 /*
  * Clears v3 user credentials from the local cache
  */
-static void __remove_user_from_cache(struct session_list *ss)
+void __remove_user_from_cache(struct session_list *ss)
 {
     struct usmUser *actUser = usm_get_userList();
     while (actUser != NULL)
@@ -1405,7 +1414,7 @@ static void __remove_user_from_cache(struct session_list *ss)
     }
 }
 
-static PyObject *py_netsnmp_construct_varbind(void)
+PyObject *py_netsnmp_construct_varbind(void)
 {
     return PyObject_CallMethod(ezsnmp_import, "SNMPVariable", NULL);
 }
@@ -1416,32 +1425,27 @@ static PyObject *py_netsnmp_construct_varbind(void)
  * This will need to be DECREF'd by the caller when access to
  * the converted value is no longer needed.
  */
-static int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
-                                  Py_ssize_t *len, PyObject **attr_bytes)
+int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
+                           Py_ssize_t *len, PyObject **attr_bytes)
 {
     *val = NULL;
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
-        if (attr)
+        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
+        if (attr.get())
         {
             int retval;
 
-#if PY_MAJOR_VERSION >= 3
             // Encode the provided attribute using latin-1 into bytes and
             // retrieve its value and length
-            *attr_bytes = PyUnicode_AsEncodedString(attr, "latin-1", "surrogateescape");
+            *attr_bytes = PyUnicode_AsEncodedString(attr.get(), "latin-1", "surrogateescape");
             if (!(*attr_bytes))
             {
-                Py_DECREF(attr);
                 return -1;
             }
             retval = PyBytes_AsStringAndSize(*attr_bytes, val, len);
-#else
-            retval = PyString_AsStringAndSize(attr, val, len);
-#endif
 
-            Py_DECREF(attr);
             return retval;
         }
     }
@@ -1449,37 +1453,38 @@ static int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
     return -1;
 }
 
-static long long py_netsnmp_attr_long(PyObject *obj, char *attr_name)
+long long py_netsnmp_attr_long(PyObject *obj, char *attr_name)
 {
     long long val = -1;
 
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
-        if (attr)
+        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
+        if (attr.get())
         {
-            val = PyLong_AsLong(attr);
-            Py_DECREF(attr);
+            val = PyLong_AsLong(attr.get());
         }
     }
 
     return val;
 }
 
-static int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
-                                      char *val, size_t len)
+int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
+                               char *val, size_t len)
 {
     int ret = -1;
     if (obj && attr_name)
     {
-        PyObject *val_obj = PyUnicode_Decode(val, len, "latin-1",
-                                             "surrogateescape");
-        if (!val_obj)
+        std::shared_ptr<PyObject> val_obj = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+        val_obj.reset(PyUnicode_Decode(val, len, "latin-1",
+                                       "surrogateescape"),
+                      PyObject_deleter);
+        if (!val_obj.get())
         {
             return -1;
         }
-        ret = PyObject_SetAttrString(obj, attr_name, val_obj);
-        Py_DECREF(val_obj);
+        ret = PyObject_SetAttrString(obj, attr_name, val_obj.get());
     }
     return ret;
 }
@@ -1508,11 +1513,11 @@ static int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
  * @param[in|out] err_num The system errno currently stored by our session
  * @param[in|out] err_ind The snmp errno currently stored by our session
  */
-static void __py_netsnmp_update_session_errors(PyObject *session,
-                                               char *err_str, int err_num,
-                                               int err_ind)
+void __py_netsnmp_update_session_errors(PyObject *session,
+                                        char *err_str, int err_num,
+                                        int err_ind)
 {
-    PyObject *tmp_for_conversion;
+    std::shared_ptr<PyObject> tmp_for_conversion = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
     PyObject *type, *value, *traceback;
 
     PyErr_Fetch(&type, &value, &traceback);
@@ -1520,21 +1525,19 @@ static void __py_netsnmp_update_session_errors(PyObject *session,
     py_netsnmp_attr_set_string(session, "error_string", err_str,
                                STRLEN(err_str));
 
-    tmp_for_conversion = PyLong_FromLong(err_num);
-    if (!tmp_for_conversion)
+    tmp_for_conversion.reset(PyLong_FromLong(err_num), PyObject_deleter);
+    if (!tmp_for_conversion.get())
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, "error_number", tmp_for_conversion);
-    Py_DECREF(tmp_for_conversion);
+    PyObject_SetAttrString(session, "error_number", tmp_for_conversion.get());
 
-    tmp_for_conversion = PyLong_FromLong(err_ind);
-    if (!tmp_for_conversion)
+    tmp_for_conversion.reset(PyLong_FromLong(err_ind), PyObject_deleter);
+    if (!tmp_for_conversion.get())
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, "error_index", tmp_for_conversion);
-    Py_DECREF(tmp_for_conversion);
+    PyObject_SetAttrString(session, "error_index", tmp_for_conversion.get());
 
 done:
     PyErr_Restore(type, value, traceback);
@@ -1548,7 +1551,7 @@ done:
  *
  * This function will raise an exception on failure.
  */
-static PyObject *create_session_capsule(SnmpSession *session)
+PyObject *create_session_capsule(SnmpSession *session)
 {
     void *handle = NULL;
     struct session_capsule_ctx *ctx = NULL;
@@ -1556,7 +1559,7 @@ static PyObject *create_session_capsule(SnmpSession *session)
     /* create a long lived handle from throwaway session object */
     if (!(handle = snmp_sess_open(session)))
     {
-        PyErr_SetString(EzSNMPConnectionError,
+        PyErr_SetString(EzSNMPConnectionError.get(),
                         "couldn't create SNMP handle");
         goto done;
     }
@@ -1565,7 +1568,7 @@ static PyObject *create_session_capsule(SnmpSession *session)
      * does not use our instance. In fact, it creates a carbon copy. The call is as follows:
      * snmp_sess_open -> _sess_open -> snmp_sess_add -> snmp_sess_add_ex -> snmp_sess_copy -> _sess_copy
      */
-    if (!(ctx = malloc(sizeof *ctx)))
+    if (!(ctx = static_cast<struct session_capsule_ctx *>(malloc(sizeof *ctx))))
     {
         PyErr_SetString(PyExc_RuntimeError,
                         "could not malloc() session_capsule_ctx");
@@ -1585,7 +1588,7 @@ static PyObject *create_session_capsule(SnmpSession *session)
     free(session->securityEngineID);
     free(session->contextEngineID);
     /* init session context variables */
-    ctx->handle = handle;
+    ctx->handle = static_cast<netsnmp_session *>(handle);
     ctx->invalid_oids = (bitarray *)ctx->invalid_oids_buf;
     bitarray_buf_init(ctx->invalid_oids, sizeof(ctx->invalid_oids_buf));
     return capsule;
@@ -1604,7 +1607,7 @@ done:
     return NULL;
 }
 
-static void *get_session_handle_from_capsule(PyObject *session_capsule)
+void *get_session_handle_from_capsule(PyObject *session_capsule)
 {
     if (!session_capsule)
     {
@@ -1618,7 +1621,7 @@ static void *get_session_handle_from_capsule(PyObject *session_capsule)
 
 #ifdef USE_DEPRECATED_COBJECT_API
 /* The CObject API calls destructor with stored pointer */
-static void delete_session_capsule(void *session_ptr)
+void delete_session_capsule(void *session_ptr)
 {
     struct session_capsule_ctx *ctx = session_ptr;
     if (ctx)
@@ -1631,10 +1634,10 @@ static void delete_session_capsule(void *session_ptr)
 }
 #else
 /* Automatically called when Python reclaims session_capsule object. */
-static void delete_session_capsule(PyObject *session_capsule)
+void delete_session_capsule(PyObject *session_capsule)
 {
     /* PyCapsule_GetPointer will raise an exception if it fails. */
-    struct session_capsule_ctx *ctx = PyCapsule_GetPointer(session_capsule, NULL);
+    struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
     {
         // clear_user_list(); // Too dangerous, may disrupt other valid sessions
@@ -1645,7 +1648,7 @@ static void delete_session_capsule(PyObject *session_capsule)
 }
 #endif /* USE_DEPRECATED_COBJECT_API */
 
-static PyObject *netsnmp_create_session(PyObject *self, PyObject *args)
+PyObject *netsnmp_create_session(PyObject *self, PyObject *args)
 {
     int version;
     char *community;
@@ -1701,7 +1704,7 @@ done:
     return NULL;
 }
 
-static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
+PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
 {
     int version;
     char *peer;
@@ -1781,7 +1784,7 @@ static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                             session.securityAuthKey,
                             &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
             {
-                PyErr_SetString(EzSNMPConnectionError,
+                PyErr_SetString(EzSNMPConnectionError.get(),
                                 "error generating Ku from authentication "
                                 "password");
                 goto done;
@@ -1805,7 +1808,7 @@ static PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                         session.securityPrivKey,
                         &session.securityPrivKeyLen) != SNMPERR_SUCCESS)
         {
-            PyErr_SetString(EzSNMPConnectionError,
+            PyErr_SetString(EzSNMPConnectionError.get(),
                             "couldn't gen Ku from priv pass phrase");
             goto done;
         }
@@ -1819,8 +1822,8 @@ done:
     return NULL;
 }
 
-static PyObject *netsnmp_create_session_tunneled(PyObject *self,
-                                                 PyObject *args)
+PyObject *netsnmp_create_session_tunneled(PyObject *self,
+                                          PyObject *args)
 {
     int version;
     char *peer;
@@ -1909,7 +1912,7 @@ done:
     return NULL;
 }
 
-static PyObject *netsnmp_get(PyObject *self, PyObject *args)
+PyObject *netsnmp_get(PyObject *self, PyObject *args)
 {
     PyObject *session = NULL;
     PyObject *varlist = NULL;
@@ -1969,7 +1972,7 @@ static PyObject *netsnmp_get(PyObject *self, PyObject *args)
     }
 
     sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-    session_ctx = get_session_handle_from_capsule(sess_ptr);
+    session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
     if (!session_ctx)
     {
@@ -2040,7 +2043,7 @@ static PyObject *netsnmp_get(PyObject *self, PyObject *args)
         }
         else
         {
-            PyErr_Format(EzSNMPUnknownObjectIDError,
+            PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                          "unknown object id (%s)",
                          (tag ? tag : "<null>"));
             error = 1;
@@ -2266,7 +2269,7 @@ done:
     Py_RETURN_NONE;
 }
 
-static PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
+PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
 {
     PyObject *session = NULL;
     PyObject *sess_ptr = NULL;
@@ -2312,7 +2315,7 @@ static PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
     BITARRAY_DECLARE(snmpv1_invalid_oids, DEFAULT_NUM_BAD_OIDS);
     bitarray *invalid_oids = snmpv1_invalid_oids;
 
-    oid_arr = calloc(MAX_OID_LEN, sizeof(oid));
+    oid_arr = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
 
     if (oid_arr && args)
     {
@@ -2322,7 +2325,7 @@ static PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
         }
 
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -2390,7 +2393,7 @@ static PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
                 }
                 else
                 {
-                    PyErr_Format(EzSNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -2616,7 +2619,7 @@ done:
     Py_RETURN_NONE;
 }
 
-static PyObject *netsnmp_walk(PyObject *self, PyObject *args)
+PyObject *netsnmp_walk(PyObject *self, PyObject *args)
 {
     PyObject *session = NULL;
     PyObject *sess_ptr = NULL;
@@ -2688,7 +2691,7 @@ static PyObject *netsnmp_walk(PyObject *self, PyObject *args)
             goto done;
         }
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -2737,17 +2740,17 @@ static PyObject *netsnmp_walk(PyObject *self, PyObject *args)
         }
         Py_XDECREF(varlist_iter);
 
-        oid_arr_len = calloc(varlist_len, sizeof(size_t));
-        oid_arr_broken_check_len = calloc(varlist_len, sizeof(int));
+        oid_arr_len = static_cast<size_t *>(calloc(varlist_len, sizeof(size_t)));
+        oid_arr_broken_check_len = static_cast<int *>(calloc(varlist_len, sizeof(int)));
 
-        oid_arr = calloc(varlist_len, sizeof(oid *));
-        oid_arr_broken_check = calloc(varlist_len, sizeof(oid *));
+        oid_arr = static_cast<oid **>(calloc(varlist_len, sizeof(oid *)));
+        oid_arr_broken_check = static_cast<oid **>(calloc(varlist_len, sizeof(oid *)));
 
         for (varlist_ind = 0; varlist_ind < varlist_len; varlist_ind++)
         {
-            oid_arr[varlist_ind] = calloc(MAX_OID_LEN, sizeof(oid));
-            oid_arr_broken_check[varlist_ind] = calloc(MAX_OID_LEN,
-                                                       sizeof(oid));
+            oid_arr[varlist_ind] = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
+            oid_arr_broken_check[varlist_ind] = static_cast<oid *>(calloc(MAX_OID_LEN,
+                                                       sizeof(oid)));
 
             oid_arr_len[varlist_ind] = MAX_OID_LEN;
             oid_arr_broken_check_len[varlist_ind] = MAX_OID_LEN;
@@ -2780,7 +2783,7 @@ static PyObject *netsnmp_walk(PyObject *self, PyObject *args)
             }
             else
             {
-                PyErr_Format(EzSNMPUnknownObjectIDError,
+                PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                              "unknown object id (%s)",
                              (tag ? tag : "<null>"));
                 error = 1;
@@ -3062,7 +3065,7 @@ done:
     Py_RETURN_NONE;
 }
 
-static PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
+PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
 {
     int nonrepeaters;
     int maxrepetitions;
@@ -3107,7 +3110,7 @@ static PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
     Py_ssize_t tmplen;
     int error = 0;
 
-    oid_arr = calloc(MAX_OID_LEN, sizeof(oid));
+    oid_arr = static_cast< oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
 
     if (oid_arr && args)
     {
@@ -3121,7 +3124,7 @@ static PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
             (varbinds = PyObject_GetAttrString(varlist, "varbinds")))
         {
             sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-            session_ctx = get_session_handle_from_capsule(sess_ptr);
+            session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
             if (!session_ctx)
             {
@@ -3183,7 +3186,7 @@ static PyObject *netsnmp_getbulk(PyObject *self, PyObject *args)
                 }
                 else
                 {
-                    PyErr_Format(EzSNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -3384,7 +3387,7 @@ done:
     Py_RETURN_NONE;
 }
 
-static PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
+PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
 {
     PyObject *session = NULL;
     PyObject *sess_ptr = NULL;
@@ -3458,7 +3461,7 @@ static PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
         }
 
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -3505,15 +3508,15 @@ static PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
         }
         Py_XDECREF(varlist_iter);
 
-        oid_arr_len = calloc(varlist_len, sizeof(size_t));
-        oid_arr = calloc(varlist_len, sizeof(oid *));
+        oid_arr_len = static_cast<size_t *>(calloc(varlist_len, sizeof(size_t)));
+        oid_arr = static_cast<oid **>(calloc(varlist_len, sizeof(oid *)));
         // initial_oid_str_arr = calloc(varlist_len, sizeof(char *));
-        oid_str_arr = calloc(varlist_len, sizeof(char *));
-        oid_idx_str_arr = calloc(varlist_len, sizeof(char *));
+        oid_str_arr = static_cast<char **>(calloc(varlist_len, sizeof(char *)));
+        oid_idx_str_arr = static_cast<char **>(calloc(varlist_len, sizeof(char *)));
 
         for (varlist_ind = 0; varlist_ind < varlist_len; varlist_ind++)
         {
-            oid_arr[varlist_ind] = calloc(MAX_OID_LEN, sizeof(oid));
+            oid_arr[varlist_ind] = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
             oid_arr_len[varlist_ind] = MAX_OID_LEN;
         }
 
@@ -3553,7 +3556,7 @@ static PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args)
 
             if (!oid_arr_len[varlist_ind])
             {
-                PyErr_Format(EzSNMPUnknownObjectIDError,
+                PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                              "unknown object id (%s)",
                              (oid_str_arr[varlist_ind] ? oid_str_arr[varlist_ind] : "<null>"));
                 error = 1;
@@ -3836,7 +3839,7 @@ done:
     Py_RETURN_NONE;
 }
 
-static PyObject *netsnmp_set(PyObject *self, PyObject *args)
+PyObject *netsnmp_set(PyObject *self, PyObject *args)
 {
     PyObject *session = NULL;
     PyObject *sess_ptr = NULL;
@@ -3858,7 +3861,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
     char *val = NULL;
     char *type_str;
     int len;
-    oid *oid_arr = calloc(MAX_OID_LEN, sizeof(oid));
+    oid *oid_arr = static_cast<oid *>(calloc(MAX_OID_LEN, sizeof(oid)));
     size_t oid_arr_len = MAX_OID_LEN;
     int type;
     u_char tmp_val_str[STR_BUF_SIZE];
@@ -3881,7 +3884,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
         }
 
         sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
-        session_ctx = get_session_handle_from_capsule(sess_ptr);
+        session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
         if (!session_ctx)
         {
@@ -3921,7 +3924,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
 
                 if (oid_arr_len == 0)
                 {
-                    PyErr_Format(EzSNMPUnknownObjectIDError,
+                    PyErr_Format(EzSNMPUnknownObjectIDError.get(),
                                  "unknown object id (%s)",
                                  (tag ? tag : "<null>"));
                     error = 1;
@@ -3943,7 +3946,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
                          * Not sure why original author did not raise an error
                          * here before. Keep an eye out for edge cases!
                          */
-                        PyErr_SetString(EzSNMPUndeterminedTypeError,
+                        PyErr_SetString(EzSNMPUndeterminedTypeError.get(),
                                         "a type could not be determine for "
                                         "the object");
                         error = 1;
@@ -3959,7 +3962,7 @@ static PyObject *netsnmp_set(PyObject *self, PyObject *args)
                     type = __translate_appl_type(type_str);
                     if (type == TYPE_UNKNOWN)
                     {
-                        PyErr_SetString(EzSNMPUndeterminedTypeError,
+                        PyErr_SetString(EzSNMPUndeterminedTypeError.get(),
                                         "a type could not be determine for "
                                         "the object");
                         error = 1;
@@ -4073,13 +4076,13 @@ done:
 /**
  * Get a logger object from the logging module.
  */
-static PyObject *py_get_logger(char *logger_name)
+PyObject *py_get_logger(char *logger_name)
 {
-    PyObject *logger = NULL;
-    PyObject *null_handler = NULL;
+    std::shared_ptr<PyObject> logger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    std::shared_ptr<PyObject> null_handler = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 
-    logger = PyObject_CallMethod(logging_import, "getLogger", "s", logger_name);
-    if (logger == NULL)
+    logger.reset(PyObject_CallMethod(logging_import.get(), "getLogger", "s", logger_name), PyObject_deleter);
+    if (logger.get() == NULL)
     {
         const char *err_msg = "failed to call logging.getLogger";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
@@ -4095,35 +4098,29 @@ static PyObject *py_get_logger(char *logger_name)
      *
      */
 
-    null_handler = PyObject_CallMethod(logging_import, "NullHandler", NULL);
-    if (null_handler == NULL)
+    null_handler.reset(PyObject_CallMethod(logging_import.get(), "NullHandler", NULL), PyObject_deleter);
+    if (null_handler.get() == NULL)
     {
         const char *err_msg = "failed to call logging.NullHandler()";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
         goto done;
     }
 
-    if (PyObject_CallMethod(logger, "addHandler", "O", null_handler) == NULL)
+    if (PyObject_CallMethod(logger.get(), "addHandler", "O", null_handler.get()) == NULL)
     {
         const char *err_msg = "failed to call logger.addHandler(NullHandler())";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
         goto done;
     }
 
-    /* we don't need the null_handler around anymore. */
-    Py_DECREF(null_handler);
-
-    return logger;
+    return logger.get();
 
 done:
-
-    Py_XDECREF(logger);
-    Py_XDECREF(null_handler);
 
     return NULL;
 }
 
-static void py_log_msg(int log_level, char *printf_fmt, ...)
+void py_log_msg(int log_level, char *printf_fmt, ...)
 {
     PyObject *log_msg = NULL, *pval = NULL;
     PyObject *type, *value, *traceback;
@@ -4144,23 +4141,23 @@ static void py_log_msg(int log_level, char *printf_fmt, ...)
     switch (log_level)
     {
     case INFO:
-        pval = PyObject_CallMethod(PyLogger, "info", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "info", "O", log_msg);
         break;
 
     case WARNING:
-        pval = PyObject_CallMethod(PyLogger, "warn", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "warn", "O", log_msg);
         break;
 
     case ERROR:
-        pval = PyObject_CallMethod(PyLogger, "error", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "error", "O", log_msg);
         break;
 
     case DEBUG:
-        pval = PyObject_CallMethod(PyLogger, "debug", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "debug", "O", log_msg);
         break;
 
     case EXCEPTION:
-        pval = PyObject_CallMethod(PyLogger, "exception", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger.get(), "exception", "O", log_msg);
         break;
 
     default:
@@ -4184,7 +4181,7 @@ static void py_log_msg(int log_level, char *printf_fmt, ...)
  * See: https://docs.python.org/2/c-api/structures.html for more info.
  *
  */
-static PyMethodDef interface_methods[] =
+PyMethodDef interface_methods[] =
     {
         {"session",
          netsnmp_create_session,
@@ -4229,9 +4226,7 @@ static PyMethodDef interface_methods[] =
 };
 
 /* entry point when importing the module */
-#if PY_MAJOR_VERSION >= 3
-
-static struct PyModuleDef moduledef = {
+struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "interface",
     NULL,
@@ -4240,22 +4235,15 @@ static struct PyModuleDef moduledef = {
     NULL,
     NULL,
     NULL,
-    __libraries_free};
+    (void (*)(void *)) __libraries_free};
 
 PyMODINIT_FUNC PyInit_interface(void)
 {
     /* Initialise the module */
-    PyObject *interface_module = PyModule_Create(&moduledef);
+    std::shared_ptr<PyObject> interface_module = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    interface_module.reset(PyModule_Create(&moduledef), PyObject_deleter);
 
-#else
-
-PyMODINIT_FUNC initinterface(void)
-{
-    /* Initialise the module */
-    PyObject *interface_module = Py_InitModule("interface", interface_methods);
-
-#endif
-    if (interface_module == NULL)
+    if (interface_module.get() == NULL)
     {
         goto done;
     }
@@ -4269,8 +4257,8 @@ PyMODINIT_FUNC initinterface(void)
      * import ezsnmp.compat
      *
      */
-    logging_import = PyImport_ImportModule("logging");
-    if (logging_import == NULL)
+    logging_import.reset(PyImport_ImportModule("logging"), PyObject_deleter);
+    if (logging_import.get() == NULL)
     {
         const char *err_msg = "failed to import 'logging'";
         PyErr_SetString(PyExc_ImportError, err_msg);
@@ -4301,24 +4289,30 @@ PyMODINIT_FUNC initinterface(void)
         goto done;
     }
 
-    EzSNMPError = PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError");
-    EzSNMPConnectionError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                     "EzSNMPConnectionError");
-    EzSNMPTimeoutError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                  "EzSNMPTimeoutError");
-    EzSNMPNoSuchNameError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                     "EzSNMPNoSuchNameError");
-    EzSNMPUnknownObjectIDError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                          "EzSNMPUnknownObjectIDError");
-    EzSNMPNoSuchObjectError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                       "EzSNMPNoSuchObjectError");
-    EzSNMPUndeterminedTypeError = PyObject_GetAttrString(ezsnmp_exceptions_import,
-                                                           "EzSNMPUndeterminedTypeError");
+    EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError"), PyObject_deleter);
+    EzSNMPConnectionError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
+                                                       "EzSNMPConnectionError"),
+                                PyObject_deleter);
+    EzSNMPTimeoutError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
+                                                    "EzSNMPTimeoutError"),
+                             PyObject_deleter);
+    EzSNMPNoSuchNameError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
+                                                       "EzSNMPNoSuchNameError"),
+                                PyObject_deleter);
+    EzSNMPUnknownObjectIDError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
+                                                            "EzSNMPUnknownObjectIDError"),
+                                     PyObject_deleter);
+    EzSNMPNoSuchObjectError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
+                                                         "EzSNMPNoSuchObjectError"),
+                                  PyObject_deleter);
+    EzSNMPUndeterminedTypeError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
+                                                             "EzSNMPUndeterminedTypeError"),
+                                      PyObject_deleter);
 
     /* Initialise logging (note: automatically has refcount 1) */
-    PyLogger = py_get_logger("ezsnmp.interface");
+    PyLogger.reset(py_get_logger("ezsnmp.interface"), PyObject_deleter);
 
-    if (PyLogger == NULL)
+    if (PyLogger.get() == NULL)
     {
         goto done;
     }
@@ -4328,30 +4322,9 @@ PyMODINIT_FUNC initinterface(void)
 
     py_log_msg(DEBUG, "initialised ezsnmp.interface");
 
-#if PY_MAJOR_VERSION >= 3
-    return interface_module;
-#else
-    return;
-#endif
+    return interface_module.get();
 
 done:
-    Py_XDECREF(interface_module);
-    Py_XDECREF(logging_import);
-    Py_XDECREF(ezsnmp_import);
-    Py_XDECREF(ezsnmp_exceptions_import);
-    Py_XDECREF(ezsnmp_compat_import);
-    Py_XDECREF(EzSNMPError);
-    Py_XDECREF(EzSNMPConnectionError);
-    Py_XDECREF(EzSNMPTimeoutError);
-    Py_XDECREF(EzSNMPNoSuchNameError);
-    Py_XDECREF(EzSNMPUnknownObjectIDError);
-    Py_XDECREF(EzSNMPNoSuchObjectError);
-    Py_XDECREF(EzSNMPUndeterminedTypeError);
-    Py_XDECREF(PyLogger);
 
-#if PY_MAJOR_VERSION >= 3
     return NULL;
-#else
-    return;
-#endif
 }

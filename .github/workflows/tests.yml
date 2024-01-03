@@ -9,7 +9,7 @@ on:
 
 jobs:
   check-source-changes:
-    runs-on: ubuntu-latest
+    runs-on: Linux
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
@@ -30,7 +30,7 @@ jobs:
             setup.cfg
   
   lint-black-formatting:
-    runs-on: ubuntu-latest
+    runs-on: Linux
     needs: check-source-changes
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [Linux, macOS]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
   
     steps:
@@ -55,16 +55,18 @@ jobs:
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
-                 mkdir -m 0755 ~/.snmp;
+                 mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
           
           macos: brew update;
+                 brew upgrade;
                  brew install net-snmp;
-                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> /Users/runner/.bash_profile;
+                 brew install openssl@3;
+                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
-                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> /Users/runner/.bash_profile;
+                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
-                 mkdir -m 0755 ~/.snmp;
+                 mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
@@ -86,22 +88,17 @@ jobs:
         run: |
           python setup.py build
           pip install -e .
-
+      
       - name: Start SNMP daemon
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]
-          then
-            mibdir="-M +/var/lib/snmp/mibs"
-            SNMPD=$(which snmpd)
-          elif [ "$RUNNER_OS" == "macOS" ]
-          then
-            mibdir=""
-            SNMPD=/usr/local/opt/net-snmp/sbin/snmpd
-          else
-            mibdir=""
-            SNMPD=$(which.exe snmpd)
-          fi
-          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        with:
+          linux: mibdir="-M +/var/lib/snmp/mibs";
+                 SNMPD=$(which snmpd);
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
+          
+          macos: mibdir="";
+                 SNMPD=/usr/local/opt/net-snmp/sbin/snmpd;
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
 
       - name: Lint with flake8
         uses: py-actions/flake8@v2
@@ -137,13 +134,13 @@ jobs:
 
       - name: Upload Valgrind Reports
         uses: actions/upload-artifact@v4
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'Linux' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
 
   comment-pytest-coverage-report:
-    runs-on: ubuntu-latest
+    runs-on: Linux
     needs: build-and-test
     steps:
       - name: Download Artifacts
@@ -181,7 +178,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [Linux]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
@@ -214,7 +211,7 @@ jobs:
             valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log
 
   comment-valgrind:
-    runs-on: ubuntu-latest
+    runs-on: Linux
     needs: make-stripped-valgrind-files
   
     steps:
@@ -227,11 +224,11 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.8/valgrind-stripped_ubuntu-latest_3.8.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
+         temp1=$(cat valgrind-stripped_Linux_3.8/valgrind-stripped_Linux_3.8.log);
+         temp2=$(cat valgrind-stripped_Linux_3.9/valgrind-stripped_Linux_3.9.log);
+         temp3=$(cat valgrind-stripped_Linux_3.10/valgrind-stripped_Linux_3.10.log);
+         temp4=$(cat valgrind-stripped_Linux_3.11/valgrind-stripped_Linux_3.11.log);
+         temp5=$(cat valgrind-stripped_Linux_3.12/valgrind-stripped_Linux_3.12.log);
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_8=$temp1 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp2 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp3 >> $GITHUB_OUTPUT;

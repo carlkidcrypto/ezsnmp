@@ -132,7 +132,7 @@ static inline bitarray *bitarray_alloc(size_t nbits)
 
     size_t nlimbs = 1 + BITARRAY_NUM_BITS_TO_LIMBS(nbits);
 
-    ba = malloc(sizeof(bitarray) * nlimbs);
+    ba = static_cast<bitarray *>(malloc(sizeof(bitarray) * nlimbs));
     if (ba)
     {
         ba[0] = nbits;
@@ -147,7 +147,7 @@ static inline bitarray *bitarray_calloc(size_t nbits)
 
     size_t nlimbs = 1 + BITARRAY_NUM_BITS_TO_LIMBS(nbits);
 
-    ba = calloc(sizeof(bitarray), nlimbs);
+    ba = static_cast<bitarray *>(calloc(sizeof(bitarray), nlimbs));
     if (ba)
     {
         ba[0] = nbits;
@@ -176,7 +176,7 @@ static inline void bitarray_free(bitarray *ba)
  */
 static inline bitarray *bitarray_buf_init(void *buf, size_t buf_size)
 {
-    bitarray *ba = buf;
+    bitarray *ba = static_cast<bitarray *>(buf);
     size_t nlimbs;
     size_t nbits;
 
