@@ -453,7 +453,7 @@ int __translate_asn_type(int type)
     case ASN_COUNTER64:
         return TYPE_COUNTER64;
     default:
-        py_log_msg(ERROR, "translate_asn_type: unhandled asn type (%d)",
+        py_log_msg(ERROR, (char *)"translate_asn_type: unhandled asn type (%d)",
                    type);
 
         return TYPE_OTHER;
@@ -587,7 +587,7 @@ int __snprint_value(char *buf, size_t buf_len,
 
         case ASN_NSAP:
         default:
-            py_log_msg(ERROR, "snprint_value: asn type not handled %d",
+            py_log_msg(ERROR, (char *)"snprint_value: asn type not handled %d",
                        var->type);
         }
     }
@@ -709,7 +709,7 @@ int __get_type_str(int type, char *str, int log_error)
         strcpy(str, "");
         if (log_error)
         {
-            py_log_msg(ERROR, "unspported type found: %d", type);
+            py_log_msg(ERROR, (char *)"unspported type found: %d", type);
         }
         return FAILURE;
     }
@@ -1348,7 +1348,7 @@ retry:
                     STR_BUF_SIZE);
             *err_num = (int)(*response)->errstat;
             *err_ind = (*response)->errindex;
-            py_log_msg(DEBUG, "sync PDU: %s", err_str);
+            py_log_msg(DEBUG, (char *)"sync PDU: %s", err_str);
 
             PyErr_SetString(EzSNMPError.get(), err_str);
             break;
@@ -1359,13 +1359,13 @@ retry:
     case STAT_ERROR:
         snmp_sess_error(ss, err_num, err_ind, &tmp_err_str);
         strlcpy(err_str, tmp_err_str, STR_BUF_SIZE);
-        py_log_msg(DEBUG, "sync PDU: %s", err_str);
+        py_log_msg(DEBUG, (char *)"sync PDU: %s", err_str);
 
         // SNMP v3 doesn't quite raise timeouts correctly, so we correct it
         if (strncmp(err_str, "Timeout", 7) == 0)
         {
             PyErr_SetString(EzSNMPTimeoutError.get(),
-                            "timed out while connecting to remote host");
+                            (char *)"timed out while connecting to remote host");
         }
         else
         {
@@ -1376,7 +1376,7 @@ retry:
     default:
         strcat(err_str, "send_sync_pdu: unknown status");
         *err_num = ss->s_snmp_errno;
-        py_log_msg(DEBUG, "sync PDU: %s", err_str);
+        py_log_msg(DEBUG, (char *)"sync PDU: %s", err_str);
 
         break;
     }
@@ -1522,7 +1522,7 @@ void __py_netsnmp_update_session_errors(PyObject *session,
 
     PyErr_Fetch(&type, &value, &traceback);
 
-    py_netsnmp_attr_set_string(session, "error_string", err_str,
+    py_netsnmp_attr_set_string(session, (char *)"error_string", err_str,
                                STRLEN(err_str));
 
     tmp_for_conversion.reset(PyLong_FromLong(err_num), PyObject_deleter);
@@ -1530,14 +1530,14 @@ void __py_netsnmp_update_session_errors(PyObject *session,
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, "error_number", tmp_for_conversion.get());
+    PyObject_SetAttrString(session, (char *)"error_number", tmp_for_conversion.get());
 
     tmp_for_conversion.reset(PyLong_FromLong(err_ind), PyObject_deleter);
     if (!tmp_for_conversion.get())
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, "error_index", tmp_for_conversion.get());
+    PyObject_SetAttrString(session, (char *)"error_index", tmp_for_conversion.get());
 
 done:
     PyErr_Restore(type, value, traceback);
@@ -1770,7 +1770,7 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                      &session.securityAuthProtoLen) != 0)
     {
         PyErr_Format(PyExc_ValueError,
-                     "unsupported authentication protocol (%s)", auth_proto);
+                     (char *)"unsupported authentication protocol (%s)", auth_proto);
         goto done;
     }
     if (session.securityLevel >= SNMP_SEC_LEVEL_AUTHNOPRIV)
@@ -1785,7 +1785,7 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                             &session.securityAuthKeyLen) != SNMPERR_SUCCESS)
             {
                 PyErr_SetString(EzSNMPConnectionError.get(),
-                                "error generating Ku from authentication "
+                                (char *)"error generating Ku from authentication "
                                 "password");
                 goto done;
             }
@@ -1795,7 +1795,7 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                      &session.securityPrivProtoLen) != 0)
     {
         PyErr_Format(PyExc_ValueError,
-                     "unsupported privacy protocol (%s)", priv_proto);
+                     (char *)"unsupported privacy protocol (%s)", priv_proto);
         goto done;
     }
 
@@ -1809,7 +1809,7 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
                         &session.securityPrivKeyLen) != SNMPERR_SUCCESS)
         {
             PyErr_SetString(EzSNMPConnectionError.get(),
-                            "couldn't gen Ku from priv pass phrase");
+                            (char *)"couldn't gen Ku from priv pass phrase");
             goto done;
         }
     }
@@ -1840,7 +1840,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
     char *trust_cert;
     SnmpSession session = {0};
 
-    if (!PyArg_ParseTuple(args, "isiiisissssss", &version,
+    if (!PyArg_ParseTuple(args, (char *)"isiiisissssss", &version,
                           &peer, &lport, &retries, &timeout,
                           &sec_name, &sec_level,
                           &context_eng_id, &context,
@@ -1853,7 +1853,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
     if (version != 3)
     {
         PyErr_SetString(PyExc_ValueError,
-                        "you must use SNMP version 3 as it's the only "
+                        (char *)"you must use SNMP version 3 as it's the only "
                         "version that supports tunneling");
         goto done;
     }
@@ -1875,10 +1875,10 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
     {
         netsnmp_container_init_list();
         session.transport_configuration =
-            netsnmp_container_find("transport_configuration:fifo");
+            netsnmp_container_find((char *)"transport_configuration:fifo");
         if (!session.transport_configuration)
         {
-            py_log_msg(ERROR, "failed to initialize the transport "
+            py_log_msg(ERROR, (char *)"failed to initialize the transport "
                               "configuration container");
             goto done;
         }
@@ -1889,22 +1889,22 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
 
     if (our_identity && our_identity[0] != '\0')
         CONTAINER_INSERT(session.transport_configuration,
-                         netsnmp_transport_create_config("localCert",
+                         netsnmp_transport_create_config((char *)"localCert",
                                                          our_identity));
 
     if (their_identity && their_identity[0] != '\0')
         CONTAINER_INSERT(session.transport_configuration,
-                         netsnmp_transport_create_config("peerCert",
+                         netsnmp_transport_create_config((char *)"peerCert",
                                                          their_identity));
 
     if (their_hostname && their_hostname[0] != '\0')
         CONTAINER_INSERT(session.transport_configuration,
-                         netsnmp_transport_create_config("their_hostname",
+                         netsnmp_transport_create_config((char *)"their_hostname",
                                                          their_hostname));
 
     if (trust_cert && trust_cert[0] != '\0')
         CONTAINER_INSERT(session.transport_configuration,
-                         netsnmp_transport_create_config("trust_cert",
+                         netsnmp_transport_create_config((char *)"trust_cert",
                                                          trust_cert));
     return create_session_capsule(&session);
 
@@ -1966,12 +1966,12 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
         goto done;
     }
 
-    if (!PyArg_ParseTuple(args, "OO", &session, &varlist))
+    if (!PyArg_ParseTuple(args,(char *) "OO", &session, &varlist))
     {
         goto done;
     }
 
-    sess_ptr = PyObject_GetAttrString(session, "sess_ptr");
+    sess_ptr = PyObject_GetAttrString(session, (char *)"sess_ptr");
     session_ctx = static_cast<struct session_capsule_ctx *>(get_session_handle_from_capsule(sess_ptr));
 
     if (!session_ctx)
@@ -1986,36 +1986,36 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
     str_bufp = str_buf;
     err_str = session_ctx->err_str;
 
-    snmp_version = py_netsnmp_attr_long(session, "version");
+    snmp_version = py_netsnmp_attr_long(session, (char *)"version");
 
-    if (py_netsnmp_attr_string(session, "error_string", &tmpstr, &tmplen, &err_bytes) < 0)
+    if (py_netsnmp_attr_string(session, (char *)"error_string", &tmpstr, &tmplen, &err_bytes) < 0)
     {
         goto done;
     }
-    if (py_netsnmp_attr_long(session, "use_long_names"))
+    if (py_netsnmp_attr_long(session,(char *) "use_long_names"))
     {
         getlabel_flag |= USE_LONG_NAMES;
     }
-    if (py_netsnmp_attr_long(session, "use_numeric"))
+    if (py_netsnmp_attr_long(session, (char *)"use_numeric"))
     {
         getlabel_flag |= USE_NUMERIC_OIDS;
     }
-    if (py_netsnmp_attr_long(session, "use_enums"))
+    if (py_netsnmp_attr_long(session, (char *)"use_enums"))
     {
         sprintval_flag = USE_ENUMS;
     }
-    if (py_netsnmp_attr_long(session, "use_sprint_value"))
+    if (py_netsnmp_attr_long(session, (char *)"use_sprint_value"))
     {
         sprintval_flag = USE_SPRINT_VALUE;
     }
-    best_guess = py_netsnmp_attr_long(session, "best_guess");
-    retry_nosuch = py_netsnmp_attr_long(session, "retry_no_such");
+    best_guess = py_netsnmp_attr_long(session, (char *)"best_guess");
+    retry_nosuch = py_netsnmp_attr_long(session,(char *) "retry_no_such");
 
     pdu = snmp_pdu_create(SNMP_MSG_GET);
 
     if (!varlist)
     {
-        const char *err_msg = "unexpected error: varlist == null";
+        const char *err_msg = (char *)"unexpected error: varlist == null";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
         error = 1;
         goto done;
@@ -2025,8 +2025,8 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
 
     while (varlist_iter && (varbind = PyIter_Next(varlist_iter)))
     {
-        if (py_netsnmp_attr_string(varbind, "oid", &tag, NULL, &tag_bytes) < 0 ||
-            py_netsnmp_attr_string(varbind, "oid_index", &iid, NULL, &iid_bytes) < 0)
+        if (py_netsnmp_attr_string(varbind, (char *)"oid", &tag, NULL, &tag_bytes) < 0 ||
+            py_netsnmp_attr_string(varbind, (char *)"oid_index", &iid, NULL, &iid_bytes) < 0)
         {
             oid_arr_len = 0;
         }
@@ -2044,7 +2044,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
         else
         {
             PyErr_Format(EzSNMPUnknownObjectIDError.get(),
-                         "unknown object id (%s)",
+                         (char *)"unknown object id (%s)",
                          (tag ? tag : "<null>"));
             error = 1;
             snmp_free_pdu(pdu);
@@ -2096,7 +2096,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
     old_format = netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID,
                                     NETSNMP_DS_LIB_OID_OUTPUT_FORMAT);
 
-    if (py_netsnmp_attr_long(session, "use_long_names"))
+    if (py_netsnmp_attr_long(session, (char *)"use_long_names"))
     {
         getlabel_flag |= USE_LONG_NAMES;
 
@@ -2110,7 +2110,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
      * outcome of NETSNMP_DS_LIB_OID_OUTPUT_FORMAT is
      * NETSNMP_OID_OUTPUT_NUMERIC
      */
-    if (py_netsnmp_attr_long(session, "use_numeric"))
+    if (py_netsnmp_attr_long(session, (char *)"use_numeric"))
     {
         getlabel_flag |= USE_LONG_NAMES;
         getlabel_flag |= USE_NUMERIC_OIDS;
@@ -2156,7 +2156,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
              * this should throw an exception.
              */
             py_log_msg(DEBUG,
-                       "netsnmp_get: response had less vars compared to varlist");
+                       (char *)"netsnmp_get: response had less vars compared to varlist");
             break;
         }
 
@@ -2164,22 +2164,22 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
 
         if (no_such_name)
         {
-            if (!PyObject_HasAttrString(varbind, "oid"))
+            if (!PyObject_HasAttrString(varbind, (char *)"oid"))
             {
-                py_log_msg(DEBUG, "netsnmp_get: bad varbind (%d)",
+                py_log_msg(DEBUG, (char *)"netsnmp_get: bad varbind (%d)",
                            varlist_ind);
                 // Py_XDECREF(varbind); Double DECREF?
             }
 
-            py_netsnmp_attr_set_string(varbind, "snmp_type", "NOSUCHNAME",
+            py_netsnmp_attr_set_string(varbind, (char *)"snmp_type", (char *)"NOSUCHNAME",
                                        strlen("NOSUCHNAME"));
 
-            py_netsnmp_attr_set_string(varbind, "value",
-                                       "NOSUCHNAME", strlen("NOSUCHNAME"));
+            py_netsnmp_attr_set_string(varbind, (char *)"value",
+                                       (char *)"NOSUCHNAME", strlen("NOSUCHNAME"));
 
             Py_DECREF(varbind);
         }
-        else if (PyObject_HasAttrString(varbind, "oid"))
+        else if (PyObject_HasAttrString(varbind, (char *)"oid"))
         {
             size_t str_buf_len = sizeof(session_ctx->buf);
             size_t out_len = 0;
@@ -2192,7 +2192,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
                                                    vars->name,
                                                    vars->name_length);
 
-            py_log_msg(DEBUG, "netsnmp_get: str_bufp: %s:%lu:%lu",
+            py_log_msg(DEBUG, (char *)"netsnmp_get: str_bufp: %s:%lu:%lu",
                        str_bufp, str_buf_len, out_len);
 
             /* clamp value */
@@ -2203,38 +2203,38 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
             if (__is_leaf(tp))
             {
                 getlabel_flag &= ~NON_LEAF_NAME;
-                py_log_msg(DEBUG, "netsnmp_get: is_leaf: %d", tp->type);
+                py_log_msg(DEBUG, (char *)"netsnmp_get: is_leaf: %d", tp->type);
             }
             else
             {
                 getlabel_flag |= NON_LEAF_NAME;
-                py_log_msg(DEBUG, "netsnmp_get: !is_leaf: %d", tp->type);
+                py_log_msg(DEBUG, (char *)"netsnmp_get: !is_leaf: %d", tp->type);
             }
 
-            py_log_msg(DEBUG, "netsnmp_get: str_buf: %s", str_buf);
+            py_log_msg(DEBUG,(char *) "netsnmp_get: str_buf: %s", str_buf);
 
             __get_label_iid((char *)str_buf, &tag, &iid, getlabel_flag);
 
-            py_netsnmp_attr_set_string(varbind, "oid", tag, STRLEN(tag));
-            py_netsnmp_attr_set_string(varbind, "oid_index", iid,
+            py_netsnmp_attr_set_string(varbind, (char *)"oid", tag, STRLEN(tag));
+            py_netsnmp_attr_set_string(varbind, (char *)"oid_index", iid,
                                        STRLEN(iid));
 
             __get_type_str(type, type_str, 1);
 
-            py_netsnmp_attr_set_string(varbind, "snmp_type", type_str,
+            py_netsnmp_attr_set_string(varbind, (char *)"snmp_type", type_str,
                                        strlen(type_str));
 
             len = __snprint_value((char *)str_buf, sizeof(session_ctx->buf),
                                   vars, tp, type, sprintval_flag);
             str_buf[len] = '\0';
-            py_netsnmp_attr_set_string(varbind, "value",
+            py_netsnmp_attr_set_string(varbind, (char *)"value",
                                        (char *)str_buf, len);
 
             Py_DECREF(varbind);
         }
         else
         {
-            py_log_msg(DEBUG, "netsnmp_get: bad varbind (%d)", varlist_ind);
+            py_log_msg(DEBUG, (char *)"netsnmp_get: bad varbind (%d)", varlist_ind);
             Py_XDECREF(varbind);
         }
 
@@ -2569,11 +2569,11 @@ PyObject *netsnmp_getnext(PyObject *self, PyObject *args)
                     // Py_XDECREF(varbind); /* Double decref? */
                 }
 
-                py_netsnmp_attr_set_string(varbind, (char *)"snmp_type", "NOSUCHNAME",
+                py_netsnmp_attr_set_string(varbind, (char *)"snmp_type", (char *)"NOSUCHNAME",
                                            strlen("NOSUCHNAME"));
 
                 py_netsnmp_attr_set_string(varbind, (char *)"value",
-                                           "NOSUCHNAME", strlen("NOSUCHNAME"));
+                                           (char *)"NOSUCHNAME", strlen("NOSUCHNAME"));
             }
             else
             {
