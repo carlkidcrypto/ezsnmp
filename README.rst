@@ -13,7 +13,7 @@ Ez SNMP
    :alt: Join the Discussions!
    :target: https://github.com/ezsnmp/ezsnmp
 
-.. image:: https://raw.githubusercontent.com/ezsnmp/ezsnmp/master/images/ezsnmp-logo.png
+.. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp-logo.png
     :alt: Ez SNMP Logo
 
 Artwork courtesy of `Open Clip Art
@@ -28,8 +28,8 @@ Ez SNMP is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/
 Why Another Library?
 --------------------
 
-- Simple, because maintainer of `Easy SNMP` seems to have abandonded project and or isn't actively working on it.
-- This version (Ez SNMP) will attempt to remain upto date with: Python versions that are supported by `Python <https://devguide.python.org/versions/>`_
+- Simple, because the maintainer of `Easy SNMP` seems to have abandoned the project and or isn't actively working on it.
+- This version (Ez SNMP) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`_
 and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`_
 
 Quick Start
