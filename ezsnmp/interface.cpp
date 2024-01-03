@@ -1786,7 +1786,7 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
             {
                 PyErr_SetString(EzSNMPConnectionError.get(),
                                 (char *)"error generating Ku from authentication "
-                                "password");
+                                        "password");
                 goto done;
             }
         }
@@ -1854,7 +1854,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
     {
         PyErr_SetString(PyExc_ValueError,
                         (char *)"you must use SNMP version 3 as it's the only "
-                        "version that supports tunneling");
+                                "version that supports tunneling");
         goto done;
     }
 
@@ -1879,7 +1879,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
         if (!session.transport_configuration)
         {
             py_log_msg(ERROR, (char *)"failed to initialize the transport "
-                              "configuration container");
+                                      "configuration container");
             goto done;
         }
 
@@ -1966,7 +1966,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
         goto done;
     }
 
-    if (!PyArg_ParseTuple(args,(char *) "OO", &session, &varlist))
+    if (!PyArg_ParseTuple(args, (char *)"OO", &session, &varlist))
     {
         goto done;
     }
@@ -1992,7 +1992,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
     {
         goto done;
     }
-    if (py_netsnmp_attr_long(session,(char *) "use_long_names"))
+    if (py_netsnmp_attr_long(session, (char *)"use_long_names"))
     {
         getlabel_flag |= USE_LONG_NAMES;
     }
@@ -2009,7 +2009,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
         sprintval_flag = USE_SPRINT_VALUE;
     }
     best_guess = py_netsnmp_attr_long(session, (char *)"best_guess");
-    retry_nosuch = py_netsnmp_attr_long(session,(char *) "retry_no_such");
+    retry_nosuch = py_netsnmp_attr_long(session, (char *)"retry_no_such");
 
     pdu = snmp_pdu_create(SNMP_MSG_GET);
 
@@ -2211,7 +2211,7 @@ PyObject *netsnmp_get(PyObject *self, PyObject *args)
                 py_log_msg(DEBUG, (char *)"netsnmp_get: !is_leaf: %d", tp->type);
             }
 
-            py_log_msg(DEBUG,(char *) "netsnmp_get: str_buf: %s", str_buf);
+            py_log_msg(DEBUG, (char *)"netsnmp_get: str_buf: %s", str_buf);
 
             __get_label_iid((char *)str_buf, &tag, &iid, getlabel_flag);
 
