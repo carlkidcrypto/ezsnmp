@@ -141,7 +141,6 @@ them with the following on Linux:
 
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
-    cd ezsnmp;
     mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
     cp tests/snmpd.conf /etc/snmp/snmpd.conf;
     systemctl start snmpd;
