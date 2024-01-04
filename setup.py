@@ -87,7 +87,9 @@ else:
                 )
             )[0]
 
-            brew = check_output("brew info {0}".format(openssl_ver), shell=True).decode()
+            brew = check_output(
+                "brew info {0}".format(openssl_ver), shell=True
+            ).decode()
             temp = brew.split("\n")
             # As of 01/02/2024 brew info openssl spits out lines. the fourth one is what we care about
             # ==> openssl@3: stable 3.2.0 (bottled)
