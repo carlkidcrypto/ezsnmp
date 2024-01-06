@@ -9,7 +9,7 @@ on:
 
 jobs:
   black:
-    runs-on: Linux
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: psf/black@23.12.1
