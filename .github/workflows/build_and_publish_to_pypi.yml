@@ -21,7 +21,7 @@ jobs:
         
       - name: Install local dependencies
         run: >-
-            sudo apt install -y snmpd libsnmp-dev libperl-dev
+          sudo apt install -y snmpd libsnmp-dev libperl-dev
 
       - name: Install pypa/build
         run: >-
