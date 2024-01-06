@@ -1,5 +1,6 @@
+=======
 Ez SNMP
-=========
+=======
 
 |Python Code Style| |Black| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests| |License|
 
@@ -22,20 +23,20 @@ Ez SNMP
     :alt: Ez SNMP Logo
 
 Artwork courtesy of `Open Clip Art
-Library <https://openclipart.org/detail/251135/simple-network>`_
+Library <https://openclipart.org/detail/251135/simple-network>`__
 
 
 Introduction
 ------------
 
-Ez SNMP is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`_
+Ez SNMP is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`__
 
 Why Another Library?
 --------------------
 
 - Simple, because the maintainer of `Easy SNMP` seems to have abandoned the project and or isn't actively working on it.
-- This version (Ez SNMP) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`_
-and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`_
+- This version (Ez SNMP) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
+  and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`__
 
 Quick Start
 -----------
