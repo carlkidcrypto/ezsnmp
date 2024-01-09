@@ -52,7 +52,7 @@ if in_tree:
 else:
     netsnmp_libs = None
     if is_docker():
-        netsnmp_libs = check_output("docker run cmd.cat/net-snmp-config net-snmp-config --libs", shell=True).decode()
+        netsnmp_libs = check_output("docker run --privileged cmd.cat/net-snmp-config net-snmp-config --libs", shell=True).decode()
 
     else:
         netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
