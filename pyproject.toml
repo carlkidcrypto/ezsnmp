@@ -2,7 +2,7 @@
 skip = "cp36-* cp37-*"
 
 [tool.cibuildwheel.linux]
-before-all = "yum install snmpd libsnmp-dev libperl-dev || apk add snmpd libsnmp-dev libperl-dev || apt-get install snmpd libsnmp-dev libperl-dev"
+before-all = "yum install net-snmp-devel || apk add snmpd libsnmp-dev libperl-dev || apt-get install snmpd libsnmp-dev libperl-dev"
 
 [tool.cibuildwheel.macos]
 before-all = """brew update;
