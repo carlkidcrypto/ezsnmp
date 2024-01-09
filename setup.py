@@ -9,6 +9,14 @@ from setuptools.command.test import test as TestCommand
 import setuptools.command.build as build
 from setuptools import dist
 
+
+from pathlib import Path
+
+def is_docker():
+    cgroup = Path('/proc/self/cgroup')
+    return Path('/.dockerenv').is_file() or cgroup.is_file() and 'docker' in cgroup.read_text()
+
+
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
@@ -42,7 +50,12 @@ if in_tree:
 
 # Otherwise, we use the system-installed SNMP libraries
 else:
-    netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
+    netsnmp_libs = None
+    if is_docker():
+        netsnmp_libs = check_output("docker run cmd.cat/net-snmp-config net-snmp-config --libs", shell=True).decode()
+
+    else:
+        netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
 
     pass_next = False
     # macOS-specific
