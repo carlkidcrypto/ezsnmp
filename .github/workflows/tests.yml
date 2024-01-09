@@ -51,7 +51,6 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.0.0
         with:
           linux: sudo apt-get update;
-                 sudo apt-get upgrade -y;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;

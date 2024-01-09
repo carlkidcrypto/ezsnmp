@@ -21,9 +21,11 @@ jobs:
         uses: tj-actions/changed-files@v41.0.1
         with:
           files: |
-            sphinx_docs_build/*.rst
-            sphinx_docs_build/*.py
-            sphinx_docs_build/*.txt
+            sphinx_docs_build/source/*.rst
+            sphinx_docs_build/source/conf.py
+            sphinx_docs_build/requirements.txt
+            sphinx_docs_build/Makefile
+            sphinx_docs_build/make.bat
 
   sphinx_docs_build:
     runs-on: ubuntu-latest

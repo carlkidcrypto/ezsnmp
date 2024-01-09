@@ -27,12 +27,10 @@ jobs:
         with:
           linux: |
             sudo apt update;
-            sudo apt upgrade -y;
             sudo apt install -y snmpd libsnmp-dev libperl-dev;
 
           macos: |
             brew update;
-            brew upgrade;
             brew install openssl@3;
             brew install net-snmp;
             echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
