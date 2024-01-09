@@ -58,7 +58,6 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
           
           macos: brew update;
-                 brew upgrade;
                  brew install net-snmp;
                  brew install openssl@3;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
