@@ -1,5 +1,8 @@
+[tool.cibuildwheel]
+skip: cp36-* cp37-*
+
 [tool.cibuildwheel.linux]
-repair-wheel-command = "sudo apt install -y snmpd libsnmp-dev libperl-dev;"
+before-all = "sudo apt install -y snmpd libsnmp-dev libperl-dev;"
 
 [tool.cibuildwheel.macos]
 before-all = """brew update;
