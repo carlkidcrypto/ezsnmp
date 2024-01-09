@@ -2,10 +2,10 @@
 repair-wheel-command = "sudo apt install -y snmpd libsnmp-dev libperl-dev;"
 
 [tool.cibuildwheel.macos]
-before-all = "brew update;
+before-all = """brew update;
     brew install openssl@3;
     brew install net-snmp;
     echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
     export PATH="/usr/local/opt/net-snmp/bin:$PATH";
     echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
-    export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"
+    export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""

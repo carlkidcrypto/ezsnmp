@@ -19,22 +19,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
 
-      - name: Install local dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.0.0
-        with:
-          linux: |
-            sudo apt update;
-            sudo apt install -y snmpd libsnmp-dev libperl-dev;
-
-          macos: |
-            brew update;
-            brew install openssl@3;
-            brew install net-snmp;
-            echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
-            export PATH="/usr/local/opt/net-snmp/bin:$PATH";
-            echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
-            export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
-
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.16.2
 
