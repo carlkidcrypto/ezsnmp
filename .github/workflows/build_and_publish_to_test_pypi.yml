@@ -51,10 +51,6 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install local dependencies
-        run: >-
-          sudo apt install -y snmpd libsnmp-dev libperl-dev
-
       - name: Install pypa/build
         run: >-
           python -m
@@ -69,6 +65,13 @@ jobs:
           --sdist
           --outdir dist/
           .
+
+      - name: Download Wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          merge-multiple: false
+          path: dist/
 
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.6
