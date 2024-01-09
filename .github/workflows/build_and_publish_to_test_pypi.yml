@@ -5,12 +5,15 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build-n-publish-test-pypi:
-    name: Build and Publish
-    runs-on: Linux
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -18,27 +21,70 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-    
+
       - name: Install local dependencies
-        run: >-
-          sudo apt install -y snmpd libsnmp-dev libperl-dev
-      
+        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        with:
+          linux: |
+            sudo apt update;
+            sudo apt install -y snmpd libsnmp-dev libperl-dev;
+
+          macos: |
+            brew update;
+            brew install openssl@3;
+            brew install net-snmp;
+            echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
+            export PATH="/usr/local/opt/net-snmp/bin:$PATH";
+            echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
+            export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.16.2
+
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_ARCHS_MACOS: x86_64 arm64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  build-n-publish-test-pypi:
+    name: Build and Publish To Test PyPi
+    needs: build_wheels
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
       - name: Install pypa/build
         run: >-
           python -m
           pip install
           build
           --user
-    
-      - name: Build a binary wheel and a source tarball
+
+      - name: Build a source tarball
         run: >-
           python -m
           build
           --sdist
-          --wheel
           --outdir dist/
           .
-      
+
+      - name: Download Wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          merge-multiple: false
+          path: dist/
+
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.6
         with:

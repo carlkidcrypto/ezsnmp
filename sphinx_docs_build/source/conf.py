@@ -20,11 +20,11 @@
 # -- Project information -----------------------------------------------------
 
 project = "Ez SNMP"
-copyright = "2023, carlkidcrypto"
+copyright = "2024, carlkidcrypto"
 author = "carlkidcrypto"
 
 # The full version, including alpha/beta/rc tags
-release = "V0.1.0a"
+release = "V0.1.0b"
 
 
 # -- General configuration ---------------------------------------------------
