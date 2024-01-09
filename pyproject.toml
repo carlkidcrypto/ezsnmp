@@ -1,5 +1,5 @@
 [tool.cibuildwheel]
-skip = cp36-* cp37-*
+skip = "cp36-* cp37-*"
 
 [tool.cibuildwheel.linux]
 before-all = "sudo apt install -y snmpd libsnmp-dev libperl-dev;"
