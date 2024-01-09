@@ -112,7 +112,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          if [ "$RUNNER_OS" == "ubuntu-latest" ]
+          if [ "$RUNNER_OS" == "Linux" ]
           then
             wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp
             VALGRIND=(
