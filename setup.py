@@ -10,6 +10,18 @@ import setuptools.command.build as build
 from setuptools import dist
 
 
+from pathlib import Path
+
+
+def is_docker():
+    cgroup = Path("/proc/self/cgroup")
+    return (
+        Path("/.dockerenv").is_file()
+        or cgroup.is_file()
+        and "docker" in cgroup.read_text()
+    )
+
+
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
