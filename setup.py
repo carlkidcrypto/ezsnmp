@@ -12,9 +12,14 @@ from setuptools import dist
 
 from pathlib import Path
 
+
 def is_docker():
-    cgroup = Path('/proc/self/cgroup')
-    return Path('/.dockerenv').is_file() or cgroup.is_file() and 'docker' in cgroup.read_text()
+    cgroup = Path("/proc/self/cgroup")
+    return (
+        Path("/.dockerenv").is_file()
+        or cgroup.is_file()
+        and "docker" in cgroup.read_text()
+    )
 
 
 # Determine if a base directory has been provided with the --basedir option
@@ -52,7 +57,10 @@ if in_tree:
 else:
     netsnmp_libs = None
     if is_docker():
-        netsnmp_libs = check_output("docker run --privileged cmd.cat/net-snmp-config net-snmp-config --libs", shell=True).decode()
+        netsnmp_libs = check_output(
+            "docker run --privileged cmd.cat/net-snmp-config net-snmp-config --libs",
+            shell=True,
+        ).decode()
 
     else:
         netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
