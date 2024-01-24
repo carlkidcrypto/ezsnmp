@@ -12,8 +12,13 @@ select = "*musllinux*"
 before-all = "apk add libsnmp-dev libperl-dev;"
 
 [tool.cibuildwheel.linux]
-before-all = """yum -y install net-snmp-devel &&
-                echo 'Done: yum -y install net-snmp-devel';"""
+before-all = """yum -y install wget;
+                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
+                unzip download;
+                cd net-snmp-5.9.4;
+                ./configure --with-defaults --disable-mibs --disable-manuals;
+                make ;
+                make install ;"""
 
 [tool.cibuildwheel.macos]
 before-all = """brew update;
@@ -23,3 +28,4 @@ before-all = """brew update;
     export PATH="/usr/local/opt/net-snmp/bin:$PATH";
     echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
     export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
+
