@@ -142,11 +142,19 @@ them with the following on Linux:
 
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
-    mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    cp tests/snmpd.conf /etc/snmp/snmpd.conf;
-    systemctl start snmpd;
+    sudo apt update && sudo apt upgrade -y;
+    sudo apt install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+    sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
+    sudo systemctl stop snmpd;
+    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
+    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo download-mibs;
+    mkdir -p -m 0755 ~/.snmp;
+    echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+    sudo systemctl start snmpd;
     rm -drf build/ ezsnmp.egg-info;
-    python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
+    sudo python3 -m pip install -r requirements.txt;
+    sudo python3 setup.py build && sudo python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
 
 
 On MacOS
