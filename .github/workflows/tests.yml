@@ -254,7 +254,7 @@ jobs:
            py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
 
       - name: Create A Comment For PR
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v4
         if: github.event_name == 'pull_request'
         with:
           issue-number: ${{ github.event.pull_request.number }}
