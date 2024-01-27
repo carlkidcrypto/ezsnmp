@@ -130,7 +130,7 @@ possible:
 -  **Wes Hardaker and the net-snmp-coders**: for their hard work and
    dedication
 - **fgimian and nnathan**: the original contributors to this codebase
-- **Kent Coble**: who as the most recent maintainer. `Easy SNMP <https://github.com/easysnmp/easysnmp>`_
+- **Kent Coble**: who was the most recent maintainer. `Easy SNMP <https://github.com/easysnmp/easysnmp>`_
 
 Running Tests
 -------------
@@ -153,8 +153,10 @@ them with the following on Linux:
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
     rm -drf build/ ezsnmp.egg-info;
-    sudo python3 -m pip install -r requirements.txt;
-    sudo python3 setup.py build && sudo python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
+    python3 -m pip install -r requirements.txt;
+    python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
+    # Bottom one for debug. Replace the top one with it if needed.
+    # python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
 
 
 On MacOS
