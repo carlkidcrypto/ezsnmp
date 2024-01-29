@@ -152,7 +152,7 @@ them with the following on Linux:
     mkdir -p -m 0755 ~/.snmp;
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
-    rm -drf build/ ezsnmp.egg-info;
+    rm -drf build/ dist/ ezsnmp.egg-info;
     python3 -m pip install -r requirements.txt;
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
     # Bottom one for debug. Replace the top one with it if needed.
@@ -169,7 +169,7 @@ On MacOS
     cp tests/snmpd.conf /etc/snmp/snmpd.conf;
     launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    rm -drf build/ ezsnmp.egg-info;
+    rm -drf build/ dist/ ezsnmp.egg-info;
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
 
 License

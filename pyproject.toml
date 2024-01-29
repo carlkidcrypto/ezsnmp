@@ -16,7 +16,7 @@ before-all = """yum -y install wget;
                 wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
                 unzip download;
                 cd net-snmp-5.9.4;
-                ./configure --with-defaults --disable-mibs --disable-manuals;
+                ./configure --with-defaults --disable-mibs --disable-manual --with-perl-modules;
                 make ;
                 make install ;"""
 
