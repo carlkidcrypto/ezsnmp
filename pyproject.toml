@@ -1,8 +1,29 @@
 [tool.cibuildwheel]
-skip = "cp36-* cp37-*"
+manylinux-x86_64-image = "manylinux2014"
+skip = "cp27-* cp36-* cp37-* pp37-*"
+
+[[tool.cibuildwheel.overrides]]
+select = "*manylinux_2_24*"
+before-all = """apt-get --assume-yes install wget unzip;
+                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
+                unzip download;
+                cd net-snmp-5.9.4;
+                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
+                make ;
+                make install ;"""
+
+[[tool.cibuildwheel.overrides]]
+select = "*musllinux*"
+before-all = "apk add net-snmp-dev;"
 
 [tool.cibuildwheel.linux]
-before-all = "yum install net-snmp-devel || apk add snmpd libsnmp-dev libperl-dev || apt-get install snmpd libsnmp-dev libperl-dev"
+before-all = """yum -y install wget;
+                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
+                unzip download;
+                cd net-snmp-5.9.4;
+                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
+                make ;
+                make install ;"""
 
 [tool.cibuildwheel.macos]
 before-all = """brew update;
@@ -12,3 +33,4 @@ before-all = """brew update;
     export PATH="/usr/local/opt/net-snmp/bin:$PATH";
     echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
     export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
+

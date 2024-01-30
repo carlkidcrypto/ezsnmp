@@ -23,8 +23,9 @@ On RHEL / CentOS systems:
 On Debian / Ubuntu systems:
 
 .. code-block:: bash
-
-    sudo apt-get install libsnmp-dev snmp-mibs-downloader
+    
+    sudo apt update && sudo apt upgrade -y;
+    sudo apt install -y libsnmp-dev libperl-dev snmp-mibs-downloader;
 
 On macOS systems:
 
