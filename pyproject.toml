@@ -4,12 +4,17 @@ skip = "cp27-* cp36-* cp37-* pp37-*"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_24*"
-before-all = """apt-get --assume-yes install libsnmp-dev libperl-dev &&
-                echo 'Done: apt-get --assume-yes install libsnmp-dev libperl-dev';"""
+before-all = """apt-get --assume-yes install wget unzip;
+                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
+                unzip download;
+                cd net-snmp-5.9.4;
+                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
+                make ;
+                make install ;"""
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
-before-all = "apk add libsnmp-dev libperl-dev;"
+before-all = "apk add net-snmp-dev;"
 
 [tool.cibuildwheel.linux]
 before-all = """yum -y install wget;
