@@ -18,10 +18,10 @@ pyflakes==3.2.0
 pyparsing==3.1.1
 pytest==8.0.0
 pytest-cov==4.1.0
-pytest-sugar==0.9.7
+pytest-sugar==1.0.0
 termcolor==2.4.0
 tomli==2.0.1
-setuptools==69.0.2
+setuptools==69.0.3
 urllib3==2.2.0
 build==1.0.3
 cibuildwheel==2.16.5
