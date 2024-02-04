@@ -143,7 +143,7 @@ them with the following on Linux:
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
     sudo apt update && sudo apt upgrade -y;
-    sudo apt install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+    sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
     sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
     sudo systemctl stop snmpd;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
