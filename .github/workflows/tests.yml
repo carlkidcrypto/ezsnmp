@@ -164,7 +164,7 @@ jobs:
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.50
+        uses: MishaKav/pytest-coverage-comment@v1.1.51
         with:
           title: Pytest Coverage Report
           hide-badge: true
