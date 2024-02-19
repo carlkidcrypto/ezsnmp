@@ -172,6 +172,20 @@ On MacOS
     rm -drf build/ dist/ ezsnmp.egg-info;
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
 
+
+Running cibuildwheels
+---------------------
+
+For Linux builds on a Linux machine
+
+.. code:: bash
+    clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform linux
+
+For MacOS builds on a MacOS machine
+
+.. code:: bash
+    clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
+
 License
 -------
 
