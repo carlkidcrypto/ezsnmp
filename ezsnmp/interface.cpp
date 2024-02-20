@@ -4044,13 +4044,14 @@ PyObject *py_get_logger(char *logger_name)
 {
     std::shared_ptr<PyObject> logger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
     std::shared_ptr<PyObject> null_handler = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    PyObject *retval = NULL;
 
     logger.reset(PyObject_CallMethod(logging_import.get(), "getLogger", "s", logger_name), PyObject_deleter);
     if (logger.get() == NULL)
     {
         const char *err_msg = "failed to call logging.getLogger";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
-        goto done;
+        return retval;
     }
 
     /*
@@ -4067,21 +4068,18 @@ PyObject *py_get_logger(char *logger_name)
     {
         const char *err_msg = "failed to call logging.NullHandler()";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
-        goto done;
+        return retval;
     }
 
     if (PyObject_CallMethod(logger.get(), "addHandler", "O", null_handler.get()) == NULL)
     {
         const char *err_msg = "failed to call logger.addHandler(NullHandler())";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
-        goto done;
+        return retval;
     }
 
-    return logger.get();
-
-done:
-
-    return NULL;
+    retval = logger.get();
+    return retval;
 }
 
 void py_log_msg(int log_level, char *printf_fmt, ...)
@@ -4206,10 +4204,11 @@ PyMODINIT_FUNC PyInit_interface(void)
     /* Initialise the module */
     std::shared_ptr<PyObject> interface_module = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
     interface_module.reset(PyModule_Create(&moduledef), PyObject_deleter);
+    PyObject *retval = NULL;
 
     if (interface_module.get() == NULL)
     {
-        goto done;
+        return retval;
     }
 
     /*
@@ -4226,7 +4225,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'logging'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     ezsnmp_import = PyImport_ImportModule("ezsnmp");
@@ -4234,7 +4233,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'ezsnmp'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     ezsnmp_exceptions_import = PyImport_ImportModule("ezsnmp.exceptions");
@@ -4242,7 +4241,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'ezsnmp.exceptions'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     ezsnmp_compat_import = PyImport_ImportModule("ezsnmp.compat");
@@ -4250,7 +4249,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'ezsnmp.compat'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError"), PyObject_deleter);
@@ -4278,7 +4277,7 @@ PyMODINIT_FUNC PyInit_interface(void)
 
     if (PyLogger.get() == NULL)
     {
-        goto done;
+        return retval;
     }
 
     /* initialise the netsnmp library */
@@ -4286,9 +4285,6 @@ PyMODINIT_FUNC PyInit_interface(void)
 
     py_log_msg(DEBUG, (char *)"initialised ezsnmp.interface");
 
-    return interface_module.get();
-
-done:
-
-    return NULL;
+    retval = interface_module.get();
+    return retval;
 }
