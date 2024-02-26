@@ -1496,27 +1496,29 @@ void __py_netsnmp_update_session_errors(PyObject *session,
                                         char *err_str, int err_num,
                                         int err_ind)
 {
-    std::shared_ptr<PyObject> tmp_for_conversion = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    PyObject *tmp_for_conversion;
     PyObject *type, *value, *traceback;
 
     PyErr_Fetch(&type, &value, &traceback);
 
-    py_netsnmp_attr_set_string(session, (char *)"error_string", err_str,
+    py_netsnmp_attr_set_string(session, "error_string", err_str,
                                STRLEN(err_str));
 
-    tmp_for_conversion.reset(PyLong_FromLong(err_num), PyObject_deleter);
-    if (!tmp_for_conversion.get())
+    tmp_for_conversion = PyLong_FromLong(err_num);
+    if (!tmp_for_conversion)
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, (char *)"error_number", tmp_for_conversion.get());
+    PyObject_SetAttrString(session, "error_number", tmp_for_conversion);
+    Py_DECREF(tmp_for_conversion);
 
-    tmp_for_conversion.reset(PyLong_FromLong(err_ind), PyObject_deleter);
-    if (!tmp_for_conversion.get())
+    tmp_for_conversion = PyLong_FromLong(err_ind);
+    if (!tmp_for_conversion)
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, (char *)"error_index", tmp_for_conversion.get());
+    PyObject_SetAttrString(session, "error_index", tmp_for_conversion);
+    Py_DECREF(tmp_for_conversion);
 
 done:
     PyErr_Restore(type, value, traceback);
