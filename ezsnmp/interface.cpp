@@ -1455,15 +1455,14 @@ int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
     int ret = -1;
     if (obj && attr_name)
     {
-        std::shared_ptr<PyObject> val_obj = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-        val_obj.reset(PyUnicode_Decode(val, len, "latin-1",
-                                       "surrogateescape"),
-                      PyObject_deleter);
-        if (!val_obj.get())
+        PyObject *val_obj = PyUnicode_Decode(val, len, "latin-1",
+                                             "surrogateescape");
+        if (!val_obj)
         {
             return -1;
         }
-        ret = PyObject_SetAttrString(obj, attr_name, val_obj.get());
+        ret = PyObject_SetAttrString(obj, attr_name, val_obj);
+        Py_DECREF(val_obj);
     }
     return ret;
 }
