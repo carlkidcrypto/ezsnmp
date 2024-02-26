@@ -3,7 +3,7 @@ attrs==23.2.0
 black==24.2.0
 click== 8.1.7
 colorama==0.4.6
-coverage==7.4.1
+coverage==7.4.3
 flake8==7.0.0
 iniconfig==2.0.0
 mccabe==0.7.0
@@ -21,8 +21,8 @@ pytest-cov==4.1.0
 pytest-sugar==1.0.0
 termcolor==2.4.0
 tomli==2.0.1
-setuptools==69.1.0
-urllib3==2.2.0
+setuptools==69.1.1
+urllib3==2.2.1
 build==1.0.3
 cibuildwheel==2.16.5
 pip==24.0
