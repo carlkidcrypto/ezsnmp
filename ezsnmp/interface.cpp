@@ -1410,21 +1410,22 @@ int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
     *val = NULL;
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
-        if (attr.get())
+        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
+        if (attr)
         {
             int retval;
 
             // Encode the provided attribute using latin-1 into bytes and
             // retrieve its value and length
-            *attr_bytes = PyUnicode_AsEncodedString(attr.get(), "latin-1", "surrogateescape");
+            *attr_bytes = PyUnicode_AsEncodedString(attr, "latin-1", "surrogateescape");
             if (!(*attr_bytes))
             {
+                Py_DECREF(attr);
                 return -1;
             }
             retval = PyBytes_AsStringAndSize(*attr_bytes, val, len);
 
+            Py_DECREF(attr);
             return retval;
         }
     }
