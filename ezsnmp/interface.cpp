@@ -4044,16 +4044,15 @@ done:
  */
 PyObject *py_get_logger(char *logger_name)
 {
-    std::shared_ptr<PyObject> logger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-    std::shared_ptr<PyObject> null_handler = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-    PyObject *retval = NULL;
+    PyObject *logger = NULL;
+    PyObject *null_handler = NULL;
 
-    logger.reset(PyObject_CallMethod(logging_import, "getLogger", "s", logger_name), PyObject_deleter);
-    if (logger.get() == NULL)
+    logger = PyObject_CallMethod(logging_import, "getLogger", "s", logger_name);
+    if (logger == NULL)
     {
         const char *err_msg = "failed to call logging.getLogger";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
-        return retval;
+        goto done;
     }
 
     /*
@@ -4065,23 +4064,32 @@ PyObject *py_get_logger(char *logger_name)
      *
      */
 
-    null_handler.reset(PyObject_CallMethod(logging_import, "NullHandler", NULL), PyObject_deleter);
-    if (null_handler.get() == NULL)
+    null_handler = PyObject_CallMethod(logging_import, "NullHandler", NULL);
+    if (null_handler == NULL)
     {
         const char *err_msg = "failed to call logging.NullHandler()";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
-        return retval;
+        goto done;
     }
 
-    if (PyObject_CallMethod(logger.get(), "addHandler", "O", null_handler.get()) == NULL)
+    if (PyObject_CallMethod(logger, "addHandler", "O", null_handler) == NULL)
     {
         const char *err_msg = "failed to call logger.addHandler(NullHandler())";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
-        return retval;
+        goto done;
     }
 
-    retval = logger.get();
-    return retval;
+    /* we don't need the null_handler around anymore. */
+    Py_DECREF(null_handler);
+
+    return logger;
+
+done:
+
+    Py_XDECREF(logger);
+    Py_XDECREF(null_handler);
+
+    return NULL;
 }
 
 void py_log_msg(int log_level, char *printf_fmt, ...)
