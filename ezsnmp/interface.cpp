@@ -4203,11 +4203,10 @@ struct PyModuleDef moduledef = {
 PyMODINIT_FUNC PyInit_interface(void)
 {
     /* Initialise the module */
-    std::shared_ptr<PyObject> interface_module = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-    interface_module.reset(PyModule_Create(&moduledef), PyObject_deleter);
+    PyObject *interface_module = PyModule_Create(&moduledef);
     PyObject *retval = NULL;
 
-    if (interface_module.get() == NULL)
+    if (interface_module == NULL)
     {
         return retval;
     }
@@ -4286,6 +4285,6 @@ PyMODINIT_FUNC PyInit_interface(void)
 
     py_log_msg(DEBUG, (char *)"initialised ezsnmp.interface");
 
-    retval = interface_module.get();
+    retval = interface_module;
     return retval;
 }
