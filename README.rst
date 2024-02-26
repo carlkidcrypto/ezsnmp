@@ -157,6 +157,8 @@ them with the following on Linux:
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
+    # Bottom one for valgrind. Replace the top one with it if needed.
+    # python3 setup.py build && python3 -m pip install -e . && valgrind --tool=memcheck --leak-check=full --show-leak-kinds=definite,indirect,possible python3 -m pytest .
 
 
 On MacOS
