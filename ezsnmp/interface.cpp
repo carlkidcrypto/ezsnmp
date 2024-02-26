@@ -1439,11 +1439,11 @@ long long py_netsnmp_attr_long(PyObject *obj, char *attr_name)
 
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
-        if (attr.get())
+        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
+        if (attr)
         {
-            val = PyLong_AsLong(attr.get());
+            val = PyLong_AsLong(attr);
+            Py_DECREF(attr);
         }
     }
 
