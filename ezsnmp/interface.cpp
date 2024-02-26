@@ -44,10 +44,10 @@ void PyObject_deleter(PyObject *obj)
 PyObject *ezsnmp_import = NULL;
 PyObject *ezsnmp_exceptions_import = NULL;
 PyObject *ezsnmp_compat_import = NULL;
+PyObject *PyLogger = NULL;
+PyObject *logging_import = NULL;
 
 /* These can be shared_ptr's :), they get auto decremented when they go out of scope. */
-std::shared_ptr<PyObject> logging_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-std::shared_ptr<PyObject> PyLogger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPConnectionError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPTimeoutError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
@@ -4046,7 +4046,7 @@ PyObject *py_get_logger(char *logger_name)
     std::shared_ptr<PyObject> null_handler = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
     PyObject *retval = NULL;
 
-    logger.reset(PyObject_CallMethod(logging_import.get(), "getLogger", "s", logger_name), PyObject_deleter);
+    logger.reset(PyObject_CallMethod(logging_import, "getLogger", "s", logger_name), PyObject_deleter);
     if (logger.get() == NULL)
     {
         const char *err_msg = "failed to call logging.getLogger";
@@ -4063,7 +4063,7 @@ PyObject *py_get_logger(char *logger_name)
      *
      */
 
-    null_handler.reset(PyObject_CallMethod(logging_import.get(), "NullHandler", NULL), PyObject_deleter);
+    null_handler.reset(PyObject_CallMethod(logging_import, "NullHandler", NULL), PyObject_deleter);
     if (null_handler.get() == NULL)
     {
         const char *err_msg = "failed to call logging.NullHandler()";
@@ -4103,23 +4103,23 @@ void py_log_msg(int log_level, char *printf_fmt, ...)
     switch (log_level)
     {
     case INFO:
-        pval = PyObject_CallMethod(PyLogger.get(), "info", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "info", "O", log_msg);
         break;
 
     case WARNING:
-        pval = PyObject_CallMethod(PyLogger.get(), "warn", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "warn", "O", log_msg);
         break;
 
     case ERROR:
-        pval = PyObject_CallMethod(PyLogger.get(), "error", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "error", "O", log_msg);
         break;
 
     case DEBUG:
-        pval = PyObject_CallMethod(PyLogger.get(), "debug", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "debug", "O", log_msg);
         break;
 
     case EXCEPTION:
-        pval = PyObject_CallMethod(PyLogger.get(), "exception", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "exception", "O", log_msg);
         break;
 
     default:
@@ -4220,8 +4220,8 @@ PyMODINIT_FUNC PyInit_interface(void)
      * import ezsnmp.compat
      *
      */
-    logging_import.reset(PyImport_ImportModule("logging"), PyObject_deleter);
-    if (logging_import.get() == NULL)
+    logging_import = PyImport_ImportModule("logging");
+    if (logging_import == NULL)
     {
         const char *err_msg = "failed to import 'logging'";
         PyErr_SetString(PyExc_ImportError, err_msg);
@@ -4273,9 +4273,9 @@ PyMODINIT_FUNC PyInit_interface(void)
                                       PyObject_deleter);
 
     /* Initialise logging (note: automatically has refcount 1) */
-    PyLogger.reset(py_get_logger((char *)"ezsnmp.interface"), PyObject_deleter);
+    PyLogger = py_get_logger((char *)"ezsnmp.interface");
 
-    if (PyLogger.get() == NULL)
+    if (PyLogger == NULL)
     {
         return retval;
     }
