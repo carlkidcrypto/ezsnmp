@@ -44,10 +44,10 @@ void PyObject_deleter(PyObject *obj)
 PyObject *ezsnmp_import = NULL;
 PyObject *ezsnmp_exceptions_import = NULL;
 PyObject *ezsnmp_compat_import = NULL;
+PyObject *PyLogger = NULL;
+PyObject *logging_import = NULL;
 
 /* These can be shared_ptr's :), they get auto decremented when they go out of scope. */
-std::shared_ptr<PyObject> logging_import = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-std::shared_ptr<PyObject> PyLogger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPConnectionError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
 std::shared_ptr<PyObject> EzSNMPTimeoutError = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
@@ -1410,21 +1410,22 @@ int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
     *val = NULL;
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
-        if (attr.get())
+        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
+        if (attr)
         {
             int retval;
 
             // Encode the provided attribute using latin-1 into bytes and
             // retrieve its value and length
-            *attr_bytes = PyUnicode_AsEncodedString(attr.get(), "latin-1", "surrogateescape");
+            *attr_bytes = PyUnicode_AsEncodedString(attr, "latin-1", "surrogateescape");
             if (!(*attr_bytes))
             {
+                Py_DECREF(attr);
                 return -1;
             }
             retval = PyBytes_AsStringAndSize(*attr_bytes, val, len);
 
+            Py_DECREF(attr);
             return retval;
         }
     }
@@ -1438,11 +1439,11 @@ long long py_netsnmp_attr_long(PyObject *obj, char *attr_name)
 
     if (obj && attr_name && PyObject_HasAttrString(obj, attr_name))
     {
-        std::shared_ptr<PyObject> attr = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-        attr.reset(PyObject_GetAttrString(obj, attr_name), PyObject_deleter);
-        if (attr.get())
+        PyObject *attr = PyObject_GetAttrString(obj, attr_name);
+        if (attr)
         {
-            val = PyLong_AsLong(attr.get());
+            val = PyLong_AsLong(attr);
+            Py_DECREF(attr);
         }
     }
 
@@ -1455,15 +1456,14 @@ int py_netsnmp_attr_set_string(PyObject *obj, char *attr_name,
     int ret = -1;
     if (obj && attr_name)
     {
-        std::shared_ptr<PyObject> val_obj = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-        val_obj.reset(PyUnicode_Decode(val, len, "latin-1",
-                                       "surrogateescape"),
-                      PyObject_deleter);
-        if (!val_obj.get())
+        PyObject *val_obj = PyUnicode_Decode(val, len, "latin-1",
+                                             "surrogateescape");
+        if (!val_obj)
         {
             return -1;
         }
-        ret = PyObject_SetAttrString(obj, attr_name, val_obj.get());
+        ret = PyObject_SetAttrString(obj, attr_name, val_obj);
+        Py_DECREF(val_obj);
     }
     return ret;
 }
@@ -1496,27 +1496,29 @@ void __py_netsnmp_update_session_errors(PyObject *session,
                                         char *err_str, int err_num,
                                         int err_ind)
 {
-    std::shared_ptr<PyObject> tmp_for_conversion = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    PyObject *tmp_for_conversion;
     PyObject *type, *value, *traceback;
 
     PyErr_Fetch(&type, &value, &traceback);
 
-    py_netsnmp_attr_set_string(session, (char *)"error_string", err_str,
+    py_netsnmp_attr_set_string(session, "error_string", err_str,
                                STRLEN(err_str));
 
-    tmp_for_conversion.reset(PyLong_FromLong(err_num), PyObject_deleter);
-    if (!tmp_for_conversion.get())
+    tmp_for_conversion = PyLong_FromLong(err_num);
+    if (!tmp_for_conversion)
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, (char *)"error_number", tmp_for_conversion.get());
+    PyObject_SetAttrString(session, "error_number", tmp_for_conversion);
+    Py_DECREF(tmp_for_conversion);
 
-    tmp_for_conversion.reset(PyLong_FromLong(err_ind), PyObject_deleter);
-    if (!tmp_for_conversion.get())
+    tmp_for_conversion = PyLong_FromLong(err_ind);
+    if (!tmp_for_conversion)
     {
         goto done; /* nothing better to do? */
     }
-    PyObject_SetAttrString(session, (char *)"error_index", tmp_for_conversion.get());
+    PyObject_SetAttrString(session, "error_index", tmp_for_conversion);
+    Py_DECREF(tmp_for_conversion);
 
 done:
     PyErr_Restore(type, value, traceback);
@@ -4042,11 +4044,11 @@ done:
  */
 PyObject *py_get_logger(char *logger_name)
 {
-    std::shared_ptr<PyObject> logger = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-    std::shared_ptr<PyObject> null_handler = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
+    PyObject *logger = NULL;
+    PyObject *null_handler = NULL;
 
-    logger.reset(PyObject_CallMethod(logging_import.get(), "getLogger", "s", logger_name), PyObject_deleter);
-    if (logger.get() == NULL)
+    logger = PyObject_CallMethod(logging_import, "getLogger", "s", logger_name);
+    if (logger == NULL)
     {
         const char *err_msg = "failed to call logging.getLogger";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
@@ -4062,24 +4064,30 @@ PyObject *py_get_logger(char *logger_name)
      *
      */
 
-    null_handler.reset(PyObject_CallMethod(logging_import.get(), "NullHandler", NULL), PyObject_deleter);
-    if (null_handler.get() == NULL)
+    null_handler = PyObject_CallMethod(logging_import, "NullHandler", NULL);
+    if (null_handler == NULL)
     {
         const char *err_msg = "failed to call logging.NullHandler()";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
         goto done;
     }
 
-    if (PyObject_CallMethod(logger.get(), "addHandler", "O", null_handler.get()) == NULL)
+    if (PyObject_CallMethod(logger, "addHandler", "O", null_handler) == NULL)
     {
         const char *err_msg = "failed to call logger.addHandler(NullHandler())";
         PyErr_SetString(PyExc_RuntimeError, err_msg);
         goto done;
     }
 
-    return logger.get();
+    /* we don't need the null_handler around anymore. */
+    Py_DECREF(null_handler);
+
+    return logger;
 
 done:
+
+    Py_XDECREF(logger);
+    Py_XDECREF(null_handler);
 
     return NULL;
 }
@@ -4105,23 +4113,23 @@ void py_log_msg(int log_level, char *printf_fmt, ...)
     switch (log_level)
     {
     case INFO:
-        pval = PyObject_CallMethod(PyLogger.get(), "info", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "info", "O", log_msg);
         break;
 
     case WARNING:
-        pval = PyObject_CallMethod(PyLogger.get(), "warn", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "warn", "O", log_msg);
         break;
 
     case ERROR:
-        pval = PyObject_CallMethod(PyLogger.get(), "error", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "error", "O", log_msg);
         break;
 
     case DEBUG:
-        pval = PyObject_CallMethod(PyLogger.get(), "debug", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "debug", "O", log_msg);
         break;
 
     case EXCEPTION:
-        pval = PyObject_CallMethod(PyLogger.get(), "exception", "O", log_msg);
+        pval = PyObject_CallMethod(PyLogger, "exception", "O", log_msg);
         break;
 
     default:
@@ -4204,12 +4212,12 @@ struct PyModuleDef moduledef = {
 PyMODINIT_FUNC PyInit_interface(void)
 {
     /* Initialise the module */
-    std::shared_ptr<PyObject> interface_module = std::shared_ptr<PyObject>(new PyObject(), PyObject_deleter);
-    interface_module.reset(PyModule_Create(&moduledef), PyObject_deleter);
+    PyObject *interface_module = PyModule_Create(&moduledef);
+    PyObject *retval = NULL;
 
-    if (interface_module.get() == NULL)
+    if (interface_module == NULL)
     {
-        goto done;
+        return retval;
     }
 
     /*
@@ -4221,12 +4229,12 @@ PyMODINIT_FUNC PyInit_interface(void)
      * import ezsnmp.compat
      *
      */
-    logging_import.reset(PyImport_ImportModule("logging"), PyObject_deleter);
-    if (logging_import.get() == NULL)
+    logging_import = PyImport_ImportModule("logging");
+    if (logging_import == NULL)
     {
         const char *err_msg = "failed to import 'logging'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     ezsnmp_import = PyImport_ImportModule("ezsnmp");
@@ -4234,7 +4242,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'ezsnmp'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     ezsnmp_exceptions_import = PyImport_ImportModule("ezsnmp.exceptions");
@@ -4242,7 +4250,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'ezsnmp.exceptions'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     ezsnmp_compat_import = PyImport_ImportModule("ezsnmp.compat");
@@ -4250,7 +4258,7 @@ PyMODINIT_FUNC PyInit_interface(void)
     {
         const char *err_msg = "failed to import 'ezsnmp.compat'";
         PyErr_SetString(PyExc_ImportError, err_msg);
-        goto done;
+        return retval;
     }
 
     EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError"), PyObject_deleter);
@@ -4274,11 +4282,11 @@ PyMODINIT_FUNC PyInit_interface(void)
                                       PyObject_deleter);
 
     /* Initialise logging (note: automatically has refcount 1) */
-    PyLogger.reset(py_get_logger((char *)"ezsnmp.interface"), PyObject_deleter);
+    PyLogger = py_get_logger((char *)"ezsnmp.interface");
 
-    if (PyLogger.get() == NULL)
+    if (PyLogger == NULL)
     {
-        goto done;
+        return retval;
     }
 
     /* initialise the netsnmp library */
@@ -4286,9 +4294,6 @@ PyMODINIT_FUNC PyInit_interface(void)
 
     py_log_msg(DEBUG, (char *)"initialised ezsnmp.interface");
 
-    return interface_module.get();
-
-done:
-
-    return NULL;
+    retval = interface_module;
+    return retval;
 }

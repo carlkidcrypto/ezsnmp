@@ -33,4 +33,3 @@ before-all = """brew update;
     export PATH="/usr/local/opt/net-snmp/bin:$PATH";
     echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
     export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
-

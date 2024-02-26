@@ -143,7 +143,7 @@ them with the following on Linux:
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
     sudo apt update && sudo apt upgrade -y;
-    sudo apt install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+    sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
     sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
     sudo systemctl stop snmpd;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
@@ -157,6 +157,8 @@ them with the following on Linux:
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
+    # Bottom one for valgrind. Replace the top one with it if needed.
+    # python3 setup.py build && python3 -m pip install -e . && valgrind --tool=memcheck --leak-check=full --show-leak-kinds=definite,indirect,possible python3 -m pytest .
 
 
 On MacOS
@@ -171,6 +173,20 @@ On MacOS
     launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ dist/ ezsnmp.egg-info;
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
+
+
+Running cibuildwheels
+---------------------
+
+For Linux builds on a Linux machine
+
+.. code:: bash
+    clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform linux
+
+For MacOS builds on a MacOS machine
+
+.. code:: bash
+    clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
 
 License
 -------

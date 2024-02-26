@@ -9,10 +9,6 @@ from setuptools.command.test import test as TestCommand
 import setuptools.command.build as build
 from setuptools import dist
 
-
-from pathlib import Path
-
-
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
