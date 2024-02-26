@@ -1,23 +1,10 @@
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux2014"
 skip = "cp27-* cp36-* cp37-* pp37-*"
-before-test = [
-  "mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig",
-  "cp tests/snmpd.conf /etc/snmp/snmpd.conf",
-  "download-mibs",
-  "mkdir -p -m 0755 ~/.snmp",
-  "echo 'mibs +ALL' > ~/.snmp/snmp.conf",
-  "python3 -m pip install -r requirements.txt",
-]
-
-test-command = [
-  "pytest",
-]
-
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_24*"
-before-all = """apt-get --assume-yes install wget unzip snmpd;
+before-all = """apt-get --assume-yes install wget unzip;
                 wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
                 unzip download;
                 cd net-snmp-5.9.4;
@@ -46,4 +33,3 @@ before-all = """brew update;
     export PATH="/usr/local/opt/net-snmp/bin:$PATH";
     echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
     export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
-
