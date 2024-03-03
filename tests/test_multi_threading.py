@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import pytest
 from ezsnmp.session import Session
 from ezsnmp.exceptions import EzSNMPConnectionError
-from time import sleep
 import concurrent.futures
 import multiprocessing
 
