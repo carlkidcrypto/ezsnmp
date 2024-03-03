@@ -40,8 +40,8 @@ def test_session_threaded(sess_args, workers, jobs):
             assert res[2].snmp_type == "OCTETSTR"
 
         except EzSNMPConnectionError:
-            # Let the client rest. We bombarded it with too many requets...
-            sleep(0.250)
+            # We bombarded the SNMP server with too many requets...
+            pass
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
         futures = [executor.submit(do_work, sess_args) for _ in range(jobs)]

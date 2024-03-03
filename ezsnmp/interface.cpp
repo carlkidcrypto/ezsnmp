@@ -1208,7 +1208,12 @@ int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
 retry:
 
     Py_BEGIN_ALLOW_THREADS
-        status = snmp_sess_synch_response(ss, *pdu, response);
+        // Lock to prevent:
+        // 'USM authentication failure (incorrect password or key) (plaintext scopedPDU header type 00: s/b 30)'
+        // errors
+        std::lock_guard<std::mutex>
+            guard(snmp_sess_synch_response_mutex);
+    status = snmp_sess_synch_response(ss, *pdu, response);
     Py_END_ALLOW_THREADS
 
         if ((*response == NULL) && (status == STAT_SUCCESS))
