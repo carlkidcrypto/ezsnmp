@@ -58,7 +58,7 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
           
           macos: brew update;
-                 brew install net-snmp;
+                 brew install net-snmp@5.9.4;
                  brew install openssl@3;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
@@ -159,6 +159,7 @@ jobs:
             echo "$(echo ${test_log[$i]} | cut -d_ -f2) - $(echo ${test_log[$i]%.*} | cut -d_ -f3), ${test_log[$i]}, ${test_xml[$i]}" >> $GITHUB_OUTPUT
           done
           echo 'EOF' >> $GITHUB_OUTPUT
+          echo $GITHUB_OUTPUT
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.51
@@ -169,7 +170,6 @@ jobs:
           create-new-comment: false
           hide-comment: false
           report-only-changed-files: false
-          pytest-coverage-path: ./
           multiple-files: |
             ${{ env.pytest_multiple_files }}
 
