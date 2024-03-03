@@ -21,6 +21,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <memory>
+#include <mutex>
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
@@ -1373,6 +1374,7 @@ done:
 /*
  * Clears v3 user credentials from the local cache
  */
+
 void __remove_user_from_cache(struct session_list *ss)
 {
     struct usmUser *actUser = usm_get_userList();
@@ -1603,6 +1605,9 @@ void *get_session_handle_from_capsule(PyObject *session_capsule)
 /* Automatically called when Python reclaims session_capsule object. */
 void delete_session_capsule(PyObject *session_capsule)
 {
+    // In a multi-threaded application this can lead to issues when sessions are deleted too early.
+    std::lock_guard<std::mutex> guard(remove_user_cache_mutex);
+
     /* PyCapsule_GetPointer will raise an exception if it fails. */
     struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
