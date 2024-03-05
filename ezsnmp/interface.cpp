@@ -1392,9 +1392,9 @@ void __remove_user_from_cache(struct session_list *ss)
             strcmp((const char *)dummy->engineID, (const char *)ss->session->contextEngineID) == 0)
         {
             usm_remove_user(actUser);
-            usm_free_user(actUser);
             actUser->next = NULL;
             actUser->prev = NULL;
+            usm_free_user(actUser);
             break;
         }
         actUser = dummy->next;
