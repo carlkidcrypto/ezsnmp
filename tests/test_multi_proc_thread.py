@@ -10,8 +10,6 @@ from .conftest import SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS
 
 NUM_PROCESSORS = multiprocessing.cpu_count()
 
-print(f"\nNumber of processors: {NUM_PROCESSORS}")
-
 
 @pytest.mark.parametrize(
     "workers", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
@@ -20,6 +18,10 @@ print(f"\nNumber of processors: {NUM_PROCESSORS}")
     "jobs", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
 )
 def test_session_threaded(sess_args, workers, jobs):
+    """
+    Ensure that sessions can work when using multiple threads.
+    """
+
     def do_work(sess_args):
 
         try:
@@ -56,6 +58,7 @@ def test_session_threaded(sess_args, workers, jobs):
             future.result()
 
 
+# Worker class for the test_session_multiprocess test
 class Worker:
     def __init__(self, sess_args):
         self.sess_args = sess_args
@@ -97,8 +100,12 @@ class Worker:
     "jobs", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
 )
 def test_session_multiprocess(sess_args, workers, jobs):
+    """
+    Ensure that sessions can work when using multiple processes.
+    """
+
+    sess_types = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS]
     with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
-        sess_types = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS]
         sess_type = randint(0, 2)
         worker = Worker(sess_types[sess_type])
         futures = [executor.submit(worker, sess_args) for _ in range(jobs)]
