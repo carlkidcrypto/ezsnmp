@@ -16,7 +16,9 @@ print(f"\nNumber of processors: {NUM_PROCESSORS}")
 @pytest.mark.parametrize(
     "workers", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
 )
-@pytest.mark.parametrize("jobs",  [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS])
+@pytest.mark.parametrize(
+    "jobs", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
+)
 def test_session_threaded(sess_args, workers, jobs):
     def do_work(sess_args):
 
@@ -91,7 +93,9 @@ class Worker:
 @pytest.mark.parametrize(
     "workers", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
 )
-@pytest.mark.parametrize("jobs",  [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS])
+@pytest.mark.parametrize(
+    "jobs", [1, int(NUM_PROCESSORS / 2), NUM_PROCESSORS, 2 * NUM_PROCESSORS]
+)
 def test_session_multiprocess(sess_args, workers, jobs):
     with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
         sess_types = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS]
