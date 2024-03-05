@@ -1386,14 +1386,15 @@ void __remove_user_from_cache(struct session_list *ss)
     while (actUser != NULL)
     {
         struct usmUser *dummy = actUser;
-        if (
+        if (actUser->secName != NULL && ss->session->securityName != NULL &&
+            actUser->engineID != NULL && ss->session->contextEngineID != NULL &&
             strcmp((const char *)dummy->secName, (const char *)ss->session->securityName) == 0 &&
             strcmp((const char *)dummy->engineID, (const char *)ss->session->contextEngineID) == 0)
         {
             usm_remove_user(actUser);
+            usm_free_user(actUser);
             actUser->next = NULL;
             actUser->prev = NULL;
-            usm_free_user(actUser);
             break;
         }
         actUser = dummy->next;
