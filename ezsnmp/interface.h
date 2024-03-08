@@ -109,14 +109,6 @@ enum
     EXCEPTION
 };
 
-/******************************************************************************
- *
- * Mutexes for guarding information when multi-threading are listed below
- *
- ******************************************************************************/
-
-std::mutex remove_user_cache_mutex;
-std::mutex snmp_sess_synch_response_mutex;
 
 /******************************************************************************
  *

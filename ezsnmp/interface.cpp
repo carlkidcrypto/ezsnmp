@@ -21,7 +21,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <memory>
-#include <mutex>
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
@@ -1207,16 +1206,11 @@ int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
 
 retry:
 
-    Py_BEGIN_ALLOW_THREADS
-        // Lock to prevent:
-        // 'USM authentication failure (incorrect password or key) (plaintext scopedPDU header type 00: s/b 30)'
-        // errors
-        std::lock_guard<std::mutex>
-            guard(snmp_sess_synch_response_mutex);
+    Py_BEGIN_ALLOW_THREADS;
     status = snmp_sess_synch_response(ss, *pdu, response);
-    Py_END_ALLOW_THREADS
+    Py_END_ALLOW_THREADS;
 
-        if ((*response == NULL) && (status == STAT_SUCCESS))
+    if ((*response == NULL) && (status == STAT_SUCCESS))
     {
         status = STAT_ERROR;
     }
@@ -1611,8 +1605,8 @@ void *get_session_handle_from_capsule(PyObject *session_capsule)
 /* Automatically called when Python reclaims session_capsule object. */
 void delete_session_capsule(PyObject *session_capsule)
 {
-    // In a multi-threaded application this can lead to issues when sessions are deleted too early.
-    std::lock_guard<std::mutex> guard(remove_user_cache_mutex);
+    // Acquire the GIL
+    PyGILState_STATE gil_state = PyGILState_Ensure();
 
     /* PyCapsule_GetPointer will raise an exception if it fails. */
     struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
@@ -1623,6 +1617,9 @@ void delete_session_capsule(PyObject *session_capsule)
         snmp_sess_close(ctx->handle);
         free(ctx);
     }
+
+    // Release the GIL
+    PyGILState_Release(gil_state);
 }
 
 PyObject *netsnmp_create_session(PyObject *self, PyObject *args)
@@ -3039,6 +3036,7 @@ done:
     {
         return NULL;
     }
+
     Py_RETURN_NONE;
 }
 
