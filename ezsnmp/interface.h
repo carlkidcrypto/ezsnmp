@@ -2,9 +2,10 @@
  * function definitions, enums, etc.
  */
 
+
 /******************************************************************************
  *
- * Defines for the 'interface.c' file are listed below
+ * Defines for the 'interface.cpp' file are listed below
  *
  ******************************************************************************/
 
@@ -107,6 +108,7 @@ enum
     DEBUG,
     EXCEPTION
 };
+
 
 /******************************************************************************
  *

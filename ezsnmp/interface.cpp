@@ -1206,11 +1206,11 @@ int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
 
 retry:
 
-    Py_BEGIN_ALLOW_THREADS
-        status = snmp_sess_synch_response(ss, *pdu, response);
-    Py_END_ALLOW_THREADS
+    Py_BEGIN_ALLOW_THREADS;
+    status = snmp_sess_synch_response(ss, *pdu, response);
+    Py_END_ALLOW_THREADS;
 
-        if ((*response == NULL) && (status == STAT_SUCCESS))
+    if ((*response == NULL) && (status == STAT_SUCCESS))
     {
         status = STAT_ERROR;
     }
@@ -1373,13 +1373,15 @@ done:
 /*
  * Clears v3 user credentials from the local cache
  */
+
 void __remove_user_from_cache(struct session_list *ss)
 {
     struct usmUser *actUser = usm_get_userList();
     while (actUser != NULL)
     {
         struct usmUser *dummy = actUser;
-        if (
+        if (actUser->secName != NULL && ss->session->securityName != NULL &&
+            actUser->engineID != NULL && ss->session->contextEngineID != NULL &&
             strcmp((const char *)dummy->secName, (const char *)ss->session->securityName) == 0 &&
             strcmp((const char *)dummy->engineID, (const char *)ss->session->contextEngineID) == 0)
         {
@@ -1603,6 +1605,9 @@ void *get_session_handle_from_capsule(PyObject *session_capsule)
 /* Automatically called when Python reclaims session_capsule object. */
 void delete_session_capsule(PyObject *session_capsule)
 {
+    // Acquire the GIL
+    PyGILState_STATE gil_state = PyGILState_Ensure();
+
     /* PyCapsule_GetPointer will raise an exception if it fails. */
     struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
@@ -1612,6 +1617,9 @@ void delete_session_capsule(PyObject *session_capsule)
         snmp_sess_close(ctx->handle);
         free(ctx);
     }
+
+    // Release the GIL
+    PyGILState_Release(gil_state);
 }
 
 PyObject *netsnmp_create_session(PyObject *self, PyObject *args)
@@ -3028,6 +3036,7 @@ done:
     {
         return NULL;
     }
+
     Py_RETURN_NONE;
 }
 
