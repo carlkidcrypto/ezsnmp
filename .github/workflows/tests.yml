@@ -138,6 +138,14 @@ jobs:
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
+      
+      - name: Run Integration Tests
+        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        with:
+          linux: cd integration_tests &&
+                 ./run_integration_tests.sh;
+          macos: cd integration_tests &&
+                 ./run_integration_tests.sh;
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
