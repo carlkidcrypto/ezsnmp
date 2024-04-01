@@ -47,6 +47,7 @@ def test_session_invalid_port(version):
         session = Session(remote_port=1234, version=version, timeout=0.2, retries=1)
         session.get("sysContact.0")
 
+
 @pytest.mark.parametrize("version", [1, 2, 3])
 def test_session_ipv6_address(version):
     session = Session(hostname="2001:db8::", version=version)
@@ -103,6 +104,7 @@ def test_session_ipv6_invalid_hostname_and_remote_port(version):
             remote_port=162,
             version=version,
         )
+
 
 def test_session_set_multiple_next(sess, reset_values):
     # Destroy succeeds even if no row exists
