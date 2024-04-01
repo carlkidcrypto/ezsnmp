@@ -3955,6 +3955,9 @@ PyObject *netsnmp_set(PyObject *self, PyObject *args)
 
                 if (py_netsnmp_attr_string(varbind, (char *)"value", &val, &tmplen, &value_bytes) < 0)
                 {
+                    // @todo Make a new error type for ValueErrors.
+                    // We have type and object but not value.
+                    error = 1;
                     snmp_free_pdu(pdu);
                     pdu = NULL;
                     Py_DECREF(varbind);
