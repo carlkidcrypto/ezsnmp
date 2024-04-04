@@ -2,6 +2,15 @@ from __future__ import unicode_literals
 
 from ezsnmp.helpers import normalize_oid
 
+def test_normalize_oid_just_iso():
+    oid, oid_index = normalize_oid("oid")
+    assert oid == "oid"
+    assert oid_index == ""
+
+def test_normalize_oid_just_period():
+    oid, oid_index = normalize_oid(".")
+    assert oid == "."
+    assert oid_index == ""
 
 def test_normalize_oid_regular():
     oid, oid_index = normalize_oid("sysContact.0")
