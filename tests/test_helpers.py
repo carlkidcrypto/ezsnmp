@@ -23,6 +23,10 @@ def test_normalize_oid_regular_2():
     assert oid == "SNMPv2::mib-2"
     assert oid_index == "17"
 
+def test_normalize_oid_regular_3():
+    oid, oid_index = normalize_oid("nsCacheTimeout.1.3.6.1.2.1.2")
+    assert oid == "nsCacheTimeout"
+    assert oid_index == "1"
 
 def test_normalize_oid_numeric():
     oid, oid_index = normalize_oid(".1.3.6.1.2.1.1.1.0")
