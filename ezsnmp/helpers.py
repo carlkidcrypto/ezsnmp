@@ -20,10 +20,14 @@ def normalize_oid(oid=None, oid_index=None):
         if "." not in oid:
             oid = oid
             oid_index = ""
-
-        elif "::" not in oid and any(c.isalpha() for c in oid):
+        
+        elif str(oid).startswith("."):
             oid_index = subidentifiers.pop()
             oid = ".".join(subidentifiers)
+
+        elif "::" not in oid and any(c.isalpha() for c in oid):
+            oid_index = subidentifiers[1]
+            oid = subidentifiers[0]
 
         elif "::" not in oid and not any(c.isalpha() for c in oid):
             oid_index = ""
