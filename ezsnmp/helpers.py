@@ -12,6 +12,8 @@ def normalize_oid(oid=None, oid_index=None):
 
     # Determine the OID index from the OID if not specified
     if oid_index is None and oid is not None:
+        print(f"oid type: {type(oid)}, oid_index type: {type(oid_index)}")
+        print(f"oid: {oid}, oid_index: {oid_index}")
         # We attempt to extract the index from an OID (e.g. sysDescr.0
         # or .iso.org.dod.internet.mgmt.mib-2.system.sysContact.0 or
         # SNMPv2::mib-2.17.7.1.4.3.1.2.300)
@@ -21,7 +23,11 @@ def normalize_oid(oid=None, oid_index=None):
             oid = oid
             oid_index = ""
         
-        elif str(oid).startswith("."):
+        elif oid.startswith(".") and not any(c.isalpha() for c in oid):
+            oid_index = ""
+            oid = ".".join(subidentifiers)
+        
+        elif oid.startswith(".") and any(c.isalpha() for c in oid):
             oid_index = subidentifiers.pop()
             oid = ".".join(subidentifiers)
 
