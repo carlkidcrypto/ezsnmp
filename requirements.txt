@@ -1,6 +1,6 @@
 atomicwrites==1.4.1
 attrs==23.2.0
-black==24.3.0
+black==24.4.0
 click== 8.1.7
 colorama==0.4.6
 coverage==7.4.4
