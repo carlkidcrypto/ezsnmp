@@ -249,7 +249,7 @@ jobs:
 
       - name: Render Valgrind Comment Template
         id: template
-        uses: chuhlomin/render-template@v1.9
+        uses: chuhlomin/render-template@v1.10
         with:
           template: .github/comment-valgrind-template.md
           vars: |
