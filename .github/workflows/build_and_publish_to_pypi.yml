@@ -47,7 +47,7 @@ jobs:
           python-version: "3.10"
     
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y libsnmp-dev libperl-dev;

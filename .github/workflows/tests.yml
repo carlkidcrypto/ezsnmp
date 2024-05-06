@@ -48,7 +48,7 @@ jobs:
   
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
@@ -140,7 +140,7 @@ jobs:
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
       
       - name: Run Integration Tests
-        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: cd integration_tests &&
                  ./run_integration_tests.sh;
