@@ -18,7 +18,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v44.0.0
+        uses: tj-actions/changed-files@v44.3.0
         with:
           files: |
             ezsnmp/*.py
@@ -34,7 +34,7 @@ jobs:
     needs: check-source-changes
     steps:
       - uses: actions/checkout@v4
-      - uses: psf/black@24.3.0
+      - uses: psf/black@24.4.2
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -48,7 +48,7 @@ jobs:
   
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
@@ -140,7 +140,7 @@ jobs:
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
       
       - name: Run Integration Tests
-        uses: carlkidcrypto/os-specific-runner@v2.0.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: cd integration_tests &&
                  ./run_integration_tests.sh;
@@ -249,7 +249,7 @@ jobs:
 
       - name: Render Valgrind Comment Template
         id: template
-        uses: chuhlomin/render-template@v1.9
+        uses: chuhlomin/render-template@v1.10
         with:
           template: .github/comment-valgrind-template.md
           vars: |
