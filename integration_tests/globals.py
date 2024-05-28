@@ -32,7 +32,7 @@ SESS_V3_ARGS = {
 SESS_TYPES = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS]
 
 # Print SNMP information
-PRINT_SNMP_INFO = False
+PRINT_SNMP_INFO = True
 
 
 # Define a function that will be executed in a separate process or thread
@@ -60,6 +60,16 @@ def worker(request_type: str):
 
         elif request_type == "walk":
             test = sess.walk(".")
+
+            # Access the result to ensure that the data is actually retrieved
+            for item in test:
+                if PRINT_SNMP_INFO:
+                    print(f"\t{item.oid} - {item.value}")
+
+            del test
+        
+        elif request_type == "bulkwalk":
+            test = sess.bulkwalk(".")
 
             # Access the result to ensure that the data is actually retrieved
             for item in test:
