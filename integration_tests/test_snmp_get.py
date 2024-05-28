@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
         # Main thread continues to execute while the worker threads are running
         print(
-            f"multi_process_snmp_get: - {num_processes} - Main {type_of_execution} executing"
+            f"multi_{type_of_execution}_snmp_get: - {num_processes} - Main {type_of_execution} executing"
         )
 
         # Wait for all worker threads to finish
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
         # Main process continues to execute while the worker processes are running
         print(
-            f"multi_process_snmp_get: - {num_processes} - Main {type_of_execution} executing"
+            f"multi_{type_of_execution}_snmp_get: - {num_processes} - Main {type_of_execution} executing"
         )
 
         # Wait for all worker processes to finish
@@ -59,11 +59,11 @@ if __name__ == "__main__":
 
     # All processes/threads have finished, program exits
     print(
-        f"multi_process_snmp_get: - {num_processes} - Main {type_of_execution} finished"
+        f"multi_{type_of_execution}_snmp_get: - {num_processes} - Main {type_of_execution} finished"
     )
 
     # Calculate and print the total execution time
     execution_time = time() - start_time
     print(
-        f"multi_process_snmp_get: - {num_processes} - Total execution time: {execution_time} seconds"
+        f"multi_{type_of_execution}_snmp_get: - {num_processes} - Total execution time: {execution_time} seconds"
     )

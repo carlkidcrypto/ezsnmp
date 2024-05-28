@@ -6,6 +6,8 @@ from time import sleep
 from random import uniform, randint
 from ezsnmp.session import Session
 from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
+from os import getpid
+from threading import get_native_id
 
 SESS_V1_ARGS = {
     "version": 1,
@@ -42,7 +44,12 @@ SESS_V3_SHA_ARGS = {
 }
 
 SESS_TYPES = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_ARGS, SESS_V3_SHA_ARGS]
-SESS_TYPES_NAMES = ["SESS_V1_ARGS", "SESS_V2_ARGS", "SESS_V3_MD5_ARGS", "SESS_V3_SHA_ARGS"]
+SESS_TYPES_NAMES = [
+    "SESS_V1_ARGS",
+    "SESS_V2_ARGS",
+    "SESS_V3_MD5_ARGS",
+    "SESS_V3_SHA_ARGS",
+]
 
 # Print SNMP information
 PRINT_SNMP_INFO = False
@@ -52,12 +59,12 @@ PRINT_SNMP_INFO = False
 def worker(request_type: str):
     try:
         # We sleep to not burden our SNMP Server
-        sleep(uniform(0.0, 0.500))
+        sleep(uniform(0.0, 0.250))
         sess_type = randint(0, len(SESS_TYPES) - 1)
         sess = Session(**SESS_TYPES[sess_type])
 
         print(
-            f"\tWorker using: sess_type - {SESS_TYPES_NAMES[sess_type]} with request_type - {request_type}"
+            f"\tWorker using: sess_type - {SESS_TYPES_NAMES[sess_type]} with request_type - {request_type}. With PID: {getpid()} and TID: {get_native_id()}"
         )
 
         if request_type == "get":
@@ -81,7 +88,7 @@ def worker(request_type: str):
                     print(f"\t{item.oid} - {item.value}")
 
             del test
-        
+
         elif request_type == "bulkwalk":
             test = sess.bulkwalk(".")
 
@@ -94,8 +101,12 @@ def worker(request_type: str):
 
     except EzSNMPConnectionError:
         # We bombarded the SNMP server with too many requests...
-        print("\tEzSNMPConnectionError: Connection to the SNMP server was lost.")
+        print(
+            f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
+        )
 
     except EzSNMPError as e:
         if str(e) == "USM unknown security name (no such user exists)":
-            print("\tEzSNMPError: USM unknown security name (no such user exists)")
+            print(
+                f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"
+            )
