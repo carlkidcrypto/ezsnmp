@@ -10,6 +10,7 @@ def test_v3_authentication_md5_privacy_des(sess_v3_md5):
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
+    del s
 
 def test_v3_authentication_sha_privacy_aes(sess_v3_sha):
     s = Session(**sess_v3_sha)
@@ -18,3 +19,4 @@ def test_v3_authentication_sha_privacy_aes(sess_v3_sha):
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
+    del s
