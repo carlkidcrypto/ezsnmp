@@ -62,18 +62,30 @@ SESS_V2_ARGS = {
     "community": "public",
 }
 
-SESS_V3_ARGS = {
+SESS_V3_MD5_ARGS = {
     "version": 3,
     "hostname": "localhost",
     "remote_port": 11161,
+    "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial",
     "privacy_password": "priv_pass",
     "auth_password": "auth_pass",
 }
 
+SESS_V3_SHA_ARGS = {
+    "version": 3,
+    "hostname": "localhost",
+    "remote_port": 11161,
+    "auth_protocol": "SHA",
+    "security_level": "authPriv",
+    "security_username": "secondary",
+    "privacy_password": "priv_second",
+    "auth_password": "auth_second",
+}
 
-@pytest.fixture(params=[SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS])
+
+@pytest.fixture(params=[SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_ARGS])
 def sess_args(request):
     return request.param
 
@@ -91,5 +103,9 @@ def reset_values():
 
 
 @pytest.fixture
-def sess_v3():
-    return SESS_V3_ARGS
+def sess_v3_md5():
+    return SESS_V3_MD5_ARGS
+
+@pytest.fixture
+def sess_v3_sha():
+    return SESS_V3_SHA_ARGS
