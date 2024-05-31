@@ -167,10 +167,10 @@ On MacOS
 
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
-    mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    cp tests/snmpd.conf /etc/snmp/snmpd.conf;
-    launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
+    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
+    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
+    sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ dist/ ezsnmp.egg-info;
     python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
 
