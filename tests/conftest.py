@@ -69,6 +69,7 @@ SESS_V3_MD5_DES_ARGS = {
     "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial_md5_des",
+    "privacy_protocol": "DES",
     "privacy_password": "priv_pass",
     "auth_password": "auth_pass",
 }
@@ -80,6 +81,7 @@ SESS_V3_MD5_AES_ARGS = {
     "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial_md5_aes",
+    "privacy_protocol": "AES",
     "privacy_password": "priv_pass",
     "auth_password": "auth_pass",
 }
@@ -91,6 +93,7 @@ SESS_V3_SHA_AES_ARGS = {
     "auth_protocol": "SHA",
     "security_level": "authPriv",
     "security_username": "secondary_sha_aes",
+    "privacy_protocol": "AES",
     "privacy_password": "priv_second",
     "auth_password": "auth_second",
 }
@@ -102,6 +105,7 @@ SESS_V3_SHA_DES_ARGS = {
     "auth_protocol": "SHA",
     "security_level": "authPriv",
     "security_username": "secondary_sha_des",
+    "privacy_protocol": "DES",
     "privacy_password": "priv_second",
     "auth_password": "auth_second",
 }
