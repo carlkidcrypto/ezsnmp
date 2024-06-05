@@ -35,22 +35,6 @@ def test_v3_authentication_md5_privacy_aes(sess_v3_md5_aes):
     del s
 
 
-# def test_v3_authentication_sha_privacy_des(sess_v3_sha_des):
-#     s = Session(**sess_v3_sha_des)
-
-#     assert s.auth_password == "auth_second"
-#     assert s.auth_protocol == "SHA"
-#     assert s.privacy_password == "priv_second"
-#     assert s.privacy_protocol == "DES"
-
-#     res = s.get("sysDescr.0")
-
-#     assert res.oid == "sysDescr"
-#     assert res.oid_index == "0"
-#     assert res.snmp_type == "OCTETSTR"
-#     del s
-
-
 def test_v3_authentication_sha_privacy_aes(sess_v3_sha_aes):
     s = Session(**sess_v3_sha_aes)
 

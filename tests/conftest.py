@@ -98,20 +98,16 @@ SESS_V3_SHA_AES_ARGS = {
     "auth_password": "auth_second",
 }
 
-SESS_V3_SHA_DES_ARGS = {
-    "version": 3,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "auth_protocol": "SHA",
-    "security_level": "authPriv",
-    "security_username": "secondary_sha_des",
-    "privacy_protocol": "DES",
-    "privacy_password": "priv_second",
-    "auth_password": "auth_second",
-}
 
-
-@pytest.fixture(params=[SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_DES_ARGS])
+@pytest.fixture(
+    params=[
+        SESS_V1_ARGS,
+        SESS_V2_ARGS,
+        SESS_V3_MD5_DES_ARGS,
+        SESS_V3_MD5_AES_ARGS,
+        SESS_V3_SHA_AES_ARGS,
+    ]
+)
 def sess_args(request):
     return request.param
 
