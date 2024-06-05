@@ -102,7 +102,7 @@ else:
             # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
             # License: Apache-2.0
             # ...
-            #print(temp)
+            # print(temp)
             temp_path = str(temp[4].split("(")[0]).strip()
 
             libdirs.append(temp_path + "/lib")
