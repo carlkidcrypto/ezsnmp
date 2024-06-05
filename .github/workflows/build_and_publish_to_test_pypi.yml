@@ -28,7 +28,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    if: needs.check-source-changes.outputs.run_job == 'true'
+    # if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
