@@ -62,7 +62,9 @@ jobs:
                  brew install net-snmp;
                  brew install openssl@3;
                  echo 'export PATH="/opt/homebrew/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
+                 export PATH="/opt/homebrew/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/opt/homebrew/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
+                 export PATH="/opt/homebrew/opt/net-snmp/sbin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
