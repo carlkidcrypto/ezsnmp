@@ -9,46 +9,24 @@ from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
 from os import getpid
 from threading import get_native_id
 
-SESS_V1_ARGS = {
-    "version": 1,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "community": "public",
-}
-SESS_V2_ARGS = {
-    "version": 2,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "community": "public",
-}
-SESS_V3_MD5_ARGS = {
-    "version": 3,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "auth_protocol": "MD5",
-    "security_level": "authPriv",
-    "security_username": "initial",
-    "privacy_password": "priv_pass",
-    "auth_password": "auth_pass",
-}
+import os
+import sys
 
-SESS_V3_SHA_ARGS = {
-    "version": 3,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "auth_protocol": "SHA",
-    "security_level": "authPriv",
-    "security_username": "secondary",
-    "privacy_password": "priv_second",
-    "auth_password": "auth_second",
-}
+sys.path.insert(0, os.path.abspath("../tests/"))
 
-SESS_TYPES = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_ARGS, SESS_V3_SHA_ARGS]
+from conftest import (
+    SESS_V1_ARGS,
+    SESS_V2_ARGS,
+    SESS_V3_MD5_DES_ARGS,
+    SESS_V3_SHA_AES_ARGS,
+)
+
+SESS_TYPES = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_DES_ARGS, SESS_V3_SHA_AES_ARGS]
 SESS_TYPES_NAMES = [
     "SESS_V1_ARGS",
     "SESS_V2_ARGS",
-    "SESS_V3_MD5_ARGS",
-    "SESS_V3_SHA_ARGS",
+    "SESS_V3_MD5_DES_ARGS",
+    "SESS_V3_SHA_AES_ARGS",
 ]
 
 # Print SNMP information
