@@ -5,7 +5,7 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [main]
+    branches: [feature/fix_pypi_deployment]
 
 jobs:
   check-source-changes:
@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Sourcecode
         uses: actions/checkout@v4
 
-      - name: Check for changes in source code
+      - name: Check for changes in setup.py/cfg
         id: changed-files
         uses: tj-actions/changed-files@v44.5.2
         with:
@@ -44,8 +44,12 @@ jobs:
 
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+      - name: Build wheels using cibuildwheel
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
+          
+          macos: python -m cibuildwheel --output-dir wheelhouse --platform macos;
 
       - uses: actions/upload-artifact@v4
         with:
