@@ -110,7 +110,7 @@ class Session(object):
     :param security_level: security level (no_auth_or_privacy,
                            auth_without_privacy or auth_with_privacy) (v3)
     :param security_username: security name (v3)
-    :param privacy_protocol: privacy protocol (v3)
+    :param privacy_protocol: privacy protocol (v3) i.e AES, DES, etc
     :param privacy_password: privacy passphrase (v3)
     :param auth_protocol: authentication protocol (MD5 or SHA) (v3)
     :param auth_password: authentication passphrase (v3)

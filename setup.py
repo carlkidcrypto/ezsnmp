@@ -91,28 +91,19 @@ else:
                 "brew info {0}".format(openssl_ver), shell=True
             ).decode()
             temp = brew.split("\n")
-            # As of 01/02/2024 brew info openssl spits out lines. the fourth one is what we care about
-            # ==> openssl@3: stable 3.2.0 (bottled)
+            # As of 06/04/2024 brew info openssl spits out lines. the fifth one is what we care about
+            # This works for now, but we need a better solution
+            # ==> openssl@3: stable 3.3.0 (bottled)
             # Cryptography and SSL/TLS Toolkit
             # https://openssl.org/
-            # /opt/homebrew/Cellar/openssl@3/3.2.0_1 (6,805 files, 31.9MB) *     <-- THIS IS THE ONE WE WANT
-            # Poured from bottle using the formulae.brew.sh API on 2023-12-16 at 21:41:39
+            # Installed
+            # /opt/homebrew/Cellar/openssl@3/3.3.0 (6,977 files, 32.4MB) *
+            # Poured from bottle using the formulae.brew.sh API on 2024-06-04 at 21:17:37
             # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
             # License: Apache-2.0
-            # ==> Dependencies
-            # Required: ca-certificates ✔
-            # ==> Caveats
-            # A CA file has been bootstrapped using certificates from the system
-            # keychain. To add additional certificates, place .pem files in
-            # /opt/homebrew/etc/openssl@3/certs
-
-            # and run
-            # /opt/homebrew/opt/openssl@3/bin/c_rehash
-            # ==> Analytics
-            # install: 428,659 (30 days), 1,304,159 (90 days), 3,175,965 (365 days)
-            # install-on-request: 59,856 (30 days), 182,474 (90 days), 518,964 (365 days)
-            # build-error: 4,875 (30 days)
-            temp_path = str(temp[3].split("(")[0]).strip()
+            # ...
+            # print(temp)
+            temp_path = str(temp[4].split("(")[0]).strip()
 
             libdirs.append(temp_path + "/lib")
             incdirs.append(temp_path + "/include")

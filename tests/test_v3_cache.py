@@ -5,8 +5,8 @@ from ezsnmp.session import Session
 from ezsnmp.exceptions import EzSNMPConnectionError
 
 
-def test_v3_not_caching_user(sess_v3):
-    s = Session(**sess_v3)
+def test_v3_not_caching_user(sess_v3_md5_des):
+    s = Session(**sess_v3_md5_des)
     res = s.get("sysDescr.0")
 
     assert res.oid == "sysDescr"
@@ -17,7 +17,7 @@ def test_v3_not_caching_user(sess_v3):
     with pytest.raises(EzSNMPConnectionError):
         res = s.get("sysDescr.0")
 
-    d = dict(**sess_v3)
+    d = dict(**sess_v3_md5_des)
     d["privacy_password"] = "wrong_pass"
     s = Session(**d)
     with pytest.raises(EzSNMPConnectionError):

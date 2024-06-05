@@ -93,7 +93,7 @@ jobs:
           elif [ "$RUNNER_OS" == "macOS" ]
           then
             mibdir=""
-            SNMPD=/usr/local/opt/net-snmp/sbin/snmpd
+            SNMPD=$(which snmpd)
           else
             mibdir=""
             SNMPD=$(which.exe snmpd)

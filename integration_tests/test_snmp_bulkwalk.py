@@ -1,5 +1,5 @@
 """
-This script is used to test the performance of the SNMP walk operation using threads and processes.
+This script is used to test the performance of the SNMP bulkwalk operation using threads and processes.
 """
 
 import multiprocessing
@@ -24,13 +24,13 @@ if __name__ == "__main__":
         # Create and start the specified number of threads
         threads = []
         for _ in range(num_processes):
-            thread = threading.Thread(target=worker, args=("walk",))
+            thread = threading.Thread(target=worker, args=("bulkwalk",))
             thread.start()
             threads.append(thread)
 
         # Main thread continues to execute while the worker threads are running
         print(
-            f"multi_{type_of_execution}_snmp_walk: - {num_processes} - Main {type_of_execution} executing"
+            f"multi_{type_of_execution}_snmp_bulkwalk: - {num_processes} - Main {type_of_execution} executing"
         )
 
         # Wait for all worker threads to finish
@@ -41,13 +41,13 @@ if __name__ == "__main__":
         # Create and start the specified number of processes
         processes = []
         for _ in range(num_processes):
-            process = multiprocessing.Process(target=worker, args=("walk",))
+            process = multiprocessing.Process(target=worker, args=("bulkwalk",))
             process.start()
             processes.append(process)
 
         # Main process continues to execute while the worker processes are running
         print(
-            f"multi_{type_of_execution}_snmp_walk: - {num_processes} - Main {type_of_execution} executing"
+            f"multi_{type_of_execution}_snmp_bulkwalk: - {num_processes} - Main {type_of_execution} executing"
         )
 
         # Wait for all worker processes to finish
@@ -59,11 +59,11 @@ if __name__ == "__main__":
 
     # All processes/threads have finished, program exits
     print(
-        f"multi_{type_of_execution}_snmp_walk: - {num_processes} - Main {type_of_execution} finished"
+        f"multi_{type_of_execution}_snmp_bulkwalk: - {num_processes} - Main {type_of_execution} finished"
     )
 
     # Calculate and print the total execution time
     execution_time = time() - start_time
     print(
-        f"multi_{type_of_execution}_snmp_walk: - {num_processes} -  Total execution time: {execution_time} seconds"
+        f"multi_{type_of_execution}_snmp_bulkwalk: - {num_processes} - Total execution time: {execution_time} seconds"
     )
