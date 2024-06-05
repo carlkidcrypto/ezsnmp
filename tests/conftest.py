@@ -62,30 +62,52 @@ SESS_V2_ARGS = {
     "community": "public",
 }
 
-SESS_V3_MD5_ARGS = {
+SESS_V3_MD5_DES_ARGS = {
     "version": 3,
     "hostname": "localhost",
     "remote_port": 11161,
     "auth_protocol": "MD5",
     "security_level": "authPriv",
-    "security_username": "initial",
+    "security_username": "initial_md5_des",
     "privacy_password": "priv_pass",
     "auth_password": "auth_pass",
 }
 
-SESS_V3_SHA_ARGS = {
+SESS_V3_MD5_AES_ARGS = {
+    "version": 3,
+    "hostname": "localhost",
+    "remote_port": 11161,
+    "auth_protocol": "MD5",
+    "security_level": "authPriv",
+    "security_username": "initial_md5_aes",
+    "privacy_password": "priv_pass",
+    "auth_password": "auth_pass",
+}
+
+SESS_V3_SHA_AES_ARGS = {
     "version": 3,
     "hostname": "localhost",
     "remote_port": 11161,
     "auth_protocol": "SHA",
     "security_level": "authPriv",
-    "security_username": "secondary",
+    "security_username": "secondary_sha_aes",
+    "privacy_password": "priv_second",
+    "auth_password": "auth_second",
+}
+
+SESS_V3_SHA_DES_ARGS = {
+    "version": 3,
+    "hostname": "localhost",
+    "remote_port": 11161,
+    "auth_protocol": "SHA",
+    "security_level": "authPriv",
+    "security_username": "secondary_sha_des",
     "privacy_password": "priv_second",
     "auth_password": "auth_second",
 }
 
 
-@pytest.fixture(params=[SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_ARGS])
+@pytest.fixture(params=[SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_DES_ARGS])
 def sess_args(request):
     return request.param
 
@@ -103,9 +125,20 @@ def reset_values():
 
 
 @pytest.fixture
-def sess_v3_md5():
-    return SESS_V3_MD5_ARGS
+def sess_v3_md5_des():
+    return SESS_V3_MD5_DES_ARGS
+
 
 @pytest.fixture
-def sess_v3_sha():
-    return SESS_V3_SHA_ARGS
+def sess_v3_md5_aes():
+    return SESS_V3_MD5_AES_ARGS
+
+
+@pytest.fixture
+def sess_v3_sha_aes():
+    return SESS_V3_SHA_AES_ARGS
+
+
+@pytest.fixture
+def sess_v3_sha_des():
+    return SESS_V3_SHA_DES_ARGS
