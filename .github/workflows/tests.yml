@@ -64,8 +64,6 @@ jobs:
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
-                 echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.zshrc;
-                 export PATH="/usr/local/opt/openssl/bin:$PATH";
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
