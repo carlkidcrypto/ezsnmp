@@ -26,6 +26,7 @@ before-all = """yum -y install wget;
                 make install ;"""
 
 [tool.cibuildwheel.macos]
+CIBW_ARCH = "all"
 before-all = """brew update;
     brew install openssl@3;
     brew install net-snmp;
