@@ -1,6 +1,7 @@
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux2014"
 skip = "cp27-* cp36-* cp37-* pp37-*"
+CIBW_ARCH = "all"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_24*"
@@ -26,7 +27,6 @@ before-all = """yum -y install wget;
                 make install ;"""
 
 [tool.cibuildwheel.macos]
-CIBW_ARCH = "all"
 before-all = """brew update;
     brew install openssl@3;
     brew install net-snmp;
