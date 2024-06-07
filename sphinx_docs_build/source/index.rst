@@ -64,6 +64,15 @@ Install EzSNMP via pip as follows:
 
     pip install ezsnmp
 
+Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSNMP compatiabile
+with as many as possible linux distros. Occasionally it isn't perfect. If you have issues try
+something like this:
+
+.. code-block:: bash
+
+    pip install --force-reinstall --no-binary :all: ezsnmp
+
+
 Quick Start
 -----------
 There are primarily two ways you can use the EzSNMP library.
