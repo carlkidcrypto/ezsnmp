@@ -510,7 +510,7 @@ int __snprint_value(char *buf, size_t buf_len,
             break;
 
         case ASN_OBJECT_ID:
-            __sprint_num_objid(buf, (oid *)(var->val.objid),
+            __snprintf_num_objid(buf, (oid *)(var->val.objid),
                                var->val_len / sizeof(oid));
             len = STRLEN(buf);
             break;
@@ -573,13 +573,13 @@ int __snprint_value(char *buf, size_t buf_len,
     return len;
 }
 
-int __sprint_num_objid(char *buf, oid *objid, int len)
+int __snprintf_num_objid(char *buf, oid *objid, int len)
 {
     int i;
     buf[0] = '\0';
     for (i = 0; i < len; i++)
     {
-        sprintf(buf, ".%lu", *objid++);
+        snprintf(buf, sizeof(*objid), ".%lu", *objid++);
         buf += STRLEN(buf);
     }
     return SUCCESS;
@@ -1503,7 +1503,7 @@ void __py_netsnmp_update_session_errors(PyObject *session,
 
     PyErr_Fetch(&type, &value, &traceback);
 
-    py_netsnmp_attr_set_string(session, "error_string", err_str,
+    py_netsnmp_attr_set_string(session, (char *) "error_string", err_str,
                                STRLEN(err_str));
 
     tmp_for_conversion = PyLong_FromLong(err_num);
