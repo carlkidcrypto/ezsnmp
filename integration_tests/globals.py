@@ -12,7 +12,7 @@ from threading import get_native_id
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../tests/"))
+sys.path.insert(1, os.path.abspath("../tests/session_parameters.py"))
 
 from session_parameters import (
     SESS_V1_ARGS,
