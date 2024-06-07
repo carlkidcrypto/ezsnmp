@@ -14,7 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../tests/"))
 
-from conftest import (
+from session_parameters import (
     SESS_V1_ARGS,
     SESS_V2_ARGS,
     SESS_V3_MD5_DES_ARGS,
