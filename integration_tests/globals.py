@@ -14,6 +14,7 @@ SESS_V1_ARGS = {
     "hostname": "localhost",
     "remote_port": 11161,
     "community": "public",
+    "retry_no_such": True,
 }
 
 SESS_V2_ARGS = {
@@ -80,12 +81,23 @@ SESS_V3_MD5_NO_PRIV_ARGS = {
 }
 
 
-SESS_TYPES = [SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_MD5_DES_ARGS, SESS_V3_SHA_AES_ARGS]
+SESS_TYPES = [
+    SESS_V1_ARGS,
+    SESS_V2_ARGS,
+    SESS_V3_MD5_DES_ARGS,
+    SESS_V3_MD5_AES_ARGS,
+    SESS_V3_SHA_AES_ARGS,
+    SESS_V3_SHA_NO_PRIV_ARGS,
+    SESS_V3_MD5_NO_PRIV_ARGS,
+]
 SESS_TYPES_NAMES = [
     "SESS_V1_ARGS",
     "SESS_V2_ARGS",
     "SESS_V3_MD5_DES_ARGS",
+    "SESS_V3_MD5_AES_ARGS",
     "SESS_V3_SHA_AES_ARGS",
+    "SESS_V3_SHA_NO_PRIV_ARGS",
+    "SESS_V3_MD5_NO_PRIV_ARGS",
 ]
 
 # Print SNMP information
@@ -99,8 +111,6 @@ def worker(request_type: str):
     usm_unknown_security_name_counter = 0
     while are_we_done != True:
         try:
-            # We sleep to not burden our SNMP Server
-            sleep(uniform(0.0, 0.250))
             sess_type = randint(0, len(SESS_TYPES) - 1)
             sess = Session(**SESS_TYPES[sess_type])
 
@@ -139,12 +149,14 @@ def worker(request_type: str):
                         print(f"\t{item.oid} - {item.value}")
 
                 del test
-            
+
             del sess
             are_we_done = True
             print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
             print(f"\t\tconnection_error_counter: {connection_error_counter}")
-            print(f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}")
+            print(
+                f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}"
+            )
 
         except EzSNMPConnectionError:
             # We bombarded the SNMP server with too many requests...
@@ -158,7 +170,7 @@ def worker(request_type: str):
                 # print(
                 #     f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"
                 # )
-                usm_unknown_security_name_counter +=1
-            
+                usm_unknown_security_name_counter += 1
+
             else:
                 raise e

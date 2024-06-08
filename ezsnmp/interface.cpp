@@ -1605,9 +1605,6 @@ void *get_session_handle_from_capsule(PyObject *session_capsule)
 /* Automatically called when Python reclaims session_capsule object. */
 void delete_session_capsule(PyObject *session_capsule)
 {
-    // Acquire the GIL
-    PyGILState_STATE gil_state = PyGILState_Ensure();
-
     /* PyCapsule_GetPointer will raise an exception if it fails. */
     struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
@@ -1617,9 +1614,6 @@ void delete_session_capsule(PyObject *session_capsule)
         snmp_sess_close(ctx->handle);
         free(ctx);
     }
-
-    // Release the GIL
-    PyGILState_Release(gil_state);
 }
 
 PyObject *netsnmp_create_session(PyObject *self, PyObject *args)

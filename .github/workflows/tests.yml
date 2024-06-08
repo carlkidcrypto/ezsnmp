@@ -142,10 +142,16 @@ jobs:
       - name: Run Integration Tests
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
-          linux: cd integration_tests &&
-                 ./run_integration_tests.sh;
-          macos: cd integration_tests &&
-                 ./run_integration_tests.sh;
+          linux: |
+                 cd integration_tests &&
+                 ./run_integration_tests.sh | grep "Total execution time" &&
+                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter" &&
+                 ./run_integration_tests.sh | grep "connection_error_counter";
+          macos: |
+                 cd integration_tests &&
+                 ./run_integration_tests.sh | grep "Total execution time" &&
+                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter" &&
+                 ./run_integration_tests.sh | grep "connection_error_counter";
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
