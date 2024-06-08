@@ -8,9 +8,8 @@ from ezsnmp.session import Session
 from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
 from os import getpid
 from threading import get_native_id
-
-import os
-import sys
+from random import choice
+from string import ascii_uppercase, digits
 
 SESS_V1_ARGS = {
     "version": 1,
@@ -36,6 +35,7 @@ SESS_V3_MD5_DES_ARGS = {
     "privacy_protocol": "DES",
     "privacy_password": "priv_pass",
     "auth_password": "auth_pass",
+    "context": "".join(choice(ascii_uppercase + digits) for _ in range(8)),
 }
 
 SESS_V3_MD5_AES_ARGS = {
@@ -48,6 +48,7 @@ SESS_V3_MD5_AES_ARGS = {
     "privacy_protocol": "AES",
     "privacy_password": "priv_pass",
     "auth_password": "auth_pass",
+    "context": "".join(choice(ascii_uppercase + digits) for _ in range(8)),
 }
 
 SESS_V3_SHA_AES_ARGS = {
@@ -60,6 +61,7 @@ SESS_V3_SHA_AES_ARGS = {
     "privacy_protocol": "AES",
     "privacy_password": "priv_second",
     "auth_password": "auth_second",
+    "context": "".join(choice(ascii_uppercase + digits) for _ in range(8)),
 }
 
 SESS_V3_SHA_NO_PRIV_ARGS = {
@@ -70,6 +72,7 @@ SESS_V3_SHA_NO_PRIV_ARGS = {
     "security_level": "authNoPriv",
     "security_username": "secondary_sha_no_priv",
     "auth_password": "auth_second",
+    "context": "".join(choice(ascii_uppercase + digits) for _ in range(8)),
 }
 
 SESS_V3_MD5_NO_PRIV_ARGS = {
@@ -80,6 +83,7 @@ SESS_V3_MD5_NO_PRIV_ARGS = {
     "security_level": "auth_without_privacy",
     "security_username": "initial_md5_no_priv",
     "auth_password": "auth_pass",
+    "context": "".join(choice(ascii_uppercase + digits) for _ in range(8)),
 }
 
 
@@ -138,6 +142,8 @@ def worker(request_type: str):
                     print(f"\t{item.oid} - {item.value}")
 
             del test
+
+        del sess
 
     except EzSNMPConnectionError:
         # We bombarded the SNMP server with too many requests...
