@@ -141,7 +141,7 @@ int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
                     netsnmp_pdu **response, int retry_nosuch,
                     char *err_str, int *err_num, int *err_ind,
                     bitarray *invalid_oids);
-void __remove_v3_user_from_cache(const char * securityName, const char * contextEngineID);
+void __remove_user_from_cache(struct session_list *ss);
 PyObject *py_netsnmp_construct_varbind(void);
 int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
                            Py_ssize_t *len, PyObject **attr_bytes);

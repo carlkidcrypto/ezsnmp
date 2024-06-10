@@ -560,7 +560,6 @@ class Session(object):
                 self.privacy_password,
                 self.engine_boots,
                 self.engine_time,
-                True, # clear user cache
             )
 
         # SNMP v1 & v2
