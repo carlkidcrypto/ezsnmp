@@ -1374,16 +1374,16 @@ done:
  * Clears v3 user credentials from the local cache
  */
 
-void __remove_user_from_cache(struct session_list *ss)
+void __remove_v3_user_from_cache(const char * securityName, const char * contextEngineID)
 {
     struct usmUser *actUser = usm_get_userList();
     while (actUser != NULL)
     {
         struct usmUser *dummy = actUser;
-        if (actUser->secName != NULL && ss->session->securityName != NULL &&
-            actUser->engineID != NULL && ss->session->contextEngineID != NULL &&
-            strcmp((const char *)dummy->secName, (const char *)ss->session->securityName) == 0 &&
-            strcmp((const char *)dummy->engineID, (const char *)ss->session->contextEngineID) == 0)
+        if (actUser->secName != NULL && securityName != NULL &&
+            actUser->engineID != NULL && contextEngineID != NULL &&
+            strcmp((const char *)dummy->secName, (const char *)securityName) == 0 &&
+            strcmp((const char *)dummy->engineID, (const char *)contextEngineID) == 0)
         {
             usm_remove_user(actUser);
             actUser->next = NULL;
@@ -1609,8 +1609,6 @@ void delete_session_capsule(PyObject *session_capsule)
     struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
     {
-        // clear_user_list(); // Too dangerous, may disrupt other valid sessions
-        __remove_user_from_cache((struct session_list *)ctx->handle);
         snmp_sess_close(ctx->handle);
         free(ctx);
     }
@@ -1690,18 +1688,26 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
     char *priv_pass;
     int eng_boots;
     int eng_time;
+    bool clear_user_from_cache;
     SnmpSession session = {0};
 
-    if (!PyArg_ParseTuple(args, "isiiisisssssssii", &version,
+    if (!PyArg_ParseTuple(args, "isiiisisssssssiib", &version,
                           &peer, &lport, &retries, &timeout,
                           &sec_name, &sec_level, &sec_eng_id,
                           &context_eng_id, &context,
                           &auth_proto, &auth_pass,
                           &priv_proto, &priv_pass,
-                          &eng_boots, &eng_time))
+                          &eng_boots, &eng_time, &clear_user_from_cache))
     {
         return NULL;
     }
+
+    // @WIP
+    if (clear_user_from_cache)
+    {
+        __remove_v3_user_from_cache(sec_name, context_eng_id);
+    }
+
 
     snmp_sess_init(&session);
 
