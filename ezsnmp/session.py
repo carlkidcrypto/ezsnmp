@@ -271,6 +271,12 @@ class Session(object):
         # Create interface instance
         self.update_session()
 
+    def __enter__(self):
+        return self
+         
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        del self.sess_ptr
+
     @property
     def connect_hostname(self):
         def format_hostname(hostname):
