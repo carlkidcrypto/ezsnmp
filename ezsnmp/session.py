@@ -522,6 +522,10 @@ class Session(object):
                 self.__setattr__(keyword, value)
             else:
                 warn('Keyword argument "{}" is not an attribute'.format(keyword))
+        
+        del self.sess_ptr
+        self.sess_ptr = None
+
         # Tunneled
         if self.tunneled:
             # TODO: Determine the best way to test this
