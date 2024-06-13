@@ -144,14 +144,14 @@ jobs:
         with:
           linux: |
                  cd integration_tests &&
-                 ./run_integration_tests.sh | grep "Total execution time" &&
-                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter" &&
-                 ./run_integration_tests.sh | grep "connection_error_counter";
+                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_log.txt &&
+                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_log.txt &&
+                 ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_log.txt;
           macos: |
                  cd integration_tests &&
-                 ./run_integration_tests.sh | grep "Total execution time" &&
-                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter" &&
-                 ./run_integration_tests.sh | grep "connection_error_counter";
+                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_log.txt &&
+                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_log.txt &&
+                 ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_log.txt;
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
@@ -165,6 +165,7 @@ jobs:
 
       - name: Create multi-file output listing
         run: |
+          cd /home/runner/work/ezsnmp/ezsnmp/
           echo 'pytest_multiple_files<<EOF' >> $GITHUB_OUTPUT
           export test_xml=($(ls -d pytest-results_*latest_*/*.xml | sort ))
           export test_log=($(ls -d pytest-results_*latest_*/*.log | sort ))

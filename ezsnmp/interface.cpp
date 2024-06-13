@@ -1649,7 +1649,9 @@ void delete_session_capsule(PyObject *session_capsule)
     if (ctx)
     {
         // clear_user_list(); // Too dangerous, may disrupt other valid sessions
+        Py_BEGIN_ALLOW_THREADS;
         __remove_v3_user_from_cache((struct session_list *)ctx->handle);
+        Py_END_ALLOW_THREADS;
         snmp_sess_close(ctx->handle);
         free(ctx);
     }
