@@ -273,7 +273,7 @@ class Session(object):
 
     def __enter__(self):
         return self
-         
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         del self.sess_ptr
 
@@ -530,7 +530,7 @@ class Session(object):
                     self.__setattr__(keyword, value)
                 else:
                     warn('Keyword argument "{}" is not an attribute'.format(keyword))
-        
+
             del self.sess_ptr
             self.sess_ptr = None
 
