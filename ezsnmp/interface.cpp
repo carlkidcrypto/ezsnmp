@@ -23,12 +23,14 @@
 #include <memory>
 #include <string>
 #include <map>
+#include <mutex>
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
 #endif
 
-static std::map<std::string, uint64_t> in_use_v3_sessions;
+std::map<std::string, uint64_t> g_in_use_v3_sessions;
+std::mutex g_in_use_v3_sessions_mutex;
 
 /* include bitarray data structure for v1 queries */
 #include "simple_bitarray.h"
@@ -1384,47 +1386,49 @@ void __remove_v3_user_from_cache(struct session_list *ss)
     while (actUser != NULL)
     {
         struct usmUser *dummy = actUser;
-        auto act_user_sec_name_str = std::string(actUser->secName);
-        auto act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID)); // u_char to char
 
-        auto security_name_str = std::string(ss->session->securityName);
-        auto context_engine_id_str = std::string(reinterpret_cast<char *>(ss->session->contextEngineID)); // u_char to char
+        auto security_name_str = std::string("");
+        auto act_user_sec_name_str = std::string("");
+        if (ss->session->securityName != NULL && actUser->secName != NULL)
+        {
+            security_name_str = std::string(ss->session->securityName);
+            act_user_sec_name_str = std::string(actUser->secName);
+        }
+
+        auto context_engine_id_str = std::string("");
+        auto act_user_engine_id_str = std::string("");
+        if (ss->session->contextEngineID != NULL && actUser->engineID != NULL)
+        {
+            context_engine_id_str = std::string(reinterpret_cast<char *>(ss->session->contextEngineID)); // u_char to char
+            act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));           // u_char to char
+        }
 
         if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
             security_name_str == act_user_sec_name_str &&
             context_engine_id_str == act_user_engine_id_str)
         {
-            auto iter = in_use_v3_sessions.find(security_name_str);
-            printf("2 - security_name_str: %s\n", security_name_str.c_str());
-            if (iter == in_use_v3_sessions.end())
+            g_in_use_v3_sessions_mutex.lock();
+            auto iter = g_in_use_v3_sessions.find(security_name_str);
+            if (iter != g_in_use_v3_sessions.end())
             {
-                break;
-            }
-            else
-            {
-                printf("2 - in_use_v3_sessions[security_name_str]: %d\n", in_use_v3_sessions[security_name_str]);
                 // Found and are we the only one?
-                if (in_use_v3_sessions[security_name_str] > 1)
+                if (g_in_use_v3_sessions[security_name_str] > 1)
                 {
-                    in_use_v3_sessions[security_name_str] -= 1;
-                    break;
+                    g_in_use_v3_sessions[security_name_str] -= 1;
                 }
-                else if (in_use_v3_sessions[security_name_str] == 1)
+                else if (g_in_use_v3_sessions[security_name_str] == 1)
                 {
                     usm_remove_user(actUser);
                     actUser->next = NULL;
                     actUser->prev = NULL;
                     usm_free_user(actUser);
-                    in_use_v3_sessions[security_name_str] = 0;
-                    break;
+                    g_in_use_v3_sessions[security_name_str] = 0;
                 }
-                else
-                {
-                    // We shouldn't be here
-                    printf("3 - in_use_v3_sessions[security_name_str]: %d\n", in_use_v3_sessions[security_name_str]);
-                    break;
-                }
+
+                g_in_use_v3_sessions_mutex.unlock();
+                break;
             }
+            g_in_use_v3_sessions_mutex.unlock();
         }
         actUser = dummy->next;
     }
@@ -1823,21 +1827,20 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
     // Before we return the session capsule add the SecurityName and ContextEngineID to the global map
     security_name_str = std::string(session.securityName);
     context_engine_id_str = std::string(reinterpret_cast<char *>(session.contextEngineID)); // u_char to char
-    iter = in_use_v3_sessions.find(security_name_str);
-    printf("1 - security_name_str: %s\n", security_name_str.c_str());
+    g_in_use_v3_sessions_mutex.lock();
+    iter = g_in_use_v3_sessions.find(security_name_str);
 
-    if (iter == in_use_v3_sessions.end())
+    if (iter == g_in_use_v3_sessions.end())
     {
         // Not Found
-        in_use_v3_sessions[security_name_str] = 1;
+        g_in_use_v3_sessions[security_name_str] = 1;
     }
     else
     {
         // Found
-        in_use_v3_sessions[security_name_str] += 1;
+        g_in_use_v3_sessions[security_name_str] += 1;
     }
-
-    printf("1 - in_use_v3_sessions[security_name_str]: %d\n", in_use_v3_sessions[security_name_str]);
+    g_in_use_v3_sessions_mutex.unlock();
 
     return create_session_capsule(&session);
 

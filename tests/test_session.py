@@ -65,6 +65,7 @@ def test_session_ipv6_address_and_remote_port(version):
     assert session.hostname == "fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa"
     assert session.remote_port == 162
     assert session.connect_hostname == "[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:162"
+    del session
 
 
 @pytest.mark.parametrize("version", [1, 2, 3])
@@ -73,6 +74,7 @@ def test_session_ipv6_address_and_remote_port_split(version):
     assert session.hostname == "[2001:db8::]"
     assert session.remote_port == 161
     assert session.connect_hostname == "[2001:db8::]:161"
+    del session
 
 
 @pytest.mark.parametrize("version", [1, 2, 3])
@@ -81,6 +83,7 @@ def test_session_ipv6_address_with_protocol_and_remote_port_split(version):
     assert session.hostname == "udp6:[2001:db8::]"
     assert session.remote_port == 162
     assert session.connect_hostname == "udp6:[2001:db8::]:162"
+    del session
 
 
 @pytest.mark.parametrize("version", [1, 2, 3])
@@ -88,6 +91,7 @@ def test_session_ipv6_address_with_protocol(version):
     session = Session(hostname="udp6:[2001:db8::]", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
     assert session.connect_hostname == "udp6:[2001:db8::]"
+    del session
 
 
 @pytest.mark.parametrize("version", [1, 2, 3])
@@ -139,6 +143,8 @@ def test_session_set_multiple_next(sess, reset_values):
     assert res[2].value == "3"
     assert res[2].snmp_type == "INTEGER"
 
+    del sess
+
 
 def test_session_set_clear(sess):
     res = sess.set(".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", 6)
@@ -165,6 +171,8 @@ def test_session_set_clear(sess):
     assert res[2].value == "0"
     assert res[2].snmp_type == "COUNTER"
 
+    del sess
+
 
 def test_session_get(sess):
     res = sess.get([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
@@ -186,6 +194,8 @@ def test_session_get(sess):
     assert res[2].value == "my original location"
     assert res[2].snmp_type == "OCTETSTR"
 
+    del sess
+
 
 def test_session_get_use_numeric(sess):
     sess.use_numeric = True
@@ -195,6 +205,8 @@ def test_session_get_use_numeric(sess):
     assert res.oid_index == "0"
     assert res.value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res.snmp_type == "OCTETSTR"
+
+    del sess
 
 
 def test_session_get_use_sprint_value(sess):
@@ -206,6 +218,8 @@ def test_session_get_use_sprint_value(sess):
     assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res.value)
     assert res.snmp_type == "TICKS"
 
+    del sess
+
 
 def test_session_get_use_enums(sess):
     sess.use_enums = True
@@ -215,6 +229,8 @@ def test_session_get_use_enums(sess):
     assert res.oid_index == "1"
     assert res.value == "up"
     assert res.snmp_type == "INTEGER"
+
+    del sess
 
 
 def test_session_get_next(sess):
@@ -237,6 +253,8 @@ def test_session_get_next(sess):
     assert int(res[2].value) >= 0
     assert res[2].snmp_type == "TICKS"
 
+    del sess
+
 
 def test_session_set(sess, reset_values):
     res = sess.get(("sysLocation", "0"))
@@ -247,6 +265,8 @@ def test_session_set(sess, reset_values):
 
     res = sess.get(("sysLocation", "0"))
     assert res.value == "my newer location"
+
+    del sess
 
 
 def test_session_set_multiple(sess, reset_values):
@@ -265,6 +285,8 @@ def test_session_set_multiple(sess, reset_values):
     res = sess.get(["sysLocation.0", "nsCacheTimeout.1.3.6.1.2.1.2.2"])
     assert res[0].value == "my newer location"
     assert res[1].value == "160"
+
+    del sess
 
 
 def test_session_get_bulk(sess):  # noqa
@@ -299,6 +321,8 @@ def test_session_get_bulk(sess):  # noqa
         assert res[4].oid_index == "1"
         assert int(res[4].value) >= 0
         assert res[4].snmp_type == "TICKS"
+
+        del sess
 
 
 def test_session_get_invalid_instance(sess):
@@ -368,6 +392,8 @@ def test_session_walk(sess):
     assert res[5].value == "my original location"
     assert res[5].snmp_type == "OCTETSTR"
 
+    del sess
+
 
 def test_session_bulkwalk(sess):
     if sess.version == 1:
@@ -397,6 +423,8 @@ def test_session_bulkwalk(sess):
         assert res[5].oid_index == "0"
         assert res[5].value == "my original location"
         assert res[5].snmp_type == "OCTETSTR"
+
+        del sess
 
 
 def test_session_walk_all(sess):
@@ -432,6 +460,8 @@ def test_session_walk_all(sess):
         assert res[5].value == "my original location"
         assert res[5].snmp_type == "OCTETSTR"
 
+        del sess
+
 
 def test_session_update():
     s = Session(version=3)
@@ -447,3 +477,5 @@ def test_session_update():
     s.update_session(tunneled=False, version=2)
     assert s.version == 2
     assert s.tunneled is False
+
+    del s

@@ -517,14 +517,16 @@ class Session(object):
             s.version = 1
             s.update_session()
         """
-        for keyword, value in kwargs.items():
-            if keyword in self.__dict__:
-                self.__setattr__(keyword, value)
-            else:
-                warn('Keyword argument "{}" is not an attribute'.format(keyword))
+
+        if kwargs:
+            for keyword, value in kwargs.items():
+                if keyword in self.__dict__:
+                    self.__setattr__(keyword, value)
+                else:
+                    warn('Keyword argument "{}" is not an attribute'.format(keyword))
         
-        del self.sess_ptr
-        self.sess_ptr = None
+            del self.sess_ptr
+            self.sess_ptr = None
 
         # Tunneled
         if self.tunneled:
