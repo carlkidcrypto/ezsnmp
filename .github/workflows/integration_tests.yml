@@ -112,6 +112,6 @@ jobs:
         with:
           name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
           path: 
-                integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log
-                integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log
-                integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log
+                ./integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log
+                ./integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log
+                ./integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log
