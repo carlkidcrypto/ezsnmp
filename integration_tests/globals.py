@@ -165,12 +165,18 @@ def worker(request_type: str):
             # )
             connection_error_counter += 1
 
+            if connection_error_counter >= 10:
+                are_we_done = True
+
         except EzSNMPError as e:
             if str(e) == "USM unknown security name (no such user exists)":
                 # print(
                 #     f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"
                 # )
                 usm_unknown_security_name_counter += 1
+
+                if usm_unknown_security_name_counter >= 10:
+                    are_we_done = True
 
             else:
                 raise e
