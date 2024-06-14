@@ -100,10 +100,12 @@ jobs:
           linux: |
                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
                  ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
                  cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
                  ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
  
       - name: Run Integration Tests "usm_unknown_security_name_counter"
         uses: carlkidcrypto/os-specific-runner@v2.1.0
@@ -111,10 +113,12 @@ jobs:
           linux: |
                 cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
                 cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
       - name: Run Integration Tests "connection_error_counter"
         uses: carlkidcrypto/os-specific-runner@v2.1.0
@@ -122,16 +126,18 @@ jobs:
           linux: |
                   cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
                   ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                  echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
                   cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
                   ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                  echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v4
         with:
           name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
-          path: 
-                /**total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log**/
-                /**usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log**/
-                /**connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log**/
+          path: |
+                ${{ env.artifactPath1 }}
+                ${{ env.artifactPath2 }}
+                ${{ env.artifactPath3 }}
