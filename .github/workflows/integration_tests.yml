@@ -94,25 +94,38 @@ jobs:
           fi
           $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
       
-      - name: Run Integration Tests
+      - name: Run Integration Tests "Total execution time"
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: |
                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
                  ./run_integration_tests.sh 2>&1 | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-                 sleep 10;
-                 ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 sleep 10;
-                 ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 sleep 10;
+
           macos: |
                  cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
                  ./run_integration_tests.sh 2>&1 | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-                 sleep 10;
-                 ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 sleep 10;
-                 ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 sleep 10;
+ 
+      - name: Run Integration Tests "usm_unknown_security_name_counter"
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: |
+                cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+                ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+
+          macos: |
+                cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+                ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+
+      - name: Run Integration Tests "connection_error_counter"
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: |
+                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+                  ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+
+          macos: |
+                  cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+                  ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v4
