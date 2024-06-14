@@ -179,13 +179,15 @@ class RelinkLibraries(BuildCommand):
                 .decode()
                 .strip()
             )
-            
+
             if linked:
                 # install_name_tool -change /opt/homebrew/opt/net-snmp/lib/libnetsnmp.40.dylib /opt/homebrew/Cellar/net-snmp/5.9.4/lib/libnetsnmp.dylib build/lib.macosx-10.9-universal2-cpython-39/ezsnmp/interface.cpython-39-darwin.so
-                cmd_to_run = "install_name_tool -change {0} {1} {2}/ezsnmp/interface{3}".format(
+                cmd_to_run = (
+                    "install_name_tool -change {0} {1} {2}/ezsnmp/interface{3}".format(
                         linked, lib_dir, b.build_platlib, ext
                     )
-                
+                )
+
                 print("cmd_to_run: ", cmd_to_run)
                 _ = check_output(
                     cmd_to_run,
