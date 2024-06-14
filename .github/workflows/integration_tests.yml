@@ -29,8 +29,9 @@ jobs:
             setup.py
             setup.cfg
 
-  build-and-test:
+  build-and-integration-test:
     runs-on: ${{ matrix.os }}
+    needs: check-source-changes
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
