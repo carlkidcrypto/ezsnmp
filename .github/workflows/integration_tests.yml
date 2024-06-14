@@ -1,0 +1,143 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-source-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_job: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout Sourcecode
+        uses: actions/checkout@v4
+
+      - name: Check for changes in source code
+        id: changed-files
+        uses: tj-actions/changed-files@v44.5.2
+        with:
+          files: |
+            ezsnmp/*.py
+            ezsnmp/*.c
+            ezsnmp/*.h
+            tests/*.py
+            tests/*.conf
+            setup.py
+            setup.cfg
+
+  build-and-integration-test:
+    runs-on: ${{ matrix.os }}
+    needs: check-source-changes
+    timeout-minutes: 15
+    if: needs.check-source-changes.outputs.run_job == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+  
+    steps:
+      - name: Set up dependencies
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: sudo apt-get update;
+                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+                 sudo systemctl stop snmpd;
+                 sudo download-mibs;
+                 mkdir -p -m 0755 ~/.snmp;
+                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+          
+          macos: brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
+                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/bin:$PATH";
+                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
+                 mkdir -p -m 0755 ~/.snmp;
+                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pip dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Build source
+        run: |
+          python setup.py build
+          pip install -e .
+      
+      - name: Start SNMP daemon
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]
+          then
+            mibdir="-M +/var/lib/snmp/mibs"
+            SNMPD=$(which snmpd)
+          elif [ "$RUNNER_OS" == "macOS" ]
+          then
+            mibdir=""
+            SNMPD=$(which snmpd)
+          else
+            mibdir=""
+            SNMPD=$(which.exe snmpd)
+          fi
+          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+      
+      - name: Run Integration Tests "Total execution time"
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: |
+                 cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+
+          macos: |
+                 cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+ 
+      - name: Run Integration Tests "usm_unknown_security_name_counter"
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: |
+                cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+                ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+
+          macos: |
+                cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+                ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+
+      - name: Run Integration Tests "connection_error_counter"
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          linux: |
+                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+                  ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                  echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+
+          macos: |
+                  cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+                  ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                  echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+      
+      - name: Upload Integration Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
+          path: |
+                ${{ env.artifactPath1 }}
+                ${{ env.artifactPath2 }}
+                ${{ env.artifactPath3 }}

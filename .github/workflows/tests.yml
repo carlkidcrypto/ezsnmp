@@ -138,14 +138,6 @@ jobs:
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
-      
-      - name: Run Integration Tests
-        uses: carlkidcrypto/os-specific-runner@v2.1.0
-        with:
-          linux: cd integration_tests &&
-                 ./run_integration_tests.sh;
-          macos: cd integration_tests &&
-                 ./run_integration_tests.sh;
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
@@ -159,6 +151,7 @@ jobs:
 
       - name: Create multi-file output listing
         run: |
+          cd /home/runner/work/ezsnmp/ezsnmp/
           echo 'pytest_multiple_files<<EOF' >> $GITHUB_OUTPUT
           export test_xml=($(ls -d pytest-results_*latest_*/*.xml | sort ))
           export test_log=($(ls -d pytest-results_*latest_*/*.log | sort ))
