@@ -271,6 +271,12 @@ class Session(object):
         # Create interface instance
         self.update_session()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        del self.sess_ptr
+
     @property
     def connect_hostname(self):
         def format_hostname(hostname):
@@ -517,11 +523,17 @@ class Session(object):
             s.version = 1
             s.update_session()
         """
-        for keyword, value in kwargs.items():
-            if keyword in self.__dict__:
-                self.__setattr__(keyword, value)
-            else:
-                warn('Keyword argument "{}" is not an attribute'.format(keyword))
+
+        if kwargs:
+            for keyword, value in kwargs.items():
+                if keyword in self.__dict__:
+                    self.__setattr__(keyword, value)
+                else:
+                    warn('Keyword argument "{}" is not an attribute'.format(keyword))
+
+            del self.sess_ptr
+            self.sess_ptr = None
+
         # Tunneled
         if self.tunneled:
             # TODO: Determine the best way to test this

@@ -21,10 +21,16 @@
 #include <string.h>
 #include <stdarg.h>
 #include <memory>
+#include <string>
+#include <map>
+#include <mutex>
 
 #ifdef HAVE_REGEX_H
 #include <regex.h>
 #endif
+
+std::map<std::string, uint64_t> g_in_use_v3_sessions;
+std::mutex g_in_use_v3_sessions_mutex;
 
 /* include bitarray data structure for v1 queries */
 #include "simple_bitarray.h"
@@ -511,7 +517,7 @@ int __snprint_value(char *buf, size_t buf_len,
 
         case ASN_OBJECT_ID:
             __snprintf_num_objid(buf, (oid *)(var->val.objid),
-                               var->val_len / sizeof(oid));
+                                 var->val_len / sizeof(oid));
             len = STRLEN(buf);
             break;
 
@@ -1374,22 +1380,55 @@ done:
  * Clears v3 user credentials from the local cache
  */
 
-void __remove_user_from_cache(struct session_list *ss)
+void __remove_v3_user_from_cache(struct session_list *ss)
 {
     struct usmUser *actUser = usm_get_userList();
     while (actUser != NULL)
     {
         struct usmUser *dummy = actUser;
-        if (actUser->secName != NULL && ss->session->securityName != NULL &&
-            actUser->engineID != NULL && ss->session->contextEngineID != NULL &&
-            strcmp((const char *)dummy->secName, (const char *)ss->session->securityName) == 0 &&
-            strcmp((const char *)dummy->engineID, (const char *)ss->session->contextEngineID) == 0)
+
+        auto security_name_str = std::string("");
+        auto act_user_sec_name_str = std::string("");
+        if (ss->session->securityName != NULL && actUser->secName != NULL)
         {
-            usm_remove_user(actUser);
-            actUser->next = NULL;
-            actUser->prev = NULL;
-            usm_free_user(actUser);
-            break;
+            security_name_str = std::string(ss->session->securityName);
+            act_user_sec_name_str = std::string(actUser->secName);
+        }
+
+        auto context_engine_id_str = std::string("");
+        auto act_user_engine_id_str = std::string("");
+        if (ss->session->contextEngineID != NULL && actUser->engineID != NULL)
+        {
+            context_engine_id_str = std::string(reinterpret_cast<char *>(ss->session->contextEngineID)); // u_char to char
+            act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));           // u_char to char
+        }
+
+        if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
+            security_name_str == act_user_sec_name_str &&
+            context_engine_id_str == act_user_engine_id_str)
+        {
+            g_in_use_v3_sessions_mutex.lock();
+            auto iter = g_in_use_v3_sessions.find(security_name_str);
+            if (iter != g_in_use_v3_sessions.end())
+            {
+                // Found and are we the only one?
+                if (g_in_use_v3_sessions[security_name_str] > 1)
+                {
+                    g_in_use_v3_sessions[security_name_str] -= 1;
+                }
+                else if (g_in_use_v3_sessions[security_name_str] == 1)
+                {
+                    usm_remove_user(actUser);
+                    actUser->next = NULL;
+                    actUser->prev = NULL;
+                    usm_free_user(actUser);
+                    g_in_use_v3_sessions[security_name_str] = 0;
+                }
+
+                g_in_use_v3_sessions_mutex.unlock();
+                break;
+            }
+            g_in_use_v3_sessions_mutex.unlock();
         }
         actUser = dummy->next;
     }
@@ -1503,7 +1542,7 @@ void __py_netsnmp_update_session_errors(PyObject *session,
 
     PyErr_Fetch(&type, &value, &traceback);
 
-    py_netsnmp_attr_set_string(session, (char *) "error_string", err_str,
+    py_netsnmp_attr_set_string(session, (char *)"error_string", err_str,
                                STRLEN(err_str));
 
     tmp_for_conversion = PyLong_FromLong(err_num);
@@ -1605,21 +1644,17 @@ void *get_session_handle_from_capsule(PyObject *session_capsule)
 /* Automatically called when Python reclaims session_capsule object. */
 void delete_session_capsule(PyObject *session_capsule)
 {
-    // Acquire the GIL
-    PyGILState_STATE gil_state = PyGILState_Ensure();
-
     /* PyCapsule_GetPointer will raise an exception if it fails. */
     struct session_capsule_ctx *ctx = static_cast<struct session_capsule_ctx *>(PyCapsule_GetPointer(session_capsule, NULL));
     if (ctx)
     {
         // clear_user_list(); // Too dangerous, may disrupt other valid sessions
-        __remove_user_from_cache((struct session_list *)ctx->handle);
+        Py_BEGIN_ALLOW_THREADS;
+        __remove_v3_user_from_cache((struct session_list *)ctx->handle);
+        Py_END_ALLOW_THREADS;
         snmp_sess_close(ctx->handle);
         free(ctx);
     }
-
-    // Release the GIL
-    PyGILState_Release(gil_state);
 }
 
 PyObject *netsnmp_create_session(PyObject *self, PyObject *args)
@@ -1697,6 +1732,9 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
     int eng_boots;
     int eng_time;
     SnmpSession session = {0};
+    auto security_name_str = std::string("");
+    auto context_engine_id_str = std::string("");
+    std::map<std::string, uint64_t>::iterator iter;
 
     if (!PyArg_ParseTuple(args, "isiiisisssssssii", &version,
                           &peer, &lport, &retries, &timeout,
@@ -1787,6 +1825,25 @@ PyObject *netsnmp_create_session_v3(PyObject *self, PyObject *args)
             goto done;
         }
     }
+
+    // Before we return the session capsule add the SecurityName and ContextEngineID to the global map
+    security_name_str = std::string(session.securityName);
+    context_engine_id_str = std::string(reinterpret_cast<char *>(session.contextEngineID)); // u_char to char
+    g_in_use_v3_sessions_mutex.lock();
+    iter = g_in_use_v3_sessions.find(security_name_str);
+
+    if (iter == g_in_use_v3_sessions.end())
+    {
+        // Not Found
+        g_in_use_v3_sessions[security_name_str] = 1;
+    }
+    else
+    {
+        // Found
+        g_in_use_v3_sessions[security_name_str] += 1;
+    }
+    g_in_use_v3_sessions_mutex.unlock();
+
     return create_session_capsule(&session);
 
 done:
@@ -1813,6 +1870,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
     char *their_hostname;
     char *trust_cert;
     SnmpSession session = {0};
+    PyObject *return_value = NULL;
 
     if (!PyArg_ParseTuple(args, (char *)"isiiisissssss", &version,
                           &peer, &lport, &retries, &timeout,
@@ -1821,7 +1879,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
                           &our_identity, &their_identity,
                           &their_hostname, &trust_cert))
     {
-        goto done;
+        return return_value;
     }
 
     if (version != 3)
@@ -1829,7 +1887,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
         PyErr_SetString(PyExc_ValueError,
                         (char *)"you must use SNMP version 3 as it's the only "
                                 "version that supports tunneling");
-        goto done;
+        return return_value;
     }
 
     snmp_sess_init(&session);
@@ -1854,7 +1912,7 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
         {
             py_log_msg(ERROR, (char *)"failed to initialize the transport "
                                       "configuration container");
-            goto done;
+            return return_value;
         }
 
         session.transport_configuration->compare =
@@ -1881,9 +1939,6 @@ PyObject *netsnmp_create_session_tunneled(PyObject *self,
                          netsnmp_transport_create_config((char *)"trust_cert",
                                                          trust_cert));
     return create_session_capsule(&session);
-
-done:
-    return NULL;
 }
 
 PyObject *netsnmp_get(PyObject *self, PyObject *args)
