@@ -32,6 +32,7 @@ jobs:
   build-and-integration-test:
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
+    timeout-minutes: 10
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
@@ -98,15 +99,19 @@ jobs:
         with:
           linux: |
                  cd integration_tests;
+                 pwd;
                  ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
                  ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
                  ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                 ls -la;
                  cd ../;
           macos: |
                  cd integration_tests;
+                 pwd;
                  ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
                  ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
                  ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                 ls -la;
                  cd ../;
       
       - name: Upload Integration Test Results
