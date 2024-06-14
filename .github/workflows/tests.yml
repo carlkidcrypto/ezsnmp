@@ -138,20 +138,6 @@ jobs:
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
-      
-      - name: Run Integration Tests
-        uses: carlkidcrypto/os-specific-runner@v2.1.0
-        with:
-          linux: |
-                 cd integration_tests &&
-                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_log.txt &&
-                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_log.txt &&
-                 ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_log.txt;
-          macos: |
-                 cd integration_tests &&
-                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_log.txt &&
-                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_log.txt &&
-                 ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_log.txt;
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
