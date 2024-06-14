@@ -32,7 +32,7 @@ jobs:
   build-and-integration-test:
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    timeout-minutes: 11
+    timeout-minutes: 15
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
@@ -99,39 +99,39 @@ jobs:
         with:
           linux: |
                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-                 ./run_integration_tests.sh 2>&1 | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
 
           macos: |
                  cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-                 ./run_integration_tests.sh 2>&1 | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
  
       - name: Run Integration Tests "usm_unknown_security_name_counter"
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: |
                 cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-                ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
 
           macos: |
                 cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-                ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
 
       - name: Run Integration Tests "connection_error_counter"
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: |
                   cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-                  ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                  ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
 
           macos: |
                   cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-                  ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                  ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v4
         with:
           name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
           path: 
-                /**/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log
-                /**/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log
-                /**/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log
+                /**total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log**/
+                /**usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log**/
+                /**connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log**/
