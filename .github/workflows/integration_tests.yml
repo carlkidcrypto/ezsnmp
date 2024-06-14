@@ -98,27 +98,27 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           linux: |
-                 cd integration_tests;
-                 pwd;
-                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 ls -la;
-                 cd ../;
+                 /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+                 ./run_integration_tests.sh 2>&1 | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 sleep 10;
+                 ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                 sleep 10;
+                 ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                 sleep 10;
           macos: |
-                 cd integration_tests;
-                 pwd;
-                 ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-                 ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-                 ls -la;
-                 cd ../;
+                 /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+                 ./run_integration_tests.sh 2>&1 | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
+                 sleep 10;
+                 ./run_integration_tests.sh 2>&1 | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                 sleep 10;
+                 ./run_integration_tests.sh 2>&1 | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+                 sleep 10;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v4
         with:
           name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
           path: 
-                ./integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log
-                ./integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log
-                ./integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log
+                */total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log
+                */usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log
+                */connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log
