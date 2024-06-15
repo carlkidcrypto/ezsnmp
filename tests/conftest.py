@@ -4,8 +4,16 @@ import logging
 import pytest
 from sys import version_info
 from subprocess import Popen, DEVNULL
-
 import ezsnmp
+from .session_parameters import (
+    SESS_V1_ARGS,
+    SESS_V2_ARGS,
+    SESS_V3_MD5_DES_ARGS,
+    SESS_V3_MD5_AES_ARGS,
+    SESS_V3_SHA_AES_ARGS,
+    SESS_V3_SHA_NO_PRIV_ARGS,
+    SESS_V3_MD5_NO_PRIV_ARGS,
+)
 
 assert version_info[0] == 3 and version_info[1] >= 8
 
@@ -48,32 +56,15 @@ snmp_logger = logging.getLogger("ezsnmp.interface")
 snmp_logger.disabled = True
 
 
-SESS_V1_ARGS = {
-    "version": 1,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "community": "public",
-}
-
-SESS_V2_ARGS = {
-    "version": 2,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "community": "public",
-}
-
-SESS_V3_ARGS = {
-    "version": 3,
-    "hostname": "localhost",
-    "remote_port": 11161,
-    "security_level": "authPriv",
-    "security_username": "initial",
-    "privacy_password": "priv_pass",
-    "auth_password": "auth_pass",
-}
-
-
-@pytest.fixture(params=[SESS_V1_ARGS, SESS_V2_ARGS, SESS_V3_ARGS])
+@pytest.fixture(
+    params=[
+        SESS_V1_ARGS,
+        SESS_V2_ARGS,
+        SESS_V3_MD5_DES_ARGS,
+        SESS_V3_MD5_AES_ARGS,
+        SESS_V3_SHA_AES_ARGS,
+    ]
+)
 def sess_args(request):
     return request.param
 
@@ -91,5 +82,25 @@ def reset_values():
 
 
 @pytest.fixture
-def sess_v3():
-    return SESS_V3_ARGS
+def sess_v3_md5_des():
+    return SESS_V3_MD5_DES_ARGS
+
+
+@pytest.fixture
+def sess_v3_md5_aes():
+    return SESS_V3_MD5_AES_ARGS
+
+
+@pytest.fixture
+def sess_v3_sha_aes():
+    return SESS_V3_SHA_AES_ARGS
+
+
+@pytest.fixture
+def sess_v3_sha_no_priv():
+    return SESS_V3_SHA_NO_PRIV_ARGS
+
+
+@pytest.fixture
+def sess_v3_md5_no_priv():
+    return SESS_V3_MD5_NO_PRIV_ARGS

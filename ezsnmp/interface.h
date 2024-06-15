@@ -127,7 +127,7 @@ int __translate_asn_type(int type);
 int __snprint_value(char *buf, size_t buf_len,
                     netsnmp_variable_list *var,
                     struct tree *tp, int type, int flag);
-int __sprint_num_objid(char *buf, oid *objid, int len);
+int __snprintf_num_objid(char *buf, oid *objid, int len);
 int __scan_num_objid(char *buf, oid *objid, size_t *len);
 int __get_type_str(int type, char *str, int log_error);
 int __get_label_iid(char *name, char **last_label, char **iid,
@@ -141,7 +141,7 @@ int __send_sync_pdu(netsnmp_session *ss, netsnmp_pdu **pdu,
                     netsnmp_pdu **response, int retry_nosuch,
                     char *err_str, int *err_num, int *err_ind,
                     bitarray *invalid_oids);
-void __remove_user_from_cache(struct session_list *ss);
+void __remove_v3_user_from_cache(struct session_list *ss);
 PyObject *py_netsnmp_construct_varbind(void);
 int py_netsnmp_attr_string(PyObject *obj, char *attr_name, char **val,
                            Py_ssize_t *len, PyObject **attr_bytes);

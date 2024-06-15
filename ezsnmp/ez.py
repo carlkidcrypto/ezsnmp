@@ -19,7 +19,9 @@ def snmp_get(oids, **session_kargs):
     """
 
     session = Session(**session_kargs)
-    return session.get(oids)
+    retval = session.get(oids)
+    del session
+    return retval
 
 
 def snmp_set(oid, value, type=None, **session_kargs):
@@ -40,7 +42,9 @@ def snmp_set(oid, value, type=None, **session_kargs):
     """
 
     session = Session(**session_kargs)
-    return session.set(oid, value, type)
+    retval = session.set(oid, value, type)
+    del session
+    return retval
 
 
 def snmp_set_multiple(oid_values, **session_kargs):
@@ -56,7 +60,9 @@ def snmp_set_multiple(oid_values, **session_kargs):
     """
 
     session = Session(**session_kargs)
-    return session.set_multiple(oid_values)
+    retval = session.set_multiple(oid_values)
+    del session
+    return retval
 
 
 def snmp_get_next(oids, **session_kargs):
@@ -75,7 +81,9 @@ def snmp_get_next(oids, **session_kargs):
     """
 
     session = Session(**session_kargs)
-    return session.get_next(oids)
+    retval = session.get_next(oids)
+    del session
+    return retval
 
 
 def snmp_get_bulk(oids, non_repeaters=0, max_repetitions=10, **session_kargs):
@@ -99,7 +107,9 @@ def snmp_get_bulk(oids, non_repeaters=0, max_repetitions=10, **session_kargs):
     """
 
     session = Session(**session_kargs)
-    return session.get_bulk(oids, non_repeaters, max_repetitions)
+    retval = session.get_bulk(oids, non_repeaters, max_repetitions)
+    del session
+    return retval
 
 
 def snmp_walk(oids=".1.3.6.1.2.1", **session_kargs):
@@ -118,7 +128,9 @@ def snmp_walk(oids=".1.3.6.1.2.1", **session_kargs):
     """
 
     session = Session(**session_kargs)
-    return session.walk(oids)
+    retval = session.walk(oids)
+    del session
+    return retval
 
 
 def snmp_bulkwalk(
@@ -143,4 +155,6 @@ def snmp_bulkwalk(
     """
 
     session = Session(**session_kargs)
-    return session.bulkwalk(oids, non_repeaters, max_repetitions)
+    retval = session.bulkwalk(oids, non_repeaters, max_repetitions)
+    del session
+    return retval

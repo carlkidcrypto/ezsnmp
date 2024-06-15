@@ -23,8 +23,9 @@ On RHEL / CentOS systems:
 On Debian / Ubuntu systems:
 
 .. code-block:: bash
-
-    sudo apt-get install libsnmp-dev snmp-mibs-downloader
+    
+    sudo apt update && sudo apt upgrade -y;
+    sudo apt install -y libsnmp-dev libperl-dev snmp-mibs-downloader;
 
 On macOS systems:
 
@@ -37,19 +38,19 @@ provided on the `Net-SNMP install page <http://www.net-snmp.org/docs/INSTALL.htm
 to build and install Net-SNMP on your system.
 
 You'll also need to ensure that you have the following packages installed so
-that Easy SNMP installs correctly:
+that EzSNMP installs correctly:
 
 On RHEL / CentOS systems:
 
 .. code-block:: bash
 
-    sudo yum install gcc python-devel
+    sudo yum install gcc python3-devel
 
 On Debian / Ubuntu systems:
 
 .. code-block:: bash
 
-    sudo apt-get install gcc python-dev
+    sudo apt-get install gcc python3-dev
 
 On macOS systems:
 
@@ -57,15 +58,24 @@ On macOS systems:
 
     brew install gcc
 
-Install Easy SNMP via pip as follows:
+Install EzSNMP via pip as follows:
 
 .. code-block:: bash
 
     pip install ezsnmp
 
+Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSNMP compatiabile
+with as many as possible linux distros. Occasionally it isn't perfect. If you have issues try
+something like this:
+
+.. code-block:: bash
+
+    pip install --force-reinstall --no-binary :all: ezsnmp
+
+
 Quick Start
 -----------
-There are primarily two ways you can use the Easy SNMP library.
+There are primarily two ways you can use the EzSNMP library.
 
 The first is with the use of a Session object which is most suitable when you
 are planning on requesting multiple pieces of SNMP data from a source.
@@ -104,7 +114,7 @@ are planning on requesting multiple pieces of SNMP data from a source.
             value=item.value
         )
 
-You may also use Easy SNMP via its simple interface which is intended for
+You may also use EzSNMP via its simple interface which is intended for
 one-off operations where you wish to specify all details in the request:
 
 .. code-block:: python
@@ -123,6 +133,89 @@ one-off operations where you wish to specify all details in the request:
     # Perform an SNMP walk
     snmp_walk('system', hostname='localhost', community='public', version=1)
 
+Example Session Kargs
+---------------------
+
+.. code-block:: python
+
+    from ezsnmp.session import Session
+
+    SESS_V1_ARGS = {
+    "version": 1,
+    "hostname": "localhost",
+    "remote_port": 11161,
+    "community": "public",
+    }
+
+    SESS_V2_ARGS = {
+        "version": 2,
+        "hostname": "localhost",
+        "remote_port": 11161,
+        "community": "public",
+    }
+
+    SESS_V3_MD5_DES_ARGS = {
+        "version": 3,
+        "hostname": "localhost",
+        "remote_port": 11161,
+        "auth_protocol": "MD5",
+        "security_level": "authPriv",
+        "security_username": "initial_md5_des",
+        "privacy_protocol": "DES",
+        "privacy_password": "priv_pass",
+        "auth_password": "auth_pass",
+    }
+
+    SESS_V3_MD5_AES_ARGS = {
+        "version": 3,
+        "hostname": "localhost",
+        "remote_port": 11161,
+        "auth_protocol": "MD5",
+        "security_level": "authPriv",
+        "security_username": "initial_md5_aes",
+        "privacy_protocol": "AES",
+        "privacy_password": "priv_pass",
+        "auth_password": "auth_pass",
+    }
+
+    SESS_V3_SHA_AES_ARGS = {
+        "version": 3,
+        "hostname": "localhost",
+        "remote_port": 11161,
+        "auth_protocol": "SHA",
+        "security_level": "authPriv",
+        "security_username": "secondary_sha_aes",
+        "privacy_protocol": "AES",
+        "privacy_password": "priv_second",
+        "auth_password": "auth_second",
+    }
+
+    SESS_V3_SHA_NO_PRIV_ARGS = {
+        "version": 3,
+        "hostname": "localhost",
+        "remote_port": 11161,
+        "auth_protocol": "SHA",
+        "security_level": "authNoPriv",
+        "security_username": "secondary_sha_no_priv",
+        "auth_password": "auth_second",
+    }
+
+    SESS_V3_MD5_NO_PRIV_ARGS = {
+        "version": 3,
+        "hostname": "localhost",
+        "remote_port": 11161,
+        "auth_protocol": "MD5",
+        "security_level": "auth_without_privacy",
+        "security_username": "initial_md5_no_priv",
+        "auth_password": "auth_pass",
+    }
+
+    # Use the kargs you want. For example
+    s = Session(**SESS_V3_MD5_NO_PRIV_ARGS)
+    res = s.get("sysDescr.0")
+
+    # Do stuff with res
+    print(res)
 
 .. toctree::
    :maxdepth: 2
