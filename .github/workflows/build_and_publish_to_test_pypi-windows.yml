@@ -1,0 +1,114 @@
+# Refer to the following link for help
+# https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+
+name: TestPyPI Distributions
+concurrency: build_and_publish_to_test_pypi
+on:
+  push:
+    branches: [main, feature/windows_builds_experimental]
+
+jobs:
+  check-source-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_job: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout Sourcecode
+        uses: actions/checkout@v4
+
+      - name: Check for changes in setup.py/cfg
+        id: changed-files
+        uses: tj-actions/changed-files@v44.5.2
+        with:
+          files: |
+            setup.py
+            setup.cfg
+
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: check-source-changes
+    # if: needs.check-source-changes.outputs.run_job == 'true'
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+
+      - name: Gather Build Materials
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          windows: |
+                   pwd;
+                   curl -o net-snmp-5-9-patches.zip https://codeload.github.com/net-snmp/net-snmp/zip/refs/heads/V5-9-patches;
+                   curl -o Win32OpenSSL-3_3_1.msi https://slproweb.com/download/Win32OpenSSL-3_3_1.msi;
+                   curl -o Win64OpenSSL-3_3_1.msi https://slproweb.com/download/Win64OpenSSL-3_3_1.msi;
+
+      - name: Install Build Materials
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          windows: |
+                   pwd;
+                   msiexec.exe /I Win32OpenSSL-3_3_1.msi /L*V "C:\tmp\Win32OpenSSL-3_3_1.msi.log";
+                   msiexec.exe /I Win64OpenSSL-3_3_1.msi /L*V "C:\tmp\Win64OpenSSL-3_3_1.msi.log";
+
+      - name: Install Visual Studio Community
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          windows: |
+                   winget install --id Microsoft.VisualStudio.2022.Community --override "--passive --config ./.vsconfig"
+                   
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+  #         path: wheelhouse/*.whl
+
+  # build-n-publish-test-pypi:
+  #   name: Build and Publish To Test PyPi
+  #   runs-on: ubuntu-latest
+  #   needs: build_wheels
+
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up Python 3.10
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.10"
+      
+  #     - name: Set up dependencies
+  #       uses: carlkidcrypto/os-specific-runner@v2.1.0
+  #       with:
+  #         linux: sudo apt-get update;
+  #                sudo apt-get install -y libsnmp-dev libperl-dev;
+
+  #     - name: Install pypa/build
+  #       run: >-
+  #         python -m
+  #         pip install
+  #         build
+  #         --user
+
+  #     - name: Build a source tarball
+  #       run: >-
+  #         python -m
+  #         build
+  #         --sdist
+  #         --outdir dist/
+  #         .
+
+  #     - name: Download Wheels
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         pattern: cibw-wheels-*
+  #         merge-multiple: true
+  #         path: dist/
+
+  #     - name: Publish distribution 📦 to Test PyPI
+  #       uses: pypa/gh-action-pypi-publish@release/v1.6
+  #       with:
+  #         skip_existing: true
+  #         print_hash: true
+  #         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+  #         repository_url: https://test.pypi.org/legacy/
