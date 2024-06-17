@@ -53,9 +53,11 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: |
-                   pwd;
-                   msiexec.exe /I Win32OpenSSL-3_3_1.msi /L*V "./Win32OpenSSL-3_3_1.msi.log";
-                   msiexec.exe /I Win64OpenSSL-3_3_1.msi /L*V "./Win64OpenSSL-3_3_1.msi.log";
+                   pwd &&
+                   Expand-Archive net-snmp-5-9-patches.zip . &&
+                   msiexec.exe /I Win32OpenSSL-3_3_1.msi /quiet TARGETDIR="./OpenSSL-Win32" /L*V "./Win32OpenSSL-3_3_1.msi.log" &&
+                   msiexec.exe /I Win64OpenSSL-3_3_1.msi /quiet TARGETDIR="OpenSSL-Win64" /L*V "./Win64OpenSSL-3_3_1.msi.log" &&
+                   ls;
 
       - name: Install Visual Studio Community
         uses: carlkidcrypto/os-specific-runner@v2.1.0
