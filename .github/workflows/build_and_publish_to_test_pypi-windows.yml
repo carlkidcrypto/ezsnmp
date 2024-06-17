@@ -60,7 +60,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: pwd &&
-                   msiexec.exe /I Win32OpenSSL-3_3_1.msi /quiet TARGETDIR="./OpenSSL-Win32" /L*V "C:\Win32OpenSSL-3_3_1.msi.log" &&
+                   msiexec.exe /I Win32OpenSSL-3_3_1.msi /quiet TARGETDIR="C:\OpenSSL-Win32" /L*V "./Win32OpenSSL-3_3_1.msi.log" &&
                    sleep 30 &&
                    ls;
 
@@ -68,7 +68,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: pwd &&
-                   msiexec.exe /I Win64OpenSSL-3_3_1.msi /quiet TARGETDIR="./OpenSSL-Win64" /L*V "C:\Win64OpenSSL-3_3_1.msi.log" &&
+                   msiexec.exe /I Win64OpenSSL-3_3_1.msi /quiet TARGETDIR="C:\OpenSSL-Win64" /L*V "./Win64OpenSSL-3_3_1.msi.log" &&
                    sleep 30 &&
                    ls;
       
