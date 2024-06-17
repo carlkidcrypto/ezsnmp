@@ -84,7 +84,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: |
-                   winget install --id Microsoft.VisualStudio.2022.Community --override "--quiet --config ./.vsconfig"
+                   winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --override "--quiet --config ./.vsconfig"
                    
   #     - uses: actions/upload-artifact@v4
   #       with:
