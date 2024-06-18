@@ -76,8 +76,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --location "D:\a\ezsnmp\ezsnmp\"  --verbose-logs --override "--quiet --config ./.vsconfig"  > Microsoft.VisualStudio.2022.Community.installation.log;
-                   winget list --logs;
-                   winget search -q Visual --id Microsoft.VisualStudio.2022.Community;
+                   winget search -n visual --verbose-logs
     
       - name: Upload Winget Install Logs
         uses: actions/upload-artifact@v4
