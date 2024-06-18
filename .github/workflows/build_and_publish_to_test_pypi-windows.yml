@@ -85,6 +85,26 @@ jobs:
         with:
           windows: |
                    winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --override "--quiet --config ./.vsconfig"
+      
+      - name: Install Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.38"
+  
+      - name: Build net-snmp for Windows
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+          with:
+            windows: |
+                     call "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2022\Visual Studio Tools\VC\c:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2022\Visual Studio Tools\VC\x64 Native Tools Command Prompt for VS 2022.lnk"
+                     set Platform=x64
+                     set TARGET_CPU=x64
+                     set INCLUDE=%INCLUDE%;C:\OpenSSL-Win64\include
+                     set LIB=%LIB%;C:\OpenSSL-Win64\lib\VC\x64
+                     PATH=%PATH%C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64
+                     perl Configure --with-sdk --with-winextdll --with-ssl --with-ipv6 --config=release --linktype=static --prefix="c:/usr"
+                     nmake clean
+                     nmake
+                     nmake install
                    
   #     - uses: actions/upload-artifact@v4
   #       with:
