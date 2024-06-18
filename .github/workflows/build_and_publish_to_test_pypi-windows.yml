@@ -94,8 +94,8 @@ jobs:
       - name: Build net-snmp for Windows
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
+          windowsShell: cmd
           windows: |
-                    cmd.exe;
                     cd C:\net-snmp-5-9-patches\win32;
                     call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64;
                     set Platform=x64;
