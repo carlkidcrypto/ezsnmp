@@ -76,6 +76,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --location "D:\a\ezsnmp\ezsnmp\MSVSC"  --verbose-logs --override "--quiet --config ./.vsconfig";
+                   winget list --logs;
       
       - name: Install Perl
         uses: shogo82148/actions-setup-perl@v1
@@ -92,7 +93,7 @@ jobs:
                     set TARGET_CPU=x64;
                     set INCLUDE=%INCLUDE%;D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\include;
                     set LIB=%LIB%;D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\lib\VC\x64;
-                    perl Configure --with-sdk --with-winextdll --with-ssl --with-ipv6 --config=release --linktype=static --prefix="D:/a/ezsnmp/ezsnmp/usr_64xusr";
+                    perl Configure --with-sdk --with-winextdll --with-ssl --with-ipv6 --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr";
                     nmake clean;
                     nmake;
                     nmake install;
