@@ -81,10 +81,12 @@ jobs:
           vsversion: 2022
 
       - name: Build net-snmp 64x for Windows
+        working-directory: D:\a\ezsnmp\ezsnmp\net-snmp-5-9-patches\win32
         shell: cmd
         run: |
-              cd D:\a\ezsnmp\ezsnmp\net-snmp-5-9-patches\win32;
+              cd;
               call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64;
+              cd;
               set Platform=x64;
               set TARGET_CPU=x64;
               perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\include" --with-ssllibdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr" > configure.out;
