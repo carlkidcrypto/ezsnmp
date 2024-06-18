@@ -75,8 +75,7 @@ jobs:
       - name: Install Visual Studio Community
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
-          windows: winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --verbose-logs --override "--passive --config .vsconfig"  > Microsoft.VisualStudio.2022.Community.installation.log;
-                   sleep 600;
+          windows: winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --verbose-logs --override "--wait --passive --config .vsconfig"  > Microsoft.VisualStudio.2022.Community.installation.log;
     
       - name: Upload Winget Install Logs
         uses: actions/upload-artifact@v4
