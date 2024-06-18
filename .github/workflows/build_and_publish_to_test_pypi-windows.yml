@@ -95,16 +95,17 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: |
-                    call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
-                    set Platform=x64
-                    set TARGET_CPU=x64
-                    set INCLUDE=%INCLUDE%;C:\OpenSSL-Win64\include
-                    set LIB=%LIB%;C:\OpenSSL-Win64\lib\VC\x64
-                    PATH=%PATH%C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64
-                    perl Configure --with-sdk --with-winextdll --with-ssl --with-ipv6 --config=release --linktype=static --prefix="c:/usr"
-                    nmake clean
-                    nmake
-                    nmake install
+                    cmd.exe;
+                    cd C:\net-snmp-5-9-patches\win32;
+                    call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64;
+                    set Platform=x64;
+                    set TARGET_CPU=x64;
+                    set INCLUDE=%INCLUDE%;C:\OpenSSL-Win64\include;
+                    set LIB=%LIB%;C:\OpenSSL-Win64\lib\VC\x64;
+                    perl Configure --with-sdk --with-winextdll --with-ssl --with-ipv6 --config=release --linktype=static --prefix="c:/usr";
+                    nmake clean;
+                    nmake;
+                    nmake install;
 
   #     - uses: actions/upload-artifact@v4
   #       with:
