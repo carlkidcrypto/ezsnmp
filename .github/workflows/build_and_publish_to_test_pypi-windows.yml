@@ -83,8 +83,8 @@ jobs:
       - name: Install Visual Studio Community
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
-          windows: |
-                   winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --override "--quiet --config ./.vsconfig"
+          windows: winget install --id Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --override "--quiet --config ./.vsconfig";
+                   winget --info;
       
       - name: Install Perl
         uses: shogo82148/actions-setup-perl@v1
