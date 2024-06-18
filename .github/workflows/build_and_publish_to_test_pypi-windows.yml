@@ -95,7 +95,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
           with:
             windows: |
-                     call "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2022\Visual Studio Tools\VC\c:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2022\Visual Studio Tools\VC\x64 Native Tools Command Prompt for VS 2022.lnk"
+                     call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
                      set Platform=x64
                      set TARGET_CPU=x64
                      set INCLUDE=%INCLUDE%;C:\OpenSSL-Win64\include
