@@ -78,20 +78,20 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: win64
+          vsversion: 2022
 
       - name: Build net-snmp 64x for Windows
-        uses: carlkidcrypto/os-specific-runner@v2.1.0
-        with:
-          windowsShell: cmd
-          windows:  cd D:\a\ezsnmp\ezsnmp\net-snmp-5-9-patches\win32;
-                    call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64;
-                    set Platform=x64;
-                    set TARGET_CPU=x64;
-                    perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\include" --with-ssllibdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr" > configure.out;
-                    nmake clean > nmake_clean.out;
-                    nmake > nmake.out;
-                    nmake install > nmake_install.out;
-                    nmake install_devel > nmake_install_devel.out;
+        shell: cmd
+        run: |
+              cd D:\a\ezsnmp\ezsnmp\net-snmp-5-9-patches\win32;
+              call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64;
+              set Platform=x64;
+              set TARGET_CPU=x64;
+              perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\include" --with-ssllibdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr" > configure.out;
+              nmake clean > nmake_clean.out;
+              nmake > nmake.out;
+              nmake install > nmake_install.out;
+              nmake install_devel > nmake_install_devel.out;
       
       - name: Upload Build net-snmp 64x for Windows Logs
         uses: actions/upload-artifact@v4
