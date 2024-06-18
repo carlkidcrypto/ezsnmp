@@ -53,13 +53,17 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: msiexec.exe /I Win32OpenSSL-3_3_1.msi /quiet TARGETDIR="D:\a\ezsnmp\ezsnmp\OpenSSL-Win32" /L*V "./Win32OpenSSL-3_3_1.msi.log" &&
-                   sleep 15;
+                   sleep 15 &&
+                   cd D:\a\ezsnmp\ezsnmp\OpenSSL-Win32 &&
+                   ls;
 
       - name: Install Win64OpenSSL
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
           windows: msiexec.exe /I Win64OpenSSL-3_3_1.msi /quiet TARGETDIR="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64" /L*V "./Win64OpenSSL-3_3_1.msi.log" &&
-                   sleep 15;
+                   sleep 15 &&
+                   cd D:\a\ezsnmp\ezsnmp\OpenSSL-Win64 &&
+                   ls;
       
       - name: Upload WinXXOpenSSL Install Logs
         uses: actions/upload-artifact@v4
@@ -81,10 +85,10 @@ jobs:
           vsversion: 2022
 
       - name: Build net-snmp 64x for Windows
-        working-directory: D:\a\ezsnmp\ezsnmp\net-snmp-5-9-patches\win32
+        working-directory: D:\a\ezsnmp\ezsnmp
         shell: cmd
         run: |
-              cd
+              cd net-snmp-5-9-patches\win32
               call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
               cd
               dir
