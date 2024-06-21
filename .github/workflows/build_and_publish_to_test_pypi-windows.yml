@@ -55,7 +55,8 @@ jobs:
       - name: Move Installed OpenSSL Files
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
-          windows: $source = "C:\Program Files\OpenSSL\";
+          windows: |
+                   $source = "C:\Program Files\OpenSSL\";
                    $destination = "D:\a\ezsnmp\ezsnmp\OpenSSL-Win64";
 
                    # Create the destination folder if it doesn't exist
