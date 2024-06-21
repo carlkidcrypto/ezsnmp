@@ -55,14 +55,14 @@ jobs:
       - name: Move Installed OpenSSL Files
         uses: carlkidcrypto/os-specific-runner@v2.1.0
         with:
-          windows: $source = "C:\Program Files\OpenSSL\"
-                   $destination = "D:\a\ezsnmp\ezsnmp\OpenSSL-Win64"
+          windows: $source = "C:\Program Files\OpenSSL\";
+                   $destination = "D:\a\ezsnmp\ezsnmp\OpenSSL-Win64";
 
                    # Create the destination folder if it doesn't exist
-                   if (-not (Test-Path $destination)) { New-Item -Type Directory -Path $destination | Out-Null}
+                   if (-not (Test-Path $destination)) { New-Item -Type Directory -Path $destination | Out-Null};
 
                    # Copy files from source to destination
-                   Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+                   Copy-Item -Path $source\* -Destination $destination -Recurse -Force;
 
 
       - name: Install Perl
