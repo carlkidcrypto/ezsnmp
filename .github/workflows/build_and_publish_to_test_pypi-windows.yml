@@ -67,14 +67,15 @@ jobs:
         working-directory: D:\a\ezsnmp\ezsnmp
         shell: cmd
         run: |
-              cd net-snmp-5-9-patches\win32 &&
-              call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64 &&
-              set Platform=x64 &&
-              set TARGET_CPU=x64 &&
-              perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir="C:\Program Files\OpenSSL\include" --with-ssllibdir="C:\Program Files\OpenSSL\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr" &&
-              nmake clean &&
-              nmake &&
-              nmake install &&
+              cd net-snmp-5-9-patches\win32
+              call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+              cd
+              set Platform=x64
+              set TARGET_CPU=x64
+              perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir="C:\Program Files\OpenSSL\include" --with-ssllibdir="C:\Program Files\OpenSSL\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr"
+              nmake clean
+              nmake
+              nmake install
               nmake install_devel
 
   #     - uses: actions/upload-artifact@v4
