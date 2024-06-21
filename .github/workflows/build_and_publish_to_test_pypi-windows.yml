@@ -57,10 +57,11 @@ jobs:
         with:
           windows: |
                    $source = "C:\Program Files\OpenSSL\";
-                   $destination = "D:\a\ezsnmp\ezsnmp\OpenSSL-Win64";
+                   $destination = "D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\";
 
                    # Create the destination folder if it doesn't exist
                    if (-not (Test-Path $destination)) { New-Item -Type Directory -Path $destination | Out-Null};
+                   Get-ChildItem -Path "*OpenSSL*";
 
                    # Copy files from source to destination
                    Copy-Item -Path $source\* -Destination $destination -Recurse -Force;
