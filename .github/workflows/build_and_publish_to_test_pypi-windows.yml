@@ -52,6 +52,19 @@ jobs:
         with:
           args: install openssl
    
+      - name: Move Installed OpenSSL Files
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          windows: $source = "C:\Program Files\OpenSSL\"
+                   $destination = "D:\a\ezsnmp\ezsnmp\OpenSSL-Win64"
+
+                   # Create the destination folder if it doesn't exist
+                   if (-not (Test-Path $destination)) { New-Item -Type Directory -Path $destination | Out-Null}
+
+                   # Copy files from source to destination
+                   Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+
+
       - name: Install Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
@@ -72,8 +85,7 @@ jobs:
               cd
               set Platform=x64
               set TARGET_CPU=x64
-              perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir="C:\Program Files\OpenSSL\include" --with-ssllibdir="C:\Program Files\OpenSSL\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64xusr"
-              nmake clean
+              perl Configure --with-ssl --enable-blumenthal-aes --with-sslincdir=D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\include" --with-ssllibdir="D:\a\ezsnmp\ezsnmp\OpenSSL-Win64\lib\VC\x64\MT" --with-sdk --with-ipv6 --with-winextdll --config=release --linktype=static --prefix="d:/a/ezsnmp/ezsnmp/usr_64x"
               nmake
               nmake install
               nmake install_devel
