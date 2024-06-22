@@ -8,15 +8,24 @@
 #include <net-snmp/library/snmp_api.h>
 #include <net-snmp/library/snmpusm.h>
 #include <sys/types.h>
+
+#ifdef _WIN32
+#include <Winsock2.h>
+#include <xkeycheck.h>
+#else
 #include <arpa/inet.h>
+#include <netdb.h>
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <ctype.h>
+
 #ifdef I_SYS_TIME
 #include <sys/time.h>
 #endif
-#include <netdb.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

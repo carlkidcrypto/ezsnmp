@@ -9,117 +9,130 @@ from setuptools.command.test import test as TestCommand
 import setuptools.command.build as build
 from setuptools import dist
 
-# Determine if a base directory has been provided with the --basedir option
-basedir = None
-in_tree = False
-# Add compiler flags if debug is set
-compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
-link_args = []
-for arg in argv:
-    if arg.startswith("--debug"):
-        # Note from GCC manual:
-        #       If you use multiple -O options, with or without level numbers,
-        #       the last such option is the one that is effective.
-        compile_args.extend(["-Wall", "-O0", "-g"])
-    elif arg.startswith("--basedir="):
-        basedir = arg.split("=")[1]
-        in_tree = True
+if platform in ["darwin", "linux"]:
 
+    # Determine if a base directory has been provided with the --basedir option
+    basedir = None
+    in_tree = False
+    # Add compiler flags if debug is set
+    compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
+    link_args = []
+    for arg in argv:
+        if arg.startswith("--debug"):
+            # Note from GCC manual:
+            #       If you use multiple -O options, with or without level numbers,
+            #       the last such option is the one that is effective.
+            compile_args.extend(["-Wall", "-O0", "-g"])
+        elif arg.startswith("--basedir="):
+            basedir = arg.split("=")[1]
+            in_tree = True
 
-# If a base directory has been provided, we use it
-if in_tree:
-    base_cmd = "{0}/net-snmp-config {{{0}}}".format(basedir)
-    libs_cmd = base_cmd.format("--build-lib-dirs {0}".format(basedir))
-    incl_cmd = base_cmd.format("--build-includes {0}".format(basedir))
+    # If a base directory has been provided, we use it
+    if in_tree:
+        base_cmd = "{0}/net-snmp-config {{{0}}}".format(basedir)
+        libs_cmd = base_cmd.format("--build-lib-dirs {0}".format(basedir))
+        incl_cmd = base_cmd.format("--build-includes {0}".format(basedir))
 
-    netsnmp_libs = check_output(base_cmd.format("--libs"), shell=True).decode()
-    libdirs = check_output(libs_cmd, shell=True).decode()
-    incdirs = check_output(incl_cmd, shell=True).decode()
+        netsnmp_libs = check_output(base_cmd.format("--libs"), shell=True).decode()
+        libdirs = check_output(libs_cmd, shell=True).decode()
+        incdirs = check_output(incl_cmd, shell=True).decode()
 
-    libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
-    libdirs = [flag[2:] for flag in s_split(libdirs) if flag[:2] == "-L"]
-    incdirs = [flag[2:] for flag in s_split(incdirs) if flag[:2] == "-I"]
+        libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
+        libdirs = [flag[2:] for flag in s_split(libdirs) if flag[:2] == "-L"]
+        incdirs = [flag[2:] for flag in s_split(incdirs) if flag[:2] == "-I"]
 
-# Otherwise, we use the system-installed SNMP libraries
-else:
-    netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
+    # Otherwise, we use the system-installed SNMP libraries
+    else:
+        netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
 
-    pass_next = False
-    # macOS-specific
-    has_arg = ("-framework",)
-    for flag in s_split(netsnmp_libs):
-        if pass_next:
-            link_args.append(flag)
-            pass_next = False
-        elif flag in has_arg:  # -framework CoreFoundation
-            link_args.append(flag)
-            pass_next = True
-        elif flag == "-flat_namespace":
-            link_args.append(flag)
-            pass_next = False
+        pass_next = False
+        # macOS-specific
+        has_arg = ("-framework",)
+        for flag in s_split(netsnmp_libs):
+            if pass_next:
+                link_args.append(flag)
+                pass_next = False
+            elif flag in has_arg:  # -framework CoreFoundation
+                link_args.append(flag)
+                pass_next = True
+            elif flag == "-flat_namespace":
+                link_args.append(flag)
+                pass_next = False
 
-    # link_args += [flag for flag in s_split(netsnmp_libs) if flag[:2] == '-f']
-    libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
-    libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
-    incdirs = []
+        # link_args += [flag for flag in s_split(netsnmp_libs) if flag[:2] == '-f']
+        libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
+        libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
+        incdirs = []
 
-    if platform == "darwin":  # OS X
-        # Check if net-snmp is installed via Brew
-        try:
-            brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
-            lines = brew.splitlines()
-            include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
-            incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
-            lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
-            libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
-            # The homebrew version also depends on the Openssl keg
-            brew = check_output("brew info net-snmp", shell=True).decode()
-            openssl_ver = list(
-                filter(
-                    lambda o: "openssl" in o,
-                    *map(
-                        str.split,
-                        filter(
-                            lambda l: "openssl" in l,
-                            str(brew.replace("'", "")).split("\n"),
+        if platform == "darwin":  # OS X
+            # Check if net-snmp is installed via Brew
+            try:
+                brew = check_output(
+                    "brew list net-snmp 2>/dev/null", shell=True
+                ).decode()
+                lines = brew.splitlines()
+                include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
+                incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
+                lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
+                libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+                # The homebrew version also depends on the Openssl keg
+                brew = check_output("brew info net-snmp", shell=True).decode()
+                openssl_ver = list(
+                    filter(
+                        lambda o: "openssl" in o,
+                        *map(
+                            str.split,
+                            filter(
+                                lambda l: "openssl" in l,
+                                str(brew.replace("'", "")).split("\n"),
+                            ),
                         ),
-                    ),
-                )
-            )[0]
+                    )
+                )[0]
 
-            brew = check_output(
-                "brew info {0}".format(openssl_ver), shell=True
-            ).decode()
-            temp = brew.split("\n")
-            # As of 06/04/2024 brew info openssl spits out lines. the fifth one is what we care about
-            # This works for now, but we need a better solution
-            # ==> openssl@3: stable 3.3.0 (bottled)
-            # Cryptography and SSL/TLS Toolkit
-            # https://openssl.org/
-            # Installed
-            # /opt/homebrew/Cellar/openssl@3/3.3.0 (6,977 files, 32.4MB) *
-            # Poured from bottle using the formulae.brew.sh API on 2024-06-04 at 21:17:37
-            # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
-            # License: Apache-2.0
-            # ...
-            # print(temp)
-            temp_path = str(temp[4].split("(")[0]).strip()
+                brew = check_output(
+                    "brew info {0}".format(openssl_ver), shell=True
+                ).decode()
+                temp = brew.split("\n")
+                # As of 06/04/2024 brew info openssl spits out lines. the fifth one is what we care about
+                # This works for now, but we need a better solution
+                # ==> openssl@3: stable 3.3.0 (bottled)
+                # Cryptography and SSL/TLS Toolkit
+                # https://openssl.org/
+                # Installed
+                # /opt/homebrew/Cellar/openssl@3/3.3.0 (6,977 files, 32.4MB) *
+                # Poured from bottle using the formulae.brew.sh API on 2024-06-04 at 21:17:37
+                # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
+                # License: Apache-2.0
+                # ...
+                # print(temp)
+                temp_path = str(temp[4].split("(")[0]).strip()
 
-            libdirs.append(temp_path + "/lib")
-            incdirs.append(temp_path + "/include")
+                libdirs.append(temp_path + "/lib")
+                incdirs.append(temp_path + "/include")
 
-            print(f"libdirs: {libdirs}")
-            print(f"incdirs: {incdirs}")
-            print(f"openssl_ver: {openssl_ver}")
+                print(f"libdirs: {libdirs}")
+                print(f"incdirs: {incdirs}")
+                print(f"openssl_ver: {openssl_ver}")
 
-        except CalledProcessError:
-            print("A brew command failed...")
-            pass
+            except CalledProcessError:
+                print("A brew command failed...")
+                pass
 
-print(f"in_tree: {in_tree}")
-print(f"compile_args: {compile_args}")
-print(f"link_args: {link_args}")
-print(f"platform: {platform}")
+    print(f"in_tree: {in_tree}")
+    print(f"compile_args: {compile_args}")
+    print(f"link_args: {link_args}")
+    print(f"platform: {platform}")
+
+elif platform in ["win32"]:
+    libdirs = ["C:/OpenSSL-Win64/lib/VC/x64/MT", "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MT", "C:/usr/lib/"]
+    incdirs = ["C:/OpenSSL-Win64/OpenSSL-Win64/include", "C:/Program Files/OpenSSL-Win64/include", "C:/usr/include/"]
+    libs = []
+    compile_args = []
+    link_args = []
+
+else:
+    raise Exception(f"Unsupported platform {platform}!")
 
 
 # Setup the py.test class for use with the test command
