@@ -91,11 +91,20 @@ jobs:
               nmake
               nmake install
               nmake install_devel
+      
+      - name: Zip net-snmp usr_64x for Windows
+        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        with:
+          windows: |
+                   $source = "D:\a\ezsnmp\ezsnmp\usr_64x";
+                   $destination = "D:\a\ezsnmp\ezsnmp\usr_64x.zip";
+                   Compress-Archive -Path $source\* -CompressionLevel Optimal -DestinationPath $destination
 
-  #     - uses: actions/upload-artifact@v4
-  #       with:
-  #         name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-  #         path: wheelhouse/*.whl
+       - name: Upload net-snmp usr_64x zip
+         uses: actions/upload-artifact@v4
+         with:
+           name: usr_64x-${{ matrix.os }}-${{ strategy.job-index }}
+           path: D:\a\ezsnmp\ezsnmp\usr_64x.zip
 
   # build-n-publish-test-pypi:
   #   name: Build and Publish To Test PyPi
