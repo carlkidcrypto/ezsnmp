@@ -1,7 +1,9 @@
+#ifndef INTERFACE_H
+#define INTERFACE_H
+
 /* This is the header file to the 'interface.cpp' file. Will include things like
  * function definitions, enums, etc.
  */
-
 
 /******************************************************************************
  *
@@ -100,15 +102,14 @@ struct session_capsule_ctx
     bitarray *invalid_oids;
 };
 
-enum
+enum class LogLevel : int
 {
-    INFO,
-    WARNING,
-    ERROR,
-    DEBUG,
-    EXCEPTION
+    INFO = 0,
+    WARNING = 1,
+    // not used ?? ERROR = 2,
+    DEBUG = 3,
+    EXCEPTION = 4
 };
-
 
 /******************************************************************************
  *
@@ -170,3 +171,5 @@ PyObject *netsnmp_bulkwalk(PyObject *self, PyObject *args);
 PyObject *netsnmp_set(PyObject *self, PyObject *args);
 PyObject *py_get_logger(char *logger_name);
 void py_log_msg(int log_level, char *printf_fmt, ...);
+
+#endif // INTERFACE_H
