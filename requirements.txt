@@ -25,5 +25,5 @@ setuptools==70.1.0
 urllib3==2.2.2
 build==1.2.1
 cibuildwheel==2.19.1
-pip==24.1
+pip==24.1.2
 wheel==0.43.0
