@@ -20,11 +20,7 @@ OID_INDEX_RE = re.compile(
 
 # This regular expression takes something like 'SNMPv2::mib-2.17.7.1.4.3.1.2.300'
 # and splits it into 'SNMPv2::mib-2' and '17.7.1.4.3.1.2.300'
-OID_INDEX_RE2 = re.compile(r"^(\w+::(?:\w+-\d+)(?:\.\d+)+)\.(\d+)$")
-
-# This regular expression takes something like 'nsCacheTimeout.1.3.6.1.2.1'
-# and splits it into 'nsCacheTimeout.1.3.6.1.2' and '1'
-OID_INDEX_RE3 = re.compile(r"^([A-Z|a-z].*)\.(\d+)$")
+OID_INDEX_RE2 = re.compile(r"^([^\.]+::[^\.]+)\.(.*)$")
 
 
 def normalize_oid(oid, oid_index=None):
@@ -39,12 +35,8 @@ def normalize_oid(oid, oid_index=None):
     if oid_index is None and oid is not None:
         first_match = OID_INDEX_RE.match(oid)
         second_match = OID_INDEX_RE2.match(oid)
-        thrid_match = OID_INDEX_RE3.match(oid)
 
-        if thrid_match:
-            oid, oid_index = thrid_match.group(1, 2)
-
-        elif second_match:
+        if second_match:
             oid, oid_index = second_match.group(1, 2)
 
         elif first_match:
