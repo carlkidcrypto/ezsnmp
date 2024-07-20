@@ -125,11 +125,11 @@ if platform in ["darwin", "linux"]:
     print(f"platform: {platform}")
 
 elif platform in ["win32"]:
-    libdirs = ["C:/OpenSSL-Win64/lib/VC/x64/MT", "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MT", "C:/usr/lib/"]
-    incdirs = ["C:/OpenSSL-Win64/OpenSSL-Win64/include", "C:/Program Files/OpenSSL-Win64/include", "C:/usr/include/"]
+    libdirs = ["C:/Program Files/Testing/OpenSSL-Win64/lib/VC/x64/MT", "C:/Program Files/Testing/lib"]
+    incdirs = ["C:/Program Files/Testing/OpenSSL-Win64/include", "C:/Program Files/Testing/usr/include"]
     libs = []
-    compile_args = []
-    link_args = []
+    compile_args = ["/MT"]
+    link_args = ["/VERBOSE:LIB"]
 
 else:
     raise Exception(f"Unsupported platform {platform}!")

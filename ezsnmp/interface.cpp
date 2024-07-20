@@ -12,6 +12,7 @@
 #ifdef _WIN32
 #include <Winsock2.h>
 #include <xkeycheck.h>
+#define _MBCS
 #else
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -4197,9 +4198,9 @@ void py_log_msg(int log_level, char *printf_fmt, ...)
         pval = PyObject_CallMethod(PyLogger, "warn", "O", log_msg);
         break;
 
-    case LogLevel::ERROR:
-        pval = PyObject_CallMethod(PyLogger, "error", "O", log_msg);
-        break;
+    // case LogLevel::ERROR:
+    //     pval = PyObject_CallMethod(PyLogger, "error", "O", log_msg);
+    //     break;
 
     case LogLevel::DEBUG:
         pval = PyObject_CallMethod(PyLogger, "debug", "O", log_msg);
