@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 import os
 import re
+from typing import Union, List, overload, Any, Tuple
 from warnings import warn
 
 # Don't attempt to import the C interface if building docs on RTD
@@ -29,7 +30,9 @@ SECURITY_LEVEL_MAPPING = {
 }
 
 
-def build_varlist(oids):
+def build_varlist(
+    oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+) -> tuple[List[SNMPVariable], bool]:
     """
     Prepare the variable binding list which will be used by the
     C interface.
@@ -63,7 +66,7 @@ def build_varlist(oids):
     return varlist, is_list
 
 
-def validate_results(varlist):
+def validate_results(varlist: list[SNMPVariable])->None:
     """
     Validates a list of SNMPVariable objects and raises any appropriate
     exceptions where necessary.
@@ -278,7 +281,7 @@ class Session(object):
         del self.sess_ptr
 
     @property
-    def connect_hostname(self):
+    def connect_hostname(self) -> str:
         def format_hostname(hostname):
             return "[{}]".format(hostname) if is_hostname_ipv6(hostname) else hostname
 
@@ -288,11 +291,20 @@ class Session(object):
             return self.hostname
 
     @property
-    def timeout_microseconds(self):
+    def timeout_microseconds(self) -> int:
         # Calculate our timeout in microseconds
         return int(self.timeout * 1000000)
 
-    def get(self, oids):
+    @overload
+    def get(self, oids: List[Union[str, Tuple[str, str]]]) -> List[SNMPVariable]: ...
+
+    @overload
+    def get(self, oids: Union[str, Tuple[str, str]]) -> SNMPVariable: ...
+
+    def get(
+        self,
+        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+    ) -> Union[List[SNMPVariable], SNMPVariable]:
         """
         Perform an SNMP GET operation using the prepared session to
         retrieve a particular piece of information.
@@ -320,7 +332,7 @@ class Session(object):
         # Return a list or single item depending on what was passed in
         return list(varlist) if is_list else varlist[0]
 
-    def set(self, oid, value, snmp_type=None):
+    def set(self, oid:  Union[str, Tuple[str, str]], value: Any, snmp_type=None) -> bool:
         """
         Perform an SNMP SET operation using the prepared session.
 
@@ -347,7 +359,9 @@ class Session(object):
         success = interface.set(self, varlist)
         return bool(success)
 
-    def set_multiple(self, oid_values):
+    def set_multiple(
+        self, oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, int]]]
+    ) -> bool:
         """
         Perform an SNMP SET operation on multiple OIDs with multiple
         values using the prepared session.
@@ -379,7 +393,18 @@ class Session(object):
         success = interface.set(self, varlist)
         return bool(success)
 
-    def get_next(self, oids):
+    @overload
+    def get_next(
+        self, oids: List[Union[str, Tuple[str, str]]]
+    ) -> List[SNMPVariable]: ...
+
+    @overload
+    def get_next(self, oids: Union[str, Tuple[str, str]]) -> SNMPVariable: ...
+
+    def get_next(
+        self,
+        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+    ) -> Union[List[SNMPVariable], SNMPVariable]:
         """
         Uses an SNMP GETNEXT operation using the prepared session to
         retrieve the next variable after the chosen item.
@@ -407,7 +432,12 @@ class Session(object):
         # Return a list or single item depending on what was passed in
         return list(varlist) if is_list else varlist[0]
 
-    def get_bulk(self, oids, non_repeaters=0, max_repetitions=10):
+    def get_bulk(
+        self,
+        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+        non_repeaters: int = 0,
+        max_repetitions: int = 10,
+    ) -> List[SNMPVariable]:
         """
         Performs a bulk SNMP GET operation using the prepared session to
         retrieve multiple pieces of information in a single packet.
@@ -443,7 +473,12 @@ class Session(object):
         # Return a list of variables
         return varlist
 
-    def walk(self, oids=".1.3.6.1.2.1"):
+    def walk(
+        self,
+        oids: Union[
+            List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
+        ] = ".1.3.6.1.2.1",
+    ) -> List[SNMPVariable]:
         """
         Uses SNMP GETNEXT operation using the prepared session to
         automatically retrieve multiple pieces of information in an OID.
@@ -470,7 +505,14 @@ class Session(object):
         # Return a list of variables
         return list(varlist)
 
-    def bulkwalk(self, oids=".1.3.6.1.2.1", non_repeaters=0, max_repetitions=10):
+    def bulkwalk(
+        self,
+        oids: Union[
+            List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
+        ] = ".1.3.6.1.2.1",
+        non_repeaters: int = 0,
+        max_repetitions: int = 10,
+    ) -> List[SNMPVariable]:
         """
         Uses SNMP GETBULK operation using the prepared session to
         automatically retrieve multiple pieces of information in an OID
@@ -500,7 +542,7 @@ class Session(object):
         # Return a list of variables
         return varlist
 
-    def update_session(self, **kwargs):
+    def update_session(self, **kwargs: Any) -> None:
         """
         (Re)creates the underlying Net-SNMP session object.
 
