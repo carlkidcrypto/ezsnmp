@@ -32,7 +32,7 @@ SECURITY_LEVEL_MAPPING = {
 
 def build_varlist(
     oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-) -> tuple[List[SNMPVariable], bool]:
+) -> Tuple[List[SNMPVariable], bool]:
     """
     Prepare the variable binding list which will be used by the
     C interface.
@@ -66,7 +66,7 @@ def build_varlist(
     return varlist, is_list
 
 
-def validate_results(varlist: list[SNMPVariable])->None:
+def validate_results(varlist: list[SNMPVariable]) -> None:
     """
     Validates a list of SNMPVariable objects and raises any appropriate
     exceptions where necessary.
@@ -332,7 +332,7 @@ class Session(object):
         # Return a list or single item depending on what was passed in
         return list(varlist) if is_list else varlist[0]
 
-    def set(self, oid:  Union[str, Tuple[str, str]], value: Any, snmp_type=None) -> bool:
+    def set(self, oid: Union[str, Tuple[str, str]], value: Any, snmp_type=None) -> bool:
         """
         Perform an SNMP SET operation using the prepared session.
 
