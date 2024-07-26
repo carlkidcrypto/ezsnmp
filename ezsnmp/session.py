@@ -66,7 +66,7 @@ def build_varlist(
     return varlist, is_list
 
 
-def validate_results(varlist: list[SNMPVariable]) -> None:
+def validate_results(varlist: List[SNMPVariable]) -> None:
     """
     Validates a list of SNMPVariable objects and raises any appropriate
     exceptions where necessary.
