@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 import os
 import re
-from typing import Union, List, overload, Any, Tuple
+from typing import Union, List, overload, Any, Tuple, Literal
 from warnings import warn
 
 # Don't attempt to import the C interface if building docs on RTD
@@ -73,6 +73,7 @@ def validate_results(varlist: List[SNMPVariable]) -> None:
 
     :param varlist: a variable list containing SNMPVariable objects to be
                     processed
+    :return:
     """
 
     for variable in varlist:
@@ -176,35 +177,37 @@ class Session(object):
 
     def __init__(
         self,
-        hostname="localhost",
-        version=3,
-        community="public",
-        timeout=1,
-        retries=3,
-        remote_port=0,
-        local_port=0,
-        security_level="no_auth_or_privacy",
-        security_username="initial",
-        privacy_protocol="DEFAULT",
-        privacy_password="",
-        auth_protocol="DEFAULT",
-        auth_password="",
-        context_engine_id="",
-        security_engine_id="",
-        context="",
-        engine_boots=0,
-        engine_time=0,
-        our_identity="",
-        their_identity="",
-        their_hostname="",
-        trust_cert="",
-        use_long_names=False,
-        use_numeric=False,
-        use_sprint_value=False,
-        use_enums=False,
-        best_guess=0,
-        retry_no_such=False,
-        abort_on_nonexistent=False,
+        hostname: str = "localhost",
+        version: Literal[1, 2, 3] = 3,
+        community: str = "public",
+        timeout: int = 1,
+        retries: int = 3,
+        remote_port: int = 0,
+        local_port: int = 0,
+        security_level: Literal[
+            "no_auth_or_privacy", "auth_without_privacy", "auth_with_privacy"
+        ] = "no_auth_or_privacy",
+        security_username: str = "initial",
+        privacy_protocol: str = "DEFAULT",
+        privacy_password: str = "",
+        auth_protocol: str = "DEFAULT",
+        auth_password: str = "",
+        context_engine_id: str = "",
+        security_engine_id: str = "",
+        context: str = "",
+        engine_boots: int = 0,
+        engine_time: int = 0,
+        our_identity: str = "",
+        their_identity: str = "",
+        their_hostname: str = "",
+        trust_cert: str = "",
+        use_long_names: bool = False,
+        use_numeric: bool = False,
+        use_sprint_value: bool = False,
+        use_enums: bool = False,
+        best_guess: Literal[0, 1, 2] = 0,
+        retry_no_such: bool = False,
+        abort_on_nonexistent: bool = False,
     ):
         # Validate and extract the remote port
         connection_string = re.match(
