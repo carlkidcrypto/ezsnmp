@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import
 
+from typing import Optional
+
 from .compat import urepr
 from .helpers import normalize_oid
 from .utils import strip_non_printable, tostr
@@ -20,12 +22,18 @@ class SNMPVariable(object):
                       NOSUCHOBJECT and NOSUCHINSTANCE respectively
     """
 
-    def __init__(self, oid=None, oid_index=None, value=None, snmp_type=None):
+    def __init__(
+        self,
+        oid: Optional[str] = None,
+        oid_index: Optional[str] = None,
+        value: Optional[str] = None,
+        snmp_type: Optional[str] = None,
+    ) -> None:
         self.oid, self.oid_index = normalize_oid(oid, oid_index)
         self.value = value
         self.snmp_type = snmp_type
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         printable_value = strip_non_printable(self.value)
         return "<{0} value={1} (oid={2}, oid_index={3}, snmp_type={4})>".format(
             self.__class__.__name__,
@@ -35,10 +43,10 @@ class SNMPVariable(object):
             urepr(self.snmp_type),
         )
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name, value) -> None:
         self.__dict__[name] = tostr(value)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return repr(self) == repr(other)
 
 

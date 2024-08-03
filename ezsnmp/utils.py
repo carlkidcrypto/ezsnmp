@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import
+from typing import Optional, Union
 
 import ipaddress
 import string
@@ -6,7 +7,7 @@ import string
 from .compat import ub, text_type
 
 
-def strip_non_printable(value):
+def strip_non_printable(value: Optional[str]) -> Optional[str]:
     """
     Removes any non-printable characters and adds an indicator to the string
     when binary characters are fonud.
@@ -29,7 +30,7 @@ def strip_non_printable(value):
     return printable_value
 
 
-def tostr(value):
+def tostr(value: Union[str, int, float, None]) -> Optional[str]:
     """
     Converts any variable to a string or returns None if the variable
     contained None to begin with; this function currently supports None,
@@ -48,7 +49,7 @@ def tostr(value):
         return ub(value)
 
 
-def is_hostname_ipv6(hostname):
+def is_hostname_ipv6(hostname: str) -> bool:
     try:
         ipaddress.IPv6Address(hostname)
     except ipaddress.AddressValueError:
