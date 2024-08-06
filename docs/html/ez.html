@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ezsnmp.ez module &mdash; Ez SNMP V1.0.0c2 documentation</title>
+  <title>ezsnmp.ez module &mdash; Ez SNMP V1.0.0c3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=e122934b"></script>
+        <script src="_static/documentation_options.js?v=455a1752"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -93,7 +93,7 @@
 <span id="ezsnmp-ez-module"></span><h1>ezsnmp.ez module<a class="headerlink" href="#module-ezsnmp.ez" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_bulkwalk">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_bulkwalk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.1.3.6.1.2.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_repeaters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_bulkwalk" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_bulkwalk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.1.3.6.1.2.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_repeaters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_bulkwalk" title="Link to this definition"></a></dt>
 <dd><p>Uses SNMP GETBULK operation using the prepared session to
 automatically retrieve multiple pieces of information in an OID</p>
 <dl class="field-list simple">
@@ -120,7 +120,9 @@ were retrieved via SNMP</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_get">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_get" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_get" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a></span></span></dt>
 <dd><p>Perform an SNMP GET operation to retrieve a particular piece of
 information.</p>
 <dl class="field-list simple">
@@ -136,12 +138,17 @@ constructing the session for this operation;
 all parameters in the Session class are supported</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an SNMPVariable object containing the value that was
+retrieved or a list of objects when you send in a list of
+OIDs</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_get_bulk">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get_bulk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_repeaters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_get_bulk" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get_bulk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_repeaters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_repetitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_get_bulk" title="Link to this definition"></a></dt>
 <dd><p>Performs a bulk SNMP GET operation to retrieve multiple pieces of
 information in a single packet.</p>
 <dl class="field-list simple">
@@ -162,12 +169,18 @@ constructing the session for this operation;
 all parameters in the Session class are supported</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SNMPVariable objects containing the values that
+were retrieved via SNMP</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_get_next">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_get_next" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_get_next" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_get_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a></span></span></dt>
 <dd><p>Uses an SNMP GETNEXT operation to retrieve the next variable after
 the chosen item.</p>
 <dl class="field-list simple">
@@ -183,12 +196,17 @@ constructing the session for this operation;
 all parameters in the Session class are supported</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an SNMPVariable object containing the value that was
+retrieved or a list of objects when you send in a list of
+OIDs</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_set">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_set" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_set" title="Link to this definition"></a></dt>
 <dd><p>Perform an SNMP SET operation to update a particular piece of
 information.</p>
 <dl class="field-list simple">
@@ -206,12 +224,15 @@ constructing the session for this operation;
 all parameters in the Session class are supported</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool value indicated that if snmp_set was successed</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_set_multiple">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_set_multiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid_values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_set_multiple" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_set_multiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_set_multiple" title="Link to this definition"></a></dt>
 <dd><p>Perform multiple SNMP SET operations to update various pieces of
 information at the same time.</p>
 <dl class="field-list simple">
@@ -224,12 +245,15 @@ constructing the session for this operation;
 all parameters in the Session class are supported</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool value indicated that if snmp_set was successed</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ezsnmp.ez.snmp_walk">
-<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.1.3.6.1.2.1'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.ez.snmp_walk" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.ez.</span></span><span class="sig-name descname"><span class="pre">snmp_walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.1.3.6.1.2.1'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">session_kargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable" title="ezsnmp.variables.SNMPVariable"><span class="pre">SNMPVariable</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ezsnmp.ez.snmp_walk" title="Link to this definition"></a></dt>
 <dd><p>Uses SNMP GETNEXT operation to automatically retrieve multiple
 pieces of information in an OID for you.</p>
 <dl class="field-list simple">
@@ -244,6 +268,10 @@ second (e.g. (‘sysDescr’, 0))</p></li>
 constructing the session for this operation;
 all parameters in the Session class are supported</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of SNMPVariable objects containing the values that
+were retrieved via SNMP</p>
 </dd>
 </dl>
 </dd></dl>
