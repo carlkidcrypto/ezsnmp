@@ -24,7 +24,7 @@ from ezsnmp.exceptions import (
 def test_snmp_get_regular(sess_args):
     res = snmp_get("sysDescr.0", **sess_args)
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -33,7 +33,7 @@ def test_snmp_get_regular(sess_args):
 def test_snmp_get_tuple(sess_args):
     res = snmp_get(("sysDescr", "0"), **sess_args)
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -42,7 +42,7 @@ def test_snmp_get_tuple(sess_args):
 def test_snmp_get_fully_qualified(sess_args):
     res = snmp_get(".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0", **sess_args)
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -53,7 +53,7 @@ def test_snmp_get_fully_qualified_tuple(sess_args):
         (".iso.org.dod.internet.mgmt.mib-2.system.sysDescr", "0"), **sess_args
     )
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -62,7 +62,7 @@ def test_snmp_get_fully_qualified_tuple(sess_args):
 def test_snmp_get_numeric(sess_args):
     res = snmp_get(".1.3.6.1.2.1.1.1.0", **sess_args)
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -71,7 +71,7 @@ def test_snmp_get_numeric(sess_args):
 def test_snmp_get_numeric_no_leading_dot(sess_args):
     res = snmp_get("1.3.6.1.2.1.1.1.0", **sess_args)
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -80,7 +80,7 @@ def test_snmp_get_numeric_no_leading_dot(sess_args):
 def test_snmp_get_numeric_tuple(sess_args):
     res = snmp_get((".1.3.6.1.2.1.1.1", "0"), **sess_args)
 
-    assert res.value and platform.version() in res.value
+    assert platform.version() in res.value
     assert res.oid == "sysDescr"
     assert res.oid_index == "0"
     assert res.snmp_type == "OCTETSTR"
@@ -102,7 +102,7 @@ def test_snmp_v1_get_with_retry_no_such(sess_args):
         assert res[0].snmp_type == "NOSUCHOBJECT"
 
     assert res[1]
-    assert res[1].value and platform.version() in res[1].value
+    assert platform.version() in res[1].value
     assert res[1].oid == "sysDescr"
     assert res[1].oid_index == "0"
     assert res[1].snmp_type == "OCTETSTR"
@@ -160,7 +160,7 @@ def test_snmp_get_next(sess_args):
 
     assert res.oid == "nsCacheTimeout"
     assert res.oid_index == "1.3.6.1.2.1.2.2"
-    assert res.value and int(res.value) >= 0
+    assert int(res.value) >= 0
     assert res.snmp_type == "INTEGER"
 
 
@@ -170,7 +170,7 @@ def test_snmp_get_next_numeric(sess_args):
     assert res.oid == "sysObjectID"
     assert res.oid_index == "0"
     # .10 == Linux, .16 == macosx, .13 == win32, .255 == UNKNOWN
-    assert res.value and res.value.rsplit(".", 1)[0] == ".1.3.6.1.4.1.8072.3.2"
+    assert res.value.rsplit(".", 1)[0] == ".1.3.6.1.4.1.8072.3.2"
     assert res.snmp_type == "OBJECTID"
 
 
@@ -187,7 +187,7 @@ def test_snmp_get_next_with_retry_no_such(sess_args):
         assert res[0].snmp_type == "NOSUCHOBJECT"
 
     assert res[1]
-    assert res[1].value and platform.version() in res[1].value
+    assert platform.version() in res[1].value
     assert res[1].oid == "sysDescr"
     assert res[1].oid_index == "0"
     assert res[1].snmp_type == "OCTETSTR"
@@ -215,7 +215,7 @@ def test_snmp_get_next_end_of_mib_view(sess_args):
         assert res[0].snmp_type == "ENDOFMIBVIEW"
 
         assert res[1]
-        assert res[1].value and platform.version() in res[1].value
+        assert platform.version() in res[1].value
         assert res[1].oid == "sysDescr"
         assert res[1].oid_index == "0"
         assert res[1].snmp_type == "OCTETSTR"
@@ -370,12 +370,12 @@ def test_snmp_get_bulk(sess_args):
 
         assert res[0].oid == "sysUpTimeInstance"
         assert res[0].oid_index == ""
-        assert res[0].value and int(res[0].value) > 0
+        assert int(res[0].value) > 0
         assert res[0].snmp_type == "TICKS"
 
         assert res[4].oid == "sysORUpTime"
         assert res[4].oid_index == "1"
-        assert res[4].value and int(res[4].value) >= 0
+        assert int(res[4].value) >= 0
         assert res[4].snmp_type == "TICKS"
 
 
@@ -383,7 +383,7 @@ def test_snmp_walk(sess_args):
     res = snmp_walk("system", **sess_args)
     assert len(res) >= 7
 
-    assert res[0].value and platform.version() in res[0].value
+    assert platform.version() in res[0].value
     assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res[4].value == platform.node()
     assert res[5].value == "my original location"
@@ -396,7 +396,7 @@ def test_snmp_walk_res(sess_args):
 
     assert res[0].oid == "sysDescr"
     assert res[0].oid_index == "0"
-    assert res[0].value and platform.version() in res[0].value
+    assert platform.version() in res[0].value
     assert res[0].snmp_type == "OCTETSTR"
 
     assert res[3].oid == "sysContact"
@@ -434,7 +434,7 @@ def test_snmp_bulkwalk_res(sess_args):
 
         assert res[0].oid == "sysDescr"
         assert res[0].oid_index == "0"
-        assert res[0].value and platform.version() in res[0].value
+        assert platform.version() in res[0].value
         assert res[0].snmp_type == "OCTETSTR"
 
         assert res[3].oid == "sysContact"

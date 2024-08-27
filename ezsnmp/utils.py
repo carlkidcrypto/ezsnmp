@@ -4,8 +4,6 @@ from typing import Optional, Union
 import ipaddress
 import string
 
-from .compat import ub, text_type
-
 
 def strip_non_printable(value: Optional[str]) -> Optional[str]:
     """
@@ -41,12 +39,12 @@ def tostr(value: Union[str, int, float, None]) -> Optional[str]:
 
     if value is None:
         return None
-    elif isinstance(value, text_type):
+    elif isinstance(value, str):
         return value
     elif isinstance(value, (int, float)):
         return str(value)
     else:
-        return ub(value)
+        return value
 
 
 def is_hostname_ipv6(hostname: str) -> bool:

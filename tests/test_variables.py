@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-from ezsnmp.compat import ub
 from ezsnmp.variables import SNMPVariable, SNMPVariableList
 
 
@@ -27,7 +26,7 @@ def test_snmp_variable_repr():
 
 def test_snmp_variable_repr_binary():
     var = SNMPVariable(
-        "sysDescr", "0", ub(chr(20)) + "my thingo" + ub(chr(155)), "OCTETSTR"
+        "sysDescr", "0", (chr(20)) + "my thingo" + (chr(155)), "OCTETSTR"
     )
     assert var.__repr__() == (
         "<SNMPVariable value='my thingo (contains binary)' "
@@ -36,7 +35,7 @@ def test_snmp_variable_repr_binary():
 
 
 def test_snmp_variable_repr_binary_only():
-    var = SNMPVariable("sysDescr", "0", ub(chr(20)) + ub(chr(155)), "OCTETSTR")
+    var = SNMPVariable("sysDescr", "0", (chr(20)) + (chr(155)), "OCTETSTR")
     assert var.__repr__() == (
         "<SNMPVariable value='(contains binary)' "
         "(oid='sysDescr', oid_index='0', snmp_type='OCTETSTR')>"
@@ -52,11 +51,11 @@ def test_snmp_variable_repr_none():
 
 def test_snmp_variable_eq_():
     var1 = SNMPVariable(
-        "sysDescr", "0", ub(chr(20)) + "my thingo 1" + ub(chr(155)), "OCTETSTR"
+        "sysDescr", "0", (chr(20)) + "my thingo 1" + (chr(155)), "OCTETSTR"
     )
 
     var2 = SNMPVariable(
-        "sysDescr", "0", ub(chr(20)) + "my thingo 1" + ub(chr(155)), "OCTETSTR"
+        "sysDescr", "0", (chr(20)) + "my thingo 1" + (chr(155)), "OCTETSTR"
     )
 
     assert var1 == var2
@@ -64,11 +63,11 @@ def test_snmp_variable_eq_():
 
 def test_snmp_variable_not_eq_():
     var1 = SNMPVariable(
-        "sysDescr", "0", ub(chr(20)) + "my thingo 1" + ub(chr(155)), "OCTETSTR"
+        "sysDescr", "0", (chr(20)) + "my thingo 1" + (chr(155)), "OCTETSTR"
     )
 
     var2 = SNMPVariable(
-        "sysDescr", "0", ub(chr(20)) + "my thingo 2" + ub(chr(155)), "OCTETSTR"
+        "sysDescr", "0", (chr(20)) + "my thingo 2" + (chr(155)), "OCTETSTR"
     )
 
     assert var1 != var2
