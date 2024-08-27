@@ -75,7 +75,8 @@ def snmp_set(
 
 
 def snmp_set_multiple(
-    oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]], **session_kargs: dict
+    oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]],
+    **session_kargs: dict,
 ) -> bool:
     """
     Perform multiple SNMP SET operations to update various pieces of
