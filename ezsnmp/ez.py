@@ -8,19 +8,19 @@ from .variables import SNMPVariable
 
 @overload
 def snmp_get(
-    oids: List[Union[str, Tuple[str, str]]], **session_kargs: Any
+    oids: List[Union[str, Tuple[str, str]]], **session_kargs: dict
 ) -> List[SNMPVariable]: ...
 
 
 @overload
 def snmp_get(
-    oids: Union[str, Tuple[str, str]], **session_kargs: Any
+    oids: Union[str, Tuple[str, str]], **session_kargs: dict
 ) -> SNMPVariable: ...
 
 
 def snmp_get(
     oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-    **session_kargs: Any,
+    **session_kargs: dict,
 ) -> Union[SNMPVariable, List[SNMPVariable]]:
     """
     Perform an SNMP GET operation to retrieve a particular piece of
@@ -49,7 +49,7 @@ def snmp_set(
     oid: Union[str, Tuple[str, str]],
     value: Any,
     type: Optional[str] = None,
-    **session_kargs: Any,
+    **session_kargs: dict,
 ) -> bool:
     """
     Perform an SNMP SET operation to update a particular piece of
@@ -75,7 +75,7 @@ def snmp_set(
 
 
 def snmp_set_multiple(
-    oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]], **session_kargs: Any
+    oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]], **session_kargs: dict
 ) -> bool:
     """
     Perform multiple SNMP SET operations to update various pieces of
@@ -97,7 +97,7 @@ def snmp_set_multiple(
 
 @overload
 def snmp_get_next(
-    oids: List[Union[str, Tuple[str, str]]], **session_kargs: Any
+    oids: List[Union[str, Tuple[str, str]]], **session_kargs: dict
 ) -> List[SNMPVariable]: ...
 
 
@@ -109,7 +109,7 @@ def snmp_get_next(
 
 def snmp_get_next(
     oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-    **session_kargs: Any,
+    **session_kargs: dict,
 ) -> Union[List[SNMPVariable], SNMPVariable]:
     """
     Uses an SNMP GETNEXT operation to retrieve the next variable after
@@ -138,7 +138,7 @@ def snmp_get_bulk(
     oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
     non_repeaters: int = 0,
     max_repetitions: int = 10,
-    **session_kargs: Any,
+    **session_kargs: dict,
 ) -> List[SNMPVariable]:
     """
     Performs a bulk SNMP GET operation to retrieve multiple pieces of
@@ -171,7 +171,7 @@ def snmp_walk(
     oids: Union[
         List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
     ] = ".1.3.6.1.2.1",
-    **session_kargs: Any,
+    **session_kargs: dict,
 ) -> List[SNMPVariable]:
     """
     Uses SNMP GETNEXT operation to automatically retrieve multiple
@@ -201,7 +201,7 @@ def snmp_bulkwalk(
     ] = ".1.3.6.1.2.1",
     non_repeaters: int = 0,
     max_repetitions: int = 10,
-    **session_kargs: Any,
+    **session_kargs: dict,
 ) -> List[SNMPVariable]:
     """
     Uses SNMP GETBULK operation using the prepared session to
