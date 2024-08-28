@@ -1,10 +1,10 @@
 atomicwrites==1.4.1
-attrs==23.2.0
-black==24.4.2
+attrs==24.2.0
+black==24.8.0
 click== 8.1.7
 colorama==0.4.6
-coverage==7.6.0
-flake8==7.1.0
+coverage==7.6.1
+flake8==7.1.1
 iniconfig==2.0.0
 mccabe==0.7.0
 mypy-extensions==1.0.0
@@ -13,17 +13,17 @@ pathspec==0.12.1
 platformdirs==4.2.2
 pluggy==1.5.0
 py==1.11.0
-pycodestyle==2.12.0
+pycodestyle==2.12.1
 pyflakes==3.2.0
-pyparsing==3.1.2
+pyparsing==3.1.4
 pytest==8.3.2
 pytest-cov==5.0.0
 pytest-sugar==1.0.0
 termcolor==2.4.0
 tomli==2.0.1
-setuptools==72.1.0
+setuptools==74.0.0
 urllib3==2.2.2
 build==1.2.1
-cibuildwheel==2.19.2
+cibuildwheel==2.20.0
 pip==24.2
-wheel==0.43.0
+wheel==0.44.0
