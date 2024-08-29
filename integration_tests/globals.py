@@ -2,8 +2,7 @@
 A module that contains global variables and functions that are used in the integration tests.
 """
 
-from time import sleep
-from random import uniform, randint
+from random import randint
 from ezsnmp.session import Session
 from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
 from os import getpid
