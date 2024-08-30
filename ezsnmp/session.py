@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 import os
 import re
+from typing import Union, List, overload, Any, Tuple, Literal, Optional
 from warnings import warn
 
 # Don't attempt to import the C interface if building docs on RTD
@@ -29,7 +30,9 @@ SECURITY_LEVEL_MAPPING = {
 }
 
 
-def build_varlist(oids):
+def build_varlist(
+    oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+) -> Tuple[List[SNMPVariable], bool]:
     """
     Prepare the variable binding list which will be used by the
     C interface.
@@ -63,13 +66,14 @@ def build_varlist(oids):
     return varlist, is_list
 
 
-def validate_results(varlist):
+def validate_results(varlist: List[SNMPVariable]) -> None:
     """
     Validates a list of SNMPVariable objects and raises any appropriate
     exceptions where necessary.
 
     :param varlist: a variable list containing SNMPVariable objects to be
                     processed
+    :return:
     """
 
     for variable in varlist:
@@ -173,35 +177,37 @@ class Session(object):
 
     def __init__(
         self,
-        hostname="localhost",
-        version=3,
-        community="public",
-        timeout=1,
-        retries=3,
-        remote_port=0,
-        local_port=0,
-        security_level="no_auth_or_privacy",
-        security_username="initial",
-        privacy_protocol="DEFAULT",
-        privacy_password="",
-        auth_protocol="DEFAULT",
-        auth_password="",
-        context_engine_id="",
-        security_engine_id="",
-        context="",
-        engine_boots=0,
-        engine_time=0,
-        our_identity="",
-        their_identity="",
-        their_hostname="",
-        trust_cert="",
-        use_long_names=False,
-        use_numeric=False,
-        use_sprint_value=False,
-        use_enums=False,
-        best_guess=0,
-        retry_no_such=False,
-        abort_on_nonexistent=False,
+        hostname: str = "localhost",
+        version: Literal[1, 2, 3] = 3,
+        community: str = "public",
+        timeout: int = 1,
+        retries: int = 3,
+        remote_port: int = 0,
+        local_port: int = 0,
+        security_level: Literal[
+            "no_auth_or_privacy", "auth_without_privacy", "auth_with_privacy"
+        ] = "no_auth_or_privacy",
+        security_username: str = "initial",
+        privacy_protocol: str = "DEFAULT",
+        privacy_password: str = "",
+        auth_protocol: str = "DEFAULT",
+        auth_password: str = "",
+        context_engine_id: str = "",
+        security_engine_id: str = "",
+        context: str = "",
+        engine_boots: int = 0,
+        engine_time: int = 0,
+        our_identity: str = "",
+        their_identity: str = "",
+        their_hostname: str = "",
+        trust_cert: str = "",
+        use_long_names: bool = False,
+        use_numeric: bool = False,
+        use_sprint_value: bool = False,
+        use_enums: bool = False,
+        best_guess: Literal[0, 1, 2] = 0,
+        retry_no_such: bool = False,
+        abort_on_nonexistent: bool = False,
     ):
         # Validate and extract the remote port
         connection_string = re.match(
@@ -214,11 +220,11 @@ class Session(object):
                     "to have a port defined too"
                 )
             else:
-                full_address, hostname, remote_port = connection_string.groups()
+                full_address, hostname, _remote_port = connection_string.groups()
                 if ":" in hostname and not is_hostname_ipv6(hostname):
                     raise ValueError("an invalid IPv6 address was specified")
                 hostname = full_address
-                remote_port = int(remote_port)
+                remote_port = int(_remote_port)
 
         self.hostname = hostname
         self.version = version
@@ -278,7 +284,7 @@ class Session(object):
         del self.sess_ptr
 
     @property
-    def connect_hostname(self):
+    def connect_hostname(self) -> str:
         def format_hostname(hostname):
             return "[{}]".format(hostname) if is_hostname_ipv6(hostname) else hostname
 
@@ -288,11 +294,20 @@ class Session(object):
             return self.hostname
 
     @property
-    def timeout_microseconds(self):
+    def timeout_microseconds(self) -> int:
         # Calculate our timeout in microseconds
         return int(self.timeout * 1000000)
 
-    def get(self, oids):
+    @overload
+    def get(self, oids: List[Union[str, Tuple[str, str]]]) -> List[SNMPVariable]: ...
+
+    @overload
+    def get(self, oids: Union[str, Tuple[str, str]]) -> SNMPVariable: ...
+
+    def get(
+        self,
+        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+    ) -> Union[List[SNMPVariable], SNMPVariable]:
         """
         Perform an SNMP GET operation using the prepared session to
         retrieve a particular piece of information.
@@ -320,7 +335,12 @@ class Session(object):
         # Return a list or single item depending on what was passed in
         return list(varlist) if is_list else varlist[0]
 
-    def set(self, oid, value, snmp_type=None):
+    def set(
+        self,
+        oid: Union[str, Tuple[str, str]],
+        value: Any,
+        snmp_type: Optional[str] = None,
+    ) -> bool:
         """
         Perform an SNMP SET operation using the prepared session.
 
@@ -347,7 +367,9 @@ class Session(object):
         success = interface.set(self, varlist)
         return bool(success)
 
-    def set_multiple(self, oid_values):
+    def set_multiple(
+        self, oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]]
+    ) -> bool:
         """
         Perform an SNMP SET operation on multiple OIDs with multiple
         values using the prepared session.
@@ -379,7 +401,18 @@ class Session(object):
         success = interface.set(self, varlist)
         return bool(success)
 
-    def get_next(self, oids):
+    @overload
+    def get_next(
+        self, oids: List[Union[str, Tuple[str, str]]]
+    ) -> List[SNMPVariable]: ...
+
+    @overload
+    def get_next(self, oids: Union[str, Tuple[str, str]]) -> SNMPVariable: ...
+
+    def get_next(
+        self,
+        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+    ) -> Union[List[SNMPVariable], SNMPVariable]:
         """
         Uses an SNMP GETNEXT operation using the prepared session to
         retrieve the next variable after the chosen item.
@@ -407,7 +440,12 @@ class Session(object):
         # Return a list or single item depending on what was passed in
         return list(varlist) if is_list else varlist[0]
 
-    def get_bulk(self, oids, non_repeaters=0, max_repetitions=10):
+    def get_bulk(
+        self,
+        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
+        non_repeaters: int = 0,
+        max_repetitions: int = 10,
+    ) -> List[SNMPVariable]:
         """
         Performs a bulk SNMP GET operation using the prepared session to
         retrieve multiple pieces of information in a single packet.
@@ -443,7 +481,12 @@ class Session(object):
         # Return a list of variables
         return varlist
 
-    def walk(self, oids=".1.3.6.1.2.1"):
+    def walk(
+        self,
+        oids: Union[
+            List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
+        ] = ".1.3.6.1.2.1",
+    ) -> List[SNMPVariable]:
         """
         Uses SNMP GETNEXT operation using the prepared session to
         automatically retrieve multiple pieces of information in an OID.
@@ -470,7 +513,14 @@ class Session(object):
         # Return a list of variables
         return list(varlist)
 
-    def bulkwalk(self, oids=".1.3.6.1.2.1", non_repeaters=0, max_repetitions=10):
+    def bulkwalk(
+        self,
+        oids: Union[
+            List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
+        ] = ".1.3.6.1.2.1",
+        non_repeaters: int = 0,
+        max_repetitions: int = 10,
+    ) -> List[SNMPVariable]:
         """
         Uses SNMP GETBULK operation using the prepared session to
         automatically retrieve multiple pieces of information in an OID
@@ -500,7 +550,7 @@ class Session(object):
         # Return a list of variables
         return varlist
 
-    def update_session(self, **kwargs):
+    def update_session(self, **kwargs: Any) -> None:
         """
         (Re)creates the underlying Net-SNMP session object.
 

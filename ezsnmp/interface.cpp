@@ -60,7 +60,6 @@ void PyObject_deleter(PyObject *obj)
 /* This can't be shared_ptr's for some reason. They'll need more work and investigation */
 PyObject *ezsnmp_import = NULL;
 PyObject *ezsnmp_exceptions_import = NULL;
-PyObject *ezsnmp_compat_import = NULL;
 PyObject *PyLogger = NULL;
 PyObject *logging_import = NULL;
 
@@ -4331,13 +4330,6 @@ PyMODINIT_FUNC PyInit_interface(void)
         return retval;
     }
 
-    ezsnmp_compat_import = PyImport_ImportModule("ezsnmp.compat");
-    if (ezsnmp_compat_import == NULL)
-    {
-        const char *err_msg = "failed to import 'ezsnmp.compat'";
-        PyErr_SetString(PyExc_ImportError, err_msg);
-        return retval;
-    }
 
     EzSNMPError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import, "EzSNMPError"), PyObject_deleter);
     EzSNMPConnectionError.reset(PyObject_GetAttrString(ezsnmp_exceptions_import,
