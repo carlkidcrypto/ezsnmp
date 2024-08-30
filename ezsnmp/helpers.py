@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from typing import Optional, Tuple, overload
+
 import re
 
 # This regular expression is used to extract the index from an OID
@@ -23,7 +25,21 @@ OID_INDEX_RE = re.compile(
 OID_INDEX_RE2 = re.compile(r"^([^\.]+::[^\.]+)\.(.*)$")
 
 
-def normalize_oid(oid, oid_index=None):
+@overload
+def normalize_oid(oid: str, oid_index: str) -> Tuple[str, str]: ...
+
+
+@overload
+def normalize_oid(oid: str, oid_index: Optional[str]) -> Tuple[str, str]: ...
+
+
+@overload
+def normalize_oid(oid=None, oid_index=None) -> Tuple[None, None]: ...
+
+
+def normalize_oid(
+    oid: Optional[str] = None, oid_index: Optional[str] = None
+) -> Tuple[Optional[str], Optional[str]]:
     """
     Ensures that the index is set correctly given an OID definition.
 

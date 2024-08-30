@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 import os
 import re
-from typing import Union, List, overload, Any, Tuple, Literal
+from typing import Union, List, overload, Any, Tuple, Literal, Optional
 from warnings import warn
 
 # Don't attempt to import the C interface if building docs on RTD
@@ -220,11 +220,11 @@ class Session(object):
                     "to have a port defined too"
                 )
             else:
-                full_address, hostname, remote_port = connection_string.groups()
+                full_address, hostname, _remote_port = connection_string.groups()
                 if ":" in hostname and not is_hostname_ipv6(hostname):
                     raise ValueError("an invalid IPv6 address was specified")
                 hostname = full_address
-                remote_port = int(remote_port)
+                remote_port = int(_remote_port)
 
         self.hostname = hostname
         self.version = version
@@ -335,7 +335,12 @@ class Session(object):
         # Return a list or single item depending on what was passed in
         return list(varlist) if is_list else varlist[0]
 
-    def set(self, oid: Union[str, Tuple[str, str]], value: Any, snmp_type=None) -> bool:
+    def set(
+        self,
+        oid: Union[str, Tuple[str, str]],
+        value: Any,
+        snmp_type: Optional[str] = None,
+    ) -> bool:
         """
         Perform an SNMP SET operation using the prepared session.
 
@@ -363,7 +368,7 @@ class Session(object):
         return bool(success)
 
     def set_multiple(
-        self, oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, int]]]
+        self, oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]]
     ) -> bool:
         """
         Perform an SNMP SET operation on multiple OIDs with multiple
