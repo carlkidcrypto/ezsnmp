@@ -38,6 +38,15 @@ Why Another Library?
 - This version (Ez SNMP) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
   and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`__
 
+
+How to Support This Project?
+----------------------------
+
+.. raw:: html
+
+    <a href="https://www.buymeacoffee.com/carlkidcrypto" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+
 Quick Start
 -----------
 
