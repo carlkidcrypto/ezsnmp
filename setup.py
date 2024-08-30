@@ -5,7 +5,6 @@ from shlex import split as s_split
 import sysconfig
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as BuildCommand
-from setuptools.command.test import test as TestCommand
 import setuptools.command.build as build
 from setuptools import dist
 
@@ -122,27 +121,6 @@ print(f"link_args: {link_args}")
 print(f"platform: {platform}")
 
 
-# Setup the py.test class for use with the test command
-class PyTest(TestCommand):
-    user_options = [("pytest-args=", "a", "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        # Import here, cause outside the eggs aren't loaded
-        import pytest
-
-        errno = pytest.main(self.pytest_args)
-        exit(errno)
-
-
 class RelinkLibraries(BuildCommand):
     """Fix dylib path for macOS
 
@@ -196,8 +174,6 @@ class RelinkLibraries(BuildCommand):
 
 
 setup(
-    tests_require=["pytest-cov", "pytest-sugar", "pytest"],
-    cmdclass={"test": PyTest, "build_ext": RelinkLibraries},
     ext_modules=[
         Extension(
             "ezsnmp.interface",
