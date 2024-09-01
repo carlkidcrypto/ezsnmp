@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from __future__ import unicode_literals, absolute_import
 
 from typing import Union, List, Tuple, Any, overload, Optional

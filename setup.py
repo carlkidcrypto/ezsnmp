@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
+
 from subprocess import check_output, CalledProcessError
-from sys import argv, platform, exit
+from sys import argv, platform
 from shlex import split as s_split
 
 import sysconfig
