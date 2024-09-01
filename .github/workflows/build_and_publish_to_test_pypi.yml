@@ -5,7 +5,7 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [main]
+    branches: [cibuildwheel/fix_the_pipeline_for_ga]
 
 jobs:
   check-source-changes:
