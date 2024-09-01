@@ -1,6 +1,6 @@
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux2014"
-skip = "cp27-* cp36-* cp37-* pp37-*"
+skip = "cp27-* cp36-* cp37-* pp27-* pp36-* pp37-*"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_24*"
@@ -35,3 +35,10 @@ before-all = """brew update;
     export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
 archs = ["x86_64"]
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools == 72.1.0",
+    "wheel == 0.43.0",
+]
