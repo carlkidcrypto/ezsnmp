@@ -33,7 +33,6 @@ before-all = """brew update;
     export PATH="/usr/local/opt/net-snmp/bin:$PATH";
     echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
     export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
-archs = ["x86_64"]
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [build-system]
