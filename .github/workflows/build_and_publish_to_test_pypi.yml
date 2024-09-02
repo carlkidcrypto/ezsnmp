@@ -38,21 +38,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-  
-      - name: 'Install MacPorts'
-        if: runner.os == 'macOS'
-        run: |
-          mkdir -p $HOME/opt/mports
-          cd $HOME/opt/mports
-          wget https://github.com/macports/macports-base/releases/download/v2.10.1/MacPorts-2.10.1.tar.gz
-          tar -xzvf MacPorts-2.10.1.tar.gz
-          cd $HOME/opt/mports/MacPorts-2.10.1
-          ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`
-          make
-          make install
-          make distclean
-          export PATH=$HOME/opt/local/bin:$HOME/opt/local/sbin:$PATH
-          port selfupdate
 
       - name: Install cibuildwheel
         run: |
