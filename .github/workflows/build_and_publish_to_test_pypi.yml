@@ -52,7 +52,8 @@ jobs:
         with:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
           
-          macos: port install net-snmp openssl;
+          macos: port clean net-snmp openssl;
+                 port install net-snmp openssl;
                  python -m cibuildwheel --output-dir wheelhouse --platform macos;
 
       - uses: actions/upload-artifact@v4
