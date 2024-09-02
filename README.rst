@@ -42,10 +42,10 @@ Why Another Library?
 How to Support This Project?
 ----------------------------
 
-.. raw:: html
+.. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/buy_me_a_coffee.png
+    :alt: Buy Me A Coffee. 
 
-    <a href="https://www.buymeacoffee.com/carlkidcrypto" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
-
+`Use this link to buy me a coffee! <https://www.buymeacoffee.com/carlkidcrypto>`__
 
 Quick Start
 -----------
