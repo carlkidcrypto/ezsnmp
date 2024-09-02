@@ -44,9 +44,9 @@ jobs:
         run: |
           mkdir -p $HOME/opt/mports
           cd $HOME/opt/mports
-          wget https://github.com/macports/macports-base/releases/download/v2.9.1/MacPorts-2.9.1.tar.gz
-          tar -xzvf MacPorts-2.9.1.tar.gz
-          cd $HOME/opt/mports/MacPorts-2.9.1
+          wget https://github.com/macports/macports-base/releases/download/v2.10.1/MacPorts-2.10.1.tar.gz
+          tar -xzvf MacPorts-2.10.1.tar.gz
+          cd $HOME/opt/mports/MacPorts-2.10.1
           ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`
           make
           make install
@@ -63,7 +63,8 @@ jobs:
         with:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
           
-          macos: port clean net-snmp openssl;
+          macos: export PATH=$HOME/opt/local/bin:$HOME/opt/local/sbin:$PATH;
+                 port clean net-snmp openssl;
                  port install net-snmp openssl;
                  python -m cibuildwheel --output-dir wheelhouse --platform macos;
 
