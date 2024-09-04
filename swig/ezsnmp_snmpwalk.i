@@ -12,5 +12,5 @@ snmpwalk_snmp_get_and_print(netsnmp_session * ss, oid * theoid, size_t theoid_le
 static void
 snmpwalk_optProc(int argc, char *const *argv, int opt);
 
-%apply (int ARGC, char **ARGV) { (size_t argc, const char **argv) }
+%apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 int snmpwalk_main(int argc, char *argv[]);
