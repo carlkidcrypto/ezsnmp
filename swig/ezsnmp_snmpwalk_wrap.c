@@ -3718,7 +3718,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_snmpwalk_main(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   int arg1 ;
   char **arg2 = (char **) (char **)0 ;
@@ -3735,12 +3735,12 @@ SWIGINTERN PyObject *_wrap_snmpwalk_main(PyObject *self, PyObject *args) {
   res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
   if (!SWIG_IsOK(res1)) {
     arg1 = 0; arg2 = 0;
-    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpwalk_main" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpwalk" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
   } else {
     arg1 = (int)(argc1);
     arg2 = (char **)(argv1);
   }
-  result = (int)snmpwalk_main(arg1,arg2);
+  result = (int)snmpwalk(arg1,arg2);
   resultobj = SWIG_From_int((int)(result));
   if (owner1) {
     size_t i = argc1;
@@ -3766,7 +3766,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "snmpwalk_usage", _wrap_snmpwalk_usage, METH_NOARGS, NULL},
 	 { "snmpwalk_snmp_get_and_print", _wrap_snmpwalk_snmp_get_and_print, METH_VARARGS, NULL},
 	 { "snmpwalk_optProc", _wrap_snmpwalk_optProc, METH_VARARGS, NULL},
-	 { "snmpwalk_main", _wrap_snmpwalk_main, METH_O, NULL},
+	 { "snmpwalk", _wrap_snmpwalk, METH_O, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 

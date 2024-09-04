@@ -2,7 +2,7 @@
 
 One look for the netsnmp app file under https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps
 
-Two copy the c file over, for example `snmpwalk.c `.
+Two copy the c file over, for example `snmpwalk.c`.
 
 Three make a header file for it `snmpwalk.h`.
 

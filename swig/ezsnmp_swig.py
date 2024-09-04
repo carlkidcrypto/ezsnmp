@@ -68,6 +68,6 @@ def snmpwalk_snmp_get_and_print(ss, theoid, theoid_len):
 def snmpwalk_optProc(argc, argv, opt):
     return _ezsnmp_swig.snmpwalk_optProc(argc, argv, opt)
 
-def snmpwalk_main(argc):
-    return _ezsnmp_swig.snmpwalk_main(argc)
+def snmpwalk(argc):
+    return _ezsnmp_swig.snmpwalk(argc)
 

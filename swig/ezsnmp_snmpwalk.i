@@ -13,4 +13,4 @@ static void
 snmpwalk_optProc(int argc, char *const *argv, int opt);
 
 %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
-int snmpwalk_main(int argc, char *argv[]);
+int snmpwalk(int argc, char *argv[]);
