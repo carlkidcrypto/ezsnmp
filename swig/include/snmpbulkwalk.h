@@ -1,5 +1,5 @@
-#ifndef SNMPWALK_H 
-#define SNMPWALK_H 
+#ifndef SNMPBULKWALK_H
+#define SNMPBULKWALK_H
 
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
@@ -9,4 +9,4 @@ void snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid
 void snmpwalk_optProc(int argc, char *const *argv, int opt);
 int snmpwalk(int argc, char *argv[]);
 
-#endif // SNMPWALK_H
+#endif // SNMPBULKWALK_H
