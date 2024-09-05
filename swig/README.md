@@ -1,6 +1,6 @@
 # Making the swig interface fils
 
-One look for the netsnmp app file under https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps
+One look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
 
 Two copy the c file over, for example `snmpwalk.c`.
 
@@ -22,4 +22,12 @@ six link stuff
 
 ```bash
 clang++ -bundle -undefined dynamic_lookup -arch arm64 -arch x86_64 -Wl,-headerpad,0x1000 snmpwalk.o  ezsnmp_snmpwalk_wrap.o -L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/Cellar/net-snmp/5.9.4/lib -L/opt/homebrew/Cellar/net-snmp/5.9.4/lib -L/opt/homebrew/Cellar/openssl@3/3.3.1/lib -lnetsnmp -lcrypto -o _ezsnmp_swig.so -flat_namespace -framework CoreFoundation -framework CoreServices -framework DiskArbitration -framework IOKit 
+```
+
+seven run it in python3
+```bash
+python3
+>>> import ezsnmp_swig
+>>> args = ["my_program", "-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
+>>> ezsnmp_swig.snmpwalk(args)
 ```
