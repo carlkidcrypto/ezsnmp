@@ -9,7 +9,7 @@ Three make a header file for it `snmpwalk.h`.
 Four run to generate the wrap file.
 
 ```bash
-swig -python -outdir src/ -o src/ezsnmp_walk.c interface/ezsnmp.i
+swig -python -outdir . -o src/ezsnmp_wrap.c interface/ezsnmp.i
 ```
 
 Five compile stuff
