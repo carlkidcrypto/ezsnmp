@@ -7,7 +7,7 @@
 from sys import version_info as _swig_python_version_info
 # Import the low-level C/C++ module
 if __package__ or "." in __name__:
-    from .. import _ezsnmp_swig
+    from . import _ezsnmp_swig
 else:
     import _ezsnmp_swig
 
@@ -58,6 +58,33 @@ class _SwigNonDynamicMeta(type):
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
+
+def snmpbulkget_usage():
+    return _ezsnmp_swig.snmpbulkget_usage()
+
+def snmpbulkget_optProc(argc, argv, opt):
+    return _ezsnmp_swig.snmpbulkget_optProc(argc, argv, opt)
+
+def snmpbulkget(argc, argv):
+    return _ezsnmp_swig.snmpbulkget(argc, argv)
+
+def snmpbulkwalk_usage():
+    return _ezsnmp_swig.snmpbulkwalk_usage()
+
+def snmpbulkwalk_optProc(argc, argv, opt):
+    return _ezsnmp_swig.snmpbulkwalk_optProc(argc, argv, opt)
+
+def snmpbulkwalk(argc):
+    return _ezsnmp_swig.snmpbulkwalk(argc)
+
+def snmpget_usage():
+    return _ezsnmp_swig.snmpget_usage()
+
+def snmpget_optProc(argc, argv, opt):
+    return _ezsnmp_swig.snmpget_optProc(argc, argv, opt)
+
+def snmpget(argc):
+    return _ezsnmp_swig.snmpget(argc)
 
 def snmpwalk_usage():
     return _ezsnmp_swig.snmpwalk_usage()

@@ -69,9 +69,9 @@ SOFTWARE.
 #define NETSNMP_DS_WALK_PRINT_STATISTICS 2
 #define NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC 3
 
-oid objid_mib[] = {1, 3, 6, 1, 2, 1};
-int numprinted = 0;
-int reps = 10, non_reps = 0;
+oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
+int snmpbulkwalk_numprinted = 0;
+int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
 #include "snmpbulkwalk.h"
 
@@ -108,7 +108,7 @@ snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_
    {
       for (vars = response->variables; vars; vars = vars->next_variable)
       {
-         numprinted++;
+         snmpbulkwalk_numprinted++;
          print_variable(vars->name, vars->name_length, vars);
       }
    }
@@ -144,11 +144,11 @@ snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
          case 'r':
             if (*(optarg - 1) == 'r')
             {
-               reps = strtol(optarg, &endptr, 0);
+               snmpbulkwalk_reps = strtol(optarg, &endptr, 0);
             }
             else
             {
-               non_reps = strtol(optarg, &endptr, 0);
+               snmpbulkwalk_non_reps = strtol(optarg, &endptr, 0);
             }
 
             if (endptr == optarg)
@@ -156,7 +156,7 @@ snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
                /*
                 * No number given -- error.
                 */
-               usage();
+               snmpbulkwalk_usage();
                exit(1);
             }
             else
@@ -215,7 +215,7 @@ int snmpbulkwalk(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc))
+   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpbulkwalk_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       goto out;
@@ -223,7 +223,7 @@ int snmpbulkwalk(int argc, char *argv[])
       exitval = 0;
       goto out;
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-      usage();
+      snmpbulkwalk_usage();
       goto out;
    default:
       break;
@@ -249,8 +249,8 @@ int snmpbulkwalk(int argc, char *argv[])
       /*
        * use default value
        */
-      memmove(root, objid_mib, sizeof(objid_mib));
-      rootlen = OID_LENGTH(objid_mib);
+      memmove(root, snmpbulkwalk_objid_mib, sizeof(snmpbulkwalk_objid_mib));
+      rootlen = OID_LENGTH(snmpbulkwalk_objid_mib);
    }
 
    /*
@@ -279,7 +279,7 @@ int snmpbulkwalk(int argc, char *argv[])
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                               NETSNMP_DS_WALK_INCLUDE_REQUESTED))
    {
-      snmp_get_and_print(ss, root, rootlen);
+      snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
    }
 
    exitval = 0;
@@ -290,8 +290,8 @@ int snmpbulkwalk(int argc, char *argv[])
        * create PDU for GETBULK request and add object name to request
        */
       pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
-      pdu->non_repeaters = non_reps;
-      pdu->max_repetitions = reps; /* fill the packet */
+      pdu->non_repeaters = snmpbulkwalk_non_reps;
+      pdu->max_repetitions = snmpbulkwalk_reps; /* fill the packet */
       snmp_add_null_var(pdu, name, name_length);
 
       /*
@@ -316,7 +316,7 @@ int snmpbulkwalk(int argc, char *argv[])
                   running = 0;
                   continue;
                }
-               numprinted++;
+               snmpbulkwalk_numprinted++;
                print_variable(vars->name, vars->name_length, vars);
                if ((vars->type != SNMP_ENDOFMIBVIEW) &&
                    (vars->type != SNMP_NOSUCHOBJECT) &&
@@ -405,21 +405,21 @@ int snmpbulkwalk(int argc, char *argv[])
          snmp_free_pdu(response);
    }
 
-   if (numprinted == 0 && status == STAT_SUCCESS)
+   if (snmpbulkwalk_numprinted == 0 && status == STAT_SUCCESS)
    {
       /*
        * no printed successful results, which may mean we were
        * pointed at an only existing instance.  Attempt a GET, just
        * for get measure.
        */
-      snmp_get_and_print(ss, root, rootlen);
+      snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
    }
    snmp_close(ss);
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                               NETSNMP_DS_WALK_PRINT_STATISTICS))
    {
-      printf("Variables found: %d\n", numprinted);
+      printf("Variables found: %d\n", snmpbulkwalk_numprinted);
    }
 
 out:

@@ -126,7 +126,7 @@ int snmpget(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc))
+   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpget_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       goto out;
@@ -134,7 +134,7 @@ int snmpget(int argc, char *argv[])
       exitval = 0;
       goto out;
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-      usage();
+      snmpget_usage();
       goto out;
    default:
       break;
@@ -143,14 +143,14 @@ int snmpget(int argc, char *argv[])
    if (arg >= argc)
    {
       fprintf(stderr, "Missing object name\n");
-      usage();
+      snmpget_usage();
       goto out;
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS)
    {
       fprintf(stderr, "Too many object identifiers specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-      usage();
+      snmpget_usage();
       goto out;
    }
 

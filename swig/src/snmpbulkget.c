@@ -65,7 +65,7 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
-oid objid_mib[] = {1, 3, 6, 1, 2, 1};
+oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int max_repetitions = 10;
 int non_repeaters = 0;
 struct nameStruct
@@ -117,7 +117,7 @@ snmpbulkget_optProc(int argc, char *const *argv, int opt)
                /*
                 * No number given -- error.
                 */
-               usage();
+               snmpbulkget_usage();
                exit(1);
             }
             else
@@ -155,7 +155,7 @@ int snmpbulkget(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc))
+   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpbulkget_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       goto out;
@@ -163,7 +163,7 @@ int snmpbulkget(int argc, char *argv[])
       exitval = 0;
       goto out;
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-      usage();
+      snmpbulkget_usage();
       goto out;
    default:
       break;
