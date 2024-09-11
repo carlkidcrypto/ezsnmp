@@ -73,7 +73,9 @@ oid objid_mib[] = {1, 3, 6, 1, 2, 1};
 int numprinted = 0;
 int reps = 10, non_reps = 0;
 
-void usage(void)
+#include "snmpbulkwalk.h"
+
+void snmpbulkwalk_usage(void)
 {
    fprintf(stderr, "USAGE: snmpbulkwalk ");
    snmp_parse_args_usage(stderr);
@@ -91,8 +93,8 @@ void usage(void)
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-static void
-snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
+void
+snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
 {
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
@@ -116,8 +118,8 @@ snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
    }
 }
 
-static void
-optProc(int argc, char *const *argv, int opt)
+void
+snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
 {
    char *endptr = NULL;
 
@@ -182,7 +184,7 @@ optProc(int argc, char *const *argv, int opt)
    }
 }
 
-int main(int argc, char *argv[])
+int snmpbulkwalk(int argc, char *argv[])
 {
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response;

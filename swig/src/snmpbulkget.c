@@ -75,7 +75,9 @@ struct nameStruct
 } *name, *namep;
 int names;
 
-void usage(void)
+#include "snmpbulkget.h"
+
+void snmpbulkget_usage(void)
 {
    fprintf(stderr, "USAGE: snmpbulkget ");
    snmp_parse_args_usage(stderr);
@@ -87,8 +89,8 @@ void usage(void)
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-static void
-optProc(int argc, char *const *argv, int opt)
+void
+snmpbulkget_optProc(int argc, char *const *argv, int opt)
 {
    char *endptr = NULL;
 
@@ -137,7 +139,7 @@ optProc(int argc, char *const *argv, int opt)
    }
 }
 
-int main(int argc, char *argv[])
+int snmpbulkget(int argc, char *argv[])
 {
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;
