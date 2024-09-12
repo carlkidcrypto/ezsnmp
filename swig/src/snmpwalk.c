@@ -79,6 +79,7 @@ int numprinted = 0;
 char *end_name = NULL;
 
 #include "snmpwalk.h"
+#include "helpers.h"
 
 void snmpwalk_usage(void)
 {
@@ -100,8 +101,10 @@ void snmpwalk_usage(void)
    fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
 }
 
-void snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
+std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
 {
+   std::vector<std::string> str_values;
+
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int status;
@@ -115,13 +118,16 @@ void snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid
       for (vars = response->variables; vars; vars = vars->next_variable)
       {
          numprinted++;
-         print_variable(vars->name, vars->name_length, vars);
+         auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+         str_values.push_back(str_value);
       }
    }
    if (response)
    {
       snmp_free_pdu(response);
    }
+
+   return str_values;
 }
 
 void snmpwalk_optProc(int argc, char *const *argv, int opt)
@@ -179,6 +185,7 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt)
 
 int snmpwalk(int argc, char *argv[])
 {
+   std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
@@ -310,7 +317,12 @@ int snmpwalk(int argc, char *argv[])
                                NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED))
    {
-      snmpwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
+
+      for (const auto& item : retval)
+      {
+         return_vector.push_back(item);
+      }
    }
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
@@ -449,7 +461,12 @@ int snmpwalk(int argc, char *argv[])
        */
       if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED))
       {
-         snmpwalk_snmp_get_and_print(ss, root, rootlen);
+         auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
+
+         for (const auto &item : retval)
+         {
+            return_vector.push_back(item);
+         }
       }
    }
    snmp_close(ss);
