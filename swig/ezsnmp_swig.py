@@ -85,6 +85,171 @@ def snmpget_optProc(argc, argv, opt):
 
 def snmpget(argc):
     return _ezsnmp_swig.snmpget(argc)
+class SwigPyIterator(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _ezsnmp_swig.delete_SwigPyIterator
+
+    def value(self):
+        return _ezsnmp_swig.SwigPyIterator_value(self)
+
+    def incr(self, n=1):
+        return _ezsnmp_swig.SwigPyIterator_incr(self, n)
+
+    def decr(self, n=1):
+        return _ezsnmp_swig.SwigPyIterator_decr(self, n)
+
+    def distance(self, x):
+        return _ezsnmp_swig.SwigPyIterator_distance(self, x)
+
+    def equal(self, x):
+        return _ezsnmp_swig.SwigPyIterator_equal(self, x)
+
+    def copy(self):
+        return _ezsnmp_swig.SwigPyIterator_copy(self)
+
+    def next(self):
+        return _ezsnmp_swig.SwigPyIterator_next(self)
+
+    def __next__(self):
+        return _ezsnmp_swig.SwigPyIterator___next__(self)
+
+    def previous(self):
+        return _ezsnmp_swig.SwigPyIterator_previous(self)
+
+    def advance(self, n):
+        return _ezsnmp_swig.SwigPyIterator_advance(self, n)
+
+    def __eq__(self, x):
+        return _ezsnmp_swig.SwigPyIterator___eq__(self, x)
+
+    def __ne__(self, x):
+        return _ezsnmp_swig.SwigPyIterator___ne__(self, x)
+
+    def __iadd__(self, n):
+        return _ezsnmp_swig.SwigPyIterator___iadd__(self, n)
+
+    def __isub__(self, n):
+        return _ezsnmp_swig.SwigPyIterator___isub__(self, n)
+
+    def __add__(self, n):
+        return _ezsnmp_swig.SwigPyIterator___add__(self, n)
+
+    def __sub__(self, *args):
+        return _ezsnmp_swig.SwigPyIterator___sub__(self, *args)
+    def __iter__(self):
+        return self
+
+# Register SwigPyIterator in _ezsnmp_swig:
+_ezsnmp_swig.SwigPyIterator_swigregister(SwigPyIterator)
+class _string_list(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self):
+        return _ezsnmp_swig._string_list_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self):
+        return _ezsnmp_swig._string_list___nonzero__(self)
+
+    def __bool__(self):
+        return _ezsnmp_swig._string_list___bool__(self)
+
+    def __len__(self):
+        return _ezsnmp_swig._string_list___len__(self)
+
+    def __getslice__(self, i, j):
+        return _ezsnmp_swig._string_list___getslice__(self, i, j)
+
+    def __setslice__(self, *args):
+        return _ezsnmp_swig._string_list___setslice__(self, *args)
+
+    def __delslice__(self, i, j):
+        return _ezsnmp_swig._string_list___delslice__(self, i, j)
+
+    def __delitem__(self, *args):
+        return _ezsnmp_swig._string_list___delitem__(self, *args)
+
+    def __getitem__(self, *args):
+        return _ezsnmp_swig._string_list___getitem__(self, *args)
+
+    def __setitem__(self, *args):
+        return _ezsnmp_swig._string_list___setitem__(self, *args)
+
+    def pop(self):
+        return _ezsnmp_swig._string_list_pop(self)
+
+    def append(self, x):
+        return _ezsnmp_swig._string_list_append(self, x)
+
+    def empty(self):
+        return _ezsnmp_swig._string_list_empty(self)
+
+    def size(self):
+        return _ezsnmp_swig._string_list_size(self)
+
+    def swap(self, v):
+        return _ezsnmp_swig._string_list_swap(self, v)
+
+    def begin(self):
+        return _ezsnmp_swig._string_list_begin(self)
+
+    def end(self):
+        return _ezsnmp_swig._string_list_end(self)
+
+    def rbegin(self):
+        return _ezsnmp_swig._string_list_rbegin(self)
+
+    def rend(self):
+        return _ezsnmp_swig._string_list_rend(self)
+
+    def clear(self):
+        return _ezsnmp_swig._string_list_clear(self)
+
+    def get_allocator(self):
+        return _ezsnmp_swig._string_list_get_allocator(self)
+
+    def pop_back(self):
+        return _ezsnmp_swig._string_list_pop_back(self)
+
+    def erase(self, *args):
+        return _ezsnmp_swig._string_list_erase(self, *args)
+
+    def __init__(self, *args):
+        _ezsnmp_swig._string_list_swiginit(self, _ezsnmp_swig.new__string_list(*args))
+
+    def push_back(self, x):
+        return _ezsnmp_swig._string_list_push_back(self, x)
+
+    def front(self):
+        return _ezsnmp_swig._string_list_front(self)
+
+    def back(self):
+        return _ezsnmp_swig._string_list_back(self)
+
+    def assign(self, n, x):
+        return _ezsnmp_swig._string_list_assign(self, n, x)
+
+    def resize(self, *args):
+        return _ezsnmp_swig._string_list_resize(self, *args)
+
+    def insert(self, *args):
+        return _ezsnmp_swig._string_list_insert(self, *args)
+
+    def reserve(self, n):
+        return _ezsnmp_swig._string_list_reserve(self, n)
+
+    def capacity(self):
+        return _ezsnmp_swig._string_list_capacity(self)
+    __swig_destroy__ = _ezsnmp_swig.delete__string_list
+
+# Register _string_list in _ezsnmp_swig:
+_ezsnmp_swig._string_list_swigregister(_string_list)
 
 def snmpwalk_usage():
     return _ezsnmp_swig.snmpwalk_usage()

@@ -186,7 +186,7 @@ setup(
             "ezsnmp_swig.ezsnmp_swig",
             ["src/ezsnmp_wrap.cpp",
              "src/helpers.cpp",
-             "src/snmpbulkget.cpp",
+             #"src/snmpbulkget.cpp",
              "src/snmpbulkwalk.cpp",
              "src/snmpget.cpp",
              "src/snmpwalk.cpp"],
