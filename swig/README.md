@@ -15,7 +15,7 @@ swig -python -outdir . -o src/ezsnmp_wrap.c interface/ezsnmp.i
 Five compile stuff
 
 ```bash
-clear && clang -Wno-unused-result -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -fwrapv -O3 -Wall -iwithsysroot/System/Library/Frameworks/System.framework/PrivateHeaders -iwithsysroot/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Headers -arch arm64 -arch x86_64 -Werror=implicit-function-declaration -Wno-error=unreachable-code -I/opt/homebrew/Cellar/net-snmp/5.9.4/include -I/opt/homebrew/Cellar/openssl@3/3.3.1/include -I/Users/carlossantos/Documents/GitHub/ezsnmp/.venv/include -I/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/include/python3.9 -I./include/ -c src/snmpwalk.c  src/snmpget.c src/snmpbulkwalk.c src/snmpbulkget.c src/ezsnmp_wrap.c -std=c11 -Wunused-function -fpermissive
+clear && clang -Wno-unused-result -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -fwrapv -O3 -Wall -iwithsysroot/System/Library/Frameworks/System.framework/PrivateHeaders -iwithsysroot/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Headers -arch arm64 -arch x86_64 -Werror=implicit-function-declaration -Wno-error=unreachable-code -I/opt/homebrew/Cellar/net-snmp/5.9.4/include -I/opt/homebrew/Cellar/openssl@3/3.3.1/include -I/Users/carlossantos/Documents/GitHub/ezsnmp/.venv/include -I/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/include/python3.9 -I./include/ -c src/snmpwalk.c  src/snmpget.c src/snmpbulkwalk.c src/snmpbulkget.c src/ezsnmp_wrap.c src/helpers.c -std=c17 -Wunused-function -fpermissive
 ```
 
 six link stuff

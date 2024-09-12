@@ -1,5 +1,3 @@
-#include <string>
-#include <vector>
 #include "helpers.h"
 
 std::string print_variable_to_string(const oid *objid, size_t objidlen, const netsnmp_variable_list *variable)
