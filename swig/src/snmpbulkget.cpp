@@ -176,7 +176,7 @@ int snmpbulkget(int argc, char *argv[])
       goto out;
    }
 
-   namep = name = calloc(names, sizeof(*name));
+   namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
    while (arg < argc)
    {
       namep->name_len = MAX_OID_LEN;
