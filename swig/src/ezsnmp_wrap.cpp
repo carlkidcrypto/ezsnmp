@@ -8402,7 +8402,7 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
   size_t argc1 = 0 ;
   int owner1 = 0 ;
   PyObject *swig_obj[1] ;
-  int result;
+  std::vector< std::string,std::allocator< std::string > > result;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -8415,8 +8415,8 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
     arg1 = static_cast< int >(argc1);
     arg2 = static_cast< char ** >(argv1);
   }
-  result = (int)snmpwalk(arg1,arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
+  result = snmpwalk(arg1,arg2);
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
   if (owner1) {
     size_t i = argc1;
     while (i) {

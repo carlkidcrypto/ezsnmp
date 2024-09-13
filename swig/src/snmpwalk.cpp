@@ -183,7 +183,7 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-int snmpwalk(int argc, char *argv[])
+std::vector<std::string> snmpwalk(int argc, char *argv[])
 {
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
@@ -369,7 +369,10 @@ int snmpwalk(int argc, char *argv[])
                   fprintf(stdout, "%f s: ",
                           (double)(tv_b.tv_usec - tv_a.tv_usec) / 1000000 +
                               (double)(tv_b.tv_sec - tv_a.tv_sec));
-               print_variable(vars->name, vars->name_length, vars);
+
+               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+               return_vector.push_back(str_value);
+
                if ((vars->type != SNMP_ENDOFMIBVIEW) &&
                    (vars->type != SNMP_NOSUCHOBJECT) &&
                    (vars->type != SNMP_NOSUCHINSTANCE))
@@ -487,5 +490,5 @@ int snmpwalk(int argc, char *argv[])
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return exitval;
+   return return_vector;
 }
