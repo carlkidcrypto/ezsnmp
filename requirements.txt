@@ -22,7 +22,7 @@ pytest-sugar==1.0.0
 termcolor==2.4.0
 tomli==2.0.1
 setuptools==74.1.2
-urllib3==2.2.2
+urllib3==2.2.3
 build==1.2.2
 cibuildwheel==2.21.0
 pip==24.2
