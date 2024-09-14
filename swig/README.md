@@ -1,4 +1,4 @@
-# Making the swig interface fils
+# Making the swig interface files
 
 One look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
 
@@ -27,3 +27,13 @@ python3
 >>> retval = ezsnmp_swig.snmpwalk(args)
 >>> print(retval)
 ```
+
+## Making the patch files
+
+Within the patches directory run the following command.
+
+```bash
+diff -Naurw ~/Downloads/net-snmp-master/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
+```
+
+
