@@ -78,6 +78,7 @@ int numprinted = 0;
 
 char *end_name = NULL;
 
+#include <stdexcept>
 #include "snmpwalk.h"
 #include "helpers.h"
 
@@ -235,13 +236,15 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
    switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpwalk_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-      exitval = 0;
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
       snmpwalk_usage();
-      goto out;
+      return return_vector;
+
    default:
       break;
    }
@@ -258,7 +261,7 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL)
       {
          snmp_perror(argv[arg]);
-         goto out;
+         return return_vector;
       }
    }
    else
@@ -281,7 +284,7 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
       if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL)
       {
          snmp_perror(end_name);
-         goto out;
+         return return_vector;
       }
    }
    else
@@ -301,7 +304,7 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpwalk", &session);
-      goto out;
+      return return_vector;
    }
 
    /*
