@@ -1,3 +1,6 @@
+/* straight copy from https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456 */
+/* Slight modifications to return std::string instead of print to stdout */
+
 #include "helpers.h"
 
 std::string print_variable_to_string(const oid *objid, size_t objidlen, const netsnmp_variable_list *variable)

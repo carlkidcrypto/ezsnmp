@@ -76,15 +76,6 @@ def snmpbulkwalk_optProc(argc, argv, opt):
 
 def snmpbulkwalk(argc):
     return _ezsnmp_swig.snmpbulkwalk(argc)
-
-def snmpget_usage():
-    return _ezsnmp_swig.snmpget_usage()
-
-def snmpget_optProc(argc, argv, opt):
-    return _ezsnmp_swig.snmpget_optProc(argc, argv, opt)
-
-def snmpget(argc):
-    return _ezsnmp_swig.snmpget(argc)
 class SwigPyIterator(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
 
@@ -250,6 +241,15 @@ class _string_list(object):
 
 # Register _string_list in _ezsnmp_swig:
 _ezsnmp_swig._string_list_swigregister(_string_list)
+
+def snmpget_usage():
+    return _ezsnmp_swig.snmpget_usage()
+
+def snmpget_optProc(argc, argv, opt):
+    return _ezsnmp_swig.snmpget_optProc(argc, argv, opt)
+
+def snmpget(argc):
+    return _ezsnmp_swig.snmpget(argc)
 
 def snmpwalk_usage():
     return _ezsnmp_swig.snmpwalk_usage()

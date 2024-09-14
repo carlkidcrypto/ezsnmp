@@ -1,3 +1,4 @@
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpbulkget.c - send SNMPv2 Bulk requests to a network entity.
  *

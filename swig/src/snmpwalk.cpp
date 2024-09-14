@@ -1,5 +1,4 @@
-/* straight copy from https://github.com/net-snmp/net-snmp/blob/5e691a85bcd95a42872933515698309e57832cfc/apps/snmpwalk.c */
-
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpwalk.c - send snmp GETNEXT requests to a network entity, walking a
  * subtree.

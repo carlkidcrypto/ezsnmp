@@ -3644,9 +3644,6 @@ SWIG_AsArgcArgv(PyObject *input, swig_type_info *ppchar_info, size_t *argc, char
 }
 
 
-#include "snmpget.h"
-
-
 #include <typeinfo>
 #include <stdexcept>
 
@@ -5287,6 +5284,9 @@ SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__era
 SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__insert__SWIG_0(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_vector_Sl_std_string_Sg__insert__SWIG_1(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::size_type n,std::vector< std::string >::value_type const &x){ self->insert(pos, n, x); }
 
+#include "snmpget.h"
+
+
 #include "snmpwalk.h"
 
 #ifdef __cplusplus
@@ -5448,101 +5448,6 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
     arg2 = static_cast< char ** >(argv1);
   }
   result = (int)snmpbulkwalk(arg1,arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  if (owner1) {
-    size_t i = argc1;
-    while (i) {
-      delete[] argv1[--i];
-    }
-    delete[] argv1;
-  }
-  return resultobj;
-fail:
-  if (owner1) {
-    size_t i = argc1;
-    while (i) {
-      delete[] argv1[--i];
-    }
-    delete[] argv1;
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpget_usage(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpget_usage", 0, 0, 0)) SWIG_fail;
-  snmpget_usage();
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpget_optProc(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) 0 ;
-  int arg3 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpget_optProc", 3, 3, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpget_optProc" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpget_optProc" "', argument " "2"" of type '" "char *const *""'"); 
-  }
-  arg2 = reinterpret_cast< char ** >(argp2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpget_optProc" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  snmpget_optProc(arg1,(char *const *)arg2,arg3);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) (char **)0 ;
-  int res1 ;
-  char **argv1 = 0 ;
-  size_t argc1 = 0 ;
-  int owner1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
-  if (!SWIG_IsOK(res1)) {
-    arg1 = 0; arg2 = 0;
-    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpget" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
-  } else {
-    arg1 = static_cast< int >(argc1);
-    arg2 = static_cast< char ** >(argv1);
-  }
-  result = (int)snmpget(arg1,arg2);
   resultobj = SWIG_From_int(static_cast< int >(result));
   if (owner1) {
     size_t i = argc1;
@@ -8303,6 +8208,101 @@ SWIGINTERN PyObject *_string_list_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Python_InitShadowInstance(args);
 }
 
+SWIGINTERN PyObject *_wrap_snmpget_usage(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "snmpget_usage", 0, 0, 0)) SWIG_fail;
+  snmpget_usage();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_snmpget_optProc(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  char **arg2 = (char **) 0 ;
+  int arg3 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject *swig_obj[3] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "snmpget_optProc", 3, 3, swig_obj)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpget_optProc" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpget_optProc" "', argument " "2"" of type '" "char *const *""'"); 
+  }
+  arg2 = reinterpret_cast< char ** >(argp2);
+  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpget_optProc" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
+  snmpget_optProc(arg1,(char *const *)arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  char **arg2 = (char **) (char **)0 ;
+  int res1 ;
+  char **argv1 = 0 ;
+  size_t argc1 = 0 ;
+  int owner1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::vector< std::string,std::allocator< std::string > > result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
+  if (!SWIG_IsOK(res1)) {
+    arg1 = 0; arg2 = 0;
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpget" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
+  } else {
+    arg1 = static_cast< int >(argc1);
+    arg2 = static_cast< char ** >(argv1);
+  }
+  result = snmpget(arg1,arg2);
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
+  return resultobj;
+fail:
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_snmpwalk_usage(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   
@@ -8444,9 +8444,6 @@ static PyMethodDef SwigMethods[] = {
 	 { "snmpbulkwalk_usage", _wrap_snmpbulkwalk_usage, METH_NOARGS, NULL},
 	 { "snmpbulkwalk_optProc", _wrap_snmpbulkwalk_optProc, METH_VARARGS, NULL},
 	 { "snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, NULL},
-	 { "snmpget_usage", _wrap_snmpget_usage, METH_NOARGS, NULL},
-	 { "snmpget_optProc", _wrap_snmpget_optProc, METH_VARARGS, NULL},
-	 { "snmpget", _wrap_snmpget, METH_O, NULL},
 	 { "delete_SwigPyIterator", _wrap_delete_SwigPyIterator, METH_O, NULL},
 	 { "SwigPyIterator_value", _wrap_SwigPyIterator_value, METH_O, NULL},
 	 { "SwigPyIterator_incr", _wrap_SwigPyIterator_incr, METH_VARARGS, NULL},
@@ -8500,6 +8497,9 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete__string_list", _wrap_delete__string_list, METH_O, NULL},
 	 { "_string_list_swigregister", _string_list_swigregister, METH_O, NULL},
 	 { "_string_list_swiginit", _string_list_swiginit, METH_VARARGS, NULL},
+	 { "snmpget_usage", _wrap_snmpget_usage, METH_NOARGS, NULL},
+	 { "snmpget_optProc", _wrap_snmpget_optProc, METH_VARARGS, NULL},
+	 { "snmpget", _wrap_snmpget, METH_O, NULL},
 	 { "snmpwalk_usage", _wrap_snmpwalk_usage, METH_NOARGS, NULL},
 	 { "snmpwalk_snmp_get_and_print", _wrap_snmpwalk_snmp_get_and_print, METH_VARARGS, NULL},
 	 { "snmpwalk_optProc", _wrap_snmpwalk_optProc, METH_VARARGS, NULL},

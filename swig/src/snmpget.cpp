@@ -1,3 +1,4 @@
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpget.c - send snmp GET requests to a network entity.
  *
@@ -68,7 +69,9 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
+#include <stdexcept>
 #include "snmpget.h"
+#include "helpers.h"
 
 void snmpget_optProc(int argc, char *const *argv, int opt)
 {
@@ -105,8 +108,9 @@ void snmpget_usage(void)
            "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-int snmpget(int argc, char *argv[])
+std::vector<std::string> snmpget(int argc, char *argv[])
 {
+   std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;
    netsnmp_pdu *response;
@@ -129,13 +133,15 @@ int snmpget(int argc, char *argv[])
    switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpget_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-      exitval = 0;
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
       snmpget_usage();
-      goto out;
+      return return_vector;
+
    default:
       break;
    }
@@ -210,7 +216,10 @@ retry:
       {
          for (vars = response->variables; vars;
               vars = vars->next_variable)
-            print_variable(vars->name, vars->name_length, vars);
+         {
+            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            return_vector.push_back(str_value);
+         }
       }
       else
       {
@@ -270,5 +279,5 @@ close_session:
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return exitval;
+   return return_vector;
 } /* end main() */
