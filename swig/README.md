@@ -2,33 +2,28 @@
 
 One look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
 
-Two copy the c file over, for example `snmpwalk.c`.
+Two copy the c file over, for example `snmpwalk.c`. Then rename to change the extension to `.cpp`.
 
-Three make a header file for it `snmpwalk.h`.
+Three make a header file for it `snmpwalk.h` and extract methods/functions from the source code.
 
-Four run to generate the wrap file.
+Four run the command below to generate the wrap file.
 
 ```bash
 swig -c++ -python -outdir . -o src/ezsnmp_wrap.cpp interface/ezsnmp.i
 ```
 
-Five compile stuff
+Five run
 
-```bash
-clear && clang -Wno-unused-result -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -fwrapv -O3 -Wall -iwithsysroot/System/Library/Frameworks/System.framework/PrivateHeaders -iwithsysroot/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Headers -arch arm64 -arch x86_64 -Werror=implicit-function-declaration -Wno-error=unreachable-code -I/opt/homebrew/Cellar/net-snmp/5.9.4/include -I/opt/homebrew/Cellar/openssl@3/3.3.1/include -I/Users/carlossantos/Documents/GitHub/ezsnmp/.venv/include -I/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/include/python3.9 -I./include/ -c src/snmpwalk.c  src/snmpget.c src/snmpbulkwalk.c src/snmpbulkget.c src/ezsnmp_wrap.c src/helpers.c -std=c17 -Wunused-function -fpermissive
+```python3
+clear && rm -drf build ezsnmp_swig.egg-info && python3 -m pip install .
 ```
 
-six link stuff
-
-```bash
-clear && clang++ -bundle -undefined dynamic_lookup -arch arm64 -arch x86_64 -Wl,-headerpad,0x1000 snmpwalk.o snmpget.o snmpbulkwalk.o snmpbulkget.o ezsnmp_wrap.o -L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/Cellar/net-snmp/5.9.4/lib -L/opt/homebrew/Cellar/net-snmp/5.9.4/lib -L/opt/homebrew/Cellar/openssl@3/3.3.1/lib -lnetsnmp -lcrypto -o _ezsnmp_swig.so -flat_namespace -framework CoreFoundation -framework CoreServices -framework DiskArbitration -framework IOKit 
-```
-
-seven run it in python3
+Six run it in python3
 
 ```bash
 python3
 >>> import ezsnmp_swig
 >>> args = ["my_program", "-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
->>> ezsnmp_swig.snmpwalk(args)
+>>> retval = ezsnmp_swig.snmpwalk(args)
+>>> print(retval)
 ```
