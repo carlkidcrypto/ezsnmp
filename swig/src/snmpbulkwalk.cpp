@@ -74,7 +74,9 @@ oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int snmpbulkwalk_numprinted = 0;
 int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
+#include <stdexcept>
 #include "snmpbulkwalk.h"
+#include "helpers.h"
 
 void snmpbulkwalk_usage(void)
 {
@@ -94,9 +96,10 @@ void snmpbulkwalk_usage(void)
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-void
-snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
+std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
 {
+   std::vector<std::string> str_values;
+
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int status;
@@ -110,17 +113,19 @@ snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_
       for (vars = response->variables; vars; vars = vars->next_variable)
       {
          snmpbulkwalk_numprinted++;
-         print_variable(vars->name, vars->name_length, vars);
+         auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+         str_values.push_back(str_value);
       }
    }
    if (response)
    {
       snmp_free_pdu(response);
    }
+
+   return str_values;
 }
 
-void
-snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
+void snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
 {
    char *endptr = NULL;
 
@@ -185,8 +190,9 @@ snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-int snmpbulkwalk(int argc, char *argv[])
+std::vector<std::string> snmpbulkwalk(int argc, char *argv[])
 {
+   std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
@@ -219,13 +225,15 @@ int snmpbulkwalk(int argc, char *argv[])
    switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpbulkwalk_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-      exitval = 0;
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
       snmpbulkwalk_usage();
-      goto out;
+      return return_vector;
+
    default:
       break;
    }
@@ -242,7 +250,7 @@ int snmpbulkwalk(int argc, char *argv[])
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL)
       {
          snmp_perror(argv[arg]);
-         goto out;
+         return return_vector;
       }
    }
    else
@@ -264,7 +272,7 @@ int snmpbulkwalk(int argc, char *argv[])
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpbulkwalk", &session);
-      goto out;
+      return return_vector;
    }
 
    /*
@@ -280,7 +288,12 @@ int snmpbulkwalk(int argc, char *argv[])
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                               NETSNMP_DS_WALK_INCLUDE_REQUESTED))
    {
-      snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+
+      for (const auto &item : retval)
+      {
+         return_vector.push_back(item);
+      }
    }
 
    exitval = 0;
@@ -318,7 +331,8 @@ int snmpbulkwalk(int argc, char *argv[])
                   continue;
                }
                snmpbulkwalk_numprinted++;
-               print_variable(vars->name, vars->name_length, vars);
+               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+               return_vector.push_back(str_value);
                if ((vars->type != SNMP_ENDOFMIBVIEW) &&
                    (vars->type != SNMP_NOSUCHOBJECT) &&
                    (vars->type != SNMP_NOSUCHINSTANCE))
@@ -413,7 +427,12 @@ int snmpbulkwalk(int argc, char *argv[])
        * pointed at an only existing instance.  Attempt a GET, just
        * for get measure.
        */
-      snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+
+      for (const auto &item : retval)
+      {
+         return_vector.push_back(item);
+      }
    }
    snmp_close(ss);
 
@@ -426,5 +445,5 @@ int snmpbulkwalk(int argc, char *argv[])
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return exitval;
+   return return_vector;
 }

@@ -3161,18 +3161,16 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_allocator_type swig_types[0]
 #define SWIGTYPE_p_char swig_types[1]
 #define SWIGTYPE_p_difference_type swig_types[2]
-#define SWIGTYPE_p_netsnmp_session swig_types[3]
-#define SWIGTYPE_p_oid swig_types[4]
-#define SWIGTYPE_p_p_PyObject swig_types[5]
-#define SWIGTYPE_p_p_char swig_types[6]
-#define SWIGTYPE_p_size_type swig_types[7]
-#define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[8]
-#define SWIGTYPE_p_std__invalid_argument swig_types[9]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[10]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[11]
-#define SWIGTYPE_p_value_type swig_types[12]
-static swig_type_info *swig_types[14];
-static swig_module_info swig_module = {swig_types, 13, 0, 0, 0, 0};
+#define SWIGTYPE_p_p_PyObject swig_types[3]
+#define SWIGTYPE_p_p_char swig_types[4]
+#define SWIGTYPE_p_size_type swig_types[5]
+#define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[6]
+#define SWIGTYPE_p_std__invalid_argument swig_types[7]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[8]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[9]
+#define SWIGTYPE_p_value_type swig_types[10]
+static swig_type_info *swig_types[12];
+static swig_module_info swig_module = {swig_types, 11, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3317,330 +3315,6 @@ namespace swig {
       return *this;      
     }
   };
-}
-
-
-#include "snmpbulkget.h"
-
-
-#include <limits.h>
-#if !defined(SWIG_NO_LLONG_MAX)
-# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
-#   define LLONG_MAX __LONG_LONG_MAX__
-#   define LLONG_MIN (-LLONG_MAX - 1LL)
-#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
-# endif
-#endif
-
-
-SWIGINTERN int
-SWIG_AsVal_double (PyObject *obj, double *val)
-{
-  int res = SWIG_TypeError;
-  if (PyFloat_Check(obj)) {
-    if (val) *val = PyFloat_AsDouble(obj);
-    return SWIG_OK;
-#if PY_VERSION_HEX < 0x03000000
-  } else if (PyInt_Check(obj)) {
-    if (val) *val = (double) PyInt_AsLong(obj);
-    return SWIG_OK;
-#endif
-  } else if (PyLong_Check(obj)) {
-    double v = PyLong_AsDouble(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = v;
-      return SWIG_OK;
-    } else {
-      PyErr_Clear();
-    }
-  }
-#ifdef SWIG_PYTHON_CAST_MODE
-  {
-    int dispatch = 0;
-    double d = PyFloat_AsDouble(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = d;
-      return SWIG_AddCast(SWIG_OK);
-    } else {
-      PyErr_Clear();
-    }
-    if (!dispatch) {
-      long v = PyLong_AsLong(obj);
-      if (!PyErr_Occurred()) {
-	if (val) *val = v;
-	return SWIG_AddCast(SWIG_AddCast(SWIG_OK));
-      } else {
-	PyErr_Clear();
-      }
-    }
-  }
-#endif
-  return res;
-}
-
-
-#include <float.h>
-
-
-#include <math.h>
-
-
-SWIGINTERNINLINE int
-SWIG_CanCastAsInteger(double *d, double min, double max) {
-  double x = *d;
-  if ((min <= x && x <= max)) {
-   double fx, cx, rd;
-   errno = 0;
-   fx = floor(x);
-   cx = ceil(x);
-   rd =  ((x - fx) < 0.5) ? fx : cx; /* simple rint */
-   if ((errno == EDOM) || (errno == ERANGE)) {
-     errno = 0;
-   } else {
-     double summ, reps, diff;
-     if (rd < x) {
-       diff = x - rd;
-     } else if (rd > x) {
-       diff = rd - x;
-     } else {
-       return 1;
-     }
-     summ = rd + x;
-     reps = diff/summ;
-     if (reps < 8*DBL_EPSILON) {
-       *d = rd;
-       return 1;
-     }
-   }
-  }
-  return 0;
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_long (PyObject *obj, long* val)
-{
-#if PY_VERSION_HEX < 0x03000000
-  if (PyInt_Check(obj)) {
-    if (val) *val = PyInt_AsLong(obj);
-    return SWIG_OK;
-  } else
-#endif
-  if (PyLong_Check(obj)) {
-    long v = PyLong_AsLong(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = v;
-      return SWIG_OK;
-    } else {
-      PyErr_Clear();
-      return SWIG_OverflowError;
-    }
-  }
-#ifdef SWIG_PYTHON_CAST_MODE
-  {
-    int dispatch = 0;
-    long v = PyInt_AsLong(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = v;
-      return SWIG_AddCast(SWIG_OK);
-    } else {
-      PyErr_Clear();
-    }
-    if (!dispatch) {
-      double d;
-      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
-      // Largest double not larger than LONG_MAX (not portably calculated easily)
-      // Note that double(LONG_MAX) is stored in a double rounded up by one (for 64-bit long)
-      // 0x7ffffffffffffc00LL == (int64_t)std::nextafter(double(__uint128_t(LONG_MAX)+1), double(0))
-      const double long_max = sizeof(long) == 8 ? 0x7ffffffffffffc00LL : LONG_MAX;
-      // No equivalent needed for 64-bit double(LONG_MIN) is exactly LONG_MIN
-      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, long_max)) {
-	if (val) *val = (long)(d);
-	return res;
-      }
-    }
-  }
-#endif
-  return SWIG_TypeError;
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_int (PyObject * obj, int *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< int >(v);
-    }
-  }  
-  return res;
-}
-
-
-SWIGINTERNINLINE PyObject*
-  SWIG_From_int  (int value)
-{
-  return PyInt_FromLong((long) value);
-}
-
-
-#include "snmpbulkwalk.h"
-
-
-SWIGINTERN swig_type_info*
-SWIG_pchar_descriptor(void)
-{
-  static int init = 0;
-  static swig_type_info* info = 0;
-  if (!init) {
-    info = SWIG_TypeQuery("_p_char");
-    init = 1;
-  }
-  return info;
-}
-
-
-/* Return string from Python obj. NOTE: obj must remain in scope in order
-   to use the returned cptr (but only when alloc is set to SWIG_OLDOBJ) */
-SWIGINTERN int
-SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, int *alloc)
-{
-#if PY_VERSION_HEX>=0x03000000
-#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
-  if (PyBytes_Check(obj))
-#else
-  if (PyUnicode_Check(obj))
-#endif
-#else  
-  if (PyString_Check(obj))
-#endif
-  {
-    char *cstr; Py_ssize_t len;
-    PyObject *bytes = NULL;
-    int ret = SWIG_OK;
-    if (alloc)
-      *alloc = SWIG_OLDOBJ;
-#if PY_VERSION_HEX>=0x03000000 && defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
-    if (PyBytes_AsStringAndSize(obj, &cstr, &len) == -1)
-      return SWIG_TypeError;
-#else
-    cstr = (char *)SWIG_PyUnicode_AsUTF8AndSize(obj, &len, &bytes);
-    if (!cstr)
-      return SWIG_TypeError;
-    /* The returned string is only duplicated if the char * returned is not owned and memory managed by obj */
-    if (bytes && cptr) {
-      if (alloc) {
-        cstr = reinterpret_cast< char* >(memcpy(new char[len + 1], cstr, sizeof(char)*(len + 1)));
-        *alloc = SWIG_NEWOBJ;
-      } else {
-        /* alloc must be set in order to clean up allocated memory */
-        return SWIG_RuntimeError;
-      }
-    }
-#endif
-    if (cptr) *cptr = cstr;
-    if (psize) *psize = len + 1;
-    Py_XDECREF(bytes);
-    return ret;
-  } else {
-#if defined(SWIG_PYTHON_2_UNICODE)
-#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
-#error "Cannot use both SWIG_PYTHON_2_UNICODE and SWIG_PYTHON_STRICT_BYTE_CHAR at once"
-#endif
-#if PY_VERSION_HEX<0x03000000
-    if (PyUnicode_Check(obj)) {
-      char *cstr; Py_ssize_t len;
-      if (!alloc && cptr) {
-        return SWIG_RuntimeError;
-      }
-      obj = PyUnicode_AsUTF8String(obj);
-      if (!obj)
-        return SWIG_TypeError;
-      if (PyString_AsStringAndSize(obj, &cstr, &len) != -1) {
-        if (cptr) {
-          if (alloc) *alloc = SWIG_NEWOBJ;
-          *cptr = reinterpret_cast< char* >(memcpy(new char[len + 1], cstr, sizeof(char)*(len + 1)));
-        }
-        if (psize) *psize = len + 1;
-
-        Py_XDECREF(obj);
-        return SWIG_OK;
-      } else {
-        Py_XDECREF(obj);
-      }
-    }
-#endif
-#endif
-
-    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
-    if (pchar_descriptor) {
-      void* vptr = 0;
-      if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
-	if (cptr) *cptr = (char *) vptr;
-	if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
-	if (alloc) *alloc = SWIG_OLDOBJ;
-	return SWIG_OK;
-      }
-    }
-  }
-  return SWIG_TypeError;
-}
-
-
-SWIGINTERN int
-SWIG_AsArgcArgv(PyObject *input, swig_type_info *ppchar_info, size_t *argc, char ***argv, int *owner) {
-  void *vptr;
-  int res = SWIG_ConvertPtr(input, &vptr, ppchar_info, 0);
-  if (!SWIG_IsOK(res)) {
-    int list = 0;
-    PyErr_Clear();
-    list = PyList_Check(input);
-    if (list || PyTuple_Check(input)) {
-      size_t i = 0;
-      size_t size = list ? PyList_Size(input) : PyTuple_Size(input);
-      if (argc) *argc = size;
-      if (argv) {
-	*argv = (new char*[size + 1]());
-	for (; i < size; ++i) {
-	  PyObject *obj = list ? PyList_GetItem(input,i) : PyTuple_GetItem(input,i);
-	  char *cptr = 0; size_t sz = 0; int alloc = 0;
-	  res = SWIG_AsCharPtrAndSize(obj, &cptr, &sz, &alloc);
-	  if (SWIG_IsOK(res)) {
-	    if (cptr && sz) {
-	      (*argv)[i] = (alloc == SWIG_NEWOBJ) ? cptr : reinterpret_cast< char* >(memcpy(new char[sz], cptr, sizeof(char)*(sz)));
-	    } else {
-	      (*argv)[i] = 0;
-	    }
-	  } else {
-	    return SWIG_TypeError;
-	  }
-	}
-	(*argv)[i] = 0;
-	if (owner) *owner = 1;
-      } else {
-	for (; i < size; ++i) {
-	  PyObject *obj = list ? PyList_GetItem(input,i) : PyTuple_GetItem(input,i);
-	  res = SWIG_AsCharPtrAndSize(obj, 0, 0, 0);
-	  if (!SWIG_IsOK(res)) return SWIG_TypeError;
-	}
-	if (owner) *owner = 0;
-      }
-      return SWIG_OK;
-    } else {
-      return SWIG_TypeError;
-    }
-  } else {
-    /* seems dangerous, but the user asked for it... */
-    size_t i = 0;
-    if (argv) { while (*argv[i] != 0) ++i;}
-    if (argc) *argc = i;
-    if (owner) *owner = 0;
-    return SWIG_OK;
-  }
 }
 
 
@@ -3798,6 +3472,90 @@ namespace swig {
 
 
 SWIGINTERN int
+SWIG_AsVal_double (PyObject *obj, double *val)
+{
+  int res = SWIG_TypeError;
+  if (PyFloat_Check(obj)) {
+    if (val) *val = PyFloat_AsDouble(obj);
+    return SWIG_OK;
+#if PY_VERSION_HEX < 0x03000000
+  } else if (PyInt_Check(obj)) {
+    if (val) *val = (double) PyInt_AsLong(obj);
+    return SWIG_OK;
+#endif
+  } else if (PyLong_Check(obj)) {
+    double v = PyLong_AsDouble(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    double d = PyFloat_AsDouble(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = d;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      long v = PyLong_AsLong(obj);
+      if (!PyErr_Occurred()) {
+	if (val) *val = v;
+	return SWIG_AddCast(SWIG_AddCast(SWIG_OK));
+      } else {
+	PyErr_Clear();
+      }
+    }
+  }
+#endif
+  return res;
+}
+
+
+#include <float.h>
+
+
+#include <math.h>
+
+
+SWIGINTERNINLINE int
+SWIG_CanCastAsInteger(double *d, double min, double max) {
+  double x = *d;
+  if ((min <= x && x <= max)) {
+   double fx, cx, rd;
+   errno = 0;
+   fx = floor(x);
+   cx = ceil(x);
+   rd =  ((x - fx) < 0.5) ? fx : cx; /* simple rint */
+   if ((errno == EDOM) || (errno == ERANGE)) {
+     errno = 0;
+   } else {
+     double summ, reps, diff;
+     if (rd < x) {
+       diff = x - rd;
+     } else if (rd > x) {
+       diff = rd - x;
+     } else {
+       return 1;
+     }
+     summ = rd + x;
+     reps = diff/summ;
+     if (reps < 8*DBL_EPSILON) {
+       *d = rd;
+       return 1;
+     }
+   }
+  }
+  return 0;
+}
+
+
+SWIGINTERN int
 SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
 {
 #if PY_VERSION_HEX < 0x03000000
@@ -3847,6 +3605,16 @@ SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val)
 #endif
   return SWIG_TypeError;
 }
+
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
+#   define LLONG_MAX __LONG_LONG_MAX__
+#   define LLONG_MIN (-LLONG_MAX - 1LL)
+#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+# endif
+#endif
 
 
 #if defined(LLONG_MAX) && !defined(SWIG_LONG_LONG_AVAILABLE)
@@ -3949,6 +3717,54 @@ SWIGINTERNINLINE PyObject*
   SWIG_From_bool  (bool value)
 {
   return PyBool_FromLong(value ? 1 : 0);
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_long (PyObject *obj, long* val)
+{
+#if PY_VERSION_HEX < 0x03000000
+  if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return SWIG_OK;
+  } else
+#endif
+  if (PyLong_Check(obj)) {
+    long v = PyLong_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+      return SWIG_OverflowError;
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    long v = PyInt_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      double d;
+      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
+      // Largest double not larger than LONG_MAX (not portably calculated easily)
+      // Note that double(LONG_MAX) is stored in a double rounded up by one (for 64-bit long)
+      // 0x7ffffffffffffc00LL == (int64_t)std::nextafter(double(__uint128_t(LONG_MAX)+1), double(0))
+      const double long_max = sizeof(long) == 8 ? 0x7ffffffffffffc00LL : LONG_MAX;
+      // No equivalent needed for 64-bit double(LONG_MIN) is exactly LONG_MIN
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, long_max)) {
+	if (val) *val = (long)(d);
+	return res;
+      }
+    }
+  }
+#endif
+  return SWIG_TypeError;
 }
 
 
@@ -4573,6 +4389,106 @@ namespace swig {
     return new SwigPyIteratorOpen_T<OutIter>(current, seq);
   }
 
+}
+
+
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
+{
+  static int init = 0;
+  static swig_type_info* info = 0;
+  if (!init) {
+    info = SWIG_TypeQuery("_p_char");
+    init = 1;
+  }
+  return info;
+}
+
+
+/* Return string from Python obj. NOTE: obj must remain in scope in order
+   to use the returned cptr (but only when alloc is set to SWIG_OLDOBJ) */
+SWIGINTERN int
+SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, int *alloc)
+{
+#if PY_VERSION_HEX>=0x03000000
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+  if (PyBytes_Check(obj))
+#else
+  if (PyUnicode_Check(obj))
+#endif
+#else  
+  if (PyString_Check(obj))
+#endif
+  {
+    char *cstr; Py_ssize_t len;
+    PyObject *bytes = NULL;
+    int ret = SWIG_OK;
+    if (alloc)
+      *alloc = SWIG_OLDOBJ;
+#if PY_VERSION_HEX>=0x03000000 && defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+    if (PyBytes_AsStringAndSize(obj, &cstr, &len) == -1)
+      return SWIG_TypeError;
+#else
+    cstr = (char *)SWIG_PyUnicode_AsUTF8AndSize(obj, &len, &bytes);
+    if (!cstr)
+      return SWIG_TypeError;
+    /* The returned string is only duplicated if the char * returned is not owned and memory managed by obj */
+    if (bytes && cptr) {
+      if (alloc) {
+        cstr = reinterpret_cast< char* >(memcpy(new char[len + 1], cstr, sizeof(char)*(len + 1)));
+        *alloc = SWIG_NEWOBJ;
+      } else {
+        /* alloc must be set in order to clean up allocated memory */
+        return SWIG_RuntimeError;
+      }
+    }
+#endif
+    if (cptr) *cptr = cstr;
+    if (psize) *psize = len + 1;
+    Py_XDECREF(bytes);
+    return ret;
+  } else {
+#if defined(SWIG_PYTHON_2_UNICODE)
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+#error "Cannot use both SWIG_PYTHON_2_UNICODE and SWIG_PYTHON_STRICT_BYTE_CHAR at once"
+#endif
+#if PY_VERSION_HEX<0x03000000
+    if (PyUnicode_Check(obj)) {
+      char *cstr; Py_ssize_t len;
+      if (!alloc && cptr) {
+        return SWIG_RuntimeError;
+      }
+      obj = PyUnicode_AsUTF8String(obj);
+      if (!obj)
+        return SWIG_TypeError;
+      if (PyString_AsStringAndSize(obj, &cstr, &len) != -1) {
+        if (cptr) {
+          if (alloc) *alloc = SWIG_NEWOBJ;
+          *cptr = reinterpret_cast< char* >(memcpy(new char[len + 1], cstr, sizeof(char)*(len + 1)));
+        }
+        if (psize) *psize = len + 1;
+
+        Py_XDECREF(obj);
+        return SWIG_OK;
+      } else {
+        Py_XDECREF(obj);
+      }
+    }
+#endif
+#endif
+
+    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+    if (pchar_descriptor) {
+      void* vptr = 0;
+      if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+	if (cptr) *cptr = (char *) vptr;
+	if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
+	if (alloc) *alloc = SWIG_OLDOBJ;
+	return SWIG_OK;
+      }
+    }
+  }
+  return SWIG_TypeError;
 }
 
 
@@ -5284,6 +5200,72 @@ SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__era
 SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__insert__SWIG_0(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_vector_Sl_std_string_Sg__insert__SWIG_1(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::size_type n,std::vector< std::string >::value_type const &x){ self->insert(pos, n, x); }
 
+#include "snmpbulkget.h"
+
+
+SWIGINTERN int
+SWIG_AsArgcArgv(PyObject *input, swig_type_info *ppchar_info, size_t *argc, char ***argv, int *owner) {
+  void *vptr;
+  int res = SWIG_ConvertPtr(input, &vptr, ppchar_info, 0);
+  if (!SWIG_IsOK(res)) {
+    int list = 0;
+    PyErr_Clear();
+    list = PyList_Check(input);
+    if (list || PyTuple_Check(input)) {
+      size_t i = 0;
+      size_t size = list ? PyList_Size(input) : PyTuple_Size(input);
+      if (argc) *argc = size;
+      if (argv) {
+	*argv = (new char*[size + 1]());
+	for (; i < size; ++i) {
+	  PyObject *obj = list ? PyList_GetItem(input,i) : PyTuple_GetItem(input,i);
+	  char *cptr = 0; size_t sz = 0; int alloc = 0;
+	  res = SWIG_AsCharPtrAndSize(obj, &cptr, &sz, &alloc);
+	  if (SWIG_IsOK(res)) {
+	    if (cptr && sz) {
+	      (*argv)[i] = (alloc == SWIG_NEWOBJ) ? cptr : reinterpret_cast< char* >(memcpy(new char[sz], cptr, sizeof(char)*(sz)));
+	    } else {
+	      (*argv)[i] = 0;
+	    }
+	  } else {
+	    return SWIG_TypeError;
+	  }
+	}
+	(*argv)[i] = 0;
+	if (owner) *owner = 1;
+      } else {
+	for (; i < size; ++i) {
+	  PyObject *obj = list ? PyList_GetItem(input,i) : PyTuple_GetItem(input,i);
+	  res = SWIG_AsCharPtrAndSize(obj, 0, 0, 0);
+	  if (!SWIG_IsOK(res)) return SWIG_TypeError;
+	}
+	if (owner) *owner = 0;
+      }
+      return SWIG_OK;
+    } else {
+      return SWIG_TypeError;
+    }
+  } else {
+    /* seems dangerous, but the user asked for it... */
+    size_t i = 0;
+    if (argv) { while (*argv[i] != 0) ++i;}
+    if (argc) *argc = i;
+    if (owner) *owner = 0;
+    return SWIG_OK;
+  }
+}
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_int  (int value)
+{
+  return PyInt_FromLong((long) value);
+}
+
+
+#include "snmpbulkwalk.h"
+
+
 #include "snmpget.h"
 
 
@@ -5292,183 +5274,6 @@ SWIGINTERN void std_vector_Sl_std_string_Sg__insert__SWIG_1(std::vector< std::st
 #ifdef __cplusplus
 extern "C" {
 #endif
-SWIGINTERN PyObject *_wrap_snmpbulkget_usage(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkget_usage", 0, 0, 0)) SWIG_fail;
-  snmpbulkget_usage();
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpbulkget_optProc(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) 0 ;
-  int arg3 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkget_optProc", 3, 3, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpbulkget_optProc" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpbulkget_optProc" "', argument " "2"" of type '" "char *const *""'"); 
-  }
-  arg2 = reinterpret_cast< char ** >(argp2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpbulkget_optProc" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  snmpbulkget_optProc(arg1,(char *const *)arg2,arg3);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) (char **)0 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  int result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkget", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpbulkget" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpbulkget" "', argument " "2"" of type '" "char *[]""'"); 
-  } 
-  arg2 = reinterpret_cast< char ** >(argp2);
-  result = (int)snmpbulkget(arg1,arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpbulkwalk_usage(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkwalk_usage", 0, 0, 0)) SWIG_fail;
-  snmpbulkwalk_usage();
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpbulkwalk_optProc(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) 0 ;
-  int arg3 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkwalk_optProc", 3, 3, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpbulkwalk_optProc" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpbulkwalk_optProc" "', argument " "2"" of type '" "char *const *""'"); 
-  }
-  arg2 = reinterpret_cast< char ** >(argp2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpbulkwalk_optProc" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  snmpbulkwalk_optProc(arg1,(char *const *)arg2,arg3);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) (char **)0 ;
-  int res1 ;
-  char **argv1 = 0 ;
-  size_t argc1 = 0 ;
-  int owner1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
-  if (!SWIG_IsOK(res1)) {
-    arg1 = 0; arg2 = 0;
-    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpbulkwalk" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
-  } else {
-    arg1 = static_cast< int >(argc1);
-    arg2 = static_cast< char ** >(argv1);
-  }
-  result = (int)snmpbulkwalk(arg1,arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  if (owner1) {
-    size_t i = argc1;
-    while (i) {
-      delete[] argv1[--i];
-    }
-    delete[] argv1;
-  }
-  return resultobj;
-fail:
-  if (owner1) {
-    size_t i = argc1;
-    while (i) {
-      delete[] argv1[--i];
-    }
-    delete[] argv1;
-  }
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_delete_SwigPyIterator(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ;
@@ -8208,53 +8013,90 @@ SWIGINTERN PyObject *_string_list_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap_snmpget_usage(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
+  int arg1 ;
+  char **arg2 = (char **) (char **)0 ;
+  int res1 ;
+  char **argv1 = 0 ;
+  size_t argc1 = 0 ;
+  int owner1 = 0 ;
+  PyObject *swig_obj[1] ;
+  int result;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpget_usage", 0, 0, 0)) SWIG_fail;
-  snmpget_usage();
-  resultobj = SWIG_Py_Void();
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
+  if (!SWIG_IsOK(res1)) {
+    arg1 = 0; arg2 = 0;
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpbulkget" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
+  } else {
+    arg1 = static_cast< int >(argc1);
+    arg2 = static_cast< char ** >(argv1);
+  }
+  result = (int)snmpbulkget(arg1,arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
   return resultobj;
 fail:
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
   return NULL;
 }
 
 
-SWIGINTERN PyObject *_wrap_snmpget_optProc(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   int arg1 ;
-  char **arg2 = (char **) 0 ;
-  int arg3 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
+  char **arg2 = (char **) (char **)0 ;
+  int res1 ;
+  char **argv1 = 0 ;
+  size_t argc1 = 0 ;
+  int owner1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::vector< std::string,std::allocator< std::string > > result;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpget_optProc", 3, 3, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpget_optProc" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpget_optProc" "', argument " "2"" of type '" "char *const *""'"); 
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
+  if (!SWIG_IsOK(res1)) {
+    arg1 = 0; arg2 = 0;
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpbulkwalk" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
+  } else {
+    arg1 = static_cast< int >(argc1);
+    arg2 = static_cast< char ** >(argv1);
   }
-  arg2 = reinterpret_cast< char ** >(argp2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpget_optProc" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  snmpget_optProc(arg1,(char *const *)arg2,arg3);
-  resultobj = SWIG_Py_Void();
+  result = snmpbulkwalk(arg1,arg2);
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
   return resultobj;
 fail:
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
   return NULL;
 }
 
@@ -8299,96 +8141,6 @@ fail:
     }
     delete[] argv1;
   }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpwalk_usage(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpwalk_usage", 0, 0, 0)) SWIG_fail;
-  snmpwalk_usage();
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpwalk_snmp_get_and_print(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  netsnmp_session *arg1 = (netsnmp_session *) 0 ;
-  oid *arg2 = (oid *) 0 ;
-  size_t arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  size_t val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
-  std::vector< std::string,std::allocator< std::string > > result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpwalk_snmp_get_and_print", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_netsnmp_session, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "snmpwalk_snmp_get_and_print" "', argument " "1"" of type '" "netsnmp_session *""'"); 
-  }
-  arg1 = reinterpret_cast< netsnmp_session * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_oid, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpwalk_snmp_get_and_print" "', argument " "2"" of type '" "oid *""'"); 
-  }
-  arg2 = reinterpret_cast< oid * >(argp2);
-  ecode3 = SWIG_AsVal_size_t(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpwalk_snmp_get_and_print" "', argument " "3"" of type '" "size_t""'");
-  } 
-  arg3 = static_cast< size_t >(val3);
-  result = snmpwalk_snmp_get_and_print(arg1,arg2,SWIG_STD_MOVE(arg3));
-  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_snmpwalk_optProc(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  char **arg2 = (char **) 0 ;
-  int arg3 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "snmpwalk_optProc", 3, 3, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpwalk_optProc" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpwalk_optProc" "', argument " "2"" of type '" "char *const *""'"); 
-  }
-  arg2 = reinterpret_cast< char ** >(argp2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "snmpwalk_optProc" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  snmpwalk_optProc(arg1,(char *const *)arg2,arg3);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
   return NULL;
 }
 
@@ -8438,12 +8190,6 @@ fail:
 
 
 static PyMethodDef SwigMethods[] = {
-	 { "snmpbulkget_usage", _wrap_snmpbulkget_usage, METH_NOARGS, NULL},
-	 { "snmpbulkget_optProc", _wrap_snmpbulkget_optProc, METH_VARARGS, NULL},
-	 { "snmpbulkget", _wrap_snmpbulkget, METH_VARARGS, NULL},
-	 { "snmpbulkwalk_usage", _wrap_snmpbulkwalk_usage, METH_NOARGS, NULL},
-	 { "snmpbulkwalk_optProc", _wrap_snmpbulkwalk_optProc, METH_VARARGS, NULL},
-	 { "snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, NULL},
 	 { "delete_SwigPyIterator", _wrap_delete_SwigPyIterator, METH_O, NULL},
 	 { "SwigPyIterator_value", _wrap_SwigPyIterator_value, METH_O, NULL},
 	 { "SwigPyIterator_incr", _wrap_SwigPyIterator_incr, METH_VARARGS, NULL},
@@ -8497,12 +8243,9 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete__string_list", _wrap_delete__string_list, METH_O, NULL},
 	 { "_string_list_swigregister", _string_list_swigregister, METH_O, NULL},
 	 { "_string_list_swiginit", _string_list_swiginit, METH_VARARGS, NULL},
-	 { "snmpget_usage", _wrap_snmpget_usage, METH_NOARGS, NULL},
-	 { "snmpget_optProc", _wrap_snmpget_optProc, METH_VARARGS, NULL},
+	 { "snmpbulkget", _wrap_snmpbulkget, METH_O, NULL},
+	 { "snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, NULL},
 	 { "snmpget", _wrap_snmpget, METH_O, NULL},
-	 { "snmpwalk_usage", _wrap_snmpwalk_usage, METH_NOARGS, NULL},
-	 { "snmpwalk_snmp_get_and_print", _wrap_snmpwalk_snmp_get_and_print, METH_VARARGS, NULL},
-	 { "snmpwalk_optProc", _wrap_snmpwalk_optProc, METH_VARARGS, NULL},
 	 { "snmpwalk", _wrap_snmpwalk, METH_O, NULL},
 	 { NULL, NULL, 0, NULL }
 };
@@ -8513,8 +8256,6 @@ static PyMethodDef SwigMethods[] = {
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_netsnmp_session = {"_p_netsnmp_session", "netsnmp_session *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_oid = {"_p_oid", "oid *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_PyObject = {"_p_p_PyObject", "PyObject **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_type = {"_p_size_type", "size_type *", 0, 0, (void*)0, 0};
@@ -8528,8 +8269,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_allocator_type,
   &_swigt__p_char,
   &_swigt__p_difference_type,
-  &_swigt__p_netsnmp_session,
-  &_swigt__p_oid,
   &_swigt__p_p_PyObject,
   &_swigt__p_p_char,
   &_swigt__p_size_type,
@@ -8543,8 +8282,6 @@ static swig_type_info *swig_type_initial[] = {
 static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_netsnmp_session[] = {  {&_swigt__p_netsnmp_session, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_oid[] = {  {&_swigt__p_oid, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_PyObject[] = {  {&_swigt__p_p_PyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_type[] = {  {&_swigt__p_size_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -8558,8 +8295,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_allocator_type,
   _swigc__p_char,
   _swigc__p_difference_type,
-  _swigc__p_netsnmp_session,
-  _swigc__p_oid,
   _swigc__p_p_PyObject,
   _swigc__p_p_char,
   _swigc__p_size_type,
