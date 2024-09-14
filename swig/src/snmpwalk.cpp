@@ -321,7 +321,7 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
    {
       auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
 
-      for (const auto& item : retval)
+      for (const auto &item : retval)
       {
          return_vector.push_back(item);
       }

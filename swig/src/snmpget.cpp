@@ -150,14 +150,14 @@ std::vector<std::string> snmpget(int argc, char *argv[])
    {
       fprintf(stderr, "Missing object name\n");
       snmpget_usage();
-      goto out;
+      return return_vector;
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS)
    {
       fprintf(stderr, "Too many object identifiers specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
       snmpget_usage();
-      goto out;
+      return return_vector;
    }
 
    /*
@@ -176,7 +176,7 @@ std::vector<std::string> snmpget(int argc, char *argv[])
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpget", &session);
-      goto out;
+      return return_vector;
    }
 
    /*
@@ -275,6 +275,7 @@ retry:
 
 close_session:
    snmp_close(ss);
+   return return_vector;
 
 out:
    netsnmp_cleanup_session(&session);

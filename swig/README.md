@@ -35,5 +35,3 @@ Within the patches directory run the following command.
 ```bash
 diff -Naurw ~/Downloads/net-snmp-master/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
 ```
-
-
