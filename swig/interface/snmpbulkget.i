@@ -8,4 +8,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-int snmpbulkget(int argc, char *argv[]);
+std::vector<std::string> snmpbulkget(int argc, char *argv[]);

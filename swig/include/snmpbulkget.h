@@ -6,6 +6,6 @@
 
 void snmpbulkget_usage(void);
 void snmpbulkget_optProc(int argc, char *const *argv, int opt);
-int snmpbulkget(int argc, char *argv[]);
+std::vector<std::string> snmpbulkget(int argc, char *argv[]);
 
 #endif // SNMPBULKGET_H

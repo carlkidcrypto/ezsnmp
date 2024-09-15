@@ -76,7 +76,9 @@ struct nameStruct
 } *name, *namep;
 int names;
 
+#include <stdexcept>
 #include "snmpbulkget.h"
+#include "helpers.h"
 
 void snmpbulkget_usage(void)
 {
@@ -90,8 +92,7 @@ void snmpbulkget_usage(void)
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-void
-snmpbulkget_optProc(int argc, char *const *argv, int opt)
+void snmpbulkget_optProc(int argc, char *const *argv, int opt)
 {
    char *endptr = NULL;
 
@@ -140,8 +141,9 @@ snmpbulkget_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-int snmpbulkget(int argc, char *argv[])
+std::vector<std::string> snmpbulkget(int argc, char *argv[])
 {
+   std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;
    netsnmp_pdu *response;
@@ -159,13 +161,15 @@ int snmpbulkget(int argc, char *argv[])
    switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpbulkget_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-      exitval = 0;
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
       snmpbulkget_usage();
-      goto out;
+      return return_vector;
+
    default:
       break;
    }
@@ -174,10 +178,10 @@ int snmpbulkget(int argc, char *argv[])
    if (names < non_repeaters)
    {
       fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
-      goto out;
+      return return_vector;
    }
 
-   namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
+   namep = name = (struct nameStruct *)calloc(names, sizeof(*name));
    while (arg < argc)
    {
       namep->name_len = MAX_OID_LEN;
@@ -185,7 +189,7 @@ int snmpbulkget(int argc, char *argv[])
           NULL)
       {
          snmp_perror(argv[arg]);
-         goto out;
+         return return_vector;
       }
       arg++;
       namep++;
@@ -201,7 +205,7 @@ int snmpbulkget(int argc, char *argv[])
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpbulkget", &session);
-      goto out;
+      return return_vector;
    }
 
    exitval = 0;
@@ -228,7 +232,10 @@ int snmpbulkget(int argc, char *argv[])
           */
          for (vars = response->variables; vars;
               vars = vars->next_variable)
-            print_variable(vars->name, vars->name_length, vars);
+         {
+            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            return_vector.push_back(str_value);
+         }
       }
       else
       {
@@ -279,5 +286,5 @@ int snmpbulkget(int argc, char *argv[])
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return exitval;
+   return return_vector;
 }
