@@ -10,7 +10,7 @@ mccabe==0.7.0
 mypy-extensions==1.0.0
 packaging==24.1
 pathspec==0.12.1
-platformdirs==4.3.2
+platformdirs==4.3.3
 pluggy==1.5.0
 py==1.11.0
 pycodestyle==2.12.1
@@ -22,8 +22,8 @@ pytest-sugar==1.0.0
 termcolor==2.4.0
 tomli==2.0.1
 setuptools==74.1.2
-urllib3==2.2.2
+urllib3==2.2.3
 build==1.2.2
-cibuildwheel==2.20.0
+cibuildwheel==2.21.0
 pip==24.2
 wheel==0.44.0
