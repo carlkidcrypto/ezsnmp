@@ -181,16 +181,20 @@ class RelinkLibraries(BuildCommand):
 
 
 setup(
-    py_modules=["ezsnmp_swig",],
+    py_modules=[
+        "ezsnmp_swig",
+    ],
     ext_modules=[
         Extension(
             name="_ezsnmp_swig",
-            sources=["src/ezsnmp_wrap.cpp",
-             "src/helpers.cpp",
-             "src/snmpbulkget.cpp",
-             "src/snmpbulkwalk.cpp",
-             "src/snmpget.cpp",
-             "src/snmpwalk.cpp"],
+            sources=[
+                "src/ezsnmp_wrap.cpp",
+                "src/helpers.cpp",
+                "src/snmpbulkget.cpp",
+                "src/snmpbulkwalk.cpp",
+                "src/snmpget.cpp",
+                "src/snmpwalk.cpp",
+            ],
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,

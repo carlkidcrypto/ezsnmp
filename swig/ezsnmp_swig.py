@@ -5,6 +5,7 @@
 # the SWIG interface file instead.
 
 from sys import version_info as _swig_python_version_info
+
 # Import the low-level C/C++ module
 if __package__ or "." in __name__:
     from . import _ezsnmp_swig
@@ -16,12 +17,17 @@ try:
 except ImportError:
     import __builtin__
 
+
 def _swig_repr(self):
     try:
         strthis = "proxy of " + self.this.__repr__()
     except __builtin__.Exception:
         strthis = ""
-    return "<%s.%s; %s >" % (self.__class__.__module__, self.__class__.__name__, strthis,)
+    return "<%s.%s; %s >" % (
+        self.__class__.__module__,
+        self.__class__.__name__,
+        strthis,
+    )
 
 
 def _swig_setattr_nondynamic_instance_variable(set):
@@ -34,6 +40,7 @@ def _swig_setattr_nondynamic_instance_variable(set):
             set(self, name, value)
         else:
             raise AttributeError("You cannot add instance attributes to %s" % self)
+
     return set_instance_attr
 
 
@@ -43,26 +50,33 @@ def _swig_setattr_nondynamic_class_variable(set):
             set(cls, name, value)
         else:
             raise AttributeError("You cannot add class attributes to %s" % cls)
+
     return set_class_attr
 
 
 def _swig_add_metaclass(metaclass):
     """Class decorator for adding a metaclass to a SWIG wrapped class - a slimmed down version of six.add_metaclass"""
+
     def wrapper(cls):
         return metaclass(cls.__name__, cls.__bases__, cls.__dict__.copy())
+
     return wrapper
 
 
 class _SwigNonDynamicMeta(type):
     """Meta class to enforce nondynamic attributes (no new attributes) for a class"""
+
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
 class SwigPyIterator(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
 
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
+
     __repr__ = _swig_repr
     __swig_destroy__ = _ezsnmp_swig.delete_SwigPyIterator
 
@@ -113,17 +127,24 @@ class SwigPyIterator(object):
 
     def __sub__(self, *args):
         return _ezsnmp_swig.SwigPyIterator___sub__(self, *args)
+
     def __iter__(self):
         return self
 
+
 # Register SwigPyIterator in _ezsnmp_swig:
 _ezsnmp_swig.SwigPyIterator_swigregister(SwigPyIterator)
+
+
 class _string_list(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    thisown = property(
+        lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag"
+    )
     __repr__ = _swig_repr
 
     def iterator(self):
         return _ezsnmp_swig._string_list_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
@@ -219,20 +240,25 @@ class _string_list(object):
 
     def capacity(self):
         return _ezsnmp_swig._string_list_capacity(self)
+
     __swig_destroy__ = _ezsnmp_swig.delete__string_list
+
 
 # Register _string_list in _ezsnmp_swig:
 _ezsnmp_swig._string_list_swigregister(_string_list)
 
+
 def snmpbulkget(argc):
     return _ezsnmp_swig.snmpbulkget(argc)
+
 
 def snmpbulkwalk(argc):
     return _ezsnmp_swig.snmpbulkwalk(argc)
 
+
 def snmpget(argc):
     return _ezsnmp_swig.snmpget(argc)
 
+
 def snmpwalk(argc):
     return _ezsnmp_swig.snmpwalk(argc)
-
