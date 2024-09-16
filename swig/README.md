@@ -9,12 +9,11 @@ Three make a header file for it `snmpwalk.h` and extract methods/functions from 
 Four run the command below to generate the wrap file.
 
 ```bash
-swig -c++ -python -py3 -builtin -outdir . -o src/ezsnmp_wrap.cpp interface/ezsnmp.i
+swig -c++ -python -builtin -outdir . -o src/ezsnmp_wrap.cpp interface/ezsnmp.i
 ```
 
 * `-c++` to force generation of a `.cpp` file
 * `-python` to build a python module
-* `py3` to force python3 support only
 * `-builtin` to build with native python data types. [Python_builtin_types](https://swig.org/Doc4.0/Python.html#Python_builtin_types)
 
 Five run
