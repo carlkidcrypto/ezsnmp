@@ -2,7 +2,7 @@ name: "Pull Request Sphinx Docs Check"
 
 on:
   push:
-    branches: [ 166-sphinx-docs ]
+    branches: [ main ]
 
   pull_request:
     branches: [ main ]
