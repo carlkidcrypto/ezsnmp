@@ -192,6 +192,7 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
 
 std::vector<std::string> snmpbulkwalk(int argc, char *argv[])
 {
+   add_first_arg(&argc, &argv);
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response;

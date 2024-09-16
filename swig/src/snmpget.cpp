@@ -110,6 +110,7 @@ void snmpget_usage(void)
 
 std::vector<std::string> snmpget(int argc, char *argv[])
 {
+   add_first_arg(&argc, &argv);
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;

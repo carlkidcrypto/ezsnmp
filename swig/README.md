@@ -27,7 +27,7 @@ Six run it in python3
 ```bash
 python3
 >>> import ezsnmp_swig
->>> args = ["THIS_CAN_BE_ANYTHING_FOR_NOW", "-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
+>>> args = ["-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
 >>> retval = ezsnmp_swig.snmpwalk(args)
 >>> print(retval)
 ```

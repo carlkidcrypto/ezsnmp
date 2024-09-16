@@ -30,3 +30,25 @@ std::string print_variable_to_string(const oid *objid, size_t objidlen, const ne
       }
    }
 }
+
+// Default argv[0] to always be the program name. This simplifies what the
+// call looks like in higher level languages like python.
+void add_first_arg(int *argc, char ***argv)
+{
+   if (*argc > 0)
+   {
+      int new_argc = *argc + 1;
+      char **new_argv = (char **)malloc((new_argc + 1) * sizeof(char *));
+
+      new_argv[0] = (char *)("ezsnmp_swig");
+
+      for (int i = 0; i < *argc; ++i)
+      {
+         new_argv[i + 1] = (*argv)[i];
+      }
+      new_argv[new_argc] = NULL;
+
+      *argc = new_argc;
+      *argv = new_argv;
+   }
+}
