@@ -1,4 +1,4 @@
-%module ezsnmp_swig 
+%module ezsnmp
 %include "argcargv.i"
 %include "stl.i"
 %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) };

@@ -1,4 +1,4 @@
-%module ezsnmp_swig 
+%module ezsnmp
 %feature("autodoc", "0");
 %include "stl.i"
 %template(_string_list) std::vector< std::string >;
