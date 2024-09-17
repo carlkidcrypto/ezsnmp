@@ -9,7 +9,7 @@ Three make a header file for it `snmpwalk.h` and extract methods/functions from 
 Four run the command below to generate the wrap file.
 
 ```bash
-swig -c++ -python -builtin -outdir . -o ezsnmp/src/ezsnmp_wrap.cpp ezsnmp/interface/ezsnmp.i
+swig -c++ -python -builtin -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_wrap.cpp ezsnmp/interface/ezsnmp.i
 ```
 
 * `-c++` to force generation of a `.cpp` file
