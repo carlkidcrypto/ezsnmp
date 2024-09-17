@@ -33,3 +33,4 @@ dev/
 *.log
 wheelhouse/**
 *.o
+.DS_Store
