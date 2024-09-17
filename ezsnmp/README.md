@@ -9,7 +9,7 @@ Three make a header file for it `snmpwalk.h` and extract methods/functions from 
 Four run the command below to generate the wrap file.
 
 ```bash
-swig -c++ -python -builtin -outdir . -o src/ezsnmp_wrap.cpp interface/ezsnmp.i
+swig -c++ -python -builtin -outdir . -o ezsnmp/src/ezsnmp_wrap.cpp interface/ezsnmp.i
 ```
 
 * `-c++` to force generation of a `.cpp` file
@@ -19,16 +19,16 @@ swig -c++ -python -builtin -outdir . -o src/ezsnmp_wrap.cpp interface/ezsnmp.i
 Five run
 
 ```python3
-clear && rm -drf build ezsnmp_swig.egg-info && python3 -m pip install .
+clear && rm -drf build ezsnmp.egg-info && python3 -m pip install .
 ```
 
 Six run it in python3
 
 ```bash
 python3
->>> import ezsnmp_swig
+>>> import ezsnmp
 >>> args = ["-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
->>> retval = ezsnmp_swig.snmpwalk(args)
+>>> retval = ezsnmp.snmpwalk(args)
 >>> print(retval)
 ```
 
