@@ -34,3 +34,4 @@ dev/
 wheelhouse/**
 *.o
 .DS_Store
+**venv**
