@@ -181,12 +181,9 @@ class RelinkLibraries(BuildCommand):
 
 
 setup(
-    py_modules=[
-        "ezsnmp",
-    ],
     ext_modules=[
         Extension(
-            name="_ezsnmp",
+            name="ezsnmp/_ezsnmp",
             sources=[
                 "ezsnmp/src/ezsnmp_wrap.cpp",
                 "ezsnmp/src/helpers.cpp",
