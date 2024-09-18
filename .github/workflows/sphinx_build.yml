@@ -2,10 +2,10 @@ name: "Pull Request Sphinx Docs Check"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev/v2.0.0 ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ dev/v2.0.0 ]
 
 jobs:
   check-source-changes:
