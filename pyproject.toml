@@ -1,6 +1,6 @@
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux2014"
-skip = "cp27-* cp36-* cp37-* pp27-* pp36-* pp37-*"
+skip = "cp27-* cp36-* cp37-* cp38-* pp27-* pp36-* pp37-* pp38-*"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_24*"
