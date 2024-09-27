@@ -72,6 +72,7 @@ jobs:
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
+        allow-prereleases: true
         with:
           python-version: ${{ matrix.python-version }}
 
