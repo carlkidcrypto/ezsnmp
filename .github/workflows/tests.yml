@@ -122,7 +122,7 @@ jobs:
             )
             echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT
           fi
-          ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.log
+          ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -130,7 +130,7 @@ jobs:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
             test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
-            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.log
+            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Valgrind Reports
         uses: actions/upload-artifact@v4
@@ -154,7 +154,7 @@ jobs:
           cd /home/runner/work/ezsnmp/ezsnmp/
           echo 'pytest_multiple_files<<EOF' >> $GITHUB_OUTPUT
           export test_xml=($(ls -d pytest-results_*latest_*/*.xml | sort ))
-          export test_log=($(ls -d pytest-results_*latest_*/*.log | sort ))
+          export test_log=($(ls -d pytest-results_*latest_*/*.txt | sort ))
           for i in "${!test_log[@]}"
           do
             echo "$(echo ${test_log[$i]} | cut -d_ -f2) - $(echo ${test_log[$i]%.*} | cut -d_ -f3), ${test_log[$i]}, ${test_xml[$i]}" >> $GITHUB_OUTPUT
