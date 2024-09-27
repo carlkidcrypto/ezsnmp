@@ -25,7 +25,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build wheels using cibuildwheel
-        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
           
@@ -49,7 +49,7 @@ jobs:
           python-version: "3.10"
     
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y libsnmp-dev libperl-dev;
