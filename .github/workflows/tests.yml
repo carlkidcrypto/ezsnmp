@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
       - name: Set up dependencies
@@ -73,6 +73,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
+          allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Install pip dependencies
@@ -159,14 +160,16 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - 3.9/test-outputs, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
-            macos-latest - 3.10/test-outputs, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-            macos-latest - 3.11/test-outputs, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
-            macos-latest - 3.12/test-outputs, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
-            ubuntu-latest - 3.9/test-outputs, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
-            ubuntu-latest - 3.10/test-outputs, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
-            ubuntu-latest - 3.11/test-outputs, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
-            ubuntu-latest - 3.12/test-outputs, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
+            macos-latest - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
+            macos-latest - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            macos-latest - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
+            ubuntu-latest - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            ubuntu-latest - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
+            ubuntu-latest - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
+            ubuntu-latest - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
+            ubuntu-latest - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -175,7 +178,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - name: Download Artifacts
@@ -224,10 +227,12 @@ jobs:
          temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
          temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
          temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
+         temp5=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp4 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
         uses: actions/checkout@v4
@@ -242,6 +247,7 @@ jobs:
            py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
            py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"
            py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
+           py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
 
       - name: Create A Comment For PR
         uses: peter-evans/create-or-update-comment@v4
