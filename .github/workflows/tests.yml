@@ -18,7 +18,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v45.0.0
+        uses: tj-actions/changed-files@v45.0.2
         with:
           files: |
             ezsnmp/*.py
@@ -44,11 +44,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
   
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.0
+        uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
@@ -122,7 +122,7 @@ jobs:
             )
             echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT
           fi
-          ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.log
+          ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -130,7 +130,7 @@ jobs:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
             test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
-            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.log
+            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Valgrind Reports
         uses: actions/upload-artifact@v4
@@ -149,19 +149,6 @@ jobs:
           pattern: pytest-results_*
           merge-multiple: false
 
-      - name: Create multi-file output listing
-        run: |
-          cd /home/runner/work/ezsnmp/ezsnmp/
-          echo 'pytest_multiple_files<<EOF' >> $GITHUB_OUTPUT
-          export test_xml=($(ls -d pytest-results_*latest_*/*.xml | sort ))
-          export test_log=($(ls -d pytest-results_*latest_*/*.log | sort ))
-          for i in "${!test_log[@]}"
-          do
-            echo "$(echo ${test_log[$i]} | cut -d_ -f2) - $(echo ${test_log[$i]%.*} | cut -d_ -f3), ${test_log[$i]}, ${test_xml[$i]}" >> $GITHUB_OUTPUT
-          done
-          echo 'EOF' >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
-
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.52
         with:
@@ -172,7 +159,14 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            ${{ env.pytest_multiple_files }}
+            macos-latest - 3.9/test-outputs, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
+            macos-latest - 3.10/test-outputs, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - 3.11/test-outputs, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - 3.12/test-outputs, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            ubuntu-latest - 3.9/test-outputs, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            ubuntu-latest - 3.10/test-outputs, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
+            ubuntu-latest - 3.11/test-outputs, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
+            ubuntu-latest - 3.12/test-outputs, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -181,7 +175,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - name: Download Artifacts
@@ -226,16 +220,14 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.8/valgrind-stripped_ubuntu-latest_3.8.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_8=$temp1 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp2 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp3 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp4 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp5 >> $GITHUB_OUTPUT;
+         temp1=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
+         temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
+         temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
+         temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp4 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
         uses: actions/checkout@v4
@@ -246,7 +238,6 @@ jobs:
         with:
           template: .github/comment-valgrind-template.md
           vars: |
-           py3_8:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_8 }}"
            py3_9:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9 }}"
            py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
            py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"

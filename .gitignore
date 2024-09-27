@@ -32,3 +32,6 @@ dev/
 */*.log
 *.log
 wheelhouse/**
+*.o
+**.DS_Store**
+**venv**

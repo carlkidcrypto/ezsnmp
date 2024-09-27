@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from .ez import (  # noqa
     snmp_get,
     snmp_set,
