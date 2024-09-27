@@ -262,51 +262,56 @@ one-off operations where you wish to specify all details in the request:</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="making-the-swig-interface-files">
+<h2>Making The SWIG Interface Files<a class="headerlink" href="#making-the-swig-interface-files" title="Link to this heading"></a></h2>
+<p>One look for the netsnmp app file under &lt;<a class="reference external" href="https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps">https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps</a>&gt;</p>
+<p>Two copy the c file over, for example <cite>snmpwalk.c</cite>. Then rename to change the extension to <cite>.cpp</cite>.</p>
+<p>Three make a header file for it <cite>snmpwalk.h</cite> and extract methods/functions from the source code.</p>
+<p>Four run the command below to generate the wrap file.</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">swig</span> <span class="pre">-c++</span> <span class="pre">-python</span> <span class="pre">-builtin</span> <span class="pre">-outdir</span> <span class="pre">ezsnmp/.</span> <span class="pre">-o</span> <span class="pre">ezsnmp/src/ezsnmp_wrap.cpp</span> <span class="pre">ezsnmp/interface/ezsnmp.i</span>
+<span class="pre">`</span></code></p>
+<ul class="simple">
+<li><p><cite>-c++</cite> to force generation of a <cite>.cpp</cite> file</p></li>
+<li><p><cite>-python</cite> to build a python module</p></li>
+<li><p><cite>-builtin</cite> to build with native python data types. [Python_builtin_types](<a class="reference external" href="https://swig.org/Doc4.0/Python.html#Python_builtin_types">https://swig.org/Doc4.0/Python.html#Python_builtin_types</a>)</p></li>
+</ul>
+<p>Five run</p>
+<p><code class="docutils literal notranslate"><span class="pre">`python3</span>
+<span class="pre">clear</span> <span class="pre">&amp;&amp;</span> <span class="pre">rm</span> <span class="pre">-drf</span> <span class="pre">build</span> <span class="pre">ezsnmp.egg-info</span> <span class="pre">&amp;&amp;</span> <span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span>
+<span class="pre">`</span></code></p>
+<p>Six run it in python3</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3
+&gt;&gt;&gt;<span class="w"> </span>import<span class="w"> </span>ezsnmp
+&gt;&gt;&gt;<span class="w"> </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;-v&quot;</span><span class="w"> </span>,<span class="w"> </span><span class="s2">&quot;3&quot;</span>,<span class="w"> </span><span class="s2">&quot;-u&quot;</span>,<span class="w"> </span><span class="s2">&quot;secondary_sha_aes&quot;</span>,<span class="w"> </span><span class="s2">&quot;-a&quot;</span>,<span class="w"> </span><span class="s2">&quot;SHA&quot;</span>,<span class="w"> </span><span class="s2">&quot;-A&quot;</span>,<span class="w"> </span><span class="s2">&quot;auth_second&quot;</span>,<span class="w"> </span><span class="s2">&quot;-x&quot;</span>,<span class="w"> </span><span class="s2">&quot;AES&quot;</span>,<span class="w"> </span><span class="s2">&quot;-X&quot;</span><span class="w"> </span>,<span class="s2">&quot;priv_second&quot;</span>,<span class="w"> </span><span class="s2">&quot;-l&quot;</span>,<span class="w"> </span><span class="s2">&quot;authPriv&quot;</span>,<span class="w"> </span><span class="s2">&quot;localhost:11161&quot;</span><span class="o">]</span>
+&gt;&gt;&gt;<span class="w"> </span><span class="nv">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ezsnmp.snmpwalk<span class="o">(</span>args<span class="o">)</span>
+&gt;&gt;&gt;<span class="w"> </span>print<span class="o">(</span>retval<span class="o">)</span>
+</pre></div>
+</div>
+</section>
+<section id="making-the-patch-files">
+<h2>Making The Patch Files<a class="headerlink" href="#making-the-patch-files" title="Link to this heading"></a></h2>
+<p>Within the patches directory run the following command.</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">diff</span> <span class="pre">-Naurw</span> <span class="pre">~/Downloads/net-snmp-master/apps/snmpwalk.c</span> <span class="pre">../src/snmpwalk.cpp</span> <span class="pre">&gt;</span> <span class="pre">snmpwalk.patch</span>
+<span class="pre">`</span></code></p>
+<p>consider the following names for the api.
+<cite>snmp</cite> is redundant in the name since the module <cite>ezsnmp</cite> already has it in its’ name.
+snmpwalk –&gt; ezsnmp.walk
+snmpbulkwalk –&gt; ezsnmp.bulk_walk
+snmpget –&gt; ezsnmp.get
+snmpbulkget –&gt; ezsnmp.bulk_get
+etc…</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">ezsnmp.exceptions module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPConnectionError"><code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPError"><code class="docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPNoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchInstanceError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPNoSuchNameError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchNameError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPNoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchObjectError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPTimeoutError"><code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPUndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUndeterminedTypeError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions.html#ezsnmp.exceptions.EzSNMPUnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUnknownObjectIDError</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_bulkwalk"><code class="docutils literal notranslate"><span class="pre">snmp_bulkwalk()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_get"><code class="docutils literal notranslate"><span class="pre">snmp_get()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_get_bulk"><code class="docutils literal notranslate"><span class="pre">snmp_get_bulk()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_get_next"><code class="docutils literal notranslate"><span class="pre">snmp_get_next()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_set"><code class="docutils literal notranslate"><span class="pre">snmp_set()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_set_multiple"><code class="docutils literal notranslate"><span class="pre">snmp_set_multiple()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="ez.html#ezsnmp.ez.snmp_walk"><code class="docutils literal notranslate"><span class="pre">snmp_walk()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="helpers.html#ezsnmp.helpers.normalize_oid"><code class="docutils literal notranslate"><span class="pre">normalize_oid()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="session.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="session.html#ezsnmp.session.build_varlist"><code class="docutils literal notranslate"><span class="pre">build_varlist()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="session.html#ezsnmp.session.validate_results"><code class="docutils literal notranslate"><span class="pre">validate_results()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#ezsnmp.utils.is_hostname_ipv6"><code class="docutils literal notranslate"><span class="pre">is_hostname_ipv6()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#ezsnmp.utils.strip_non_printable"><code class="docutils literal notranslate"><span class="pre">strip_non_printable()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#ezsnmp.utils.tostr"><code class="docutils literal notranslate"><span class="pre">tostr()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="variables.html">ezsnmp.variables module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariable"><code class="docutils literal notranslate"><span class="pre">SNMPVariable</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="variables.html#ezsnmp.variables.SNMPVariableList"><code class="docutils literal notranslate"><span class="pre">SNMPVariableList</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">ezsnmp.exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables.html">ezsnmp.variables module</a></li>
 </ul>
 </div>
 </section>

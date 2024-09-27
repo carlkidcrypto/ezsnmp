@@ -6,3 +6,4 @@
 %include "snmpbulkwalk.i"
 %include "snmpget.i"
 %include "snmpwalk.i"
+%include "snmpset.i"

@@ -6044,6 +6044,16 @@ SWIG_AsArgcArgv(PyObject *input, swig_type_info *ppchar_info, size_t *argc, char
 
 #include "snmpwalk.h"
 
+
+#include "snmpset.h"
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_int  (int value)
+{
+  return PyInt_FromLong((long) value);
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -8919,11 +8929,55 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_snmpset(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  char **arg2 = (char **) (char **)0 ;
+  int res1 ;
+  char **argv1 = 0 ;
+  size_t argc1 = 0 ;
+  int owner1 = 0 ;
+  PyObject *swig_obj[1] ;
+  int result;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_AsArgcArgv(swig_obj[0], SWIGTYPE_p_p_char, &argc1, &argv1, &owner1);
+  if (!SWIG_IsOK(res1)) {
+    arg1 = 0; arg2 = 0;
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "snmpset" "', argument " "1"" of type '" "int ARGC, char **ARGV""'");
+  } else {
+    arg1 = static_cast< int >(argc1);
+    arg2 = static_cast< char ** >(argv1);
+  }
+  result = (int)snmpset(arg1,arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
+  return resultobj;
+fail:
+  if (owner1) {
+    size_t i = argc1;
+    while (i) {
+      delete[] argv1[--i];
+    }
+    delete[] argv1;
+  }
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { "snmpbulkget", _wrap_snmpbulkget, METH_O, "snmpbulkget(argc) -> _string_list"},
 	 { "snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, "snmpbulkwalk(argc) -> _string_list"},
 	 { "snmpget", _wrap_snmpget, METH_O, "snmpget(argc) -> _string_list"},
 	 { "snmpwalk", _wrap_snmpwalk, METH_O, "snmpwalk(argc) -> _string_list"},
+	 { "snmpset", _wrap_snmpset, METH_O, "snmpset(argc) -> int"},
 	 { NULL, NULL, 0, NULL }
 };
 
