@@ -72,8 +72,8 @@ jobs:
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
-        allow-prereleases: true
         with:
+          allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Install pip dependencies
