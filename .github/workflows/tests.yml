@@ -149,19 +149,6 @@ jobs:
           pattern: pytest-results_*
           merge-multiple: false
 
-      - name: Create multi-file output listing
-        run: |
-          cd /home/runner/work/ezsnmp/ezsnmp/
-          echo 'pytest_multiple_files<<EOF' >> $GITHUB_OUTPUT
-          export test_xml=($(ls -d pytest-results_*latest_*/*.xml | sort ))
-          export test_log=($(ls -d pytest-results_*latest_*/*.txt | sort ))
-          for i in "${!test_log[@]}"
-          do
-            echo "$(echo ${test_log[$i]} | cut -d_ -f2) - $(echo ${test_log[$i]%.*} | cut -d_ -f3), ${test_log[$i]}, ${test_xml[$i]}" >> $GITHUB_OUTPUT
-          done
-          echo 'EOF' >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
-
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.52
         with:
@@ -172,7 +159,14 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            ${{ env.pytest_multiple_files }}
+            macos-latest - 3.9/test-outputs, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
+            macos-latest - 3.10/test-outputs, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - 3.11/test-outputs, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - 3.12/test-outputs, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            ubuntu-latest - 3.9/test-outputs, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            ubuntu-latest - 3.10/test-outputs, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
+            ubuntu-latest - 3.11/test-outputs, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
+            ubuntu-latest - 3.12/test-outputs, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
