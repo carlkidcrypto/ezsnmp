@@ -142,10 +142,11 @@ int snmpset(int argc, char *argv[])
    switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpset_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-      exitval = 0;
-      goto out;
+      throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
       snmpset_usage();
       goto out;
