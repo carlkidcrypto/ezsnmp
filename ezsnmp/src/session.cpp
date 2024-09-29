@@ -1,4 +1,8 @@
 #include "session.h"
+#include "snmpwalk.h"
+#include "snmpbulkwalk.h"
+#include "snmpget.h"
+#include "snmpbulkget.h"
 
 /******************************************************************************
  * The class constructor. This is a wrapper around the lower level c++ calls.
@@ -83,4 +87,20 @@ Session::~Session()
       delete[] m_argv[i];
    }
    delete[] m_argv;
+}
+
+std::vector<std::string> Session::walk()
+{
+}
+
+std::vector<std::string> Session::bulk_walk()
+{
+}
+
+std::vector<std::string> Session::get()
+{
+}
+
+std::vector<std::string> Session::bulk_get()
+{
 }

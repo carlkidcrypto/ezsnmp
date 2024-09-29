@@ -187,6 +187,7 @@ setup(
             sources=[
                 "ezsnmp/src/ezsnmp_wrap.cpp",
                 "ezsnmp/src/helpers.cpp",
+                "ezsnmp/src/session.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
                 "ezsnmp/src/snmpbulkwalk.cpp",
                 "ezsnmp/src/snmpget.cpp",

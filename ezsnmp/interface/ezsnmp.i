@@ -7,3 +7,4 @@
 %include "snmpget.i"
 %include "snmpwalk.i"
 %include "snmpset.i"
+%include "session.i"
