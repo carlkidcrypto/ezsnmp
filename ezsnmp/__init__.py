@@ -1,1 +1,1 @@
-from .ezsnmp import snmpbulkget, snmpget, snmpbulkwalk, snmpwalk, snmpset
+from .ezsnmp import snmpbulkget, snmpget, snmpbulkwalk, snmpwalk, snmpset, Session

@@ -1,3 +1,7 @@
+#include <map>
+#include <vector>
+#include <cstring>
+
 #include "session.h"
 #include "snmpwalk.h"
 #include "snmpbulkwalk.h"
@@ -32,13 +36,13 @@ std::map<std::string, std::string> cml_param_lookup = {
     {"context_engine_id", "-E"},
     {"security_level", "-l"},
     {"context", "-n"},
-    {"security_name", "-u"},
+    {"security_username", "-u"},
     {"privacy_protocol", "-x"},
     {"privacy_passphrase", "-X"},
     {"boots_time", "-Z"},
     {"retires", "-r"},
     {"timeout", "-t"}};
-    
+
 /******************************************************************************
  * The class constructor. This is a wrapper around the lower level c++ calls.
  * This allows for reuse of given parameters for multiple calls to functions
@@ -54,7 +58,7 @@ std::map<std::string, std::string> cml_param_lookup = {
  * @param [in] context_engine_id Set context engine ID (e.g. 800000020109840301). Default ``.
  * @param [in] security_level Set security level (noAuthNoPriv|authNoPriv|authPriv). Default ``.
  * @param [in] context Set context name (e.g. bridge1). Default ``.
- * @param [in] security_name Set security name (e.g. bert). Default ``.
+ * @param [in] security_username Set security name (e.g. bert). Default ``.
  * @param [in] privacy_protocol Set privacy protocol (DES|AES). Default ``.
  * @param [in] privacy_passphrase Set privacy protocol pass phrase. Default ``.
  * @param [in] boots_time Set destination engine boots/time. Default ``.
@@ -71,7 +75,7 @@ Session::Session(std::string hostname,
                  std::string context_engine_id,
                  std::string security_level,
                  std::string context,
-                 std::string security_name,
+                 std::string security_username,
                  std::string privacy_protocol,
                  std::string privacy_passphrase,
                  std::string boots_time,
@@ -91,7 +95,7 @@ Session::Session(std::string hostname,
        context_engine_id,
        security_level,
        context,
-       security_name,
+       security_username,
        privacy_protocol,
        privacy_passphrase,
        boots_time,
@@ -126,16 +130,20 @@ Session::~Session()
 
 std::vector<std::string> Session::walk()
 {
+   return snmpwalk(m_argc, m_argv);
 }
 
 std::vector<std::string> Session::bulk_walk()
 {
+   return snmpbulkwalk(m_argc, m_argv);
 }
 
 std::vector<std::string> Session::get()
 {
+   return snmpget(m_argc, m_argv);
 }
 
 std::vector<std::string> Session::bulk_get()
 {
+   return snmpbulkget(m_argc, m_argv);
 }
