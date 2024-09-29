@@ -21,7 +21,7 @@ public:
            std::string context_engine_id = "",
            std::string security_level = "",
            std::string context = "",
-           std::string security_name = "",
+           std::string security_username = "",
            std::string privacy_protocol = "",
            std::string privacy_passphrase = "",
            std::string boots_time = "",

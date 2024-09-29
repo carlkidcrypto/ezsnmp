@@ -9011,7 +9011,7 @@ SWIGINTERN int _wrap_new_Session(PyObject *self, PyObject *args, PyObject *kwarg
   PyObject * obj15 = 0 ;
   PyObject * obj16 = 0 ;
   char * kwnames[] = {
-    (char *)"hostname",  (char *)"port_number",  (char *)"version",  (char *)"community",  (char *)"auth_protocol",  (char *)"auth_passphrase",  (char *)"security_engine_id",  (char *)"context_engine_id",  (char *)"security_level",  (char *)"context",  (char *)"security_name",  (char *)"privacy_protocol",  (char *)"privacy_passphrase",  (char *)"boots_time",  (char *)"retires",  (char *)"timeout",  NULL 
+    (char *)"hostname",  (char *)"port_number",  (char *)"version",  (char *)"community",  (char *)"auth_protocol",  (char *)"auth_passphrase",  (char *)"security_engine_id",  (char *)"context_engine_id",  (char *)"security_level",  (char *)"context",  (char *)"security_username",  (char *)"privacy_protocol",  (char *)"privacy_passphrase",  (char *)"boots_time",  (char *)"retires",  (char *)"timeout",  NULL 
   };
   Session *result = 0 ;
   

@@ -1,5 +1,4 @@
 #include <map>
-#include <vector>
 #include <cstring>
 
 #include "session.h"
@@ -102,13 +101,33 @@ Session::Session(std::string hostname,
        retires,
        timeout};
 
+   std::vector<std::string> args_names = {
+       "hostname",
+       "port_number",
+       "version",
+       "community",
+       "auth_protocol",
+       "auth_passphrase",
+       "security_engine_id",
+       "context_engine_id",
+       "security_level",
+       "context",
+       "security_username",
+       "privacy_protocol",
+       "privacy_passphrase",
+       "boots_time",
+       "retires",
+       "timeout"};
+
    m_argc = args.size();
    m_argv = new char *[m_argc];
 
    for (int i = 0; i < m_argc; ++i)
    {
       if (!args[i].empty())
-      {
+      { 
+         // note to sellf we alos need to add the cml parameter -n -x etc. use the lookup map.
+         // some special handling will be needed for the hostname and port_number.
          m_argv[i] = new char[args[i].size() + 1];
          std::strcpy(m_argv[i], args[i].c_str());
       }
