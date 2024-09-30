@@ -80,7 +80,7 @@ char *end_name = NULL;
 #include <stdexcept>
 #include "snmpwalk.h"
 #include "helpers.h"
-
+#include <iostream>
 void snmpwalk_usage(void)
 {
    fprintf(stderr, "USAGE: snmpwalk ");
@@ -298,6 +298,7 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
     * open an SNMP session
     */
    ss = snmp_open(&session);
+   std::cout << "HERE - 1" << std::endl;
    if (ss == NULL)
    {
       /*

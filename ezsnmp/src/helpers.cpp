@@ -46,8 +46,18 @@ void add_first_arg(int *argc, char ***argv)
       {
          new_argv[i + 1] = (*argv)[i];
       }
+
+      // Null-terminate the array
       new_argv[new_argc] = NULL;
 
+      // // Free the old argv array
+      // for (int i = 0; i < *argc; ++i)
+      // {
+      //    free((*argv)[i]);
+      // }
+      // free(*argv);
+
+      // Update argc and argv
       *argc = new_argc;
       *argv = new_argv;
    }
@@ -55,32 +65,32 @@ void add_first_arg(int *argc, char ***argv)
 
 void add_last_arg(int *argc, char ***argv, std::string const &value_to_add)
 {
-    if (*argc > 0)
-    {
-        int new_argc = *argc + 1;
-        char **new_argv = (char **)malloc((new_argc + 1) * sizeof(char *));
+   if (*argc > 0)
+   {
+      int new_argc = *argc + 1;
+      char **new_argv = (char **)malloc((new_argc + 1) * sizeof(char *));
 
-        // Copy the existing arguments
-        for (int i = 0; i < *argc; ++i)
-        {
-            new_argv[i] = (*argv)[i];
-        }
+      // Copy the existing arguments
+      for (int i = 0; i < *argc; ++i)
+      {
+         new_argv[i] = (*argv)[i];
+      }
 
-        // Add the new argument
-        new_argv[*argc] = strdup(value_to_add.c_str());
+      // Add the new argument
+      new_argv[*argc] = strdup(value_to_add.c_str());
 
-        // Null-terminate the array
-        new_argv[new_argc] = NULL;
+      // Null-terminate the array
+      new_argv[new_argc] = NULL;
 
-        // Free the old argv array
-        for (int i = 0; i < *argc; ++i)
-        {
-            free((*argv)[i]);
-        }
-        free(*argv);
+      // Free the old argv array
+      for (int i = 0; i < *argc; ++i)
+      {
+         free((*argv)[i]);
+      }
+      free(*argv);
 
-        // Update argc and argv
-        *argc = new_argc;
-        *argv = new_argv;
-    }
+      // Update argc and argv
+      *argc = new_argc;
+      *argv = new_argv;
+   }
 }

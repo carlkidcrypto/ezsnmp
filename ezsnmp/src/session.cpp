@@ -1,6 +1,5 @@
 #include <map>
 #include <cstring>
-#include <iostream>
 #include <cassert>
 
 #include "session.h"
@@ -30,20 +29,20 @@
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
 std::map<std::string, std::string> cml_param_lookup = {
-    {"version", "-v "},
-    {"community", "-c "},
-    {"auth_protocol", "-a "},
-    {"auth_passphrase", "-A "},
-    {"security_engine_id", "-e "},
-    {"context_engine_id", "-E "},
-    {"security_level", "-l "},
-    {"context", "-n "},
-    {"security_username", "-u "},
-    {"privacy_protocol", "-x "},
-    {"privacy_passphrase", "-X "},
-    {"boots_time", "-Z "},
-    {"retires", "-r "},
-    {"timeout", "-t "}};
+    {"version", "-v"},
+    {"community", "-c"},
+    {"auth_protocol", "-a"},
+    {"auth_passphrase", "-A"},
+    {"security_engine_id", "-e"},
+    {"context_engine_id", "-E"},
+    {"security_level", "-l"},
+    {"context", "-n"},
+    {"security_username", "-u"},
+    {"privacy_protocol", "-x"},
+    {"privacy_passphrase", "-X"},
+    {"boots_time", "-Z"},
+    {"retires", "-r"},
+    {"timeout", "-t"}};
 
 /******************************************************************************
  * The class constructor. This is a wrapper around the lower level c++ calls.
@@ -111,9 +110,6 @@ Session::Session(std::string hostname,
    {
       if (!val.empty() && key != "hostname" && key != "port_number")
       {
-         std::cout << "1 - key: " << key << std::endl;
-         std::cout << "1 - val: " << val.c_str() << std::endl;
-
          // add one for the flag
          m_argc++;
 
@@ -139,18 +135,14 @@ Session::Session(std::string hostname,
    {
       if (!val.empty() && key != "hostname" && key != "port_number")
       {
-         std::cout << "2 - key: " << key << std::endl;
-         std::cout << "2 - val: " << val.c_str() << std::endl;
-
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
          m_argv[temp_index] = new char[cml_param_lookup[key].size() + 1];
          std::strcpy(m_argv[temp_index], cml_param_lookup[key].c_str());
          temp_index++;
 
          // Copy the input paramater value...
-         auto temp_val = val + " ";
-         m_argv[temp_index] = new char[temp_val.size() + 1];
-         std::strcpy(m_argv[temp_index], temp_val.c_str());
+         m_argv[temp_index] = new char[val.size() + 1];
+         std::strcpy(m_argv[temp_index], val.c_str());
          temp_index++;
       }
    }
@@ -159,11 +151,11 @@ Session::Session(std::string hostname,
    auto host_address = std::string("");
    if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty())
    {
-      host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"] + " ";
+      host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
    }
    else if (!input_arg_name_map["hostname"].empty() && input_arg_name_map["port_number"].empty())
    {
-      host_address = input_arg_name_map["hostname"] + " ";
+      host_address = input_arg_name_map["hostname"];
    }
    else
    {
@@ -177,12 +169,6 @@ Session::Session(std::string hostname,
    // Fifth add the nullptr
    m_argv[temp_index] = NULL;
    assert(temp_index == m_argc);
-
-   std::cout << "m_argc: " << m_argc << std::endl;
-   for (int i = 0; i < m_argc; ++i)
-   {
-      std::cout << "m_argv: " << "`" << m_argv[i] << "`" << std::endl;
-   }
 }
 
 Session::~Session()

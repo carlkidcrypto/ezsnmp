@@ -9220,14 +9220,45 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Session_walk(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Session_walk__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Session *arg1 = (Session *) 0 ;
+  std::string arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< std::string,std::allocator< std::string > > result;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Session, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Session_walk" "', argument " "1"" of type '" "Session *""'"); 
+  }
+  arg1 = reinterpret_cast< Session * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Session_walk" "', argument " "2"" of type '" "std::string""'"); 
+    }
+    arg2 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  result = (arg1)->walk(arg2);
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Session_walk__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   Session *arg1 = (Session *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::string,std::allocator< std::string > > result;
   
-  if (!SWIG_Python_UnpackTuple(args, "Session_walk", 0, 0, 0)) SWIG_fail;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Session, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Session_walk" "', argument " "1"" of type '" "Session *""'"); 
@@ -9238,6 +9269,47 @@ SWIGINTERN PyObject *_wrap_Session_walk(PyObject *self, PyObject *args) {
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Session_walk(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  (void)self;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Session_walk", 0, 2, argv+1))) SWIG_fail;
+  argv[0] = self;
+  if (argc == 1) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Session, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_Session_walk__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Session, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Session_walk__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Session_walk'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Session::walk(std::string)\n"
+    "    Session::walk()\n");
+  return 0;
 }
 
 
@@ -9262,14 +9334,45 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Session_get(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Session_get__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Session *arg1 = (Session *) 0 ;
+  std::string arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< std::string,std::allocator< std::string > > result;
+  
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Session, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Session_get" "', argument " "1"" of type '" "Session *""'"); 
+  }
+  arg1 = reinterpret_cast< Session * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Session_get" "', argument " "2"" of type '" "std::string""'"); 
+    }
+    arg2 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  result = (arg1)->get(arg2);
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Session_get__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0;
   Session *arg1 = (Session *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   std::vector< std::string,std::allocator< std::string > > result;
   
-  if (!SWIG_Python_UnpackTuple(args, "Session_get", 0, 0, 0)) SWIG_fail;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Session, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Session_get" "', argument " "1"" of type '" "Session *""'"); 
@@ -9280,6 +9383,47 @@ SWIGINTERN PyObject *_wrap_Session_get(PyObject *self, PyObject *args) {
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Session_get(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  
+  (void)self;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Session_get", 0, 2, argv+1))) SWIG_fail;
+  argv[0] = self;
+  if (argc == 1) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Session, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_Session_get__SWIG_1(self, argc, argv);
+    }
+  }
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Session, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Session_get__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Session_get'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Session::get(std::string)\n"
+    "    Session::get()\n");
+  return 0;
 }
 
 
@@ -9882,9 +10026,9 @@ SwigPyBuiltin__Session_richcompare(PyObject *self, PyObject *other, int op) {
 }
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__Session_methods[] = {
-  { "walk", _wrap_Session_walk, METH_NOARGS, "walk(self) -> _string_list" },
+  { "walk", _wrap_Session_walk, METH_VARARGS, "walk(self, mib=\"\") -> _string_list" },
   { "bulk_walk", _wrap_Session_bulk_walk, METH_NOARGS, "bulk_walk(self) -> _string_list" },
-  { "get", _wrap_Session_get, METH_NOARGS, "get(self) -> _string_list" },
+  { "get", _wrap_Session_get, METH_VARARGS, "get(self, mib=\"\") -> _string_list" },
   { "bulk_get", _wrap_Session_bulk_get, METH_NOARGS, "bulk_get(self) -> _string_list" },
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
