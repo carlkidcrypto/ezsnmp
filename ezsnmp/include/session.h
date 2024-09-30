@@ -29,9 +29,9 @@ public:
            std::string timeout = "1");
    ~Session();
 
-   std::vector<std::string> walk();
+   std::vector<std::string> walk(std::string mib = "");
    std::vector<std::string> bulk_walk();
-   std::vector<std::string> get();
+   std::vector<std::string> get(std::string mib = "");
    std::vector<std::string> bulk_get();
 };
 

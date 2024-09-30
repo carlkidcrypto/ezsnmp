@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "session.h"
+#include "helpers.h"
 #include "snmpwalk.h"
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
@@ -158,11 +159,11 @@ Session::Session(std::string hostname,
    auto host_address = std::string("");
    if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty())
    {
-      host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
+      host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"] + " ";
    }
    else if (!input_arg_name_map["hostname"].empty() && input_arg_name_map["port_number"].empty())
    {
-      host_address = input_arg_name_map["hostname"];
+      host_address = input_arg_name_map["hostname"] + " ";
    }
    else
    {
@@ -193,8 +194,13 @@ Session::~Session()
    delete[] m_argv;
 }
 
-std::vector<std::string> Session::walk()
+std::vector<std::string> Session::walk(std::string mib)
 {
+   if (!mib.empty())
+   {
+      add_last_arg(&m_argc, &m_argv, mib);
+   }
+
    return snmpwalk(m_argc, m_argv);
 }
 
@@ -203,8 +209,13 @@ std::vector<std::string> Session::bulk_walk()
    return snmpbulkwalk(m_argc, m_argv);
 }
 
-std::vector<std::string> Session::get()
+std::vector<std::string> Session::get(std::string mib)
 {
+   if (!mib.empty())
+   {
+      add_last_arg(&m_argc, &m_argv, mib);
+   }
+
    return snmpget(m_argc, m_argv);
 }
 
