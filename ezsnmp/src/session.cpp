@@ -1,6 +1,7 @@
 #include <map>
 #include <cstring>
 #include <iostream>
+#include <cassert>
 
 #include "session.h"
 #include "snmpwalk.h"
@@ -107,8 +108,11 @@ Session::Session(std::string hostname,
    auto host_address_accounted_for = false;
    for (auto const &[key, val] : input_arg_name_map)
    {
-      if (!val.empty() && (key != "hostname" || key != "port_number"))
+      if (!val.empty() && key != "hostname" && key != "port_number")
       {
+         std::cout << "1 - key: " << key << std::endl;
+         std::cout << "1 - val: " << val.c_str() << std::endl;
+
          // add one for the flag
          m_argc++;
 
@@ -124,6 +128,8 @@ Session::Session(std::string hostname,
    }
 
    // Second make the dynamic array of size m_argc
+   // Add an extra one for the nullptr.
+   m_argc++;
    m_argv = new char *[m_argc];
 
    // Third now populate m_argv
@@ -132,7 +138,8 @@ Session::Session(std::string hostname,
    {
       if (!val.empty() && key != "hostname" && key != "port_number")
       {
-         std::cout << "key: " << key << std::endl;
+         std::cout << "2 - key: " << key << std::endl;
+         std::cout << "2 - val: " << val.c_str() << std::endl;
 
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
          m_argv[temp_index] = new char[cml_param_lookup[key].size() + 1];
@@ -166,10 +173,14 @@ Session::Session(std::string hostname,
    std::strcpy(m_argv[temp_index], host_address.c_str());
    temp_index++;
 
+   // Fifth add the nullptr
+   m_argv[temp_index] = NULL;
+   assert(temp_index == m_argc);
+
    std::cout << "m_argc: " << m_argc << std::endl;
    for (int i = 0; i < m_argc; ++i)
    {
-      std::cout << "m_argv: " << m_argv[i] << std::endl;
+      std::cout << "m_argv: " << "`" << m_argv[i] << "`" << std::endl;
    }
 }
 

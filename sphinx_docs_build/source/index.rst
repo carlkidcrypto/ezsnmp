@@ -205,7 +205,7 @@ Example Session Kargs
         "hostname": "localhost",
         "port_number": "11161",
         "auth_protocol": "MD5",
-        "security_level": "auth_without_privacy",
+        "security_level": "authNoPriv",
         "security_username": "initial_md5_no_priv",
         "auth_passphrase": "auth_pass",
     }
