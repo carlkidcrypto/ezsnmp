@@ -1,5 +1,6 @@
 #include <map>
 #include <cstring>
+#include <iostream>
 
 #include "session.h"
 #include "snmpwalk.h"
@@ -83,58 +84,60 @@ Session::Session(std::string hostname,
 
 {
    // Convert arguments to m_argc and m_argv
-   std::vector<std::string> args = {
-       hostname,
-       port_number,
-       version,
-       community,
-       auth_protocol,
-       auth_passphrase,
-       security_engine_id,
-       context_engine_id,
-       security_level,
-       context,
-       security_username,
-       privacy_protocol,
-       privacy_passphrase,
-       boots_time,
-       retires,
-       timeout};
+   std::map<std::string, std::string> input_arg_name_map = {
+       {"hostname", hostname},
+       {"port_number", port_number},
+       {"version", version},
+       {"community", community},
+       {"auth_protocol", auth_protocol},
+       {"auth_passphrase", auth_passphrase},
+       {"security_engine_id", security_engine_id},
+       {"context_engine_id", context_engine_id},
+       {"security_level", security_level},
+       {"context", context},
+       {"security_username", security_username},
+       {"privacy_protocol", privacy_protocol},
+       {"privacy_passphrase", privacy_passphrase},
+       {"boots_time", boots_time},
+       {"retires", retires},
+       {"timeout", timeout}};
 
-   std::vector<std::string> args_names = {
-       "hostname",
-       "port_number",
-       "version",
-       "community",
-       "auth_protocol",
-       "auth_passphrase",
-       "security_engine_id",
-       "context_engine_id",
-       "security_level",
-       "context",
-       "security_username",
-       "privacy_protocol",
-       "privacy_passphrase",
-       "boots_time",
-       "retires",
-       "timeout"};
-
-   m_argc = args.size();
+   m_argc = 0;
    m_argv = new char *[m_argc];
 
+   auto host_address = std::string("");
+   for (auto const &[key, val] : input_arg_name_map)
+   {
+      if (!val.empty() && (key != "hostname" || key != "port_number"))
+      {
+         // Copy the cml parameter flag i.e -a, -A, -x, etc...
+         m_argv[m_argc] = new char[cml_param_lookup[key].size() + 1];
+         std::strcpy(m_argv[m_argc], cml_param_lookup[key].c_str());
+         m_argc++;
+
+         // Copy the input paramater value...
+         m_argv[m_argc] = new char[val.size() + 1];
+         std::strcpy(m_argv[m_argc], val.c_str());
+         m_argc++;
+      }
+      else if (!val.empty() && key == "hostname")
+      {
+         host_address = host_address + val;
+      }
+      else if (!val.empty() && key == "port_number")
+      {
+         host_address = host_address + ":" + val;
+      }
+   }
+
+   // Now add the host address last...
+   m_argv[m_argc] = new char[host_address.size() + 1];
+   std::strcpy(m_argv[m_argc], host_address.c_str());
+
+   std::cout << "m_argc: " << m_argc << std::endl;
    for (int i = 0; i < m_argc; ++i)
    {
-      if (!args[i].empty())
-      { 
-         // note to sellf we alos need to add the cml parameter -n -x etc. use the lookup map.
-         // some special handling will be needed for the hostname and port_number.
-         m_argv[i] = new char[args[i].size() + 1];
-         std::strcpy(m_argv[i], args[i].c_str());
-      }
-      else
-      {
-         m_argc--;
-      }
+      std::cout << "m_argv: " << &m_argv[m_argc] << std::endl;
    }
 }
 
