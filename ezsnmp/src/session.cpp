@@ -28,20 +28,20 @@
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
 std::map<std::string, std::string> cml_param_lookup = {
-    {"version", "-v"},
-    {"community", "-c"},
-    {"auth_protocol", "-a"},
-    {"auth_passphrase", "-A"},
-    {"security_engine_id", "-e"},
-    {"context_engine_id", "-E"},
-    {"security_level", "-l"},
-    {"context", "-n"},
-    {"security_username", "-u"},
-    {"privacy_protocol", "-x"},
-    {"privacy_passphrase", "-X"},
-    {"boots_time", "-Z"},
-    {"retires", "-r"},
-    {"timeout", "-t"}};
+    {"version", "-v "},
+    {"community", "-c "},
+    {"auth_protocol", "-a "},
+    {"auth_passphrase", "-A "},
+    {"security_engine_id", "-e "},
+    {"context_engine_id", "-E "},
+    {"security_level", "-l "},
+    {"context", "-n "},
+    {"security_username", "-u "},
+    {"privacy_protocol", "-x "},
+    {"privacy_passphrase", "-X "},
+    {"boots_time", "-Z "},
+    {"retires", "-r "},
+    {"timeout", "-t "}};
 
 /******************************************************************************
  * The class constructor. This is a wrapper around the lower level c++ calls.
@@ -102,42 +102,74 @@ Session::Session(std::string hostname,
        {"retires", retires},
        {"timeout", timeout}};
 
+   // First find out the size of argc
    m_argc = 0;
-   m_argv = new char *[m_argc];
-
-   auto host_address = std::string("");
+   auto host_address_accounted_for = false;
    for (auto const &[key, val] : input_arg_name_map)
    {
       if (!val.empty() && (key != "hostname" || key != "port_number"))
       {
-         // Copy the cml parameter flag i.e -a, -A, -x, etc...
-         m_argv[m_argc] = new char[cml_param_lookup[key].size() + 1];
-         std::strcpy(m_argv[m_argc], cml_param_lookup[key].c_str());
+         // add one for the flag
          m_argc++;
 
-         // Copy the input paramater value...
-         m_argv[m_argc] = new char[val.size() + 1];
-         std::strcpy(m_argv[m_argc], val.c_str());
+         // add one for the value
          m_argc++;
       }
-      else if (!val.empty() && key == "hostname")
+      else if (!val.empty() && (key == "hostname" || key == "port_number") && !host_address_accounted_for)
       {
-         host_address = host_address + val;
-      }
-      else if (!val.empty() && key == "port_number")
-      {
-         host_address = host_address + ":" + val;
+         // Add one for the host_address
+         m_argc++;
+         host_address_accounted_for = true;
       }
    }
 
-   // Now add the host address last...
-   m_argv[m_argc] = new char[host_address.size() + 1];
-   std::strcpy(m_argv[m_argc], host_address.c_str());
+   // Second make the dynamic array of size m_argc
+   m_argv = new char *[m_argc];
+
+   // Third now populate m_argv
+   auto temp_index = 0;
+   for (auto const &[key, val] : input_arg_name_map)
+   {
+      if (!val.empty() && key != "hostname" && key != "port_number")
+      {
+         std::cout << "key: " << key << std::endl;
+
+         // Copy the cml parameter flag i.e -a, -A, -x, etc...
+         m_argv[temp_index] = new char[cml_param_lookup[key].size() + 1];
+         std::strcpy(m_argv[temp_index], cml_param_lookup[key].c_str());
+         temp_index++;
+
+         // Copy the input paramater value...
+         auto temp_val = val + " ";
+         m_argv[temp_index] = new char[temp_val.size() + 1];
+         std::strcpy(m_argv[temp_index], temp_val.c_str());
+         temp_index++;
+      }
+   }
+
+   // Fourth add and make the host address
+   auto host_address = std::string("");
+   if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty())
+   {
+      host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
+   }
+   else if (!input_arg_name_map["hostname"].empty() && input_arg_name_map["port_number"].empty())
+   {
+      host_address = input_arg_name_map["hostname"];
+   }
+   else
+   {
+      host_address = "";
+   }
+
+   m_argv[temp_index] = new char[host_address.size() + 1];
+   std::strcpy(m_argv[temp_index], host_address.c_str());
+   temp_index++;
 
    std::cout << "m_argc: " << m_argc << std::endl;
    for (int i = 0; i < m_argc; ++i)
    {
-      std::cout << "m_argv: " << &m_argv[m_argc] << std::endl;
+      std::cout << "m_argv: " << m_argv[i] << std::endl;
    }
 }
 
