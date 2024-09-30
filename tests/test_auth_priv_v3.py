@@ -1,6 +1,4 @@
-from __future__ import unicode_literals
-
-from ezsnmp.session import Session
+from ezsnmp import Session
 
 
 def test_v3_authentication_md5_privacy_des(sess_v3_md5_des):

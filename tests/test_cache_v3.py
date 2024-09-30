@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
-
 import pytest
-from ezsnmp.session import Session
-from ezsnmp.exceptions import EzSNMPConnectionError
+from ezsnmp import Session
+from ezsnmp import EzSNMPConnectionError
 
 
 def test_v3_not_caching_user(sess_v3_md5_des):
