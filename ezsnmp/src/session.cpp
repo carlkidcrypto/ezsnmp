@@ -136,7 +136,7 @@ Session::~Session()
 {
 }
 
-std::vector<std::string> Session::walk(std::string mib)
+std::vector<Result> Session::walk(std::string mib)
 {
    if (!mib.empty())
    {

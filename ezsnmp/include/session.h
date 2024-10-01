@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+# include "datatypes.h"
+
 class Session
 {
 private:
@@ -28,7 +30,7 @@ public:
            std::string timeout = "1");
    ~Session();
 
-   std::vector<std::string> walk(std::string mib = "");
+   std::vector<Result> walk(std::string mib = "");
    std::vector<std::string> bulk_walk();
    std::vector<std::string> get(std::string mib = "");
    std::vector<std::string> bulk_get();

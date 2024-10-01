@@ -2,6 +2,7 @@
 /* Slight modifications to return std::string instead of print to stdout */
 
 #include <cstring>
+#include <sstream>
 
 #include "helpers.h"
 
@@ -47,4 +48,33 @@ std::unique_ptr<char *[]> create_argv(const std::vector<std::string> &args, int 
    argv[argc] = nullptr;
 
    return argv;
+}
+
+Result parse_result(const std::string &input)
+{
+   Result result;
+   std::stringstream ss(input);
+   std::string temp;
+
+   // Extract OID
+   std::getline(ss, result.oid, '=');
+   result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
+
+   // Extract type and value
+   std::getline(ss, temp, ':');
+   result.type = temp.substr(temp.find_last_of(' ') + 1);
+   std::getline(ss, temp);
+   result.value = temp.substr(0, temp.find_first_of(' '));
+
+   return result;
+}
+
+std::vector<Result> parse_results(const std::vector<std::string> &inputs)
+{
+   std::vector<Result> results;
+   for (const auto &input : inputs)
+   {
+      results.push_back(parse_result(input));
+   }
+   return results;
 }
