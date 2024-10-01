@@ -1,6 +1,8 @@
 /* straight copy from https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456 */
 /* Slight modifications to return std::string instead of print to stdout */
 
+#include <cstring>
+
 #include "helpers.h"
 
 std::string print_variable_to_string(const oid *objid, size_t objidlen, const netsnmp_variable_list *variable)
@@ -63,34 +65,28 @@ void add_first_arg(int *argc, char ***argv)
    }
 }
 
-void add_last_arg(int *argc, char ***argv, std::string const &value_to_add)
+void add_last_arg(int *argc, std::unique_ptr<char*[]> &argv, std::string const &value_to_add)
 {
    if (*argc > 0)
    {
       int new_argc = *argc + 1;
-      char **new_argv = (char **)malloc((new_argc + 1) * sizeof(char *));
+      auto new_argv = std::make_unique<char*[]>(new_argc + 1);
 
       // Copy the existing arguments
       for (int i = 0; i < *argc; ++i)
       {
-         new_argv[i] = (*argv)[i];
+         new_argv[i] = argv[i];
       }
 
       // Add the new argument
-      new_argv[*argc] = strdup(value_to_add.c_str());
+      new_argv[*argc] = new char[value_to_add.size() + 1];
+      std::strcpy(new_argv[*argc], value_to_add.c_str());
 
       // Null-terminate the array
-      new_argv[new_argc] = NULL;
-
-      // Free the old argv array
-      for (int i = 0; i < *argc; ++i)
-      {
-         free((*argv)[i]);
-      }
-      free(*argv);
+      new_argv[new_argc] = nullptr;
 
       // Update argc and argv
       *argc = new_argc;
-      *argv = new_argv;
+      argv = std::move(new_argv);
    }
 }

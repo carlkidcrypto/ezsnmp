@@ -82,7 +82,6 @@ Session::Session(std::string hostname,
                  std::string boots_time,
                  std::string retires,
                  std::string timeout)
-
 {
    // Convert arguments to m_argc and m_argv
    std::map<std::string, std::string> input_arg_name_map = {
@@ -127,7 +126,7 @@ Session::Session(std::string hostname,
    // Second make the dynamic array of size m_argc
    // Add an extra one for the nullptr.
    m_argc++;
-   m_argv = new char *[m_argc];
+   m_argv = std::make_unique<char *[]>(m_argc);
 
    // Third now populate m_argv
    auto temp_index = 0;
@@ -167,45 +166,41 @@ Session::Session(std::string hostname,
    temp_index++;
 
    // Fifth add the nullptr
-   m_argv[temp_index] = NULL;
+   m_argv[temp_index] = nullptr;
    assert(temp_index == m_argc);
 }
 
 Session::~Session()
 {
-   for (int i = 0; i < m_argc; ++i)
-   {
-      delete[] m_argv[i];
-   }
-   delete[] m_argv;
+   // No need to manually delete m_argv, std::unique_ptr will handle it
 }
 
 std::vector<std::string> Session::walk(std::string mib)
 {
    if (!mib.empty())
    {
-      add_last_arg(&m_argc, &m_argv, mib);
+      add_last_arg(&m_argc, m_argv, mib);
    }
 
-   return snmpwalk(m_argc, m_argv);
+   return snmpwalk(m_argc, m_argv.get());
 }
 
 std::vector<std::string> Session::bulk_walk()
 {
-   return snmpbulkwalk(m_argc, m_argv);
+   return snmpbulkwalk(m_argc, m_argv.get());
 }
 
 std::vector<std::string> Session::get(std::string mib)
 {
    if (!mib.empty())
    {
-      add_last_arg(&m_argc, &m_argv, mib);
+      add_last_arg(&m_argc, m_argv, mib);
    }
 
-   return snmpget(m_argc, m_argv);
+   return snmpget(m_argc, m_argv.get());
 }
 
 std::vector<std::string> Session::bulk_get()
 {
-   return snmpbulkget(m_argc, m_argv);
+   return snmpbulkget(m_argc, m_argv.get());
 }
