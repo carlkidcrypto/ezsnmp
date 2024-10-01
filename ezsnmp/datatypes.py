@@ -10,10 +10,3 @@ if __package__ or "." in __name__:
     from ._datatypes import *
 else:
     from _datatypes import *
-
-
-class Result:
-    def __str__(self):
-        return self.to_string()
-
-
