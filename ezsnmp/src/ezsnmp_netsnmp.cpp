@@ -3948,16 +3948,16 @@ static swig_module_info swig_module = {swig_types, 12, 0, 0, 0, 0};
 #define SWIG_TypeQuery SWIG_Python_TypeQuery
 
 /*-----------------------------------------------
-              @(target):= _ezsnmp.so
+              @(target):= _netsnmp.so
   ------------------------------------------------*/
 #if PY_VERSION_HEX >= 0x03000000
-#  define SWIG_init    PyInit__ezsnmp
+#  define SWIG_init    PyInit__netsnmp
 
 #else
-#  define SWIG_init    init_ezsnmp
+#  define SWIG_init    init_netsnmp
 
 #endif
-#define SWIG_name    "_ezsnmp"
+#define SWIG_name    "_netsnmp"
 
 #ifdef __cplusplus
 #include <utility>
@@ -9026,7 +9026,7 @@ static PyHeapTypeObject SwigPyBuiltin__swig__SwigPyIterator_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "ezsnmp.SwigPyIterator",                  /* tp_name */
+    "netsnmp.SwigPyIterator",                 /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
     _wrap_delete_SwigPyIterator_destructor_closure,               /* tp_dealloc */
@@ -9314,7 +9314,7 @@ static PyHeapTypeObject SwigPyBuiltin__std__vectorT_std__string_t_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "ezsnmp._string_list",                    /* tp_name */
+    "netsnmp._string_list",                   /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
     _wrap_delete__string_list_destructor_closure,                 /* tp_dealloc */

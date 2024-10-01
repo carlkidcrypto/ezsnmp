@@ -1,4 +1,4 @@
-%module ezsnmp
+%module netsnmp
 %feature("autodoc", "0");
 %include "stl.i"
 %template(_string_list) std::vector< std::string >;
@@ -7,4 +7,3 @@
 %include "snmpget.i"
 %include "snmpwalk.i"
 %include "snmpset.i"
-%include "session.i"

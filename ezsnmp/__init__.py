@@ -1,1 +1,2 @@
-from .ezsnmp import snmpbulkget, snmpget, snmpbulkwalk, snmpwalk, snmpset, Session
+from .netsnmp import snmpbulkget, snmpget, snmpbulkwalk, snmpwalk, snmpset
+from .session import Session

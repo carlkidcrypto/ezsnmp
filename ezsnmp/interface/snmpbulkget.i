@@ -1,4 +1,4 @@
-%module ezsnmp
+%module netsnmp
 %include "argcargv.i"
 %include "stl.i"
 %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) };
