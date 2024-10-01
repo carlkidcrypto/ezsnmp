@@ -9,10 +9,7 @@ struct Result
     std::string type;
     std::string value;
 
-    std::string to_string() const
-    {
-        return "oid: " + oid + ", type: " + type + ", value: " + value;
-    }
+    std::string to_string() const;
 };
 
 #endif // DATATYPES_H
