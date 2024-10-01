@@ -3943,12 +3943,11 @@ SwigPyBuiltin_iternextfunc_closure(SwigPyWrapperFunction wrapper, PyObject *a) {
 #define SWIGTYPE_p_size_type swig_types[6]
 #define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[7]
 #define SWIGTYPE_p_std__invalid_argument swig_types[8]
-#define SWIGTYPE_p_std__unique_ptrT_char_paA_t swig_types[9]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[10]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[11]
-#define SWIGTYPE_p_value_type swig_types[12]
-static swig_type_info *swig_types[14];
-static swig_module_info swig_module = {swig_types, 13, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[9]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[10]
+#define SWIGTYPE_p_value_type swig_types[11]
+static swig_type_info *swig_types[13];
+static swig_module_info swig_module = {swig_types, 12, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5982,22 +5981,6 @@ SWIGINTERN std::vector< std::string >::iterator std_vector_Sl_std_string_Sg__ins
 SWIGINTERN void std_vector_Sl_std_string_Sg__insert__SWIG_1(std::vector< std::string > *self,std::vector< std::string >::iterator pos,std::vector< std::string >::size_type n,std::vector< std::string >::value_type const &x){ self->insert(pos, n, x); }
 
 #include "snmpbulkget.h"
-
-
-SWIGINTERN int
-SWIG_AsVal_int (PyObject * obj, int *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< int >(v);
-    }
-  }  
-  return res;
-}
 
 
 #include "snmpbulkwalk.h"
@@ -8723,99 +8706,90 @@ SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete__string_list) /* defines _wrap_delete__st
 
 SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  int arg1 ;
-  std::unique_ptr< char *[] > *arg2 = 0 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
+  std::vector< std::string,std::allocator< std::string > > *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
   std::vector< std::string,std::allocator< std::string > > result;
   
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkget", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpbulkget" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__unique_ptrT_char_paA_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpbulkget" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    res1 = swig::asptr(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "snmpbulkget" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpbulkget" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    arg1 = ptr;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpbulkget" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
-  }
-  arg2 = reinterpret_cast< std::unique_ptr< char *[] > * >(argp2);
-  result = snmpbulkget(arg1,*arg2);
+  result = snmpbulkget((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
   resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return NULL;
 }
 
 
 SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  int arg1 ;
-  std::unique_ptr< char *[] > *arg2 = 0 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
+  std::vector< std::string,std::allocator< std::string > > *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
   std::vector< std::string,std::allocator< std::string > > result;
   
-  if (!SWIG_Python_UnpackTuple(args, "snmpbulkwalk", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpbulkwalk" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__unique_ptrT_char_paA_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpbulkwalk" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    res1 = swig::asptr(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "snmpbulkwalk" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpbulkwalk" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    arg1 = ptr;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpbulkwalk" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
-  }
-  arg2 = reinterpret_cast< std::unique_ptr< char *[] > * >(argp2);
-  result = snmpbulkwalk(arg1,*arg2);
+  result = snmpbulkwalk((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
   resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return NULL;
 }
 
 
 SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  int arg1 ;
-  std::unique_ptr< char *[] > *arg2 = 0 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
+  std::vector< std::string,std::allocator< std::string > > *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
   std::vector< std::string,std::allocator< std::string > > result;
   
-  if (!SWIG_Python_UnpackTuple(args, "snmpget", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpget" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__unique_ptrT_char_paA_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpget" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    res1 = swig::asptr(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "snmpget" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpget" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    arg1 = ptr;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpget" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
-  }
-  arg2 = reinterpret_cast< std::unique_ptr< char *[] > * >(argp2);
-  result = snmpget(arg1,*arg2);
+  result = snmpget((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
   resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return NULL;
 }
 
@@ -8852,43 +8826,40 @@ fail:
 
 SWIGINTERN PyObject *_wrap_snmpset(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  int arg1 ;
-  std::unique_ptr< char *[] > *arg2 = 0 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
+  std::vector< std::string,std::allocator< std::string > > *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
   int result;
   
-  if (!SWIG_Python_UnpackTuple(args, "snmpset", 2, 2, swig_obj)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(swig_obj[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "snmpset" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__unique_ptrT_char_paA_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "snmpset" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  {
+    std::vector< std::string,std::allocator< std::string > > *ptr = (std::vector< std::string,std::allocator< std::string > > *)0;
+    res1 = swig::asptr(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "snmpset" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpset" "', argument " "1"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); 
+    }
+    arg1 = ptr;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "snmpset" "', argument " "2"" of type '" "std::unique_ptr< char *[] > &""'"); 
-  }
-  arg2 = reinterpret_cast< std::unique_ptr< char *[] > * >(argp2);
-  result = (int)snmpset(arg1,*arg2);
+  result = (int)snmpset((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
   resultobj = SWIG_From_int(static_cast< int >(result));
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
   return NULL;
 }
 
 
 static PyMethodDef SwigMethods[] = {
-	 { "snmpbulkget", _wrap_snmpbulkget, METH_VARARGS, "snmpbulkget(argc, argv) -> _string_list"},
-	 { "snmpbulkwalk", _wrap_snmpbulkwalk, METH_VARARGS, "snmpbulkwalk(argc, argv) -> _string_list"},
-	 { "snmpget", _wrap_snmpget, METH_VARARGS, "snmpget(argc, argv) -> _string_list"},
+	 { "snmpbulkget", _wrap_snmpbulkget, METH_O, "snmpbulkget(args) -> _string_list"},
+	 { "snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, "snmpbulkwalk(args) -> _string_list"},
+	 { "snmpget", _wrap_snmpget, METH_O, "snmpget(args) -> _string_list"},
 	 { "snmpwalk", _wrap_snmpwalk, METH_O, "snmpwalk(args) -> _string_list"},
-	 { "snmpset", _wrap_snmpset, METH_VARARGS, "snmpset(argc, argv) -> int"},
+	 { "snmpset", _wrap_snmpset, METH_O, "snmpset(args) -> int"},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -9450,7 +9421,6 @@ static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0
 static swig_type_info _swigt__p_size_type = {"_p_size_type", "size_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_std__string_t = {"_p_std__allocatorT_std__string_t", "std::vector< std::string >::allocator_type *|std::allocator< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__unique_ptrT_char_paA_t = {"_p_std__unique_ptrT_char_paA_t", "std::unique_ptr< char *[] > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__string_t = {"_p_std__vectorT_std__string_t", "std::vector< std::string,std::allocator< std::string > > *|std::vector< std::string > *", 0, 0, (void*)&SwigPyBuiltin__std__vectorT_std__string_t_clientdata, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)&SwigPyBuiltin__swig__SwigPyIterator_clientdata, 0};
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void*)0, 0};
@@ -9465,7 +9435,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_size_type,
   &_swigt__p_std__allocatorT_std__string_t,
   &_swigt__p_std__invalid_argument,
-  &_swigt__p_std__unique_ptrT_char_paA_t,
   &_swigt__p_std__vectorT_std__string_t,
   &_swigt__p_swig__SwigPyIterator,
   &_swigt__p_value_type,
@@ -9480,7 +9449,6 @@ static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0
 static swig_cast_info _swigc__p_size_type[] = {  {&_swigt__p_size_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__string_t[] = {  {&_swigt__p_std__allocatorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__unique_ptrT_char_paA_t[] = {  {&_swigt__p_std__unique_ptrT_char_paA_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__string_t[] = {  {&_swigt__p_std__vectorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__SwigPyIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_value_type[] = {  {&_swigt__p_value_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -9495,7 +9463,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_size_type,
   _swigc__p_std__allocatorT_std__string_t,
   _swigc__p_std__invalid_argument,
-  _swigc__p_std__unique_ptrT_char_paA_t,
   _swigc__p_std__vectorT_std__string_t,
   _swigc__p_swig__SwigPyIterator,
   _swigc__p_value_type,

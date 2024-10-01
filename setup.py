@@ -203,7 +203,6 @@ setup(
             name="ezsnmp/_session",
             sources=[
                 "ezsnmp/src/ezsnmp_session.cpp",
-                "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/session.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
                 "ezsnmp/src/snmpbulkwalk.cpp",

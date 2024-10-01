@@ -5,10 +5,9 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <string>
 #include <vector>
-#include <memory>
 
 void snmpset_usage(void);
 void snmpset_optProc(int argc, char *const *argv, int opt);
-int snmpset(int argc, std::unique_ptr<char *[]> &argv);
+int snmpset(const std::vector<std::string> &args);
 
 #endif // SNMPSET_H

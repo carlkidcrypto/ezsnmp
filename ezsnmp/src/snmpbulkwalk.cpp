@@ -190,9 +190,18 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-std::vector<std::string> snmpbulkwalk(int argc, std::unique_ptr<char *[]> &argv)
+std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args)
 {
-   add_first_arg(&argc, argv);
+   int argc = args.size() + 1;
+   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+
+   argv[0] = const_cast<char *>("snmpbulkwalk");
+
+   for (int i = 0; i < argc; ++i)
+   {
+      argv[i + 1] = const_cast<char *>(args[i].c_str());
+   }
+   argv[argc] = nullptr;
 
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;

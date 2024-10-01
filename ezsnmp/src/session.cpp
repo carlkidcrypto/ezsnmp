@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include "session.h"
-#include "helpers.h"
 #include "snmpwalk.h"
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
@@ -135,35 +134,34 @@ Session::Session(std::string hostname,
 
 Session::~Session()
 {
-   // No need to manually delete m_argv, std::unique_ptr will handle it
 }
 
 std::vector<std::string> Session::walk(std::string mib)
 {
-   // if (!mib.empty())
-   // {
-   //    add_last_arg(&m_argc, m_argv, mib);
-   // }
+   if (!mib.empty())
+   {
+      m_args.push_back(mib);
+   }
 
    return snmpwalk(m_args);
 }
 
 std::vector<std::string> Session::bulk_walk()
 {
-   // return snmpbulkwalk(m_args);
+   return snmpbulkwalk(m_args);
 }
 
 std::vector<std::string> Session::get(std::string mib)
 {
-   // if (!mib.empty())
-   // {
-   //    add_last_arg(&m_argc, m_argv, mib);
-   // }
+   if (!mib.empty())
+   {
+      m_args.push_back(mib);
+   }
 
-   // return snmpget(m_args);
+   return snmpget(m_args);
 }
 
 std::vector<std::string> Session::bulk_get()
 {
-   // return snmpbulkget(m_args);
+   return snmpbulkget(m_args);
 }

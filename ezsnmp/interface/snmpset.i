@@ -7,4 +7,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-int snmpset(int argc, std::unique_ptr<char *[]> &argv); 
+int snmpset(const std::vector<std::string> &args);

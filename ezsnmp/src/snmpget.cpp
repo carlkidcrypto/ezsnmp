@@ -108,9 +108,18 @@ void snmpget_usage(void)
            "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-std::vector<std::string> snmpget(int argc, std::unique_ptr<char *[]> &argv)
+std::vector<std::string> snmpget(const std::vector<std::string> &args)
 {
-   add_first_arg(&argc, argv);
+   int argc = args.size() + 1;
+   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+
+   argv[0] = const_cast<char *>("snmpget");
+
+   for (int i = 0; i < argc; ++i)
+   {
+      argv[i + 1] = const_cast<char *>(args[i].c_str());
+   }
+   argv[argc] = nullptr;
 
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;

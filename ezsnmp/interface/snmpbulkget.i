@@ -7,4 +7,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<std::string> snmpbulkget(int argc, std::unique_ptr<char *[]> &argv);
+std::vector<std::string> snmpbulkget(const std::vector<std::string> &args);
