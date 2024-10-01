@@ -3,13 +3,11 @@
 
 #include <string>
 #include <vector>
-#include <memory>
 
 class Session
 {
 private:
-   int m_argc;
-   std::unique_ptr<char*[]> m_argv;
+   std::vector<std::string> m_args;
 
 public:
    Session(std::string hostname = "localhost",

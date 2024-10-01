@@ -102,47 +102,16 @@ Session::Session(std::string hostname,
        {"retires", retires},
        {"timeout", timeout}};
 
-   // First find out the size of argc
-   m_argc = 0;
-   auto host_address_accounted_for = false;
-   for (auto const &[key, val] : input_arg_name_map)
-   {
-      if (!val.empty() && key != "hostname" && key != "port_number")
-      {
-         // add one for the flag
-         m_argc++;
-
-         // add one for the value
-         m_argc++;
-      }
-      else if (!val.empty() && (key == "hostname" || key == "port_number") && !host_address_accounted_for)
-      {
-         // Add one for the host_address
-         m_argc++;
-         host_address_accounted_for = true;
-      }
-   }
-
-   // Second make the dynamic array of size m_argc
-   // Add an extra one for the nullptr.
-   m_argc++;
-   m_argv = std::make_unique<char *[]>(m_argc);
-
    // Third now populate m_argv
-   auto temp_index = 0;
    for (auto const &[key, val] : input_arg_name_map)
    {
       if (!val.empty() && key != "hostname" && key != "port_number")
       {
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
-         m_argv[temp_index] = new char[cml_param_lookup[key].size() + 1];
-         std::strcpy(m_argv[temp_index], cml_param_lookup[key].c_str());
-         temp_index++;
+         m_args.push_back(cml_param_lookup[key]);
 
          // Copy the input paramater value...
-         m_argv[temp_index] = new char[val.size() + 1];
-         std::strcpy(m_argv[temp_index], val.c_str());
-         temp_index++;
+         m_args.push_back(val);
       }
    }
 
@@ -161,13 +130,7 @@ Session::Session(std::string hostname,
       host_address = "";
    }
 
-   m_argv[temp_index] = new char[host_address.size() + 1];
-   std::strcpy(m_argv[temp_index], host_address.c_str());
-   temp_index++;
-
-   // Fifth add the nullptr
-   m_argv[temp_index] = nullptr;
-   assert(temp_index == m_argc);
+   m_args.push_back(host_address);
 }
 
 Session::~Session()
@@ -177,30 +140,30 @@ Session::~Session()
 
 std::vector<std::string> Session::walk(std::string mib)
 {
-   if (!mib.empty())
-   {
-      add_last_arg(&m_argc, m_argv, mib);
-   }
+   // if (!mib.empty())
+   // {
+   //    add_last_arg(&m_argc, m_argv, mib);
+   // }
 
-   return snmpwalk(m_argc, m_argv.get());
+   return snmpwalk(m_args);
 }
 
 std::vector<std::string> Session::bulk_walk()
 {
-   return snmpbulkwalk(m_argc, m_argv.get());
+   // return snmpbulkwalk(m_args);
 }
 
 std::vector<std::string> Session::get(std::string mib)
 {
-   if (!mib.empty())
-   {
-      add_last_arg(&m_argc, m_argv, mib);
-   }
+   // if (!mib.empty())
+   // {
+   //    add_last_arg(&m_argc, m_argv, mib);
+   // }
 
-   return snmpget(m_argc, m_argv.get());
+   // return snmpget(m_args);
 }
 
 std::vector<std::string> Session::bulk_get()
 {
-   return snmpbulkget(m_argc, m_argv.get());
+   // return snmpbulkget(m_args);
 }

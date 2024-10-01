@@ -108,9 +108,10 @@ void snmpget_usage(void)
            "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-std::vector<std::string> snmpget(int argc, char *argv[])
+std::vector<std::string> snmpget(int argc, std::unique_ptr<char *[]> &argv)
 {
-   add_first_arg(&argc, &argv);
+   add_first_arg(&argc, argv);
+
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;
@@ -131,7 +132,7 @@ std::vector<std::string> snmpget(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpget_optProc))
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");

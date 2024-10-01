@@ -183,9 +183,19 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-std::vector<std::string> snmpwalk(int argc, char *argv[])
+std::vector<std::string> snmpwalk(const std::vector<std::string> &args)
 {
-   add_first_arg(&argc, &argv);
+   int argc = args.size();
+   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+
+   for (int i = 0; i < argc; ++i)
+   {
+      argv[i] = const_cast<char *>(args[i].c_str());
+   }
+   argv[argc] = nullptr;
+
+   add_first_arg(&argc, argv);
+
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response;
@@ -233,7 +243,7 @@ std::vector<std::string> snmpwalk(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpwalk_optProc))
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");

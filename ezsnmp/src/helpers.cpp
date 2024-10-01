@@ -35,34 +35,24 @@ std::string print_variable_to_string(const oid *objid, size_t objidlen, const ne
 
 // Default argv[0] to always be the program name. This simplifies what the
 // call looks like in higher level languages like python.
-void add_first_arg(int *argc, char ***argv)
-{
-   if (*argc > 0)
-   {
-      int new_argc = *argc + 1;
-      char **new_argv = (char **)malloc((new_argc + 1) * sizeof(char *));
+void add_first_arg(int *argc, std::unique_ptr<char*[]>& argv) {
+    if (*argc > 0) {
+        int new_argc = *argc + 1;
+        std::unique_ptr<char*[]> new_argv(new char*[new_argc + 1]);
 
-      new_argv[0] = (char *)("ezsnmp_swig");
+        new_argv[0] = const_cast<char*>("ezsnmp_swig");
 
-      for (int i = 0; i < *argc; ++i)
-      {
-         new_argv[i + 1] = (*argv)[i];
-      }
+        for (int i = 0; i < *argc; ++i) {
+            new_argv[i + 1] = argv[i];
+        }
 
-      // Null-terminate the array
-      new_argv[new_argc] = NULL;
+        // Null-terminate the array
+        new_argv[new_argc] = nullptr;
 
-      // // Free the old argv array
-      // for (int i = 0; i < *argc; ++i)
-      // {
-      //    free((*argv)[i]);
-      // }
-      // free(*argv);
-
-      // Update argc and argv
-      *argc = new_argc;
-      *argv = new_argv;
-   }
+        // Update argc and argv
+        *argc = new_argc;
+        argv = std::move(new_argv);
+    }
 }
 
 void add_last_arg(int *argc, std::unique_ptr<char*[]> &argv, std::string const &value_to_add)

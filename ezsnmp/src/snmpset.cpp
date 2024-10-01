@@ -113,8 +113,10 @@ void snmpset_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-int snmpset(int argc, char *argv[])
+int snmpset(int argc, std::unique_ptr<char *[]> &argv)
 {
+   add_first_arg(&argc, argv);
+
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response = NULL;
    netsnmp_variable_list *vars;
@@ -139,7 +141,7 @@ int snmpset(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpset_optProc))
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
