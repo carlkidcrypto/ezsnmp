@@ -215,6 +215,7 @@ setup(
         Extension(
             name="ezsnmp/_datatypes",
             sources=[
+                "ezsnmp/src/ezsnmp_datatypes.cpp",
                 "ezsnmp/src/datatypes.cpp",
             ],
             library_dirs=libdirs,

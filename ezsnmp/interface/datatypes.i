@@ -1,15 +1,23 @@
 %module datatypes
 %feature("autodoc", "0");
 
-%include "stl.i"
-%include "datatypes.i" // Include it again for SWIG to process
-
-// Tell SWIG how to handle our special return type from C++
-%template(_result_list) std::vector<Result>;
-
 %{
 #include "datatypes.h"
 %}
 
-// Now list ANSI C/C++ declarations
+// Include the header file
 %include "../include/datatypes.h"
+
+// Expose the to_string method
+%extend Result {
+    std::string to_string() const {
+        return $self->to_string();
+    }
+};
+
+// Tell SWIG how to print our datatype Result in Python
+%pythoncode {
+    class Result:
+        def __str__(self):
+            return self.to_string()
+};
