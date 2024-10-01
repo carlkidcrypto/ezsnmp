@@ -32,3 +32,19 @@ std::string print_variable_to_string(const oid *objid, size_t objidlen, const ne
       }
    }
 }
+
+std::unique_ptr<char *[]> create_argv(const std::vector<std::string> &args, int &argc)
+{
+   argc = args.size() + 1;
+   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+
+   argv[0] = const_cast<char *>("netsnmp");
+
+   for (int i = 0; i < static_cast<int>(args.size()); ++i)
+   {
+      argv[i + 1] = const_cast<char *>(args[i].c_str());
+   }
+   argv[argc] = nullptr;
+
+   return argv;
+}

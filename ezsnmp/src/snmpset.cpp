@@ -115,16 +115,8 @@ void snmpset_optProc(int argc, char *const *argv, int opt)
 
 int snmpset(const std::vector<std::string> &args)
 {
-   int argc = args.size() + 1;
-   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
-
-   argv[0] = const_cast<char *>("snmpset");
-
-   for (int i = 0; i < argc; ++i)
-   {
-      argv[i + 1] = const_cast<char *>(args[i].c_str());
-   }
-   argv[argc] = nullptr;
+   int argc;
+   std::unique_ptr<char*[]> argv = create_argv(args, argc);
 
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response = NULL;
