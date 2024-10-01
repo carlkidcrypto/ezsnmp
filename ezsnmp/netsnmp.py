@@ -10,3 +10,10 @@ if __package__ or "." in __name__:
     from ._netsnmp import *
 else:
     from _netsnmp import *
+
+
+class Result:
+    def __str__(self):
+        return self.to_string()
+
+

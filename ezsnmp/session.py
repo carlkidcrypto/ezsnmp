@@ -10,3 +10,10 @@ if __package__ or "." in __name__:
     from ._session import *
 else:
     from _session import *
+
+
+class Result:
+    def __str__(self):
+        return self.to_string()
+
+
