@@ -9,6 +9,7 @@
 
 #define SWIG_VERSION 0x040201
 #define SWIGPYTHON
+#define SWIG_PYTHON_THREADS
 #define SWIG_PYTHON_DIRECTOR_NO_VTABLE
 #define SWIGPYTHON_BUILTIN
 
@@ -4254,6 +4255,16 @@ SWIG_From_std_string  (const std::string& s)
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
 }
 
+SWIGINTERN char const *Result___str__(Result *self){
+        return self->to_string().c_str();
+    }
+
+SWIGINTERNINLINE PyObject * 
+SWIG_FromCharPtr(const char *cptr)
+{ 
+  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4284,7 +4295,11 @@ SWIGINTERN PyObject *_wrap_Result_oid_set(PyObject *self, PyObject *args) {
     }
     arg2 = ptr;
   }
-  if (arg1) (arg1)->oid = *arg2;
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    if (arg1) (arg1)->oid = *arg2;
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
@@ -4307,7 +4322,11 @@ SWIGINTERN PyObject *_wrap_Result_oid_get(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result_oid_get" "', argument " "1"" of type '" "Result *""'"); 
   }
   arg1 = reinterpret_cast< Result * >(argp1);
-  result = (std::string *) & ((arg1)->oid);
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = (std::string *) & ((arg1)->oid);
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
   return resultobj;
 fail:
@@ -4342,7 +4361,11 @@ SWIGINTERN PyObject *_wrap_Result_type_set(PyObject *self, PyObject *args) {
     }
     arg2 = ptr;
   }
-  if (arg1) (arg1)->type = *arg2;
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    if (arg1) (arg1)->type = *arg2;
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
@@ -4365,7 +4388,11 @@ SWIGINTERN PyObject *_wrap_Result_type_get(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result_type_get" "', argument " "1"" of type '" "Result *""'"); 
   }
   arg1 = reinterpret_cast< Result * >(argp1);
-  result = (std::string *) & ((arg1)->type);
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = (std::string *) & ((arg1)->type);
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
   return resultobj;
 fail:
@@ -4400,7 +4427,11 @@ SWIGINTERN PyObject *_wrap_Result_value_set(PyObject *self, PyObject *args) {
     }
     arg2 = ptr;
   }
-  if (arg1) (arg1)->value = *arg2;
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    if (arg1) (arg1)->value = *arg2;
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
@@ -4423,7 +4454,11 @@ SWIGINTERN PyObject *_wrap_Result_value_get(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result_value_get" "', argument " "1"" of type '" "Result *""'"); 
   }
   arg1 = reinterpret_cast< Result * >(argp1);
-  result = (std::string *) & ((arg1)->value);
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = (std::string *) & ((arg1)->value);
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
   return resultobj;
 fail:
@@ -4444,8 +4479,37 @@ SWIGINTERN PyObject *_wrap_Result_to_string(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result_to_string" "', argument " "1"" of type '" "Result const *""'"); 
   }
   arg1 = reinterpret_cast< Result * >(argp1);
-  result = ((Result const *)arg1)->to_string();
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = ((Result const *)arg1)->to_string();
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Result___str__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Result *arg1 = (Result *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  char *result = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "Result___str__", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Result, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result___str__" "', argument " "1"" of type '" "Result *""'"); 
+  }
+  arg1 = reinterpret_cast< Result * >(argp1);
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = (char *)Result___str__(arg1);
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
+  resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
   return NULL;
@@ -4458,8 +4522,20 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
   
   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_Result")) SWIG_fail;
   if (!SWIG_Python_UnpackTuple(args, "new_Result", 0, 0, 0)) SWIG_fail;
-  result = (Result *)new Result();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Result, SWIG_BUILTIN_INIT |  0 );
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = (Result *)new Result();
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
+  {
+    if (result) {
+      std::string result_str = result->to_string();
+      resultobj = PyUnicode_FromString(result_str.c_str());
+    } else {
+      resultobj = Py_None;
+      Py_INCREF(Py_None);
+    }
+  }
   return resultobj == Py_None ? -1 : 0;
 fail:
   return -1;
@@ -4478,7 +4554,11 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Result" "', argument " "1"" of type '" "Result *""'"); 
   }
   arg1 = reinterpret_cast< Result * >(argp1);
-  delete arg1;
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    delete arg1;
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -4520,6 +4600,7 @@ SwigPyBuiltin__Result_richcompare(PyObject *self, PyObject *other, int op) {
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
   { "to_string", _wrap_Result_to_string, METH_NOARGS, "to_string(self) -> std::string" },
+  { "__str__", _wrap_Result___str__, METH_NOARGS, "__str__(self) -> char const *" },
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
@@ -5245,6 +5326,9 @@ SWIG_init(void) {
   PyModule_AddObject(m, "Result", (PyObject *)builtin_pytype);
   SwigPyBuiltin_AddPublicSymbol(public_interface, "Result");
   d = md;
+  
+  /* Initialize threading */
+  SWIG_PYTHON_INITIALIZE_THREADS;
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

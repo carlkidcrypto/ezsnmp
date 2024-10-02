@@ -2,5 +2,5 @@
 
 std::string Result::to_string() const
 {
-    return "oid: " + oid + ", type: " + type + ", value: " + value;
+    return "oid: " + this->oid + ", type: " + this->type + ", value: " + this->value;
 }
