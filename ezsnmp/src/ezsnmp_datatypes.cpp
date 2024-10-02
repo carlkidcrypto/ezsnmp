@@ -4255,16 +4255,6 @@ SWIG_From_std_string  (const std::string& s)
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
 }
 
-SWIGINTERN char const *Result___str__(Result *self){
-        return self->to_string().c_str();
-    }
-
-SWIGINTERNINLINE PyObject * 
-SWIG_FromCharPtr(const char *cptr)
-{ 
-  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
-}
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4491,31 +4481,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Result___str__(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Result *arg1 = (Result *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  char *result = 0 ;
-  
-  if (!SWIG_Python_UnpackTuple(args, "Result___str__", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Result, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result___str__" "', argument " "1"" of type '" "Result *""'"); 
-  }
-  arg1 = reinterpret_cast< Result * >(argp1);
-  {
-    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-    result = (char *)Result___str__(arg1);
-    SWIG_PYTHON_THREAD_END_ALLOW;
-  }
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   Result *result = 0 ;
@@ -4527,15 +4492,7 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
     result = (Result *)new Result();
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  {
-    if (result) {
-      std::string result_str = result->to_string();
-      resultobj = PyUnicode_FromString(result_str.c_str());
-    } else {
-      resultobj = Py_None;
-      Py_INCREF(Py_None);
-    }
-  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Result, SWIG_BUILTIN_INIT |  0 );
   return resultobj == Py_None ? -1 : 0;
 fail:
   return -1;
@@ -4600,7 +4557,6 @@ SwigPyBuiltin__Result_richcompare(PyObject *self, PyObject *other, int op) {
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
   { "to_string", _wrap_Result_to_string, METH_NOARGS, "to_string(self) -> std::string" },
-  { "__str__", _wrap_Result___str__, METH_NOARGS, "__str__(self) -> char const *" },
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 

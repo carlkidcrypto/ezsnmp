@@ -60,11 +60,13 @@ Result parse_result(const std::string &input)
    std::getline(ss, result.oid, '=');
    result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
 
-   // Extract type and value
+   // Extract type
    std::getline(ss, temp, ':');
    result.type = temp.substr(temp.find_last_of(' ') + 1);
+
+   // Extract value
    std::getline(ss, temp);
-   result.value = temp.substr(0, temp.find_first_of(' '));
+   result.value = temp.substr(1, temp.size());
 
    return result;
 }
