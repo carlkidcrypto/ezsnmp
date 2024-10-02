@@ -48,14 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ezsnmp.variables module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.variables.SNMPVariable"><code class="docutils literal notranslate"><span class="pre">SNMPVariable</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.variables.SNMPVariableList"><code class="docutils literal notranslate"><span class="pre">SNMPVariableList</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#ezsnmp.variables.SNMPVariableList.varbinds"><code class="docutils literal notranslate"><span class="pre">SNMPVariableList.varbinds</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ezsnmp.variables module</a></li>
 </ul>
 
         </div>
@@ -83,43 +76,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-ezsnmp.variables">
-<span id="ezsnmp-variables-module"></span><h1>ezsnmp.variables module<a class="headerlink" href="#module-ezsnmp.variables" title="Link to this heading"></a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="ezsnmp.variables.SNMPVariable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.variables.</span></span><span class="sig-name descname"><span class="pre">SNMPVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oid_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snmp_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.variables.SNMPVariable" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>An SNMP variable binding which is used to represent a piece of
-information being retreived via SNMP.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>oid</strong> – the OID being manipulated</p></li>
-<li><p><strong>oid_index</strong> – the index of the OID</p></li>
-<li><p><strong>value</strong> – the OID value</p></li>
-<li><p><strong>snmp_type</strong> – the snmp_type of data contained in val (please see
-<a class="reference external" href="http://www.net-snmp.org/wiki/index.php/TUT:snmpset#Data_Types">http://www.net-snmp.org/wiki/index.php/TUT:snmpset#Data_Types</a>
-for further information); in the case that an object
-or instance is not found, the type will be set to
-NOSUCHOBJECT and NOSUCHINSTANCE respectively</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ezsnmp.variables.SNMPVariableList">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.variables.</span></span><span class="sig-name descname"><span class="pre">SNMPVariableList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.variables.SNMPVariableList" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
-<p>An slight variation of a list which is used internally by the
-Net-SNMP C interface.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="ezsnmp.variables.SNMPVariableList.varbinds">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">varbinds</span></span><a class="headerlink" href="#ezsnmp.variables.SNMPVariableList.varbinds" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <section id="ezsnmp-variables-module">
+<h1>ezsnmp.variables module<a class="headerlink" href="#ezsnmp-variables-module" title="Link to this heading"></a></h1>
 </section>
 
 

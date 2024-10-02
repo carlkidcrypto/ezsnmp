@@ -1,6 +1,6 @@
 /* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
- * snmpget.c - send snmp GET requests to a network entity.
+ * snmpset.c - send snmp SET requests to a network entity.
  *
  */
 /***********************************************************************
@@ -63,17 +63,35 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <net-snmp/utilities.h>
-
 #include <net-snmp/net-snmp-includes.h>
 
-#define NETSNMP_DS_APP_DONT_FIX_PDUS 0
-
 #include <stdexcept>
-#include "snmpget.h"
+#include "snmpwalk.h"
 #include "helpers.h"
 
-void snmpget_optProc(int argc, char *const *argv, int opt)
+void snmpset_usage(void)
+{
+   fprintf(stderr, "USAGE: snmpset ");
+   snmp_parse_args_usage(stderr);
+   fprintf(stderr, " OID TYPE VALUE [OID TYPE VALUE]...\n\n");
+   snmp_parse_args_descriptions(stderr);
+   fprintf(stderr,
+           "  -C APPOPTS\t\tSet various application specific behaviours:\n");
+   fprintf(stderr, "\t\t\t  q:  don't print results on success\n");
+   fprintf(stderr, "\n  TYPE: one of i, u, t, a, o, s, x, d, b\n");
+   fprintf(stderr,
+           "\ti: INTEGER, u: unsigned INTEGER, t: TIMETICKS, a: IPADDRESS\n");
+   fprintf(stderr,
+           "\to: OBJID, s: STRING, x: HEX STRING, d: DECIMAL STRING, b: BITS\n");
+#ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
+   fprintf(stderr,
+           "\tU: unsigned int64, I: signed int64, F: float, D: double\n");
+#endif /* NETSNMP_WITH_OPAQUE_SPECIAL_TYPES */
+}
+
+static int quiet = 0;
+
+void snmpset_optProc(int argc, char *const *argv, int opt)
 {
    switch (opt)
    {
@@ -82,46 +100,35 @@ void snmpget_optProc(int argc, char *const *argv, int opt)
       {
          switch (*optarg++)
          {
-         case 'f':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_APP_DONT_FIX_PDUS);
+         case 'q':
+            quiet = 1;
             break;
+
          default:
             fprintf(stderr, "Unknown flag passed to -C: %c\n",
                     optarg[-1]);
             exit(1);
          }
       }
-      break;
    }
 }
 
-void snmpget_usage(void)
-{
-   fprintf(stderr, "USAGE: snmpget ");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " OID [OID]...\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr,
-           "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr,
-           "\t\t\t  f:  do not fix errors and retry the request\n");
-}
-
-std::vector<std::string> snmpget(const std::vector<std::string> &args)
+int snmpset(const std::vector<std::string> &args)
 {
    int argc;
    std::unique_ptr<char*[]> argv = create_argv(args, argc);
 
-   std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
-   netsnmp_pdu *pdu;
-   netsnmp_pdu *response;
+   netsnmp_pdu *pdu, *response = NULL;
    netsnmp_variable_list *vars;
    int arg;
    int count;
    int current_name = 0;
+   int current_type = 0;
+   int current_value = 0;
    char *names[SNMP_MAX_CMDLINE_OIDS];
+   char types[SNMP_MAX_CMDLINE_OIDS];
+   char *values[SNMP_MAX_CMDLINE_OIDS];
    oid name[MAX_OID_LEN];
    size_t name_length;
    int status;
@@ -130,10 +137,12 @@ std::vector<std::string> snmpget(const std::vector<std::string> &args)
 
    SOCK_STARTUP;
 
+   putenv(strdup("POSIXLY_CORRECT=1"));
+
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc))
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
@@ -142,9 +151,8 @@ std::vector<std::string> snmpget(const std::vector<std::string> &args)
       throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-      snmpget_usage();
-      return return_vector;
-
+      snmpset_usage();
+      goto out;
    default:
       break;
    }
@@ -152,25 +160,72 @@ std::vector<std::string> snmpget(const std::vector<std::string> &args)
    if (arg >= argc)
    {
       fprintf(stderr, "Missing object name\n");
-      snmpget_usage();
-      return return_vector;
+      snmpset_usage();
+      goto out;
    }
-   if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS)
+   if ((argc - arg) > 3 * SNMP_MAX_CMDLINE_OIDS)
    {
-      fprintf(stderr, "Too many object identifiers specified. ");
+      fprintf(stderr, "Too many assignments specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-      snmpget_usage();
-      return return_vector;
+      snmpset_usage();
+      goto out;
    }
 
    /*
-    * get the object names
+    * get object names, types, and values
     */
    for (; arg < argc; arg++)
-      names[current_name++] = argv[arg];
+   {
+      DEBUGMSGTL(("snmp_parse_args", "handling (#%d): %s %s %s\n",
+                  arg, argv[arg], arg + 1 < argc ? argv[arg + 1] : "",
+                  arg + 2 < argc ? argv[arg + 2] : ""));
+      names[current_name++] = argv[arg++];
+      if (arg < argc)
+      {
+         switch (*argv[arg])
+         {
+         case '=':
+         case 'i':
+         case 'u':
+         case '3':
+         case 't':
+         case 'a':
+         case 'o':
+         case 's':
+         case 'x':
+         case 'd':
+         case 'b':
+         case 'n': /* undocumented */
+#ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
+         case 'I':
+         case 'U':
+         case 'F':
+         case 'D':
+#endif /* NETSNMP_WITH_OPAQUE_SPECIAL_TYPES */
+            types[current_type++] = *argv[arg++];
+            break;
+         default:
+            fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1],
+                    *argv[arg]);
+            goto out;
+         }
+      }
+      else
+      {
+         fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
+         goto out;
+      }
+      if (arg < argc)
+         values[current_value++] = argv[arg];
+      else
+      {
+         fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
+         goto out;
+      }
+   }
 
    /*
-    * Open an SNMP session.
+    * open an SNMP session
     */
    ss = snmp_open(&session);
    if (ss == NULL)
@@ -178,110 +233,87 @@ std::vector<std::string> snmpget(const std::vector<std::string> &args)
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpget", &session);
-      return return_vector;
+      snmp_sess_perror("snmpset", &session);
+      goto out;
    }
 
    /*
-    * Create PDU for GET request and add object names to request.
+    * create PDU for SET request and add object names and values to request
     */
-   pdu = snmp_pdu_create(SNMP_MSG_GET);
+   pdu = snmp_pdu_create(SNMP_MSG_SET);
    for (count = 0; count < current_name; count++)
    {
       name_length = MAX_OID_LEN;
-      if (!snmp_parse_oid(names[count], name, &name_length))
+      if (snmp_parse_oid(names[count], name, &name_length) == NULL)
       {
          snmp_perror(names[count]);
          failures++;
       }
-      else
-         snmp_add_null_var(pdu, name, name_length);
+      else if (snmp_add_var(pdu, name, name_length, types[count], values[count]))
+      {
+         snmp_perror(names[count]);
+         failures++;
+      }
    }
+
    if (failures)
-   {
-      snmp_free_pdu(pdu);
       goto close_session;
-   }
 
    exitval = 0;
 
    /*
-    * Perform the request.
-    *
-    * If the Get Request fails, note the OID that caused the error,
-    * "fix" the PDU (removing the error-prone OID) and retry.
+    * do the request
     */
-retry:
    status = snmp_synch_response(ss, pdu, &response);
    if (status == STAT_SUCCESS)
    {
       if (response->errstat == SNMP_ERR_NOERROR)
       {
-         for (vars = response->variables; vars;
-              vars = vars->next_variable)
+         if (!quiet)
          {
-            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-            return_vector.push_back(str_value);
+            for (vars = response->variables; vars;
+                 vars = vars->next_variable)
+               print_variable(vars->name, vars->name_length, vars);
          }
       }
       else
       {
-         fprintf(stderr, "Error in packet\nReason: %s\n",
+         fprintf(stderr, "Error in packet.\nReason: %s\n",
                  snmp_errstring(response->errstat));
-
          if (response->errindex != 0)
          {
             fprintf(stderr, "Failed object: ");
             for (count = 1, vars = response->variables;
-                 vars && count != response->errindex;
+                 vars && (count != response->errindex);
                  vars = vars->next_variable, count++)
-               /*EMPTY*/;
+               ;
             if (vars)
-            {
                fprint_objid(stderr, vars->name, vars->name_length);
-            }
             fprintf(stderr, "\n");
          }
          exitval = 2;
-
-         /*
-          * retry if the errored variable was successfully removed
-          */
-         if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                                     NETSNMP_DS_APP_DONT_FIX_PDUS))
-         {
-            pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
-            snmp_free_pdu(response);
-            response = NULL;
-            if (pdu != NULL)
-            {
-               goto retry;
-            }
-         }
-      } /* endif -- SNMP_ERR_NOERROR */
+      }
    }
    else if (status == STAT_TIMEOUT)
    {
-      fprintf(stderr, "Timeout: No Response from %s.\n",
+      fprintf(stderr, "Timeout: No Response from %s\n",
               session.peername);
       exitval = 1;
    }
    else
    { /* status == STAT_ERROR */
-      snmp_sess_perror("snmpget", ss);
+      snmp_sess_perror("snmpset", ss);
       exitval = 1;
-
-   } /* endif -- STAT_SUCCESS */
+   }
 
    if (response)
       snmp_free_pdu(response);
 
 close_session:
    snmp_close(ss);
-   return return_vector;
 
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return return_vector;
-} /* end main() */
+   return exitval;
+}

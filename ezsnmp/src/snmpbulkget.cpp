@@ -141,9 +141,11 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt)
    }
 }
 
-std::vector<std::string> snmpbulkget(int argc, char *argv[])
+std::vector<std::string> snmpbulkget(const std::vector<std::string> &args)
 {
-   add_first_arg(&argc, &argv);
+   int argc;
+   std::unique_ptr<char*[]> argv = create_argv(args, argc);
+
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;
@@ -159,7 +161,7 @@ std::vector<std::string> snmpbulkget(int argc, char *argv[])
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmpbulkget_optProc))
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc))
    {
    case NETSNMP_PARSE_ARGS_ERROR:
       throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");

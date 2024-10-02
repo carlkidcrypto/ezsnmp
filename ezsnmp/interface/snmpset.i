@@ -3,8 +3,8 @@
 %include "stl.i"
 
 %{
-#include "snmpwalk.h"
+#include "snmpset.h"
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<Result> snmpwalk(const std::vector<std::string> &args);
+int snmpset(const std::vector<std::string> &args);

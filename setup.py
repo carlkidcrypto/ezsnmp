@@ -183,14 +183,42 @@ class RelinkLibraries(BuildCommand):
 setup(
     ext_modules=[
         Extension(
-            name="ezsnmp/_ezsnmp",
+            name="ezsnmp/_netsnmp",
             sources=[
-                "ezsnmp/src/ezsnmp_wrap.cpp",
+                "ezsnmp/src/ezsnmp_netsnmp.cpp",
+                "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
                 "ezsnmp/src/snmpbulkwalk.cpp",
                 "ezsnmp/src/snmpget.cpp",
                 "ezsnmp/src/snmpwalk.cpp",
+                "ezsnmp/src/snmpset.cpp",
+            ],
+            library_dirs=libdirs,
+            include_dirs=incdirs,
+            libraries=libs,
+            extra_compile_args=compile_args,
+            extra_link_args=link_args,
+        ),
+        Extension(
+            name="ezsnmp/_session",
+            sources=[
+                "ezsnmp/src/ezsnmp_session.cpp",
+                "ezsnmp/src/datatypes.cpp",
+                "ezsnmp/src/session.cpp",
+                "ezsnmp/src/helpers.cpp",
+            ],
+            library_dirs=libdirs,
+            include_dirs=incdirs,
+            libraries=libs,
+            extra_compile_args=compile_args,
+            extra_link_args=link_args,
+        ),
+        Extension(
+            name="ezsnmp/_datatypes",
+            sources=[
+                "ezsnmp/src/ezsnmp_datatypes.cpp",
+                "ezsnmp/src/datatypes.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,

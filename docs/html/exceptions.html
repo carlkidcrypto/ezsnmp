@@ -44,17 +44,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ezsnmp.exceptions module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPConnectionError"><code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError"><code class="docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPNoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchInstanceError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPNoSuchNameError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchNameError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPNoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchObjectError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPTimeoutError"><code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPUndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUndeterminedTypeError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ezsnmp.exceptions.EzSNMPUnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">EzSNMPUnknownObjectIDError</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ezsnmp.exceptions module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
@@ -87,66 +77,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-ezsnmp.exceptions">
-<span id="ezsnmp-exceptions-module"></span><h1>ezsnmp.exceptions module<a class="headerlink" href="#module-ezsnmp.exceptions" title="Link to this heading"></a></h1>
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPConnectionError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPConnectionError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPConnectionError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError" title="ezsnmp.exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
-<p>Indicates a problem connecting to the remote host.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>The base Easy SNMP exception which covers all exceptions raised.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPNoSuchInstanceError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchInstanceError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPNoSuchInstanceError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError" title="ezsnmp.exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
-<p>Raised when a particular OID index requested from Net-SNMP doesn’t exist.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPNoSuchNameError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchNameError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPNoSuchNameError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError" title="ezsnmp.exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
-<p>Raised when an OID is requested which may be an invalid object name
-or invalid instance (only applies to SNMPv1).</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPNoSuchObjectError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPNoSuchObjectError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPNoSuchObjectError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError" title="ezsnmp.exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
-<p>Raised when an OID is requested which may have some form of existence but
-is an invalid object name.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPTimeoutError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPTimeoutError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPTimeoutError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPConnectionError" title="ezsnmp.exceptions.EzSNMPConnectionError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code></a></p>
-<p>Raised when an SNMP request times out.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPUndeterminedTypeError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPUndeterminedTypeError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPUndeterminedTypeError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError" title="ezsnmp.exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
-<p>Raised when the type cannot be determined when setting the value of an OID.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.EzSNMPUnknownObjectIDError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">EzSNMPUnknownObjectIDError</span></span><a class="headerlink" href="#ezsnmp.exceptions.EzSNMPUnknownObjectIDError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.EzSNMPError" title="ezsnmp.exceptions.EzSNMPError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EzSNMPError</span></code></a></p>
-<p>Raised when a nonexistent OID is requested.</p>
-</dd></dl>
-
+  <section id="ezsnmp-exceptions-module">
+<h1>ezsnmp.exceptions module<a class="headerlink" href="#ezsnmp-exceptions-module" title="Link to this heading"></a></h1>
 </section>
 
 

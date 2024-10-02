@@ -1,6 +1,9 @@
 /* straight copy from https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456 */
 /* Slight modifications to return std::string instead of print to stdout */
 
+#include <cstring>
+#include <sstream>
+
 #include "helpers.h"
 
 std::string print_variable_to_string(const oid *objid, size_t objidlen, const netsnmp_variable_list *variable)
@@ -31,24 +34,49 @@ std::string print_variable_to_string(const oid *objid, size_t objidlen, const ne
    }
 }
 
-// Default argv[0] to always be the program name. This simplifies what the
-// call looks like in higher level languages like python.
-void add_first_arg(int *argc, char ***argv)
+std::unique_ptr<char *[]> create_argv(const std::vector<std::string> &args, int &argc)
 {
-   if (*argc > 0)
+   argc = args.size() + 1;
+   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+
+   argv[0] = const_cast<char *>("netsnmp");
+
+   for (int i = 0; i < static_cast<int>(args.size()); ++i)
    {
-      int new_argc = *argc + 1;
-      char **new_argv = (char **)malloc((new_argc + 1) * sizeof(char *));
-
-      new_argv[0] = (char *)("ezsnmp_swig");
-
-      for (int i = 0; i < *argc; ++i)
-      {
-         new_argv[i + 1] = (*argv)[i];
-      }
-      new_argv[new_argc] = NULL;
-
-      *argc = new_argc;
-      *argv = new_argv;
+      argv[i + 1] = const_cast<char *>(args[i].c_str());
    }
+   argv[argc] = nullptr;
+
+   return argv;
+}
+
+Result parse_result(const std::string &input)
+{
+   Result result;
+   std::stringstream ss(input);
+   std::string temp;
+
+   // Extract OID
+   std::getline(ss, result.oid, '=');
+   result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
+
+   // Extract type
+   std::getline(ss, temp, ':');
+   result.type = temp.substr(temp.find_last_of(' ') + 1);
+
+   // Extract value
+   std::getline(ss, temp);
+   result.value = temp.substr(1, temp.size());
+
+   return result;
+}
+
+std::vector<Result> parse_results(const std::vector<std::string> &inputs)
+{
+   std::vector<Result> results;
+   for (const auto &input : inputs)
+   {
+      results.push_back(parse_result(input));
+   }
+   return results;
 }
