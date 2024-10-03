@@ -130,7 +130,7 @@ std::vector<Result> Session::walk(std::string mib) {
    return snmpwalk(m_args);
 }
 
-std::vector<std::string> Session::bulk_walk(const std::vector<std::string> &mibs) {
+std::vector<std::string> Session::bulk_walk(std::vector<std::string> const &mibs) {
    for (auto const &entry : mibs) {
       m_args.push_back(entry);
    }
@@ -146,7 +146,7 @@ std::vector<std::string> Session::get(std::string mib) {
    return snmpget(m_args);
 }
 
-std::vector<std::string> Session::bulk_get(const std::vector<std::string> &mibs) {
+std::vector<std::string> Session::bulk_get(std::vector<std::string> const &mibs) {
    for (auto const &entry : mibs) {
       m_args.push_back(entry);
    }

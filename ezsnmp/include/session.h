@@ -22,9 +22,9 @@ class Session {
    ~Session();
 
    std::vector<Result> walk(std::string mib = "");
-   std::vector<std::string> bulk_walk(const std::vector<std::string> &mibs);
+   std::vector<std::string> bulk_walk(std::vector<std::string> const &mibs);
    std::vector<std::string> get(std::string mib = "");
-   std::vector<std::string> bulk_get(const std::vector<std::string> &mibs);
+   std::vector<std::string> bulk_get(std::vector<std::string> const &mibs);
 };
 
-#endif  // SESSION_H
+#endif // SESSION_H

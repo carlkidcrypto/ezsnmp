@@ -13,4 +13,4 @@ struct Result {
    std::string to_string() const;
 };
 
-#endif  // DATATYPES_H
+#endif // DATATYPES_H

@@ -12,6 +12,6 @@
 void snmptrap_usage(void);
 void snmptrap_optProc(int argc, char *const *argv, int opt);
 int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *pdu, void *magic);
-int snmptrap(const std::vector<std::string> &args);
+int snmptrap(std::vector<std::string> const &args);
 
-#endif  // SNMPTRAP_H
+#endif // SNMPTRAP_H

@@ -171,7 +171,7 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args) {
+std::vector<std::string> snmpbulkwalk(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -262,7 +262,7 @@ std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args) {
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
       auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
 
-      for (const auto &item : retval) {
+      for (auto const &item : retval) {
          return_vector.push_back(item);
       }
    }
@@ -343,7 +343,9 @@ std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args) {
                   for (count = 1, vars = response->variables; vars && count != response->errindex;
                        vars = vars->next_variable, count++)
                      /*EMPTY*/;
-                  if (vars) fprint_objid(stderr, vars->name, vars->name_length);
+                  if (vars) {
+                     fprint_objid(stderr, vars->name, vars->name_length);
+                  }
                   fprintf(stderr, "\n");
                }
                exitval = 2;
@@ -358,7 +360,9 @@ std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args) {
          running = 0;
          exitval = 1;
       }
-      if (response) snmp_free_pdu(response);
+      if (response) {
+         snmp_free_pdu(response);
+      }
    }
 
    if (snmpbulkwalk_numprinted == 0 && status == STAT_SUCCESS) {
@@ -369,7 +373,7 @@ std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args) {
        */
       auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
 
-      for (const auto &item : retval) {
+      for (auto const &item : retval) {
          return_vector.push_back(item);
       }
    }

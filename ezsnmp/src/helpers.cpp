@@ -8,8 +8,8 @@
 #include <cstring>
 #include <sstream>
 
-std::string print_variable_to_string(const oid *objid, size_t objidlen,
-                                     const netsnmp_variable_list *variable) {
+std::string print_variable_to_string(oid const *objid, size_t objidlen,
+                                     netsnmp_variable_list const *variable) {
    u_char *buf = nullptr;
    size_t buf_len = 256, out_len = 0;
 
@@ -19,18 +19,18 @@ std::string print_variable_to_string(const oid *objid, size_t objidlen,
       if (sprint_realloc_variable(&buf, &buf_len, &out_len, 1, objid, objidlen, variable)) {
          // Construct the formatted string
          std::string result(reinterpret_cast<char *>(buf), out_len);
-         SNMP_FREE(buf);  // Free the allocated buffer
+         SNMP_FREE(buf); // Free the allocated buffer
          return result;
       } else {
          // Construct the truncated string
          std::string truncated(reinterpret_cast<char *>(buf));
-         SNMP_FREE(buf);  // Free the allocated buffer
+         SNMP_FREE(buf); // Free the allocated buffer
          return truncated + " [TRUNCATED]";
       }
    }
 }
 
-std::unique_ptr<char *[]> create_argv(const std::vector<std::string> &args, int &argc) {
+std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {
    argc = args.size() + 1;
    std::unique_ptr<char *[]> argv(new char *[argc + 1]);
 
@@ -44,7 +44,7 @@ std::unique_ptr<char *[]> create_argv(const std::vector<std::string> &args, int 
    return argv;
 }
 
-Result parse_result(const std::string &input) {
+Result parse_result(std::string const &input) {
    Result result;
    std::stringstream ss(input);
    std::string temp;
@@ -64,9 +64,9 @@ Result parse_result(const std::string &input) {
    return result;
 }
 
-std::vector<Result> parse_results(const std::vector<std::string> &inputs) {
+std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
    std::vector<Result> results;
-   for (const auto &input : inputs) {
+   for (auto const &input : inputs) {
       results.push_back(parse_result(input));
    }
    return results;

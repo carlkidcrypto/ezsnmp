@@ -9,6 +9,6 @@
 
 void snmpget_usage(void);
 void snmpget_optProc(int argc, char *const *argv, int opt);
-std::vector<std::string> snmpget(const std::vector<std::string> &args);
+std::vector<std::string> snmpget(std::vector<std::string> const &args);
 
-#endif  // SNMPGET_H
+#endif // SNMPGET_H

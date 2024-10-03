@@ -112,7 +112,7 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-int snmptrap(const std::vector<std::string> &args) {
+int snmptrap(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -133,14 +133,17 @@ int snmptrap(const std::vector<std::string> &args) {
    SOCK_STARTUP;
 
    prognam = strrchr(argv[0], '/');
-   if (prognam)
+   if (prognam) {
       prognam++;
-   else
+   } else {
       prognam = argv[0];
+   }
 
    putenv(strdup("POSIXLY_CORRECT=1"));
 
-   if (strcmp(prognam, "snmpinform") == 0) inform = 1;
+   if (strcmp(prognam, "snmpinform") == 0) {
+      inform = 1;
+   }
 
    /** parse args (also initializes session) */
    switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmptrap_optProc)) {
@@ -202,9 +205,12 @@ int snmptrap(const std::vector<std::string> &args) {
        * boots and time...  I'll cause a not-in-time-window report to
        * be sent back to this machine.
        */
-      if (session.engineBoots == 0) session.engineBoots = 1;
-      if (session.engineTime == 0)          /* not really correct, */
+      if (session.engineBoots == 0) {
+         session.engineBoots = 1;
+      }
+      if (session.engineTime == 0) {        /* not really correct, */
          session.engineTime = get_uptime(); /* but it'll work. Sort of. */
+      }
 
       set_enginetime(session.securityEngineID, session.securityEngineIDLen, session.engineBoots,
                      session.engineTime, TRUE);
@@ -287,10 +293,11 @@ int snmptrap(const std::vector<std::string> &args) {
          goto out;
       }
       description = argv[arg];
-      if (description == NULL || *description == 0)
+      if (description == NULL || *description == 0) {
          pdu->time = get_uptime();
-      else
+      } else {
          pdu->time = atol(description);
+      }
    } else
 #endif
    {
@@ -343,16 +350,20 @@ int snmptrap(const std::vector<std::string> &args) {
       }
    }
 
-   if (inform)
+   if (inform) {
       status = snmp_synch_response(ss, pdu, &response);
-   else
+   } else {
       status = snmp_send(ss, pdu) == 0;
+   }
    if (status) {
       snmp_sess_perror(inform ? "snmpinform" : "snmptrap", ss);
-      if (!inform) snmp_free_pdu(pdu);
+      if (!inform) {
+         snmp_free_pdu(pdu);
+      }
       goto close_session;
-   } else if (inform)
+   } else if (inform) {
       snmp_free_pdu(response);
+   }
 
    exitval = 0;
 

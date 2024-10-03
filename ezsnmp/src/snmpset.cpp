@@ -104,7 +104,7 @@ void snmpset_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-int snmpset(const std::vector<std::string> &args) {
+int snmpset(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -195,9 +195,9 @@ int snmpset(const std::vector<std::string> &args) {
          fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
          goto out;
       }
-      if (arg < argc)
+      if (arg < argc) {
          values[current_value++] = argv[arg];
-      else {
+      } else {
          fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
          goto out;
       }
@@ -230,7 +230,9 @@ int snmpset(const std::vector<std::string> &args) {
       }
    }
 
-   if (failures) goto close_session;
+   if (failures) {
+      goto close_session;
+   }
 
    exitval = 0;
 
@@ -241,8 +243,9 @@ int snmpset(const std::vector<std::string> &args) {
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          if (!quiet) {
-            for (vars = response->variables; vars; vars = vars->next_variable)
+            for (vars = response->variables; vars; vars = vars->next_variable) {
                print_variable(vars->name, vars->name_length, vars);
+            }
          }
       } else {
          fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
@@ -250,7 +253,9 @@ int snmpset(const std::vector<std::string> &args) {
             fprintf(stderr, "Failed object: ");
             for (count = 1, vars = response->variables; vars && (count != response->errindex);
                  vars = vars->next_variable, count++);
-            if (vars) fprint_objid(stderr, vars->name, vars->name_length);
+            if (vars) {
+               fprint_objid(stderr, vars->name, vars->name_length);
+            }
             fprintf(stderr, "\n");
          }
          exitval = 2;
@@ -263,7 +268,9 @@ int snmpset(const std::vector<std::string> &args) {
       exitval = 1;
    }
 
-   if (response) snmp_free_pdu(response);
+   if (response) {
+      snmp_free_pdu(response);
+   }
 
 close_session:
    snmp_close(ss);

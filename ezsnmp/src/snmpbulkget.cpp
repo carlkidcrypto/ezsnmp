@@ -127,7 +127,7 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<std::string> snmpbulkget(const std::vector<std::string> &args) {
+std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -198,7 +198,9 @@ std::vector<std::string> snmpbulkget(const std::vector<std::string> &args) {
    pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
    pdu->non_repeaters = non_repeaters;
    pdu->max_repetitions = max_repetitions; /* fill the packet */
-   for (arg = 0; arg < names; arg++) snmp_add_null_var(pdu, name[arg].name, name[arg].name_len);
+   for (arg = 0; arg < names; arg++) {
+      snmp_add_null_var(pdu, name[arg].name, name[arg].name_len);
+   }
 
    /*
     * do the request
@@ -226,7 +228,9 @@ std::vector<std::string> snmpbulkget(const std::vector<std::string> &args) {
                for (count = 1, vars = response->variables; vars && (count != response->errindex);
                     vars = vars->next_variable, count++)
                   /*EMPTY*/;
-               if (vars) fprint_objid(stderr, vars->name, vars->name_length);
+               if (vars) {
+                  fprint_objid(stderr, vars->name, vars->name_length);
+               }
                fprintf(stderr, "\n");
             }
             exitval = 2;
@@ -240,7 +244,9 @@ std::vector<std::string> snmpbulkget(const std::vector<std::string> &args) {
       exitval = 1;
    }
 
-   if (response) snmp_free_pdu(response);
+   if (response) {
+      snmp_free_pdu(response);
+   }
 
    snmp_close(ss);
 

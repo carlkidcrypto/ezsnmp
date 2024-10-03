@@ -100,7 +100,7 @@ void snmpget_usage(void) {
    fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-std::vector<std::string> snmpget(const std::vector<std::string> &args) {
+std::vector<std::string> snmpget(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -154,7 +154,9 @@ std::vector<std::string> snmpget(const std::vector<std::string> &args) {
    /*
     * get the object names
     */
-   for (; arg < argc; arg++) names[current_name++] = argv[arg];
+   for (; arg < argc; arg++) {
+      names[current_name++] = argv[arg];
+   }
 
    /*
     * Open an SNMP session.
@@ -177,8 +179,9 @@ std::vector<std::string> snmpget(const std::vector<std::string> &args) {
       if (!snmp_parse_oid(names[count], name, &name_length)) {
          snmp_perror(names[count]);
          failures++;
-      } else
+      } else {
          snmp_add_null_var(pdu, name, name_length);
+      }
    }
    if (failures) {
       snmp_free_pdu(pdu);
@@ -237,7 +240,9 @@ retry:
 
    } /* endif -- STAT_SUCCESS */
 
-   if (response) snmp_free_pdu(response);
+   if (response) {
+      snmp_free_pdu(response);
+   }
 
 close_session:
    snmp_close(ss);

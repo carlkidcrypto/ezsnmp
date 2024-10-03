@@ -9,6 +9,6 @@
 
 void snmpset_usage(void);
 void snmpset_optProc(int argc, char *const *argv, int opt);
-int snmpset(const std::vector<std::string> &args);
+int snmpset(std::vector<std::string> const &args);
 
-#endif  // SNMPSET_H
+#endif // SNMPSET_H
