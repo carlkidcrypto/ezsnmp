@@ -78,31 +78,29 @@ int numprinted = 0;
 char *end_name = NULL;
 
 #include <stdexcept>
-#include "snmpwalk.h"
-#include "helpers.h"
 
-void snmpwalk_usage(void)
-{
+#include "helpers.h"
+#include "snmpwalk.h"
+
+void snmpwalk_usage(void) {
    fprintf(stderr, "USAGE: snmpwalk ");
    snmp_parse_args_usage(stderr);
    fprintf(stderr, " [OID]\n\n");
    snmp_parse_args_descriptions(stderr);
-   fprintf(stderr,
-           "  -C APPOPTS\t\tSet various application specific behaviours:\n");
+   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
    fprintf(stderr, "\t\t\t  p:  print the number of variables found\n");
    fprintf(stderr, "\t\t\t  i:  include given OID in the search range\n");
-   fprintf(stderr, "\t\t\t  I:  don't include the given OID, even if no results are returned\n");
    fprintf(stderr,
-           "\t\t\t  c:  do not check returned OIDs are increasing\n");
-   fprintf(stderr,
-           "\t\t\t  t:  Display wall-clock time to complete the walk\n");
-   fprintf(stderr,
-           "\t\t\t  T:  Display wall-clock time to complete each request\n");
+           "\t\t\t  I:  don't include the given OID, even if no results "
+           "are returned\n");
+   fprintf(stderr, "\t\t\t  c:  do not check returned OIDs are increasing\n");
+   fprintf(stderr, "\t\t\t  t:  Display wall-clock time to complete the walk\n");
+   fprintf(stderr, "\t\t\t  T:  Display wall-clock time to complete each request\n");
    fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
 }
 
-std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid, size_t theoid_len)
-{
+std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid,
+                                                     size_t theoid_len) {
    std::vector<std::string> str_values;
 
    netsnmp_pdu *pdu, *response;
@@ -113,80 +111,71 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *t
    snmp_add_null_var(pdu, theoid, theoid_len);
 
    status = snmp_synch_response(ss, pdu, &response);
-   if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR)
-   {
-      for (vars = response->variables; vars; vars = vars->next_variable)
-      {
+   if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
+      for (vars = response->variables; vars; vars = vars->next_variable) {
          numprinted++;
          auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
          str_values.push_back(str_value);
       }
    }
-   if (response)
-   {
+   if (response) {
       snmp_free_pdu(response);
    }
 
    return str_values;
 }
 
-void snmpwalk_optProc(int argc, char *const *argv, int opt)
-{
-   switch (opt)
-   {
-   case 'C':
-      while (*optarg)
-      {
-         switch (*optarg++)
-         {
-         case 'i':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_WALK_INCLUDE_REQUESTED);
-            break;
+void snmpwalk_optProc(int argc, char *const *argv, int opt) {
+   switch (opt) {
+      case 'C':
+         while (*optarg) {
+            switch (*optarg++) {
+               case 'i':
+                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                            NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+                  break;
 
-         case 'I':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_WALK_DONT_GET_REQUESTED);
-            break;
+               case 'I':
+                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                            NETSNMP_DS_WALK_DONT_GET_REQUESTED);
+                  break;
 
-         case 'p':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_WALK_PRINT_STATISTICS);
-            break;
+               case 'p':
+                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                            NETSNMP_DS_WALK_PRINT_STATISTICS);
+                  break;
 
-         case 'c':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
-            break;
+               case 'c':
+                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                            NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+                  break;
 
-         case 't':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_WALK_TIME_RESULTS);
-            break;
+               case 't':
+                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                            NETSNMP_DS_WALK_TIME_RESULTS);
+                  break;
 
-         case 'E':
-            end_name = argv[optind++];
-            break;
+               case 'E':
+                  end_name = argv[optind++];
+                  break;
 
-         case 'T':
-            netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                      NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
-            break;
+               case 'T':
+                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                            NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
+                  break;
 
-         default:
-            fprintf(stderr, "Unknown flag passed to -C: %c\n",
-                    optarg[-1]);
-            exit(1);
+               default:
+                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
+                  exit(1);
+            }
          }
-      }
-      break;
+         break;
    }
 }
 
-std::vector<Result> snmpwalk(const std::vector<std::string> &args)
-{
+std::vector<Result> snmpwalk(const std::vector<std::string> &args) {
    int argc;
-   std::unique_ptr<char*[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
@@ -209,65 +198,54 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
    SOCK_STARTUP;
 
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                              NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
 
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
-                              NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_DONT_GET_REQUESTED);
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics",
-                              NETSNMP_DS_APPLICATION_ID,
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
                               NETSNMP_DS_WALK_PRINT_STATISTICS);
 
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                              NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults",
-                              NETSNMP_DS_APPLICATION_ID,
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
                               NETSNMP_DS_WALK_TIME_RESULTS);
 
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
-                              NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
 
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc))
-   {
-   case NETSNMP_PARSE_ARGS_ERROR:
-      throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc)) {
+      case NETSNMP_PARSE_ARGS_ERROR:
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
 
-   case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-      throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
-   case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-      snmpwalk_usage();
-      return parse_results(return_vector);
+      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+         snmpwalk_usage();
+         return parse_results(return_vector);
 
-   default:
-      break;
+      default:
+         break;
    }
 
    /*
     * get the initial object and subtree
     */
-   if (arg < argc)
-   {
+   if (arg < argc) {
       /*
        * specified on the command line
        */
       rootlen = MAX_OID_LEN;
-      if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL)
-      {
+      if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
          snmp_perror(argv[arg]);
          return parse_results(return_vector);
       }
-   }
-   else
-   {
+   } else {
       /*
        * use default value
        */
@@ -280,17 +258,13 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
     *  then convert this to an OID, otherwise
     *  move to the next sibling of the start.
     */
-   if (end_name)
-   {
+   if (end_name) {
       end_len = MAX_OID_LEN;
-      if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL)
-      {
+      if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
          snmp_perror(end_name);
          return parse_results(return_vector);
       }
-   }
-   else
-   {
+   } else {
       memmove(end_oid, root, rootlen * sizeof(oid));
       end_len = rootlen;
       end_oid[end_len - 1]++;
@@ -300,8 +274,7 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
     * open an SNMP session
     */
    ss = snmp_open(&session);
-   if (ss == NULL)
-   {
+   if (ss == NULL) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -318,24 +291,19 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
    running = 1;
 
    check =
-       !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                               NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED))
-   {
+       !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
       auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
 
-      for (const auto &item : retval)
-      {
+      for (const auto &item : retval) {
          return_vector.push_back(item);
       }
    }
 
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_TIME_RESULTS))
+   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS))
       netsnmp_get_monotonic_clock(&tv1);
    exitval = 0;
-   while (running)
-   {
+   while (running) {
       /*
        * create PDU for GETNEXT request and add object name to request
        */
@@ -348,21 +316,15 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
       if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE))
          netsnmp_get_monotonic_clock(&tv_a);
       status = snmp_synch_response(ss, pdu, &response);
-      if (status == STAT_SUCCESS)
-      {
+      if (status == STAT_SUCCESS) {
          if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE))
             netsnmp_get_monotonic_clock(&tv_b);
-         if (response->errstat == SNMP_ERR_NOERROR)
-         {
+         if (response->errstat == SNMP_ERR_NOERROR) {
             /*
              * check resulting variables
              */
-            for (vars = response->variables; vars;
-                 vars = vars->next_variable)
-            {
-               if (snmp_oid_compare(end_oid, end_len,
-                                    vars->name, vars->name_length) <= 0)
-               {
+            for (vars = response->variables; vars; vars = vars->next_variable) {
+               if (snmp_oid_compare(end_oid, end_len, vars->name, vars->name_length) <= 0) {
                   /*
                    * not part of this subtree
                    */
@@ -370,7 +332,8 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
                   continue;
                }
                numprinted++;
-               if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE))
+               if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
+                                          NETSNMP_DS_WALK_TIME_RESULTS_SINGLE))
                   fprintf(stdout, "%f s: ",
                           (double)(tv_b.tv_usec - tv_a.tv_usec) / 1000000 +
                               (double)(tv_b.tv_sec - tv_a.tv_sec));
@@ -378,118 +341,86 @@ std::vector<Result> snmpwalk(const std::vector<std::string> &args)
                auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
                return_vector.push_back(str_value);
 
-               if ((vars->type != SNMP_ENDOFMIBVIEW) &&
-                   (vars->type != SNMP_NOSUCHOBJECT) &&
-                   (vars->type != SNMP_NOSUCHINSTANCE))
-               {
+               if ((vars->type != SNMP_ENDOFMIBVIEW) && (vars->type != SNMP_NOSUCHOBJECT) &&
+                   (vars->type != SNMP_NOSUCHINSTANCE)) {
                   /*
                    * not an exception value
                    */
-                  if (check && snmp_oid_compare(name, name_length,
-                                                vars->name,
-                                                vars->name_length) >= 0)
-                  {
+                  if (check &&
+                      snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
                      fflush(stdout);
                      fprintf(stderr, "Error: OID not increasing: ");
                      fprint_objid(stderr, name, name_length);
                      fprintf(stderr, " >= ");
-                     fprint_objid(stderr, vars->name,
-                                  vars->name_length);
+                     fprint_objid(stderr, vars->name, vars->name_length);
                      fprintf(stderr, "\n");
                      running = 0;
                      exitval = 1;
                   }
-                  memmove((char *)name, (char *)vars->name,
-                          vars->name_length * sizeof(oid));
+                  memmove((char *)name, (char *)vars->name, vars->name_length * sizeof(oid));
                   name_length = vars->name_length;
-               }
-               else
+               } else
                   /*
                    * an exception value, so stop
                    */
                   running = 0;
             }
-         }
-         else
-         {
+         } else {
             /*
              * error in response, print it
              */
             running = 0;
-            if (response->errstat == SNMP_ERR_NOSUCHNAME)
-            {
+            if (response->errstat == SNMP_ERR_NOSUCHNAME) {
                printf("End of MIB\n");
-            }
-            else
-            {
-               fprintf(stderr, "Error in packet.\nReason: %s\n",
-                       snmp_errstring(response->errstat));
-               if (response->errindex != 0)
-               {
+            } else {
+               fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+               if (response->errindex != 0) {
                   fprintf(stderr, "Failed object: ");
-                  for (count = 1, vars = response->variables;
-                       vars && count != response->errindex;
+                  for (count = 1, vars = response->variables; vars && count != response->errindex;
                        vars = vars->next_variable, count++)
                      /*EMPTY*/;
-                  if (vars)
-                     fprint_objid(stderr, vars->name,
-                                  vars->name_length);
+                  if (vars) fprint_objid(stderr, vars->name, vars->name_length);
                   fprintf(stderr, "\n");
                }
                exitval = 2;
             }
          }
-      }
-      else if (status == STAT_TIMEOUT)
-      {
-         fprintf(stderr, "Timeout: No Response from %s\n",
-                 session.peername);
+      } else if (status == STAT_TIMEOUT) {
+         fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
          running = 0;
          exitval = 1;
-      }
-      else
-      { /* status == STAT_ERROR */
+      } else { /* status == STAT_ERROR */
          snmp_sess_perror("snmpwalk", ss);
          running = 0;
          exitval = 1;
       }
-      if (response)
-         snmp_free_pdu(response);
+      if (response) snmp_free_pdu(response);
    }
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_TIME_RESULTS))
+   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS))
       netsnmp_get_monotonic_clock(&tv2);
 
-   if (numprinted == 0 && status == STAT_SUCCESS)
-   {
+   if (numprinted == 0 && status == STAT_SUCCESS) {
       /*
        * no printed successful results, which may mean we were
        * pointed at an only existing instance.  Attempt a GET, just
        * for get measure.
        */
-      if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED))
-      {
+      if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
          auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
 
-         for (const auto &item : retval)
-         {
+         for (const auto &item : retval) {
             return_vector.push_back(item);
          }
       }
    }
    snmp_close(ss);
 
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_PRINT_STATISTICS))
-   {
+   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", numprinted);
    }
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_TIME_RESULTS))
-   {
+   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
       fprintf(stderr, "Total traversal time = %f seconds\n",
-              (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 +
-                  (double)(tv2.tv_sec - tv1.tv_sec));
+              (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
    }
 
 out:

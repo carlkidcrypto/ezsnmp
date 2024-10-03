@@ -204,6 +204,20 @@ For MacOS builds on a MacOS machine
     clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
 
 
+Formatting
+----------
+
+For c++ code:
+
+.. code:: bash
+    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
+
+For python3 code:
+
+.. code:: bash
+    python3 -m black .
+
+
 License
 -------
 

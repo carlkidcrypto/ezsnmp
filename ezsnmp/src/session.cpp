@@ -1,12 +1,13 @@
-#include <map>
-#include <cstring>
-#include <cassert>
-
 #include "session.h"
-#include "snmpwalk.h"
+
+#include <cassert>
+#include <cstring>
+#include <map>
+
+#include "snmpbulkget.h"
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
-#include "snmpbulkget.h"
+#include "snmpwalk.h"
 
 // Take all the Session class inputs and map them to:
 // OPTIONS:
@@ -14,34 +15,33 @@
 // SNMP Version 1 or 2c specific
 //   -c COMMUNITY          set the community string
 // SNMP Version 3 specific
-//   -a PROTOCOL           set authentication protocol (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512)
-//   -A PASSPHRASE         set authentication protocol pass phrase
-//   -e ENGINE-ID          set security engine ID (e.g. 800000020109840301)
-//   -E ENGINE-ID          set context engine ID (e.g. 800000020109840301)
-//   -l LEVEL              set security level (noAuthNoPriv|authNoPriv|authPriv)
-//   -n CONTEXT            set context name (e.g. bridge1)
-//   -u USER-NAME          set security name (e.g. bert)
-//   -x PROTOCOL           set privacy protocol (DES|AES)
-//   -X PASSPHRASE         set privacy protocol pass phrase
-//   -Z BOOTS,TIME         set destination engine boots/time
+//   -a PROTOCOL           set authentication protocol
+//   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512) -A PASSPHRASE         set
+//   authentication protocol pass phrase -e ENGINE-ID          set security
+//   engine ID (e.g. 800000020109840301) -E ENGINE-ID          set context
+//   engine ID (e.g. 800000020109840301) -l LEVEL              set security
+//   level (noAuthNoPriv|authNoPriv|authPriv) -n CONTEXT            set context
+//   name (e.g. bridge1) -u USER-NAME          set security name (e.g. bert) -x
+//   PROTOCOL           set privacy protocol (DES|AES) -X PASSPHRASE         set
+//   privacy protocol pass phrase -Z BOOTS,TIME         set destination engine
+//   boots/time
 // General communication options
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
-std::map<std::string, std::string> cml_param_lookup = {
-    {"version", "-v"},
-    {"community", "-c"},
-    {"auth_protocol", "-a"},
-    {"auth_passphrase", "-A"},
-    {"security_engine_id", "-e"},
-    {"context_engine_id", "-E"},
-    {"security_level", "-l"},
-    {"context", "-n"},
-    {"security_username", "-u"},
-    {"privacy_protocol", "-x"},
-    {"privacy_passphrase", "-X"},
-    {"boots_time", "-Z"},
-    {"retires", "-r"},
-    {"timeout", "-t"}};
+std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
+                                                       {"community", "-c"},
+                                                       {"auth_protocol", "-a"},
+                                                       {"auth_passphrase", "-A"},
+                                                       {"security_engine_id", "-e"},
+                                                       {"context_engine_id", "-E"},
+                                                       {"security_level", "-l"},
+                                                       {"context", "-n"},
+                                                       {"security_username", "-u"},
+                                                       {"privacy_protocol", "-x"},
+                                                       {"privacy_passphrase", "-X"},
+                                                       {"boots_time", "-Z"},
+                                                       {"retires", "-r"},
+                                                       {"timeout", "-t"}};
 
 /******************************************************************************
  * The class constructor. This is a wrapper around the lower level c++ calls.
@@ -52,11 +52,16 @@ std::map<std::string, std::string> cml_param_lookup = {
  * @param [in] port_number
  * @param [in] version 1|2c|3 specifies SNMP version to use. Default is `3`.
  * @param [in] community Set the community string. Default `public`
- * @param [in] auth_protocol Set authentication protocol (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512). Default ``.
- * @param [in] auth_passphrase Set authentication protocol pass phrase. Default ``.
- * @param [in] security_engine_id Set security engine ID (e.g. 800000020109840301). Default ``.
- * @param [in] context_engine_id Set context engine ID (e.g. 800000020109840301). Default ``.
- * @param [in] security_level Set security level (noAuthNoPriv|authNoPriv|authPriv). Default ``.
+ * @param [in] auth_protocol Set authentication protocol
+ *(MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512). Default ``.
+ * @param [in] auth_passphrase Set authentication protocol pass phrase. Default
+ *``.
+ * @param [in] security_engine_id Set security engine ID (e.g.
+ *800000020109840301). Default ``.
+ * @param [in] context_engine_id Set context engine ID (e.g.
+ *800000020109840301). Default ``.
+ * @param [in] security_level Set security level
+ *(noAuthNoPriv|authNoPriv|authPriv). Default ``.
  * @param [in] context Set context name (e.g. bridge1). Default ``.
  * @param [in] security_username Set security name (e.g. bert). Default ``.
  * @param [in] privacy_protocol Set privacy protocol (DES|AES). Default ``.
@@ -65,23 +70,12 @@ std::map<std::string, std::string> cml_param_lookup = {
  * @param [in] retires Set the number of retries. Default `3`.
  * @param [in] timeout Set the request timeout (in seconds). Default `1`.
  ******************************************************************************/
-Session::Session(std::string hostname,
-                 std::string port_number,
-                 std::string version,
-                 std::string community,
-                 std::string auth_protocol,
-                 std::string auth_passphrase,
-                 std::string security_engine_id,
-                 std::string context_engine_id,
-                 std::string security_level,
-                 std::string context,
-                 std::string security_username,
-                 std::string privacy_protocol,
-                 std::string privacy_passphrase,
-                 std::string boots_time,
-                 std::string retires,
-                 std::string timeout)
-{
+Session::Session(std::string hostname, std::string port_number, std::string version,
+                 std::string community, std::string auth_protocol, std::string auth_passphrase,
+                 std::string security_engine_id, std::string context_engine_id,
+                 std::string security_level, std::string context, std::string security_username,
+                 std::string privacy_protocol, std::string privacy_passphrase,
+                 std::string boots_time, std::string retires, std::string timeout) {
    // Convert arguments to m_argc and m_argv
    std::map<std::string, std::string> input_arg_name_map = {
        {"hostname", hostname},
@@ -102,10 +96,8 @@ Session::Session(std::string hostname,
        {"timeout", timeout}};
 
    // Third now populate m_argv
-   for (auto const &[key, val] : input_arg_name_map)
-   {
-      if (!val.empty() && key != "hostname" && key != "port_number")
-      {
+   for (auto const &[key, val] : input_arg_name_map) {
+      if (!val.empty() && key != "hostname" && key != "port_number") {
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
          m_args.push_back(cml_param_lookup[key]);
 
@@ -116,52 +108,48 @@ Session::Session(std::string hostname,
 
    // Fourth add and make the host address
    auto host_address = std::string("");
-   if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty())
-   {
+   if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty()) {
       host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
-   }
-   else if (!input_arg_name_map["hostname"].empty() && input_arg_name_map["port_number"].empty())
-   {
+   } else if (!input_arg_name_map["hostname"].empty() &&
+              input_arg_name_map["port_number"].empty()) {
       host_address = input_arg_name_map["hostname"];
-   }
-   else
-   {
+   } else {
       host_address = "";
    }
 
    m_args.push_back(host_address);
 }
 
-Session::~Session()
-{
-}
+Session::~Session() {}
 
-std::vector<Result> Session::walk(std::string mib)
-{
-   if (!mib.empty())
-   {
+std::vector<Result> Session::walk(std::string mib) {
+   if (!mib.empty()) {
       m_args.push_back(mib);
    }
 
    return snmpwalk(m_args);
 }
 
-std::vector<std::string> Session::bulk_walk()
-{
+std::vector<std::string> Session::bulk_walk(const std::vector<std::string> &mibs) {
+   for (auto const &entry : mibs) {
+      m_args.push_back(entry);
+   }
+
    return snmpbulkwalk(m_args);
 }
 
-std::vector<std::string> Session::get(std::string mib)
-{
-   if (!mib.empty())
-   {
+std::vector<std::string> Session::get(std::string mib) {
+   if (!mib.empty()) {
       m_args.push_back(mib);
    }
 
    return snmpget(m_args);
 }
 
-std::vector<std::string> Session::bulk_get()
-{
+std::vector<std::string> Session::bulk_get(const std::vector<std::string> &mibs) {
+   for (auto const &entry : mibs) {
+      m_args.push_back(entry);
+   }
+
    return snmpbulkget(m_args);
 }
