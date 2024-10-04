@@ -163,7 +163,7 @@ them with the following on Linux:
     sudo systemctl start snmpd;
     rm -drf build/ dist/ ezsnmp.egg-info;
     python3 -m pip install -r requirements.txt;
-    python3 -m pip install . && python3 -m pytest tests/.;
+    python3 -m pip install . && pytest;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
     # Bottom one for valgrind. Replace the top one with it if needed.
@@ -184,7 +184,7 @@ On MacOS
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ dist/ ezsnmp.egg-info;
     python3 -m pip install -r requirements.txt;
-    python3 -m pip install . && python3 -m pytest tests/.;
+    python3 -m pip install . && pytest;
 
 
 Running cibuildwheels

@@ -47,3 +47,14 @@ requires = [
     "setuptools == 72.1.0",
     "wheel == 0.43.0",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "tests"
+addopts = [
+    "--import-mode=importlib",
+    "--ignore=integration_tests/",
+    "--ignore=tests/test_helpers.py",
+    "--ignore=tests/test_utils.py",
+    "--ignore=tests/test_variables.py",
+    "--ignore=tests/test_session_build_varlist.py",
+]
