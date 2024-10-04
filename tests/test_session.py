@@ -192,10 +192,10 @@ def test_session_get_use_numeric(sess):
     sess.use_numeric = True
     res = sess.get("sysContact.0")
 
-    assert res.oid == ".1.3.6.1.2.1.1.4"
-    assert res.oid_index == "0"
-    assert res.value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == ".1.3.6.1.2.1.1.4"
+    assert res[0].oid_index == "0"
+    assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[0].snmp_type == "OCTETSTR"
 
     del sess
 
@@ -204,10 +204,10 @@ def test_session_get_use_sprint_value(sess):
     sess.use_sprint_value = True
     res = sess.get("sysUpTimeInstance")
 
-    assert res.oid == "sysUpTimeInstance"
-    assert res.oid_index == ""
-    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res.value)
-    assert res.snmp_type == "TICKS"
+    assert res[0].oid == "sysUpTimeInstance"
+    assert res[0].oid_index == ""
+    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0].value)
+    assert res[0].snmp_type == "TICKS"
 
     del sess
 
@@ -216,10 +216,10 @@ def test_session_get_use_enums(sess):
     sess.use_enums = True
     res = sess.get("ifAdminStatus.1")
 
-    assert res.oid == "ifAdminStatus"
-    assert res.oid_index == "1"
-    assert res.value == "up"
-    assert res.snmp_type == "INTEGER"
+    assert res[0].oid == "ifAdminStatus"
+    assert res[0].oid_index == "1"
+    assert res[0].value == "up"
+    assert res[0].snmp_type == "INTEGER"
 
     del sess
 
@@ -249,13 +249,13 @@ def test_session_get_next(sess):
 
 def test_session_set(sess, reset_values):
     res = sess.get(("sysLocation", "0"))
-    assert res.value != "my newer location"
+    assert res[0].value != "my newer location"
 
     success = sess.set(("sysLocation", "0"), "my newer location")
     assert success
 
     res = sess.get(("sysLocation", "0"))
-    assert res.value == "my newer location"
+    assert res[0].value == "my newer location"
 
     del sess
 
@@ -324,7 +324,7 @@ def test_session_get_invalid_instance(sess):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
-        assert res.snmp_type == "NOSUCHINSTANCE"
+        assert res[0].snmp_type == "NOSUCHINSTANCE"
 
 
 def test_session_get_invalid_instance_with_abort_enabled(sess):
@@ -345,7 +345,7 @@ def test_session_get_invalid_object(sess):
             sess.get("iso")
     else:
         res = sess.get("iso")
-        assert res.snmp_type == "NOSUCHOBJECT"
+        assert res[0].snmp_type == "NOSUCHOBJECT"
 
 
 def test_session_get_invalid_object_with_abort_enabled(sess):

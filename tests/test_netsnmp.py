@@ -14,10 +14,10 @@ def test_snmp_get_regular(netsnmp_args):
     netsnmp_args = netsnmp_args + ["sysDescr.0"]
     res = snmpget(netsnmp_args)
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_tuple(netsnmp_args):
@@ -25,20 +25,20 @@ def test_snmp_get_tuple(netsnmp_args):
     netsnmp_args = netsnmp_args + ["sysDescr", "0"]
     res = snmpget(netsnmp_args)
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_fully_qualified(netsnmp_args):
     netsnmp_args = netsnmp_args + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
     res = snmpget(netsnmp_args)
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_fully_qualified_tuple(netsnmp_args):
@@ -46,37 +46,37 @@ def test_snmp_get_fully_qualified_tuple(netsnmp_args):
         (".iso.org.dod.internet.mgmt.mib-2.system.sysDescr", "0"), netsnmp_args
     )
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_numeric(netsnmp_args):
     res = snmpget(".1.3.6.1.2.1.1.1.0", netsnmp_args)
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
     res = snmpget("1.3.6.1.2.1.1.1.0", netsnmp_args)
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_numeric_tuple(netsnmp_args):
     res = snmpget((".1.3.6.1.2.1.1.1", "0"), netsnmp_args)
 
-    assert platform.version() in res.value
-    assert res.oid == "sysDescr"
-    assert res.oid_index == "0"
-    assert res.snmp_type == "OCTETSTR"
+    assert platform.version() in res[0].value
+    assert res[0].oid == "sysDescr"
+    assert res[0].oid_index == "0"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_get_unknown(netsnmp_args):
@@ -92,7 +92,7 @@ def test_snmp_get_invalid_instance(netsnmp_args):
             snmpget("sysContact.1", netsnmp_args)
     else:
         res = snmpget("sysContact.1", netsnmp_args)
-        assert res.snmp_type == "NOSUCHINSTANCE"
+        assert res[0].snmp_type == "NOSUCHINSTANCE"
 
 
 def test_snmp_get_invalid_object(netsnmp_args):
@@ -101,32 +101,32 @@ def test_snmp_get_invalid_object(netsnmp_args):
             snmpget("iso", netsnmp_args)
     else:
         res = snmpget("iso", netsnmp_args)
-        assert res.snmp_type == "NOSUCHOBJECT"
+        assert res[0].snmp_type == "NOSUCHOBJECT"
 
 
 def test_snmp_set_string(netsnmp_args, request, reset_values):
     res = snmpget(("sysLocation", "0"), netsnmp_args)
-    assert res.oid == "sysLocation"
-    assert res.oid_index == "0"
-    assert res.value != "my newer location"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == "sysLocation"
+    assert res[0].oid_index == "0"
+    assert res[0].value != "my newer location"
+    assert res[0].snmp_type == "OCTETSTR"
 
     success = snmpset(("sysLocation", "0"), "my newer location", netsnmp_args)
     assert success
 
     res = snmpget(("sysLocation", "0"), netsnmp_args)
-    assert res.oid == "sysLocation"
-    assert res.oid_index == "0"
-    assert res.value == "my newer location"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == "sysLocation"
+    assert res[0].oid_index == "0"
+    assert res[0].value == "my newer location"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_set_string_long_type(netsnmp_args, reset_values):
     res = snmpget(("sysLocation", "0"), netsnmp_args)
-    assert res.oid == "sysLocation"
-    assert res.oid_index == "0"
-    assert res.value != "my newer location"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == "sysLocation"
+    assert res[0].oid_index == "0"
+    assert res[0].value != "my newer location"
+    assert res[0].snmp_type == "OCTETSTR"
 
     success = snmpset(
         ("sysLocation", "0"), "my newer location", "OCTETSTR", netsnmp_args
@@ -134,27 +134,27 @@ def test_snmp_set_string_long_type(netsnmp_args, reset_values):
     assert success
 
     res = snmpget(("sysLocation", "0"), netsnmp_args)
-    assert res.oid == "sysLocation"
-    assert res.oid_index == "0"
-    assert res.value == "my newer location"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == "sysLocation"
+    assert res[0].oid_index == "0"
+    assert res[0].value == "my newer location"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_set_string_short_type(netsnmp_args, reset_values):
     res = snmpget(("sysLocation", "0"), netsnmp_args)
-    assert res.oid == "sysLocation"
-    assert res.oid_index == "0"
-    assert res.value != "my newer location"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == "sysLocation"
+    assert res[0].oid_index == "0"
+    assert res[0].value != "my newer location"
+    assert res[0].snmp_type == "OCTETSTR"
 
     success = snmpset(("sysLocation", "0"), "my newer location", "s", netsnmp_args)
     assert success
 
     res = snmpget(("sysLocation", "0"), netsnmp_args)
-    assert res.oid == "sysLocation"
-    assert res.oid_index == "0"
-    assert res.value == "my newer location"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == "sysLocation"
+    assert res[0].oid_index == "0"
+    assert res[0].value == "my newer location"
+    assert res[0].snmp_type == "OCTETSTR"
 
 
 def test_snmp_set_integer(netsnmp_args, reset_values):
@@ -162,10 +162,10 @@ def test_snmp_set_integer(netsnmp_args, reset_values):
     assert success
 
     res = snmpget(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), netsnmp_args)
-    assert res.oid == "nsCacheTimeout"
-    assert res.oid_index == "1.3.6.1.2.1.2.2"
-    assert res.value == "65"
-    assert res.snmp_type == "INTEGER"
+    assert res[0].oid == "nsCacheTimeout"
+    assert res[0].oid_index == "1.3.6.1.2.1.2.2"
+    assert res[0].value == "65"
+    assert res[0].snmp_type == "INTEGER"
 
 
 def test_snmp_set_integer_long_type(netsnmp_args, reset_values):
@@ -175,10 +175,10 @@ def test_snmp_set_integer_long_type(netsnmp_args, reset_values):
     assert success
 
     res = snmpget(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), netsnmp_args)
-    assert res.oid == "nsCacheTimeout"
-    assert res.oid_index == "1.3.6.1.2.1.2.2"
-    assert res.value == "65"
-    assert res.snmp_type == "INTEGER"
+    assert res[0].oid == "nsCacheTimeout"
+    assert res[0].oid_index == "1.3.6.1.2.1.2.2"
+    assert res[0].value == "65"
+    assert res[0].snmp_type == "INTEGER"
 
 
 def test_snmp_set_integer_short_type(netsnmp_args, reset_values):
@@ -186,10 +186,10 @@ def test_snmp_set_integer_short_type(netsnmp_args, reset_values):
     assert success
 
     res = snmpget(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), netsnmp_args)
-    assert res.oid == "nsCacheTimeout"
-    assert res.oid_index == "1.3.6.1.2.1.2.2"
-    assert res.value == "65"
-    assert res.snmp_type == "INTEGER"
+    assert res[0].oid == "nsCacheTimeout"
+    assert res[0].oid_index == "1.3.6.1.2.1.2.2"
+    assert res[0].value == "65"
+    assert res[0].snmp_type == "INTEGER"
 
 
 def test_snmpbulkget(netsnmp_args):
