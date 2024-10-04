@@ -226,6 +226,6 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-        )
+        ),
     ],
 )
