@@ -75,27 +75,48 @@ Session::Session(std::string hostname, std::string port_number, std::string vers
                  std::string security_engine_id, std::string context_engine_id,
                  std::string security_level, std::string context, std::string security_username,
                  std::string privacy_protocol, std::string privacy_passphrase,
-                 std::string boots_time, std::string retires, std::string timeout) {
+                 std::string boots_time, std::string retires, std::string timeout)
+    : m_hostname(hostname),
+      m_port_number(port_number),
+      m_version(version),
+      m_community(community),
+      m_auth_protocol(auth_protocol),
+      m_auth_passphrase(auth_passphrase),
+      m_security_engine_id(security_engine_id),
+      m_context_engine_id(context_engine_id),
+      m_security_level(security_level),
+      m_context(context),
+      m_security_username(security_username),
+      m_privacy_protocol(privacy_protocol),
+      m_privacy_passphrase(privacy_passphrase),
+      m_boots_time(boots_time),
+      m_retires(retires),
+      m_timeout(timeout) {
+   populate_args();
+}
+
+Session::~Session() {}
+
+void Session::populate_args() {
    // Convert arguments to m_argc and m_argv
    std::map<std::string, std::string> input_arg_name_map = {
-       {"hostname", hostname},
-       {"port_number", port_number},
-       {"version", version},
-       {"community", community},
-       {"auth_protocol", auth_protocol},
-       {"auth_passphrase", auth_passphrase},
-       {"security_engine_id", security_engine_id},
-       {"context_engine_id", context_engine_id},
-       {"security_level", security_level},
-       {"context", context},
-       {"security_username", security_username},
-       {"privacy_protocol", privacy_protocol},
-       {"privacy_passphrase", privacy_passphrase},
-       {"boots_time", boots_time},
-       {"retires", retires},
-       {"timeout", timeout}};
+       {"hostname", m_hostname},
+       {"port_number", m_port_number},
+       {"version", m_version},
+       {"community", m_community},
+       {"auth_protocol", m_auth_protocol},
+       {"auth_passphrase", m_auth_passphrase},
+       {"security_engine_id", m_security_engine_id},
+       {"context_engine_id", m_context_engine_id},
+       {"security_level", m_security_level},
+       {"context", m_context},
+       {"security_username", m_security_username},
+       {"privacy_protocol", m_privacy_protocol},
+       {"privacy_passphrase", m_privacy_passphrase},
+       {"boots_time", m_boots_time},
+       {"retires", m_retires},
+       {"timeout", m_timeout}};
 
-   // Third now populate m_argv
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
@@ -106,7 +127,7 @@ Session::Session(std::string hostname, std::string port_number, std::string vers
       }
    }
 
-   // Fourth add and make the host address
+   // Add and make the host address
    auto host_address = std::string("");
    if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty()) {
       host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
@@ -119,8 +140,6 @@ Session::Session(std::string hostname, std::string port_number, std::string vers
 
    m_args.push_back(host_address);
 }
-
-Session::~Session() {}
 
 std::vector<Result> Session::walk(std::string mib) {
    if (!mib.empty()) {

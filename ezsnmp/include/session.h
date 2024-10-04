@@ -25,6 +25,7 @@ class Session {
    std::string m_boots_time;
    std::string m_retires;
    std::string m_timeout;
+   void populate_args();
 
   public:
    Session(std::string hostname = "localhost", std::string port_number = "",
