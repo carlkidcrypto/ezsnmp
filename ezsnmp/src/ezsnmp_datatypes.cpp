@@ -4,8 +4,7 @@
  *
  * Do not make changes to this file unless you know what you are doing - modify
  * the SWIG interface file instead.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #define SWIG_VERSION 0x040201
 #define SWIGPYTHON
@@ -16,19 +15,16 @@
 /* -----------------------------------------------------------------------------
  *  This section contains generic SWIG labels for method/variable
  *  declarations/attributes, and other compiler dependent labels.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
-/* template workaround for compilers that cannot correctly implement the C++
- * standard */
+/* template workaround for compilers that cannot correctly implement the C++ standard */
 #ifndef SWIGTEMPLATEDISAMBIGUATOR
 #if defined(__SUNPRO_CC) && (__SUNPRO_CC <= 0x560)
 #define SWIGTEMPLATEDISAMBIGUATOR template
 #elif defined(__HP_aCC)
-/* Needed even with `aCC -AA' when `aCC -V' reports HP ANSI C++ B3910B A.03.55
+/* Needed even with `aCC -AA' when `aCC -V' reports HP ANSI C++ B3910B A.03.55 */
+/* If we find a maximum version that requires this, the test would be __HP_aCC <= 35500 for A.03.55
  */
-/* If we find a maximum version that requires this, the test would be __HP_aCC
- * <= 35500 for A.03.55 */
 #define SWIGTEMPLATEDISAMBIGUATOR template
 #else
 #define SWIGTEMPLATEDISAMBIGUATOR
@@ -123,8 +119,7 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
 
-/* Deal with Microsoft's attempt at deprecating methods in the standard C++
- * library */
+/* Deal with Microsoft's attempt at deprecating methods in the standard C++ library */
 #if !defined(SWIG_NO_SCL_SECURE_NO_DEPRECATE) && defined(_MSC_VER) && \
     !defined(_SCL_SECURE_NO_DEPRECATE)
 #define _SCL_SECURE_NO_DEPRECATE
@@ -154,8 +149,7 @@
  * swigcompat.swg
  *
  * Macros to provide support compatibility with older C and C++ standards.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* C99 and C++11 should provide snprintf, but define SWIG_NO_SNPRINTF
  * if you're missing it.
@@ -175,8 +169,7 @@
 #endif
 
 #if defined(__GNUC__) && defined(_WIN32) && !defined(SWIG_PYTHON_NO_HYPOT_WORKAROUND)
-/* Workaround for '::hypot' has not been declared', see
- * https://bugs.python.org/issue11566 */
+/* Workaround for '::hypot' has not been declared', see https://bugs.python.org/issue11566 */
 #include <math.h>
 #endif
 
@@ -195,8 +188,8 @@
 /* Use debug wrappers with the Python release dll */
 
 #if defined(_MSC_VER) && _MSC_VER >= 1929
-/* Workaround compilation errors when redefining _DEBUG in MSVC 2019
- * version 16.10 and later See https://github.com/swig/swig/issues/2090 */
+/* Workaround compilation errors when redefining _DEBUG in MSVC 2019 version 16.10 and later
+ * See https://github.com/swig/swig/issues/2090 */
 #include <corecrt.h>
 #endif
 
@@ -218,11 +211,10 @@
  *
  * This file contains generic C API SWIG runtime support for pointer
  * type checking.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
-/* This should only be incremented when either the layout of swig_type_info
-   changes, or for whatever reason, the runtime changes incompatibly */
+/* This should only be incremented when either the layout of swig_type_info changes,
+   or for whatever reason, the runtime changes incompatibly */
 #define SWIG_RUNTIME_VERSION "4"
 
 /* define SWIG_TYPE_TABLE_NAME as "SWIG_TYPE_TABLE" */
@@ -327,9 +319,9 @@
         }
       }
 
-   Of course, returning the plain '0(success)/-1(fail)' still works, but you can
-   be more explicit by returning SWIG_BADOBJ, SWIG_ERROR or any of the SWIG
-   errors code.
+   Of course, returning the plain '0(success)/-1(fail)' still works, but you can be
+   more explicit by returning SWIG_BADOBJ, SWIG_ERROR or any of the
+   SWIG errors code.
 
    Finally, if the SWIG_CASTRANK_MODE is enabled, the result code
    allows returning the 'cast rank', for example, if you have this
@@ -348,10 +340,9 @@
 #define SWIG_OK (0)
 /* Runtime errors are < 0 */
 #define SWIG_ERROR (-1)
-/* Errors in range -1 to -99 are in swigerrors.swg (errors for all languages
- * including those not using the runtime) */
-/* Errors in range -100 to -199 are language specific errors defined in
- * *errors.swg */
+/* Errors in range -1 to -99 are in swigerrors.swg (errors for all languages including those not
+ * using the runtime) */
+/* Errors in range -100 to -199 are language specific errors defined in *errors.swg */
 /* Errors < -200 are generic runtime specific errors */
 #define SWIG_ERROR_RELEASE_NOT_OWNED (-200)
 
@@ -427,9 +418,9 @@ typedef struct swig_cast_info {
  * Each module generates one structure like this, and the runtime collects
  * all of these structures and stores them in a circularly linked list.*/
 typedef struct swig_module_info {
-   swig_type_info **types;        /* Array of pointers to swig_type_info structures
-                                     that are in this module */
-   size_t size;                   /* Number of types in this module */
+   swig_type_info *
+       *types;  /* Array of pointers to swig_type_info structures that are in this module */
+   size_t size; /* Number of types in this module */
    struct swig_module_info *next; /* Pointer to next element in circularly linked list */
    swig_type_info **type_initial; /* Array of initially generated type structures */
    swig_cast_info **cast_initial; /* Array of initially generated casting structures */
@@ -519,8 +510,7 @@ SWIGRUNTIME swig_cast_info *SWIG_TypeCheck(char const *c, swig_type_info *ty) {
 }
 
 /*
-  Identical to SWIG_TypeCheck, except strcmp is replaced with a pointer
-  comparison
+  Identical to SWIG_TypeCheck, except strcmp is replaced with a pointer comparison
 */
 SWIGRUNTIME swig_cast_info *SWIG_TypeCheckStruct(swig_type_info const *from, swig_type_info *ty) {
    if (ty) {
@@ -632,8 +622,8 @@ SWIGRUNTIME void SWIG_TypeNewClientData(swig_type_info *ti, void *clientdata) {
   Search is a O(log #types)
 
   We start searching at module start, and finish searching when start == end.
-  Note: if start == end at the beginning of the function, we go all the way
-  around the circular list.
+  Note: if start == end at the beginning of the function, we go all the way around
+  the circular list.
 */
 SWIGRUNTIME swig_type_info *SWIG_MangledTypeQueryModule(swig_module_info *start,
                                                         swig_module_info *end, char const *name) {
@@ -670,14 +660,13 @@ SWIGRUNTIME swig_type_info *SWIG_MangledTypeQueryModule(swig_module_info *start,
 }
 
 /*
-  Search for a swig_type_info structure for either a mangled name or a human
-  readable name. It first searches the mangled names of the types, which is a
-  O(log #types) If a type is not found it then searches the human readable
-  names, which is O(#types).
+  Search for a swig_type_info structure for either a mangled name or a human readable name.
+  It first searches the mangled names of the types, which is a O(log #types)
+  If a type is not found it then searches the human readable names, which is O(#types).
 
   We start searching at module start, and finish searching when start == end.
-  Note: if start == end at the beginning of the function, we go all the way
-  around the circular list.
+  Note: if start == end at the beginning of the function, we go all the way around
+  the circular list.
 */
 SWIGRUNTIME swig_type_info *SWIG_TypeQueryModule(swig_module_info *start, swig_module_info *end,
                                                  char const *name) {
@@ -810,8 +799,7 @@ SWIGRUNTIME const char *SWIG_UnpackDataName(char const *c, void *ptr, size_t sz,
 }
 #endif
 
-/* SWIG Errors applicable to all language modules, values are reserved from -1
- * to -99 */
+/* SWIG Errors applicable to all language modules, values are reserved from -1 to -99 */
 #define SWIG_UnknownError -1
 #define SWIG_IOError -2
 #define SWIG_RuntimeError -3
@@ -857,8 +845,8 @@ SWIGRUNTIME const char *SWIG_UnpackDataName(char const *c, void *ptr, size_t sz,
 #define SWIG_Python_str_FromFormat PyString_FromFormat
 #endif
 
-/* Wrapper around PyUnicode_AsUTF8AndSize - call Py_XDECREF on the returned
- * pbytes when finished with the returned string */
+/* Wrapper around PyUnicode_AsUTF8AndSize - call Py_XDECREF on the returned pbytes when finished
+ * with the returned string */
 SWIGINTERN const char *SWIG_PyUnicode_AsUTF8AndSize(PyObject *str, Py_ssize_t *psize,
                                                     PyObject **pbytes) {
 #if PY_VERSION_HEX >= 0x03030000
@@ -893,8 +881,8 @@ SWIGINTERN PyObject *SWIG_Python_str_FromChar(char const *c) {
 #define PyObject_DEL PyObject_Del
 #endif
 
-/* SWIGPY_USE_CAPSULE is no longer used within SWIG itself, but some user
- * interface files check for it. */
+/* SWIGPY_USE_CAPSULE is no longer used within SWIG itself, but some user interface files check for
+ * it. */
 #define SWIGPY_USE_CAPSULE
 #ifdef SWIGPYTHON_BUILTIN
 #define SWIGPY_CAPSULE_ATTR_NAME "type_pointer_capsule_builtin" SWIG_TYPE_TABLE_NAME
@@ -911,11 +899,10 @@ SWIGINTERN PyObject *SWIG_Python_str_FromChar(char const *c) {
 
 #ifdef Py_LIMITED_API
 #define PyTuple_GET_ITEM PyTuple_GetItem
-/* Note that PyTuple_SetItem() has different semantics from PyTuple_SET_ITEM as
-  it decref's the original tuple item, so in general they cannot be used
-  interchangeably. However in SWIG-generated code PyTuple_SET_ITEM is only used
-  with newly initialized tuples without any items and for them this does work.
-*/
+/* Note that PyTuple_SetItem() has different semantics from PyTuple_SET_ITEM as it decref's the
+  original tuple item, so in general they cannot be used interchangeably. However in SWIG-generated
+  code PyTuple_SET_ITEM is only used with newly initialized tuples without any items and for them
+  this does work. */
 #define PyTuple_SET_ITEM PyTuple_SetItem
 #define PyTuple_GET_SIZE PyTuple_Size
 #define PyCFunction_GET_FLAGS PyCFunction_GetFlags
@@ -928,8 +915,7 @@ SWIGINTERN PyObject *SWIG_Python_str_FromChar(char const *c) {
 
 /* -----------------------------------------------------------------------------
  * error manipulation
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 SWIGRUNTIME PyObject *SWIG_Python_ErrorType(int code) {
    PyObject *type = 0;
@@ -1011,8 +997,7 @@ SWIGRUNTIME int SWIG_Python_TypeErrorOccurred(PyObject *obj) {
 
 SWIGRUNTIME void SWIG_Python_RaiseOrModifyTypeError(char const *message) {
    if (SWIG_Python_TypeErrorOccurred(NULL)) {
-      /* Use existing TypeError to preserve stacktrace and enhance with given
-       * message */
+      /* Use existing TypeError to preserve stacktrace and enhance with given message */
       PyObject *newvalue;
       PyObject *type = NULL, *value = NULL, *traceback = NULL;
       PyErr_Fetch(&type, &value, &traceback);
@@ -1117,8 +1102,7 @@ class SWIG_Python_Thread_Allow {
 
 /* -----------------------------------------------------------------------------
  * Python API portion that goes into the runtime
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -1126,8 +1110,7 @@ extern "C" {
 
 /* -----------------------------------------------------------------------------
  * Constant declarations
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* Constant Types */
 #define SWIG_PY_POINTER 4
@@ -1154,8 +1137,7 @@ typedef struct swig_const_info {
  * and includes code for managing global variables and pointer
  * type checking.
  *
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #if PY_VERSION_HEX < 0x02070000 /* 2.7.0 */
 #error "This version of SWIG only supports Python >= 2.7"
@@ -1374,8 +1356,7 @@ extern "C" {
 
 /* -----------------------------------------------------------------------------
  * global variable support code.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 typedef struct swig_globalvar {
    char *name;                  /* Name of global variable */
@@ -1624,8 +1605,7 @@ SWIGINTERN PyObject *SWIG_globals(void) {
 
 /* -----------------------------------------------------------------------------
  * Pointer declarations
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* Flags for new pointer objects */
 #define SWIG_POINTER_NOSHADOW (SWIG_POINTER_OWN << 1)
@@ -1684,9 +1664,7 @@ SWIGRUNTIME SwigPyClientData *SwigPyClientData_New(PyObject *obj) {
       /* the klass element */
       data->klass = obj;
       Py_INCREF(data->klass);
-      /* the newraw method and newargs arguments used to create a new raw
-       * instance
-       */
+      /* the newraw method and newargs arguments used to create a new raw instance */
       if (PyClass_Check(obj)) {
          data->newraw = 0;
          Py_INCREF(obj);
@@ -1910,9 +1888,7 @@ SWIGRUNTIME void SwigPyObject_dealloc(PyObject *v) {
          PyErr_Fetch(&type, &value, &traceback);
 
          if (data->delargs) {
-            /* we need to create a temporary object to carry the destroy
-             * operation
-             */
+            /* we need to create a temporary object to carry the destroy operation */
             PyObject *tmp = SwigPyObject_New(sobj->ptr, ty, 0);
             if (tmp) {
                res = SWIG_Python_CallFunctor(destroy, tmp);
@@ -1936,10 +1912,8 @@ SWIGRUNTIME void SwigPyObject_dealloc(PyObject *v) {
 #if !defined(SWIG_PYTHON_SILENT_MEMLEAK)
       else {
          char const *name = SWIG_TypePrettyName(ty);
-         printf(
-             "swig/python detected a memory leak of type '%s', no destructor "
-             "found.\n",
-             (name ? name : "unknown"));
+         printf("swig/python detected a memory leak of type '%s', no destructor found.\n",
+                (name ? name : "unknown"));
       }
 #endif
       Py_XDECREF(Swig_Capsule_global);
@@ -2219,10 +2193,9 @@ SWIGRUNTIME PyObject *SwigPyObject_New(void *ptr, swig_type_info *ty, int own) {
       sobj->dict = 0;
 #endif
       if (own == SWIG_POINTER_OWN) {
-         /* Obtain a reference to the Python capsule wrapping the module
-          * information, so that the module information is correctly destroyed
-          * after all SWIG python objects have been freed by the GC (and
-          * corresponding destructors invoked) */
+         /* Obtain a reference to the Python capsule wrapping the module information, so that the
+          * module information is correctly destroyed after all SWIG python objects have been freed
+          * by the GC (and corresponding destructors invoked) */
          Py_XINCREF(Swig_Capsule_global);
       }
    }
@@ -2231,8 +2204,7 @@ SWIGRUNTIME PyObject *SwigPyObject_New(void *ptr, swig_type_info *ty, int own) {
 
 /* -----------------------------------------------------------------------------
  * Implements a simple Swig Packed type, and use it instead of string
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 typedef struct {
    PyObject_HEAD void *pack;
@@ -2436,8 +2408,7 @@ SWIGRUNTIME swig_type_info *SwigPyPacked_UnpackData(PyObject *obj, void *ptr, si
 
 /* -----------------------------------------------------------------------------
  * pointers/data manipulation
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 static PyObject *Swig_This_global = NULL;
 
@@ -2580,9 +2551,8 @@ SWIGRUNTIME int SWIG_Python_ConvertPtrAndOwn(PyObject *obj, void **ptr, swig_typ
                   int newmemory = 0;
                   *ptr = SWIG_TypeCast(tc, vptr, &newmemory);
                   if (newmemory == SWIG_CAST_NEW_MEMORY) {
-                     assert(own); /* badly formed typemap which will lead to a
-                                     memory leak - it must set and use own to
-                                     delete *ptr */
+                     assert(own); /* badly formed typemap which will lead to a memory leak - it must
+                                     set and use own to delete *ptr */
                      if (own) {
                         *own = *own | SWIG_CAST_NEW_MEMORY;
                      }
@@ -2723,8 +2693,7 @@ SWIGRUNTIME int SWIG_Python_ConvertPacked(PyObject *obj, void *ptr, size_t sz, s
 
 /* -----------------------------------------------------------------------------
  * Create a new pointer object
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /*
   Create a new instance object, without calling __init__, and set the
@@ -2942,8 +2911,8 @@ SWIGRUNTIME void SWIG_Python_DestroyModule(PyObject *obj) {
        (swig_module_info *)PyCapsule_GetPointer(obj, SWIGPY_CAPSULE_NAME);
    swig_type_info **types = swig_module->types;
    size_t i;
-   if (--interpreter_counter != 0) { /* another sub-interpreter may still be using
-                                       the swig_module's types */
+   if (--interpreter_counter !=
+       0) { /* another sub-interpreter may still be using the swig_module's types */
       return;
    }
    for (i = 0; i < swig_module->size; ++i) {
@@ -3217,8 +3186,7 @@ SWIGINTERN void SwigPyBuiltin_BadDealloc(PyObject *obj) {
    SwigPyObject *sobj = (SwigPyObject *)obj;
    if (sobj->own) {
       PyErr_Format(PyExc_TypeError,
-                   "Swig detected a memory leak in type '%.300s': no callable "
-                   "destructor found.",
+                   "Swig detected a memory leak in type '%.300s': no callable destructor found.",
                    obj->ob_type->tp_name);
    }
 }
@@ -4026,8 +3994,7 @@ class SwigValueWrapper {
 };
 
 /*
- * SwigValueInit() is a generic initialisation solution as the following
- * approach:
+ * SwigValueInit() is a generic initialisation solution as the following approach:
  *
  *       T c_result = T();
  *
@@ -4153,8 +4120,8 @@ SWIGINTERN int SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, 
       if (!cstr) {
          return SWIG_TypeError;
       }
-      /* The returned string is only duplicated if the char * returned is not
-       * owned and memory managed by obj */
+      /* The returned string is only duplicated if the char * returned is not owned and memory
+       * managed by obj */
       if (bytes && cptr) {
          if (alloc) {
             cstr =
@@ -5017,8 +4984,7 @@ static PyTypeObject *builtin_bases[2];
  *  3) Finally, if cast->type has not already been loaded, then we add that
  *     swig_cast_info to the linked list (because the cast->type) pointer will
  *     be correct.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -5058,13 +5024,11 @@ SWIGRUNTIME void SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
       /* so set the swig module into the interpreter */
       SWIG_SetModule(clientdata, &swig_module);
    } else {
-      /* the interpreter has loaded a SWIG module, but has it loaded this one?
-       */
+      /* the interpreter has loaded a SWIG module, but has it loaded this one? */
       iter = module_head;
       do {
          if (iter == &swig_module) {
-            /* Our module is already in the list, so there's nothing more to do.
-             */
+            /* Our module is already in the list, so there's nothing more to do. */
             return;
          }
          iter = iter->next;
@@ -5075,10 +5039,10 @@ SWIGRUNTIME void SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
       module_head->next = &swig_module;
    }
 
-   /* When multiple interpreters are used, a module could have already been
-      initialized in a different interpreter, but not yet have a pointer in this
-      interpreter. In this case, we do not want to continue adding types...
-      everything should be set up already */
+   /* When multiple interpreters are used, a module could have already been initialized in
+        a different interpreter, but not yet have a pointer in this interpreter.
+        In this case, we do not want to continue adding types... everything should be
+        set up already */
    if (init == 0) {
       return;
    }
@@ -5233,8 +5197,7 @@ extern "C" {
 
 /* -----------------------------------------------------------------------------
  * constants/methods manipulation
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* Install Constants */
 SWIGINTERN void SWIG_Python_InstallConstants(PyObject *d, swig_const_info constants[]) {
@@ -5368,8 +5331,8 @@ void
 
    (void)globals;
 
-   /* Create singletons now to avoid potential deadlocks with multi-threaded
-    * usage after module initialization */
+   /* Create singletons now to avoid potential deadlocks with multi-threaded usage after module
+    * initialization */
    SWIG_This();
    SWIG_Python_TypeCache();
    SwigPyPacked_type();
@@ -5402,8 +5365,7 @@ void
       SwigPyObject_clientdata.pytype = swigpyobject;
    } else if (swigpyobject->tp_basicsize != cd->pytype->tp_basicsize) {
       PyErr_SetString(PyExc_RuntimeError,
-                      "Import error: attempted to load two "
-                      "incompatible swig-generated modules.");
+                      "Import error: attempted to load two incompatible swig-generated modules.");
 #if PY_VERSION_HEX >= 0x03000000
       return NULL;
 #else

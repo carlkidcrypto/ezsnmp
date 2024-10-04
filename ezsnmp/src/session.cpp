@@ -96,7 +96,7 @@ Session::Session(std::string hostname, std::string port_number, std::string vers
        {"timeout", timeout}};
 
    // Third now populate m_argv
-   for (auto const &[key, val] : input_arg_name_map) {
+   for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
          m_args.push_back(cml_param_lookup[key]);
@@ -130,8 +130,8 @@ std::vector<Result> Session::walk(std::string mib) {
    return snmpwalk(m_args);
 }
 
-std::vector<std::string> Session::bulk_walk(std::vector<std::string> const &mibs) {
-   for (auto const &entry : mibs) {
+std::vector<std::string> Session::bulk_walk(std::vector<std::string> const& mibs) {
+   for (auto const& entry : mibs) {
       m_args.push_back(entry);
    }
 
@@ -146,10 +146,28 @@ std::vector<std::string> Session::get(std::string mib) {
    return snmpget(m_args);
 }
 
-std::vector<std::string> Session::bulk_get(std::vector<std::string> const &mibs) {
-   for (auto const &entry : mibs) {
+std::vector<std::string> Session::bulk_get(std::vector<std::string> const& mibs) {
+   for (auto const& entry : mibs) {
       m_args.push_back(entry);
    }
 
    return snmpbulkget(m_args);
 }
+
+std::vector<std::string> const& Session::args() const { return m_args; }
+std::string const& Session::hostname() const { return m_hostname; }
+std::string const& Session::port_number() const { return m_port_number; }
+std::string const& Session::version() const { return m_version; }
+std::string const& Session::community() const { return m_community; }
+std::string const& Session::auth_protocol() const { return m_auth_protocol; }
+std::string const& Session::auth_passphrase() const { return m_auth_passphrase; }
+std::string const& Session::security_engine_id() const { return m_security_engine_id; }
+std::string const& Session::context_engine_id() const { return m_context_engine_id; }
+std::string const& Session::security_level() const { return m_security_level; }
+std::string const& Session::context() const { return m_context; }
+std::string const& Session::security_username() const { return m_security_username; }
+std::string const& Session::privacy_protocol() const { return m_privacy_protocol; }
+std::string const& Session::privacy_passphrase() const { return m_privacy_passphrase; }
+std::string const& Session::boots_time() const { return m_boots_time; }
+std::string const& Session::retires() const { return m_retires; }
+std::string const& Session::timeout() const { return m_timeout; }

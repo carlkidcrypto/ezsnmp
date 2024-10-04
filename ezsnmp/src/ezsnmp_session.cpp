@@ -4,8 +4,7 @@
  *
  * Do not make changes to this file unless you know what you are doing - modify
  * the SWIG interface file instead.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #define SWIG_VERSION 0x040201
 #define SWIGPYTHON
@@ -16,19 +15,16 @@
 /* -----------------------------------------------------------------------------
  *  This section contains generic SWIG labels for method/variable
  *  declarations/attributes, and other compiler dependent labels.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
-/* template workaround for compilers that cannot correctly implement the C++
- * standard */
+/* template workaround for compilers that cannot correctly implement the C++ standard */
 #ifndef SWIGTEMPLATEDISAMBIGUATOR
 #if defined(__SUNPRO_CC) && (__SUNPRO_CC <= 0x560)
 #define SWIGTEMPLATEDISAMBIGUATOR template
 #elif defined(__HP_aCC)
-/* Needed even with `aCC -AA' when `aCC -V' reports HP ANSI C++ B3910B A.03.55
+/* Needed even with `aCC -AA' when `aCC -V' reports HP ANSI C++ B3910B A.03.55 */
+/* If we find a maximum version that requires this, the test would be __HP_aCC <= 35500 for A.03.55
  */
-/* If we find a maximum version that requires this, the test would be __HP_aCC
- * <= 35500 for A.03.55 */
 #define SWIGTEMPLATEDISAMBIGUATOR template
 #else
 #define SWIGTEMPLATEDISAMBIGUATOR
@@ -123,8 +119,7 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
 
-/* Deal with Microsoft's attempt at deprecating methods in the standard C++
- * library */
+/* Deal with Microsoft's attempt at deprecating methods in the standard C++ library */
 #if !defined(SWIG_NO_SCL_SECURE_NO_DEPRECATE) && defined(_MSC_VER) && \
     !defined(_SCL_SECURE_NO_DEPRECATE)
 #define _SCL_SECURE_NO_DEPRECATE
@@ -154,8 +149,7 @@
  * swigcompat.swg
  *
  * Macros to provide support compatibility with older C and C++ standards.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* C99 and C++11 should provide snprintf, but define SWIG_NO_SNPRINTF
  * if you're missing it.
@@ -175,8 +169,7 @@
 #endif
 
 #if defined(__GNUC__) && defined(_WIN32) && !defined(SWIG_PYTHON_NO_HYPOT_WORKAROUND)
-/* Workaround for '::hypot' has not been declared', see
- * https://bugs.python.org/issue11566 */
+/* Workaround for '::hypot' has not been declared', see https://bugs.python.org/issue11566 */
 #include <math.h>
 #endif
 
@@ -195,8 +188,8 @@
 /* Use debug wrappers with the Python release dll */
 
 #if defined(_MSC_VER) && _MSC_VER >= 1929
-/* Workaround compilation errors when redefining _DEBUG in MSVC 2019
- * version 16.10 and later See https://github.com/swig/swig/issues/2090 */
+/* Workaround compilation errors when redefining _DEBUG in MSVC 2019 version 16.10 and later
+ * See https://github.com/swig/swig/issues/2090 */
 #include <corecrt.h>
 #endif
 
@@ -218,11 +211,10 @@
  *
  * This file contains generic C API SWIG runtime support for pointer
  * type checking.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
-/* This should only be incremented when either the layout of swig_type_info
-   changes, or for whatever reason, the runtime changes incompatibly */
+/* This should only be incremented when either the layout of swig_type_info changes,
+   or for whatever reason, the runtime changes incompatibly */
 #define SWIG_RUNTIME_VERSION "4"
 
 /* define SWIG_TYPE_TABLE_NAME as "SWIG_TYPE_TABLE" */
@@ -327,9 +319,9 @@
         }
       }
 
-   Of course, returning the plain '0(success)/-1(fail)' still works, but you can
-   be more explicit by returning SWIG_BADOBJ, SWIG_ERROR or any of the SWIG
-   errors code.
+   Of course, returning the plain '0(success)/-1(fail)' still works, but you can be
+   more explicit by returning SWIG_BADOBJ, SWIG_ERROR or any of the
+   SWIG errors code.
 
    Finally, if the SWIG_CASTRANK_MODE is enabled, the result code
    allows returning the 'cast rank', for example, if you have this
@@ -348,10 +340,9 @@
 #define SWIG_OK (0)
 /* Runtime errors are < 0 */
 #define SWIG_ERROR (-1)
-/* Errors in range -1 to -99 are in swigerrors.swg (errors for all languages
- * including those not using the runtime) */
-/* Errors in range -100 to -199 are language specific errors defined in
- * *errors.swg */
+/* Errors in range -1 to -99 are in swigerrors.swg (errors for all languages including those not
+ * using the runtime) */
+/* Errors in range -100 to -199 are language specific errors defined in *errors.swg */
 /* Errors < -200 are generic runtime specific errors */
 #define SWIG_ERROR_RELEASE_NOT_OWNED (-200)
 
@@ -427,9 +418,9 @@ typedef struct swig_cast_info {
  * Each module generates one structure like this, and the runtime collects
  * all of these structures and stores them in a circularly linked list.*/
 typedef struct swig_module_info {
-   swig_type_info **types;        /* Array of pointers to swig_type_info structures
-                                     that are in this module */
-   size_t size;                   /* Number of types in this module */
+   swig_type_info *
+       *types;  /* Array of pointers to swig_type_info structures that are in this module */
+   size_t size; /* Number of types in this module */
    struct swig_module_info *next; /* Pointer to next element in circularly linked list */
    swig_type_info **type_initial; /* Array of initially generated type structures */
    swig_cast_info **cast_initial; /* Array of initially generated casting structures */
@@ -519,8 +510,7 @@ SWIGRUNTIME swig_cast_info *SWIG_TypeCheck(char const *c, swig_type_info *ty) {
 }
 
 /*
-  Identical to SWIG_TypeCheck, except strcmp is replaced with a pointer
-  comparison
+  Identical to SWIG_TypeCheck, except strcmp is replaced with a pointer comparison
 */
 SWIGRUNTIME swig_cast_info *SWIG_TypeCheckStruct(swig_type_info const *from, swig_type_info *ty) {
    if (ty) {
@@ -632,8 +622,8 @@ SWIGRUNTIME void SWIG_TypeNewClientData(swig_type_info *ti, void *clientdata) {
   Search is a O(log #types)
 
   We start searching at module start, and finish searching when start == end.
-  Note: if start == end at the beginning of the function, we go all the way
-  around the circular list.
+  Note: if start == end at the beginning of the function, we go all the way around
+  the circular list.
 */
 SWIGRUNTIME swig_type_info *SWIG_MangledTypeQueryModule(swig_module_info *start,
                                                         swig_module_info *end, char const *name) {
@@ -670,14 +660,13 @@ SWIGRUNTIME swig_type_info *SWIG_MangledTypeQueryModule(swig_module_info *start,
 }
 
 /*
-  Search for a swig_type_info structure for either a mangled name or a human
-  readable name. It first searches the mangled names of the types, which is a
-  O(log #types) If a type is not found it then searches the human readable
-  names, which is O(#types).
+  Search for a swig_type_info structure for either a mangled name or a human readable name.
+  It first searches the mangled names of the types, which is a O(log #types)
+  If a type is not found it then searches the human readable names, which is O(#types).
 
   We start searching at module start, and finish searching when start == end.
-  Note: if start == end at the beginning of the function, we go all the way
-  around the circular list.
+  Note: if start == end at the beginning of the function, we go all the way around
+  the circular list.
 */
 SWIGRUNTIME swig_type_info *SWIG_TypeQueryModule(swig_module_info *start, swig_module_info *end,
                                                  char const *name) {
@@ -810,8 +799,7 @@ SWIGRUNTIME const char *SWIG_UnpackDataName(char const *c, void *ptr, size_t sz,
 }
 #endif
 
-/* SWIG Errors applicable to all language modules, values are reserved from -1
- * to -99 */
+/* SWIG Errors applicable to all language modules, values are reserved from -1 to -99 */
 #define SWIG_UnknownError -1
 #define SWIG_IOError -2
 #define SWIG_RuntimeError -3
@@ -857,8 +845,8 @@ SWIGRUNTIME const char *SWIG_UnpackDataName(char const *c, void *ptr, size_t sz,
 #define SWIG_Python_str_FromFormat PyString_FromFormat
 #endif
 
-/* Wrapper around PyUnicode_AsUTF8AndSize - call Py_XDECREF on the returned
- * pbytes when finished with the returned string */
+/* Wrapper around PyUnicode_AsUTF8AndSize - call Py_XDECREF on the returned pbytes when finished
+ * with the returned string */
 SWIGINTERN const char *SWIG_PyUnicode_AsUTF8AndSize(PyObject *str, Py_ssize_t *psize,
                                                     PyObject **pbytes) {
 #if PY_VERSION_HEX >= 0x03030000
@@ -893,8 +881,8 @@ SWIGINTERN PyObject *SWIG_Python_str_FromChar(char const *c) {
 #define PyObject_DEL PyObject_Del
 #endif
 
-/* SWIGPY_USE_CAPSULE is no longer used within SWIG itself, but some user
- * interface files check for it. */
+/* SWIGPY_USE_CAPSULE is no longer used within SWIG itself, but some user interface files check for
+ * it. */
 #define SWIGPY_USE_CAPSULE
 #ifdef SWIGPYTHON_BUILTIN
 #define SWIGPY_CAPSULE_ATTR_NAME "type_pointer_capsule_builtin" SWIG_TYPE_TABLE_NAME
@@ -911,11 +899,10 @@ SWIGINTERN PyObject *SWIG_Python_str_FromChar(char const *c) {
 
 #ifdef Py_LIMITED_API
 #define PyTuple_GET_ITEM PyTuple_GetItem
-/* Note that PyTuple_SetItem() has different semantics from PyTuple_SET_ITEM as
-  it decref's the original tuple item, so in general they cannot be used
-  interchangeably. However in SWIG-generated code PyTuple_SET_ITEM is only used
-  with newly initialized tuples without any items and for them this does work.
-*/
+/* Note that PyTuple_SetItem() has different semantics from PyTuple_SET_ITEM as it decref's the
+  original tuple item, so in general they cannot be used interchangeably. However in SWIG-generated
+  code PyTuple_SET_ITEM is only used with newly initialized tuples without any items and for them
+  this does work. */
 #define PyTuple_SET_ITEM PyTuple_SetItem
 #define PyTuple_GET_SIZE PyTuple_Size
 #define PyCFunction_GET_FLAGS PyCFunction_GetFlags
@@ -928,8 +915,7 @@ SWIGINTERN PyObject *SWIG_Python_str_FromChar(char const *c) {
 
 /* -----------------------------------------------------------------------------
  * error manipulation
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 SWIGRUNTIME PyObject *SWIG_Python_ErrorType(int code) {
    PyObject *type = 0;
@@ -1011,8 +997,7 @@ SWIGRUNTIME int SWIG_Python_TypeErrorOccurred(PyObject *obj) {
 
 SWIGRUNTIME void SWIG_Python_RaiseOrModifyTypeError(char const *message) {
    if (SWIG_Python_TypeErrorOccurred(NULL)) {
-      /* Use existing TypeError to preserve stacktrace and enhance with given
-       * message */
+      /* Use existing TypeError to preserve stacktrace and enhance with given message */
       PyObject *newvalue;
       PyObject *type = NULL, *value = NULL, *traceback = NULL;
       PyErr_Fetch(&type, &value, &traceback);
@@ -1117,8 +1102,7 @@ class SWIG_Python_Thread_Allow {
 
 /* -----------------------------------------------------------------------------
  * Python API portion that goes into the runtime
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -1126,8 +1110,7 @@ extern "C" {
 
 /* -----------------------------------------------------------------------------
  * Constant declarations
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* Constant Types */
 #define SWIG_PY_POINTER 4
@@ -1154,8 +1137,7 @@ typedef struct swig_const_info {
  * and includes code for managing global variables and pointer
  * type checking.
  *
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #if PY_VERSION_HEX < 0x02070000 /* 2.7.0 */
 #error "This version of SWIG only supports Python >= 2.7"
@@ -1374,8 +1356,7 @@ extern "C" {
 
 /* -----------------------------------------------------------------------------
  * global variable support code.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 typedef struct swig_globalvar {
    char *name;                  /* Name of global variable */
@@ -1624,8 +1605,7 @@ SWIGINTERN PyObject *SWIG_globals(void) {
 
 /* -----------------------------------------------------------------------------
  * Pointer declarations
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* Flags for new pointer objects */
 #define SWIG_POINTER_NOSHADOW (SWIG_POINTER_OWN << 1)
@@ -1684,9 +1664,7 @@ SWIGRUNTIME SwigPyClientData *SwigPyClientData_New(PyObject *obj) {
       /* the klass element */
       data->klass = obj;
       Py_INCREF(data->klass);
-      /* the newraw method and newargs arguments used to create a new raw
-       * instance
-       */
+      /* the newraw method and newargs arguments used to create a new raw instance */
       if (PyClass_Check(obj)) {
          data->newraw = 0;
          Py_INCREF(obj);
@@ -1910,9 +1888,7 @@ SWIGRUNTIME void SwigPyObject_dealloc(PyObject *v) {
          PyErr_Fetch(&type, &value, &traceback);
 
          if (data->delargs) {
-            /* we need to create a temporary object to carry the destroy
-             * operation
-             */
+            /* we need to create a temporary object to carry the destroy operation */
             PyObject *tmp = SwigPyObject_New(sobj->ptr, ty, 0);
             if (tmp) {
                res = SWIG_Python_CallFunctor(destroy, tmp);
@@ -1936,10 +1912,8 @@ SWIGRUNTIME void SwigPyObject_dealloc(PyObject *v) {
 #if !defined(SWIG_PYTHON_SILENT_MEMLEAK)
       else {
          char const *name = SWIG_TypePrettyName(ty);
-         printf(
-             "swig/python detected a memory leak of type '%s', no destructor "
-             "found.\n",
-             (name ? name : "unknown"));
+         printf("swig/python detected a memory leak of type '%s', no destructor found.\n",
+                (name ? name : "unknown"));
       }
 #endif
       Py_XDECREF(Swig_Capsule_global);
@@ -2219,10 +2193,9 @@ SWIGRUNTIME PyObject *SwigPyObject_New(void *ptr, swig_type_info *ty, int own) {
       sobj->dict = 0;
 #endif
       if (own == SWIG_POINTER_OWN) {
-         /* Obtain a reference to the Python capsule wrapping the module
-          * information, so that the module information is correctly destroyed
-          * after all SWIG python objects have been freed by the GC (and
-          * corresponding destructors invoked) */
+         /* Obtain a reference to the Python capsule wrapping the module information, so that the
+          * module information is correctly destroyed after all SWIG python objects have been freed
+          * by the GC (and corresponding destructors invoked) */
          Py_XINCREF(Swig_Capsule_global);
       }
    }
@@ -2231,8 +2204,7 @@ SWIGRUNTIME PyObject *SwigPyObject_New(void *ptr, swig_type_info *ty, int own) {
 
 /* -----------------------------------------------------------------------------
  * Implements a simple Swig Packed type, and use it instead of string
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 typedef struct {
    PyObject_HEAD void *pack;
@@ -2436,8 +2408,7 @@ SWIGRUNTIME swig_type_info *SwigPyPacked_UnpackData(PyObject *obj, void *ptr, si
 
 /* -----------------------------------------------------------------------------
  * pointers/data manipulation
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 static PyObject *Swig_This_global = NULL;
 
@@ -2580,9 +2551,8 @@ SWIGRUNTIME int SWIG_Python_ConvertPtrAndOwn(PyObject *obj, void **ptr, swig_typ
                   int newmemory = 0;
                   *ptr = SWIG_TypeCast(tc, vptr, &newmemory);
                   if (newmemory == SWIG_CAST_NEW_MEMORY) {
-                     assert(own); /* badly formed typemap which will lead to a
-                                     memory leak - it must set and use own to
-                                     delete *ptr */
+                     assert(own); /* badly formed typemap which will lead to a memory leak - it must
+                                     set and use own to delete *ptr */
                      if (own) {
                         *own = *own | SWIG_CAST_NEW_MEMORY;
                      }
@@ -2723,8 +2693,7 @@ SWIGRUNTIME int SWIG_Python_ConvertPacked(PyObject *obj, void *ptr, size_t sz, s
 
 /* -----------------------------------------------------------------------------
  * Create a new pointer object
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /*
   Create a new instance object, without calling __init__, and set the
@@ -2942,8 +2911,8 @@ SWIGRUNTIME void SWIG_Python_DestroyModule(PyObject *obj) {
        (swig_module_info *)PyCapsule_GetPointer(obj, SWIGPY_CAPSULE_NAME);
    swig_type_info **types = swig_module->types;
    size_t i;
-   if (--interpreter_counter != 0) { /* another sub-interpreter may still be using
-                                       the swig_module's types */
+   if (--interpreter_counter !=
+       0) { /* another sub-interpreter may still be using the swig_module's types */
       return;
    }
    for (i = 0; i < swig_module->size; ++i) {
@@ -3217,8 +3186,7 @@ SWIGINTERN void SwigPyBuiltin_BadDealloc(PyObject *obj) {
    SwigPyObject *sobj = (SwigPyObject *)obj;
    if (sobj->own) {
       PyErr_Format(PyExc_TypeError,
-                   "Swig detected a memory leak in type '%.300s': no callable "
-                   "destructor found.",
+                   "Swig detected a memory leak in type '%.300s': no callable destructor found.",
                    obj->ob_type->tp_name);
    }
 }
@@ -4045,8 +4013,7 @@ class SwigValueWrapper {
 };
 
 /*
- * SwigValueInit() is a generic initialisation solution as the following
- * approach:
+ * SwigValueInit() is a generic initialisation solution as the following approach:
  *
  *       T c_result = T();
  *
@@ -4362,11 +4329,10 @@ SWIGINTERN int SWIG_AsVal_unsigned_SS_long(PyObject *obj, unsigned long *val) {
       if (!dispatch) {
          double d;
          int res = SWIG_AddCast(SWIG_AsVal_double(obj, &d));
-         // Largest double not larger than ULONG_MAX (not portably calculated
-         // easily) Note that double(ULONG_MAX) is stored in a double rounded up
-         // by one (for 64-bit unsigned long) 0xfffffffffffff800ULL ==
-         // (uint64_t)std::nextafter(double(__uint128_t(ULONG_MAX)+1),
-         // double(0))
+         // Largest double not larger than ULONG_MAX (not portably calculated easily)
+         // Note that double(ULONG_MAX) is stored in a double rounded up by one (for 64-bit unsigned
+         // long) 0xfffffffffffff800ULL ==
+         // (uint64_t)std::nextafter(double(__uint128_t(ULONG_MAX)+1), double(0))
          double const ulong_max = sizeof(unsigned long) == 8 ? 0xfffffffffffff800ULL : ULONG_MAX;
          if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, ulong_max)) {
             if (val) {
@@ -4520,10 +4486,10 @@ SWIGINTERN int SWIG_AsVal_long(PyObject *obj, long *val) {
       if (!dispatch) {
          double d;
          int res = SWIG_AddCast(SWIG_AsVal_double(obj, &d));
-         // Largest double not larger than LONG_MAX (not portably calculated
-         // easily) Note that double(LONG_MAX) is stored in a double rounded up
-         // by one (for 64-bit long) 0x7ffffffffffffc00LL ==
-         // (int64_t)std::nextafter(double(__uint128_t(LONG_MAX)+1), double(0))
+         // Largest double not larger than LONG_MAX (not portably calculated easily)
+         // Note that double(LONG_MAX) is stored in a double rounded up by one (for 64-bit long)
+         // 0x7ffffffffffffc00LL == (int64_t)std::nextafter(double(__uint128_t(LONG_MAX)+1),
+         // double(0))
          double const long_max = sizeof(long) == 8 ? 0x7ffffffffffffc00LL : LONG_MAX;
          // No equivalent needed for 64-bit double(LONG_MIN) is exactly LONG_MIN
          if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, long_max)) {
@@ -4652,8 +4618,8 @@ SWIGINTERN int SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, 
       if (!cstr) {
          return SWIG_TypeError;
       }
-      /* The returned string is only duplicated if the char * returned is not
-       * owned and memory managed by obj */
+      /* The returned string is only duplicated if the char * returned is not owned and memory
+       * managed by obj */
       if (bytes && cptr) {
          if (alloc) {
             cstr =
@@ -5096,7 +5062,8 @@ struct iterator_traits {
 };
 
 template <class Iterator, class Category, class T, class Reference, class Pointer, class Distance>
-struct iterator_traits<__reverse_bi_iterator<Iterator, Category, T, Reference, Pointer, Distance>> {
+struct iterator_traits<
+    __reverse_bi_iterator<Iterator, Category, T, Reference, Pointer, Distance> > {
    typedef Distance difference_type;
    typedef T value_type;
 };
@@ -5163,7 +5130,7 @@ struct from_oper {
 
 template <typename OutIterator,
           typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
-          typename FromOper = from_oper<ValueType>>
+          typename FromOper = from_oper<ValueType> >
 class SwigPyForwardIteratorOpen_T : public SwigPyIterator_T<OutIterator> {
   public:
    FromOper from;
@@ -5189,7 +5156,7 @@ class SwigPyForwardIteratorOpen_T : public SwigPyIterator_T<OutIterator> {
 
 template <typename OutIterator,
           typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
-          typename FromOper = from_oper<ValueType>>
+          typename FromOper = from_oper<ValueType> >
 class SwigPyIteratorOpen_T : public SwigPyForwardIteratorOpen_T<OutIterator, ValueType, FromOper> {
   public:
    FromOper from;
@@ -5211,7 +5178,7 @@ class SwigPyIteratorOpen_T : public SwigPyForwardIteratorOpen_T<OutIterator, Val
 
 template <typename OutIterator,
           typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
-          typename FromOper = from_oper<ValueType>>
+          typename FromOper = from_oper<ValueType> >
 class SwigPyForwardIteratorClosed_T : public SwigPyIterator_T<OutIterator> {
   public:
    FromOper from;
@@ -5252,7 +5219,7 @@ class SwigPyForwardIteratorClosed_T : public SwigPyIterator_T<OutIterator> {
 
 template <typename OutIterator,
           typename ValueType = typename std::iterator_traits<OutIterator>::value_type,
-          typename FromOper = from_oper<ValueType>>
+          typename FromOper = from_oper<ValueType> >
 class SwigPyIteratorClosed_T
     : public SwigPyForwardIteratorClosed_T<OutIterator, ValueType, FromOper> {
   public:
@@ -5574,8 +5541,7 @@ inline void setslice(Sequence *self, Difference i, Difference j, Py_ssize_t step
          if (is.size() != replacecount) {
             char msg[1024];
             PyOS_snprintf(msg, sizeof(msg),
-                          "attempt to assign sequence of size %lu to extended "
-                          "slice of size %lu",
+                          "attempt to assign sequence of size %lu to extended slice of size %lu",
                           (unsigned long)is.size(), (unsigned long)replacecount);
             throw std::invalid_argument(msg);
          }
@@ -5594,8 +5560,7 @@ inline void setslice(Sequence *self, Difference i, Difference j, Py_ssize_t step
       if (is.size() != replacecount) {
          char msg[1024];
          PyOS_snprintf(msg, sizeof(msg),
-                       "attempt to assign sequence of size %lu to extended slice "
-                       "of size %lu",
+                       "attempt to assign sequence of size %lu to extended slice of size %lu",
                        (unsigned long)is.size(), (unsigned long)replacecount);
          throw std::invalid_argument(msg);
       }
@@ -5759,30 +5724,30 @@ struct traits_from_stdseq {
 
 namespace swig {
 template <class T>
-struct traits_reserve<std::vector<T>> {
+struct traits_reserve<std::vector<T> > {
    static void reserve(std::vector<T> &seq, typename std::vector<T>::size_type n) {
       seq.reserve(n);
    }
 };
 
 template <class T>
-struct traits_asptr<std::vector<T>> {
+struct traits_asptr<std::vector<T> > {
    static int asptr(PyObject *obj, std::vector<T> **vec) {
-      return traits_asptr_stdseq<std::vector<T>>::asptr(obj, vec);
+      return traits_asptr_stdseq<std::vector<T> >::asptr(obj, vec);
    }
 };
 
 template <class T>
-struct traits_from<std::vector<T>> {
+struct traits_from<std::vector<T> > {
    static PyObject *from(std::vector<T> const &vec) {
-      return traits_from_stdseq<std::vector<T>>::from(vec);
+      return traits_from_stdseq<std::vector<T> >::from(vec);
    }
 };
 } // namespace swig
 
 namespace swig {
 template <>
-struct traits<std::vector<std::string, std::allocator<std::string>>> {
+struct traits<std::vector<std::string, std::allocator<std::string> > > {
    typedef pointer_category category;
    static char const *type_name() {
       return "std::vector<"
@@ -5834,7 +5799,7 @@ SWIGINTERNINLINE PyObject *SWIG_From_size_t(size_t value) {
 #endif
 }
 
-SWIGINTERN std::vector<std::string, std::allocator<std::string>> *
+SWIGINTERN std::vector<std::string, std::allocator<std::string> > *
 std_vector_Sl_std_string_Sg____getslice__(std::vector<std::string> *self,
                                           std::vector<std::string>::difference_type i,
                                           std::vector<std::string>::difference_type j) {
@@ -5843,12 +5808,12 @@ std_vector_Sl_std_string_Sg____getslice__(std::vector<std::string> *self,
 SWIGINTERN void std_vector_Sl_std_string_Sg____setslice____SWIG_0(
     std::vector<std::string> *self, std::vector<std::string>::difference_type i,
     std::vector<std::string>::difference_type j) {
-   swig::setslice(self, i, j, 1, std::vector<std::string, std::allocator<std::string>>());
+   swig::setslice(self, i, j, 1, std::vector<std::string, std::allocator<std::string> >());
 }
 SWIGINTERN void std_vector_Sl_std_string_Sg____setslice____SWIG_1(
     std::vector<std::string> *self, std::vector<std::string>::difference_type i,
     std::vector<std::string>::difference_type j,
-    std::vector<std::string, std::allocator<std::string>> const &v) {
+    std::vector<std::string, std::allocator<std::string> > const &v) {
    swig::setslice(self, i, j, 1, v);
 }
 SWIGINTERN void std_vector_Sl_std_string_Sg____delslice__(
@@ -5860,7 +5825,7 @@ SWIGINTERN void std_vector_Sl_std_string_Sg____delitem____SWIG_0(
     std::vector<std::string> *self, std::vector<std::string>::difference_type i) {
    swig::erase(self, swig::getpos(self, i));
 }
-SWIGINTERN std::vector<std::string, std::allocator<std::string>> *
+SWIGINTERN std::vector<std::string, std::allocator<std::string> > *
 std_vector_Sl_std_string_Sg____getitem____SWIG_0(std::vector<std::string> *self,
                                                  SWIGPY_SLICEOBJECT *slice) {
    Py_ssize_t i, j, step;
@@ -5869,21 +5834,21 @@ std_vector_Sl_std_string_Sg____getitem____SWIG_0(std::vector<std::string> *self,
       return NULL;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<std::string, std::allocator<std::string>>::difference_type id = i;
-   std::vector<std::string, std::allocator<std::string>>::difference_type jd = j;
+   std::vector<std::string, std::allocator<std::string> >::difference_type id = i;
+   std::vector<std::string, std::allocator<std::string> >::difference_type jd = j;
    return swig::getslice(self, id, jd, step);
 }
 SWIGINTERN void std_vector_Sl_std_string_Sg____setitem____SWIG_0(
     std::vector<std::string> *self, SWIGPY_SLICEOBJECT *slice,
-    std::vector<std::string, std::allocator<std::string>> const &v) {
+    std::vector<std::string, std::allocator<std::string> > const &v) {
    Py_ssize_t i, j, step;
    if (!PySlice_Check(slice)) {
       SWIG_Error(SWIG_TypeError, "Slice object expected.");
       return;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<std::string, std::allocator<std::string>>::difference_type id = i;
-   std::vector<std::string, std::allocator<std::string>>::difference_type jd = j;
+   std::vector<std::string, std::allocator<std::string> >::difference_type id = i;
+   std::vector<std::string, std::allocator<std::string> >::difference_type jd = j;
    swig::setslice(self, id, jd, step, v);
 }
 SWIGINTERN void std_vector_Sl_std_string_Sg____setitem____SWIG_1(std::vector<std::string> *self,
@@ -5894,8 +5859,8 @@ SWIGINTERN void std_vector_Sl_std_string_Sg____setitem____SWIG_1(std::vector<std
       return;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<std::string, std::allocator<std::string>>::difference_type id = i;
-   std::vector<std::string, std::allocator<std::string>>::difference_type jd = j;
+   std::vector<std::string, std::allocator<std::string> >::difference_type id = i;
+   std::vector<std::string, std::allocator<std::string> >::difference_type jd = j;
    swig::delslice(self, id, jd, step);
 }
 SWIGINTERN void std_vector_Sl_std_string_Sg____delitem____SWIG_1(std::vector<std::string> *self,
@@ -5906,8 +5871,8 @@ SWIGINTERN void std_vector_Sl_std_string_Sg____delitem____SWIG_1(std::vector<std
       return;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<std::string, std::allocator<std::string>>::difference_type id = i;
-   std::vector<std::string, std::allocator<std::string>>::difference_type jd = j;
+   std::vector<std::string, std::allocator<std::string> >::difference_type id = i;
+   std::vector<std::string, std::allocator<std::string> >::difference_type jd = j;
    swig::delslice(self, id, jd, step);
 }
 SWIGINTERN std::vector<std::string>::value_type const &
@@ -5962,7 +5927,7 @@ SWIGINTERN std::vector<std::string>::value_type std_vector_Sl_std_string_Sg__pop
    if (self->size() == 0) {
       throw std::out_of_range("pop from empty container");
    }
-   std::vector<std::string, std::allocator<std::string>>::value_type x = self->back();
+   std::vector<std::string, std::allocator<std::string> >::value_type x = self->back();
    self->pop_back();
    return x;
 }
@@ -6000,7 +5965,7 @@ struct traits<Result> {
 
 namespace swig {
 template <>
-struct traits<std::vector<Result, std::allocator<Result>>> {
+struct traits<std::vector<Result, std::allocator<Result> > > {
    typedef pointer_category category;
    static char const *type_name() {
       return "std::vector<"
@@ -6026,7 +5991,7 @@ SWIGINTERN std::vector<Result>::size_type std_vector_Sl_Result_Sg____len__(
     std::vector<Result> const *self) {
    return self->size();
 }
-SWIGINTERN std::vector<Result, std::allocator<Result>> *std_vector_Sl_Result_Sg____getslice__(
+SWIGINTERN std::vector<Result, std::allocator<Result> > *std_vector_Sl_Result_Sg____getslice__(
     std::vector<Result> *self, std::vector<Result>::difference_type i,
     std::vector<Result>::difference_type j) {
    return swig::getslice(self, i, j, 1);
@@ -6034,11 +5999,11 @@ SWIGINTERN std::vector<Result, std::allocator<Result>> *std_vector_Sl_Result_Sg_
 SWIGINTERN void std_vector_Sl_Result_Sg____setslice____SWIG_0(
     std::vector<Result> *self, std::vector<Result>::difference_type i,
     std::vector<Result>::difference_type j) {
-   swig::setslice(self, i, j, 1, std::vector<Result, std::allocator<Result>>());
+   swig::setslice(self, i, j, 1, std::vector<Result, std::allocator<Result> >());
 }
 SWIGINTERN void std_vector_Sl_Result_Sg____setslice____SWIG_1(
     std::vector<Result> *self, std::vector<Result>::difference_type i,
-    std::vector<Result>::difference_type j, std::vector<Result, std::allocator<Result>> const &v) {
+    std::vector<Result>::difference_type j, std::vector<Result, std::allocator<Result> > const &v) {
    swig::setslice(self, i, j, 1, v);
 }
 SWIGINTERN void std_vector_Sl_Result_Sg____delslice__(std::vector<Result> *self,
@@ -6050,7 +6015,7 @@ SWIGINTERN void std_vector_Sl_Result_Sg____delitem____SWIG_0(
     std::vector<Result> *self, std::vector<Result>::difference_type i) {
    swig::erase(self, swig::getpos(self, i));
 }
-SWIGINTERN std::vector<Result, std::allocator<Result>> *
+SWIGINTERN std::vector<Result, std::allocator<Result> > *
 std_vector_Sl_Result_Sg____getitem____SWIG_0(std::vector<Result> *self, SWIGPY_SLICEOBJECT *slice) {
    Py_ssize_t i, j, step;
    if (!PySlice_Check(slice)) {
@@ -6058,21 +6023,21 @@ std_vector_Sl_Result_Sg____getitem____SWIG_0(std::vector<Result> *self, SWIGPY_S
       return NULL;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<Result, std::allocator<Result>>::difference_type id = i;
-   std::vector<Result, std::allocator<Result>>::difference_type jd = j;
+   std::vector<Result, std::allocator<Result> >::difference_type id = i;
+   std::vector<Result, std::allocator<Result> >::difference_type jd = j;
    return swig::getslice(self, id, jd, step);
 }
 SWIGINTERN void std_vector_Sl_Result_Sg____setitem____SWIG_0(
     std::vector<Result> *self, SWIGPY_SLICEOBJECT *slice,
-    std::vector<Result, std::allocator<Result>> const &v) {
+    std::vector<Result, std::allocator<Result> > const &v) {
    Py_ssize_t i, j, step;
    if (!PySlice_Check(slice)) {
       SWIG_Error(SWIG_TypeError, "Slice object expected.");
       return;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<Result, std::allocator<Result>>::difference_type id = i;
-   std::vector<Result, std::allocator<Result>>::difference_type jd = j;
+   std::vector<Result, std::allocator<Result> >::difference_type id = i;
+   std::vector<Result, std::allocator<Result> >::difference_type jd = j;
    swig::setslice(self, id, jd, step, v);
 }
 SWIGINTERN void std_vector_Sl_Result_Sg____setitem____SWIG_1(std::vector<Result> *self,
@@ -6083,8 +6048,8 @@ SWIGINTERN void std_vector_Sl_Result_Sg____setitem____SWIG_1(std::vector<Result>
       return;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<Result, std::allocator<Result>>::difference_type id = i;
-   std::vector<Result, std::allocator<Result>>::difference_type jd = j;
+   std::vector<Result, std::allocator<Result> >::difference_type id = i;
+   std::vector<Result, std::allocator<Result> >::difference_type jd = j;
    swig::delslice(self, id, jd, step);
 }
 SWIGINTERN void std_vector_Sl_Result_Sg____delitem____SWIG_1(std::vector<Result> *self,
@@ -6095,8 +6060,8 @@ SWIGINTERN void std_vector_Sl_Result_Sg____delitem____SWIG_1(std::vector<Result>
       return;
    }
    PySlice_GetIndices(slice, (Py_ssize_t)self->size(), &i, &j, &step);
-   std::vector<Result, std::allocator<Result>>::difference_type id = i;
-   std::vector<Result, std::allocator<Result>>::difference_type jd = j;
+   std::vector<Result, std::allocator<Result> >::difference_type id = i;
+   std::vector<Result, std::allocator<Result> >::difference_type jd = j;
    swig::delslice(self, id, jd, step);
 }
 SWIGINTERN std::vector<Result>::value_type const &std_vector_Sl_Result_Sg____getitem____SWIG_1(
@@ -6116,7 +6081,7 @@ SWIGINTERN std::vector<Result>::value_type std_vector_Sl_Result_Sg__pop(std::vec
    if (self->size() == 0) {
       throw std::out_of_range("pop from empty container");
    }
-   std::vector<Result, std::allocator<Result>>::value_type x = self->back();
+   std::vector<Result, std::allocator<Result> >::value_type x = self->back();
    self->pop_back();
    return x;
 }
@@ -6358,8 +6323,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'SwigPyIterator_incr'.\n"
+       "Wrong number or type of arguments for overloaded function 'SwigPyIterator_incr'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    swig::SwigPyIterator::incr(size_t)\n"
        "    swig::SwigPyIterator::incr()\n");
@@ -6501,8 +6465,7 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'SwigPyIterator_decr'.\n"
+       "Wrong number or type of arguments for overloaded function 'SwigPyIterator_decr'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    swig::SwigPyIterator::decr(size_t)\n"
        "    swig::SwigPyIterator::decr()\n");
@@ -7355,19 +7318,13 @@ fail:
 }
 
 SWIGPY_DESTRUCTOR_CLOSURE(
-    _wrap_delete_SwigPyIterator) /* defines
-                                    _wrap_delete_SwigPyIterator_destructor_closure
-                                  */
+    _wrap_delete_SwigPyIterator) /* defines _wrap_delete_SwigPyIterator_destructor_closure */
 
 SWIGPY_ITERNEXTFUNC_CLOSURE(
-    _wrap_SwigPyIterator___next__) /* defines
-                                      _wrap_SwigPyIterator___next___iternextfunc_closure
-                                    */
+    _wrap_SwigPyIterator___next__) /* defines _wrap_SwigPyIterator___next___iternextfunc_closure */
 
 SWIGPY_BINARYFUNC_CLOSURE(
-    _wrap_SwigPyIterator___sub__) /* defines
-                                     _wrap_SwigPyIterator___sub___binaryfunc_closure
-                                   */
+    _wrap_SwigPyIterator___sub__) /* defines _wrap_SwigPyIterator___sub___binaryfunc_closure */
 
 SWIGINTERN PyObject *_wrap_Result_oid_set(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
@@ -7929,7 +7886,7 @@ SWIGINTERN PyObject *_wrap__string_list___getslice__(PyObject *self, PyObject *a
    ptrdiff_t val3;
    int ecode3 = 0;
    PyObject *swig_obj[3];
-   std::vector<std::string, std::allocator<std::string>> *result = 0;
+   std::vector<std::string, std::allocator<std::string> > *result = 0;
 
    if (!SWIG_Python_UnpackTuple(args, "_string_list___getslice__", 2, 2, swig_obj)) {
       SWIG_fail;
@@ -7973,7 +7930,7 @@ SWIGINTERN PyObject *_wrap__string_list___getslice__(PyObject *self, PyObject *a
    try {
       {
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<std::string, std::allocator<std::string>> *)
+         result = (std::vector<std::string, std::allocator<std::string> > *)
              std_vector_Sl_std_string_Sg____getslice__(arg1, SWIG_STD_MOVE(arg2),
                                                        SWIG_STD_MOVE(arg3));
          SWIG_PYTHON_THREAD_END_ALLOW;
@@ -8066,7 +8023,7 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self, Py_
    std::vector<std::string> *arg1 = (std::vector<std::string> *)0;
    std::vector<std::string>::difference_type arg2;
    std::vector<std::string>::difference_type arg3;
-   std::vector<std::string, std::allocator<std::string>> *arg4 = 0;
+   std::vector<std::string, std::allocator<std::string> > *arg4 = 0;
    void *argp1 = 0;
    int res1 = 0;
    ptrdiff_t val2;
@@ -8115,8 +8072,8 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self, Py_
    }
    arg3 = static_cast<std::vector<std::string>::difference_type>(val3);
    {
-      std::vector<std::string, std::allocator<std::string>> *ptr =
-          (std::vector<std::string, std::allocator<std::string>> *)0;
+      std::vector<std::string, std::allocator<std::string> > *ptr =
+          (std::vector<std::string, std::allocator<std::string> > *)0;
       res4 = swig::asptr(swig_obj[3], &ptr);
       if (!SWIG_IsOK(res4)) {
          SWIG_exception_fail(SWIG_ArgError(res4),
@@ -8146,7 +8103,7 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self, Py_
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
          std_vector_Sl_std_string_Sg____setslice____SWIG_1(
              arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
-             (std::vector<std::string, std::allocator<std::string>> const &)*arg4);
+             (std::vector<std::string, std::allocator<std::string> > const &)*arg4);
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
    } catch (std::out_of_range &_e) {
@@ -8177,7 +8134,8 @@ SWIGINTERN PyObject *_wrap__string_list___setslice__(PyObject *self, PyObject *a
    argv[0] = self;
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8197,7 +8155,8 @@ SWIGINTERN PyObject *_wrap__string_list___setslice__(PyObject *self, PyObject *a
    }
    if (argc == 4) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8210,8 +8169,8 @@ SWIGINTERN PyObject *_wrap__string_list___setslice__(PyObject *self, PyObject *a
                _v = SWIG_CheckState(res);
             }
             if (_v) {
-               int res = swig::asptr(argv[3],
-                                     (std::vector<std::string, std::allocator<std::string>> **)(0));
+               int res = swig::asptr(
+                   argv[3], (std::vector<std::string, std::allocator<std::string> > **)(0));
                _v = SWIG_CheckState(res);
                if (_v) {
                   return _wrap__string_list___setslice____SWIG_1(self, argc, argv);
@@ -8223,16 +8182,13 @@ SWIGINTERN PyObject *_wrap__string_list___setslice__(PyObject *self, PyObject *a
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list___setslice__'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list___setslice__'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< std::string >::__setslice__(std::vector< std::string "
        ">::difference_type,std::vector< std::string >::difference_type)\n"
        "    std::vector< std::string >::__setslice__(std::vector< std::string "
-       ">::difference_type,std::vector< std::string "
-       ">::difference_type,std::vector< std::string,std::allocator< "
-       "std::string "
-       "> > const &)\n");
+       ">::difference_type,std::vector< std::string >::difference_type,std::vector< "
+       "std::string,std::allocator< std::string > > const &)\n");
    return 0;
 }
 
@@ -8366,7 +8322,7 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_0(PyObject *self, Py_s
    SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *)0;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<std::string, std::allocator<std::string>> *result = 0;
+   std::vector<std::string, std::allocator<std::string> > *result = 0;
 
    if ((nobjs < 2) || (nobjs > 2)) {
       SWIG_fail;
@@ -8399,7 +8355,7 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_0(PyObject *self, Py_s
    try {
       {
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<std::string, std::allocator<std::string>> *)
+         result = (std::vector<std::string, std::allocator<std::string> > *)
              std_vector_Sl_std_string_Sg____getitem____SWIG_0(arg1, arg2);
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
@@ -8420,7 +8376,7 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self, Py_s
    PyObject *resultobj = 0;
    std::vector<std::string> *arg1 = (std::vector<std::string> *)0;
    SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *)0;
-   std::vector<std::string, std::allocator<std::string>> *arg3 = 0;
+   std::vector<std::string, std::allocator<std::string> > *arg3 = 0;
    void *argp1 = 0;
    int res1 = 0;
    int res3 = SWIG_OLDOBJ;
@@ -8454,8 +8410,8 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self, Py_s
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
    {
-      std::vector<std::string, std::allocator<std::string>> *ptr =
-          (std::vector<std::string, std::allocator<std::string>> *)0;
+      std::vector<std::string, std::allocator<std::string> > *ptr =
+          (std::vector<std::string, std::allocator<std::string> > *)0;
       res3 = swig::asptr(swig_obj[2], &ptr);
       if (!SWIG_IsOK(res3)) {
          SWIG_exception_fail(SWIG_ArgError(res3),
@@ -8484,7 +8440,7 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self, Py_s
       {
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
          std_vector_Sl_std_string_Sg____setitem____SWIG_0(
-             arg1, arg2, (std::vector<std::string, std::allocator<std::string>> const &)*arg3);
+             arg1, arg2, (std::vector<std::string, std::allocator<std::string> > const &)*arg3);
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
    } catch (std::out_of_range &_e) {
@@ -8621,7 +8577,8 @@ SWIGINTERN PyObject *_wrap__string_list___delitem__(PyObject *self, PyObject *ar
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8634,7 +8591,8 @@ SWIGINTERN PyObject *_wrap__string_list___delitem__(PyObject *self, PyObject *ar
    }
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8649,11 +8607,9 @@ SWIGINTERN PyObject *_wrap__string_list___delitem__(PyObject *self, PyObject *ar
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list___delitem__'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list___delitem__'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< std::string >::__delitem__(std::vector< std::string "
-       ">::difference_type)\n"
+       "    std::vector< std::string >::__delitem__(std::vector< std::string >::difference_type)\n"
        "    std::vector< std::string >::__delitem__(SWIGPY_SLICEOBJECT *)\n");
    return 0;
 }
@@ -8730,7 +8686,8 @@ SWIGINTERN PyObject *_wrap__string_list___getitem__(PyObject *self, PyObject *ar
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8743,7 +8700,8 @@ SWIGINTERN PyObject *_wrap__string_list___getitem__(PyObject *self, PyObject *ar
    }
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8758,12 +8716,11 @@ SWIGINTERN PyObject *_wrap__string_list___getitem__(PyObject *self, PyObject *ar
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list___getitem__'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list___getitem__'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< std::string >::__getitem__(SWIGPY_SLICEOBJECT *)\n"
-       "    std::vector< std::string >::__getitem__(std::vector< std::string "
-       ">::difference_type) const\n");
+       "    std::vector< std::string >::__getitem__(std::vector< std::string >::difference_type) "
+       "const\n");
    return 0;
 }
 
@@ -8919,7 +8876,8 @@ SWIGINTERN PyObject *_wrap__string_list___setitem__(PyObject *self, PyObject *ar
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8932,7 +8890,8 @@ SWIGINTERN PyObject *_wrap__string_list___setitem__(PyObject *self, PyObject *ar
    }
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8946,15 +8905,16 @@ SWIGINTERN PyObject *_wrap__string_list___setitem__(PyObject *self, PyObject *ar
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
             _v = PySlice_Check(argv[1]);
          }
          if (_v) {
-            int res =
-                swig::asptr(argv[2], (std::vector<std::string, std::allocator<std::string>> **)(0));
+            int res = swig::asptr(argv[2],
+                                  (std::vector<std::string, std::allocator<std::string> > **)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
                return _wrap__string_list___setitem____SWIG_0(self, argc, argv);
@@ -8964,7 +8924,8 @@ SWIGINTERN PyObject *_wrap__string_list___setitem__(PyObject *self, PyObject *ar
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -8983,11 +8944,10 @@ SWIGINTERN PyObject *_wrap__string_list___setitem__(PyObject *self, PyObject *ar
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list___setitem__'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list___setitem__'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< std::string >::__setitem__(SWIGPY_SLICEOBJECT "
-       "*,std::vector< std::string,std::allocator< std::string > > const &)\n"
+       "    std::vector< std::string >::__setitem__(SWIGPY_SLICEOBJECT *,std::vector< "
+       "std::string,std::allocator< std::string > > const &)\n"
        "    std::vector< std::string >::__setitem__(SWIGPY_SLICEOBJECT *)\n"
        "    std::vector< std::string >::__setitem__(std::vector< std::string "
        ">::difference_type,std::vector< std::string >::value_type const &)\n"
@@ -9132,8 +9092,8 @@ SWIGINTERN int _wrap_new__string_list__SWIG_1(PyObject *self, Py_ssize_t nobjs,
       SWIG_fail;
    }
    {
-      std::vector<std::string, std::allocator<std::string>> *ptr =
-          (std::vector<std::string, std::allocator<std::string>> *)0;
+      std::vector<std::string, std::allocator<std::string> > *ptr =
+          (std::vector<std::string, std::allocator<std::string> > *)0;
       res1 = swig::asptr(swig_obj[0], &ptr);
       if (!SWIG_IsOK(res1)) {
          SWIG_exception_fail(SWIG_ArgError(res1),
@@ -9482,7 +9442,7 @@ SWIGINTERN PyObject *_wrap__string_list_get_allocator(PyObject *self, PyObject *
    std::vector<std::string> *arg1 = (std::vector<std::string> *)0;
    void *argp1 = 0;
    int res1 = 0;
-   SwigValueWrapper<std::allocator<std::string>> result;
+   SwigValueWrapper<std::allocator<std::string> > result;
 
    if (!SWIG_Python_UnpackTuple(args, "_string_list_get_allocator", 0, 0, 0)) {
       SWIG_fail;
@@ -9800,7 +9760,8 @@ SWIGINTERN PyObject *_wrap__string_list_erase(PyObject *self, PyObject *args) {
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -9816,7 +9777,8 @@ SWIGINTERN PyObject *_wrap__string_list_erase(PyObject *self, PyObject *args) {
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -9841,13 +9803,11 @@ SWIGINTERN PyObject *_wrap__string_list_erase(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list_erase'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list_erase'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< std::string >::erase(std::vector< std::string "
-       ">::iterator)\n"
-       "    std::vector< std::string >::erase(std::vector< std::string "
-       ">::iterator,std::vector< std::string >::iterator)\n");
+       "    std::vector< std::string >::erase(std::vector< std::string >::iterator)\n"
+       "    std::vector< std::string >::erase(std::vector< std::string >::iterator,std::vector< "
+       "std::string >::iterator)\n");
    return 0;
 }
 
@@ -9948,7 +9908,8 @@ SWIGINTERN int _wrap_new__string_list(PyObject *self, PyObject *args, PyObject *
    }
    if (argc == 1) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          return _wrap_new__string_list__SWIG_1(self, argc, argv);
@@ -9971,17 +9932,13 @@ SWIGINTERN int _wrap_new__string_list(PyObject *self, PyObject *args, PyObject *
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'new__string_list'.\n"
+       "Wrong number or type of arguments for overloaded function 'new__string_list'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< std::string >::vector()\n"
-       "    std::vector< std::string >::vector(std::vector< std::string > "
-       "const "
-       "&)\n"
-       "    std::vector< std::string >::vector(std::vector< std::string "
-       ">::size_type)\n"
-       "    std::vector< std::string >::vector(std::vector< std::string "
-       ">::size_type,std::vector< std::string >::value_type const &)\n");
+       "    std::vector< std::string >::vector(std::vector< std::string > const &)\n"
+       "    std::vector< std::string >::vector(std::vector< std::string >::size_type)\n"
+       "    std::vector< std::string >::vector(std::vector< std::string >::size_type,std::vector< "
+       "std::string >::value_type const &)\n");
    return -1;
 }
 
@@ -10302,7 +10259,8 @@ SWIGINTERN PyObject *_wrap__string_list_resize(PyObject *self, PyObject *args) {
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -10316,7 +10274,8 @@ SWIGINTERN PyObject *_wrap__string_list_resize(PyObject *self, PyObject *args) {
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -10335,13 +10294,11 @@ SWIGINTERN PyObject *_wrap__string_list_resize(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list_resize'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list_resize'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< std::string >::resize(std::vector< std::string "
-       ">::size_type)\n"
-       "    std::vector< std::string >::resize(std::vector< std::string "
-       ">::size_type,std::vector< std::string >::value_type const &)\n");
+       "    std::vector< std::string >::resize(std::vector< std::string >::size_type)\n"
+       "    std::vector< std::string >::resize(std::vector< std::string >::size_type,std::vector< "
+       "std::string >::value_type const &)\n");
    return 0;
 }
 
@@ -10570,7 +10527,8 @@ SWIGINTERN PyObject *_wrap__string_list_insert(PyObject *self, PyObject *args) {
    argv[0] = self;
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -10590,7 +10548,8 @@ SWIGINTERN PyObject *_wrap__string_list_insert(PyObject *self, PyObject *args) {
    }
    if (argc == 4) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string>> **)(0));
+      int res =
+          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -10617,14 +10576,12 @@ SWIGINTERN PyObject *_wrap__string_list_insert(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_string_list_insert'.\n"
+       "Wrong number or type of arguments for overloaded function '_string_list_insert'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< std::string >::insert(std::vector< std::string "
-       ">::iterator,std::vector< std::string >::value_type const &)\n"
-       "    std::vector< std::string >::insert(std::vector< std::string "
-       ">::iterator,std::vector< std::string >::size_type,std::vector< "
-       "std::string >::value_type const &)\n");
+       "    std::vector< std::string >::insert(std::vector< std::string >::iterator,std::vector< "
+       "std::string >::value_type const &)\n"
+       "    std::vector< std::string >::insert(std::vector< std::string >::iterator,std::vector< "
+       "std::string >::size_type,std::vector< std::string >::value_type const &)\n");
    return 0;
 }
 
@@ -10751,31 +10708,23 @@ fail:
 }
 
 SWIGPY_GETITERFUNC_CLOSURE(
-    _wrap__string_list_iterator) /* defines
-                                    _wrap__string_list_iterator_getiterfunc_closure
-                                  */
+    _wrap__string_list_iterator) /* defines _wrap__string_list_iterator_getiterfunc_closure */
 
 SWIGPY_INQUIRY_CLOSURE(
-    _wrap__string_list___nonzero__) /* defines
-                                       _wrap__string_list___nonzero___inquiry_closure
-                                     */
+    _wrap__string_list___nonzero__) /* defines _wrap__string_list___nonzero___inquiry_closure */
 
-SWIGPY_LENFUNC_CLOSURE(_wrap__string_list___len__) /* defines
-                                                      _wrap__string_list___len___lenfunc_closure */
+SWIGPY_LENFUNC_CLOSURE(
+    _wrap__string_list___len__) /* defines _wrap__string_list___len___lenfunc_closure */
 
 SWIGPY_BINARYFUNC_CLOSURE(
-    _wrap__string_list___getitem__) /* defines
-                                       _wrap__string_list___getitem___binaryfunc_closure
-                                     */
+    _wrap__string_list___getitem__) /* defines _wrap__string_list___getitem___binaryfunc_closure */
 
 SWIGPY_OBJOBJARGPROC_CLOSURE(
-    _wrap__string_list___setitem__) /* defines
-                                       _wrap__string_list___setitem___objobjargproc_closure
+    _wrap__string_list___setitem__) /* defines _wrap__string_list___setitem___objobjargproc_closure
                                      */
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete__string_list) /* defines
-                                                        _wrap_delete__string_list_destructor_closure
-                                                      */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete__string_list) /* defines _wrap_delete__string_list_destructor_closure */
 
 SWIGINTERN PyObject *_wrap__result_list_iterator(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
@@ -10924,7 +10873,7 @@ SWIGINTERN PyObject *_wrap__result_list___getslice__(PyObject *self, PyObject *a
    ptrdiff_t val3;
    int ecode3 = 0;
    PyObject *swig_obj[3];
-   std::vector<Result, std::allocator<Result>> *result = 0;
+   std::vector<Result, std::allocator<Result> > *result = 0;
 
    if (!SWIG_Python_UnpackTuple(args, "_result_list___getslice__", 2, 2, swig_obj)) {
       SWIG_fail;
@@ -10969,7 +10918,7 @@ SWIGINTERN PyObject *_wrap__result_list___getslice__(PyObject *self, PyObject *a
       {
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
          result =
-             (std::vector<Result, std::allocator<Result>> *)std_vector_Sl_Result_Sg____getslice__(
+             (std::vector<Result, std::allocator<Result> > *)std_vector_Sl_Result_Sg____getslice__(
                  arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3));
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
@@ -11061,7 +11010,7 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self, Py_
    std::vector<Result> *arg1 = (std::vector<Result> *)0;
    std::vector<Result>::difference_type arg2;
    std::vector<Result>::difference_type arg3;
-   std::vector<Result, std::allocator<Result>> *arg4 = 0;
+   std::vector<Result, std::allocator<Result> > *arg4 = 0;
    void *argp1 = 0;
    int res1 = 0;
    ptrdiff_t val2;
@@ -11110,8 +11059,8 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self, Py_
    }
    arg3 = static_cast<std::vector<Result>::difference_type>(val3);
    {
-      std::vector<Result, std::allocator<Result>> *ptr =
-          (std::vector<Result, std::allocator<Result>> *)0;
+      std::vector<Result, std::allocator<Result> > *ptr =
+          (std::vector<Result, std::allocator<Result> > *)0;
       res4 = swig::asptr(swig_obj[3], &ptr);
       if (!SWIG_IsOK(res4)) {
          SWIG_exception_fail(SWIG_ArgError(res4),
@@ -11141,7 +11090,7 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self, Py_
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
          std_vector_Sl_Result_Sg____setslice____SWIG_1(
              arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
-             (std::vector<Result, std::allocator<Result>> const &)*arg4);
+             (std::vector<Result, std::allocator<Result> > const &)*arg4);
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
    } catch (std::out_of_range &_e) {
@@ -11172,7 +11121,7 @@ SWIGINTERN PyObject *_wrap__result_list___setslice__(PyObject *self, PyObject *a
    argv[0] = self;
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11192,7 +11141,7 @@ SWIGINTERN PyObject *_wrap__result_list___setslice__(PyObject *self, PyObject *a
    }
    if (argc == 4) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11205,7 +11154,7 @@ SWIGINTERN PyObject *_wrap__result_list___setslice__(PyObject *self, PyObject *a
                _v = SWIG_CheckState(res);
             }
             if (_v) {
-               int res = swig::asptr(argv[3], (std::vector<Result, std::allocator<Result>> **)(0));
+               int res = swig::asptr(argv[3], (std::vector<Result, std::allocator<Result> > **)(0));
                _v = SWIG_CheckState(res);
                if (_v) {
                   return _wrap__result_list___setslice____SWIG_1(self, argc, argv);
@@ -11217,8 +11166,7 @@ SWIGINTERN PyObject *_wrap__result_list___setslice__(PyObject *self, PyObject *a
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list___setslice__'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list___setslice__'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< Result >::__setslice__(std::vector< Result "
        ">::difference_type,std::vector< Result >::difference_type)\n"
@@ -11358,7 +11306,7 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_0(PyObject *self, Py_s
    SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *)0;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<Result, std::allocator<Result>> *result = 0;
+   std::vector<Result, std::allocator<Result> > *result = 0;
 
    if ((nobjs < 2) || (nobjs > 2)) {
       SWIG_fail;
@@ -11391,7 +11339,7 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_0(PyObject *self, Py_s
    try {
       {
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<Result, std::allocator<Result>> *)
+         result = (std::vector<Result, std::allocator<Result> > *)
              std_vector_Sl_Result_Sg____getitem____SWIG_0(arg1, arg2);
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
@@ -11412,7 +11360,7 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self, Py_s
    PyObject *resultobj = 0;
    std::vector<Result> *arg1 = (std::vector<Result> *)0;
    SWIGPY_SLICEOBJECT *arg2 = (SWIGPY_SLICEOBJECT *)0;
-   std::vector<Result, std::allocator<Result>> *arg3 = 0;
+   std::vector<Result, std::allocator<Result> > *arg3 = 0;
    void *argp1 = 0;
    int res1 = 0;
    int res3 = SWIG_OLDOBJ;
@@ -11446,8 +11394,8 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self, Py_s
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
    {
-      std::vector<Result, std::allocator<Result>> *ptr =
-          (std::vector<Result, std::allocator<Result>> *)0;
+      std::vector<Result, std::allocator<Result> > *ptr =
+          (std::vector<Result, std::allocator<Result> > *)0;
       res3 = swig::asptr(swig_obj[2], &ptr);
       if (!SWIG_IsOK(res3)) {
          SWIG_exception_fail(SWIG_ArgError(res3),
@@ -11476,7 +11424,7 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self, Py_s
       {
          SWIG_PYTHON_THREAD_BEGIN_ALLOW;
          std_vector_Sl_Result_Sg____setitem____SWIG_0(
-             arg1, arg2, (std::vector<Result, std::allocator<Result>> const &)*arg3);
+             arg1, arg2, (std::vector<Result, std::allocator<Result> > const &)*arg3);
          SWIG_PYTHON_THREAD_END_ALLOW;
       }
    } catch (std::out_of_range &_e) {
@@ -11613,7 +11561,7 @@ SWIGINTERN PyObject *_wrap__result_list___delitem__(PyObject *self, PyObject *ar
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11626,7 +11574,7 @@ SWIGINTERN PyObject *_wrap__result_list___delitem__(PyObject *self, PyObject *ar
    }
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11641,11 +11589,9 @@ SWIGINTERN PyObject *_wrap__result_list___delitem__(PyObject *self, PyObject *ar
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list___delitem__'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list___delitem__'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< Result >::__delitem__(std::vector< Result "
-       ">::difference_type)\n"
+       "    std::vector< Result >::__delitem__(std::vector< Result >::difference_type)\n"
        "    std::vector< Result >::__delitem__(SWIGPY_SLICEOBJECT *)\n");
    return 0;
 }
@@ -11717,7 +11663,7 @@ SWIGINTERN PyObject *_wrap__result_list___getitem__(PyObject *self, PyObject *ar
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11730,7 +11676,7 @@ SWIGINTERN PyObject *_wrap__result_list___getitem__(PyObject *self, PyObject *ar
    }
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11745,12 +11691,10 @@ SWIGINTERN PyObject *_wrap__result_list___getitem__(PyObject *self, PyObject *ar
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list___getitem__'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list___getitem__'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< Result >::__getitem__(SWIGPY_SLICEOBJECT *)\n"
-       "    std::vector< Result >::__getitem__(std::vector< Result "
-       ">::difference_type) const\n");
+       "    std::vector< Result >::__getitem__(std::vector< Result >::difference_type) const\n");
    return 0;
 }
 
@@ -11898,7 +11842,7 @@ SWIGINTERN PyObject *_wrap__result_list___setitem__(PyObject *self, PyObject *ar
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11911,7 +11855,7 @@ SWIGINTERN PyObject *_wrap__result_list___setitem__(PyObject *self, PyObject *ar
    }
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11925,14 +11869,14 @@ SWIGINTERN PyObject *_wrap__result_list___setitem__(PyObject *self, PyObject *ar
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
             _v = PySlice_Check(argv[1]);
          }
          if (_v) {
-            int res = swig::asptr(argv[2], (std::vector<Result, std::allocator<Result>> **)(0));
+            int res = swig::asptr(argv[2], (std::vector<Result, std::allocator<Result> > **)(0));
             _v = SWIG_CheckState(res);
             if (_v) {
                return _wrap__result_list___setitem____SWIG_0(self, argc, argv);
@@ -11942,7 +11886,7 @@ SWIGINTERN PyObject *_wrap__result_list___setitem__(PyObject *self, PyObject *ar
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -11961,16 +11905,14 @@ SWIGINTERN PyObject *_wrap__result_list___setitem__(PyObject *self, PyObject *ar
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list___setitem__'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list___setitem__'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< Result >::__setitem__(SWIGPY_SLICEOBJECT "
-       "*,std::vector< Result,std::allocator< Result > > const &)\n"
+       "    std::vector< Result >::__setitem__(SWIGPY_SLICEOBJECT *,std::vector< "
+       "Result,std::allocator< Result > > const &)\n"
        "    std::vector< Result >::__setitem__(SWIGPY_SLICEOBJECT *)\n"
-       "    std::vector< Result >::__setitem__(std::vector< Result "
-       ">::difference_type,std::vector< Result >::value_type const &)\n"
-       "    std::vector< Result >::__setitem__(std::vector< Result "
-       ">::difference_type)\n");
+       "    std::vector< Result >::__setitem__(std::vector< Result >::difference_type,std::vector< "
+       "Result >::value_type const &)\n"
+       "    std::vector< Result >::__setitem__(std::vector< Result >::difference_type)\n");
    return 0;
 }
 
@@ -12103,8 +12045,8 @@ SWIGINTERN int _wrap_new__result_list__SWIG_1(PyObject *self, Py_ssize_t nobjs,
       SWIG_fail;
    }
    {
-      std::vector<Result, std::allocator<Result>> *ptr =
-          (std::vector<Result, std::allocator<Result>> *)0;
+      std::vector<Result, std::allocator<Result> > *ptr =
+          (std::vector<Result, std::allocator<Result> > *)0;
       res1 = swig::asptr(swig_obj[0], &ptr);
       if (!SWIG_IsOK(res1)) {
          SWIG_exception_fail(SWIG_ArgError(res1),
@@ -12452,7 +12394,7 @@ SWIGINTERN PyObject *_wrap__result_list_get_allocator(PyObject *self, PyObject *
    std::vector<Result> *arg1 = (std::vector<Result> *)0;
    void *argp1 = 0;
    int res1 = 0;
-   SwigValueWrapper<std::allocator<Result>> result;
+   SwigValueWrapper<std::allocator<Result> > result;
 
    if (!SWIG_Python_UnpackTuple(args, "_result_list_get_allocator", 0, 0, 0)) {
       SWIG_fail;
@@ -12770,7 +12712,7 @@ SWIGINTERN PyObject *_wrap__result_list_erase(PyObject *self, PyObject *args) {
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -12785,7 +12727,7 @@ SWIGINTERN PyObject *_wrap__result_list_erase(PyObject *self, PyObject *args) {
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -12809,12 +12751,11 @@ SWIGINTERN PyObject *_wrap__result_list_erase(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list_erase'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list_erase'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< Result >::erase(std::vector< Result >::iterator)\n"
-       "    std::vector< Result >::erase(std::vector< Result "
-       ">::iterator,std::vector< Result >::iterator)\n");
+       "    std::vector< Result >::erase(std::vector< Result >::iterator,std::vector< Result "
+       ">::iterator)\n");
    return 0;
 }
 
@@ -12907,7 +12848,7 @@ SWIGINTERN int _wrap_new__result_list(PyObject *self, PyObject *args, PyObject *
    }
    if (argc == 1) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          return _wrap_new__result_list__SWIG_1(self, argc, argv);
@@ -12930,14 +12871,13 @@ SWIGINTERN int _wrap_new__result_list(PyObject *self, PyObject *args, PyObject *
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'new__result_list'.\n"
+       "Wrong number or type of arguments for overloaded function 'new__result_list'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< Result >::vector()\n"
        "    std::vector< Result >::vector(std::vector< Result > const &)\n"
        "    std::vector< Result >::vector(std::vector< Result >::size_type)\n"
-       "    std::vector< Result >::vector(std::vector< Result "
-       ">::size_type,std::vector< Result >::value_type const &)\n");
+       "    std::vector< Result >::vector(std::vector< Result >::size_type,std::vector< Result "
+       ">::value_type const &)\n");
    return -1;
 }
 
@@ -13230,7 +13170,7 @@ SWIGINTERN PyObject *_wrap__result_list_resize(PyObject *self, PyObject *args) {
    argv[0] = self;
    if (argc == 2) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -13244,7 +13184,7 @@ SWIGINTERN PyObject *_wrap__result_list_resize(PyObject *self, PyObject *args) {
    }
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          {
@@ -13263,12 +13203,11 @@ SWIGINTERN PyObject *_wrap__result_list_resize(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list_resize'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list_resize'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    std::vector< Result >::resize(std::vector< Result >::size_type)\n"
-       "    std::vector< Result >::resize(std::vector< Result "
-       ">::size_type,std::vector< Result >::value_type const &)\n");
+       "    std::vector< Result >::resize(std::vector< Result >::size_type,std::vector< Result "
+       ">::value_type const &)\n");
    return 0;
 }
 
@@ -13481,7 +13420,7 @@ SWIGINTERN PyObject *_wrap__result_list_insert(PyObject *self, PyObject *args) {
    argv[0] = self;
    if (argc == 3) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -13500,7 +13439,7 @@ SWIGINTERN PyObject *_wrap__result_list_insert(PyObject *self, PyObject *args) {
    }
    if (argc == 4) {
       int _v = 0;
-      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result>> **)(0));
+      int res = swig::asptr(argv[0], (std::vector<Result, std::allocator<Result> > **)(0));
       _v = SWIG_CheckState(res);
       if (_v) {
          swig::SwigPyIterator *iter = 0;
@@ -13526,14 +13465,12 @@ SWIGINTERN PyObject *_wrap__result_list_insert(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function "
-       "'_result_list_insert'.\n"
+       "Wrong number or type of arguments for overloaded function '_result_list_insert'.\n"
        "  Possible C/C++ prototypes are:\n"
-       "    std::vector< Result >::insert(std::vector< Result "
-       ">::iterator,std::vector< Result >::value_type const &)\n"
-       "    std::vector< Result >::insert(std::vector< Result "
-       ">::iterator,std::vector< Result >::size_type,std::vector< Result "
-       ">::value_type const &)\n");
+       "    std::vector< Result >::insert(std::vector< Result >::iterator,std::vector< Result "
+       ">::value_type const &)\n"
+       "    std::vector< Result >::insert(std::vector< Result >::iterator,std::vector< Result "
+       ">::size_type,std::vector< Result >::value_type const &)\n");
    return 0;
 }
 
@@ -13659,31 +13596,23 @@ fail:
 }
 
 SWIGPY_GETITERFUNC_CLOSURE(
-    _wrap__result_list_iterator) /* defines
-                                    _wrap__result_list_iterator_getiterfunc_closure
-                                  */
+    _wrap__result_list_iterator) /* defines _wrap__result_list_iterator_getiterfunc_closure */
 
 SWIGPY_INQUIRY_CLOSURE(
-    _wrap__result_list___nonzero__) /* defines
-                                       _wrap__result_list___nonzero___inquiry_closure
-                                     */
+    _wrap__result_list___nonzero__) /* defines _wrap__result_list___nonzero___inquiry_closure */
 
-SWIGPY_LENFUNC_CLOSURE(_wrap__result_list___len__) /* defines
-                                                      _wrap__result_list___len___lenfunc_closure */
+SWIGPY_LENFUNC_CLOSURE(
+    _wrap__result_list___len__) /* defines _wrap__result_list___len___lenfunc_closure */
 
 SWIGPY_BINARYFUNC_CLOSURE(
-    _wrap__result_list___getitem__) /* defines
-                                       _wrap__result_list___getitem___binaryfunc_closure
-                                     */
+    _wrap__result_list___getitem__) /* defines _wrap__result_list___getitem___binaryfunc_closure */
 
 SWIGPY_OBJOBJARGPROC_CLOSURE(
-    _wrap__result_list___setitem__) /* defines
-                                       _wrap__result_list___setitem___objobjargproc_closure
+    _wrap__result_list___setitem__) /* defines _wrap__result_list___setitem___objobjargproc_closure
                                      */
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete__result_list) /* defines
-                                                        _wrap_delete__result_list_destructor_closure
-                                                      */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete__result_list) /* defines _wrap_delete__result_list_destructor_closure */
 
 SWIGINTERN int _wrap_new_Session(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -14129,7 +14058,7 @@ SWIGINTERN PyObject *_wrap_Session_walk__SWIG_0(PyObject *self, Py_ssize_t nobjs
    std::string arg2;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<Result, std::allocator<Result>> result;
+   std::vector<Result, std::allocator<Result> > result;
 
    if ((nobjs < 2) || (nobjs > 2)) {
       SWIG_fail;
@@ -14176,7 +14105,7 @@ SWIGINTERN PyObject *_wrap_Session_walk__SWIG_0(PyObject *self, Py_ssize_t nobjs
          SWIG_fail;
       }
    }
-   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result>>>(result));
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
    return resultobj;
 fail:
    return NULL;
@@ -14188,7 +14117,7 @@ SWIGINTERN PyObject *_wrap_Session_walk__SWIG_1(PyObject *self, Py_ssize_t nobjs
    Session *arg1 = (Session *)0;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<Result, std::allocator<Result>> result;
+   std::vector<Result, std::allocator<Result> > result;
 
    if ((nobjs < 1) || (nobjs > 1)) {
       SWIG_fail;
@@ -14217,7 +14146,7 @@ SWIGINTERN PyObject *_wrap_Session_walk__SWIG_1(PyObject *self, Py_ssize_t nobjs
          SWIG_fail;
       }
    }
-   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result>>>(result));
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
    return resultobj;
 fail:
    return NULL;
@@ -14257,8 +14186,7 @@ SWIGINTERN PyObject *_wrap_Session_walk(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for "
-       "overloaded function 'Session_walk'.\n"
+       "Wrong number or type of arguments for overloaded function 'Session_walk'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    Session::walk(std::string)\n"
        "    Session::walk()\n");
@@ -14268,12 +14196,12 @@ fail:
 SWIGINTERN PyObject *_wrap_Session_bulk_walk(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    Session *arg1 = (Session *)0;
-   std::vector<std::string, std::allocator<std::string>> *arg2 = 0;
+   std::vector<std::string, std::allocator<std::string> > *arg2 = 0;
    void *argp1 = 0;
    int res1 = 0;
    int res2 = SWIG_OLDOBJ;
    PyObject *swig_obj[2];
-   std::vector<std::string, std::allocator<std::string>> result;
+   std::vector<std::string, std::allocator<std::string> > result;
 
    if (!args) {
       SWIG_fail;
@@ -14292,8 +14220,8 @@ SWIGINTERN PyObject *_wrap_Session_bulk_walk(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<Session *>(argp1);
    {
-      std::vector<std::string, std::allocator<std::string>> *ptr =
-          (std::vector<std::string, std::allocator<std::string>> *)0;
+      std::vector<std::string, std::allocator<std::string> > *ptr =
+          (std::vector<std::string, std::allocator<std::string> > *)0;
       res2 = swig::asptr(swig_obj[0], &ptr);
       if (!SWIG_IsOK(res2)) {
          SWIG_exception_fail(SWIG_ArgError(res2),
@@ -14323,7 +14251,7 @@ SWIGINTERN PyObject *_wrap_Session_bulk_walk(PyObject *self, PyObject *args) {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
             result = (arg1)->bulk_walk(
-                (std::vector<std::string, std::allocator<std::string>> const &)*arg2);
+                (std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14332,7 +14260,7 @@ SWIGINTERN PyObject *_wrap_Session_bulk_walk(PyObject *self, PyObject *args) {
       }
    }
    resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string>>>(result));
+       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
    if (SWIG_IsNewObj(res2)) {
       delete arg2;
    }
@@ -14351,7 +14279,7 @@ SWIGINTERN PyObject *_wrap_Session_get__SWIG_0(PyObject *self, Py_ssize_t nobjs,
    std::string arg2;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<std::string, std::allocator<std::string>> result;
+   std::vector<std::string, std::allocator<std::string> > result;
 
    if ((nobjs < 2) || (nobjs > 2)) {
       SWIG_fail;
@@ -14399,7 +14327,7 @@ SWIGINTERN PyObject *_wrap_Session_get__SWIG_0(PyObject *self, Py_ssize_t nobjs,
       }
    }
    resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string>>>(result));
+       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
    return resultobj;
 fail:
    return NULL;
@@ -14411,7 +14339,7 @@ SWIGINTERN PyObject *_wrap_Session_get__SWIG_1(PyObject *self, Py_ssize_t nobjs,
    Session *arg1 = (Session *)0;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<std::string, std::allocator<std::string>> result;
+   std::vector<std::string, std::allocator<std::string> > result;
 
    if ((nobjs < 1) || (nobjs > 1)) {
       SWIG_fail;
@@ -14441,7 +14369,7 @@ SWIGINTERN PyObject *_wrap_Session_get__SWIG_1(PyObject *self, Py_ssize_t nobjs,
       }
    }
    resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string>>>(result));
+       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
    return resultobj;
 fail:
    return NULL;
@@ -14481,8 +14409,7 @@ SWIGINTERN PyObject *_wrap_Session_get(PyObject *self, PyObject *args) {
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for "
-       "overloaded function 'Session_get'.\n"
+       "Wrong number or type of arguments for overloaded function 'Session_get'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    Session::get(std::string)\n"
        "    Session::get()\n");
@@ -14492,12 +14419,12 @@ fail:
 SWIGINTERN PyObject *_wrap_Session_bulk_get(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    Session *arg1 = (Session *)0;
-   std::vector<std::string, std::allocator<std::string>> *arg2 = 0;
+   std::vector<std::string, std::allocator<std::string> > *arg2 = 0;
    void *argp1 = 0;
    int res1 = 0;
    int res2 = SWIG_OLDOBJ;
    PyObject *swig_obj[2];
-   std::vector<std::string, std::allocator<std::string>> result;
+   std::vector<std::string, std::allocator<std::string> > result;
 
    if (!args) {
       SWIG_fail;
@@ -14516,8 +14443,8 @@ SWIGINTERN PyObject *_wrap_Session_bulk_get(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<Session *>(argp1);
    {
-      std::vector<std::string, std::allocator<std::string>> *ptr =
-          (std::vector<std::string, std::allocator<std::string>> *)0;
+      std::vector<std::string, std::allocator<std::string> > *ptr =
+          (std::vector<std::string, std::allocator<std::string> > *)0;
       res2 = swig::asptr(swig_obj[0], &ptr);
       if (!SWIG_IsOK(res2)) {
          SWIG_exception_fail(SWIG_ArgError(res2),
@@ -14547,7 +14474,7 @@ SWIGINTERN PyObject *_wrap_Session_bulk_get(PyObject *self, PyObject *args) {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
             result = (arg1)->bulk_get(
-                (std::vector<std::string, std::allocator<std::string>> const &)*arg2);
+                (std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14556,7 +14483,7 @@ SWIGINTERN PyObject *_wrap_Session_bulk_get(PyObject *self, PyObject *args) {
       }
    }
    resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string>>>(result));
+       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
    if (SWIG_IsNewObj(res2)) {
       delete arg2;
    }
@@ -14565,6 +14492,689 @@ fail:
    if (SWIG_IsNewObj(res2)) {
       delete arg2;
    }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_args(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::vector<std::string, std::allocator<std::string> > *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_args", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_args"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (std::vector<std::string, std::allocator<std::string> > *)&((Session const *)arg1)
+                    ->args();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj =
+       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_hostname(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_hostname", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_hostname"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->hostname();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_port_number(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_port_number", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_port_number"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->port_number();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_version(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_version", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_version"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->version();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_community(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_community", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_community"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->community();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_auth_protocol(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_auth_protocol", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_auth_protocol"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->auth_protocol();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_auth_passphrase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_auth_passphrase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_auth_passphrase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->auth_passphrase();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_security_engine_id(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_security_engine_id", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_security_engine_id"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->security_engine_id();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_context_engine_id(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_context_engine_id", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_context_engine_id"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->context_engine_id();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_security_level(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_security_level", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_security_level"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->security_level();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_context(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_context", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_context"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->context();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_security_username(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_security_username", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_security_username"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->security_username();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_privacy_protocol(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_privacy_protocol", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_privacy_protocol"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->privacy_protocol();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_privacy_passphrase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_privacy_passphrase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_privacy_passphrase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->privacy_passphrase();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_boots_time(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_boots_time", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_boots_time"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->boots_time();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_retires(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_retires", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_retires"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->retires();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Session_timeout(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Session *arg1 = (Session *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Session_timeout", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Session, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Session_timeout"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Session const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Session *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::string *)&((Session const *)arg1)->timeout();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
    return NULL;
 }
 
@@ -15222,8 +15832,7 @@ static PyHeapTypeObject SwigPyBuiltin__std__vectorT_std__string_t_type = {
         "std::vector< std::string >",                          /* tp_doc */
         (traverseproc)0,                                       /* tp_traverse */
         (inquiry)0,                                            /* tp_clear */
-        SwigPyBuiltin__std__vectorT_std__string_t_richcompare, /* tp_richcompare
-                                                                */
+        SwigPyBuiltin__std__vectorT_std__string_t_richcompare, /* tp_richcompare */
         0,                                                     /* tp_weaklistoffset */
         _wrap__string_list_iterator_getiterfunc_closure,       /* tp_iter */
         (iternextfunc)0,                                       /* tp_iternext */
@@ -15337,8 +15946,7 @@ static PyHeapTypeObject SwigPyBuiltin__std__vectorT_std__string_t_type = {
     {
         (lenfunc)0,                                           /* mp_length */
         _wrap__string_list___getitem___binaryfunc_closure,    /* mp_subscript */
-        _wrap__string_list___setitem___objobjargproc_closure, /* mp_ass_subscript
-                                                               */
+        _wrap__string_list___setitem___objobjargproc_closure, /* mp_ass_subscript */
     },
     {
         _wrap__string_list___len___lenfunc_closure, /* sq_length */
@@ -15642,8 +16250,7 @@ static PyHeapTypeObject SwigPyBuiltin__std__vectorT_Result_t_type = {
     {
         (lenfunc)0,                                           /* mp_length */
         _wrap__result_list___getitem___binaryfunc_closure,    /* mp_subscript */
-        _wrap__result_list___setitem___objobjargproc_closure, /* mp_ass_subscript
-                                                               */
+        _wrap__result_list___setitem___objobjargproc_closure, /* mp_ass_subscript */
     },
     {
         _wrap__result_list___len___lenfunc_closure, /* sq_length */
@@ -15723,6 +16330,33 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__Session_methods[] = {
     {"bulk_walk", _wrap_Session_bulk_walk, METH_O, "bulk_walk(self, mibs) -> _string_list"},
     {"get", _wrap_Session_get, METH_VARARGS, "get(self, mib=\"\") -> _string_list"},
     {"bulk_get", _wrap_Session_bulk_get, METH_O, "bulk_get(self, mibs) -> _string_list"},
+    {"args", _wrap_Session_args, METH_NOARGS, "args(self) -> _string_list"},
+    {"hostname", _wrap_Session_hostname, METH_NOARGS, "hostname(self) -> std::string const &"},
+    {"port_number", _wrap_Session_port_number, METH_NOARGS,
+     "port_number(self) -> std::string const &"},
+    {"version", _wrap_Session_version, METH_NOARGS, "version(self) -> std::string const &"},
+    {"community", _wrap_Session_community, METH_NOARGS, "community(self) -> std::string const &"},
+    {"auth_protocol", _wrap_Session_auth_protocol, METH_NOARGS,
+     "auth_protocol(self) -> std::string const &"},
+    {"auth_passphrase", _wrap_Session_auth_passphrase, METH_NOARGS,
+     "auth_passphrase(self) -> std::string const &"},
+    {"security_engine_id", _wrap_Session_security_engine_id, METH_NOARGS,
+     "security_engine_id(self) -> std::string const &"},
+    {"context_engine_id", _wrap_Session_context_engine_id, METH_NOARGS,
+     "context_engine_id(self) -> std::string const &"},
+    {"security_level", _wrap_Session_security_level, METH_NOARGS,
+     "security_level(self) -> std::string const &"},
+    {"context", _wrap_Session_context, METH_NOARGS, "context(self) -> std::string const &"},
+    {"security_username", _wrap_Session_security_username, METH_NOARGS,
+     "security_username(self) -> std::string const &"},
+    {"privacy_protocol", _wrap_Session_privacy_protocol, METH_NOARGS,
+     "privacy_protocol(self) -> std::string const &"},
+    {"privacy_passphrase", _wrap_Session_privacy_passphrase, METH_NOARGS,
+     "privacy_passphrase(self) -> std::string const &"},
+    {"boots_time", _wrap_Session_boots_time, METH_NOARGS,
+     "boots_time(self) -> std::string const &"},
+    {"retires", _wrap_Session_retires, METH_NOARGS, "retires(self) -> std::string const &"},
+    {"timeout", _wrap_Session_timeout, METH_NOARGS, "timeout(self) -> std::string const &"},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -15961,8 +16595,7 @@ static swig_type_info _swigt__p_std__allocatorT_Result_t = {
     0};
 static swig_type_info _swigt__p_std__allocatorT_std__string_t = {
     "_p_std__allocatorT_std__string_t",
-    "std::vector< std::string >::allocator_type *|std::allocator< std::string "
-    "> *",
+    "std::vector< std::string >::allocator_type *|std::allocator< std::string > *",
     0,
     0,
     (void *)0,
@@ -15978,8 +16611,7 @@ static swig_type_info _swigt__p_std__vectorT_Result_t = {
     0};
 static swig_type_info _swigt__p_std__vectorT_std__string_t = {
     "_p_std__vectorT_std__string_t",
-    "std::vector< std::string,std::allocator< std::string > > *|std::vector< "
-    "std::string > *",
+    "std::vector< std::string,std::allocator< std::string > > *|std::vector< std::string > *",
     0,
     0,
     (void *)&SwigPyBuiltin__std__vectorT_std__string_t_clientdata,
@@ -16101,8 +16733,7 @@ static PyTypeObject *builtin_bases[2];
  *  3) Finally, if cast->type has not already been loaded, then we add that
  *     swig_cast_info to the linked list (because the cast->type) pointer will
  *     be correct.
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -16142,13 +16773,11 @@ SWIGRUNTIME void SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
       /* so set the swig module into the interpreter */
       SWIG_SetModule(clientdata, &swig_module);
    } else {
-      /* the interpreter has loaded a SWIG module, but has it loaded this one?
-       */
+      /* the interpreter has loaded a SWIG module, but has it loaded this one? */
       iter = module_head;
       do {
          if (iter == &swig_module) {
-            /* Our module is already in the list, so there's nothing more to do.
-             */
+            /* Our module is already in the list, so there's nothing more to do. */
             return;
          }
          iter = iter->next;
@@ -16159,10 +16788,10 @@ SWIGRUNTIME void SWIG_InitializeModule(SWIG_INIT_CLIENT_DATA_TYPE clientdata) {
       module_head->next = &swig_module;
    }
 
-   /* When multiple interpreters are used, a module could have already been
-      initialized in a different interpreter, but not yet have a pointer in this
-      interpreter. In this case, we do not want to continue adding types...
-      everything should be set up already */
+   /* When multiple interpreters are used, a module could have already been initialized in
+        a different interpreter, but not yet have a pointer in this interpreter.
+        In this case, we do not want to continue adding types... everything should be
+        set up already */
    if (init == 0) {
       return;
    }
@@ -16317,8 +16946,7 @@ extern "C" {
 
 /* -----------------------------------------------------------------------------
  * constants/methods manipulation
- * -----------------------------------------------------------------------------
- */
+ * ----------------------------------------------------------------------------- */
 
 /* Install Constants */
 SWIGINTERN void SWIG_Python_InstallConstants(PyObject *d, swig_const_info constants[]) {
@@ -16452,8 +17080,8 @@ void
 
    (void)globals;
 
-   /* Create singletons now to avoid potential deadlocks with multi-threaded
-    * usage after module initialization */
+   /* Create singletons now to avoid potential deadlocks with multi-threaded usage after module
+    * initialization */
    SWIG_This();
    SWIG_Python_TypeCache();
    SwigPyPacked_type();
@@ -16486,8 +17114,7 @@ void
       SwigPyObject_clientdata.pytype = swigpyobject;
    } else if (swigpyobject->tp_basicsize != cd->pytype->tp_basicsize) {
       PyErr_SetString(PyExc_RuntimeError,
-                      "Import error: attempted to load two "
-                      "incompatible swig-generated modules.");
+                      "Import error: attempted to load two incompatible swig-generated modules.");
 #if PY_VERSION_HEX >= 0x03000000
       return NULL;
 #else

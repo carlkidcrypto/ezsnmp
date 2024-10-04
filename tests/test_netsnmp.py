@@ -205,14 +205,14 @@ def test_snmpbulkget(netsnmp_args):
                 ],
                 2,
                 8,
-                netsnmp_args
+                netsnmp_args,
             )
     else:
         res = snmpbulkget(
             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"],
             2,
             8,
-            netsnmp_args
+            netsnmp_args,
         )
 
         assert len(res) == 26
