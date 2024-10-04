@@ -193,6 +193,7 @@ setup(
                 "ezsnmp/src/snmpget.cpp",
                 "ezsnmp/src/snmpwalk.cpp",
                 "ezsnmp/src/snmpset.cpp",
+                "ezsnmp/src/snmptrap.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,

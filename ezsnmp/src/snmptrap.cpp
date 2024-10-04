@@ -146,7 +146,7 @@ int snmptrap(std::vector<std::string> const &args) {
    }
 
    /** parse args (also initializes session) */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", snmptrap_optProc)) {
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          goto out;
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
