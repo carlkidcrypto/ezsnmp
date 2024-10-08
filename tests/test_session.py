@@ -2,7 +2,6 @@ import platform
 import random
 import re
 import pytest
-from time import sleep
 
 from ezsnmp.session import Session
 
@@ -419,9 +418,6 @@ def test_session_bulkwalk(sess):
 
 
 def test_session_walk_all(sess):
-    # Introduce some radom sleep to prevent us DDoSing our own snmp test server.
-    sleep(random.uniform(0.1, 0.500))
-
     # OID 1.3.6.1.6.3.16.1.5.2.1.6.6.95.110.111.110.101.95.1.2
     # or SNMP-VIEW-BASED-ACM-MIB::vacmViewTreeFamilyStatus."_none_".1.2
     # appears to return a noSuchName error when using v1, but not with v2c.

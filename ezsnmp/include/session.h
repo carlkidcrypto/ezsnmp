@@ -23,7 +23,7 @@ class Session {
    std::string m_privacy_protocol;
    std::string m_privacy_passphrase;
    std::string m_boots_time;
-   std::string m_retires;
+   std::string m_retries;
    std::string m_timeout;
    void populate_args();
 
@@ -35,7 +35,7 @@ class Session {
            std::string security_level = "", std::string context = "",
            std::string security_username = "", std::string privacy_protocol = "",
            std::string privacy_passphrase = "", std::string boots_time = "",
-           std::string retires = "3", std::string timeout = "1");
+           std::string retries = "3", std::string timeout = "1");
    ~Session();
 
    std::vector<Result> walk(std::string mib = "");
@@ -44,23 +44,23 @@ class Session {
    std::vector<std::string> bulk_get(std::vector<std::string> const& mibs);
 
    // Const getters
-   std::vector<std::string> const& args() const;
-   std::string const& hostname() const;
-   std::string const& port_number() const;
-   std::string const& version() const;
-   std::string const& community() const;
-   std::string const& auth_protocol() const;
-   std::string const& auth_passphrase() const;
-   std::string const& security_engine_id() const;
-   std::string const& context_engine_id() const;
-   std::string const& security_level() const;
-   std::string const& context() const;
-   std::string const& security_username() const;
-   std::string const& privacy_protocol() const;
-   std::string const& privacy_passphrase() const;
-   std::string const& boots_time() const;
-   std::string const& retires() const;
-   std::string const& timeout() const;
+   std::vector<std::string> const& get_args() const;
+   std::string const& get_hostname() const;
+   std::string const& get_port_number() const;
+   std::string const& get_version() const;
+   std::string const& get_community() const;
+   std::string const& get_auth_protocol() const;
+   std::string const& get_auth_passphrase() const;
+   std::string const& get_security_engine_id() const;
+   std::string const& get_context_engine_id() const;
+   std::string const& get_security_level() const;
+   std::string const& get_context() const;
+   std::string const& get_security_username() const;
+   std::string const& get_privacy_protocol() const;
+   std::string const& get_privacy_passphrase() const;
+   std::string const& get_boots_time() const;
+   std::string const& get_retries() const;
+   std::string const& get_timeout() const;
 };
 
 #endif // SESSION_H

@@ -5,6 +5,7 @@
 %include "datatypes.i"
 
 %feature("kwargs") Session::Session;
+%feature("python:annotations", "c");
 
 // Tell SWIG how to handle our special return type(s) from C++
 %template(_string_list) std::vector<std::string>;

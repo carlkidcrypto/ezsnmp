@@ -4,6 +4,8 @@
 %include "stl.i"
 %include "datatypes.i"
 
+%feature("python:annotations", "c");
+
 // Tell SWIG how to handle our special return type(s) from C++
 %template(_string_list) std::vector<std::string>;
 %template(_result_list) std::vector<Result>;
