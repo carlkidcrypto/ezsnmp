@@ -61,6 +61,24 @@ class SessionBase {
    std::string const& _get_boots_time() const;
    std::string const& _get_retries() const;
    std::string const& _get_timeout() const;
+
+   // Setters
+   void _set_hostname(std::string const& hostname);
+   void _set_port_number(std::string const& port_number);
+   void _set_version(std::string const& version);
+   void _set_community(std::string const& community);
+   void _set_auth_protocol(std::string const& auth_protocol);
+   void _set_auth_passphrase(std::string const& auth_passphrase);
+   void _set_security_engine_id(std::string const& security_engine_id);
+   void _set_context_engine_id(std::string const& context_engine_id);
+   void _set_security_level(std::string const& security_level);
+   void _set_context(std::string const& context);
+   void _set_security_username(std::string const& security_username);
+   void _set_privacy_protocol(std::string const& privacy_protocol);
+   void _set_privacy_passphrase(std::string const& privacy_passphrase);
+   void _set_boots_time(std::string const& boots_time);
+   void _set_retries(std::string const& retries);
+   void _set_timeout(std::string const& timeout);
 };
 
 #endif // SESSIONBASE_H

@@ -99,6 +99,8 @@ SessionBase::SessionBase(std::string hostname, std::string port_number, std::str
 SessionBase::~SessionBase() {}
 
 void SessionBase::populate_args() {
+   m_args.clear();
+
    // Convert arguments to m_argc and m_argv
    std::map<std::string, std::string> input_arg_name_map = {
        {"hostname", m_hostname},
@@ -143,6 +145,8 @@ void SessionBase::populate_args() {
 }
 
 std::vector<Result> SessionBase::walk(std::string mib) {
+   populate_args();
+
    if (!mib.empty()) {
       m_args.push_back(mib);
    }
@@ -151,6 +155,8 @@ std::vector<Result> SessionBase::walk(std::string mib) {
 }
 
 std::vector<std::string> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
+   populate_args();
+
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
    }
@@ -159,6 +165,8 @@ std::vector<std::string> SessionBase::bulk_walk(std::vector<std::string> const& 
 }
 
 std::vector<std::string> SessionBase::get(std::string mib) {
+   populate_args();
+
    if (!mib.empty()) {
       m_args.push_back(mib);
    }
@@ -167,6 +175,8 @@ std::vector<std::string> SessionBase::get(std::string mib) {
 }
 
 std::vector<std::string> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
+   populate_args();
+
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
    }
@@ -191,3 +201,35 @@ std::string const& SessionBase::_get_privacy_passphrase() const { return m_priva
 std::string const& SessionBase::_get_boots_time() const { return m_boots_time; }
 std::string const& SessionBase::_get_retries() const { return m_retries; }
 std::string const& SessionBase::_get_timeout() const { return m_timeout; }
+void SessionBase::_set_hostname(std::string const& hostname) { m_hostname = hostname; }
+void SessionBase::_set_port_number(std::string const& port_number) { m_port_number = port_number; }
+void SessionBase::_set_version(std::string const& version) { m_version = version; }
+void SessionBase::_set_community(std::string const& community) { m_community = community; }
+void SessionBase::_set_auth_protocol(std::string const& auth_protocol) {
+   m_auth_protocol = auth_protocol;
+}
+void SessionBase::_set_auth_passphrase(std::string const& auth_passphrase) {
+   m_auth_passphrase = auth_passphrase;
+}
+void SessionBase::_set_security_engine_id(std::string const& security_engine_id) {
+   m_security_engine_id = security_engine_id;
+}
+void SessionBase::_set_context_engine_id(std::string const& context_engine_id) {
+   m_context_engine_id = context_engine_id;
+}
+void SessionBase::_set_security_level(std::string const& security_level) {
+   m_security_level = security_level;
+}
+void SessionBase::_set_context(std::string const& context) { m_context = context; }
+void SessionBase::_set_security_username(std::string const& security_username) {
+   m_security_username = security_username;
+}
+void SessionBase::_set_privacy_protocol(std::string const& privacy_protocol) {
+   m_privacy_protocol = privacy_protocol;
+}
+void SessionBase::_set_privacy_passphrase(std::string const& privacy_passphrase) {
+   m_privacy_passphrase = privacy_passphrase;
+}
+void SessionBase::_set_boots_time(std::string const& boots_time) { m_boots_time = boots_time; }
+void SessionBase::_set_retries(std::string const& retries) { m_retries = retries; }
+void SessionBase::_set_timeout(std::string const& timeout) { m_timeout = timeout; }

@@ -15179,6 +15179,1206 @@ fail:
    return NULL;
 }
 
+SWIGINTERN PyObject *_wrap_SessionBase__set_hostname(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_hostname"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_hostname"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_hostname"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_hostname((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_port_number(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_port_number"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_port_number"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_port_number"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_port_number((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_version(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_version"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_version"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_version"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_version((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_community(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_community"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_community"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_community"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_community((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_auth_protocol(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_auth_protocol"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_auth_protocol"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_auth_protocol"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_auth_protocol((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_auth_passphrase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_auth_passphrase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_auth_passphrase"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_auth_passphrase"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_auth_passphrase((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_security_engine_id(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_security_engine_id"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_security_engine_id"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_security_engine_id"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_security_engine_id((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_context_engine_id(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_context_engine_id"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_context_engine_id"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_context_engine_id"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_context_engine_id((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_security_level(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_security_level"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_security_level"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_security_level"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_security_level((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_context(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_context"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_context"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_context"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_context((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_security_username(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_security_username"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_security_username"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_security_username"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_security_username((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_privacy_protocol(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_privacy_protocol"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_privacy_protocol"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_privacy_protocol"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_privacy_protocol((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_privacy_passphrase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_privacy_passphrase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_privacy_passphrase"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_privacy_passphrase"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_privacy_passphrase((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_boots_time(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_boots_time"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_boots_time"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_boots_time"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_boots_time((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_retries(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_retries"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_retries"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_retries"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_retries((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SessionBase__set_timeout(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase__set_timeout"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase__set_timeout"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase__set_timeout"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->_set_timeout((std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
 SWIGPY_DESTRUCTOR_CLOSURE(
     _wrap_delete_SessionBase) /* defines _wrap_delete_SessionBase_destructor_closure */
 
@@ -16365,6 +17565,32 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__SessionBase_methods[] = {
      "_get_retries(self) -> std::string const &"},
     {"_get_timeout", _wrap_SessionBase__get_timeout, METH_NOARGS,
      "_get_timeout(self) -> std::string const &"},
+    {"_set_hostname", _wrap_SessionBase__set_hostname, METH_O, "_set_hostname(self, hostname)"},
+    {"_set_port_number", _wrap_SessionBase__set_port_number, METH_O,
+     "_set_port_number(self, port_number)"},
+    {"_set_version", _wrap_SessionBase__set_version, METH_O, "_set_version(self, version)"},
+    {"_set_community", _wrap_SessionBase__set_community, METH_O, "_set_community(self, community)"},
+    {"_set_auth_protocol", _wrap_SessionBase__set_auth_protocol, METH_O,
+     "_set_auth_protocol(self, auth_protocol)"},
+    {"_set_auth_passphrase", _wrap_SessionBase__set_auth_passphrase, METH_O,
+     "_set_auth_passphrase(self, auth_passphrase)"},
+    {"_set_security_engine_id", _wrap_SessionBase__set_security_engine_id, METH_O,
+     "_set_security_engine_id(self, security_engine_id)"},
+    {"_set_context_engine_id", _wrap_SessionBase__set_context_engine_id, METH_O,
+     "_set_context_engine_id(self, context_engine_id)"},
+    {"_set_security_level", _wrap_SessionBase__set_security_level, METH_O,
+     "_set_security_level(self, security_level)"},
+    {"_set_context", _wrap_SessionBase__set_context, METH_O, "_set_context(self, context)"},
+    {"_set_security_username", _wrap_SessionBase__set_security_username, METH_O,
+     "_set_security_username(self, security_username)"},
+    {"_set_privacy_protocol", _wrap_SessionBase__set_privacy_protocol, METH_O,
+     "_set_privacy_protocol(self, privacy_protocol)"},
+    {"_set_privacy_passphrase", _wrap_SessionBase__set_privacy_passphrase, METH_O,
+     "_set_privacy_passphrase(self, privacy_passphrase)"},
+    {"_set_boots_time", _wrap_SessionBase__set_boots_time, METH_O,
+     "_set_boots_time(self, boots_time)"},
+    {"_set_retries", _wrap_SessionBase__set_retries, METH_O, "_set_retries(self, retries)"},
+    {"_set_timeout", _wrap_SessionBase__set_timeout, METH_O, "_set_timeout(self, timeout)"},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
