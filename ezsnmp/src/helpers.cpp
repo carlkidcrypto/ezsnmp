@@ -76,13 +76,21 @@ Result parse_result(std::string const &input) {
    std::smatch second_match;
 
    if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
-      result.oid = second_match[1].str();
-      result.index = second_match[2].str();
+      std::string temp_oid = second_match[1].str(); // Create temporary strings
+      std::string temp_index = second_match[2].str();
+      result.oid = std::move(temp_oid); // Move from temporary strings
+      result.index = std::move(temp_index);
    } else if (std::regex_match(result.oid, first_match, OID_INDEX_RE)) {
-      result.oid = first_match[1].str();
-      result.index = first_match[2].str();
+      std::string temp_oid = first_match[1].str(); // Create temporary strings
+      std::string temp_index = first_match[2].str();
+      result.oid = std::move(temp_oid); // Move from temporary strings
+      result.index = std::move(temp_index);
+
    } else if (result.oid == ".") {
-      result.index = ""; // oid remains "."
+      result.index = "";
+   } else {
+      // Default case if no matches are found
+      result.index = "";
    }
 
    // Extract type
