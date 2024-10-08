@@ -7,4 +7,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<std::string> snmpget(const std::vector<std::string> &args);
+std::vector<Result> snmpget(const std::vector<std::string> &args);

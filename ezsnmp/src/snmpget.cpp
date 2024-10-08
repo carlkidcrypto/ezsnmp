@@ -100,7 +100,7 @@ void snmpget_usage(void) {
    fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-std::vector<std::string> snmpget(std::vector<std::string> const &args) {
+std::vector<Result> snmpget(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -133,7 +133,7 @@ std::vector<std::string> snmpget(std::vector<std::string> const &args) {
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
          snmpget_usage();
-         return return_vector;
+         return parse_results(return_vector);
 
       default:
          break;
@@ -142,13 +142,13 @@ std::vector<std::string> snmpget(std::vector<std::string> const &args) {
    if (arg >= argc) {
       fprintf(stderr, "Missing object name\n");
       snmpget_usage();
-      return return_vector;
+      return parse_results(return_vector);
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
       fprintf(stderr, "Too many object identifiers specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
       snmpget_usage();
-      return return_vector;
+      return parse_results(return_vector);
    }
 
    /*
@@ -167,7 +167,7 @@ std::vector<std::string> snmpget(std::vector<std::string> const &args) {
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpget", &session);
-      return return_vector;
+      return parse_results(return_vector);
    }
 
    /*
@@ -246,10 +246,10 @@ retry:
 
 close_session:
    snmp_close(ss);
-   return return_vector;
+   return parse_results(return_vector);
 
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return return_vector;
+   return parse_results(return_vector);
 } /* end main() */

@@ -13858,7 +13858,7 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
    std::vector<std::string, std::allocator<std::string> > *arg1 = 0;
    int res1 = SWIG_OLDOBJ;
    PyObject *swig_obj[1];
-   std::vector<std::string, std::allocator<std::string> > result;
+   std::vector<Result, std::allocator<Result> > result;
 
    if (!args) {
       SWIG_fail;
@@ -13903,8 +13903,7 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
          SWIG_fail;
       }
    }
-   resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
    if (SWIG_IsNewObj(res1)) {
       delete arg1;
    }
@@ -14108,7 +14107,7 @@ fail:
 static PyMethodDef SwigMethods[] = {
     {"snmpbulkget", _wrap_snmpbulkget, METH_O, "snmpbulkget(args) -> _string_list"},
     {"snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, "snmpbulkwalk(args) -> _string_list"},
-    {"snmpget", _wrap_snmpget, METH_O, "snmpget(args) -> _string_list"},
+    {"snmpget", _wrap_snmpget, METH_O, "snmpget(args) -> _result_list"},
     {"snmpset", _wrap_snmpset, METH_O, "snmpset(args) -> int"},
     {"snmptrap", _wrap_snmptrap, METH_O, "snmptrap(args) -> int"},
     {"snmpwalk", _wrap_snmpwalk, METH_O, "snmpwalk(args) -> _result_list"},

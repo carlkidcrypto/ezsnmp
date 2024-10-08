@@ -40,7 +40,7 @@ class SessionBase {
 
    std::vector<Result> walk(std::string mib = "");
    std::vector<std::string> bulk_walk(std::vector<std::string> const& mibs);
-   std::vector<std::string> get(std::string mib = "");
+   std::vector<Result> get(std::string mib = "");
    std::vector<std::string> bulk_get(std::vector<std::string> const& mibs);
 
    // Const getters

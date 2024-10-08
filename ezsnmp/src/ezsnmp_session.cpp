@@ -14383,7 +14383,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_0(PyObject *self, Py_ssize_t no
    std::string arg2;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<std::string, std::allocator<std::string> > result;
+   std::vector<Result, std::allocator<Result> > result;
 
    if ((nobjs < 2) || (nobjs > 2)) {
       SWIG_fail;
@@ -14430,8 +14430,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_0(PyObject *self, Py_ssize_t no
          SWIG_fail;
       }
    }
-   resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
    return resultobj;
 fail:
    return NULL;
@@ -14443,7 +14442,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_1(PyObject *self, Py_ssize_t no
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
-   std::vector<std::string, std::allocator<std::string> > result;
+   std::vector<Result, std::allocator<Result> > result;
 
    if ((nobjs < 1) || (nobjs > 1)) {
       SWIG_fail;
@@ -14472,8 +14471,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_1(PyObject *self, Py_ssize_t no
          SWIG_fail;
       }
    }
-   resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
    return resultobj;
 fail:
    return NULL;
@@ -17636,7 +17634,7 @@ SWIGINTERN PyObject *SwigPyBuiltin__SessionBase_richcompare(PyObject *self, PyOb
 SWIGINTERN PyMethodDef SwigPyBuiltin__SessionBase_methods[] = {
     {"walk", _wrap_SessionBase_walk, METH_VARARGS, "walk(self, mib=\"\") -> _result_list"},
     {"bulk_walk", _wrap_SessionBase_bulk_walk, METH_O, "bulk_walk(self, mibs) -> _string_list"},
-    {"get", _wrap_SessionBase_get, METH_VARARGS, "get(self, mib=\"\") -> _string_list"},
+    {"get", _wrap_SessionBase_get, METH_VARARGS, "get(self, mib=\"\") -> _result_list"},
     {"bulk_get", _wrap_SessionBase_bulk_get, METH_O, "bulk_get(self, mibs) -> _string_list"},
     {"_get_args", _wrap_SessionBase__get_args, METH_NOARGS, "_get_args(self) -> _string_list"},
     {"_get_hostname", _wrap_SessionBase__get_hostname, METH_NOARGS,

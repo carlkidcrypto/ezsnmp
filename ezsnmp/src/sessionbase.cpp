@@ -164,7 +164,7 @@ std::vector<std::string> SessionBase::bulk_walk(std::vector<std::string> const& 
    return snmpbulkwalk(m_args);
 }
 
-std::vector<std::string> SessionBase::get(std::string mib) {
+std::vector<Result> SessionBase::get(std::string mib) {
    populate_args();
 
    if (!mib.empty()) {
