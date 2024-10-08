@@ -174,20 +174,20 @@ std::vector<std::string> SessionBase::bulk_get(std::vector<std::string> const& m
    return snmpbulkget(m_args);
 }
 
-std::vector<std::string> const& SessionBase::get_args() const { return m_args; }
-std::string const& SessionBase::get_hostname() const { return m_hostname; }
-std::string const& SessionBase::get_port_number() const { return m_port_number; }
-std::string const& SessionBase::get_version() const { return m_version; }
-std::string const& SessionBase::get_community() const { return m_community; }
-std::string const& SessionBase::get_auth_protocol() const { return m_auth_protocol; }
-std::string const& SessionBase::get_auth_passphrase() const { return m_auth_passphrase; }
-std::string const& SessionBase::get_security_engine_id() const { return m_security_engine_id; }
-std::string const& SessionBase::get_context_engine_id() const { return m_context_engine_id; }
-std::string const& SessionBase::get_security_level() const { return m_security_level; }
-std::string const& SessionBase::get_context() const { return m_context; }
-std::string const& SessionBase::get_security_username() const { return m_security_username; }
-std::string const& SessionBase::get_privacy_protocol() const { return m_privacy_protocol; }
-std::string const& SessionBase::get_privacy_passphrase() const { return m_privacy_passphrase; }
-std::string const& SessionBase::get_boots_time() const { return m_boots_time; }
-std::string const& SessionBase::get_retries() const { return m_retries; }
-std::string const& SessionBase::get_timeout() const { return m_timeout; }
+std::vector<std::string> const& SessionBase::_get_args() const { return m_args; }
+std::string const& SessionBase::_get_hostname() const { return m_hostname; }
+std::string const& SessionBase::_get_port_number() const { return m_port_number; }
+std::string const& SessionBase::_get_version() const { return m_version; }
+std::string const& SessionBase::_get_community() const { return m_community; }
+std::string const& SessionBase::_get_auth_protocol() const { return m_auth_protocol; }
+std::string const& SessionBase::_get_auth_passphrase() const { return m_auth_passphrase; }
+std::string const& SessionBase::_get_security_engine_id() const { return m_security_engine_id; }
+std::string const& SessionBase::_get_context_engine_id() const { return m_context_engine_id; }
+std::string const& SessionBase::_get_security_level() const { return m_security_level; }
+std::string const& SessionBase::_get_context() const { return m_context; }
+std::string const& SessionBase::_get_security_username() const { return m_security_username; }
+std::string const& SessionBase::_get_privacy_protocol() const { return m_privacy_protocol; }
+std::string const& SessionBase::_get_privacy_passphrase() const { return m_privacy_passphrase; }
+std::string const& SessionBase::_get_boots_time() const { return m_boots_time; }
+std::string const& SessionBase::_get_retries() const { return m_retries; }
+std::string const& SessionBase::_get_timeout() const { return m_timeout; }

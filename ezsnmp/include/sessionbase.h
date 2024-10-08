@@ -44,23 +44,23 @@ class SessionBase {
    std::vector<std::string> bulk_get(std::vector<std::string> const& mibs);
 
    // Const getters
-   std::vector<std::string> const& get_args() const;
-   std::string const& get_hostname() const;
-   std::string const& get_port_number() const;
-   std::string const& get_version() const;
-   std::string const& get_community() const;
-   std::string const& get_auth_protocol() const;
-   std::string const& get_auth_passphrase() const;
-   std::string const& get_security_engine_id() const;
-   std::string const& get_context_engine_id() const;
-   std::string const& get_security_level() const;
-   std::string const& get_context() const;
-   std::string const& get_security_username() const;
-   std::string const& get_privacy_protocol() const;
-   std::string const& get_privacy_passphrase() const;
-   std::string const& get_boots_time() const;
-   std::string const& get_retries() const;
-   std::string const& get_timeout() const;
+   std::vector<std::string> const& _get_args() const;
+   std::string const& _get_hostname() const;
+   std::string const& _get_port_number() const;
+   std::string const& _get_version() const;
+   std::string const& _get_community() const;
+   std::string const& _get_auth_protocol() const;
+   std::string const& _get_auth_passphrase() const;
+   std::string const& _get_security_engine_id() const;
+   std::string const& _get_context_engine_id() const;
+   std::string const& _get_security_level() const;
+   std::string const& _get_context() const;
+   std::string const& _get_security_username() const;
+   std::string const& _get_privacy_protocol() const;
+   std::string const& _get_privacy_passphrase() const;
+   std::string const& _get_boots_time() const;
+   std::string const& _get_retries() const;
+   std::string const& _get_timeout() const;
 };
 
 #endif // SESSIONBASE_H

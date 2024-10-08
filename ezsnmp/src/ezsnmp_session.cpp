@@ -14496,21 +14496,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_args(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_args(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::vector<std::string, std::allocator<std::string> > *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_args", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_args", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_args"
+                          "SessionBase__get_args"
                           "', argument "
                           "1"
                           " of type '"
@@ -14524,7 +14524,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_args(PyObject *self, PyObject *args) 
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
             result = (std::vector<std::string, std::allocator<std::string> > *)&(
                          (SessionBase const *)arg1)
-                         ->get_args();
+                         ->_get_args();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14539,21 +14539,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_hostname(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_hostname(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_hostname", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_hostname", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_hostname"
+                          "SessionBase__get_hostname"
                           "', argument "
                           "1"
                           " of type '"
@@ -14565,7 +14565,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_hostname(PyObject *self, PyObject *ar
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_hostname();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_hostname();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14579,21 +14579,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_port_number(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_port_number(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_port_number", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_port_number", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_port_number"
+                          "SessionBase__get_port_number"
                           "', argument "
                           "1"
                           " of type '"
@@ -14605,7 +14605,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_port_number(PyObject *self, PyObject 
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_port_number();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_port_number();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14619,21 +14619,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_version(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_version(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_version", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_version", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_version"
+                          "SessionBase__get_version"
                           "', argument "
                           "1"
                           " of type '"
@@ -14645,7 +14645,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_version(PyObject *self, PyObject *arg
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_version();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_version();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14659,21 +14659,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_community(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_community(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_community", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_community", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_community"
+                          "SessionBase__get_community"
                           "', argument "
                           "1"
                           " of type '"
@@ -14685,7 +14685,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_community(PyObject *self, PyObject *a
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_community();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_community();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14699,21 +14699,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_auth_protocol(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_auth_protocol(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_auth_protocol", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_auth_protocol", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_auth_protocol"
+                          "SessionBase__get_auth_protocol"
                           "', argument "
                           "1"
                           " of type '"
@@ -14725,7 +14725,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_auth_protocol(PyObject *self, PyObjec
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_auth_protocol();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_auth_protocol();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14739,21 +14739,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_auth_passphrase(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_auth_passphrase(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_auth_passphrase", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_auth_passphrase", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_auth_passphrase"
+                          "SessionBase__get_auth_passphrase"
                           "', argument "
                           "1"
                           " of type '"
@@ -14765,7 +14765,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_auth_passphrase(PyObject *self, PyObj
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_auth_passphrase();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_auth_passphrase();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14779,21 +14779,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_security_engine_id(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_security_engine_id(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_security_engine_id", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_security_engine_id", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_security_engine_id"
+                          "SessionBase__get_security_engine_id"
                           "', argument "
                           "1"
                           " of type '"
@@ -14805,7 +14805,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_security_engine_id(PyObject *self, Py
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_security_engine_id();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_security_engine_id();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14819,21 +14819,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_context_engine_id(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_context_engine_id(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_context_engine_id", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_context_engine_id", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_context_engine_id"
+                          "SessionBase__get_context_engine_id"
                           "', argument "
                           "1"
                           " of type '"
@@ -14845,7 +14845,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_context_engine_id(PyObject *self, PyO
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_context_engine_id();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_context_engine_id();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14859,21 +14859,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_security_level(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_security_level(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_security_level", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_security_level", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_security_level"
+                          "SessionBase__get_security_level"
                           "', argument "
                           "1"
                           " of type '"
@@ -14885,7 +14885,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_security_level(PyObject *self, PyObje
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_security_level();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_security_level();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14899,21 +14899,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_context(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_context(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_context", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_context", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_context"
+                          "SessionBase__get_context"
                           "', argument "
                           "1"
                           " of type '"
@@ -14925,7 +14925,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_context(PyObject *self, PyObject *arg
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_context();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_context();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14939,21 +14939,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_security_username(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_security_username(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_security_username", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_security_username", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_security_username"
+                          "SessionBase__get_security_username"
                           "', argument "
                           "1"
                           " of type '"
@@ -14965,7 +14965,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_security_username(PyObject *self, PyO
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_security_username();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_security_username();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -14979,21 +14979,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_privacy_protocol(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_privacy_protocol(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_privacy_protocol", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_privacy_protocol", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_privacy_protocol"
+                          "SessionBase__get_privacy_protocol"
                           "', argument "
                           "1"
                           " of type '"
@@ -15005,7 +15005,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_privacy_protocol(PyObject *self, PyOb
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_privacy_protocol();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_privacy_protocol();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -15019,21 +15019,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_privacy_passphrase(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_privacy_passphrase(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_privacy_passphrase", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_privacy_passphrase", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_privacy_passphrase"
+                          "SessionBase__get_privacy_passphrase"
                           "', argument "
                           "1"
                           " of type '"
@@ -15045,7 +15045,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_privacy_passphrase(PyObject *self, Py
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_privacy_passphrase();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_privacy_passphrase();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -15059,21 +15059,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_boots_time(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_boots_time(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_boots_time", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_boots_time", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_boots_time"
+                          "SessionBase__get_boots_time"
                           "', argument "
                           "1"
                           " of type '"
@@ -15085,7 +15085,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_boots_time(PyObject *self, PyObject *
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_boots_time();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_boots_time();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -15099,21 +15099,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_retries(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_retries(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_retries", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_retries", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_retries"
+                          "SessionBase__get_retries"
                           "', argument "
                           "1"
                           " of type '"
@@ -15125,7 +15125,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_retries(PyObject *self, PyObject *arg
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_retries();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_retries();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -15139,21 +15139,21 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_SessionBase_get_timeout(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_SessionBase__get_timeout(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    SessionBase *arg1 = (SessionBase *)0;
    void *argp1 = 0;
    int res1 = 0;
    std::string *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "SessionBase_get_timeout", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "SessionBase__get_timeout", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "SessionBase_get_timeout"
+                          "SessionBase__get_timeout"
                           "', argument "
                           "1"
                           " of type '"
@@ -15165,7 +15165,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_timeout(PyObject *self, PyObject *arg
       try {
          {
             SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-            result = (std::string *)&((SessionBase const *)arg1)->get_timeout();
+            result = (std::string *)&((SessionBase const *)arg1)->_get_timeout();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (std::runtime_error const &e) {
@@ -16332,39 +16332,39 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__SessionBase_methods[] = {
     {"bulk_walk", _wrap_SessionBase_bulk_walk, METH_O, "bulk_walk(self, mibs) -> _string_list"},
     {"get", _wrap_SessionBase_get, METH_VARARGS, "get(self, mib=\"\") -> _string_list"},
     {"bulk_get", _wrap_SessionBase_bulk_get, METH_O, "bulk_get(self, mibs) -> _string_list"},
-    {"get_args", _wrap_SessionBase_get_args, METH_NOARGS, "get_args(self) -> _string_list"},
-    {"get_hostname", _wrap_SessionBase_get_hostname, METH_NOARGS,
-     "get_hostname(self) -> std::string const &"},
-    {"get_port_number", _wrap_SessionBase_get_port_number, METH_NOARGS,
-     "get_port_number(self) -> std::string const &"},
-    {"get_version", _wrap_SessionBase_get_version, METH_NOARGS,
-     "get_version(self) -> std::string const &"},
-    {"get_community", _wrap_SessionBase_get_community, METH_NOARGS,
-     "get_community(self) -> std::string const &"},
-    {"get_auth_protocol", _wrap_SessionBase_get_auth_protocol, METH_NOARGS,
-     "get_auth_protocol(self) -> std::string const &"},
-    {"get_auth_passphrase", _wrap_SessionBase_get_auth_passphrase, METH_NOARGS,
-     "get_auth_passphrase(self) -> std::string const &"},
-    {"get_security_engine_id", _wrap_SessionBase_get_security_engine_id, METH_NOARGS,
-     "get_security_engine_id(self) -> std::string const &"},
-    {"get_context_engine_id", _wrap_SessionBase_get_context_engine_id, METH_NOARGS,
-     "get_context_engine_id(self) -> std::string const &"},
-    {"get_security_level", _wrap_SessionBase_get_security_level, METH_NOARGS,
-     "get_security_level(self) -> std::string const &"},
-    {"get_context", _wrap_SessionBase_get_context, METH_NOARGS,
-     "get_context(self) -> std::string const &"},
-    {"get_security_username", _wrap_SessionBase_get_security_username, METH_NOARGS,
-     "get_security_username(self) -> std::string const &"},
-    {"get_privacy_protocol", _wrap_SessionBase_get_privacy_protocol, METH_NOARGS,
-     "get_privacy_protocol(self) -> std::string const &"},
-    {"get_privacy_passphrase", _wrap_SessionBase_get_privacy_passphrase, METH_NOARGS,
-     "get_privacy_passphrase(self) -> std::string const &"},
-    {"get_boots_time", _wrap_SessionBase_get_boots_time, METH_NOARGS,
-     "get_boots_time(self) -> std::string const &"},
-    {"get_retries", _wrap_SessionBase_get_retries, METH_NOARGS,
-     "get_retries(self) -> std::string const &"},
-    {"get_timeout", _wrap_SessionBase_get_timeout, METH_NOARGS,
-     "get_timeout(self) -> std::string const &"},
+    {"_get_args", _wrap_SessionBase__get_args, METH_NOARGS, "_get_args(self) -> _string_list"},
+    {"_get_hostname", _wrap_SessionBase__get_hostname, METH_NOARGS,
+     "_get_hostname(self) -> std::string const &"},
+    {"_get_port_number", _wrap_SessionBase__get_port_number, METH_NOARGS,
+     "_get_port_number(self) -> std::string const &"},
+    {"_get_version", _wrap_SessionBase__get_version, METH_NOARGS,
+     "_get_version(self) -> std::string const &"},
+    {"_get_community", _wrap_SessionBase__get_community, METH_NOARGS,
+     "_get_community(self) -> std::string const &"},
+    {"_get_auth_protocol", _wrap_SessionBase__get_auth_protocol, METH_NOARGS,
+     "_get_auth_protocol(self) -> std::string const &"},
+    {"_get_auth_passphrase", _wrap_SessionBase__get_auth_passphrase, METH_NOARGS,
+     "_get_auth_passphrase(self) -> std::string const &"},
+    {"_get_security_engine_id", _wrap_SessionBase__get_security_engine_id, METH_NOARGS,
+     "_get_security_engine_id(self) -> std::string const &"},
+    {"_get_context_engine_id", _wrap_SessionBase__get_context_engine_id, METH_NOARGS,
+     "_get_context_engine_id(self) -> std::string const &"},
+    {"_get_security_level", _wrap_SessionBase__get_security_level, METH_NOARGS,
+     "_get_security_level(self) -> std::string const &"},
+    {"_get_context", _wrap_SessionBase__get_context, METH_NOARGS,
+     "_get_context(self) -> std::string const &"},
+    {"_get_security_username", _wrap_SessionBase__get_security_username, METH_NOARGS,
+     "_get_security_username(self) -> std::string const &"},
+    {"_get_privacy_protocol", _wrap_SessionBase__get_privacy_protocol, METH_NOARGS,
+     "_get_privacy_protocol(self) -> std::string const &"},
+    {"_get_privacy_passphrase", _wrap_SessionBase__get_privacy_passphrase, METH_NOARGS,
+     "_get_privacy_passphrase(self) -> std::string const &"},
+    {"_get_boots_time", _wrap_SessionBase__get_boots_time, METH_NOARGS,
+     "_get_boots_time(self) -> std::string const &"},
+    {"_get_retries", _wrap_SessionBase__get_retries, METH_NOARGS,
+     "_get_retries(self) -> std::string const &"},
+    {"_get_timeout", _wrap_SessionBase__get_timeout, METH_NOARGS,
+     "_get_timeout(self) -> std::string const &"},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
