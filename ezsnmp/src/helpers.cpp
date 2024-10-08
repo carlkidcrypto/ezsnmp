@@ -101,6 +101,15 @@ Result parse_result(std::string const &input) {
    std::getline(ss, temp);
    result.value = temp.substr(1, temp.size());
 
+   // Check for "No Such Object" in the value
+   if (result.value.find("No Such Object") != std::string::npos) {
+      result.type = "NOSUCHOBJECT";
+
+   // Check for "No Such Instance" in the value
+   } else if (result.value.find("No Such Instance") != std::string::npos) {
+      result.type = "NOSUCHINSTANCE";
+   }
+
    return result;
 }
 
