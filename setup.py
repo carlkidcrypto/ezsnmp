@@ -202,11 +202,11 @@ setup(
             extra_link_args=link_args,
         ),
         Extension(
-            name="ezsnmp/_session",
+            name="ezsnmp/_sessionbase",
             sources=[
                 "ezsnmp/src/ezsnmp_session.cpp",
                 "ezsnmp/src/datatypes.cpp",
-                "ezsnmp/src/session.cpp",
+                "ezsnmp/src/sessionbase.cpp",
                 "ezsnmp/src/helpers.cpp",
             ],
             library_dirs=libdirs,
