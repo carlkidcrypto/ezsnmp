@@ -6,6 +6,7 @@
 #include "helpers.h"
 
 #include <cstring>
+#include <regex>
 #include <sstream>
 
 std::string print_variable_to_string(oid const *objid, size_t objidlen,
@@ -44,6 +45,17 @@ std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int 
    return argv;
 }
 
+// Regular expressions for OID and index extraction
+std::regex const OID_INDEX_RE(R"((
+        \.?\d+(?:\.\d+)*               # numeric OID
+        |                              # or
+        (?:\w+(?:[-:]*\w+)+)          # regular OID
+        |                              # or
+        (?:\.?iso(?:\.\w+[-:]*\w+)+)  # fully qualified OID
+    )
+    \.?(.*)                            # OID index
+)");
+
 Result parse_result(std::string const &input) {
    Result result;
    std::stringstream ss(input);
@@ -52,6 +64,14 @@ Result parse_result(std::string const &input) {
    // Extract OID
    std::getline(ss, result.oid, '=');
    result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
+
+   // Extract OID index using regex
+   std::smatch match;
+   if (std::regex_match(result.oid, match, OID_INDEX_RE)) {
+      if (match[1].matched) {
+         result.index = match[1].str();
+      }
+   }
 
    // Extract type
    std::getline(ss, temp, ':');

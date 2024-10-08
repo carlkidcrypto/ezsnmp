@@ -5,8 +5,7 @@
 
 struct Result {
    std::string oid;
-   // @todo
-   // std::string index;
+   std::string index;
    std::string type;
    std::string value;
 

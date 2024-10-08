@@ -1,5 +1,4 @@
 import platform
-import random
 import re
 import pytest
 
@@ -8,7 +7,7 @@ from ezsnmp.session import Session
 
 def test_session_invalid_snmp_version():
     with pytest.raises(ValueError):
-        Session(version=4)
+        Session(version="4")
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
@@ -119,17 +118,17 @@ def test_session_set_multiple_next(sess, reset_values):
     )
 
     assert res[0].oid == "snmpTargetAddrTDomain"
-    assert res[0].oid_index == "116.101.115.116"
+    assert res[0].index == "116.101.115.116"
     assert res[0].value == ".1.3.6.1.6.1.1"
     assert res[0].type == "OBJECTID"
 
     assert res[1].oid == "snmpTargetAddrTAddress"
-    assert res[1].oid_index == "116.101.115.116"
+    assert res[1].index == "116.101.115.116"
     assert res[1].value == "1234"
     assert res[1].type == "OCTETSTR"
 
     assert res[2].oid == "snmpTargetAddrRowStatus"
-    assert res[2].oid_index == "116.101.115.116"
+    assert res[2].index == "116.101.115.116"
     assert res[2].value == "3"
     assert res[2].type == "INTEGER"
 
@@ -145,17 +144,17 @@ def test_session_set_clear(sess):
     )
 
     assert res[0].oid == "snmpUnavailableContexts"
-    assert res[0].oid_index == "0"
+    assert res[0].index == "0"
     assert res[0].value == "0"
     assert res[0].type == "COUNTER"
 
     assert res[1].oid == "snmpUnavailableContexts"
-    assert res[1].oid_index == "0"
+    assert res[1].index == "0"
     assert res[1].value == "0"
     assert res[1].type == "COUNTER"
 
     assert res[2].oid == "snmpUnavailableContexts"
-    assert res[2].oid_index == "0"
+    assert res[2].index == "0"
     assert res[2].value == "0"
     assert res[2].type == "COUNTER"
 
@@ -166,17 +165,17 @@ def test_session_get(sess):
     res = sess.get([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
 
     assert res[0].oid == "sysUpTimeInstance"
-    assert res[0].oid_index == ""
+    assert res[0].index == ""
     assert int(res[0].value) > 0
     assert res[0].type == "TICKS"
 
     assert res[1].oid == "sysContact"
-    assert res[1].oid_index == "0"
+    assert res[1].index == "0"
     assert res[1].value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res[1].type == "OCTETSTR"
 
     assert res[2].oid == "sysLocation"
-    assert res[2].oid_index == "0"
+    assert res[2].index == "0"
     assert res[2].value == "my original location"
     assert res[2].type == "OCTETSTR"
 
@@ -188,7 +187,7 @@ def test_session_get_use_numeric(sess):
     res = sess.get("sysContact.0")
 
     assert res[0].oid == ".1.3.6.1.2.1.1.4"
-    assert res[0].oid_index == "0"
+    assert res[0].index == "0"
     assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res[0].type == "OCTETSTR"
 
@@ -200,7 +199,7 @@ def test_session_get_use_sprint_value(sess):
     res = sess.get("sysUpTimeInstance")
 
     assert res[0].oid == "sysUpTimeInstance"
-    assert res[0].oid_index == ""
+    assert res[0].index == ""
     assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0].value)
     assert res[0].type == "TICKS"
 
@@ -212,7 +211,7 @@ def test_session_get_use_enums(sess):
     res = sess.get("ifAdminStatus.1")
 
     assert res[0].oid == "ifAdminStatus"
-    assert res[0].oid_index == "1"
+    assert res[0].index == "1"
     assert res[0].value == "up"
     assert res[0].type == "INTEGER"
 
@@ -223,17 +222,17 @@ def test_session_get_next(sess):
     res = sess.get_next([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
 
     assert res[0].oid == "sysContact"
-    assert res[0].oid_index == "0"
+    assert res[0].index == "0"
     assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res[0].type == "OCTETSTR"
 
     assert res[1].oid == "sysName"
-    assert res[1].oid_index == "0"
+    assert res[1].index == "0"
     assert res[1].value == platform.node()
     assert res[1].type == "OCTETSTR"
 
     assert res[2].oid == "sysORLastChange"
-    assert res[2].oid_index == "0"
+    assert res[2].index == "0"
     assert int(res[2].value) >= 0
     assert res[2].type == "TICKS"
 
@@ -295,12 +294,12 @@ def test_session_get_bulk(sess):  # noqa
         )
 
         assert res[0].oid == "sysUpTimeInstance"
-        assert res[0].oid_index == ""
+        assert res[0].index == ""
         assert int(res[0].value) > 0
         assert res[0].type == "TICKS"
 
         assert res[4].oid == "sysORUpTime"
-        assert res[4].oid_index == "1"
+        assert res[4].index == "1"
         assert int(res[4].value) >= 0
         assert res[4].type == "TICKS"
 
@@ -353,22 +352,22 @@ def test_session_walk(sess):
     res = sess.walk("system")
 
     assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
+    assert res[0].index == "0"
     assert platform.version() in res[0].value
     assert res[0].type == "OCTETSTR"
 
     assert res[3].oid == "sysContact"
-    assert res[3].oid_index == "0"
+    assert res[3].index == "0"
     assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res[3].type == "OCTETSTR"
 
     assert res[4].oid == "sysName"
-    assert res[4].oid_index == "0"
+    assert res[4].index == "0"
     assert res[4].value == platform.node()
     assert res[4].type == "OCTETSTR"
 
     assert res[5].oid == "sysLocation"
-    assert res[5].oid_index == "0"
+    assert res[5].index == "0"
     assert res[5].value == "my original location"
     assert res[5].type == "OCTETSTR"
 
@@ -383,22 +382,22 @@ def test_session_bulkwalk(sess):
         res = sess.walk("system")
 
         assert res[0].oid == "sysDescr"
-        assert res[0].oid_index == "0"
+        assert res[0].index == "0"
         assert platform.version() in res[0].value
         assert res[0].type == "OCTETSTR"
 
         assert res[3].oid == "sysContact"
-        assert res[3].oid_index == "0"
+        assert res[3].index == "0"
         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
         assert res[3].type == "OCTETSTR"
 
         assert res[4].oid == "sysName"
-        assert res[4].oid_index == "0"
+        assert res[4].index == "0"
         assert res[4].value == platform.node()
         assert res[4].type == "OCTETSTR"
 
         assert res[5].oid == "sysLocation"
-        assert res[5].oid_index == "0"
+        assert res[5].index == "0"
         assert res[5].value == "my original location"
         assert res[5].type == "OCTETSTR"
 
@@ -417,22 +416,22 @@ def test_session_walk_all(sess):
         res = sess.walk(".")
 
         assert res[0].oid == "sysDescr"
-        assert res[0].oid_index == "0"
+        assert res[0].index == "0"
         assert platform.version() in res[0].value
         assert res[0].type == "OCTETSTR"
 
         assert res[3].oid == "sysContact"
-        assert res[3].oid_index == "0"
+        assert res[3].index == "0"
         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
         assert res[3].type == "OCTETSTR"
 
         assert res[4].oid == "sysName"
-        assert res[4].oid_index == "0"
+        assert res[4].index == "0"
         assert res[4].value == platform.node()
         assert res[4].type == "OCTETSTR"
 
         assert res[5].oid == "sysLocation"
-        assert res[5].oid_index == "0"
+        assert res[5].index == "0"
         assert res[5].value == "my original location"
         assert res[5].type == "OCTETSTR"
 
@@ -440,9 +439,9 @@ def test_session_walk_all(sess):
 
 
 def test_session_update():
-    s = Session(version=3)
+    s = Session(version="3")
     ptr = s.sess_ptr
-    s.version = 1
+    s.version = "1"
     s.update_session()
     assert ptr != s.sess_ptr
     s.tunneled = True

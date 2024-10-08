@@ -4371,6 +4371,109 @@ fail:
    return NULL;
 }
 
+SWIGINTERN PyObject *_wrap_Result_index_set(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Result *arg1 = (Result *)0;
+   std::string *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Result_index_set"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Result *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Result *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "Result_index_set"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_ValueError,
+                             "invalid null reference "
+                             "in method '"
+                             "Result_index_set"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      if (arg1) {
+         (arg1)->index = *arg2;
+      }
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_Py_Void();
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Result_index_get(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Result *arg1 = (Result *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Result_index_get", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Result_index_get"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Result *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Result *>(argp1);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (std::string *)&((arg1)->index);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
 SWIGINTERN PyObject *_wrap_Result_type_set(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    Result *arg1 = (Result *)0;
@@ -4672,6 +4775,7 @@ static SwigPyGetSet Result_type_getset = {_wrap_Result_type_get, _wrap_Result_ty
 static SwigPyGetSet Result___dict___getset = {SwigPyObject_get___dict__, 0};
 static SwigPyGetSet Result_value_getset = {_wrap_Result_value_get, _wrap_Result_value_set};
 static SwigPyGetSet Result_oid_getset = {_wrap_Result_oid_get, _wrap_Result_oid_set};
+static SwigPyGetSet Result_index_getset = {_wrap_Result_index_get, _wrap_Result_index_set};
 SWIGINTERN PyGetSetDef SwigPyBuiltin__Result_getset[] = {
     {(char *)"type", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
      (char *)"type", &Result_type_getset},
@@ -4681,6 +4785,8 @@ SWIGINTERN PyGetSetDef SwigPyBuiltin__Result_getset[] = {
      (char *)"value", &Result_value_getset},
     {(char *)"oid", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
      (char *)"oid", &Result_oid_getset},
+    {(char *)"index", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
+     (char *)"index", &Result_index_getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
 };
 
