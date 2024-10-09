@@ -31,11 +31,6 @@ jobs:
       with:
         languages: ${{ matrix.language }}
 
-    - name: Install Python Dependencies
-      run: |
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-
     - name: Install Linux Dependencies
       run: |
         sudo apt-get update;
