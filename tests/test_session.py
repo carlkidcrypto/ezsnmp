@@ -353,27 +353,34 @@ def test_session_walk(sess):
 
 
 def test_session_bulkwalk(sess):
-    res = sess.bulk_walk(["system"])
+    if sess.version == "1":
+        # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
+        # with pytest.raises(EzSNMPError):
+        # sess.bulkwalk("system")
+        assert 1 == 2
+    else:
 
-    assert res[0].oid == "SNMPv2-MIB::sysDescr"
-    assert res[0].index == "0"
-    assert platform.version() in res[0].value
-    assert res[0].type == "STRING"
+        res = sess.bulk_walk(["system"])
 
-    assert res[3].oid == "SNMPv2-MIB::sysContact"
-    assert res[3].index == "0"
-    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[3].type == "STRING"
+        assert res[0].oid == "SNMPv2-MIB::sysDescr"
+        assert res[0].index == "0"
+        assert platform.version() in res[0].value
+        assert res[0].type == "STRING"
 
-    assert res[4].oid == "SNMPv2-MIB::sysName"
-    assert res[4].index == "0"
-    assert res[4].value == platform.node()
-    assert res[4].type == "STRING"
+        assert res[3].oid == "SNMPv2-MIB::sysContact"
+        assert res[3].index == "0"
+        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+        assert res[3].type == "STRING"
 
-    assert res[5].oid == "SNMPv2-MIB::sysLocation"
-    assert res[5].index == "0"
-    assert res[5].value == "my original location"
-    assert res[5].type == "STRING"
+        assert res[4].oid == "SNMPv2-MIB::sysName"
+        assert res[4].index == "0"
+        assert res[4].value == platform.node()
+        assert res[4].type == "STRING"
+
+        assert res[5].oid == "SNMPv2-MIB::sysLocation"
+        assert res[5].index == "0"
+        assert res[5].value == "my original location"
+        assert res[5].type == "STRING"
 
     del sess
 
