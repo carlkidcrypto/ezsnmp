@@ -83,7 +83,7 @@ jobs:
       - name: Build source
         run: |
           python setup.py build
-          pip install -e .
+          pip install .
       
       - name: Start SNMP daemon
         run: |
@@ -111,8 +111,7 @@ jobs:
       - name: Run Tests
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
-          linux: pwd;
-                 wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
+          linux: wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
                  VALGRIND=(
                    'valgrind'
                    '--tool=memcheck'
@@ -124,8 +123,7 @@ jobs:
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
                  ${VALGRIND[@]} pytest --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
           
-          macos: pwd;
-                 pytest --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+          macos: pytest --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
