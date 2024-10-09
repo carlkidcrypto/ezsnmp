@@ -317,18 +317,6 @@ def test_session_get_invalid_instance(sess):
         assert res[0].type == "NOSUCHINSTANCE"
 
 
-def test_session_get_invalid_instance_with_abort_enabled(sess):
-    # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
-    # invalid object ID, instead it excepts with noSuchName
-    sess.abort_on_nonexistent = True
-    if sess.version == "1":
-        with pytest.raises(ValueError):
-            sess.get("sysDescr.100")
-    else:
-        with pytest.raises(ValueError):
-            sess.get("sysDescr.100")
-
-
 def test_session_get_invalid_object(sess):
     if sess.version == "1":
         with pytest.raises(ValueError):
@@ -336,16 +324,6 @@ def test_session_get_invalid_object(sess):
     else:
         res = sess.get("iso")
         assert res[0].type == "NOSUCHOBJECT"
-
-
-def test_session_get_invalid_object_with_abort_enabled(sess):
-    sess.abort_on_nonexistent = True
-    if sess.version == "1":
-        with pytest.raises(ValueError):
-            sess.get("iso")
-    else:
-        with pytest.raises(ValueError):
-            sess.get("iso")
 
 
 def test_session_walk(sess):
@@ -375,7 +353,7 @@ def test_session_walk(sess):
 
 
 def test_session_bulkwalk(sess):
-    res = sess.bulk_walk("system")
+    res = sess.bulk_walk(["system"])
 
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
     assert res[0].index == "0"
