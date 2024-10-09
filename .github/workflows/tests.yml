@@ -18,7 +18,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v45.0.2
+        uses: tj-actions/changed-files@v45.0.3
         with:
           files: |
             ezsnmp/*.py
@@ -34,7 +34,7 @@ jobs:
     needs: check-source-changes
     steps:
       - uses: actions/checkout@v4
-      - uses: psf/black@24.8.0
+      - uses: psf/black@24.10.0
 
   build-and-test:
     runs-on: ${{ matrix.os }}
