@@ -174,7 +174,7 @@ std::vector<Result> SessionBase::get(std::string mib) {
    return snmpget(m_args);
 }
 
-std::vector<std::string> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
+std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {

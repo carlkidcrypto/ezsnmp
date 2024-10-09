@@ -127,7 +127,7 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
+std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -155,7 +155,7 @@ std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
          snmpbulkget_usage();
-         return return_vector;
+         return parse_results(return_vector);
 
       default:
          break;
@@ -164,7 +164,7 @@ std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
    names = argc - arg;
    if (names < non_repeaters) {
       fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
-      return return_vector;
+      return parse_results(return_vector);
    }
 
    namep = name = (struct nameStruct *)calloc(names, sizeof(*name));
@@ -172,7 +172,7 @@ std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
       namep->name_len = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
          snmp_perror(argv[arg]);
-         return return_vector;
+         return parse_results(return_vector);
       }
       arg++;
       namep++;
@@ -187,7 +187,7 @@ std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpbulkget", &session);
-      return return_vector;
+      return parse_results(return_vector);
    }
 
    exitval = 0;
@@ -253,5 +253,5 @@ std::vector<std::string> snmpbulkget(std::vector<std::string> const &args) {
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return return_vector;
+   return parse_results(return_vector);
 }
