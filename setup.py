@@ -204,7 +204,7 @@ setup(
         Extension(
             name="ezsnmp/_sessionbase",
             sources=[
-                "ezsnmp/src/ezsnmp_session.cpp",
+                "ezsnmp/src/ezsnmp_sessionbase.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/sessionbase.cpp",
                 "ezsnmp/src/helpers.cpp",

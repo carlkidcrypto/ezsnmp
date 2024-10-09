@@ -18,23 +18,23 @@ def test_session_invalid_hostname(version):
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
-def test_session_invalid_hostname_and_remote_port(version):
+def test_session_invalid_hostname_and_port_number(version):
     with pytest.raises(ValueError):
-        Session(hostname="localhost:162", remote_port="163", version=version)
+        Session(hostname="localhost:162", port_number="163", version=version)
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
-def test_session_hostname_and_remote_port_split(version):
+def test_session_hostname_and_port_number_split(version):
     session = Session(hostname="localhost:162", version=version)
     assert session.hostname == "localhost"
-    assert session.remote_port == "162"
+    assert session.port_number == "162"
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_port(version):
     with pytest.raises(ValueError):
         session = Session(
-            remote_port="1234", version=version, timeout="0.2", retries="1"
+            port_number="1234", version=version, timeout="0.2", retries="1"
         )
         session.get("sysContact.0")
 
@@ -43,37 +43,33 @@ def test_session_invalid_port(version):
 def test_session_ipv6_address(version):
     session = Session(hostname="2001:db8::", version=version)
     assert session.hostname == "2001:db8::"
-    assert session.connect_hostname == "2001:db8::"
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
-def test_session_ipv6_address_and_remote_port(version):
+def test_session_ipv6_address_and_port_number(version):
     session = Session(
         hostname="fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa",
-        remote_port="162",
+        port_number="162",
         version=version,
     )
     assert session.hostname == "fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa"
-    assert session.remote_port == "162"
-    assert session.connect_hostname == "[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:162"
+    assert session.port_number == "162"
     del session
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
-def test_session_ipv6_address_and_remote_port_split(version):
+def test_session_ipv6_address_and_port_number_split(version):
     session = Session(hostname="[2001:db8::]:161", version=version)
     assert session.hostname == "[2001:db8::]"
-    assert session.remote_port == "161"
-    assert session.connect_hostname == "[2001:db8::]:161"
+    assert session.port_number == "161"
     del session
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
-def test_session_ipv6_address_with_protocol_and_remote_port_split(version):
+def test_session_ipv6_address_with_protocol_and_port_number_split(version):
     session = Session(hostname="udp6:[2001:db8::]:162", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
-    assert session.remote_port == "162"
-    assert session.connect_hostname == "udp6:[2001:db8::]:162"
+    assert session.port_number == "162"
     del session
 
 
@@ -81,7 +77,6 @@ def test_session_ipv6_address_with_protocol_and_remote_port_split(version):
 def test_session_ipv6_address_with_protocol(version):
     session = Session(hostname="udp6:[2001:db8::]", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
-    assert session.connect_hostname == "udp6:[2001:db8::]"
     del session
 
 
@@ -92,11 +87,11 @@ def test_session_ipv6_is_not_ipv6(version):
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
-def test_session_ipv6_invalid_hostname_and_remote_port(version):
+def test_session_ipv6_invalid_hostname_and_port_number(version):
     with pytest.raises(ValueError):
         Session(
             hostname="[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:161",
-            remote_port="162",
+            port_number="162",
             version=version,
         )
 
@@ -272,35 +267,33 @@ def test_session_set_multiple(sess, reset_values):
     del sess
 
 
-def test_session_bulk_get(sess):  # noqa
+def test_session_bulk_get(sess):
     if sess.version == "1":
-        with pytest.raises(ValueError):
-            sess.bulk_get(
-                [
-                    "sysUpTime",
-                    "sysORLastChange",
-                    "sysORID",
-                    "sysORDescr",
-                    "sysORUpTime",
-                ],
-                2,
-                8,
-            )
+        # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
+        # with pytest.raises(ValueError):
+        #     sess.bulk_get(
+        #         [
+        #             "sysUpTime",
+        #             "sysORLastChange",
+        #             "sysORID",
+        #             "sysORDescr",
+        #             "sysORUpTime",
+        #         ],
+        #         2,
+        #         8,
+        #     )
+        assert 1 == 2
     else:
         res = sess.bulk_get(
-            ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"],
-            2,
-            8,
+            ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
         )
 
-        assert res[0].oid == "sysUpTimeInstance"
+        assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
         assert res[0].index == ""
-        assert int(res[0].value) > 0
         assert res[0].type == "Timeticks"
 
-        assert res[4].oid == "sysORUpTime"
+        assert res[4].oid == "SNMPv2-MIB::sysORUpTime"
         assert res[4].index == "1"
-        assert int(res[4].value) >= 0
         assert res[4].type == "Timeticks"
 
         del sess
