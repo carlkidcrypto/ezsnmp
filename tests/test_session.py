@@ -351,91 +351,79 @@ def test_session_get_invalid_object_with_abort_enabled(sess):
 def test_session_walk(sess):
     res = sess.walk("system")
 
-    assert res[0].oid == "sysDescr"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
     assert res[0].index == "0"
     assert platform.version() in res[0].value
-    assert res[0].type == "OCTETSTR"
+    assert res[0].type == "STRING"
 
-    assert res[3].oid == "sysContact"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
     assert res[3].index == "0"
     assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[3].type == "OCTETSTR"
+    assert res[3].type == "STRING"
 
-    assert res[4].oid == "sysName"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
     assert res[4].index == "0"
     assert res[4].value == platform.node()
-    assert res[4].type == "OCTETSTR"
+    assert res[4].type == "STRING"
 
-    assert res[5].oid == "sysLocation"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
     assert res[5].index == "0"
     assert res[5].value == "my original location"
-    assert res[5].type == "OCTETSTR"
+    assert res[5].type == "STRING"
 
     del sess
 
 
 def test_session_bulkwalk(sess):
-    if sess.version == "1":
-        with pytest.raises(ValueError):
-            sess.bulkwalk("system")
-    else:
-        res = sess.walk("system")
+    res = sess.bulk_walk("system")
 
-        assert res[0].oid == "sysDescr"
-        assert res[0].index == "0"
-        assert platform.version() in res[0].value
-        assert res[0].type == "OCTETSTR"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert platform.version() in res[0].value
+    assert res[0].type == "STRING"
 
-        assert res[3].oid == "sysContact"
-        assert res[3].index == "0"
-        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3].type == "OCTETSTR"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[3].type == "STRING"
 
-        assert res[4].oid == "sysName"
-        assert res[4].index == "0"
-        assert res[4].value == platform.node()
-        assert res[4].type == "OCTETSTR"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
+    assert res[4].value == platform.node()
+    assert res[4].type == "STRING"
 
-        assert res[5].oid == "sysLocation"
-        assert res[5].index == "0"
-        assert res[5].value == "my original location"
-        assert res[5].type == "OCTETSTR"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
+    assert res[5].value == "my original location"
+    assert res[5].type == "STRING"
 
-        del sess
+    del sess
 
 
 def test_session_walk_all(sess):
-    # OID 1.3.6.1.6.3.16.1.5.2.1.6.6.95.110.111.110.101.95.1.2
-    # or SNMP-VIEW-BASED-ACM-MIB::vacmViewTreeFamilyStatus."_none_".1.2
-    # appears to return a noSuchName error when using v1, but not with v2c.
-    # This may be a Net-SNMP snmpd bug.
-    if sess.version == "1":
-        with pytest.raises(ValueError):
-            sess.walk(".")
-    else:
-        res = sess.walk(".")
+    res = sess.walk(".")
 
-        assert res[0].oid == "SNMPv2-MIB::sysDescr"
-        assert res[0].index == "0"
-        assert platform.version() in res[0].value
-        assert res[0].type == "STRING"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert platform.version() in res[0].value
+    assert res[0].type == "STRING"
 
-        assert res[3].oid == "SNMPv2-MIB::sysContact"
-        assert res[3].index == "0"
-        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3].type == "STRING"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[3].type == "STRING"
 
-        assert res[4].oid == "SNMPv2-MIB::sysName"
-        assert res[4].index == "0"
-        assert res[4].value == platform.node()
-        assert res[4].type == "STRING"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
+    assert res[4].value == platform.node()
+    assert res[4].type == "STRING"
 
-        assert res[5].oid == "SNMPv2-MIB::sysLocation"
-        assert res[5].index == "0"
-        assert res[5].value == "my original location"
-        assert res[5].type == "STRING"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
+    assert res[5].value == "my original location"
+    assert res[5].type == "STRING"
 
-        del sess
+    del sess
 
 
 def test_session_update():

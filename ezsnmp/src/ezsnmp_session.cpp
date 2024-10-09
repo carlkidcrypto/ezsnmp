@@ -14305,7 +14305,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_walk(PyObject *self, PyObject *args)
    int res1 = 0;
    int res2 = SWIG_OLDOBJ;
    PyObject *swig_obj[2];
-   std::vector<std::string, std::allocator<std::string> > result;
+   std::vector<Result, std::allocator<Result> > result;
 
    if (!args) {
       SWIG_fail;
@@ -14363,8 +14363,7 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_walk(PyObject *self, PyObject *args)
          SWIG_fail;
       }
    }
-   resultobj =
-       swig::from(static_cast<std::vector<std::string, std::allocator<std::string> > >(result));
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
    if (SWIG_IsNewObj(res2)) {
       delete arg2;
    }
@@ -17633,7 +17632,7 @@ SWIGINTERN PyObject *SwigPyBuiltin__SessionBase_richcompare(PyObject *self, PyOb
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__SessionBase_methods[] = {
     {"walk", _wrap_SessionBase_walk, METH_VARARGS, "walk(self, mib=\"\") -> _result_list"},
-    {"bulk_walk", _wrap_SessionBase_bulk_walk, METH_O, "bulk_walk(self, mibs) -> _string_list"},
+    {"bulk_walk", _wrap_SessionBase_bulk_walk, METH_O, "bulk_walk(self, mibs) -> _result_list"},
     {"get", _wrap_SessionBase_get, METH_VARARGS, "get(self, mib=\"\") -> _result_list"},
     {"bulk_get", _wrap_SessionBase_bulk_get, METH_O, "bulk_get(self, mibs) -> _string_list"},
     {"_get_args", _wrap_SessionBase__get_args, METH_NOARGS, "_get_args(self) -> _string_list"},

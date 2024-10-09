@@ -7,4 +7,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<std::string> snmpbulkwalk(const std::vector<std::string> &args);
+std::vector<Result> snmpbulkwalk(const std::vector<std::string> &args);

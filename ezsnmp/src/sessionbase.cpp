@@ -154,7 +154,7 @@ std::vector<Result> SessionBase::walk(std::string mib) {
    return snmpwalk(m_args);
 }
 
-std::vector<std::string> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
+std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {

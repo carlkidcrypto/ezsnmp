@@ -171,7 +171,7 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<std::string> snmpbulkwalk(std::vector<std::string> const &args) {
+std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
@@ -211,7 +211,7 @@ std::vector<std::string> snmpbulkwalk(std::vector<std::string> const &args) {
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
          snmpbulkwalk_usage();
-         return return_vector;
+         return parse_results(return_vector);
 
       default:
          break;
@@ -227,7 +227,7 @@ std::vector<std::string> snmpbulkwalk(std::vector<std::string> const &args) {
       rootlen = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
          snmp_perror(argv[arg]);
-         return return_vector;
+         return parse_results(return_vector);
       }
    } else {
       /*
@@ -246,7 +246,7 @@ std::vector<std::string> snmpbulkwalk(std::vector<std::string> const &args) {
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror("snmpbulkwalk", &session);
-      return return_vector;
+      return parse_results(return_vector);
    }
 
    /*
@@ -386,5 +386,5 @@ std::vector<std::string> snmpbulkwalk(std::vector<std::string> const &args) {
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return return_vector;
+   return parse_results(return_vector);
 }
