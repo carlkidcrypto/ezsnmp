@@ -1,10 +1,11 @@
-%module session
+%module sessionbase
 %feature("autodoc", "0");
 
 %include "stl.i"
 %include "datatypes.i"
 
-%feature("kwargs") Session::Session;
+%feature("kwargs") SessionBase::SessionBase;
+%feature("python:annotations", "c");
 
 // Tell SWIG how to handle our special return type(s) from C++
 %template(_string_list) std::vector<std::string>;
@@ -21,8 +22,8 @@
 };
 
 %{
-#include "session.h"
+#include "sessionbase.h"
 %}
 
 // Now list ANSI C/C++ declarations
-%include "../include/session.h"
+%include "../include/sessionbase.h"

@@ -193,6 +193,7 @@ setup(
                 "ezsnmp/src/snmpget.cpp",
                 "ezsnmp/src/snmpwalk.cpp",
                 "ezsnmp/src/snmpset.cpp",
+                "ezsnmp/src/snmptrap.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,
@@ -201,11 +202,11 @@ setup(
             extra_link_args=link_args,
         ),
         Extension(
-            name="ezsnmp/_session",
+            name="ezsnmp/_sessionbase",
             sources=[
-                "ezsnmp/src/ezsnmp_session.cpp",
+                "ezsnmp/src/ezsnmp_sessionbase.cpp",
                 "ezsnmp/src/datatypes.cpp",
-                "ezsnmp/src/session.cpp",
+                "ezsnmp/src/sessionbase.cpp",
                 "ezsnmp/src/helpers.cpp",
             ],
             library_dirs=libdirs,
@@ -225,6 +226,6 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-        )
+        ),
     ],
 )

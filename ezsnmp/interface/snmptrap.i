@@ -3,8 +3,8 @@
 %include "stl.i"
 
 %{
-#include "snmpbulkget.h"
+#include "snmptrap.h"
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<Result> snmpbulkget(const std::vector<std::string> &args);
+int snmptrap(const std::vector<std::string> &args);

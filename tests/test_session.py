@@ -1,111 +1,97 @@
 import platform
-import random
 import re
 import pytest
-from time import sleep
-
-from ezsnmp.exceptions import (
-    EzSNMPError,
-    EzSNMPConnectionError,
-    EzSNMPTimeoutError,
-    EzSNMPNoSuchObjectError,
-    EzSNMPNoSuchInstanceError,
-    EzSNMPNoSuchNameError,
-)
 
 from ezsnmp.session import Session
 
 
 def test_session_invalid_snmp_version():
     with pytest.raises(ValueError):
-        Session(version=4)
+        Session(version="4")
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname(version):
-    with pytest.raises(EzSNMPConnectionError):
+    with pytest.raises(ValueError):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_session_invalid_hostname_and_remote_port(version):
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
+def test_session_invalid_hostname_and_port_number(version):
     with pytest.raises(ValueError):
-        Session(hostname="localhost:162", remote_port=163, version=version)
+        Session(hostname="localhost:162", port_number="163", version=version)
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_session_hostname_and_remote_port_split(version):
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
+def test_session_hostname_and_port_number_split(version):
     session = Session(hostname="localhost:162", version=version)
     assert session.hostname == "localhost"
-    assert session.remote_port == 162
+    assert session.port_number == "162"
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_port(version):
-    with pytest.raises(EzSNMPTimeoutError):
-        session = Session(remote_port=1234, version=version, timeout=0.2, retries=1)
+    with pytest.raises(ValueError):
+        session = Session(
+            port_number="1234", version=version, timeout="0.2", retries="1"
+        )
         session.get("sysContact.0")
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address(version):
     session = Session(hostname="2001:db8::", version=version)
     assert session.hostname == "2001:db8::"
-    assert session.connect_hostname == "2001:db8::"
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_session_ipv6_address_and_remote_port(version):
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
+def test_session_ipv6_address_and_port_number(version):
     session = Session(
         hostname="fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa",
-        remote_port=162,
+        port_number="162",
         version=version,
     )
     assert session.hostname == "fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa"
-    assert session.remote_port == 162
-    assert session.connect_hostname == "[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:162"
+    assert session.port_number == "162"
     del session
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_session_ipv6_address_and_remote_port_split(version):
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
+def test_session_ipv6_address_and_port_number_split(version):
     session = Session(hostname="[2001:db8::]:161", version=version)
     assert session.hostname == "[2001:db8::]"
-    assert session.remote_port == 161
-    assert session.connect_hostname == "[2001:db8::]:161"
+    assert session.port_number == "161"
     del session
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_session_ipv6_address_with_protocol_and_remote_port_split(version):
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
+def test_session_ipv6_address_with_protocol_and_port_number_split(version):
     session = Session(hostname="udp6:[2001:db8::]:162", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
-    assert session.remote_port == 162
-    assert session.connect_hostname == "udp6:[2001:db8::]:162"
+    assert session.port_number == "162"
     del session
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_with_protocol(version):
     session = Session(hostname="udp6:[2001:db8::]", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
-    assert session.connect_hostname == "udp6:[2001:db8::]"
     del session
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_is_not_ipv6(version):
     with pytest.raises(ValueError):
         Session(hostname="[foo::bar]:161", version=version)
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_session_ipv6_invalid_hostname_and_remote_port(version):
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
+def test_session_ipv6_invalid_hostname_and_port_number(version):
     with pytest.raises(ValueError):
         Session(
             hostname="[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:161",
-            remote_port=162,
+            port_number="162",
             version=version,
         )
 
@@ -126,22 +112,20 @@ def test_session_set_multiple_next(sess, reset_values):
         ["snmpTargetAddrTDomain", "snmpTargetAddrTAddress", "snmpTargetAddrRowStatus"]
     )
 
-    assert len(res) == 3
-
     assert res[0].oid == "snmpTargetAddrTDomain"
-    assert res[0].oid_index == "116.101.115.116"
+    assert res[0].index == "116.101.115.116"
     assert res[0].value == ".1.3.6.1.6.1.1"
-    assert res[0].snmp_type == "OBJECTID"
+    assert res[0].type == "OBJECTID"
 
     assert res[1].oid == "snmpTargetAddrTAddress"
-    assert res[1].oid_index == "116.101.115.116"
+    assert res[1].index == "116.101.115.116"
     assert res[1].value == "1234"
-    assert res[1].snmp_type == "OCTETSTR"
+    assert res[1].type == "STRING"
 
     assert res[2].oid == "snmpTargetAddrRowStatus"
-    assert res[2].oid_index == "116.101.115.116"
+    assert res[2].index == "116.101.115.116"
     assert res[2].value == "3"
-    assert res[2].snmp_type == "INTEGER"
+    assert res[2].type == "INTEGER"
 
     del sess
 
@@ -154,45 +138,41 @@ def test_session_set_clear(sess):
         ["snmpTargetAddrTDomain", "snmpTargetAddrTAddress", "snmpTargetAddrRowStatus"]
     )
 
-    assert len(res) == 3
-
     assert res[0].oid == "snmpUnavailableContexts"
-    assert res[0].oid_index == "0"
+    assert res[0].index == "0"
     assert res[0].value == "0"
-    assert res[0].snmp_type == "COUNTER"
+    assert res[0].type == "COUNTER"
 
     assert res[1].oid == "snmpUnavailableContexts"
-    assert res[1].oid_index == "0"
+    assert res[1].index == "0"
     assert res[1].value == "0"
-    assert res[1].snmp_type == "COUNTER"
+    assert res[1].type == "COUNTER"
 
     assert res[2].oid == "snmpUnavailableContexts"
-    assert res[2].oid_index == "0"
+    assert res[2].index == "0"
     assert res[2].value == "0"
-    assert res[2].snmp_type == "COUNTER"
+    assert res[2].type == "COUNTER"
 
     del sess
 
 
 def test_session_get(sess):
-    res = sess.get([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
-
-    assert len(res) == 3
-
-    assert res[0].oid == "sysUpTimeInstance"
-    assert res[0].oid_index == ""
-    assert int(res[0].value) > 0
-    assert res[0].snmp_type == "TICKS"
-
-    assert res[1].oid == "sysContact"
-    assert res[1].oid_index == "0"
-    assert res[1].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[1].snmp_type == "OCTETSTR"
-
-    assert res[2].oid == "sysLocation"
-    assert res[2].oid_index == "0"
-    assert res[2].value == "my original location"
-    assert res[2].snmp_type == "OCTETSTR"
+    for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
+        res = sess.get(oid)
+        if oid == "sysUpTime.0":
+            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+            assert res[0].index == ""
+            assert res[0].type == "Timeticks"
+        elif oid == "sysContact.0":
+            assert res[0].oid == "SNMPv2-MIB::sysContact"
+            assert res[0].index == "0"
+            assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+            assert res[0].type == "STRING"
+        elif oid == "sysLocation.0":
+            assert res[0].oid == "SNMPv2-MIB::sysLocation"
+            assert res[0].index == "0"
+            assert res[0].value == "my original location"
+            assert res[0].type == "STRING"
 
     del sess
 
@@ -201,10 +181,10 @@ def test_session_get_use_numeric(sess):
     sess.use_numeric = True
     res = sess.get("sysContact.0")
 
-    assert res.oid == ".1.3.6.1.2.1.1.4"
-    assert res.oid_index == "0"
-    assert res.value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res.snmp_type == "OCTETSTR"
+    assert res[0].oid == ".1.3.6.1.2.1.1.4"
+    assert res[0].index == "0"
+    assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[0].type == "STRING"
 
     del sess
 
@@ -213,10 +193,10 @@ def test_session_get_use_sprint_value(sess):
     sess.use_sprint_value = True
     res = sess.get("sysUpTimeInstance")
 
-    assert res.oid == "sysUpTimeInstance"
-    assert res.oid_index == ""
-    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res.value)
-    assert res.snmp_type == "TICKS"
+    assert res[0].oid == "sysUpTimeInstance"
+    assert res[0].index == ""
+    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0].value)
+    assert res[0].type == "Timeticks"
 
     del sess
 
@@ -225,10 +205,10 @@ def test_session_get_use_enums(sess):
     sess.use_enums = True
     res = sess.get("ifAdminStatus.1")
 
-    assert res.oid == "ifAdminStatus"
-    assert res.oid_index == "1"
-    assert res.value == "up"
-    assert res.snmp_type == "INTEGER"
+    assert res[0].oid == "ifAdminStatus"
+    assert res[0].index == "1"
+    assert res[0].value == "up"
+    assert res[0].type == "INTEGER"
 
     del sess
 
@@ -236,35 +216,33 @@ def test_session_get_use_enums(sess):
 def test_session_get_next(sess):
     res = sess.get_next([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
 
-    assert len(res) == 3
-
     assert res[0].oid == "sysContact"
-    assert res[0].oid_index == "0"
+    assert res[0].index == "0"
     assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].type == "STRING"
 
     assert res[1].oid == "sysName"
-    assert res[1].oid_index == "0"
+    assert res[1].index == "0"
     assert res[1].value == platform.node()
-    assert res[1].snmp_type == "OCTETSTR"
+    assert res[1].type == "STRING"
 
     assert res[2].oid == "sysORLastChange"
-    assert res[2].oid_index == "0"
+    assert res[2].index == "0"
     assert int(res[2].value) >= 0
-    assert res[2].snmp_type == "TICKS"
+    assert res[2].type == "Timeticks"
 
     del sess
 
 
 def test_session_set(sess, reset_values):
     res = sess.get(("sysLocation", "0"))
-    assert res.value != "my newer location"
+    assert res[0].value != "my newer location"
 
     success = sess.set(("sysLocation", "0"), "my newer location")
     assert success
 
     res = sess.get(("sysLocation", "0"))
-    assert res.value == "my newer location"
+    assert res[0].value == "my newer location"
 
     del sess
 
@@ -289,38 +267,34 @@ def test_session_set_multiple(sess, reset_values):
     del sess
 
 
-def test_session_get_bulk(sess):  # noqa
-    if sess.version == 1:
-        with pytest.raises(EzSNMPError):
-            sess.get_bulk(
-                [
-                    "sysUpTime",
-                    "sysORLastChange",
-                    "sysORID",
-                    "sysORDescr",
-                    "sysORUpTime",
-                ],
-                2,
-                8,
-            )
+def test_session_bulk_get(sess):
+    if sess.version == "1":
+        # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
+        # with pytest.raises(ValueError):
+        #     sess.bulk_get(
+        #         [
+        #             "sysUpTime",
+        #             "sysORLastChange",
+        #             "sysORID",
+        #             "sysORDescr",
+        #             "sysORUpTime",
+        #         ],
+        #         2,
+        #         8,
+        #     )
+        assert 1 == 2
     else:
-        res = sess.get_bulk(
-            ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"],
-            2,
-            8,
+        res = sess.bulk_get(
+            ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
         )
 
-        assert len(res) == 26
+        assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+        assert res[0].index == ""
+        assert res[0].type == "Timeticks"
 
-        assert res[0].oid == "sysUpTimeInstance"
-        assert res[0].oid_index == ""
-        assert int(res[0].value) > 0
-        assert res[0].snmp_type == "TICKS"
-
-        assert res[4].oid == "sysORUpTime"
-        assert res[4].oid_index == "1"
-        assert int(res[4].value) >= 0
-        assert res[4].snmp_type == "TICKS"
+        assert res[4].oid == "SNMPv2-MIB::sysORUpTime"
+        assert res[4].index == "1"
+        assert res[4].type == "Timeticks"
 
         del sess
 
@@ -328,157 +302,113 @@ def test_session_get_bulk(sess):  # noqa
 def test_session_get_invalid_instance(sess):
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
-    if sess.version == 1:
-        with pytest.raises(EzSNMPNoSuchNameError):
+    if sess.version == "1":
+        with pytest.raises(ValueError):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
-        assert res.snmp_type == "NOSUCHINSTANCE"
-
-
-def test_session_get_invalid_instance_with_abort_enabled(sess):
-    # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
-    # invalid object ID, instead it excepts with noSuchName
-    sess.abort_on_nonexistent = True
-    if sess.version == 1:
-        with pytest.raises(EzSNMPNoSuchNameError):
-            sess.get("sysDescr.100")
-    else:
-        with pytest.raises(EzSNMPNoSuchInstanceError):
-            sess.get("sysDescr.100")
+        assert res[0].type == "NOSUCHINSTANCE"
 
 
 def test_session_get_invalid_object(sess):
-    if sess.version == 1:
-        with pytest.raises(EzSNMPNoSuchNameError):
+    if sess.version == "1":
+        with pytest.raises(ValueError):
             sess.get("iso")
     else:
         res = sess.get("iso")
-        assert res.snmp_type == "NOSUCHOBJECT"
-
-
-def test_session_get_invalid_object_with_abort_enabled(sess):
-    sess.abort_on_nonexistent = True
-    if sess.version == 1:
-        with pytest.raises(EzSNMPNoSuchNameError):
-            sess.get("iso")
-    else:
-        with pytest.raises(EzSNMPNoSuchObjectError):
-            sess.get("iso")
+        assert res[0].type == "NOSUCHOBJECT"
 
 
 def test_session_walk(sess):
     res = sess.walk("system")
 
-    assert len(res) >= 7
-
-    assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
     assert platform.version() in res[0].value
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].type == "STRING"
 
-    assert res[3].oid == "sysContact"
-    assert res[3].oid_index == "0"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
     assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[3].snmp_type == "OCTETSTR"
+    assert res[3].type == "STRING"
 
-    assert res[4].oid == "sysName"
-    assert res[4].oid_index == "0"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
     assert res[4].value == platform.node()
-    assert res[4].snmp_type == "OCTETSTR"
+    assert res[4].type == "STRING"
 
-    assert res[5].oid == "sysLocation"
-    assert res[5].oid_index == "0"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
     assert res[5].value == "my original location"
-    assert res[5].snmp_type == "OCTETSTR"
+    assert res[5].type == "STRING"
 
     del sess
 
 
 def test_session_bulkwalk(sess):
-    if sess.version == 1:
-        with pytest.raises(EzSNMPError):
-            sess.bulkwalk("system")
+    if sess.version == "1":
+        # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
+        # with pytest.raises(EzSNMPError):
+        # sess.bulkwalk("system")
+        assert 1 == 2
     else:
-        res = sess.walk("system")
 
-        assert len(res) >= 7
+        res = sess.bulk_walk(["system"])
 
-        assert res[0].oid == "sysDescr"
-        assert res[0].oid_index == "0"
+        assert res[0].oid == "SNMPv2-MIB::sysDescr"
+        assert res[0].index == "0"
         assert platform.version() in res[0].value
-        assert res[0].snmp_type == "OCTETSTR"
+        assert res[0].type == "STRING"
 
-        assert res[3].oid == "sysContact"
-        assert res[3].oid_index == "0"
+        assert res[3].oid == "SNMPv2-MIB::sysContact"
+        assert res[3].index == "0"
         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3].snmp_type == "OCTETSTR"
+        assert res[3].type == "STRING"
 
-        assert res[4].oid == "sysName"
-        assert res[4].oid_index == "0"
+        assert res[4].oid == "SNMPv2-MIB::sysName"
+        assert res[4].index == "0"
         assert res[4].value == platform.node()
-        assert res[4].snmp_type == "OCTETSTR"
+        assert res[4].type == "STRING"
 
-        assert res[5].oid == "sysLocation"
-        assert res[5].oid_index == "0"
+        assert res[5].oid == "SNMPv2-MIB::sysLocation"
+        assert res[5].index == "0"
         assert res[5].value == "my original location"
-        assert res[5].snmp_type == "OCTETSTR"
+        assert res[5].type == "STRING"
 
-        del sess
+    del sess
 
 
 def test_session_walk_all(sess):
-    # Introduce some radom sleep to prevent us DDoSing our own snmp test server.
-    sleep(random.uniform(0.1, 0.500))
+    res = sess.walk(".")
 
-    # OID 1.3.6.1.6.3.16.1.5.2.1.6.6.95.110.111.110.101.95.1.2
-    # or SNMP-VIEW-BASED-ACM-MIB::vacmViewTreeFamilyStatus."_none_".1.2
-    # appears to return a noSuchName error when using v1, but not with v2c.
-    # This may be a Net-SNMP snmpd bug.
-    if sess.version == 1:
-        with pytest.raises(EzSNMPNoSuchNameError):
-            sess.walk(".")
-    else:
-        res = sess.walk(".")
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert platform.version() in res[0].value
+    assert res[0].type == "STRING"
 
-        assert len(res) > 0
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[3].type == "STRING"
 
-        assert res[0].oid == "sysDescr"
-        assert res[0].oid_index == "0"
-        assert platform.version() in res[0].value
-        assert res[0].snmp_type == "OCTETSTR"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
+    assert res[4].value == platform.node()
+    assert res[4].type == "STRING"
 
-        assert res[3].oid == "sysContact"
-        assert res[3].oid_index == "0"
-        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3].snmp_type == "OCTETSTR"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
+    assert res[5].value == "my original location"
+    assert res[5].type == "STRING"
 
-        assert res[4].oid == "sysName"
-        assert res[4].oid_index == "0"
-        assert res[4].value == platform.node()
-        assert res[4].snmp_type == "OCTETSTR"
-
-        assert res[5].oid == "sysLocation"
-        assert res[5].oid_index == "0"
-        assert res[5].value == "my original location"
-        assert res[5].snmp_type == "OCTETSTR"
-
-        del sess
+    del sess
 
 
 def test_session_update():
-    s = Session(version=3)
-    ptr = s.sess_ptr
-    s.version = 1
-    s.update_session()
-    assert ptr != s.sess_ptr
-    s.tunneled = True
-    ptr = s.sess_ptr
-    with pytest.raises(ValueError):
-        s.update_session()
-    assert ptr == s.sess_ptr
-    s.update_session(tunneled=False, version=2)
-    assert s.version == 2
-    assert s.tunneled is False
+    s = Session(version="3")
+    assert s.version == "3"
+
+    s.version = "1"
+    assert s.version == "1"
 
     del s

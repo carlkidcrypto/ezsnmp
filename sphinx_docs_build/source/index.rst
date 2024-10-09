@@ -229,14 +229,15 @@ Three make a header file for it `snmpwalk.h` and extract methods/functions from 
 Four run the command below to generate the wrap file.
 
 ```bash
-swig -c++ -python -builtin -threads -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmp.cpp ezsnmp/interface/netsnmp.i &&
-swig -c++ -python -builtin -threads -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_session.cpp ezsnmp/interface/session.i &&
-swig -c++ -python -builtin -threads -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i
+swig -c++ -python -builtin -threads -doxygen -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmp.cpp ezsnmp/interface/netsnmp.i &&
+swig -c++ -python -builtin -threads -doxygen -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_sessionbase.cpp ezsnmp/interface/sessionbase.i &&
+swig -c++ -python -builtin -threads -doxygen -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i
 ```
 
 * `-c++` to force generation of a `.cpp` file
 * `-python` to build a python module
 * `-builtin` to build with native python data types. [Python_builtin_types](https://swig.org/Doc4.0/Python.html#Python_builtin_types)
+* `-doxygen` Convert C++ doxygen comments to pydoc comments in proxy classes [Python_commandline](https://swig.org/Doc4.0/Python.html#Python_commandline)
 * `-threads` adds thread support for all modules. [Support_for_Multithreaded_Applications](https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications)
 
 Five run

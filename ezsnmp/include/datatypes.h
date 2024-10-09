@@ -3,15 +3,13 @@
 
 #include <string>
 
-struct Result
-{
-    std::string oid;
-    // @todo
-    // std::string index;
-    std::string type;
-    std::string value;
+struct Result {
+   std::string oid = "";
+   std::string index = "";
+   std::string type = "";
+   std::string value = "";
 
-    std::string to_string() const;
+   std::string to_string() const;
 };
 
 #endif // DATATYPES_H
