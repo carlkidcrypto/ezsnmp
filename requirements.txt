@@ -23,7 +23,7 @@ termcolor==2.5.0
 tomli==2.0.2
 setuptools==75.1.0
 urllib3==2.2.3
-build==1.2.2
+build==1.2.2.post1
 cibuildwheel==2.21.2
 pip==24.2
 wheel==0.44.0
