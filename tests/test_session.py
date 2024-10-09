@@ -125,7 +125,7 @@ def test_session_set_multiple_next(sess, reset_values):
     assert res[1].oid == "snmpTargetAddrTAddress"
     assert res[1].index == "116.101.115.116"
     assert res[1].value == "1234"
-    assert res[1].type == "OCTETSTR"
+    assert res[1].type == "STRING"
 
     assert res[2].oid == "snmpTargetAddrRowStatus"
     assert res[2].index == "116.101.115.116"
@@ -162,22 +162,22 @@ def test_session_set_clear(sess):
 
 
 def test_session_get(sess):
-    res = sess.get([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
-
-    assert res[0].oid == "sysUpTimeInstance"
-    assert res[0].index == ""
-    assert int(res[0].value) > 0
-    assert res[0].type == "TICKS"
-
-    assert res[1].oid == "sysContact"
-    assert res[1].index == "0"
-    assert res[1].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[1].type == "OCTETSTR"
-
-    assert res[2].oid == "sysLocation"
-    assert res[2].index == "0"
-    assert res[2].value == "my original location"
-    assert res[2].type == "OCTETSTR"
+    for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
+        res = sess.get(oid)
+        if oid == "sysUpTime.0":
+            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+            assert res[0].index == ""
+            assert res[0].type == "Timeticks"
+        elif oid == "sysContact.0":
+            assert res[0].oid == "SNMPv2-MIB::sysContact"
+            assert res[0].index == "0"
+            assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+            assert res[0].type == "STRING"
+        elif oid == "sysLocation.0":
+            assert res[0].oid == "SNMPv2-MIB::sysLocation"
+            assert res[0].index == "0"
+            assert res[0].value == "my original location"
+            assert res[0].type == "STRING"
 
     del sess
 
@@ -189,7 +189,7 @@ def test_session_get_use_numeric(sess):
     assert res[0].oid == ".1.3.6.1.2.1.1.4"
     assert res[0].index == "0"
     assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[0].type == "OCTETSTR"
+    assert res[0].type == "STRING"
 
     del sess
 
@@ -201,7 +201,7 @@ def test_session_get_use_sprint_value(sess):
     assert res[0].oid == "sysUpTimeInstance"
     assert res[0].index == ""
     assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0].value)
-    assert res[0].type == "TICKS"
+    assert res[0].type == "Timeticks"
 
     del sess
 
@@ -224,17 +224,17 @@ def test_session_get_next(sess):
     assert res[0].oid == "sysContact"
     assert res[0].index == "0"
     assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[0].type == "OCTETSTR"
+    assert res[0].type == "STRING"
 
     assert res[1].oid == "sysName"
     assert res[1].index == "0"
     assert res[1].value == platform.node()
-    assert res[1].type == "OCTETSTR"
+    assert res[1].type == "STRING"
 
     assert res[2].oid == "sysORLastChange"
     assert res[2].index == "0"
     assert int(res[2].value) >= 0
-    assert res[2].type == "TICKS"
+    assert res[2].type == "Timeticks"
 
     del sess
 
@@ -272,10 +272,10 @@ def test_session_set_multiple(sess, reset_values):
     del sess
 
 
-def test_session_get_bulk(sess):  # noqa
+def test_session_bulk_get(sess):  # noqa
     if sess.version == "1":
         with pytest.raises(ValueError):
-            sess.get_bulk(
+            sess.bulk_get(
                 [
                     "sysUpTime",
                     "sysORLastChange",
@@ -287,7 +287,7 @@ def test_session_get_bulk(sess):  # noqa
                 8,
             )
     else:
-        res = sess.get_bulk(
+        res = sess.bulk_get(
             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"],
             2,
             8,
@@ -296,12 +296,12 @@ def test_session_get_bulk(sess):  # noqa
         assert res[0].oid == "sysUpTimeInstance"
         assert res[0].index == ""
         assert int(res[0].value) > 0
-        assert res[0].type == "TICKS"
+        assert res[0].type == "Timeticks"
 
         assert res[4].oid == "sysORUpTime"
         assert res[4].index == "1"
         assert int(res[4].value) >= 0
-        assert res[4].type == "TICKS"
+        assert res[4].type == "Timeticks"
 
         del sess
 
