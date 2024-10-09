@@ -6,7 +6,7 @@ SESS_V1_ARGS = {
 }
 
 SESS_V2_ARGS = {
-    "version": "2",
+    "version": "2c",
     "hostname": "localhost",
     "port_number": "11161",
     "community": "public",

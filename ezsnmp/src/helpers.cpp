@@ -104,9 +104,10 @@ Result parse_result(std::string const &input) {
    // Check for "No Such Object" in the value
    if (result.value.find("No Such Object") != std::string::npos) {
       result.type = "NOSUCHOBJECT";
+   }
 
    // Check for "No Such Instance" in the value
-   } else if (result.value.find("No Such Instance") != std::string::npos) {
+   else if (result.value.find("No Such Instance") != std::string::npos) {
       result.type = "NOSUCHINSTANCE";
    }
 

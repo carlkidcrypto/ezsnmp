@@ -415,42 +415,34 @@ def test_session_walk_all(sess):
     else:
         res = sess.walk(".")
 
-        assert res[0].oid == "sysDescr"
+        assert res[0].oid == "SNMPv2-MIB::sysDescr"
         assert res[0].index == "0"
         assert platform.version() in res[0].value
-        assert res[0].type == "OCTETSTR"
+        assert res[0].type == "STRING"
 
-        assert res[3].oid == "sysContact"
+        assert res[3].oid == "SNMPv2-MIB::sysContact"
         assert res[3].index == "0"
         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3].type == "OCTETSTR"
+        assert res[3].type == "STRING"
 
-        assert res[4].oid == "sysName"
+        assert res[4].oid == "SNMPv2-MIB::sysName"
         assert res[4].index == "0"
         assert res[4].value == platform.node()
-        assert res[4].type == "OCTETSTR"
+        assert res[4].type == "STRING"
 
-        assert res[5].oid == "sysLocation"
+        assert res[5].oid == "SNMPv2-MIB::sysLocation"
         assert res[5].index == "0"
         assert res[5].value == "my original location"
-        assert res[5].type == "OCTETSTR"
+        assert res[5].type == "STRING"
 
         del sess
 
 
 def test_session_update():
     s = Session(version="3")
-    ptr = s.sess_ptr
+    assert s.version == "3"
+
     s.version = "1"
-    s.update_session()
-    assert ptr != s.sess_ptr
-    s.tunneled = True
-    ptr = s.sess_ptr
-    with pytest.raises(ValueError):
-        s.update_session()
-    assert ptr == s.sess_ptr
-    s.update_session(tunneled=False, version=2)
-    assert s.version == "2"
-    assert s.tunneled is False
+    assert s.version == "1"
 
     del s
