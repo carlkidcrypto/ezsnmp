@@ -3,7 +3,7 @@ attrs==24.2.0
 black==24.10.0
 click== 8.1.7
 colorama==0.4.6
-coverage==7.6.1
+coverage==7.6.2
 flake8==7.1.1
 iniconfig==2.0.0
 mccabe==0.7.0
@@ -24,6 +24,6 @@ tomli==2.0.2
 setuptools==75.1.0
 urllib3==2.2.3
 build==1.2.2
-cibuildwheel==2.21.2
+cibuildwheel==2.21.3
 pip==24.2
 wheel==0.44.0
