@@ -7320,7 +7320,6 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -7355,7 +7354,6 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -9417,7 +9415,6 @@ SWIGINTERN PyObject *_wrap_delete__string_list(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11457,7 +11454,6 @@ SWIGINTERN PyObject *_wrap_delete__result_list(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11512,7 +11508,6 @@ SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11521,10 +11516,10 @@ SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
     resultobj = PyList_New((&result)->size());
     for (size_t i = 0; i < (&result)->size(); ++i) {
       PyObject* dict = PyDict_New();
-      PyDict_SetItemString(dict, "oid", PyUnicode_FromUTF8(result[i].oid.c_str()));
-      PyDict_SetItemString(dict, "index", PyUnicode_FromUTF8(result[i].index.c_str()));
-      PyDict_SetItemString(dict, "type", PyUnicode_FromUTF8(result[i].type.c_str()));
-      PyDict_SetItemString(dict, "value", PyUnicode_FromUTF8(result[i].value.c_str()));
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
       PyList_SET_ITEM(resultobj, i, dict);
     }
   }
@@ -11567,7 +11562,6 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11576,10 +11570,10 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
     resultobj = PyList_New((&result)->size());
     for (size_t i = 0; i < (&result)->size(); ++i) {
       PyObject* dict = PyDict_New();
-      PyDict_SetItemString(dict, "oid", PyUnicode_FromUTF8(result[i].oid.c_str()));
-      PyDict_SetItemString(dict, "index", PyUnicode_FromUTF8(result[i].index.c_str()));
-      PyDict_SetItemString(dict, "type", PyUnicode_FromUTF8(result[i].type.c_str()));
-      PyDict_SetItemString(dict, "value", PyUnicode_FromUTF8(result[i].value.c_str()));
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
       PyList_SET_ITEM(resultobj, i, dict);
     }
   }
@@ -11622,7 +11616,6 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11631,10 +11624,10 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
     resultobj = PyList_New((&result)->size());
     for (size_t i = 0; i < (&result)->size(); ++i) {
       PyObject* dict = PyDict_New();
-      PyDict_SetItemString(dict, "oid", PyUnicode_FromUTF8(result[i].oid.c_str()));
-      PyDict_SetItemString(dict, "index", PyUnicode_FromUTF8(result[i].index.c_str()));
-      PyDict_SetItemString(dict, "type", PyUnicode_FromUTF8(result[i].type.c_str()));
-      PyDict_SetItemString(dict, "value", PyUnicode_FromUTF8(result[i].value.c_str()));
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
       PyList_SET_ITEM(resultobj, i, dict);
     }
   }
@@ -11677,7 +11670,6 @@ SWIGINTERN PyObject *_wrap_snmpset(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11722,7 +11714,6 @@ SWIGINTERN PyObject *_wrap_snmptrap(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11767,7 +11758,6 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11776,10 +11766,10 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
     resultobj = PyList_New((&result)->size());
     for (size_t i = 0; i < (&result)->size(); ++i) {
       PyObject* dict = PyDict_New();
-      PyDict_SetItemString(dict, "oid", PyUnicode_FromUTF8(result[i].oid.c_str()));
-      PyDict_SetItemString(dict, "index", PyUnicode_FromUTF8(result[i].index.c_str()));
-      PyDict_SetItemString(dict, "type", PyUnicode_FromUTF8(result[i].type.c_str()));
-      PyDict_SetItemString(dict, "value", PyUnicode_FromUTF8(result[i].value.c_str()));
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
       PyList_SET_ITEM(resultobj, i, dict);
     }
   }

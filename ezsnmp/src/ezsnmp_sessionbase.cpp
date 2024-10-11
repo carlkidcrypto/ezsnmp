@@ -7298,7 +7298,6 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -7333,7 +7332,6 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -9395,7 +9393,6 @@ SWIGINTERN PyObject *_wrap_delete__string_list(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11435,7 +11432,6 @@ SWIGINTERN PyObject *_wrap_delete__result_list(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11686,7 +11682,6 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11721,7 +11716,6 @@ SWIGINTERN PyObject *_wrap_delete_SessionBase(PyObject *self, PyObject *args) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -11767,12 +11761,21 @@ SWIGINTERN PyObject *_wrap_SessionBase_walk__SWIG_0(PyObject *self, Py_ssize_t n
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
   }
-  resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
+  {
+    resultobj = PyList_New((&result)->size());
+    for (size_t i = 0; i < (&result)->size(); ++i) {
+      PyObject* dict = PyDict_New();
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
+      PyList_SET_ITEM(resultobj, i, dict);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -11803,12 +11806,21 @@ SWIGINTERN PyObject *_wrap_SessionBase_walk__SWIG_1(PyObject *self, Py_ssize_t n
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
   }
-  resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
+  {
+    resultobj = PyList_New((&result)->size());
+    for (size_t i = 0; i < (&result)->size(); ++i) {
+      PyObject* dict = PyDict_New();
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
+      PyList_SET_ITEM(resultobj, i, dict);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -11895,12 +11907,21 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_walk(PyObject *self, PyObject *args)
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
   }
-  resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
+  {
+    resultobj = PyList_New((&result)->size());
+    for (size_t i = 0; i < (&result)->size(); ++i) {
+      PyObject* dict = PyDict_New();
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
+      PyList_SET_ITEM(resultobj, i, dict);
+    }
+  }
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -11943,12 +11964,21 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_0(PyObject *self, Py_ssize_t no
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
   }
-  resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
+  {
+    resultobj = PyList_New((&result)->size());
+    for (size_t i = 0; i < (&result)->size(); ++i) {
+      PyObject* dict = PyDict_New();
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
+      PyList_SET_ITEM(resultobj, i, dict);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -11979,12 +12009,21 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_1(PyObject *self, Py_ssize_t no
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
   }
-  resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
+  {
+    resultobj = PyList_New((&result)->size());
+    for (size_t i = 0; i < (&result)->size(); ++i) {
+      PyObject* dict = PyDict_New();
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
+      PyList_SET_ITEM(resultobj, i, dict);
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -12071,12 +12110,21 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_get(PyObject *self, PyObject *args) 
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
   }
-  resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
+  {
+    resultobj = PyList_New((&result)->size());
+    for (size_t i = 0; i < (&result)->size(); ++i) {
+      PyObject* dict = PyDict_New();
+      PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8(result[i].oid.c_str()));
+      PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8(result[i].index.c_str()));
+      PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8(result[i].type.c_str()));
+      PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8(result[i].value.c_str()));
+      PyList_SET_ITEM(resultobj, i, dict);
+    }
+  }
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -12109,7 +12157,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_args(PyObject *self, PyObject *args)
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12145,7 +12192,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_hostname(PyObject *self, PyObject *a
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12181,7 +12227,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_port_number(PyObject *self, PyObject
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12217,7 +12262,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_version(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12253,7 +12297,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_community(PyObject *self, PyObject *
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12289,7 +12332,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_auth_protocol(PyObject *self, PyObje
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12325,7 +12367,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_auth_passphrase(PyObject *self, PyOb
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12361,7 +12402,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_security_engine_id(PyObject *self, P
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12397,7 +12437,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_context_engine_id(PyObject *self, Py
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12433,7 +12472,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_security_level(PyObject *self, PyObj
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12469,7 +12507,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_context(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12505,7 +12542,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_security_username(PyObject *self, Py
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12541,7 +12577,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_privacy_protocol(PyObject *self, PyO
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12577,7 +12612,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_privacy_passphrase(PyObject *self, P
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12613,7 +12647,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_boots_time(PyObject *self, PyObject 
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12649,7 +12682,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_retries(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12685,7 +12717,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_timeout(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12735,7 +12766,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_hostname(PyObject *self, PyObject *a
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12787,7 +12817,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_port_number(PyObject *self, PyObject
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12839,7 +12868,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_version(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12891,7 +12919,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_community(PyObject *self, PyObject *
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12943,7 +12970,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_auth_protocol(PyObject *self, PyObje
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -12995,7 +13021,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_auth_passphrase(PyObject *self, PyOb
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13047,7 +13072,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_security_engine_id(PyObject *self, P
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13099,7 +13123,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_context_engine_id(PyObject *self, Py
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13151,7 +13174,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_security_level(PyObject *self, PyObj
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13203,7 +13225,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_context(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13255,7 +13276,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_security_username(PyObject *self, Py
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13307,7 +13327,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_privacy_protocol(PyObject *self, PyO
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13359,7 +13378,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_privacy_passphrase(PyObject *self, P
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13411,7 +13429,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_boots_time(PyObject *self, PyObject 
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13463,7 +13480,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_retries(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
@@ -13515,7 +13531,6 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_timeout(PyObject *self, PyObject *ar
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
-      // Example of a more specific exception
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
     }
