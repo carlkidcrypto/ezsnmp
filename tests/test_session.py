@@ -3,6 +3,9 @@ import re
 import pytest
 
 from ezsnmp.session import Session
+import faulthandler
+
+faulthandler.enable()
 
 
 def test_session_invalid_snmp_version():
