@@ -14236,10 +14236,14 @@ SWIGINTERN PyObject *_wrap_SessionBase_walk__SWIG_0(PyObject *self, Py_ssize_t n
          PyObject *dict = PyDict_New();
 
          // Use PyUnicode_FromString to create Python Unicode objects
-         PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-         PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-         PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-         PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+         PyDict_SetItemString(dict, "oid",
+                              PyUnicode_FromString(result[i].oid.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "index",
+                              PyUnicode_FromString(result[i].index.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "type",
+                              PyUnicode_FromString(result[i].type.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "value",
+                              PyUnicode_FromString(result[i].value.c_str())); // Use result[i]
 
          // Import the types module
          PyObject *types_module = PyImport_ImportModule("types");
@@ -14314,10 +14318,14 @@ SWIGINTERN PyObject *_wrap_SessionBase_walk__SWIG_1(PyObject *self, Py_ssize_t n
          PyObject *dict = PyDict_New();
 
          // Use PyUnicode_FromString to create Python Unicode objects
-         PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-         PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-         PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-         PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+         PyDict_SetItemString(dict, "oid",
+                              PyUnicode_FromString(result[i].oid.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "index",
+                              PyUnicode_FromString(result[i].index.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "type",
+                              PyUnicode_FromString(result[i].type.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "value",
+                              PyUnicode_FromString(result[i].value.c_str())); // Use result[i]
 
          // Import the types module
          PyObject *types_module = PyImport_ImportModule("types");
@@ -14464,10 +14472,14 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_walk(PyObject *self, PyObject *args)
          PyObject *dict = PyDict_New();
 
          // Use PyUnicode_FromString to create Python Unicode objects
-         PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-         PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-         PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-         PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+         PyDict_SetItemString(dict, "oid",
+                              PyUnicode_FromString(result[i].oid.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "index",
+                              PyUnicode_FromString(result[i].index.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "type",
+                              PyUnicode_FromString(result[i].type.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "value",
+                              PyUnicode_FromString(result[i].value.c_str())); // Use result[i]
 
          // Import the types module
          PyObject *types_module = PyImport_ImportModule("types");
@@ -14567,10 +14579,14 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_0(PyObject *self, Py_ssize_t no
          PyObject *dict = PyDict_New();
 
          // Use PyUnicode_FromString to create Python Unicode objects
-         PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-         PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-         PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-         PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+         PyDict_SetItemString(dict, "oid",
+                              PyUnicode_FromString(result[i].oid.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "index",
+                              PyUnicode_FromString(result[i].index.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "type",
+                              PyUnicode_FromString(result[i].type.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "value",
+                              PyUnicode_FromString(result[i].value.c_str())); // Use result[i]
 
          // Import the types module
          PyObject *types_module = PyImport_ImportModule("types");
@@ -14645,10 +14661,14 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_1(PyObject *self, Py_ssize_t no
          PyObject *dict = PyDict_New();
 
          // Use PyUnicode_FromString to create Python Unicode objects
-         PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-         PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-         PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-         PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+         PyDict_SetItemString(dict, "oid",
+                              PyUnicode_FromString(result[i].oid.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "index",
+                              PyUnicode_FromString(result[i].index.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "type",
+                              PyUnicode_FromString(result[i].type.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "value",
+                              PyUnicode_FromString(result[i].value.c_str())); // Use result[i]
 
          // Import the types module
          PyObject *types_module = PyImport_ImportModule("types");
@@ -14795,10 +14815,14 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_get(PyObject *self, PyObject *args) 
          PyObject *dict = PyDict_New();
 
          // Use PyUnicode_FromString to create Python Unicode objects
-         PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-         PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-         PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-         PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+         PyDict_SetItemString(dict, "oid",
+                              PyUnicode_FromString(result[i].oid.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "index",
+                              PyUnicode_FromString(result[i].index.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "type",
+                              PyUnicode_FromString(result[i].type.c_str())); // Use result[i]
+         PyDict_SetItemString(dict, "value",
+                              PyUnicode_FromString(result[i].value.c_str())); // Use result[i]
 
          // Import the types module
          PyObject *types_module = PyImport_ImportModule("types");

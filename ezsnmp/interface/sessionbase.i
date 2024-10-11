@@ -41,17 +41,17 @@
 }
 
 // Typemaps for std::vector<Result>: Added to support PyPy builds
-// Output typemap (std::vector<Result> to Python list of dictionaries)
+// Output typemap (std::vector<Result> to Python list of MappingProxyType objects)
 %typemap(out) std::vector<Result> {
   $result = PyList_New($1.size());
   for (size_t i = 0; i < $1.size(); ++i) {
     PyObject *dict = PyDict_New();
-  
+
     // Use PyUnicode_FromString to create Python Unicode objects
-    PyDict_SetItemString(dict, "oid", PyUnicode_FromString(result[i].oid.c_str()));
-    PyDict_SetItemString(dict, "index", PyUnicode_FromString(result[i].index.c_str()));
-    PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
-    PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
+    PyDict_SetItemString(dict, "oid", PyUnicode_FromString($1[i].oid.c_str()));  // Use $1[i]
+    PyDict_SetItemString(dict, "index", PyUnicode_FromString($1[i].index.c_str()));  // Use $1[i]
+    PyDict_SetItemString(dict, "type", PyUnicode_FromString($1[i].type.c_str()));  // Use $1[i]
+    PyDict_SetItemString(dict, "value", PyUnicode_FromString($1[i].value.c_str()));  // Use $1[i]
 
     // Import the types module
     PyObject* types_module = PyImport_ImportModule("types"); 
@@ -70,10 +70,10 @@
 
     PyObject* immutable_dict = PyObject_CallFunctionObjArgs(mappingproxy_type, dict, NULL);
 
-    PyList_SET_ITEM($result, i, immutable_dict);
+    PyList_SET_ITEM($result, i, immutable_dict); 
 
     Py_DECREF(types_module);
-    Py_DECREF(mappingproxy_type);
+    Py_DECREF(mappingproxy_type); 
   }
 }
 
