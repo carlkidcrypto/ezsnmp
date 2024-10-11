@@ -20,6 +20,14 @@
     }
 };
 
+%typemap(out) std::vector<std::string> {
+  $result = PyList_New($1.size());
+  for (size_t i = 0; i < $1.size(); ++i) {
+    PyObject* str = PyUnicode_FromString($1[i].c_str());
+    PyList_SET_ITEM($result, i, str); 
+  }
+}
+
 %include "snmpbulkget.i"
 %include "snmpbulkwalk.i"
 %include "snmpget.i"
