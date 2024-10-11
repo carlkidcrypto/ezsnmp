@@ -115,20 +115,20 @@ def test_session_set_multiple_next(sess, reset_values):
         ["snmpTargetAddrTDomain", "snmpTargetAddrTAddress", "snmpTargetAddrRowStatus"]
     )
 
-    assert res[0]["oid"] == "snmpTargetAddrTDomain"
-    assert res[0]["index"] == "116.101.115.116"
-    assert res[0]["value"] == ".1.3.6.1.6.1.1"
-    assert res[0]["type"] == "OBJECTID"
+    assert res[0].oid == "snmpTargetAddrTDomain"
+    assert res[0].index == "116.101.115.116"
+    assert res[0].value == ".1.3.6.1.6.1.1"
+    assert res[0].type == "OBJECTID"
 
-    assert res[1]["oid"] == "snmpTargetAddrTAddress"
-    assert res[1]["index"] == "116.101.115.116"
-    assert res[1]["value"] == "1234"
-    assert res[1]["type"] == "STRING"
+    assert res[1].oid == "snmpTargetAddrTAddress"
+    assert res[1].index == "116.101.115.116"
+    assert res[1].value == "1234"
+    assert res[1].type == "STRING"
 
-    assert res[2]["oid"] == "snmpTargetAddrRowStatus"
-    assert res[2]["index"] == "116.101.115.116"
-    assert res[2]["value"] == "3"
-    assert res[2]["type"] == "INTEGER"
+    assert res[2].oid == "snmpTargetAddrRowStatus"
+    assert res[2].index == "116.101.115.116"
+    assert res[2].value == "3"
+    assert res[2].type == "INTEGER"
 
     del sess
 
@@ -141,20 +141,20 @@ def test_session_set_clear(sess):
         ["snmpTargetAddrTDomain", "snmpTargetAddrTAddress", "snmpTargetAddrRowStatus"]
     )
 
-    assert res[0]["oid"] == "snmpUnavailableContexts"
-    assert res[0]["index"] == "0"
-    assert res[0]["value"] == "0"
-    assert res[0]["type"] == "COUNTER"
+    assert res[0].oid == "snmpUnavailableContexts"
+    assert res[0].index == "0"
+    assert res[0].value == "0"
+    assert res[0].type == "COUNTER"
 
-    assert res[1]["oid"] == "snmpUnavailableContexts"
-    assert res[1]["index"] == "0"
-    assert res[1]["value"] == "0"
-    assert res[1]["type"] == "COUNTER"
+    assert res[1].oid == "snmpUnavailableContexts"
+    assert res[1].index == "0"
+    assert res[1].value == "0"
+    assert res[1].type == "COUNTER"
 
-    assert res[2]["oid"] == "snmpUnavailableContexts"
-    assert res[2]["index"] == "0"
-    assert res[2]["value"] == "0"
-    assert res[2]["type"] == "COUNTER"
+    assert res[2].oid == "snmpUnavailableContexts"
+    assert res[2].index == "0"
+    assert res[2].value == "0"
+    assert res[2].type == "COUNTER"
 
     del sess
 
@@ -163,19 +163,19 @@ def test_session_get(sess):
     for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
         res = sess.get(oid)
         if oid == "sysUpTime.0":
-            assert res[0]["oid"] == "DISMAN-EVENT-MIB::sysUpTimeInstance"
-            assert res[0]["index"] == ""
-            assert res[0]["type"] == "Timeticks"
+            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+            assert res[0].index == ""
+            assert res[0].type == "Timeticks"
         elif oid == "sysContact.0":
-            assert res[0]["oid"] == "SNMPv2-MIB::sysContact"
-            assert res[0]["index"] == "0"
-            assert res[0]["value"] == "G. S. Marzot <gmarzot@marzot.net>"
-            assert res[0]["type"] == "STRING"
+            assert res[0].oid == "SNMPv2-MIB::sysContact"
+            assert res[0].index == "0"
+            assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+            assert res[0].type == "STRING"
         elif oid == "sysLocation.0":
-            assert res[0]["oid"] == "SNMPv2-MIB::sysLocation"
-            assert res[0]["index"] == "0"
-            assert res[0]["value"] == "my original location"
-            assert res[0]["type"] == "STRING"
+            assert res[0].oid == "SNMPv2-MIB::sysLocation"
+            assert res[0].index == "0"
+            assert res[0].value == "my original location"
+            assert res[0].type == "STRING"
 
     del sess
 
@@ -184,10 +184,10 @@ def test_session_get_use_numeric(sess):
     sess.use_numeric = True
     res = sess.get("sysContact.0")
 
-    assert res[0]["oid"] == ".1.3.6.1.2.1.1.4"
-    assert res[0]["index"] == "0"
-    assert res[0]["value"] == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[0]["type"] == "STRING"
+    assert res[0].oid == ".1.3.6.1.2.1.1.4"
+    assert res[0].index == "0"
+    assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[0].type == "STRING"
 
     del sess
 
@@ -196,10 +196,10 @@ def test_session_get_use_sprint_value(sess):
     sess.use_sprint_value = True
     res = sess.get("sysUpTimeInstance")
 
-    assert res[0]["oid"] == "sysUpTimeInstance"
-    assert res[0]["index"] == ""
-    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0]["value"])
-    assert res[0]["type"] == "Timeticks"
+    assert res[0].oid == "sysUpTimeInstance"
+    assert res[0].index == ""
+    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0].value)
+    assert res[0].type == "Timeticks"
 
     del sess
 
@@ -208,10 +208,10 @@ def test_session_get_use_enums(sess):
     sess.use_enums = True
     res = sess.get("ifAdminStatus.1")
 
-    assert res[0]["oid"] == "ifAdminStatus"
-    assert res[0]["index"] == "1"
-    assert res[0]["value"] == "up"
-    assert res[0]["type"] == "INTEGER"
+    assert res[0].oid == "ifAdminStatus"
+    assert res[0].index == "1"
+    assert res[0].value == "up"
+    assert res[0].type == "INTEGER"
 
     del sess
 
@@ -219,41 +219,41 @@ def test_session_get_use_enums(sess):
 def test_session_get_next(sess):
     res = sess.get_next([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
 
-    assert res[0]["oid"] == "sysContact"
-    assert res[0]["index"] == "0"
-    assert res[0]["value"] == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[0]["type"] == "STRING"
+    assert res[0].oid == "sysContact"
+    assert res[0].index == "0"
+    assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[0].type == "STRING"
 
-    assert res[1]["oid"] == "sysName"
-    assert res[1]["index"] == "0"
-    assert res[1]["value"] == platform.node()
-    assert res[1]["type"] == "STRING"
+    assert res[1].oid == "sysName"
+    assert res[1].index == "0"
+    assert res[1].value == platform.node()
+    assert res[1].type == "STRING"
 
-    assert res[2]["oid"] == "sysORLastChange"
-    assert res[2]["index"] == "0"
-    assert int(res[2]["value"]) >= 0
-    assert res[2]["type"] == "Timeticks"
+    assert res[2].oid == "sysORLastChange"
+    assert res[2].index == "0"
+    assert int(res[2].value) >= 0
+    assert res[2].type == "Timeticks"
 
     del sess
 
 
 def test_session_set(sess, reset_values):
     res = sess.get(("sysLocation", "0"))
-    assert res[0]["value"] != "my newer location"
+    assert res[0].value != "my newer location"
 
     success = sess.set(("sysLocation", "0"), "my newer location")
     assert success
 
     res = sess.get(("sysLocation", "0"))
-    assert res[0]["value"] == "my newer location"
+    assert res[0].value == "my newer location"
 
     del sess
 
 
 def test_session_set_multiple(sess, reset_values):
     res = sess.get(["sysLocation.0", "nsCacheTimeout.1.3.6.1.2.1.2.2"])
-    assert res[0]["value"] != "my newer location"
-    assert res[1]["value"] != "160"
+    assert res[0].value != "my newer location"
+    assert res[1].value != "160"
 
     success = sess.set_multiple(
         [
@@ -264,8 +264,8 @@ def test_session_set_multiple(sess, reset_values):
     assert success
 
     res = sess.get(["sysLocation.0", "nsCacheTimeout.1.3.6.1.2.1.2.2"])
-    assert res[0]["value"] == "my newer location"
-    assert res[1]["value"] == "160"
+    assert res[0].value == "my newer location"
+    assert res[1].value == "160"
 
     del sess
 
@@ -291,13 +291,13 @@ def test_session_bulk_get(sess):
             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
         )
 
-        assert res[0]["oid"] == "DISMAN-EVENT-MIB::sysUpTimeInstance"
-        assert res[0]["index"] == ""
-        assert res[0]["type"] == "Timeticks"
+        assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+        assert res[0].index == ""
+        assert res[0].type == "Timeticks"
 
-        assert res[4]["oid"] == "SNMPv2-MIB::sysORUpTime"
-        assert res[4]["index"] == "1"
-        assert res[4]["type"] == "Timeticks"
+        assert res[4].oid == "SNMPv2-MIB::sysORUpTime"
+        assert res[4].index == "1"
+        assert res[4].type == "Timeticks"
 
         del sess
 
@@ -310,7 +310,7 @@ def test_session_get_invalid_instance(sess):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
-        assert res[0]["type"] == "NOSUCHINSTANCE"
+        assert res[0].type == "NOSUCHINSTANCE"
 
 
 def test_session_get_invalid_object(sess):
@@ -319,31 +319,31 @@ def test_session_get_invalid_object(sess):
             sess.get("iso")
     else:
         res = sess.get("iso")
-        assert res[0]["type"] == "NOSUCHOBJECT"
+        assert res[0].type == "NOSUCHOBJECT"
 
 
 def test_session_walk(sess):
     res = sess.walk("system")
 
-    assert res[0]["oid"] == "SNMPv2-MIB::sysDescr"
-    assert res[0]["index"] == "0"
-    assert platform.version() in res[0]["value"]
-    assert res[0]["type"] == "STRING"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert platform.version() in res[0].value
+    assert res[0].type == "STRING"
 
-    assert res[3]["oid"] == "SNMPv2-MIB::sysContact"
-    assert res[3]["index"] == "0"
-    assert res[3]["value"] == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[3]["type"] == "STRING"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[3].type == "STRING"
 
-    assert res[4]["oid"] == "SNMPv2-MIB::sysName"
-    assert res[4]["index"] == "0"
-    # assert res[4]["value"] == platform.node()
-    assert res[4]["type"] == "STRING"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
+    assert res[4].value == platform.node()
+    assert res[4].type == "STRING"
 
-    assert res[5]["oid"] == "SNMPv2-MIB::sysLocation"
-    assert res[5]["index"] == "0"
-    assert res[5]["value"] == "my original location"
-    assert res[5]["type"] == "STRING"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
+    assert res[5].value == "my original location"
+    assert res[5].type == "STRING"
 
     del sess
 
@@ -358,25 +358,25 @@ def test_session_bulkwalk(sess):
 
         res = sess.bulk_walk(["system"])
 
-        assert res[0]["oid"] == "SNMPv2-MIB::sysDescr"
-        assert res[0]["index"] == "0"
-        assert platform.version() in res[0]["value"]
-        assert res[0]["type"] == "STRING"
+        assert res[0].oid == "SNMPv2-MIB::sysDescr"
+        assert res[0].index == "0"
+        assert platform.version() in res[0].value
+        assert res[0].type == "STRING"
 
-        assert res[3]["oid"] == "SNMPv2-MIB::sysContact"
-        assert res[3]["index"] == "0"
-        assert res[3]["value"] == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3]["type"] == "STRING"
+        assert res[3].oid == "SNMPv2-MIB::sysContact"
+        assert res[3].index == "0"
+        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+        assert res[3].type == "STRING"
 
-        assert res[4]["oid"] == "SNMPv2-MIB::sysName"
-        assert res[4]["index"] == "0"
-        assert res[4]["value"] == platform.node()
-        assert res[4]["type"] == "STRING"
+        assert res[4].oid == "SNMPv2-MIB::sysName"
+        assert res[4].index == "0"
+        assert res[4].value == platform.node()
+        assert res[4].type == "STRING"
 
-        assert res[5]["oid"] == "SNMPv2-MIB::sysLocation"
-        assert res[5]["index"] == "0"
-        assert res[5]["value"] == "my original location"
-        assert res[5]["type"] == "STRING"
+        assert res[5].oid == "SNMPv2-MIB::sysLocation"
+        assert res[5].index == "0"
+        assert res[5].value == "my original location"
+        assert res[5].type == "STRING"
 
     del sess
 
@@ -384,25 +384,25 @@ def test_session_bulkwalk(sess):
 def test_session_walk_all(sess):
     res = sess.walk(".")
 
-    assert res[0]["oid"] == "SNMPv2-MIB::sysDescr"
-    assert res[0]["index"] == "0"
-    assert platform.version() in res[0]["value"]
-    assert res[0]["type"] == "STRING"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert platform.version() in res[0].value
+    assert res[0].type == "STRING"
 
-    assert res[3]["oid"] == "SNMPv2-MIB::sysContact"
-    assert res[3]["index"] == "0"
-    assert res[3]["value"] == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[3]["type"] == "STRING"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[3].type == "STRING"
 
-    assert res[4]["oid"] == "SNMPv2-MIB::sysName"
-    assert res[4]["index"] == "0"
-    assert res[4]["value"] == platform.node()
-    assert res[4]["type"] == "STRING"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
+    assert res[4].value == platform.node()
+    assert res[4].type == "STRING"
 
-    assert res[5]["oid"] == "SNMPv2-MIB::sysLocation"
-    assert res[5]["index"] == "0"
-    assert res[5]["value"] == "my original location"
-    assert res[5]["type"] == "STRING"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
+    assert res[5].value == "my original location"
+    assert res[5].type == "STRING"
 
     del sess
 
