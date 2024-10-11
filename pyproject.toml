@@ -1,6 +1,7 @@
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
-skip = "cp27-* cp36-* cp37-* cp38-* pp27-* pp36-* pp37-* pp38-*"
+# No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
+skip = "cp27-* cp36-* cp37-* cp38-* pp*"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_2*"
