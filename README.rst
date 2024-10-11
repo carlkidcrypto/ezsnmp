@@ -19,12 +19,8 @@ Ez SNMP
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
 
-.. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp-logo.png
+.. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp_logo.jpeg
     :alt: Ez SNMP Logo
-
-Artwork courtesy of `Open Clip Art
-Library <https://openclipart.org/detail/251135/simple-network>`__
-
 
 Introduction
 ------------
