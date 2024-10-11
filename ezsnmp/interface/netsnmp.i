@@ -73,10 +73,13 @@
   $result = PyList_New($1.size());
   for (size_t i = 0; i < $1.size(); ++i) {
     PyObject* dict = PyDict_New();
-    PyDict_SetItemString(dict, "oid", PyUnicode_AsUTF8($1[i].oid.c_str()));
-    PyDict_SetItemString(dict, "index", PyUnicode_AsUTF8($1[i].index.c_str()));
-    PyDict_SetItemString(dict, "type", PyUnicode_AsUTF8($1[i].type.c_str()));
-    PyDict_SetItemString(dict, "value", PyUnicode_AsUTF8($1[i].value.c_str()));
+
+    // Use PyUnicode_FromString to create Python Unicode objects
+    PyDict_SetItemString(dict, "oid", PyUnicode_FromString($1[i].oid.c_str())); 
+    PyDict_SetItemString(dict, "index", PyUnicode_FromString($1[i].index.c_str()));
+    PyDict_SetItemString(dict, "type", PyUnicode_FromString($1[i].type.c_str()));
+    PyDict_SetItemString(dict, "value", PyUnicode_FromString($1[i].value.c_str()));
+
     PyList_SET_ITEM($result, i, dict);
   }
 }
