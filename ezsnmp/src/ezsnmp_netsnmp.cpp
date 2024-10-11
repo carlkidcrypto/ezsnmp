@@ -13802,7 +13802,28 @@ SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
          PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
          PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
 
-         PyList_SET_ITEM(resultobj, i, dict);
+         // Import the types module
+         PyObject *types_module = PyImport_ImportModule("types");
+         if (types_module == NULL) {
+            PyErr_SetString(PyExc_ImportError, "Could not import 'types' module");
+            SWIG_fail;
+         }
+
+         // Get MappingProxyType from the types module
+         PyObject *mappingproxy_type = PyObject_GetAttrString(types_module, "MappingProxyType");
+         if (mappingproxy_type == NULL) {
+            PyErr_SetString(PyExc_AttributeError,
+                            "Could not get 'MappingProxyType' from 'types' module");
+            Py_DECREF(types_module);
+            SWIG_fail;
+         }
+
+         PyObject *immutable_dict = PyObject_CallFunctionObjArgs(mappingproxy_type, dict, NULL);
+
+         PyList_SET_ITEM(resultobj, i, immutable_dict);
+
+         Py_DECREF(types_module);
+         Py_DECREF(mappingproxy_type);
       }
    }
    if (SWIG_IsNewObj(res1)) {
@@ -13881,7 +13902,28 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
          PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
          PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
 
-         PyList_SET_ITEM(resultobj, i, dict);
+         // Import the types module
+         PyObject *types_module = PyImport_ImportModule("types");
+         if (types_module == NULL) {
+            PyErr_SetString(PyExc_ImportError, "Could not import 'types' module");
+            SWIG_fail;
+         }
+
+         // Get MappingProxyType from the types module
+         PyObject *mappingproxy_type = PyObject_GetAttrString(types_module, "MappingProxyType");
+         if (mappingproxy_type == NULL) {
+            PyErr_SetString(PyExc_AttributeError,
+                            "Could not get 'MappingProxyType' from 'types' module");
+            Py_DECREF(types_module);
+            SWIG_fail;
+         }
+
+         PyObject *immutable_dict = PyObject_CallFunctionObjArgs(mappingproxy_type, dict, NULL);
+
+         PyList_SET_ITEM(resultobj, i, immutable_dict);
+
+         Py_DECREF(types_module);
+         Py_DECREF(mappingproxy_type);
       }
    }
    if (SWIG_IsNewObj(res1)) {
@@ -13959,7 +14001,28 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
          PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
          PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
 
-         PyList_SET_ITEM(resultobj, i, dict);
+         // Import the types module
+         PyObject *types_module = PyImport_ImportModule("types");
+         if (types_module == NULL) {
+            PyErr_SetString(PyExc_ImportError, "Could not import 'types' module");
+            SWIG_fail;
+         }
+
+         // Get MappingProxyType from the types module
+         PyObject *mappingproxy_type = PyObject_GetAttrString(types_module, "MappingProxyType");
+         if (mappingproxy_type == NULL) {
+            PyErr_SetString(PyExc_AttributeError,
+                            "Could not get 'MappingProxyType' from 'types' module");
+            Py_DECREF(types_module);
+            SWIG_fail;
+         }
+
+         PyObject *immutable_dict = PyObject_CallFunctionObjArgs(mappingproxy_type, dict, NULL);
+
+         PyList_SET_ITEM(resultobj, i, immutable_dict);
+
+         Py_DECREF(types_module);
+         Py_DECREF(mappingproxy_type);
       }
    }
    if (SWIG_IsNewObj(res1)) {
@@ -14170,7 +14233,28 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
          PyDict_SetItemString(dict, "type", PyUnicode_FromString(result[i].type.c_str()));
          PyDict_SetItemString(dict, "value", PyUnicode_FromString(result[i].value.c_str()));
 
-         PyList_SET_ITEM(resultobj, i, dict);
+         // Import the types module
+         PyObject *types_module = PyImport_ImportModule("types");
+         if (types_module == NULL) {
+            PyErr_SetString(PyExc_ImportError, "Could not import 'types' module");
+            SWIG_fail;
+         }
+
+         // Get MappingProxyType from the types module
+         PyObject *mappingproxy_type = PyObject_GetAttrString(types_module, "MappingProxyType");
+         if (mappingproxy_type == NULL) {
+            PyErr_SetString(PyExc_AttributeError,
+                            "Could not get 'MappingProxyType' from 'types' module");
+            Py_DECREF(types_module);
+            SWIG_fail;
+         }
+
+         PyObject *immutable_dict = PyObject_CallFunctionObjArgs(mappingproxy_type, dict, NULL);
+
+         PyList_SET_ITEM(resultobj, i, immutable_dict);
+
+         Py_DECREF(types_module);
+         Py_DECREF(mappingproxy_type);
       }
    }
    if (SWIG_IsNewObj(res1)) {
