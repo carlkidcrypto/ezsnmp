@@ -206,11 +206,13 @@ Formatting
 For c++ code:
 
 .. code:: bash
+
     find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
 
 For python3 code:
 
 .. code:: bash
+
     python3 -m black .
 
 
