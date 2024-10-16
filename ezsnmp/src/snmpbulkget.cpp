@@ -139,7 +139,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    int arg;
    int count;
    int status;
-   int exitval = 1;
 
    SOCK_STARTUP;
 
@@ -190,8 +189,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
       return parse_results(return_vector);
    }
 
-   exitval = 0;
-
    /*
     * create PDU for GETBULK request and add object name to request
     */
@@ -233,15 +230,13 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
                }
                fprintf(stderr, "\n");
             }
-            exitval = 2;
          }
       }
    } else if (status == STAT_TIMEOUT) {
       fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
-      exitval = 1;
+
    } else { /* status == STAT_ERROR */
       snmp_sess_perror("snmpbulkget", ss);
-      exitval = 1;
    }
 
    if (response) {
@@ -250,7 +245,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
 
    snmp_close(ss);
 
-out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
    return parse_results(return_vector);

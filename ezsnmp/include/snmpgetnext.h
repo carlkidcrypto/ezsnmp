@@ -9,6 +9,6 @@
 
 void snmpgetnext_usage(void);
 void snmpgetnext_optProc(int argc, char *const *argv, int opt);
-int snmpgetnext(std::vector<std::string> const &args);
+std::vector<Result> snmpgetnext(std::vector<std::string> const &args);
 
 #endif // SNMPGETNEXT_H

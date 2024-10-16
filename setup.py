@@ -189,6 +189,7 @@ setup(
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
+                "ezsnmp/src/snmpgetnext.cpp",
                 "ezsnmp/src/snmpbulkwalk.cpp",
                 "ezsnmp/src/snmpget.cpp",
                 "ezsnmp/src/snmpwalk.cpp",
