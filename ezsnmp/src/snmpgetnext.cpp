@@ -121,28 +121,30 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv, &session, "C:", &optProc)) {
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         goto out;
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         exitval = 0;
-         goto out;
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         usage();
-         goto out;
+         snmpgetnext_usage();
+         return parse_results(return_vector);
+
       default:
          break;
    }
 
    if (arg >= argc) {
       fprintf(stderr, "Missing object name\n");
-      usage();
+      snmpgetnext_usage();
       goto out;
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
       fprintf(stderr, "Too many object identifiers specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-      usage();
+      snmpgetnext_usage();
       goto out;
    }
 
