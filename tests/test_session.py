@@ -217,7 +217,7 @@ def test_session_get_use_enums(sess):
 
 
 def test_session_get_next(sess):
-    res = sess.get_next([("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")])
+    res = sess.get_next(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
 
     assert res[0].oid == "sysContact"
     assert res[0].index == "0"

@@ -212,6 +212,7 @@ setup(
                 "ezsnmp/src/snmpbulkget.cpp",
                 "ezsnmp/src/snmpbulkwalk.cpp",
                 "ezsnmp/src/snmpget.cpp",
+                "ezsnmp/src/snmpgetnext.cpp",
                 "ezsnmp/src/snmpwalk.cpp",
                 "ezsnmp/src/snmpset.cpp",
                 "ezsnmp/src/snmptrap.cpp",
