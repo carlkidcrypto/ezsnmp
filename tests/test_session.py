@@ -101,7 +101,7 @@ def test_session_ipv6_invalid_hostname_and_port_number(version):
 
 def test_session_set_multiple_next(sess, reset_values):
     # Destroy succeeds even if no row exists
-    sess.set(".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", 6)
+    sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "6"])
     success = sess.set_multiple(
         [
             (".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116", ".1.3.6.1.6.1.1"),
@@ -134,7 +134,7 @@ def test_session_set_multiple_next(sess, reset_values):
 
 
 def test_session_set_clear(sess):
-    res = sess.set(".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", 6)
+    res = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "6"])
     assert res == 1
 
     res = sess.get_next(
@@ -241,7 +241,7 @@ def test_session_set(sess, reset_values):
     res = sess.get("sysLocation.0")
     assert res[0].value != "my newer location"
 
-    success = sess.set(("sysLocation", "0"), "my newer location")
+    success = sess.set(["sysLocation.0", "my newer location"])
     assert success
 
     res = sess.get("sysLocation.0")
