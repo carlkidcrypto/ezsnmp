@@ -238,13 +238,13 @@ def test_session_get_next(sess):
 
 
 def test_session_set(sess, reset_values):
-    res = sess.get(("sysLocation", "0"))
+    res = sess.get("sysLocation.0")
     assert res[0].value != "my newer location"
 
     success = sess.set(("sysLocation", "0"), "my newer location")
     assert success
 
-    res = sess.get(("sysLocation", "0"))
+    res = sess.get("sysLocation.0")
     assert res[0].value == "my newer location"
 
     del sess

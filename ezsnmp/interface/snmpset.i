@@ -7,4 +7,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-int snmpset(const std::vector<std::string> &args);
+std::vector<Result> snmpset(const std::vector<std::string> &args);

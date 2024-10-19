@@ -8,6 +8,7 @@
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
 #include "snmpgetnext.h"
+#include "snmpset.h"
 #include "snmpwalk.h"
 
 // Take all the SessionBase class inputs and map them to:
@@ -193,6 +194,16 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
    }
 
    return snmpbulkget(m_args);
+}
+
+std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
+   populate_args();
+
+   for (auto const& entry : mibs) {
+      m_args.push_back(entry);
+   }
+
+   return snmpset(m_args);
 }
 
 std::vector<std::string> const& SessionBase::_get_args() const { return m_args; }

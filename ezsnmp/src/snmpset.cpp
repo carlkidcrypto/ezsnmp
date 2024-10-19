@@ -104,9 +104,10 @@ void snmpset_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-int snmpset(std::vector<std::string> const &args) {
+std::vector<Result> snmpset(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::vector<std::string> return_vector;
 
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu, *response = NULL;
@@ -244,7 +245,8 @@ int snmpset(std::vector<std::string> const &args) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          if (!quiet) {
             for (vars = response->variables; vars; vars = vars->next_variable) {
-               print_variable(vars->name, vars->name_length, vars);
+               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+               return_vector.push_back(str_value);
             }
          }
       } else {
@@ -278,5 +280,5 @@ close_session:
 out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
-   return exitval;
+   return parse_results(return_vector);
 }
