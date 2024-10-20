@@ -3,8 +3,8 @@
 %include "stl.i"
 
 %{
-#include "snmpset.h"
+#include "snmpgetnext.h"
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<Result> snmpset(const std::vector<std::string> &args);
+std::vector<Result> snmpgetnext(std::vector<std::string> const &args);

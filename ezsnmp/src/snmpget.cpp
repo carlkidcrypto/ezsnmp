@@ -103,8 +103,8 @@ void snmpget_usage(void) {
 std::vector<Result> snmpget(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
-
    std::vector<std::string> return_vector;
+
    netsnmp_session session, *ss;
    netsnmp_pdu *pdu;
    netsnmp_pdu *response;
