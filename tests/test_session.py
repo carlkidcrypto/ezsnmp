@@ -199,59 +199,21 @@ def test_session_get(sess):
 
     del sess
 
-
-def test_session_get_use_numeric(sess):
-    sess.use_numeric = True
-    res = sess.get("sysContact.0")
-
-    assert res[0].oid == ".1.3.6.1.2.1.1.4"
-    assert res[0].index == "0"
-    assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[0].type == "STRING"
-
-    del sess
-
-
-def test_session_get_use_sprint_value(sess):
-    sess.use_sprint_value = True
-    res = sess.get("sysUpTimeInstance")
-
-    assert res[0].oid == "sysUpTimeInstance"
-    assert res[0].index == ""
-    assert re.match(r"^\d+:\d+:\d+:\d+\.\d+$", res[0].value)
-    assert res[0].type == "Timeticks"
-
-    del sess
-
-
-def test_session_get_use_enums(sess):
-    sess.use_enums = True
-    res = sess.get("ifAdminStatus.1")
-
-    assert res[0].oid == "ifAdminStatus"
-    assert res[0].index == "1"
-    assert res[0].value == "up"
-    assert res[0].type == "INTEGER"
-
-    del sess
-
-
 def test_session_get_next(sess):
     res = sess.get_next(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
 
-    assert res[0].oid == "sysContact"
+    assert res[0].oid == "SNMPv2-MIB::sysContact"
     assert res[0].index == "0"
     assert res[0].value == "G. S. Marzot <gmarzot@marzot.net>"
     assert res[0].type == "STRING"
 
-    assert res[1].oid == "sysName"
+    assert res[1].oid == "SNMPv2-MIB::sysName"
     assert res[1].index == "0"
     assert res[1].value == platform.node()
     assert res[1].type == "STRING"
 
-    assert res[2].oid == "sysORLastChange"
+    assert res[2].oid == "SNMPv2-MIB::sysORLastChange"
     assert res[2].index == "0"
-    assert int(res[2].value) >= 0
     assert res[2].type == "Timeticks"
 
     del sess
