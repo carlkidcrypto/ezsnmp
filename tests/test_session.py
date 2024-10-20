@@ -100,7 +100,7 @@ def test_session_ipv6_invalid_hostname_and_port_number(version):
 
 
 def test_session_set_multiple_next(sess, reset_values):
-    res  = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "6"])
+    res = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "6"])
     assert res[0].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[0].index == "'test'"
     assert res[0].value == "destroy(6)"
@@ -108,9 +108,15 @@ def test_session_set_multiple_next(sess, reset_values):
 
     res = sess.set(
         [
-            ".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116", "o", ".1.3.6.1.6.1.1",
-            ".1.3.6.1.6.3.12.1.2.1.3.116.101.115.116", "s", "1234",
-            ".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "4",
+            ".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116",
+            "o",
+            ".1.3.6.1.6.1.1",
+            ".1.3.6.1.6.3.12.1.2.1.3.116.101.115.116",
+            "s",
+            "1234",
+            ".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116",
+            "i",
+            "4",
         ]
     )
 
@@ -126,7 +132,6 @@ def test_session_set_multiple_next(sess, reset_values):
     assert res[2].index == "'test'"
     assert res[2].value == "createAndGo(4)"
     assert res[2].type == "INTEGER"
-
 
     res = sess.get_next(
         ["snmpTargetAddrTDomain", "snmpTargetAddrTAddress", "snmpTargetAddrRowStatus"]
@@ -198,6 +203,7 @@ def test_session_get(sess):
             assert res[0].type == "STRING"
 
     del sess
+
 
 def test_session_get_next(sess):
     res = sess.get_next(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
