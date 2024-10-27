@@ -3,7 +3,7 @@ attrs==24.2.0
 black==24.10.0
 click== 8.1.7
 colorama==0.4.6
-coverage==7.6.3
+coverage==7.6.4
 flake8==7.1.1
 iniconfig==2.0.0
 mccabe==0.7.0
