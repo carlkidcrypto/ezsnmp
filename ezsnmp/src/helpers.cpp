@@ -9,7 +9,6 @@
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
  */
 /* Slight modifications to return std::string instead of print to stdout */
-
 std::string print_variable_to_string(oid const *objid, size_t objidlen,
                                      netsnmp_variable_list const *variable) {
    u_char *buf = nullptr;
@@ -35,8 +34,7 @@ std::string print_variable_to_string(oid const *objid, size_t objidlen,
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
  */
-/* Slight modifications to return std::string instead of print to stdout */
-
+/* Slight modifications to raise std::runtime_error instead of print to stderr */
 void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    std::string err;
    char *err_cstr = nullptr;
@@ -47,6 +45,21 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
 
    // Construct the error message
    std::string message = std::string(prog_string) + ": " + err;
+
+   // Throw a runtime_error with the message
+   throw std::runtime_error(message);
+}
+
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L505-L511
+ */
+/* Slight modifications to raise std::runtime_error instead of print to stderr */
+void snmp_perror_exception(char const *prog_string) {
+   int xerr = snmp_errno; // MTCRITICAL_RESOURCE
+   char const *str = snmp_api_errstring(xerr);
+
+   // Construct the error message
+   std::string message = std::string(prog_string) + ": " + str;
 
    // Throw a runtime_error with the message
    throw std::runtime_error(message);

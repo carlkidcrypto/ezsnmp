@@ -250,7 +250,7 @@ int snmptrap(std::vector<std::string> const &args) {
       } else {
          name_length = MAX_OID_LEN;
          if (!snmp_parse_oid(argv[arg], name, &name_length)) {
-            snmp_perror(argv[arg]);
+            snmp_perror_exception(argv[arg]);
             snmptrap_usage();
             goto out;
          }
@@ -327,7 +327,7 @@ int snmptrap(std::vector<std::string> const &args) {
          goto out;
       }
       if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          goto out;
       }
    }
@@ -341,11 +341,11 @@ int snmptrap(std::vector<std::string> const &args) {
       }
       name_length = MAX_OID_LEN;
       if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
-         snmp_perror(argv[arg - 3]);
+         snmp_perror_exception(argv[arg - 3]);
          goto out;
       }
       if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
-         snmp_perror(argv[arg - 3]);
+         snmp_perror_exception(argv[arg - 3]);
          goto out;
       }
    }

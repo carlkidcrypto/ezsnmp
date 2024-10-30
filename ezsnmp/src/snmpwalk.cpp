@@ -242,7 +242,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
        */
       rootlen = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }
    } else {
@@ -261,7 +261,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
    if (end_name) {
       end_len = MAX_OID_LEN;
       if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
-         snmp_perror(end_name);
+         snmp_perror_exception(end_name);
          return parse_results(return_vector);
       }
    } else {

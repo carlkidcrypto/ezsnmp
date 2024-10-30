@@ -226,7 +226,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
        */
       rootlen = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }
    } else {

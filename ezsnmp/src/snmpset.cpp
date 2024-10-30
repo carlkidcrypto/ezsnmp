@@ -223,10 +223,10 @@ std::vector<Result> snmpset(std::vector<std::string> const &args) {
    for (count = 0; count < current_name; count++) {
       name_length = MAX_OID_LEN;
       if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror(names[count]);
+         snmp_perror_exception(names[count]);
          failures++;
       } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
-         snmp_perror(names[count]);
+         snmp_perror_exception(names[count]);
          failures++;
       }
    }

@@ -170,7 +170,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    while (arg < argc) {
       namep->name_len = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }
       arg++;
