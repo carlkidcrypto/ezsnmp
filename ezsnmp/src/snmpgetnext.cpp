@@ -81,8 +81,9 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
                                             NETSNMP_DS_APP_DONT_FIX_PDUS);
                   break;
                default:
-                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
-                  exit(1);
+                  std::string err_msg =
+                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  throw std::runtime_error(err_msg);
             }
          }
          break;
@@ -129,8 +130,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
          throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         snmpgetnext_usage();
-         return parse_results(return_vector);
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;

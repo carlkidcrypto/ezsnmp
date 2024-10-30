@@ -9,20 +9,20 @@ faulthandler.enable()
 
 
 def test_session_invalid_snmp_version():
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         Session(version="4")
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname(version):
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname_and_port_number(version):
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         Session(hostname="localhost:162", port_number="163", version=version)
 
 
@@ -35,7 +35,7 @@ def test_session_hostname_and_port_number_split(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_port(version):
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         session = Session(
             port_number="1234", version=version, timeout="0.2", retries="1"
         )
@@ -85,13 +85,13 @@ def test_session_ipv6_address_with_protocol(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_is_not_ipv6(version):
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         Session(hostname="[foo::bar]:161", version=version)
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_invalid_hostname_and_port_number(version):
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         Session(
             hostname="[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:161",
             port_number="162",
@@ -261,7 +261,7 @@ def test_session_set_multiple(sess, reset_values):
 def test_session_bulk_get(sess):
     if sess.version == "1":
         # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
-        # with pytest.raises(ValueError):
+        # with pytest.raises(RuntimeError):
         #     sess.bulk_get(
         #         [
         #             "sysUpTime",
@@ -294,7 +294,7 @@ def test_session_get_invalid_instance(sess):
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess.version == "1":
-        with pytest.raises(ValueError):
+        with pytest.raises(RuntimeError):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
@@ -303,7 +303,7 @@ def test_session_get_invalid_instance(sess):
 
 def test_session_get_invalid_object(sess):
     if sess.version == "1":
-        with pytest.raises(ValueError):
+        with pytest.raises(RuntimeError):
             sess.get("iso")
     else:
         res = sess.get("iso")
@@ -338,10 +338,9 @@ def test_session_walk(sess):
 
 def test_session_bulkwalk(sess):
     if sess.version == "1":
-        # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
-        # with pytest.raises(EzSNMPError):
-        # sess.bulkwalk("system")
-        assert 1 == 2
+        with pytest.raises(RuntimeError):
+            sess.bulk_walk("system")
+
     else:
 
         res = sess.bulk_walk(["system"])
