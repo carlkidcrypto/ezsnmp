@@ -138,40 +138,51 @@ void SessionBase::populate_args() {
    // raise an error. We do this to maintain compatibility with what V1.X.X version do.
    auto host_address = std::string("");
    if (!input_arg_name_map["hostname"].empty()) {
-      std::string hostname = input_arg_name_map["hostname"];
-      std::string port_number = "";
+      std::string temp_hostname = input_arg_name_map["hostname"];
+      std::string temp_port_number = "";
 
       // Check for IPv6 address (enclosed in brackets)
-      size_t openBracketPos = hostname.find('[');
-      size_t closeBracketPos = hostname.find(']');
+      size_t openBracketPos = temp_hostname.find('[');
+      size_t closeBracketPos = temp_hostname.find(']');
       if (openBracketPos != std::string::npos && closeBracketPos != std::string::npos) {
          // Extract the IPv6 address and port number
-         hostname = hostname.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1);
-         size_t colonPos = hostname.find(':', closeBracketPos);
+         temp_hostname =
+             temp_hostname.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1);
+         size_t colonPos = temp_hostname.find(':', closeBracketPos);
          if (colonPos != std::string::npos) {
-            port_number = hostname.substr(colonPos + 1);
-            hostname = hostname.substr(0, colonPos);
+            temp_port_number = temp_hostname.substr(colonPos + 1);
+            temp_hostname = temp_hostname.substr(0, colonPos);
          }
       } else {
          // IPv4 address or hostname
-         size_t colonPos = hostname.find(':');
+         size_t colonPos = temp_hostname.find(':');
          if (colonPos != std::string::npos) {
-            port_number = hostname.substr(colonPos + 1);
-            hostname = hostname.substr(0, colonPos);
+            temp_port_number = temp_hostname.substr(colonPos + 1);
+            temp_hostname = temp_hostname.substr(0, colonPos);
          }
       }
 
+      // Now check that the port number wasn't provided both via hostname and port_number inputs
+      // args
+      if (!temp_port_number.empty() && !input_arg_name_map["port_number"].empty()) {
+         throw std::runtime_error(
+             "Error: Provide either 'hostname' with port included (e.g., localhost:1234, "
+             "[2001:db8::]:161, etc) or 'hostname' and 'port_number' separately, not both.");
+      }
+
       // Now you have separate hostname and port_number
-      input_arg_name_map["hostname"] = hostname;
-      input_arg_name_map["port_number"] = port_number;
-      m_hostname = hostname;
-      m_port_number = port_number;
+      input_arg_name_map["hostname"] = temp_hostname;
+      m_hostname = temp_hostname;
+      if (!temp_port_number.empty()) {
+         input_arg_name_map["port_number"] = temp_port_number;
+         m_port_number = temp_port_number;
+      }
 
       // Construct the host_address as needed
-      if (!port_number.empty()) {
-         host_address = hostname + ":" + port_number;
+      if (temp_port_number.empty() && !input_arg_name_map["port_number"].empty()) {
+         host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
       } else {
-         host_address = hostname;
+         host_address = temp_hostname;
       }
    } else {
       host_address = "";
