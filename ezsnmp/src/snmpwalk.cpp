@@ -278,7 +278,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpwalk", &session);
+      snmp_sess_perror_exception("snmpwalk", &session);
       return parse_results(return_vector);
    }
 
@@ -398,7 +398,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
          running = 0;
          exitval = 1;
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror("snmpwalk", ss);
+         snmp_sess_perror_exception("snmpwalk", ss);
          running = 0;
          exitval = 1;
       }

@@ -1,13 +1,14 @@
-/* straight copy from
- * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
- */
-/* Slight modifications to return std::string instead of print to stdout */
 
 #include "helpers.h"
 
 #include <cstring>
 #include <regex>
 #include <sstream>
+
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
+ */
+/* Slight modifications to return std::string instead of print to stdout */
 
 std::string print_variable_to_string(oid const *objid, size_t objidlen,
                                      netsnmp_variable_list const *variable) {
@@ -29,6 +30,26 @@ std::string print_variable_to_string(oid const *objid, size_t objidlen,
          return truncated + " [TRUNCATED]";
       }
    }
+}
+
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
+ */
+/* Slight modifications to return std::string instead of print to stdout */
+
+void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
+   std::string err;
+   char *err_cstr = nullptr;
+
+   snmp_error(ss, NULL, NULL, &err_cstr);
+   err = err_cstr;
+   SNMP_FREE(err_cstr);
+
+   // Construct the error message
+   std::string message = std::string(prog_string) + ": " + err;
+
+   // Throw a runtime_error with the message
+   throw std::runtime_error(message);
 }
 
 std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {

@@ -163,7 +163,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpgetnext", &session);
+      snmp_sess_perror_exception("snmpgetnext", &session);
       goto out;
    }
 
@@ -227,7 +227,7 @@ retry:
       fprintf(stderr, "Timeout: No Response from %s.\n", session.peername);
       exitval = 1;
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror("snmpgetnext", ss);
+      snmp_sess_perror_exception("snmpgetnext", ss);
       exitval = 1;
    }
 

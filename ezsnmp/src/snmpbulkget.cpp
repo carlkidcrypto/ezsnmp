@@ -185,7 +185,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpbulkget", &session);
+      snmp_sess_perror_exception("snmpbulkget", &session);
       return parse_results(return_vector);
    }
 
@@ -236,7 +236,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
       fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
 
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror("snmpbulkget", ss);
+      snmp_sess_perror_exception("snmpbulkget", ss);
    }
 
    if (response) {

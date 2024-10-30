@@ -222,7 +222,7 @@ int snmptrap(std::vector<std::string> const &args) {
        * diagnose netsnmp_transport_open_client and snmp_add errors with
        * the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmptrap", &session);
+      snmp_sess_perror_exception("snmptrap", &session);
       goto out;
    }
 
@@ -356,7 +356,7 @@ int snmptrap(std::vector<std::string> const &args) {
       status = snmp_send(ss, pdu) == 0;
    }
    if (status) {
-      snmp_sess_perror(inform ? "snmpinform" : "snmptrap", ss);
+      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
       if (!inform) {
          snmp_free_pdu(pdu);
       }

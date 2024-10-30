@@ -212,7 +212,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpset", &session);
+      snmp_sess_perror_exception("snmpset", &session);
       goto out;
    }
 
@@ -266,7 +266,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args) {
       fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
       exitval = 1;
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror("snmpset", ss);
+      snmp_sess_perror_exception("snmpset", ss);
       exitval = 1;
    }
 

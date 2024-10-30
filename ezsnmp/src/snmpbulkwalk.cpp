@@ -245,7 +245,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpbulkwalk", &session);
+      snmp_sess_perror_exception("snmpbulkwalk", &session);
       return parse_results(return_vector);
    }
 
@@ -356,7 +356,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
          running = 0;
          exitval = 1;
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror("snmpbulkwalk", ss);
+         snmp_sess_perror_exception("snmpbulkwalk", ss);
          running = 0;
          exitval = 1;
       }
