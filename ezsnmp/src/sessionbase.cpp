@@ -141,12 +141,24 @@ void SessionBase::populate_args() {
       std::string hostname = input_arg_name_map["hostname"];
       std::string port_number = "";
 
-      // Find the position of the colon
-      size_t colonPos = hostname.find(':');
-      if (colonPos != std::string::npos) {
-         // Split the string into hostname and port number
-         port_number = hostname.substr(colonPos + 1);
-         hostname = hostname.substr(0, colonPos);
+      // Check for IPv6 address (enclosed in brackets)
+      size_t openBracketPos = hostname.find('[');
+      size_t closeBracketPos = hostname.find(']');
+      if (openBracketPos != std::string::npos && closeBracketPos != std::string::npos) {
+         // Extract the IPv6 address and port number
+         hostname = hostname.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1);
+         size_t colonPos = hostname.find(':', closeBracketPos);
+         if (colonPos != std::string::npos) {
+            port_number = hostname.substr(colonPos + 1);
+            hostname = hostname.substr(0, colonPos);
+         }
+      } else {
+         // IPv4 address or hostname
+         size_t colonPos = hostname.find(':');
+         if (colonPos != std::string::npos) {
+            port_number = hostname.substr(colonPos + 1);
+            hostname = hostname.substr(0, colonPos);
+         }
       }
 
       // Now you have separate hostname and port_number
