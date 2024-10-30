@@ -133,12 +133,34 @@ void SessionBase::populate_args() {
    }
 
    // Add and make the host address
+   // Note: We allow the hostname to contain the port number like `localhost:161` or
+   // `[2001:db8::]:161`. If it is provided that way then port_number must be empty otherwise we
+   // raise an error. We do this to maintain compatibility with what V1.X.X version do.
    auto host_address = std::string("");
-   if (!input_arg_name_map["hostname"].empty() && !input_arg_name_map["port_number"].empty()) {
-      host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
-   } else if (!input_arg_name_map["hostname"].empty() &&
-              input_arg_name_map["port_number"].empty()) {
-      host_address = input_arg_name_map["hostname"];
+   if (!input_arg_name_map["hostname"].empty()) {
+      std::string hostname = input_arg_name_map["hostname"];
+      std::string port_number = "";
+
+      // Find the position of the colon
+      size_t colonPos = hostname.find(':');
+      if (colonPos != std::string::npos) {
+         // Split the string into hostname and port number
+         port_number = hostname.substr(colonPos + 1);
+         hostname = hostname.substr(0, colonPos);
+      }
+
+      // Now you have separate hostname and port_number
+      input_arg_name_map["hostname"] = hostname;
+      input_arg_name_map["port_number"] = port_number;
+      m_hostname = hostname;
+      m_port_number = port_number;
+
+      // Construct the host_address as needed
+      if (!port_number.empty()) {
+         host_address = hostname + ":" + port_number;
+      } else {
+         host_address = hostname;
+      }
    } else {
       host_address = "";
    }
