@@ -9,22 +9,22 @@
 class SessionBase {
   private:
    std::vector<std::string> m_args;
-   std::string m_hostname;
-   std::string m_port_number;
-   std::string m_version;
-   std::string m_community;
-   std::string m_auth_protocol;
-   std::string m_auth_passphrase;
-   std::string m_security_engine_id;
-   std::string m_context_engine_id;
-   std::string m_security_level;
-   std::string m_context;
-   std::string m_security_username;
-   std::string m_privacy_protocol;
-   std::string m_privacy_passphrase;
-   std::string m_boots_time;
-   std::string m_retries;
-   std::string m_timeout;
+   std::string m_hostname = "";
+   std::string m_port_number = "";
+   std::string m_version = "";
+   std::string m_community = "";
+   std::string m_auth_protocol = "";
+   std::string m_auth_passphrase = "";
+   std::string m_security_engine_id = "";
+   std::string m_context_engine_id = "";
+   std::string m_security_level = "";
+   std::string m_context = "";
+   std::string m_security_username = "";
+   std::string m_privacy_protocol = "";
+   std::string m_privacy_passphrase = "";
+   std::string m_boots_time = "";
+   std::string m_retries = "";
+   std::string m_timeout = "";
    void populate_args();
 
   public:
