@@ -160,7 +160,15 @@ void SessionBase::populate_args() {
 
       if (IsUdp6InStr != std::string::npos && openBracketPos != std::string::npos &&
           closeBracketPos != std::string::npos) {
-         // Do nothing we want to preserve it.
+         size_t lastColonPos = temp_hostname.find_last_of(':', closeBracketPos + 1);
+
+         // Do a check if something like `udp6:[2001:db8::]:162` was provided
+         if (lastColonPos != std::string::npos) {
+            // Colon found after bracket, extract hostname and port
+            temp_port_number = temp_hostname.substr(lastColonPos + 1);
+            temp_hostname = temp_hostname.substr(0, closeBracketPos + 1);
+         }
+
       } else if (IsUdp6InStr == std::string::npos && openBracketPos != std::string::npos &&
                  closeBracketPos != std::string::npos) {
          // Extract the IPv6 address and port number
