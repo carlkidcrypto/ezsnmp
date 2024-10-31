@@ -133,9 +133,10 @@ void SessionBase::populate_args() {
    }
 
    // Add and make the host address
-   // Note: We allow the hostname to contain the port number like `localhost:161` or
-   // `[2001:db8::]:161`. If it is provided that way then port_number must be empty otherwise we
-   // raise an error. We do this to maintain compatibility with what V1.X.X version do.
+   // Note: We allow the hostname to contain the port number like `localhost:161`,
+   // `udp6:[2001:db8::]`, or `[2001:db8::]:161`. If it is provided that way then
+   // port_number must be empty otherwise we raise an error. We do this to maintain
+   // compatibility with what V1.X.X version do.
    auto host_address = std::string("");
    if (!input_arg_name_map["hostname"].empty()) {
       std::string temp_hostname = input_arg_name_map["hostname"];
@@ -154,11 +155,18 @@ void SessionBase::populate_args() {
             temp_hostname = temp_hostname.substr(0, colonPos);
          }
       } else {
-         // IPv4 address or hostname
-         size_t colonPos = temp_hostname.find(':');
-         if (colonPos != std::string::npos) {
-            temp_port_number = temp_hostname.substr(colonPos + 1);
-            temp_hostname = temp_hostname.substr(0, colonPos);
+         // Count the number of colons to determine if it's an IPv6 address
+         int colonCount = std::count(temp_hostname.begin(), temp_hostname.end(), ':');
+         if (colonCount >= 2) { // IPv6 addresses have at least 2 colons
+                                // This is an IPv6 address without brackets
+                                // No need to extract port here, it will be handled later
+         } else {
+            // IPv4 address or hostname
+            size_t colonPos = temp_hostname.find(':');
+            if (colonPos != std::string::npos) {
+               temp_port_number = temp_hostname.substr(colonPos + 1);
+               temp_hostname = temp_hostname.substr(0, colonPos);
+            }
          }
       }
 
