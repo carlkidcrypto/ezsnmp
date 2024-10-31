@@ -72,13 +72,22 @@ std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
  * @param [in] retries Set the number of retries. Default `3`.
  * @param [in] timeout Set the request timeout (in seconds). Default `1`.
  ******************************************************************************/
-SessionBase::SessionBase(std::string hostname, std::string port_number, std::string version,
-                         std::string community, std::string auth_protocol,
-                         std::string auth_passphrase, std::string security_engine_id,
-                         std::string context_engine_id, std::string security_level,
-                         std::string context, std::string security_username,
-                         std::string privacy_protocol, std::string privacy_passphrase,
-                         std::string boots_time, std::string retries, std::string timeout)
+SessionBase::SessionBase(std::string hostname,
+                         std::string port_number,
+                         std::string version,
+                         std::string community,
+                         std::string auth_protocol,
+                         std::string auth_passphrase,
+                         std::string security_engine_id,
+                         std::string context_engine_id,
+                         std::string security_level,
+                         std::string context,
+                         std::string security_username,
+                         std::string privacy_protocol,
+                         std::string privacy_passphrase,
+                         std::string boots_time,
+                         std::string retries,
+                         std::string timeout)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -142,10 +151,18 @@ void SessionBase::populate_args() {
       std::string temp_hostname = input_arg_name_map["hostname"];
       std::string temp_port_number = "";
 
+      // Check for `udp6` in something like this `udp6:[2001:db8::]`
+      size_t IsUdp6InStr = temp_hostname.find('udp6');
+
       // Check for IPv6 address (enclosed in brackets)
       size_t openBracketPos = temp_hostname.find('[');
       size_t closeBracketPos = temp_hostname.find(']');
-      if (openBracketPos != std::string::npos && closeBracketPos != std::string::npos) {
+
+      if (IsUdp6InStr != std::string::npos && openBracketPos != std::string::npos &&
+          closeBracketPos != std::string::npos) {
+         // Do nothing we want to preserve it.
+      } else if (IsUdp6InStr == std::string::npos && openBracketPos != std::string::npos &&
+                 closeBracketPos != std::string::npos) {
          // Extract the IPv6 address and port number
          temp_hostname =
              temp_hostname.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1);
@@ -187,10 +204,10 @@ void SessionBase::populate_args() {
       }
 
       // Construct the host_address as needed
-      if (temp_port_number.empty() && !input_arg_name_map["port_number"].empty()) {
+      if (!input_arg_name_map["port_number"].empty()) {
          host_address = input_arg_name_map["hostname"] + ":" + input_arg_name_map["port_number"];
       } else {
-         host_address = temp_hostname;
+         host_address = input_arg_name_map["hostname"];
       }
    } else {
       host_address = "";

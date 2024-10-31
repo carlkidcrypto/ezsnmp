@@ -644,7 +644,8 @@ SWIGRUNTIME void SWIG_TypeNewClientData(swig_type_info *ti, void *clientdata) {
   the circular list.
 */
 SWIGRUNTIME swig_type_info *SWIG_MangledTypeQueryModule(swig_module_info *start,
-                                                        swig_module_info *end, char const *name) {
+                                                        swig_module_info *end,
+                                                        char const *name) {
    swig_module_info *iter = start;
    do {
       if (iter->size) {
@@ -686,7 +687,8 @@ SWIGRUNTIME swig_type_info *SWIG_MangledTypeQueryModule(swig_module_info *start,
   Note: if start == end at the beginning of the function, we go all the way around
   the circular list.
 */
-SWIGRUNTIME swig_type_info *SWIG_TypeQueryModule(swig_module_info *start, swig_module_info *end,
+SWIGRUNTIME swig_type_info *SWIG_TypeQueryModule(swig_module_info *start,
+                                                 swig_module_info *end,
                                                  char const *name) {
    /* STEP 1: Search the name field using binary search */
    swig_type_info *ret = SWIG_MangledTypeQueryModule(start, end, name);
@@ -784,8 +786,8 @@ SWIGRUNTIME const char *SWIG_UnpackVoidPtr(char const *c, void **ptr, char const
    return SWIG_UnpackData(++c, ptr, sizeof(void *));
 }
 
-SWIGRUNTIME char *SWIG_PackDataName(char *buff, void *ptr, size_t sz, char const *name,
-                                    size_t bsz) {
+SWIGRUNTIME char *SWIG_PackDataName(
+    char *buff, void *ptr, size_t sz, char const *name, size_t bsz) {
    char *r = buff;
    size_t lname = (name ? strlen(name) : 0);
    if ((2 * sz + 2 + lname) > bsz) {
@@ -861,7 +863,8 @@ SWIGRUNTIME const char *SWIG_UnpackDataName(char const *c, void *ptr, size_t sz,
 
 /* Wrapper around PyUnicode_AsUTF8AndSize - call Py_XDECREF on the returned pbytes when finished
  * with the returned string */
-SWIGINTERN const char *SWIG_PyUnicode_AsUTF8AndSize(PyObject *str, Py_ssize_t *psize,
+SWIGINTERN const char *SWIG_PyUnicode_AsUTF8AndSize(PyObject *str,
+                                                    Py_ssize_t *psize,
                                                     PyObject **pbytes) {
 #if PY_VERSION_HEX >= 0x03030000
 #if !defined(Py_LIMITED_API) || Py_LIMITED_API + 0 >= 0x030A0000
@@ -1255,7 +1258,9 @@ SWIGINTERN void SwigPyBuiltin_AddPublicSymbol(PyObject *seq, const char *key) {
    SWIG_Py_DECREF(s);
 }
 
-SWIGINTERN void SWIG_Python_SetConstant(PyObject *d, PyObject *public_interface, char const *name,
+SWIGINTERN void SWIG_Python_SetConstant(PyObject *d,
+                                        PyObject *public_interface,
+                                        char const *name,
                                         PyObject *obj) {
    PyDict_SetItemString(d, name, obj);
    SWIG_Py_DECREF(obj);
@@ -1300,8 +1305,8 @@ SWIGINTERN PyObject *SWIG_Python_AppendOutput(PyObject *result, PyObject *obj, i
 
 /* Unpack the argument tuple */
 
-SWIGINTERN Py_ssize_t SWIG_Python_UnpackTuple(PyObject *args, char const *name, Py_ssize_t min,
-                                              Py_ssize_t max, PyObject **objs) {
+SWIGINTERN Py_ssize_t SWIG_Python_UnpackTuple(
+    PyObject *args, char const *name, Py_ssize_t min, Py_ssize_t max, PyObject **objs) {
    if (!args) {
       if (!min && !max) {
          return 1;
@@ -1604,7 +1609,9 @@ SWIGINTERN PyObject *SWIG_Python_newvarlink(void) {
    return ((PyObject *)result);
 }
 
-SWIGINTERN void SWIG_Python_addvarlink(PyObject *p, char const *name, PyObject *(*get_attr)(void),
+SWIGINTERN void SWIG_Python_addvarlink(PyObject *p,
+                                       char const *name,
+                                       PyObject *(*get_attr)(void),
                                        int (*set_attr)(PyObject *p)) {
    swig_varlinkobject *v = (swig_varlinkobject *)p;
    swig_globalvar *gv = (swig_globalvar *)malloc(sizeof(swig_globalvar));
@@ -2559,8 +2566,8 @@ SWIGRUNTIME int SWIG_Python_AcquirePtr(PyObject *obj, int own) {
 
 /* Convert a pointer value */
 
-SWIGRUNTIME int SWIG_Python_ConvertPtrAndOwn(PyObject *obj, void **ptr, swig_type_info *ty,
-                                             int flags, int *own) {
+SWIGRUNTIME int SWIG_Python_ConvertPtrAndOwn(
+    PyObject *obj, void **ptr, swig_type_info *ty, int flags, int *own) {
    int res;
    SwigPyObject *sobj;
    int implicit_conv = (flags & SWIG_POINTER_IMPLICIT_CONV) != 0;
@@ -2851,7 +2858,9 @@ SWIGINTERN PyObject *SWIG_Python_InitShadowInstance(PyObject *args) {
 
 /* Create a new pointer object */
 
-SWIGRUNTIME PyObject *SWIG_Python_NewPointerObj(PyObject *self, void *ptr, swig_type_info *type,
+SWIGRUNTIME PyObject *SWIG_Python_NewPointerObj(PyObject *self,
+                                                void *ptr,
+                                                swig_type_info *type,
                                                 int flags) {
    SwigPyClientData *clientdata;
    PyObject *robj;
@@ -3119,8 +3128,10 @@ SWIGRUNTIME void SWIG_Python_TypeError(char const *type, PyObject *obj) {
 }
 
 /* Convert a pointer value, signal an exception on a type mismatch */
-SWIGRUNTIME void *SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty,
-                                         int SWIGUNUSEDPARM(argnum), int flags) {
+SWIGRUNTIME void *SWIG_Python_MustGetPtr(PyObject *obj,
+                                         swig_type_info *ty,
+                                         int SWIGUNUSEDPARM(argnum),
+                                         int flags) {
    void *result;
    if (SWIG_Python_ConvertPtr(obj, &result, ty, flags) == -1) {
       PyErr_Clear();
@@ -3225,7 +3236,8 @@ SWIGINTERN Py_hash_t SWIG_PyNumber_AsPyHash(PyObject *obj) {
    return PyErr_Occurred() ? -1 : result;
 }
 
-SWIGINTERN int SwigPyBuiltin_BadInit(PyObject *self, PyObject *SWIGUNUSEDPARM(args),
+SWIGINTERN int SwigPyBuiltin_BadInit(PyObject *self,
+                                     PyObject *SWIGUNUSEDPARM(args),
                                      PyObject *SWIGUNUSEDPARM(kwds)) {
    PyErr_Format(PyExc_TypeError, "Cannot create new instances of type '%.300s'",
                 self->ob_type->tp_name);
@@ -3343,7 +3355,8 @@ SWIGINTERN int SwigPyStaticVar_traverse(PyObject *self, visitproc visit, void *a
    return 0;
 }
 
-SWIGINTERN PyObject *SwigPyStaticVar_get(PyGetSetDescrObject *descr, PyObject *obj,
+SWIGINTERN PyObject *SwigPyStaticVar_get(PyGetSetDescrObject *descr,
+                                         PyObject *obj,
                                          PyObject *SWIGUNUSEDPARM(type)) {
    if (descr->d_getset->get != NULL) {
       return descr->d_getset->get(obj, descr->d_getset->closure);
@@ -3661,7 +3674,8 @@ SWIGINTERN PyObject *SwigPyBuiltin_unaryfunc_closure(SwigPyWrapperFunction wrapp
       SwigPyBuiltin_destructor_closure(wrapper, #wrapper, a);  \
    }
 SWIGINTERN void SwigPyBuiltin_destructor_closure(SwigPyWrapperFunction wrapper,
-                                                 const char *wrappername, PyObject *a) {
+                                                 const char *wrappername,
+                                                 PyObject *a) {
    SwigPyObject *sobj;
    sobj = (SwigPyObject *)a;
    SWIG_Py_XDECREF(sobj->dict);
@@ -3710,7 +3724,8 @@ SWIGINTERN PyObject *SwigPyBuiltin_getiterfunc_closure(SwigPyWrapperFunction wra
    SWIGINTERN PyObject *wrapper##_binaryfunc_closure(PyObject *a, PyObject *b) { \
       return SwigPyBuiltin_binaryfunc_closure(wrapper, a, b);                    \
    }
-SWIGINTERN PyObject *SwigPyBuiltin_binaryfunc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
+SWIGINTERN PyObject *SwigPyBuiltin_binaryfunc_closure(SwigPyWrapperFunction wrapper,
+                                                      PyObject *a,
                                                       PyObject *b) {
    PyObject *tuple, *result;
    tuple = PyTuple_New(1);
@@ -3728,8 +3743,10 @@ typedef ternaryfunc ternarycallfunc;
    SWIGINTERN PyObject *wrapper##_ternaryfunc_closure(PyObject *a, PyObject *b, PyObject *c) { \
       return SwigPyBuiltin_ternaryfunc_closure(wrapper, a, b, c);                              \
    }
-SWIGINTERN PyObject *SwigPyBuiltin_ternaryfunc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
-                                                       PyObject *b, PyObject *c) {
+SWIGINTERN PyObject *SwigPyBuiltin_ternaryfunc_closure(SwigPyWrapperFunction wrapper,
+                                                       PyObject *a,
+                                                       PyObject *b,
+                                                       PyObject *c) {
    PyObject *tuple, *result;
    tuple = PyTuple_New(2);
    assert(tuple);
@@ -3749,7 +3766,9 @@ SWIGINTERN PyObject *SwigPyBuiltin_ternaryfunc_closure(SwigPyWrapperFunction wra
       return SwigPyBuiltin_ternarycallfunc_closure(wrapper, a, b, c);                              \
    }
 SWIGINTERN PyObject *SwigPyBuiltin_ternarycallfunc_closure(SwigPyWrapperFunction wrapper,
-                                                           PyObject *a, PyObject *b, PyObject *c) {
+                                                           PyObject *a,
+                                                           PyObject *b,
+                                                           PyObject *c) {
    (void)c;
    return wrapper(a, b);
 }
@@ -3773,7 +3792,8 @@ SWIGINTERN Py_ssize_t SwigPyBuiltin_lenfunc_closure(SwigPyWrapperFunction wrappe
       return SwigPyBuiltin_ssizessizeargfunc_closure(wrapper, a, b, c);                \
    }
 SWIGINTERN PyObject *SwigPyBuiltin_ssizessizeargfunc_closure(SwigPyWrapperFunction wrapper,
-                                                             PyObject *a, Py_ssize_t b,
+                                                             PyObject *a,
+                                                             Py_ssize_t b,
                                                              Py_ssize_t c) {
    PyObject *tuple, *result;
    tuple = PyTuple_New(2);
@@ -3790,9 +3810,8 @@ SWIGINTERN PyObject *SwigPyBuiltin_ssizessizeargfunc_closure(SwigPyWrapperFuncti
                                                          PyObject *d) {                           \
       return SwigPyBuiltin_ssizessizeobjargproc_closure(wrapper, a, b, c, d);                     \
    }
-SWIGINTERN int SwigPyBuiltin_ssizessizeobjargproc_closure(SwigPyWrapperFunction wrapper,
-                                                          PyObject *a, Py_ssize_t b, Py_ssize_t c,
-                                                          PyObject *d) {
+SWIGINTERN int SwigPyBuiltin_ssizessizeobjargproc_closure(
+    SwigPyWrapperFunction wrapper, PyObject *a, Py_ssize_t b, Py_ssize_t c, PyObject *d) {
    PyObject *tuple, *resultobj;
    int result;
    tuple = PyTuple_New(d ? 3 : 2);
@@ -3815,7 +3834,8 @@ SWIGINTERN int SwigPyBuiltin_ssizessizeobjargproc_closure(SwigPyWrapperFunction 
       return SwigPyBuiltin_funpack_ssizeargfunc_closure(wrapper, a, b);             \
    }
 SWIGINTERN PyObject *SwigPyBuiltin_funpack_ssizeargfunc_closure(SwigPyWrapperFunction wrapper,
-                                                                PyObject *a, Py_ssize_t b) {
+                                                                PyObject *a,
+                                                                Py_ssize_t b) {
    PyObject *tuple, *result;
    tuple = PyTuple_New(1);
    assert(tuple);
@@ -3829,7 +3849,8 @@ SWIGINTERN PyObject *SwigPyBuiltin_funpack_ssizeargfunc_closure(SwigPyWrapperFun
    SWIGINTERN PyObject *wrapper##_ssizeargfunc_closure(PyObject *a, Py_ssize_t b) { \
       return SwigPyBuiltin_ssizeargfunc_closure(wrapper, a, b);                     \
    }
-SWIGINTERN PyObject *SwigPyBuiltin_ssizeargfunc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
+SWIGINTERN PyObject *SwigPyBuiltin_ssizeargfunc_closure(SwigPyWrapperFunction wrapper,
+                                                        PyObject *a,
                                                         Py_ssize_t b) {
    PyObject *arg, *result;
    arg = _PyLong_FromSsize_t(b);
@@ -3842,8 +3863,10 @@ SWIGINTERN PyObject *SwigPyBuiltin_ssizeargfunc_closure(SwigPyWrapperFunction wr
    SWIGINTERN int wrapper##_ssizeobjargproc_closure(PyObject *a, Py_ssize_t b, PyObject *c) { \
       return SwigPyBuiltin_ssizeobjargproc_closure(wrapper, a, b, c);                         \
    }
-SWIGINTERN int SwigPyBuiltin_ssizeobjargproc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
-                                                     Py_ssize_t b, PyObject *c) {
+SWIGINTERN int SwigPyBuiltin_ssizeobjargproc_closure(SwigPyWrapperFunction wrapper,
+                                                     PyObject *a,
+                                                     Py_ssize_t b,
+                                                     PyObject *c) {
    PyObject *tuple, *resultobj;
    int result;
    tuple = PyTuple_New(2);
@@ -3864,7 +3887,8 @@ SWIGINTERN int SwigPyBuiltin_ssizeobjargproc_closure(SwigPyWrapperFunction wrapp
    SWIGINTERN int wrapper##_objobjproc_closure(PyObject *a, PyObject *b) { \
       return SwigPyBuiltin_objobjproc_closure(wrapper, a, b);              \
    }
-SWIGINTERN int SwigPyBuiltin_objobjproc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
+SWIGINTERN int SwigPyBuiltin_objobjproc_closure(SwigPyWrapperFunction wrapper,
+                                                PyObject *a,
                                                 PyObject *b) {
    int result;
    PyObject *pyresult;
@@ -3884,7 +3908,8 @@ SWIGINTERN int SwigPyBuiltin_objobjproc_closure(SwigPyWrapperFunction wrapper, P
    SWIGINTERN int wrapper##_objobjproc_closure(PyObject *a, PyObject *b) { \
       return SwigPyBuiltin_funpack_objobjproc_closure(wrapper, a, b);      \
    }
-SWIGINTERN int SwigPyBuiltin_funpack_objobjproc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
+SWIGINTERN int SwigPyBuiltin_funpack_objobjproc_closure(SwigPyWrapperFunction wrapper,
+                                                        PyObject *a,
                                                         PyObject *b) {
    int result;
    PyObject *pyresult;
@@ -3898,8 +3923,10 @@ SWIGINTERN int SwigPyBuiltin_funpack_objobjproc_closure(SwigPyWrapperFunction wr
    SWIGINTERN int wrapper##_objobjargproc_closure(PyObject *a, PyObject *b, PyObject *c) { \
       return SwigPyBuiltin_objobjargproc_closure(wrapper, a, b, c);                        \
    }
-SWIGINTERN int SwigPyBuiltin_objobjargproc_closure(SwigPyWrapperFunction wrapper, PyObject *a,
-                                                   PyObject *b, PyObject *c) {
+SWIGINTERN int SwigPyBuiltin_objobjargproc_closure(SwigPyWrapperFunction wrapper,
+                                                   PyObject *a,
+                                                   PyObject *b,
+                                                   PyObject *c) {
    PyObject *tuple, *resultobj;
    int result;
    tuple = PyTuple_New(c ? 2 : 1);
@@ -5069,7 +5096,8 @@ static PyHeapTypeObject SwigPyBuiltin__Result_type = {
 #endif
 };
 
-static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type, PyTypeObject **bases,
+static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type,
+                                                       PyTypeObject **bases,
                                                        PyObject *dict) {
    PyObject *tuple_bases;
    PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__Result_type;
@@ -5088,7 +5116,8 @@ static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type, PyTyp
 }
 
 #else
-static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type, PyTypeObject **bases,
+static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type,
+                                                       PyTypeObject **bases,
                                                        PyObject *dict) {
    PyMemberDef members[] = {
        {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
@@ -5489,8 +5518,10 @@ SWIGINTERN void SWIG_Python_InstallConstants(PyObject *d, swig_const_info consta
  * Patch %callback methods' docstrings to hold the callback ptrs
  * -----------------------------------------------------------------------------*/
 
-SWIGINTERN void SWIG_Python_FixMethods(PyMethodDef *methods, swig_const_info const *const_table,
-                                       swig_type_info **types, swig_type_info **types_initial) {
+SWIGINTERN void SWIG_Python_FixMethods(PyMethodDef *methods,
+                                       swig_const_info const *const_table,
+                                       swig_type_info **types,
+                                       swig_type_info **types_initial) {
    size_t i;
    for (i = 0; methods[i].ml_name; ++i) {
       char const *c = methods[i].ml_doc;

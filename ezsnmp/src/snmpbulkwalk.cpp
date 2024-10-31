@@ -92,7 +92,8 @@ void snmpbulkwalk_usage(void) {
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid,
+std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
+                                                         oid *theoid,
                                                          size_t theoid_len) {
    std::vector<std::string> str_values;
 

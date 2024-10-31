@@ -10,7 +10,8 @@
 
 #include "datatypes.h"
 
-std::string print_variable_to_string(oid const *objid, size_t objidlen,
+std::string print_variable_to_string(oid const *objid,
+                                     size_t objidlen,
                                      netsnmp_variable_list const *variable);
 void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss);
 void snmp_perror_exception(char const *prog_string);

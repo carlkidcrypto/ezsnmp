@@ -9,7 +9,8 @@
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
  */
 /* Slight modifications to return std::string instead of print to stdout */
-std::string print_variable_to_string(oid const *objid, size_t objidlen,
+std::string print_variable_to_string(oid const *objid,
+                                     size_t objidlen,
                                      netsnmp_variable_list const *variable) {
    u_char *buf = nullptr;
    size_t buf_len = 256, out_len = 0;

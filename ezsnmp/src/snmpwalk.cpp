@@ -99,7 +99,8 @@ void snmpwalk_usage(void) {
    fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
 }
 
-std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid,
+std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
+                                                     oid *theoid,
                                                      size_t theoid_len) {
    std::vector<std::string> str_values;
 
