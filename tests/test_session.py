@@ -10,7 +10,8 @@ faulthandler.enable()
 
 def test_session_invalid_snmp_version():
     with pytest.raises(RuntimeError):
-        Session(version="4")
+        sess = Session(version="4")
+        sess.get("sysDescr.0")
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
@@ -86,7 +87,8 @@ def test_session_ipv6_address_with_protocol(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_is_not_ipv6(version):
     with pytest.raises(RuntimeError):
-        Session(hostname="[foo::bar]:161", version=version)
+        sess = Session(hostname="[foo::bar]:161", version=version)
+        sess.get("sysContact.0")
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
