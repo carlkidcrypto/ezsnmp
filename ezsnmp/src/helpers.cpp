@@ -43,6 +43,7 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    snmp_error(ss, NULL, NULL, &err_cstr);
    err = err_cstr;
    SNMP_FREE(err_cstr);
+   snmp_close(ss);
 
    // Construct the error message
    std::string message = std::string(prog_string) + ": " + err;

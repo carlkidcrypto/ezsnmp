@@ -262,20 +262,18 @@ def test_session_set_multiple(sess, reset_values):
 
 def test_session_bulk_get(sess):
     if sess.version == "1":
-        # @todo, we need to bubble up those *_perror functions. Right now they print to stderr/stdout.
-        # with pytest.raises(RuntimeError):
-        #     sess.bulk_get(
-        #         [
-        #             "sysUpTime",
-        #             "sysORLastChange",
-        #             "sysORID",
-        #             "sysORDescr",
-        #             "sysORUpTime",
-        #         ],
-        #         2,
-        #         8,
-        #     )
-        assert 1 == 2
+        with pytest.raises(RuntimeError):
+            sess.bulk_get(
+                [
+                    "sysUpTime",
+                    "sysORLastChange",
+                    "sysORID",
+                    "sysORDescr",
+                    "sysORUpTime",
+                ],
+                2,
+                8,
+            )
     else:
         res = sess.bulk_get(
             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
