@@ -52,6 +52,7 @@ class SessionBase {
 
    // gets
    std::vector<Result> get(std::string mib = "");
+   std::vector<Result> get(std::vector<std::string> const& mibs);
    std::vector<Result> get_next(std::vector<std::string> const& mibs);
    std::vector<Result> bulk_get(std::vector<std::string> const& mibs);
 

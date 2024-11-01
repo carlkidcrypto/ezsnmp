@@ -245,10 +245,14 @@ def test_session_set_multiple(sess, reset_values):
     assert res[0].value != "my newer location"
     assert res[1].value != "160"
 
-    success = sess.set_multiple(
+    success = sess.set(
         [
-            ("sysLocation.0", "my newer location"),
-            (("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), 160),
+            "sysLocation.0",
+            "s",
+            "my newer location",
+            "nsCacheTimeout.1.3.6.1.2.1.2.2",
+            "i",
+            "160",
         ]
     )
     assert success
@@ -270,9 +274,9 @@ def test_session_bulk_get(sess):
                     "sysORID",
                     "sysORDescr",
                     "sysORUpTime",
+                    "2",
+                    "8",
                 ],
-                2,
-                8,
             )
     else:
         res = sess.bulk_get(

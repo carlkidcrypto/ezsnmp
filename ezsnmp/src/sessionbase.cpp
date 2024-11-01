@@ -254,6 +254,16 @@ std::vector<Result> SessionBase::get(std::string mib) {
    return snmpget(m_args);
 }
 
+std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
+   populate_args();
+
+   for (auto const& entry : mibs) {
+      m_args.push_back(entry);
+   }
+
+   return snmpget(m_args);
+}
+
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
    populate_args();
 

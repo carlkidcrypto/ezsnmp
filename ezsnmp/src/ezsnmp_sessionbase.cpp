@@ -14661,6 +14661,87 @@ fail:
    return NULL;
 }
 
+SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_2(PyObject *self,
+                                                   Py_ssize_t nobjs,
+                                                   PyObject **swig_obj) {
+   PyObject *resultobj = 0;
+   SessionBase *arg1 = (SessionBase *)0;
+   std::vector<std::string, std::allocator<std::string> > *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   std::vector<Result, std::allocator<Result> > result;
+
+   if ((nobjs < 2) || (nobjs > 2)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_SessionBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SessionBase_get"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "SessionBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<SessionBase *>(argp1);
+   {
+      std::vector<std::string, std::allocator<std::string> > *ptr =
+          (std::vector<std::string, std::allocator<std::string> > *)0;
+      res2 = swig::asptr(swig_obj[1], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "SessionBase_get"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::vector< std::string,std::allocator< std::string > > const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "SessionBase_get"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::vector< std::string,std::allocator< std::string > > const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (arg1)->get((std::vector<std::string, std::allocator<std::string> > const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (std::runtime_error const &e) {
+         PyErr_SetString(PyExc_RuntimeError, e.what());
+         SWIG_fail;
+      } catch (std::invalid_argument const &e) {
+         PyErr_SetString(PyExc_ValueError, e.what());
+         SWIG_fail;
+      }
+   }
+   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   return NULL;
+}
+
 SWIGINTERN PyObject *_wrap_SessionBase_get(PyObject *self, PyObject *args) {
    Py_ssize_t argc;
    PyObject *argv[3] = {0};
@@ -14692,13 +14773,28 @@ SWIGINTERN PyObject *_wrap_SessionBase_get(PyObject *self, PyObject *args) {
          }
       }
    }
+   if (argc == 2) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_SessionBase, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         int res =
+             swig::asptr(argv[1], (std::vector<std::string, std::allocator<std::string> > **)(0));
+         _v = SWIG_CheckState(res);
+         if (_v) {
+            return _wrap_SessionBase_get__SWIG_2(self, argc, argv);
+         }
+      }
+   }
 
 fail:
    SWIG_Python_RaiseOrModifyTypeError(
        "Wrong number or type of arguments for overloaded function 'SessionBase_get'.\n"
        "  Possible C/C++ prototypes are:\n"
        "    SessionBase::get(std::string)\n"
-       "    SessionBase::get()\n");
+       "    SessionBase::get()\n"
+       "    SessionBase::get(std::vector< std::string,std::allocator< std::string > > const &)\n");
    return 0;
 }
 
@@ -18532,7 +18628,11 @@ SWIGINTERN PyObject *SwigPyBuiltin__SessionBase_richcompare(PyObject *self,
 SWIGINTERN PyMethodDef SwigPyBuiltin__SessionBase_methods[] = {
     {"walk", _wrap_SessionBase_walk, METH_VARARGS, "walk(self, mib=\"\") -> _result_list"},
     {"bulk_walk", _wrap_SessionBase_bulk_walk, METH_O, "bulk_walk(self, mibs) -> _result_list"},
-    {"get", _wrap_SessionBase_get, METH_VARARGS, "get(self, mib=\"\") -> _result_list"},
+    {"get", _wrap_SessionBase_get, METH_VARARGS,
+     "\n"
+     "get(self, mib=\"\") -> _result_list\n"
+     "get(self, mibs) -> _result_list\n"
+     ""},
     {"get_next", _wrap_SessionBase_get_next, METH_O, "get_next(self, mibs) -> _result_list"},
     {"bulk_get", _wrap_SessionBase_bulk_get, METH_O, "bulk_get(self, mibs) -> _result_list"},
     {"set", _wrap_SessionBase_set, METH_O, "set(self, mibs) -> _result_list"},
