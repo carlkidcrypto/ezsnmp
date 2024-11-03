@@ -74,7 +74,7 @@ std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int 
    argv[0] = const_cast<char *>("netsnmp");
 
    for (int i = 0; i < static_cast<int>(args.size()); ++i) {
-      argv[i + 1] = const_cast<char *>(args[i].c_str());
+      argv[i + 1] = strdup(args[i].c_str());
    }
    argv[argc] = nullptr;
 
@@ -161,4 +161,18 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
       results.push_back(parse_result(input));
    }
    return results;
+}
+
+void clear_specific_v3_user(char const *engineID, char const *userName) {
+   struct usmUser *user = usm_get_userList();
+
+   while (user != NULL) {
+      if (user->secName != NULL && strcmp(user->secName, userName) == 0 && user->engineID != NULL &&
+          strcmp(reinterpret_cast<char const *>(user->engineID), engineID) == 0 &&
+          user->authProtocol != NULL && user->privProtocol != NULL) {
+         usm_remove_user(user);
+         break;
+      }
+      user = user->next;
+   }
 }

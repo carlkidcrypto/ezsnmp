@@ -118,7 +118,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
    size_t name_length;
    int status;
    int failures = 0;
-   int exitval = 1;
 
    SOCK_STARTUP;
 
@@ -185,10 +184,9 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
    }
    if (failures) {
       snmp_free_pdu(pdu);
-      goto close_session;
+      snmp_close(ss);
+      return parse_results(return_vector);
    }
-
-   exitval = 0;
 
    /*
     * Perform the request.
@@ -218,7 +216,6 @@ retry:
             }
             err_msg = err_msg + "\n";
          }
-         exitval = 2;
 
          /*
           * retry if the errored variable was successfully removed
@@ -246,11 +243,6 @@ retry:
       snmp_free_pdu(response);
    }
 
-close_session:
-   snmp_close(ss);
-   return parse_results(return_vector);
-
-out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
    return parse_results(return_vector);

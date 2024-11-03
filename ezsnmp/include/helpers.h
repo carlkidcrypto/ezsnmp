@@ -18,5 +18,6 @@ void snmp_perror_exception(char const *prog_string);
 std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc);
 Result parse_result(std::string const &input);
 std::vector<Result> parse_results(std::vector<std::string> const &inputs);
+void clear_specific_v3_user(char const *engineID, char const *userName);
 
 #endif // HELPERS_H
