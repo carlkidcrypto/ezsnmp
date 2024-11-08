@@ -2,6 +2,7 @@
 #include "helpers.h"
 
 #include <cstring>
+#include <iostream>
 #include <regex>
 #include <sstream>
 
@@ -161,18 +162,4 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
       results.push_back(parse_result(input));
    }
    return results;
-}
-
-void clear_specific_v3_user(char const *engineID, char const *userName) {
-   struct usmUser *user = usm_get_userList();
-
-   while (user != NULL) {
-      if (user->secName != NULL && strcmp(user->secName, userName) == 0 && user->engineID != NULL &&
-          strcmp(reinterpret_cast<char const *>(user->engineID), engineID) == 0 &&
-          user->authProtocol != NULL && user->privProtocol != NULL) {
-         usm_remove_user(user);
-         break;
-      }
-      user = user->next;
-   }
 }

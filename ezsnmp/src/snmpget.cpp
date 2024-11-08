@@ -101,7 +101,8 @@ void snmpget_usage(void) {
    fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-std::vector<Result> snmpget(std::vector<std::string> const &args) {
+std::vector<Result> snmpget(std::vector<std::string> const &args,
+                            std::optional<std::shared_ptr<SessionBase>> session_base) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;

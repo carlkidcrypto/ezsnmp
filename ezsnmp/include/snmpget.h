@@ -7,8 +7,12 @@
 #include <string>
 #include <vector>
 
+#include "sessionbase.h"
+
 void snmpget_usage(void);
 void snmpget_optProc(int argc, char *const *argv, int opt);
-std::vector<Result> snmpget(std::vector<std::string> const &args);
+std::vector<Result> snmpget(
+    std::vector<std::string> const &args,
+    std::optional<std::shared_ptr<SessionBase>> session_base = std::nullopt);
 
 #endif // SNMPGET_H
