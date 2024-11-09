@@ -1,5 +1,8 @@
 import pytest
 from ezsnmp import Session
+import faulthandler
+
+faulthandler.enable()
 
 
 def test_v3_not_caching_user(sess_v3_md5_des):

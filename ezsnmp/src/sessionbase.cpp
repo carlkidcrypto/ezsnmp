@@ -251,7 +251,12 @@ std::vector<Result> SessionBase::get(std::string mib) {
       m_args.push_back(mib);
    }
 
-   return snmpget(m_args);
+   if (m_v3_args_changed) {
+      // clear cache
+      m_v3_args_changed = false;
+   }
+
+   return snmpget(m_args, *this);
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
@@ -261,7 +266,7 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
       m_args.push_back(entry);
    }
 
-   return snmpget(m_args);
+   return snmpget(m_args, *this);
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
@@ -330,10 +335,12 @@ void SessionBase::_set_community(std::string const& community) {
 void SessionBase::_set_auth_protocol(std::string const& auth_protocol) {
    m_auth_protocol = auth_protocol;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_auth_passphrase(std::string const& auth_passphrase) {
    m_auth_passphrase = auth_passphrase;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_security_engine_id(std::string const& security_engine_id) {
    m_security_engine_id = security_engine_id;
@@ -354,14 +361,17 @@ void SessionBase::_set_context(std::string const& context) {
 void SessionBase::_set_security_username(std::string const& security_username) {
    m_security_username = security_username;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_privacy_protocol(std::string const& privacy_protocol) {
    m_privacy_protocol = privacy_protocol;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_privacy_passphrase(std::string const& privacy_passphrase) {
    m_privacy_passphrase = privacy_passphrase;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_boots_time(std::string const& boots_time) {
    m_boots_time = boots_time;

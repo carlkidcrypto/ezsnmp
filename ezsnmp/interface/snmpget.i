@@ -8,4 +8,4 @@
 
 // Now list ANSI C/C++ declarations
 std::vector<Result> snmpget(std::vector<std::string> const &args, 
-                            std::optional<std::shared_ptr<SessionBase>> session_base = std::nullopt);
+                            std::optional<SessionBase&> session_base = std::nullopt);

@@ -1,5 +1,4 @@
 import platform
-import re
 import pytest
 
 from ezsnmp.session import Session

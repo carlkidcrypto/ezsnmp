@@ -195,6 +195,7 @@ setup(
                 "ezsnmp/src/snmpwalk.cpp",
                 "ezsnmp/src/snmpset.cpp",
                 "ezsnmp/src/snmptrap.cpp",
+                "ezsnmp/src/sessionbase.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,
