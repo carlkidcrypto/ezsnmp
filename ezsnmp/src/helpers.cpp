@@ -163,3 +163,32 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
    }
    return results;
 }
+
+void remove_v3_user_from_cache(std::string const &security_name_str,
+                               std::string const &context_engine_id_str) {
+   struct usmUser *actUser = usm_get_userList();
+
+   while (actUser != NULL) {
+      struct usmUser *dummy = actUser;
+      auto act_user_sec_name_str = std::string("");
+      auto act_user_engine_id_str = std::string("");
+
+      if (actUser->secName != NULL) {
+         act_user_sec_name_str = std::string(actUser->secName);
+      }
+      if (actUser->engineID != NULL) {
+         act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));
+      }
+
+      if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
+          security_name_str == act_user_sec_name_str &&
+          context_engine_id_str == act_user_engine_id_str) {
+         usm_remove_user(actUser);
+         actUser->next = NULL;
+         actUser->prev = NULL;
+         usm_free_user(actUser);
+         break;
+      }
+      actUser = dummy->next;
+   }
+}

@@ -101,8 +101,7 @@ void snmpget_usage(void) {
    fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
 }
 
-std::vector<Result> snmpget(std::vector<std::string> const &args,
-                            std::optional<SessionBase &> session_base) {
+std::vector<Result> snmpget(std::vector<std::string> const &args) {
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
@@ -162,11 +161,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
     * Open an SNMP session.
     */
    ss = snmp_open(&session);
-   if (session_base.has_value()) {
-      session_base.value()._set_context_engine_id(
-          std::string(reinterpret_cast<char *>(session.contextEngineID)));
-      session_base.value()._set_boots_time(std::to_string(session.engineBoots));
-   }
 
    if (ss == NULL) {
       /*

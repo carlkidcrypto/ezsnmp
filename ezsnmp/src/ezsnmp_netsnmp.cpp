@@ -4017,13 +4017,12 @@ SWIGINTERN PyObject *SwigPyBuiltin_iternextfunc_closure(SwigPyWrapperFunction wr
 #define SWIGTYPE_p_std__allocatorT_Result_t swig_types[8]
 #define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[9]
 #define SWIGTYPE_p_std__invalid_argument swig_types[10]
-#define SWIGTYPE_p_std__optionalT_SessionBase_R_t swig_types[11]
-#define SWIGTYPE_p_std__vectorT_Result_t swig_types[12]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[13]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[14]
-#define SWIGTYPE_p_value_type swig_types[15]
-static swig_type_info *swig_types[17];
-static swig_module_info swig_module = {swig_types, 16, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__vectorT_Result_t swig_types[11]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[12]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[13]
+#define SWIGTYPE_p_value_type swig_types[14]
+static swig_type_info *swig_types[16];
+static swig_module_info swig_module = {swig_types, 15, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -13954,103 +13953,17 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_snmpget__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-   PyObject *resultobj = 0;
-   std::vector<std::string, std::allocator<std::string> > *arg1 = 0;
-   std::optional<SessionBase &> arg2;
-   int res1 = SWIG_OLDOBJ;
-   void *argp2;
-   int res2 = 0;
-   std::vector<Result, std::allocator<Result> > result;
-
-   if ((nobjs < 2) || (nobjs > 2)) {
-      SWIG_fail;
-   }
-   {
-      std::vector<std::string, std::allocator<std::string> > *ptr =
-          (std::vector<std::string, std::allocator<std::string> > *)0;
-      res1 = swig::asptr(swig_obj[0], &ptr);
-      if (!SWIG_IsOK(res1)) {
-         SWIG_exception_fail(SWIG_ArgError(res1),
-                             "in method '"
-                             "snmpget"
-                             "', argument "
-                             "1"
-                             " of type '"
-                             "std::vector< std::string,std::allocator< std::string > > const &"
-                             "'");
-      }
-      if (!ptr) {
-         SWIG_exception_fail(SWIG_NullReferenceError,
-                             "invalid null reference "
-                             "in method '"
-                             "snmpget"
-                             "', argument "
-                             "1"
-                             " of type '"
-                             "std::vector< std::string,std::allocator< std::string > > const &"
-                             "'");
-      }
-      arg1 = ptr;
-   }
-   {
-      res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__optionalT_SessionBase_R_t, 0 | 0);
-      if (!SWIG_IsOK(res2)) {
-         SWIG_exception_fail(SWIG_ArgError(res2),
-                             "in method '"
-                             "snmpget"
-                             "', argument "
-                             "2"
-                             " of type '"
-                             "std::optional< SessionBase & >"
-                             "'");
-      }
-      if (!argp2) {
-         SWIG_exception_fail(SWIG_NullReferenceError,
-                             "invalid null reference "
-                             "in method '"
-                             "snmpget"
-                             "', argument "
-                             "2"
-                             " of type '"
-                             "std::optional< SessionBase & >"
-                             "'");
-      } else {
-         std::optional<SessionBase &> *temp =
-             reinterpret_cast<std::optional<SessionBase &> *>(argp2);
-         arg2 = *temp;
-         if (SWIG_IsNewObj(res2)) {
-            delete temp;
-         }
-      }
-   }
-   {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = snmpget((std::vector<std::string, std::allocator<std::string> > const &)*arg1,
-                       SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
-   }
-   resultobj = swig::from(static_cast<std::vector<Result, std::allocator<Result> > >(result));
-   if (SWIG_IsNewObj(res1)) {
-      delete arg1;
-   }
-   return resultobj;
-fail:
-   if (SWIG_IsNewObj(res1)) {
-      delete arg1;
-   }
-   return NULL;
-}
-
-SWIGINTERN PyObject *_wrap_snmpget__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    std::vector<std::string, std::allocator<std::string> > *arg1 = 0;
    int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
    std::vector<Result, std::allocator<Result> > result;
 
-   if ((nobjs < 1) || (nobjs > 1)) {
+   if (!args) {
       SWIG_fail;
    }
+   swig_obj[0] = args;
    {
       std::vector<std::string, std::allocator<std::string> > *ptr =
           (std::vector<std::string, std::allocator<std::string> > *)0;
@@ -14093,49 +14006,6 @@ fail:
       delete arg1;
    }
    return NULL;
-}
-
-SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
-   Py_ssize_t argc;
-   PyObject *argv[3] = {0};
-
-   (void)self;
-   if (!(argc = SWIG_Python_UnpackTuple(args, "snmpget", 0, 2, argv))) {
-      SWIG_fail;
-   }
-   --argc;
-   if (argc == 1) {
-      int _v = 0;
-      int res =
-          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-         return _wrap_snmpget__SWIG_1(self, argc, argv);
-      }
-   }
-   if (argc == 2) {
-      int _v = 0;
-      int res =
-          swig::asptr(argv[0], (std::vector<std::string, std::allocator<std::string> > **)(0));
-      _v = SWIG_CheckState(res);
-      if (_v) {
-         int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__optionalT_SessionBase_R_t,
-                                   SWIG_POINTER_NO_NULL | 0);
-         _v = SWIG_CheckState(res);
-         if (_v) {
-            return _wrap_snmpget__SWIG_0(self, argc, argv);
-         }
-      }
-   }
-
-fail:
-   SWIG_Python_RaiseOrModifyTypeError(
-       "Wrong number or type of arguments for overloaded function 'snmpget'.\n"
-       "  Possible C/C++ prototypes are:\n"
-       "    snmpget(std::vector< std::string,std::allocator< std::string > > const "
-       "&,std::optional< SessionBase & >)\n"
-       "    snmpget(std::vector< std::string,std::allocator< std::string > > const &)\n");
-   return 0;
 }
 
 SWIGINTERN PyObject *_wrap_snmpgetnext(PyObject *self, PyObject *args) {
@@ -14361,8 +14231,7 @@ fail:
 static PyMethodDef SwigMethods[] = {
     {"snmpbulkget", _wrap_snmpbulkget, METH_O, "snmpbulkget(args) -> _result_list"},
     {"snmpbulkwalk", _wrap_snmpbulkwalk, METH_O, "snmpbulkwalk(args) -> _result_list"},
-    {"snmpget", _wrap_snmpget, METH_VARARGS,
-     "snmpget(args, session_base=std::nullopt) -> _result_list"},
+    {"snmpget", _wrap_snmpget, METH_O, "snmpget(args) -> _result_list"},
     {"snmpgetnext", _wrap_snmpgetnext, METH_O, "snmpgetnext(args) -> _result_list"},
     {"snmpset", _wrap_snmpset, METH_O, "snmpset(args) -> _result_list"},
     {"snmptrap", _wrap_snmptrap, METH_O, "snmptrap(args) -> int"},
@@ -15975,8 +15844,6 @@ static swig_type_info _swigt__p_std__allocatorT_std__string_t = {
     0};
 static swig_type_info _swigt__p_std__invalid_argument = {
     "_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void *)0, 0};
-static swig_type_info _swigt__p_std__optionalT_SessionBase_R_t = {
-    "_p_std__optionalT_SessionBase_R_t", "std::optional< SessionBase & > *", 0, 0, (void *)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Result_t = {
     "_p_std__vectorT_Result_t",
     "std::vector< Result,std::allocator< Result > > *|std::vector< Result > *",
@@ -16012,7 +15879,6 @@ static swig_type_info *swig_type_initial[] = {
     &_swigt__p_std__allocatorT_Result_t,
     &_swigt__p_std__allocatorT_std__string_t,
     &_swigt__p_std__invalid_argument,
-    &_swigt__p_std__optionalT_SessionBase_R_t,
     &_swigt__p_std__vectorT_Result_t,
     &_swigt__p_std__vectorT_std__string_t,
     &_swigt__p_swig__SwigPyIterator,
@@ -16035,8 +15901,6 @@ static swig_cast_info _swigc__p_std__allocatorT_std__string_t[] = {
     {&_swigt__p_std__allocatorT_std__string_t, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {
     {&_swigt__p_std__invalid_argument, 0, 0, 0}, {0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__optionalT_SessionBase_R_t[] = {
-    {&_swigt__p_std__optionalT_SessionBase_R_t, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Result_t[] = {
     {&_swigt__p_std__vectorT_Result_t, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__string_t[] = {
@@ -16057,7 +15921,6 @@ static swig_cast_info *swig_cast_initial[] = {
     _swigc__p_std__allocatorT_Result_t,
     _swigc__p_std__allocatorT_std__string_t,
     _swigc__p_std__invalid_argument,
-    _swigc__p_std__optionalT_SessionBase_R_t,
     _swigc__p_std__vectorT_Result_t,
     _swigc__p_std__vectorT_std__string_t,
     _swigc__p_swig__SwigPyIterator,

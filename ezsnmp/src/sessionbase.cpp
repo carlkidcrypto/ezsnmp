@@ -4,6 +4,7 @@
 #include <cstring>
 #include <map>
 
+#include "helpers.h"
 #include "snmpbulkget.h"
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
@@ -224,8 +225,16 @@ void SessionBase::populate_args() {
    m_args.push_back(host_address);
 }
 
+void SessionBase::check_and_clear_v3_user() {
+   if (m_v3_args_changed) {
+      remove_v3_user_from_cache(m_security_username, m_context_engine_id);
+      m_v3_args_changed = false;
+   }
+}
+
 std::vector<Result> SessionBase::walk(std::string mib) {
    populate_args();
+   check_and_clear_v3_user();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -236,6 +245,7 @@ std::vector<Result> SessionBase::walk(std::string mib) {
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
    populate_args();
+   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -246,31 +256,29 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 
 std::vector<Result> SessionBase::get(std::string mib) {
    populate_args();
+   check_and_clear_v3_user();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
    }
 
-   if (m_v3_args_changed) {
-      // clear cache
-      m_v3_args_changed = false;
-   }
-
-   return snmpget(m_args, *this);
+   return snmpget(m_args);
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
    populate_args();
+   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
    }
 
-   return snmpget(m_args, *this);
+   return snmpget(m_args);
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
    populate_args();
+   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -281,6 +289,7 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
    populate_args();
+   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -291,6 +300,7 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
    populate_args();
+   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -345,18 +355,22 @@ void SessionBase::_set_auth_passphrase(std::string const& auth_passphrase) {
 void SessionBase::_set_security_engine_id(std::string const& security_engine_id) {
    m_security_engine_id = security_engine_id;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_context_engine_id(std::string const& context_engine_id) {
    m_context_engine_id = context_engine_id;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_security_level(std::string const& security_level) {
    m_security_level = security_level;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_context(std::string const& context) {
    m_context = context;
    populate_args();
+   m_v3_args_changed = true;
 }
 void SessionBase::_set_security_username(std::string const& security_username) {
    m_security_username = security_username;
