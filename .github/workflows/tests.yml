@@ -2,10 +2,10 @@ name: Tests
 
 on:
   push:
-    branches: [ dev/v2.0.0 ]
+    branches: [ main ]
 
   pull_request:
-    branches: [ dev/v2.0.0 ]
+    branches: [ main ]
 
 jobs:
   check-source-changes:
