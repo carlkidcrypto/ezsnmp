@@ -25,7 +25,6 @@ class SessionBase {
    std::string m_boots_time = "";
    std::string m_retries = "";
    std::string m_timeout = "";
-   bool m_v3_args_changed = false;
    void populate_args();
    void check_and_clear_v3_user();
 

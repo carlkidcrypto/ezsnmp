@@ -166,6 +166,8 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
 
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
+   std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
+   std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
@@ -180,9 +182,29 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
          act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));
       }
 
+      // if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
+      //     security_name_str == act_user_sec_name_str &&
+      //     context_engine_id_str == act_user_engine_id_str) {
+      //    std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+      //    usm_remove_user(actUser);
+      //    actUser->next = NULL;
+      //    actUser->prev = NULL;
+      //    usm_free_user(actUser);
+      //    break;
+      // }
+
+      // This works for now, but it may change when threads/muli-procs are involved.
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
+         std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         usm_remove_user(actUser);
+         actUser->next = NULL;
+         actUser->prev = NULL;
+         usm_free_user(actUser);
+         break;
+      } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
+         std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;

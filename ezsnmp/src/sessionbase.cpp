@@ -226,15 +226,11 @@ void SessionBase::populate_args() {
 }
 
 void SessionBase::check_and_clear_v3_user() {
-   if (m_v3_args_changed) {
-      remove_v3_user_from_cache(m_security_username, m_context_engine_id);
-      m_v3_args_changed = false;
-   }
+   remove_v3_user_from_cache(m_security_username, m_context_engine_id);
 }
 
 std::vector<Result> SessionBase::walk(std::string mib) {
    populate_args();
-   check_and_clear_v3_user();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -245,7 +241,6 @@ std::vector<Result> SessionBase::walk(std::string mib) {
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
    populate_args();
-   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -256,7 +251,6 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 
 std::vector<Result> SessionBase::get(std::string mib) {
    populate_args();
-   check_and_clear_v3_user();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -267,7 +261,6 @@ std::vector<Result> SessionBase::get(std::string mib) {
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
    populate_args();
-   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -278,7 +271,6 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
    populate_args();
-   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -289,7 +281,6 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
    populate_args();
-   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -300,7 +291,6 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
    populate_args();
-   check_and_clear_v3_user();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -345,47 +335,47 @@ void SessionBase::_set_community(std::string const& community) {
 void SessionBase::_set_auth_protocol(std::string const& auth_protocol) {
    m_auth_protocol = auth_protocol;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_auth_passphrase(std::string const& auth_passphrase) {
    m_auth_passphrase = auth_passphrase;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_security_engine_id(std::string const& security_engine_id) {
    m_security_engine_id = security_engine_id;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_context_engine_id(std::string const& context_engine_id) {
    m_context_engine_id = context_engine_id;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_security_level(std::string const& security_level) {
    m_security_level = security_level;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_context(std::string const& context) {
    m_context = context;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_security_username(std::string const& security_username) {
    m_security_username = security_username;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_privacy_protocol(std::string const& privacy_protocol) {
    m_privacy_protocol = privacy_protocol;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_privacy_passphrase(std::string const& privacy_passphrase) {
    m_privacy_passphrase = privacy_passphrase;
    populate_args();
-   m_v3_args_changed = true;
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_boots_time(std::string const& boots_time) {
    m_boots_time = boots_time;
