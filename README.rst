@@ -159,13 +159,13 @@ them with the following on Linux:
     sudo systemctl start snmpd;
     rm -drf build/ dist/ ezsnmp.egg-info;
     python3 -m pip install -r requirements.txt;
-    python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
+    python3 -m pip install . && pytest;
     # Bottom one for debug. Replace the top one with it if needed.
-    # python3 setup.py build && python3 -m pip install -e . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
+    # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
     # Bottom one for valgrind. Replace the top one with it if needed.
-    # python3 setup.py build && python3 -m pip install -e . && valgrind --tool=memcheck --leak-check=full --show-leak-kinds=definite,indirect,possible python3 -m pytest .
+    # python3 -m pip install . && valgrind --tool=memcheck --leak-check=full --show-leak-kinds=definite,indirect,possible python3 -m pytest .
     # Bottom one for valgrind using helgrind. Replace the top one with it if needed.
-    # python3 setup.py build && python3 -m pip install -e . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
+    # python3 -m pip install . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
 
 
 On MacOS
@@ -179,7 +179,8 @@ On MacOS
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 setup.py build && python3 -m pip install -e . && python3 -m pytest .;
+    python3 -m pip install -r requirements.txt;
+    python3 -m pip install . && pytest;
 
 
 Running cibuildwheels
@@ -197,6 +198,22 @@ For MacOS builds on a MacOS machine
 .. code:: bash
 
     clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
+
+
+Formatting
+----------
+
+For c++ code:
+
+.. code:: bash
+
+    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
+
+For python3 code:
+
+.. code:: bash
+
+    python3 -m black .
 
 
 License

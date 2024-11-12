@@ -16,6 +16,7 @@ in_tree = False
 # Add compiler flags if debug is set
 compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
 link_args = []
+
 for arg in argv:
     if arg.startswith("--debug"):
         # Note from GCC manual:
@@ -62,7 +63,11 @@ else:
     # link_args += [flag for flag in s_split(netsnmp_libs) if flag[:2] == '-f']
     libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
-    incdirs = []
+    incdirs = ["ezsnmp/include/"]
+
+    print(f"libs: {libs}")
+    print(f"libdirs: {libdirs}")
+    print(f"incdirs: {incdirs}")
 
     if platform == "darwin":  # OS X
         # Check if net-snmp is installed via Brew
@@ -178,13 +183,57 @@ class RelinkLibraries(BuildCommand):
 setup(
     ext_modules=[
         Extension(
-            "ezsnmp.interface",
-            ["ezsnmp/interface.cpp"],
+            name="ezsnmp/_netsnmp",
+            sources=[
+                "ezsnmp/src/ezsnmp_netsnmp.cpp",
+                "ezsnmp/src/datatypes.cpp",
+                "ezsnmp/src/helpers.cpp",
+                "ezsnmp/src/snmpbulkget.cpp",
+                "ezsnmp/src/snmpgetnext.cpp",
+                "ezsnmp/src/snmpbulkwalk.cpp",
+                "ezsnmp/src/snmpget.cpp",
+                "ezsnmp/src/snmpwalk.cpp",
+                "ezsnmp/src/snmpset.cpp",
+                "ezsnmp/src/snmptrap.cpp",
+            ],
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-        )
+        ),
+        Extension(
+            name="ezsnmp/_sessionbase",
+            sources=[
+                "ezsnmp/src/ezsnmp_sessionbase.cpp",
+                "ezsnmp/src/datatypes.cpp",
+                "ezsnmp/src/sessionbase.cpp",
+                "ezsnmp/src/helpers.cpp",
+                "ezsnmp/src/snmpbulkget.cpp",
+                "ezsnmp/src/snmpbulkwalk.cpp",
+                "ezsnmp/src/snmpget.cpp",
+                "ezsnmp/src/snmpgetnext.cpp",
+                "ezsnmp/src/snmpwalk.cpp",
+                "ezsnmp/src/snmpset.cpp",
+                "ezsnmp/src/snmptrap.cpp",
+            ],
+            library_dirs=libdirs,
+            include_dirs=incdirs,
+            libraries=libs,
+            extra_compile_args=compile_args,
+            extra_link_args=link_args,
+        ),
+        Extension(
+            name="ezsnmp/_datatypes",
+            sources=[
+                "ezsnmp/src/ezsnmp_datatypes.cpp",
+                "ezsnmp/src/datatypes.cpp",
+            ],
+            library_dirs=libdirs,
+            include_dirs=incdirs,
+            libraries=libs,
+            extra_compile_args=compile_args,
+            extra_link_args=link_args,
+        ),
     ],
 )
