@@ -4,80 +4,78 @@ A module that contains global variables and functions that are used in the integ
 
 from time import sleep
 from random import uniform, randint
-from ezsnmp.sessionbase import Session
-from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
+from ezsnmp.session import Session
 from os import getpid
 from threading import get_native_id
 
 SESS_V1_ARGS = {
-    "version": 1,
+    "version": "1",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "community": "public",
-    "retry_no_such": True,
 }
 
 SESS_V2_ARGS = {
-    "version": 2,
+    "version": "2c",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "community": "public",
 }
 
 SESS_V3_MD5_DES_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial_md5_des",
     "privacy_protocol": "DES",
-    "privacy_password": "priv_pass",
-    "auth_password": "auth_pass",
+    "privacy_passphrase": "priv_pass",
+    "auth_passphrase": "auth_pass",
 }
 
 SESS_V3_MD5_AES_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial_md5_aes",
     "privacy_protocol": "AES",
-    "privacy_password": "priv_pass",
-    "auth_password": "auth_pass",
+    "privacy_passphrase": "priv_pass",
+    "auth_passphrase": "auth_pass",
 }
 
 SESS_V3_SHA_AES_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "SHA",
     "security_level": "authPriv",
     "security_username": "secondary_sha_aes",
     "privacy_protocol": "AES",
-    "privacy_password": "priv_second",
-    "auth_password": "auth_second",
+    "privacy_passphrase": "priv_second",
+    "auth_passphrase": "auth_second",
 }
 
 SESS_V3_SHA_NO_PRIV_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "SHA",
     "security_level": "authNoPriv",
     "security_username": "secondary_sha_no_priv",
-    "auth_password": "auth_second",
+    "auth_passphrase": "auth_second",
 }
 
 SESS_V3_MD5_NO_PRIV_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "MD5",
-    "security_level": "auth_without_privacy",
+    "security_level": "authNoPriv",
     "security_username": "initial_md5_no_priv",
-    "auth_password": "auth_pass",
+    "auth_passphrase": "auth_pass",
 }
 
 
@@ -119,9 +117,7 @@ def worker(request_type: str):
             )
 
             if request_type == "get":
-                test = sess.get(
-                    [("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")]
-                )
+                test = sess.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
 
                 # Access the result to ensure that the data is actually retrieved
                 for item in test:
@@ -141,7 +137,7 @@ def worker(request_type: str):
                 del test
 
             elif request_type == "bulkwalk" and sess.version != 1:
-                test = sess.bulkwalk(".")
+                test = sess.bulk_walk(".")
 
                 # Access the result to ensure that the data is actually retrieved
                 for item in test:
@@ -158,17 +154,18 @@ def worker(request_type: str):
                 f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}"
             )
 
-        except EzSNMPConnectionError:
-            # We bombarded the SNMP server with too many requests...
-            # print(
-            #     f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
-            # )
-            connection_error_counter += 1
+        except RuntimeError as e:
 
-            if connection_error_counter >= 10:
-                are_we_done = True
+            if str(e) == "Timeout Error":
+                # We bombarded the SNMP server with too many requests...
+                # print(
+                #     f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
+                # )
+                connection_error_counter += 1
 
-        except EzSNMPError as e:
+                if connection_error_counter >= 10:
+                    are_we_done = True
+
             if str(e) == "USM unknown security name (no such user exists)":
                 # print(
                 #     f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"

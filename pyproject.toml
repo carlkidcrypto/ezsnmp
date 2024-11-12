@@ -53,9 +53,4 @@ requires = [
 pythonpath = "tests"
 addopts = [
     "--import-mode=importlib",
-    "--ignore=integration_tests/",
-    "--ignore=tests/test_helpers.py",
-    "--ignore=tests/test_utils.py",
-    "--ignore=tests/test_variables.py",
-    "--ignore=tests/test_session_build_varlist.py",
 ]
