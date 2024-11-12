@@ -166,7 +166,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpget", &session);
-      return parse_results(return_vector);
    }
 
    /*
