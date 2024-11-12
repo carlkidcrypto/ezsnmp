@@ -273,8 +273,6 @@ def test_session_bulk_get(sess):
                     "sysORID",
                     "sysORDescr",
                     "sysORUpTime",
-                    "2",
-                    "8",
                 ],
             )
     else:

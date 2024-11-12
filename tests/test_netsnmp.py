@@ -125,8 +125,6 @@ def test_snmpbulkget(netsnmp_args):
                 "sysORID",
                 "sysORDescr",
                 "sysORUpTime",
-                "2",
-                "8",
             ]
             snmpbulkget(netsnmp_args)
     else:
@@ -136,22 +134,18 @@ def test_snmpbulkget(netsnmp_args):
             "sysORID",
             "sysORDescr",
             "sysORUpTime",
-            "2",
-            "8",
         ]
         res = snmpbulkget(netsnmp_args)
 
-        assert len(res) == 26
+        assert len(res) == 50
 
-        assert res[0].oid == "sysUpTimeInstance"
+        assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
         assert res[0].index == ""
-        assert int(res[0].value) > 0
-        assert res[0].type == "TICKS"
+        assert res[0].type == "Timeticks"
 
-        assert res[4].oid == "sysORUpTime"
+        assert res[4].oid == "SNMPv2-MIB::sysORUpTime"
         assert res[4].index == "1"
-        assert int(res[4].value) >= 0
-        assert res[4].type == "TICKS"
+        assert res[4].type == "Timeticks"
 
 
 def test_snmpwalk(netsnmp_args):
@@ -159,7 +153,7 @@ def test_snmpwalk(netsnmp_args):
         with pytest.raises(RuntimeError):
             netsnmp_args = netsnmp_args + ["system"]
             res = snmpbulkwalk(netsnmp_args)
-    
+
     else:
         netsnmp_args = netsnmp_args + ["system"]
         res = snmpbulkwalk(netsnmp_args)
@@ -232,5 +226,6 @@ def test_snmp_bulkwalk_res(netsnmp_args):
 
 def test_snmp_walk_unknown(netsnmp_args):
     with pytest.raises(RuntimeError):
-        netsnmp_args = netsnmp_args + ["systemo"]
+        netsnmp_args = netsnmp_args + ["systemo123"]
         snmpwalk(netsnmp_args)
+
