@@ -5,7 +5,7 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [ dev/v2.0.0 ]
+    branches: [ main ]
 
 jobs:
   check-source-changes:
@@ -18,7 +18,7 @@ jobs:
 
       - name: Check for changes in setup.py/cfg
         id: changed-files
-        uses: tj-actions/changed-files@v45.0.3
+        uses: tj-actions/changed-files@v45.0.4
         with:
           files: |
             setup.py

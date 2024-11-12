@@ -161,7 +161,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
     * Open an SNMP session.
     */
    ss = snmp_open(&session);
-
    if (ss == NULL) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
