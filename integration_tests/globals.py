@@ -4,7 +4,7 @@ A module that contains global variables and functions that are used in the integ
 
 from time import sleep
 from random import uniform, randint
-from ezsnmp.session import Session
+from ezsnmp.sessionbase import Session
 from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
 from os import getpid
 from threading import get_native_id

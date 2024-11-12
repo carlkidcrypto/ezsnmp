@@ -138,76 +138,76 @@ Example Session Kargs
 
 .. code-block:: python
 
-    from ezsnmp.session import Session
+    from ezsnmp import Session
 
     SESS_V1_ARGS = {
-    "version": 1,
+    "version": "1",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "community": "public",
     }
 
     SESS_V2_ARGS = {
-        "version": 2,
+        "version": "2",
         "hostname": "localhost",
-        "remote_port": 11161,
+        "port_number": "11161",
         "community": "public",
     }
 
     SESS_V3_MD5_DES_ARGS = {
-        "version": 3,
+        "version": "3",
         "hostname": "localhost",
-        "remote_port": 11161,
+        "port_number": "11161",
         "auth_protocol": "MD5",
         "security_level": "authPriv",
         "security_username": "initial_md5_des",
         "privacy_protocol": "DES",
-        "privacy_password": "priv_pass",
-        "auth_password": "auth_pass",
+        "privacy_passphrase": "priv_pass",
+        "auth_passphrase": "auth_pass",
     }
 
     SESS_V3_MD5_AES_ARGS = {
-        "version": 3,
+        "version": "3",
         "hostname": "localhost",
-        "remote_port": 11161,
+        "port_number": "11161",
         "auth_protocol": "MD5",
         "security_level": "authPriv",
         "security_username": "initial_md5_aes",
         "privacy_protocol": "AES",
-        "privacy_password": "priv_pass",
-        "auth_password": "auth_pass",
+        "privacy_passphrase": "priv_pass",
+        "auth_passphrase": "auth_pass",
     }
 
     SESS_V3_SHA_AES_ARGS = {
-        "version": 3,
+        "version": "3",
         "hostname": "localhost",
-        "remote_port": 11161,
+        "port_number": "11161",
         "auth_protocol": "SHA",
         "security_level": "authPriv",
         "security_username": "secondary_sha_aes",
         "privacy_protocol": "AES",
-        "privacy_password": "priv_second",
-        "auth_password": "auth_second",
+        "privacy_passphrase": "priv_second",
+        "auth_passphrase": "auth_second",
     }
 
     SESS_V3_SHA_NO_PRIV_ARGS = {
-        "version": 3,
+        "version": "3",
         "hostname": "localhost",
-        "remote_port": 11161,
+        "port_number": "11161",
         "auth_protocol": "SHA",
         "security_level": "authNoPriv",
         "security_username": "secondary_sha_no_priv",
-        "auth_password": "auth_second",
+        "auth_passphrase": "auth_second",
     }
 
     SESS_V3_MD5_NO_PRIV_ARGS = {
-        "version": 3,
+        "version": "3",
         "hostname": "localhost",
-        "remote_port": 11161,
+        "port_number": "11161",
         "auth_protocol": "MD5",
-        "security_level": "auth_without_privacy",
+        "security_level": "authNoPriv",
         "security_username": "initial_md5_no_priv",
-        "auth_password": "auth_pass",
+        "auth_passphrase": "auth_pass",
     }
 
     # Use the kargs you want. For example
@@ -216,6 +216,62 @@ Example Session Kargs
 
     # Do stuff with res
     print(res)
+
+Making The SWIG Interface Files
+-------------------------------
+
+One look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
+
+Two copy the c file over, for example `snmpwalk.c`. Then rename to change the extension to `.cpp`.
+
+Three make a header file for it `snmpwalk.h` and extract methods/functions from the source code.
+
+Four run the command below to generate the wrap file.
+
+```bash
+swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmp.cpp ezsnmp/interface/netsnmp.i &&
+swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_sessionbase.cpp ezsnmp/interface/sessionbase.i &&
+swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i
+```
+
+* `-c++` to force generation of a `.cpp` file
+* `-python` to build a python module
+* `-builtin` to build with native python data types. [Python_builtin_types](https://swig.org/Doc4.0/Python.html#Python_builtin_types)
+* `-doxygen` Convert C++ doxygen comments to pydoc comments in proxy classes [Python_commandline](https://swig.org/Doc4.0/Python.html#Python_commandline)
+* `-threads` adds thread support for all modules. [Support_for_Multithreaded_Applications](https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications)
+
+Five run
+
+```python3
+clear && rm -drf build ezsnmp.egg-info && python3 -m pip install .
+```
+
+Six run it in python3
+
+.. code-block:: bash
+
+    python3
+    >>> import ezsnmp
+    >>> args = ["-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
+    >>> retval = ezsnmp.snmpwalk(args)
+    >>> print(retval)
+
+Making The Patch Files
+----------------------
+
+Within the patches directory run the following command.
+
+```bash
+diff -Naurw ~/Downloads/net-snmp-master/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
+```
+
+consider the following names for the api.
+`snmp` is redundant in the name since the module `ezsnmp` already has it in its' name.
+snmpwalk --> ezsnmp.walk
+snmpbulkwalk --> ezsnmp.bulk_walk
+snmpget --> ezsnmp.get
+snmpbulkget --> ezsnmp.bulk_get
+etc...
 
 .. toctree::
    :maxdepth: 2

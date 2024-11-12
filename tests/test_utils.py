@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from ezsnmp.utils import strip_non_printable, tostr
 
 

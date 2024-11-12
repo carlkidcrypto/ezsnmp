@@ -1,8 +1,4 @@
-from __future__ import unicode_literals
-
-import logging
 import pytest
-from sys import version_info
 from subprocess import Popen, DEVNULL
 import ezsnmp
 from .session_parameters import (
@@ -15,7 +11,15 @@ from .session_parameters import (
     SESS_V3_MD5_NO_PRIV_ARGS,
 )
 
-assert version_info[0] == 3 and version_info[1] >= 8
+from .netsnmp_parameters import (
+    NETSNMP_SESS_V1_ARGS,
+    NETSNMP_SESS_V2_ARGS,
+    NETSNMP_SESS_V3_MD5_DES_ARGS,
+    NETSNMP_SESS_V3_MD5_AES_ARGS,
+    NETSNMP_SESS_V3_SHA_AES_ARGS,
+    NETSNMP_SESS_V3_SHA_NO_PRIV_ARGS,
+    NETSNMP_SESS_V3_MD5_NO_PRIV_ARGS,
+)
 
 
 class SNMPSetCLIError(Exception):
@@ -51,9 +55,22 @@ def snmp_set_via_cli(oid, value, type):
         )
 
 
-# Disable logging for the C interface
-snmp_logger = logging.getLogger("ezsnmp.interface")
-snmp_logger.disabled = True
+@pytest.fixture(
+    params=[
+        NETSNMP_SESS_V1_ARGS,
+        NETSNMP_SESS_V2_ARGS,
+        NETSNMP_SESS_V3_MD5_DES_ARGS,
+        NETSNMP_SESS_V3_MD5_AES_ARGS,
+        NETSNMP_SESS_V3_SHA_AES_ARGS,
+    ]
+)
+def netsnmp_args(request):
+    return request.param
+
+
+@pytest.fixture
+def netsnmp(netsnmp_args):
+    return netsnmp_args
 
 
 @pytest.fixture(
@@ -104,3 +121,28 @@ def sess_v3_sha_no_priv():
 @pytest.fixture
 def sess_v3_md5_no_priv():
     return SESS_V3_MD5_NO_PRIV_ARGS
+
+
+@pytest.fixture
+def netsnmp_v3_md5_des():
+    return NETSNMP_SESS_V3_MD5_DES_ARGS
+
+
+@pytest.fixture
+def netsnmp_v3_md5_aes():
+    return NETSNMP_SESS_V3_MD5_AES_ARGS
+
+
+@pytest.fixture
+def netsnmp_v3_sha_aes():
+    return NETSNMP_SESS_V3_SHA_AES_ARGS
+
+
+@pytest.fixture
+def netsnmp_v3_sha_no_priv():
+    return NETSNMP_SESS_V3_SHA_NO_PRIV_ARGS
+
+
+@pytest.fixture
+def netsnmp_v3_md5_no_priv():
+    return NETSNMP_SESS_V3_MD5_NO_PRIV_ARGS
