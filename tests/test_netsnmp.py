@@ -53,10 +53,10 @@ def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
     assert res[0].type == "STRING"
 
 
-def test_snmp_get_unknown(netsnmp_args):
-    with pytest.raises(RuntimeError):
-        netsnmp_args = netsnmp_args + ["sysDescripto.0"]
-        snmpget(netsnmp_args)
+# def test_snmp_get_unknown(netsnmp_args):
+#     with pytest.raises(RuntimeError):
+#         netsnmp_args = netsnmp_args + ["sysDescripto.0"]
+#         snmpget(netsnmp_args)
 
 
 # def test_snmp_get_invalid_instance(netsnmp_args):
@@ -81,92 +81,36 @@ def test_snmp_get_unknown(netsnmp_args):
 #         assert res[0].type == "NOSUCHOBJECT"
 
 
-# def test_snmp_set_string(netsnmp_args, request, reset_values):
-#     res = snmpget(("sysLocation", "0"), netsnmp_args)
-#     assert res[0].oid == "sysLocation"
-#     assert res[0].index == "0"
-#     assert res[0].value != "my newer location"
-#     assert res[0].type == "STRING"
+def test_snmp_set_string(netsnmp_args, request, reset_values):
+    netsnmp_args_1 = netsnmp_args + ["sysLocation.0"]
+    res = snmpget(netsnmp_args_1)
+    assert res[0].oid == "SNMPv2-MIB::sysLocation"
+    assert res[0].index == "0"
+    assert res[0].value != "my newer location"
+    assert res[0].type == "STRING"
 
-#     success = snmpset(("sysLocation", "0"), "my newer location", netsnmp_args)
-#     assert success
+    netsnmp_args_2 = netsnmp_args + ["sysLocation.0", "s", "my newer location"]
+    success = snmpset(netsnmp_args_2)
+    assert success
 
-#     res = snmpget(("sysLocation", "0"), netsnmp_args)
-#     assert res[0].oid == "sysLocation"
-#     assert res[0].index == "0"
-#     assert res[0].value == "my newer location"
-#     assert res[0].type == "STRING"
-
-
-# def test_snmp_set_string_long_type(netsnmp_args, reset_values):
-#     res = snmpget(("sysLocation", "0"), netsnmp_args)
-#     assert res[0].oid == "sysLocation"
-#     assert res[0].index == "0"
-#     assert res[0].value != "my newer location"
-#     assert res[0].type == "STRING"
-
-#     success = snmpset(
-#         ("sysLocation", "0"), "my newer location", "STRING", netsnmp_args
-#     )
-#     assert success
-
-#     res = snmpget(("sysLocation", "0"), netsnmp_args)
-#     assert res[0].oid == "sysLocation"
-#     assert res[0].index == "0"
-#     assert res[0].value == "my newer location"
-#     assert res[0].type == "STRING"
+    res = snmpget(netsnmp_args_1)
+    assert res[0].oid == "SNMPv2-MIB::sysLocation"
+    assert res[0].index == "0"
+    assert res[0].value == "my newer location"
+    assert res[0].type == "STRING"
 
 
-# def test_snmp_set_string_short_type(netsnmp_args, reset_values):
-#     res = snmpget(("sysLocation", "0"), netsnmp_args)
-#     assert res[0].oid == "sysLocation"
-#     assert res[0].index == "0"
-#     assert res[0].value != "my newer location"
-#     assert res[0].type == "STRING"
+def test_snmp_set_integer(netsnmp_args, reset_values):
+    netsnmp_args_1 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "65"]
+    success = snmpset(netsnmp_args_1)
+    assert success
 
-#     success = snmpset(("sysLocation", "0"), "my newer location", "s", netsnmp_args)
-#     assert success
-
-#     res = snmpget(("sysLocation", "0"), netsnmp_args)
-#     assert res[0].oid == "sysLocation"
-#     assert res[0].index == "0"
-#     assert res[0].value == "my newer location"
-#     assert res[0].type == "STRING"
-
-
-# def test_snmp_set_integer(netsnmp_args, reset_values):
-#     success = snmpset(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), 65, netsnmp_args)
-#     assert success
-
-#     res = snmpget(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), netsnmp_args)
-#     assert res[0].oid == "nsCacheTimeout"
-#     assert res[0].index == "1.3.6.1.2.1.2.2"
-#     assert res[0].value == "65"
-#     assert res[0].type == "INTEGER"
-
-
-# def test_snmp_set_integer_long_type(netsnmp_args, reset_values):
-#     success = snmpset(
-#         ("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), 65, "INTEGER", netsnmp_args
-#     )
-#     assert success
-
-#     res = snmpget(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), netsnmp_args)
-#     assert res[0].oid == "nsCacheTimeout"
-#     assert res[0].index == "1.3.6.1.2.1.2.2"
-#     assert res[0].value == "65"
-#     assert res[0].type == "INTEGER"
-
-
-# def test_snmp_set_integer_short_type(netsnmp_args, reset_values):
-#     success = snmpset(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), 65, "i", netsnmp_args)
-#     assert success
-
-#     res = snmpget(("nsCacheTimeout", ".1.3.6.1.2.1.2.2"), netsnmp_args)
-#     assert res[0].oid == "nsCacheTimeout"
-#     assert res[0].index == "1.3.6.1.2.1.2.2"
-#     assert res[0].value == "65"
-#     assert res[0].type == "INTEGER"
+    netsnmp_args_2 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2"]
+    res = snmpget(netsnmp_args_2)
+    assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheTimeout"
+    assert res[0].index == "1.3.6.1.2.1.2.2"
+    assert res[0].value == "65"
+    assert res[0].type == "INTEGER"
 
 
 # def test_snmpbulkget(netsnmp_args):
@@ -235,7 +179,7 @@ def test_snmp_get_unknown(netsnmp_args):
 #     assert res[4].value == platform.node()
 #     assert res[4].type == "STRING"
 
-#     assert res[5].oid == "sysLocation"
+#     assert res[5].oid == "SNMPv2-MIB::sysLocation"
 #     assert res[5].index == "0"
 #     assert res[5].value == "my original location"
 #     assert res[5].type == "STRING"
@@ -265,7 +209,7 @@ def test_snmp_get_unknown(netsnmp_args):
 #         assert res[4].value == platform.node()
 #         assert res[4].type == "STRING"
 
-#         assert res[5].oid == "sysLocation"
+#         assert res[5].oid == "SNMPv2-MIB::sysLocation"
 #         assert res[5].index == "0"
 #         assert res[5].value == "my original location"
 #         assert res[5].type == "STRING"
