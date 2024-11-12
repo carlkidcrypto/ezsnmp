@@ -115,26 +115,32 @@ def test_snmp_set_integer(netsnmp_args, reset_values):
 
 # def test_snmpbulkget(netsnmp_args):
 #     if netsnmp_args[1] == 1:
-#         with pytest.raises():
-#             snmpbulkget(
-#                 [
+#         with pytest.raises(RuntimeError):
+#             netsnmp_args =  netsnmp_args + [
 #                     "sysUpTime",
 #                     "sysORLastChange",
 #                     "sysORID",
 #                     "sysORDescr",
 #                     "sysORUpTime",
-#                 ],
-#                 2,
-#                 8,
+#                     "2",
+#                     "8",
+#                 ]
+#             snmpbulkget(
 #                 netsnmp_args,
 #             )
 #     else:
+#         netsnmp_args =  netsnmp_args + [
+#                     "sysUpTime",
+#                     "sysORLastChange",
+#                     "sysORID",
+#                     "sysORDescr",
+#                     "sysORUpTime",
+#                     "2",
+#                     "8",
+#                 ]
 #         res = snmpbulkget(
-#             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"],
-#             2,
-#             8,
-#             netsnmp_args,
-#         )
+#                 netsnmp_args,
+#             )
 
 #         assert len(res) == 26
 
@@ -149,48 +155,52 @@ def test_snmp_set_integer(netsnmp_args, reset_values):
 #         assert res[4].type == "TICKS"
 
 
-# def test_snmpwalk(netsnmp_args):
-#     res = snmpwalk("system", netsnmp_args)
-#     assert len(res) >= 7
+def test_snmpwalk(netsnmp_args):
+    netsnmp_args = netsnmp_args + ["system"]
+    res = snmpwalk(netsnmp_args)
+    assert len(res) >= 7
 
-#     assert platform.version() in res[0].value
-#     assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-#     assert res[4].value == platform.node()
-#     assert res[5].value == "my original location"
+    assert platform.version() in res[0].value
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[4].value == platform.node()
+    assert res[5].value == "my original location"
 
 
-# def test_snmp_walk_res(netsnmp_args):
-#     res = snmpwalk("system", netsnmp_args)
+def test_snmp_walk_res(netsnmp_args):
+    netsnmp_args = netsnmp_args + ["system"]
+    res = snmpwalk(netsnmp_args)
 
-#     assert len(res) >= 7
+    assert len(res) >= 7
 
-#     assert res[0].oid == "SNMPv2-MIB::sysDescr"
-#     assert res[0].index == "0"
-#     assert platform.version() in res[0].value
-#     assert res[0].type == "STRING"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert platform.version() in res[0].value
+    assert res[0].type == "STRING"
 
-#     assert res[3].oid == "sysContact"
-#     assert res[3].index == "0"
-#     assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-#     assert res[3].type == "STRING"
+    assert res[3].oid == "SNMPv2-MIB::sysContact"
+    assert res[3].index == "0"
+    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
+    assert res[3].type == "STRING"
 
-#     assert res[4].oid == "sysName"
-#     assert res[4].index == "0"
-#     assert res[4].value == platform.node()
-#     assert res[4].type == "STRING"
+    assert res[4].oid == "SNMPv2-MIB::sysName"
+    assert res[4].index == "0"
+    assert res[4].value == platform.node()
+    assert res[4].type == "STRING"
 
-#     assert res[5].oid == "SNMPv2-MIB::sysLocation"
-#     assert res[5].index == "0"
-#     assert res[5].value == "my original location"
-#     assert res[5].type == "STRING"
+    assert res[5].oid == "SNMPv2-MIB::sysLocation"
+    assert res[5].index == "0"
+    assert res[5].value == "my original location"
+    assert res[5].type == "STRING"
 
 
 # def test_snmp_bulkwalk_res(netsnmp_args):
 #     if netsnmp_args[1] == 1:
-#         with pytest.raises():
-#             snmpbulkwalk("system", netsnmp_args)
+#         with pytest.raises(RuntimeError):
+#             netsnmp_args = netsnmp_args + ["system"]
+#             snmpbulkwalk(netsnmp_args)
 #     else:
-#         res = snmpbulkwalk("system", netsnmp_args)
+#         netsnmp_args = netsnmp_args + ["system"]
+#         res = snmpbulkwalk(netsnmp_args)
 
 #         assert len(res) >= 7
 
@@ -199,12 +209,12 @@ def test_snmp_set_integer(netsnmp_args, reset_values):
 #         assert platform.version() in res[0].value
 #         assert res[0].type == "STRING"
 
-#         assert res[3].oid == "sysContact"
+#         assert res[3].oid == "SNMPv2-MIB::sysContact"
 #         assert res[3].index == "0"
 #         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
 #         assert res[3].type == "STRING"
 
-#         assert res[4].oid == "sysName"
+#         assert res[4].oid == "SNMPv2-MIB::sysName"
 #         assert res[4].index == "0"
 #         assert res[4].value == platform.node()
 #         assert res[4].type == "STRING"
@@ -216,5 +226,6 @@ def test_snmp_set_integer(netsnmp_args, reset_values):
 
 
 # def test_snmp_walk_unknown(netsnmp_args):
-#     with pytest.raises():
-#         snmpwalk("systemo", netsnmp_args)
+#     with pytest.raises(RuntimeError):
+#         netsnmp_args = netsnmp_args + ["systemo"]
+#         snmpwalk(netsnmp_args)
