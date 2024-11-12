@@ -1,10 +1,10 @@
 #include "sessionbase.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <map>
 #include <stdexcept>
-#include <algorithm>
 
 #include "helpers.h"
 #include "snmpbulkget.h"

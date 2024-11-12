@@ -212,12 +212,12 @@ retry:
                /*EMPTY*/;
             if (vars) {
                // Create a buffer for capturing output. 256 comes from the max
-                     // inside fprint_objid
-                     std::vector<char> buffer(256);
-                     buffer.clear();
+               // inside fprint_objid
+               std::vector<char> buffer(256);
+               buffer.clear();
 
-                     // Open the buffer as a file
-                     FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
+               // Open the buffer as a file
+               FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
 
                fprint_objid(f1, vars->name, vars->name_length);
                fclose(f1);

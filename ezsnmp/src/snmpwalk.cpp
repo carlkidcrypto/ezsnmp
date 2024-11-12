@@ -351,7 +351,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                    */
                   if (check &&
                       snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
-                     
                      std::string err_msg = "Error: OID not increasing: ";
 
                      // Create a buffer for capturing output. 256 comes from the max
@@ -392,15 +391,16 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                printf("End of MIB\n");
             } else {
                std::string err_msg =
-             "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+                   "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
+                   "\n";
 
-         if (response->errindex != 0) {
-            err_msg = err_msg + "Failed object: ";
-            for (count = 1, vars = response->variables; vars && count != response->errindex;
-                 vars = vars->next_variable, count++)
-               /*EMPTY*/;
-            if (vars) {
-               // Create a buffer for capturing output. 256 comes from the max
+               if (response->errindex != 0) {
+                  err_msg = err_msg + "Failed object: ";
+                  for (count = 1, vars = response->variables; vars && count != response->errindex;
+                       vars = vars->next_variable, count++)
+                     /*EMPTY*/;
+                  if (vars) {
+                     // Create a buffer for capturing output. 256 comes from the max
                      // inside fprint_objid
                      std::vector<char> buffer(256);
                      buffer.clear();
@@ -408,13 +408,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                      // Open the buffer as a file
                      FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
 
-               fprint_objid(f1, vars->name, vars->name_length);
-               fclose(f1);
-               err_msg = err_msg + std::string(buffer.data());
-            }
-            err_msg = err_msg + "\n";
-            throw std::runtime_error(err_msg);
-         }
+                     fprint_objid(f1, vars->name, vars->name_length);
+                     fclose(f1);
+                     err_msg = err_msg + std::string(buffer.data());
+                  }
+                  err_msg = err_msg + "\n";
+                  throw std::runtime_error(err_msg);
+               }
             }
          }
       } else if (status == STAT_TIMEOUT) {
@@ -422,7 +422,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
          throw std::runtime_error(err_msg);
       } else { /* status == STAT_ERROR */
          snmp_sess_perror_exception("snmpwalk", ss);
-
       }
       if (response) {
          snmp_free_pdu(response);
