@@ -228,4 +228,3 @@ def test_snmp_walk_unknown(netsnmp_args):
     with pytest.raises(RuntimeError):
         netsnmp_args = netsnmp_args + ["systemo123"]
         snmpwalk(netsnmp_args)
-
