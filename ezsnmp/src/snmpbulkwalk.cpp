@@ -190,7 +190,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
    int running;
    int status = STAT_ERROR;
    int check;
-   int exitval = 1;
 
    SOCK_STARTUP;
 
@@ -268,8 +267,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
       }
    }
 
-   exitval = 0;
-
    while (running) {
       /*
        * create PDU for GETBULK request and add object name to request
@@ -314,7 +311,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                      fprint_objid(stderr, vars->name, vars->name_length);
                      fprintf(stderr, "\n");
                      running = 0;
-                     exitval = 1;
                   }
                   /*
                    * Check if last variable, and if so, save for next request.
@@ -349,17 +345,14 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                   }
                   fprintf(stderr, "\n");
                }
-               exitval = 2;
             }
          }
       } else if (status == STAT_TIMEOUT) {
-         fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
-         running = 0;
-         exitval = 1;
+         std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
+         throw std::runtime_error(err_msg);
+
       } else { /* status == STAT_ERROR */
          snmp_sess_perror_exception("snmpbulkwalk", ss);
-         running = 0;
-         exitval = 1;
       }
       if (response) {
          snmp_free_pdu(response);
@@ -384,7 +377,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
       printf("Variables found: %d\n", snmpbulkwalk_numprinted);
    }
 
-out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
    return parse_results(return_vector);

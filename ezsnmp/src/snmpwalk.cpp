@@ -194,7 +194,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
    int running;
    int status = STAT_ERROR;
    int check;
-   int exitval = 1;
    struct timeval tv1, tv2, tv_a, tv_b;
 
    SOCK_STARTUP;
@@ -301,7 +300,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
       netsnmp_get_monotonic_clock(&tv1);
    }
-   exitval = 0;
+
    while (running) {
       /*
        * create PDU for GETNEXT request and add object name to request

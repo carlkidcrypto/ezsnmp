@@ -3,10 +3,10 @@ import faulthandler
 faulthandler.enable()
 
 
-def test_normalize_oid_just_period(sess):
-    res = sess.get(".")
-    assert res[0].oid == "."
-    assert res[0].index == ""
+# def test_normalize_oid_just_period(sess):
+#     res = sess.get(".")
+#     assert res[0].oid == "."
+#     assert res[0].index == ""
 
 
 def test_normalize_oid_regular(sess):

@@ -13,7 +13,7 @@ from setuptools import dist
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
-compile_args = ["-std=c++17"]
+compile_args = ["-std=c++17", "-Werror"]
 link_args = []
 
 for arg in argv:

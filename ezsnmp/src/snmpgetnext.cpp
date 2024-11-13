@@ -115,7 +115,6 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    size_t name_length;
    int status;
    int failures = 0;
-   int exitval = 1;
 
    SOCK_STARTUP;
 
@@ -185,8 +184,6 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
       goto close_session;
    }
 
-   exitval = 0;
-
    /*
     * do the request
     */
@@ -208,7 +205,6 @@ retry:
                fprint_objid(stderr, vars->name, vars->name_length);
             }
             fprintf(stderr, "\n");
-            exitval = 2;
          }
 
          /*
@@ -224,11 +220,10 @@ retry:
          }
       }
    } else if (status == STAT_TIMEOUT) {
-      fprintf(stderr, "Timeout: No Response from %s.\n", session.peername);
-      exitval = 1;
+      std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
+      throw std::runtime_error(err_msg);
    } else { /* status == STAT_ERROR */
       snmp_sess_perror_exception("snmpgetnext", ss);
-      exitval = 1;
    }
 
    if (response) {

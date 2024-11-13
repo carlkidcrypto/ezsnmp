@@ -155,7 +155,7 @@ void SessionBase::populate_args() {
       std::string temp_port_number = "";
 
       // Check for `udp6` in something like this `udp6:[2001:db8::]`
-      size_t IsUdp6InStr = temp_hostname.find('udp6');
+      size_t IsUdp6InStr = temp_hostname.find("udp6");
 
       // Check for IPv6 address (enclosed in brackets)
       size_t openBracketPos = temp_hostname.find('[');
