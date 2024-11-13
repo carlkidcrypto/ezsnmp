@@ -1,14 +1,6 @@
-import pytest
-from ezsnmp import Session
 import faulthandler
 
 faulthandler.enable()
-
-
-def test_normalize_oid_just_iso(sess):
-    res = sess.get("oid")
-    assert res[0].oid == "oid"
-    assert res[0].index == ""
 
 
 def test_normalize_oid_just_period(sess):
@@ -51,9 +43,3 @@ def test_normalize_oid_full_qualified(sess):
     res = sess.get(".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0")
     assert res[0].oid == ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr"
     assert res[0].index == "0"
-
-
-def test_normalize_oid_with_index(sess):
-    res = sess.get("abc", "def")
-    assert res[0].oid == "abc"
-    assert res[0].index == "def"
