@@ -4,6 +4,7 @@ import faulthandler
 
 faulthandler.enable()
 
+
 def test_normalize_oid_just_iso(sess):
     res = sess.get("oid")
     assert res[0].oid == "oid"

@@ -2,8 +2,7 @@
 A module that contains global variables and functions that are used in the integration tests.
 """
 
-from time import sleep
-from random import uniform, randint
+from random import randint
 from ezsnmp.session import Session
 from os import getpid
 from threading import get_native_id
@@ -136,7 +135,7 @@ def worker(request_type: str):
 
                 del test
 
-            elif request_type == "bulkwalk" and sess.version != 1:
+            elif request_type == "bulkwalk" and sess.version != "1":
                 test = sess.bulk_walk(".")
 
                 # Access the result to ensure that the data is actually retrieved
@@ -156,7 +155,7 @@ def worker(request_type: str):
 
         except RuntimeError as e:
 
-            if str(e) == "Timeout Error":
+            if "Timeout: No Response from" in str(e):
                 # We bombarded the SNMP server with too many requests...
                 # print(
                 #     f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
@@ -166,7 +165,7 @@ def worker(request_type: str):
                 if connection_error_counter >= 10:
                     are_we_done = True
 
-            if str(e) == "USM unknown security name (no such user exists)":
+            elif "USM unknown security name (no such user exists)" in str(e):
                 # print(
                 #     f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"
                 # )

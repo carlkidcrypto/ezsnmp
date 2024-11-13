@@ -231,7 +231,7 @@ void SessionBase::check_and_clear_v3_user() {
    remove_v3_user_from_cache(m_security_username, m_context_engine_id);
 }
 
-std::vector<Result> SessionBase::walk(std::string mib) {
+std::vector<Result> SessionBase::walk(std::string const& mib) {
    populate_args();
 
    if (!mib.empty()) {
@@ -239,6 +239,16 @@ std::vector<Result> SessionBase::walk(std::string mib) {
    }
 
    return snmpwalk(m_args);
+}
+
+std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
+   populate_args();
+
+   if (!mib.empty()) {
+      m_args.push_back(mib);
+   }
+
+   return snmpbulkwalk(m_args);
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
@@ -251,7 +261,7 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
    return snmpbulkwalk(m_args);
 }
 
-std::vector<Result> SessionBase::get(std::string mib) {
+std::vector<Result> SessionBase::get(std::string const& mib) {
    populate_args();
 
    if (!mib.empty()) {
