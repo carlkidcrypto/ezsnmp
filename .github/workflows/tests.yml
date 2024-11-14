@@ -80,9 +80,8 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Build source
+      - name: Build And Install EzSnmp
         run: |
-          python setup.py build
           pip install .
       
       - name: Start SNMP daemon
