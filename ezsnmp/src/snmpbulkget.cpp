@@ -120,8 +120,9 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
                   break;
 
                default:
-                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
-                  exit(1);
+                  std::string err_msg =
+                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  throw std::runtime_error(err_msg);
             }
          }
    }
@@ -153,8 +154,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
          throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         snmpbulkget_usage();
-         return parse_results(return_vector);
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -170,7 +170,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    while (arg < argc) {
       namep->name_len = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }
       arg++;
@@ -185,7 +185,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpbulkget", &session);
+      snmp_sess_perror_exception("snmpbulkget", &session);
       return parse_results(return_vector);
    }
 
@@ -236,7 +236,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
       fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
 
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror("snmpbulkget", ss);
+      snmp_sess_perror_exception("snmpbulkget", ss);
    }
 
    if (response) {

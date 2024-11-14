@@ -99,7 +99,8 @@ void snmpwalk_usage(void) {
    fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
 }
 
-std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid,
+std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
+                                                     oid *theoid,
                                                      size_t theoid_len) {
    std::vector<std::string> str_values;
 
@@ -165,8 +166,9 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
                   break;
 
                default:
-                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
-                  exit(1);
+                  std::string err_msg =
+                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  throw std::runtime_error(err_msg);
             }
          }
          break;
@@ -192,7 +194,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
    int running;
    int status = STAT_ERROR;
    int check;
-   int exitval = 1;
    struct timeval tv1, tv2, tv_a, tv_b;
 
    SOCK_STARTUP;
@@ -226,8 +227,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
          throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         snmpwalk_usage();
-         return parse_results(return_vector);
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -242,8 +242,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
        */
       rootlen = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror(argv[arg]);
-         return parse_results(return_vector);
+         snmp_perror_exception(argv[arg]);
       }
    } else {
       /*
@@ -261,8 +260,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
    if (end_name) {
       end_len = MAX_OID_LEN;
       if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
-         snmp_perror(end_name);
-         return parse_results(return_vector);
+         snmp_perror_exception(end_name);
       }
    } else {
       memmove(end_oid, root, rootlen * sizeof(oid));
@@ -278,8 +276,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpwalk", &session);
-      return parse_results(return_vector);
+      snmp_sess_perror_exception("snmpwalk", &session);
    }
 
    /*
@@ -303,7 +300,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
       netsnmp_get_monotonic_clock(&tv1);
    }
-   exitval = 0;
+
    while (running) {
       /*
        * create PDU for GETNEXT request and add object name to request
@@ -353,14 +350,27 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                    */
                   if (check &&
                       snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
-                     fflush(stdout);
-                     fprintf(stderr, "Error: OID not increasing: ");
-                     fprint_objid(stderr, name, name_length);
-                     fprintf(stderr, " >= ");
-                     fprint_objid(stderr, vars->name, vars->name_length);
-                     fprintf(stderr, "\n");
-                     running = 0;
-                     exitval = 1;
+                     std::string err_msg = "Error: OID not increasing: ";
+
+                     // Create a buffer for capturing output. 256 comes from the max
+                     // inside fprint_objid
+                     std::vector<char> buffer(256);
+                     buffer.clear();
+
+                     // Open the buffer as a file
+                     FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
+
+                     fprint_objid(f1, name, name_length);
+                     fclose(f1);
+
+                     err_msg = err_msg + std::string(buffer.data()) + " >= ";
+
+                     buffer.clear();
+                     FILE *f2 = fmemopen(buffer.data(), buffer.size(), "w");
+                     fprint_objid(f2, vars->name, vars->name_length);
+                     fclose(f2);
+                     err_msg = err_msg + std::string(buffer.data()) + "\n";
+                     throw std::runtime_error(err_msg);
                   }
                   memmove((char *)name, (char *)vars->name, vars->name_length * sizeof(oid));
                   name_length = vars->name_length;
@@ -379,28 +389,38 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
             if (response->errstat == SNMP_ERR_NOSUCHNAME) {
                printf("End of MIB\n");
             } else {
-               fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+               std::string err_msg =
+                   "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
+                   "\n";
+
                if (response->errindex != 0) {
-                  fprintf(stderr, "Failed object: ");
+                  err_msg = err_msg + "Failed object: ";
                   for (count = 1, vars = response->variables; vars && count != response->errindex;
                        vars = vars->next_variable, count++)
                      /*EMPTY*/;
                   if (vars) {
-                     fprint_objid(stderr, vars->name, vars->name_length);
+                     // Create a buffer for capturing output. 256 comes from the max
+                     // inside fprint_objid
+                     std::vector<char> buffer(256);
+                     buffer.clear();
+
+                     // Open the buffer as a file
+                     FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
+
+                     fprint_objid(f1, vars->name, vars->name_length);
+                     fclose(f1);
+                     err_msg = err_msg + std::string(buffer.data());
                   }
-                  fprintf(stderr, "\n");
+                  err_msg = err_msg + "\n";
+                  throw std::runtime_error(err_msg);
                }
-               exitval = 2;
             }
          }
       } else if (status == STAT_TIMEOUT) {
-         fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
-         running = 0;
-         exitval = 1;
+         std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
+         throw std::runtime_error(err_msg);
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror("snmpwalk", ss);
-         running = 0;
-         exitval = 1;
+         snmp_sess_perror_exception("snmpwalk", ss);
       }
       if (response) {
          snmp_free_pdu(response);
@@ -434,7 +454,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
               (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
    }
 
-out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
    return parse_results(return_vector);

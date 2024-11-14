@@ -11,9 +11,9 @@ def test_v3_authentication_md5_privacy_des(sess_v3_md5_des):
 
     res = s.get("sysDescr.0")
 
-    assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert res[0].type == "STRING"
     del s
 
 
@@ -27,9 +27,9 @@ def test_v3_authentication_md5_privacy_aes(sess_v3_md5_aes):
 
     res = s.get("sysDescr.0")
 
-    assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert res[0].type == "STRING"
     del s
 
 
@@ -43,9 +43,9 @@ def test_v3_authentication_sha_privacy_aes(sess_v3_sha_aes):
 
     res = s.get("sysDescr.0")
 
-    assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert res[0].type == "STRING"
     del s
 
 
@@ -55,13 +55,13 @@ def test_v3_authentication_sha_no_priv(sess_v3_sha_no_priv):
     assert s.auth_passphrase == "auth_second"
     assert s.auth_protocol == "SHA"
     assert s.privacy_passphrase == ""
-    assert s.privacy_protocol == "DEFAULT"
+    assert s.privacy_protocol == ""
 
     res = s.get("sysDescr.0")
 
-    assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert res[0].type == "STRING"
     del s
 
 
@@ -71,11 +71,11 @@ def test_v3_authentication_md5_no_priv(sess_v3_md5_no_priv):
     assert s.auth_passphrase == "auth_pass"
     assert s.auth_protocol == "MD5"
     assert s.privacy_passphrase == ""
-    assert s.privacy_protocol == "DEFAULT"
+    assert s.privacy_protocol == ""
 
     res = s.get("sysDescr.0")
 
-    assert res[0].oid == "sysDescr"
-    assert res[0].oid_index == "0"
-    assert res[0].snmp_type == "OCTETSTR"
+    assert res[0].oid == "SNMPv2-MIB::sysDescr"
+    assert res[0].index == "0"
+    assert res[0].type == "STRING"
     del s

@@ -9,41 +9,52 @@
 class SessionBase {
   private:
    std::vector<std::string> m_args;
-   std::string m_hostname;
-   std::string m_port_number;
-   std::string m_version;
-   std::string m_community;
-   std::string m_auth_protocol;
-   std::string m_auth_passphrase;
-   std::string m_security_engine_id;
-   std::string m_context_engine_id;
-   std::string m_security_level;
-   std::string m_context;
-   std::string m_security_username;
-   std::string m_privacy_protocol;
-   std::string m_privacy_passphrase;
-   std::string m_boots_time;
-   std::string m_retries;
-   std::string m_timeout;
+   std::string m_hostname = "";
+   std::string m_port_number = "";
+   std::string m_version = "";
+   std::string m_community = "";
+   std::string m_auth_protocol = "";
+   std::string m_auth_passphrase = "";
+   std::string m_security_engine_id = "";
+   std::string m_context_engine_id = "";
+   std::string m_security_level = "";
+   std::string m_context = "";
+   std::string m_security_username = "";
+   std::string m_privacy_protocol = "";
+   std::string m_privacy_passphrase = "";
+   std::string m_boots_time = "";
+   std::string m_retries = "";
+   std::string m_timeout = "";
    void populate_args();
+   void check_and_clear_v3_user();
 
   public:
-   SessionBase(std::string hostname = "localhost", std::string port_number = "",
-               std::string version = "3", std::string community = "public",
-               std::string auth_protocol = "", std::string auth_passphrase = "",
-               std::string security_engine_id = "", std::string context_engine_id = "",
-               std::string security_level = "", std::string context = "",
-               std::string security_username = "", std::string privacy_protocol = "",
-               std::string privacy_passphrase = "", std::string boots_time = "",
-               std::string retries = "3", std::string timeout = "1");
+   SessionBase(std::string hostname = "localhost",
+               std::string port_number = "",
+               std::string version = "3",
+               std::string community = "public",
+               std::string auth_protocol = "",
+               std::string auth_passphrase = "",
+               std::string security_engine_id = "",
+               std::string context_engine_id = "",
+               std::string security_level = "",
+               std::string context = "",
+               std::string security_username = "",
+               std::string privacy_protocol = "",
+               std::string privacy_passphrase = "",
+               std::string boots_time = "",
+               std::string retries = "3",
+               std::string timeout = "1");
    ~SessionBase();
 
    // walks
-   std::vector<Result> walk(std::string mib = "");
+   std::vector<Result> walk(std::string const& mib = "");
+   std::vector<Result> bulk_walk(std::string const& mib);
    std::vector<Result> bulk_walk(std::vector<std::string> const& mibs);
 
    // gets
-   std::vector<Result> get(std::string mib = "");
+   std::vector<Result> get(std::string const& mib = "");
+   std::vector<Result> get(std::vector<std::string> const& mibs);
    std::vector<Result> get_next(std::vector<std::string> const& mibs);
    std::vector<Result> bulk_get(std::vector<std::string> const& mibs);
 

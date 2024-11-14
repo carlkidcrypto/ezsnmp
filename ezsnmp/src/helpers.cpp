@@ -1,15 +1,17 @@
-/* straight copy from
- * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
- */
-/* Slight modifications to return std::string instead of print to stdout */
 
 #include "helpers.h"
 
 #include <cstring>
+#include <iostream>
 #include <regex>
 #include <sstream>
 
-std::string print_variable_to_string(oid const *objid, size_t objidlen,
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
+ */
+/* Slight modifications to return std::string instead of print to stdout */
+std::string print_variable_to_string(oid const *objid,
+                                     size_t objidlen,
                                      netsnmp_variable_list const *variable) {
    u_char *buf = nullptr;
    size_t buf_len = 256, out_len = 0;
@@ -31,6 +33,41 @@ std::string print_variable_to_string(oid const *objid, size_t objidlen,
    }
 }
 
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
+ */
+/* Slight modifications to raise std::runtime_error instead of print to stderr */
+void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
+   std::string err;
+   char *err_cstr = nullptr;
+
+   snmp_error(ss, NULL, NULL, &err_cstr);
+   err = err_cstr;
+   SNMP_FREE(err_cstr);
+   snmp_close(ss);
+
+   // Construct the error message
+   std::string message = std::string(prog_string) + ": " + err;
+
+   // Throw a runtime_error with the message
+   throw std::runtime_error(message);
+}
+
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L505-L511
+ */
+/* Slight modifications to raise std::runtime_error instead of print to stderr */
+void snmp_perror_exception(char const *prog_string) {
+   int xerr = snmp_errno; // MTCRITICAL_RESOURCE
+   char const *str = snmp_api_errstring(xerr);
+
+   // Construct the error message
+   std::string message = std::string(prog_string) + ": " + str;
+
+   // Throw a runtime_error with the message
+   throw std::runtime_error(message);
+}
+
 std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {
    argc = args.size() + 1;
    std::unique_ptr<char *[]> argv(new char *[argc + 1]);
@@ -38,7 +75,7 @@ std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int 
    argv[0] = const_cast<char *>("netsnmp");
 
    for (int i = 0; i < static_cast<int>(args.size()); ++i) {
-      argv[i + 1] = const_cast<char *>(args[i].c_str());
+      argv[i + 1] = strdup(args[i].c_str());
    }
    argv[argc] = nullptr;
 
@@ -125,4 +162,55 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
       results.push_back(parse_result(input));
    }
    return results;
+}
+
+void remove_v3_user_from_cache(std::string const &security_name_str,
+                               std::string const &context_engine_id_str) {
+   std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
+   std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
+   struct usmUser *actUser = usm_get_userList();
+
+   while (actUser != NULL) {
+      struct usmUser *dummy = actUser;
+      auto act_user_sec_name_str = std::string("");
+      auto act_user_engine_id_str = std::string("");
+
+      if (actUser->secName != NULL) {
+         act_user_sec_name_str = std::string(actUser->secName);
+      }
+      if (actUser->engineID != NULL) {
+         act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));
+      }
+
+      // if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
+      //     security_name_str == act_user_sec_name_str &&
+      //     context_engine_id_str == act_user_engine_id_str) {
+      //    std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+      //    usm_remove_user(actUser);
+      //    actUser->next = NULL;
+      //    actUser->prev = NULL;
+      //    usm_free_user(actUser);
+      //    break;
+      // }
+
+      // This works for now, but it may change when threads/muli-procs are involved.
+      if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
+          security_name_str == act_user_sec_name_str &&
+          context_engine_id_str == act_user_engine_id_str) {
+         std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         usm_remove_user(actUser);
+         actUser->next = NULL;
+         actUser->prev = NULL;
+         usm_free_user(actUser);
+         break;
+      } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
+         std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         usm_remove_user(actUser);
+         actUser->next = NULL;
+         actUser->prev = NULL;
+         usm_free_user(actUser);
+         break;
+      }
+      actUser = dummy->next;
+   }
 }

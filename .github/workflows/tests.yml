@@ -22,7 +22,7 @@ jobs:
         with:
           files: |
             ezsnmp/*.py
-            ezsnmp/*.c
+            ezsnmp/*.cpp
             ezsnmp/*.h
             tests/*.py
             tests/*.conf

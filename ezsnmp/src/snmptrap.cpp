@@ -104,8 +104,9 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
                   inform = 1;
                   break;
                default:
-                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
-                  exit(1);
+                  std::string err_msg =
+                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  throw std::runtime_error(err_msg);
             }
          }
          break;
@@ -148,13 +149,13 @@ int snmptrap(std::vector<std::string> const &args) {
    /** parse args (also initializes session) */
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         goto out;
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         exitval = 0;
-         goto out;
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         snmptrap_usage();
-         goto out;
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
       default:
          break;
    }
@@ -222,7 +223,7 @@ int snmptrap(std::vector<std::string> const &args) {
        * diagnose netsnmp_transport_open_client and snmp_add errors with
        * the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmptrap", &session);
+      snmp_sess_perror_exception("snmptrap", &session);
       goto out;
    }
 
@@ -250,7 +251,7 @@ int snmptrap(std::vector<std::string> const &args) {
       } else {
          name_length = MAX_OID_LEN;
          if (!snmp_parse_oid(argv[arg], name, &name_length)) {
-            snmp_perror(argv[arg]);
+            snmp_perror_exception(argv[arg]);
             snmptrap_usage();
             goto out;
          }
@@ -327,7 +328,7 @@ int snmptrap(std::vector<std::string> const &args) {
          goto out;
       }
       if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          goto out;
       }
    }
@@ -341,11 +342,11 @@ int snmptrap(std::vector<std::string> const &args) {
       }
       name_length = MAX_OID_LEN;
       if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
-         snmp_perror(argv[arg - 3]);
+         snmp_perror_exception(argv[arg - 3]);
          goto out;
       }
       if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
-         snmp_perror(argv[arg - 3]);
+         snmp_perror_exception(argv[arg - 3]);
          goto out;
       }
    }
@@ -356,7 +357,7 @@ int snmptrap(std::vector<std::string> const &args) {
       status = snmp_send(ss, pdu) == 0;
    }
    if (status) {
-      snmp_sess_perror(inform ? "snmpinform" : "snmptrap", ss);
+      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
       if (!inform) {
          snmp_free_pdu(pdu);
       }

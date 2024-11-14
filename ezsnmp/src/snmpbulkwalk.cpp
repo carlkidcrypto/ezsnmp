@@ -92,7 +92,8 @@ void snmpbulkwalk_usage(void) {
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss, oid *theoid,
+std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
+                                                         oid *theoid,
                                                          size_t theoid_len) {
    std::vector<std::string> str_values;
 
@@ -163,8 +164,9 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
                   break;
 
                default:
-                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
-                  exit(1);
+                  std::string err_msg =
+                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  throw std::runtime_error(err_msg);
             }
          }
          break;
@@ -188,7 +190,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
    int running;
    int status = STAT_ERROR;
    int check;
-   int exitval = 1;
 
    SOCK_STARTUP;
 
@@ -210,8 +211,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
          throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         snmpbulkwalk_usage();
-         return parse_results(return_vector);
+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -226,7 +226,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
        */
       rootlen = MAX_OID_LEN;
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror(argv[arg]);
+         snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }
    } else {
@@ -245,7 +245,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
-      snmp_sess_perror("snmpbulkwalk", &session);
+      snmp_sess_perror_exception("snmpbulkwalk", &session);
       return parse_results(return_vector);
    }
 
@@ -266,8 +266,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
          return_vector.push_back(item);
       }
    }
-
-   exitval = 0;
 
    while (running) {
       /*
@@ -313,7 +311,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                      fprint_objid(stderr, vars->name, vars->name_length);
                      fprintf(stderr, "\n");
                      running = 0;
-                     exitval = 1;
                   }
                   /*
                    * Check if last variable, and if so, save for next request.
@@ -348,17 +345,14 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                   }
                   fprintf(stderr, "\n");
                }
-               exitval = 2;
             }
          }
       } else if (status == STAT_TIMEOUT) {
-         fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
-         running = 0;
-         exitval = 1;
+         std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
+         throw std::runtime_error(err_msg);
+
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror("snmpbulkwalk", ss);
-         running = 0;
-         exitval = 1;
+         snmp_sess_perror_exception("snmpbulkwalk", ss);
       }
       if (response) {
          snmp_free_pdu(response);
@@ -383,7 +377,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
       printf("Variables found: %d\n", snmpbulkwalk_numprinted);
    }
 
-out:
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
    return parse_results(return_vector);
