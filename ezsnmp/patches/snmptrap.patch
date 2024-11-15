@@ -1,5 +1,5 @@
 --- net-snmp-master/apps/snmptrap.c 2024-09-06 10:48:16
-+++ ../src/snmptrap.cpp             2024-10-11 13:21:00
++++ ../src/snmptrap.cpp             2024-11-11 16:21:26
 @@ -1,3 +1,4 @@
 +/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
@@ -52,17 +52,19 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -107,8 +104,7 @@
+@@ -107,18 +104,19 @@
                  inform = 1;
                  break;
              default:
 -                fprintf(stderr,
 -                        "Unknown flag passed to -C: %c\n", optarg[-1]);
-+                  fprintf(stderr, "Unknown flag passed to -C: %c\n", optarg[-1]);
-                 exit(1);
+-                exit(1);
++                  std::string err_msg =
++                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
++                  throw std::runtime_error(err_msg);
              }
          }
-@@ -116,9 +112,10 @@
+         break;
      }
  }
  
@@ -76,7 +78,7 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -136,25 +133,27 @@
+@@ -136,26 +134,28 @@
      SOCK_STARTUP;
  
      prognam = strrchr(argv[0], '/');
@@ -99,17 +101,22 @@
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
-         goto out;
+-        goto out;
++         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
++
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         exitval = 0;
-         goto out;
+-        exitval = 0;
+-        goto out;
++         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
-+         snmptrap_usage();
-         goto out;
+-        goto out;
++         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
      default:
          break;
-@@ -171,10 +170,8 @@
+     }
+@@ -171,10 +171,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -122,7 +129,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -198,10 +195,8 @@
+@@ -198,10 +196,8 @@
          /*
           * pick our own engineID 
           */
@@ -135,7 +142,7 @@
          }
  
          /*
-@@ -210,18 +205,18 @@
+@@ -210,24 +206,24 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -161,7 +168,14 @@
      if (ss == NULL) {
          /*
           * diagnose netsnmp_transport_open_client and snmp_add errors with
-@@ -245,20 +240,18 @@
+          * the input netsnmp_session pointer
+          */
+-        snmp_sess_perror("snmptrap", &session);
++      snmp_sess_perror_exception("snmptrap", &session);
+         goto out;
+     }
+ 
+@@ -245,20 +241,18 @@
          pdu_in_addr_t = (in_addr_t *) pdu->agent_addr;
          if (arg == argc) {
              fprintf(stderr, "No enterprise oid\n");
@@ -180,13 +194,14 @@
          } else {
              name_length = MAX_OID_LEN;
              if (!snmp_parse_oid(argv[arg], name, &name_length)) {
-                 snmp_perror(argv[arg]);
+-                snmp_perror(argv[arg]);
 -                usage();
++            snmp_perror_exception(argv[arg]);
 +            snmptrap_usage();
                  goto out;
              }
              pdu->enterprise = (oid *) malloc(name_length * sizeof(oid));
-@@ -267,7 +260,7 @@
+@@ -267,7 +261,7 @@
          }
          if (++arg >= argc) {
              fprintf(stderr, "Missing agent parameter\n");
@@ -195,7 +210,7 @@
              goto out;
          }
          agent = argv[arg];
-@@ -282,28 +275,29 @@
+@@ -282,28 +276,29 @@
          }
          if (++arg == argc) {
              fprintf(stderr, "Missing generic-trap parameter\n");
@@ -230,7 +245,7 @@
      } else
  #endif
      {
-@@ -317,7 +311,7 @@
+@@ -317,7 +312,7 @@
          }
          if (arg == argc) {
              fprintf(stderr, "Missing up-time parameter\n");
@@ -239,7 +254,7 @@
              goto out;
          }
          trap = argv[arg];
-@@ -326,16 +320,13 @@
+@@ -326,17 +321,14 @@
              snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
              trap = csysuptime;
          }
@@ -255,11 +270,13 @@
 -        if (snmp_add_var
 -            (pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap),
 -             'o', argv[arg]) != 0) {
+-            snmp_perror(argv[arg]);
 +      if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
-             snmp_perror(argv[arg]);
++         snmp_perror_exception(argv[arg]);
              goto out;
          }
-@@ -345,8 +336,7 @@
+     }
+@@ -345,34 +337,34 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -269,15 +286,17 @@
              goto out;
          }
          name_length = MAX_OID_LEN;
-@@ -354,25 +344,26 @@
-             snmp_perror(argv[arg - 3]);
+         if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
+-            snmp_perror(argv[arg - 3]);
++         snmp_perror_exception(argv[arg - 3]);
              goto out;
          }
 -        if (snmp_add_var
 -            (pdu, name, name_length, argv[arg - 2][0],
 -             argv[arg - 1]) != 0) {
+-            snmp_perror(argv[arg - 3]);
 +      if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
-             snmp_perror(argv[arg - 3]);
++         snmp_perror_exception(argv[arg - 3]);
              goto out;
          }
      }
@@ -290,8 +309,9 @@
          status = snmp_send(ss, pdu) == 0;
 +   }
      if (status) {
-         snmp_sess_perror(inform ? "snmpinform" : "snmptrap", ss);
+-        snmp_sess_perror(inform ? "snmpinform" : "snmptrap", ss);
 -        if (!inform)
++      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
 +      if (!inform) {
              snmp_free_pdu(pdu);
 +      }

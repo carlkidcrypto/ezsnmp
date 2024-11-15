@@ -229,19 +229,22 @@ def test_snmp_walk_unknown(netsnmp_args):
         netsnmp_args = netsnmp_args + ["systemo123"]
         snmpwalk(netsnmp_args)
 
+
 def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
-    
+
     if netsnmp_args[1] == "1":
         with pytest.raises(RuntimeError):
-            netsnmp_args = netsnmp_args + ["NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4"]
+            netsnmp_args = netsnmp_args + [
+                "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4"
+            ]
             snmpbulkwalk(netsnmp_args)
     else:
-        netsnmp_args = netsnmp_args + ["NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4"]
+        netsnmp_args = netsnmp_args + [
+            "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4"
+        ]
         res = snmpbulkwalk(netsnmp_args)
-        
-        assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4" 
+
+        assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4"
         assert res[0].type == ""
         assert res[0].index == ""
         assert res[0].value == ""
-
-    
