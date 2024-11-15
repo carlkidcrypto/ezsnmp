@@ -95,9 +95,9 @@ std::regex const OID_INDEX_RE(R"((
     \.?(.*)                            # OID index
 )");
 
-// This regular expression takes an OID string and splits it into 
+// This regular expression takes an OID string and splits it into
 // the base OID and the index. It works for OIDs with formats like:
-//  - 'SNMPv2::mib-2.17.7.1.4.3.1.2.300' 
+//  - 'SNMPv2::mib-2.17.7.1.4.3.1.2.300'
 //  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
