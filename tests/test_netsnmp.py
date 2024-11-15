@@ -229,8 +229,13 @@ def test_snmp_walk_unknown(netsnmp_args):
         netsnmp_args = netsnmp_args + ["systemo123"]
         snmpwalk(netsnmp_args)
 
-def test_snmp_bulkwalk_non_sequential_oids(netsnmp_argst):
+def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
     
-    netsnmp_args = netsnmp_args + ["1.0.8802.1.1.2.1.4.1.1.4"]
-    res = snmpbulkwalk(netsnmp_args)
+    if netsnmp_args[1] == "1":
+        with pytest.raises(RuntimeError):
+            netsnmp_args = netsnmp_args + ["1.0.8802.1.1.2.1.4.1.1.4"]
+            snmpbulkwalk(netsnmp_args)
+    else:
+        netsnmp_args = netsnmp_args + ["1.0.8802.1.1.2.1.4.1.1.4"]
+        res = snmpbulkwalk(netsnmp_args)
     
