@@ -334,28 +334,17 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
             if (response->errstat == SNMP_ERR_NOSUCHNAME) {
                printf("End of MIB\n");
             } else {
-               std::string err_msg =
-             "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
-
-         if (response->errindex != 0) {
-            err_msg = err_msg + "Failed object: ";
-            for (count = 1, vars = response->variables; vars && count != response->errindex;
-                 vars = vars->next_variable, count++)
-               /*EMPTY*/;
-            if (vars) {
-               // Create a buffer for capturing output. 256 comes from the max
-               // inside fprint_objid
-               std::vector<char> buffer(256);
-               buffer.clear();
-
-               // Open the buffer as a file
-               FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
-
-               fprint_objid(f1, vars->name, vars->name_length);
-               fclose(f1);
-               err_msg = err_msg + std::string(buffer.data());
-            }
-            err_msg = err_msg + "\n";
+               fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+               if (response->errindex != 0) {
+                  fprintf(stderr, "Failed object: ");
+                  for (count = 1, vars = response->variables; vars && count != response->errindex;
+                       vars = vars->next_variable, count++)
+                     /*EMPTY*/;
+                  if (vars) {
+                     fprint_objid(stderr, vars->name, vars->name_length);
+                  }
+                  fprintf(stderr, "\n");
+               }
             }
          }
       } else if (status == STAT_TIMEOUT) {
