@@ -9,12 +9,14 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as BuildCommand
 import setuptools.command.build as build
 from setuptools import dist
+from re import search
 
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
-compile_args = ["-std=c++17", "-Werror"]
+compile_args = ["-std=c++17", "-Werror", "-Wno-unguarded-availability-new"]
 link_args = []
+netsnmp_version = check_output("net-snmp-config --version", shell=True).decode()
 
 for arg in argv:
     if arg.startswith("--debug"):
@@ -68,15 +70,20 @@ else:
     print(f"libdirs: {libdirs}")
     print(f"incdirs: {incdirs}")
 
-    if platform == "darwin":  # OS X
+    # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
+    homebrew_version = check_output("brew --version", shell=True).decode()
+    if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
         # Check if net-snmp is installed via Brew
         try:
             brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
             lines = brew.splitlines()
             include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
             incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
-            lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
-            libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+
+            if platform == "darwin":
+                lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
+                libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+
             # The homebrew version also depends on the Openssl keg
             brew = check_output("brew info net-snmp", shell=True).decode()
             openssl_ver = list(
@@ -125,6 +132,7 @@ print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
 print(f"platform: {platform}")
+print(f"netsnmp_version: {netsnmp_version}")
 
 
 class RelinkLibraries(BuildCommand):

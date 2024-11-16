@@ -95,9 +95,11 @@ std::regex const OID_INDEX_RE(R"((
     \.?(.*)                            # OID index
 )");
 
-// This regular expression takes something like 'SNMPv2::mib-2.17.7.1.4.3.1.2.300'
-// and splits it into 'SNMPv2::mib-2' and '17.7.1.4.3.1.2.300'
-std::regex const OID_INDEX_RE2(R"(^([^\.]+::[^\.]+)\.(.*)$)"); // Added regex
+// This regular expression takes an OID string and splits it into
+// the base OID and the index. It works for OIDs with formats like:
+//  - 'SNMPv2::mib-2.17.7.1.4.3.1.2.300'
+//  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
+std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
 Result parse_result(std::string const &input) {
    Result result;
@@ -166,8 +168,8 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
 
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
-   std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
-   std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
+   // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
+   // std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
@@ -197,14 +199,14 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
-         std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         //std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
          break;
       } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
-         std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         //std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;

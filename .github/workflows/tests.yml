@@ -47,11 +47,18 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+                 brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -80,9 +87,8 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Build source
+      - name: Build And Install EzSnmp
         run: |
-          python setup.py build
           pip install .
       
       - name: Start SNMP daemon
@@ -121,9 +127,9 @@ jobs:
                    '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
                  );
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 ${VALGRIND[@]} pytest --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 ${VALGRIND[@]} pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
           
-          macos: pytest --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+          macos: pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
