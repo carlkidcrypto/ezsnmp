@@ -189,9 +189,15 @@ def test_session_get(sess):
     for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
         res = sess.get(oid)
         if oid == "sysUpTime.0":
-            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+            if platform.system() == "Darwin":  # Check if running on macOS
+                assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+    
+            else:  # For other operating systems (e.g., Linux)
+                assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
+        
             assert res[0].index == ""
             assert res[0].type == "Timeticks"
+
         elif oid == "sysContact.0":
             assert res[0].oid == "SNMPv2-MIB::sysContact"
             assert res[0].index == "0"
@@ -280,7 +286,12 @@ def test_session_bulk_get(sess):
             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
         )
 
-        assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+        if platform.system() == "Darwin":  # Check if running on macOS
+            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
+    
+        else:  # For other operating systems (e.g., Linux)
+            assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
+        
         assert res[0].index == ""
         assert res[0].type == "Timeticks"
 

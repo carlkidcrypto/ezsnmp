@@ -217,7 +217,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
           * error in response, print it
           */
          if (response->errstat == SNMP_ERR_NOSUCHNAME) {
-            printf("End of MIB.\n");
+            // printf("End of MIB.\n");
          } else {
             fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
             if (response->errindex != 0) {
@@ -233,7 +233,8 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
          }
       }
    } else if (status == STAT_TIMEOUT) {
-      fprintf(stderr, "Timeout: No Response from %s\n", session.peername);
+      std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
+      throw std::runtime_error(err_msg);
 
    } else { /* status == STAT_ERROR */
       snmp_sess_perror_exception("snmpbulkget", ss);

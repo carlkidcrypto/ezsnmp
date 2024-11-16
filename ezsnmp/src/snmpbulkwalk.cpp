@@ -332,7 +332,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
              */
             running = 0;
             if (response->errstat == SNMP_ERR_NOSUCHNAME) {
-               printf("End of MIB\n");
+               // printf("End of MIB\n");
             } else {
                fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
                if (response->errindex != 0) {

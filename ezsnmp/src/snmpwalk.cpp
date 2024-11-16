@@ -387,7 +387,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
              */
             running = 0;
             if (response->errstat == SNMP_ERR_NOSUCHNAME) {
-               printf("End of MIB\n");
+               // printf("End of MIB\n");
             } else {
                std::string err_msg =
                    "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
