@@ -23,6 +23,10 @@ jobs:
         language: [ 'c++', 'python' ] 
 
     steps:
+    - name: Set up Homebrew
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+    
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -34,8 +38,9 @@ jobs:
     - name: Install Linux Dependencies
       if: matrix.language == 'c++'
       run: |
-        sudo apt-get update;
-        sudo apt-get install -y libsnmp-dev libperl-dev;
+        brew update;
+        brew install net-snmp;
+        brew install openssl@3;
     
     - name: Set up Python 3.10
       if: matrix.language == 'c++'
