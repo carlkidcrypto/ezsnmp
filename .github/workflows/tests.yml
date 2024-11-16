@@ -54,7 +54,9 @@ jobs:
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
-          linux: brew update;
+          linux: sudo apt-get update;
+                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+                 brew update;
                  brew install net-snmp;
                  brew install openssl@3;
                  sudo systemctl stop snmpd;
