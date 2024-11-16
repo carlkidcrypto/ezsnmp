@@ -45,7 +45,10 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+                 brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -76,8 +79,7 @@ jobs:
 
       - name: Build source
         run: |
-          python setup.py build
-          pip install -e .
+          pip install .
       
       - name: Start SNMP daemon
         run: |
