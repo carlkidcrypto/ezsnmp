@@ -13,8 +13,9 @@ from setuptools import dist
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
-compile_args = ["-std=c++17", "-Werror"]
+compile_args = ["-std=c++17", "-Werror", "-Wno-unguarded-availability-new"]
 link_args = []
+netsnmp_version = check_output("net-snmp-config --version", shell=True).decode()
 
 for arg in argv:
     if arg.startswith("--debug"):
@@ -125,7 +126,7 @@ print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
 print(f"platform: {platform}")
-
+print(f"netsnmp_version: {netsnmp_version}")
 
 class RelinkLibraries(BuildCommand):
     """Fix dylib path for macOS
