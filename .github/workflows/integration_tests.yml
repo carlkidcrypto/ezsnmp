@@ -41,6 +41,10 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
