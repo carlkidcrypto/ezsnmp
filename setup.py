@@ -128,6 +128,7 @@ print(f"link_args: {link_args}")
 print(f"platform: {platform}")
 print(f"netsnmp_version: {netsnmp_version}")
 
+
 class RelinkLibraries(BuildCommand):
     """Fix dylib path for macOS
 

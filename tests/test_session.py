@@ -191,10 +191,10 @@ def test_session_get(sess):
         if oid == "sysUpTime.0":
             if platform.system() == "Darwin":  # Check if running on macOS
                 assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
-    
+
             else:  # For other operating systems (e.g., Linux)
                 assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
-        
+
             assert res[0].index == ""
             assert res[0].type == "Timeticks"
 
@@ -288,10 +288,10 @@ def test_session_bulk_get(sess):
 
         if platform.system() == "Darwin":  # Check if running on macOS
             assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
-    
+
         else:  # For other operating systems (e.g., Linux)
             assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
-        
+
         assert res[0].index == ""
         assert res[0].type == "Timeticks"
 
