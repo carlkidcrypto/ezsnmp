@@ -72,7 +72,7 @@ else:
 
     # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
     homebrew_version = check_output("brew --version", shell=True).decode()
-    if  search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
+    if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
         # Check if net-snmp is installed via Brew
         try:
             brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
