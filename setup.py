@@ -9,6 +9,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as BuildCommand
 import setuptools.command.build as build
 from setuptools import dist
+from re import search
 
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
@@ -69,7 +70,9 @@ else:
     print(f"libdirs: {libdirs}")
     print(f"incdirs: {incdirs}")
 
-    if platform == "darwin":  # OS X
+    # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
+    homebrew_version = check_output("brew --version", shell=True).decode()
+    if  search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
         # Check if net-snmp is installed via Brew
         try:
             brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
