@@ -79,8 +79,11 @@ else:
             lines = brew.splitlines()
             include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
             incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
-            lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
-            libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+
+            if platform == "darwin":
+                lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
+                libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+
             # The homebrew version also depends on the Openssl keg
             brew = check_output("brew info net-snmp", shell=True).decode()
             openssl_ver = list(
