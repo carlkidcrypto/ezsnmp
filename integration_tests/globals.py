@@ -98,6 +98,8 @@ SESS_TYPES_NAMES = [
     "SESS_V3_MD5_NO_PRIV_ARGS",
 ]
 
+MAX_RETRIES = 25
+
 # Print SNMP information
 PRINT_SNMP_INFO = False
 
@@ -108,6 +110,8 @@ def worker(request_type: str):
     connection_error_counter = 0
     usm_unknown_security_name_counter = 0
     err_gen_ku_key_counter = 0
+    netsnmp_parse_args_error_counter = 0
+
     while are_we_done != True:
         try:
             # Give our SNMPD server some varing breathing room...
@@ -152,12 +156,6 @@ def worker(request_type: str):
 
             del sess
             are_we_done = True
-            print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
-            print(f"\t\tconnection_error_counter: {connection_error_counter}")
-            print(
-                f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}"
-            )
-            print(f"\t\terr_gen_ku_key_counter: {err_gen_ku_key_counter}")
 
         except RuntimeError as e:
 
@@ -166,22 +164,15 @@ def worker(request_type: str):
                 or "Resource temporarily unavailable" in str(e)
                 or "Unknown host" in str(e)
             ):
-                # We bombarded the SNMP server with too many requests...
-                # print(
-                #     f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
-                # )
                 connection_error_counter += 1
 
-                if connection_error_counter >= 10:
+                if connection_error_counter >= MAX_RETRIES:
                     are_we_done = True
 
             elif "USM unknown security name (no such user exists)" in str(e):
-                # print(
-                #     f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"
-                # )
                 usm_unknown_security_name_counter += 1
 
-                if usm_unknown_security_name_counter >= 10:
+                if usm_unknown_security_name_counter >= MAX_RETRIES:
                     are_we_done = True
 
             elif (
@@ -190,8 +181,21 @@ def worker(request_type: str):
             ):
                 err_gen_ku_key_counter += 1
 
-                if err_gen_ku_key_counter >= 10:
+                if err_gen_ku_key_counter >= MAX_RETRIES:
+                    are_we_done = True
+
+            elif "NETSNMP_PARSE_ARGS_ERROR" in str(e):
+
+                netsnmp_parse_args_error_counter += 1
+
+                if netsnmp_parse_args_error_counter >= MAX_RETRIES:
                     are_we_done = True
 
             else:
                 raise e
+
+    print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
+    print(f"\t\tconnection_error_counter: {connection_error_counter}")
+    print(f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}")
+    print(f"\t\terr_gen_ku_key_counter: {err_gen_ku_key_counter}")
+    print(f"\t\tnetsnmp_parse_args_error_counter: {netsnmp_parse_args_error_counter}")
