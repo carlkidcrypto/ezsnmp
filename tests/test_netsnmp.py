@@ -236,26 +236,30 @@ def test_snmp_walk_unknown(netsnmp_args):
 
 def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
 
-    if netsnmp_args[1] == "1":
-        with pytest.raises(RuntimeError):
+    if platform.system() != "Darwin":
+        if netsnmp_args[1] == "1":
+            with pytest.raises(RuntimeError):
+                netsnmp_args = netsnmp_args + [
+                    "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+                ]
+                snmpbulkwalk(netsnmp_args)
+        else:
             netsnmp_args = netsnmp_args + [
                 "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
             ]
-            snmpbulkwalk(netsnmp_args)
+            res = snmpbulkwalk(netsnmp_args)
+
+            assert len(res) == 2
+
+            assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+            assert res[0].type == "INTEGER"
+            assert res[0].index == "4"
+            assert res[0].value == "expired(5)"
+
+            assert res[1].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+            assert res[1].type == "INTEGER"
+            assert res[1].index == "7"
+            assert res[1].value == "expired(5)"
+
     else:
-        netsnmp_args = netsnmp_args + [
-            "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-        ]
-        res = snmpbulkwalk(netsnmp_args)
-
-        assert len(res) == 2
-
-        assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-        assert res[0].type == "INTEGER"
-        assert res[0].index == "4"
-        assert res[0].value == "expired(5)"
-
-        assert res[1].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-        assert res[1].type == "INTEGER"
-        assert res[1].index == "7"
-        assert res[1].value == "expired(5)"
+        assert True

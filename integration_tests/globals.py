@@ -192,6 +192,7 @@ def worker(request_type: str):
                     are_we_done = True
 
             else:
+                print(f"sess.args: {sess.args}")
                 raise e
 
     print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
