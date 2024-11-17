@@ -2,10 +2,11 @@
 A module that contains global variables and functions that are used in the integration tests.
 """
 
-from random import randint
+from random import randint, uniform
 from ezsnmp.session import Session
 from os import getpid
 from threading import get_native_id
+from time import sleep
 
 SESS_V1_ARGS = {
     "version": "1",
@@ -106,8 +107,12 @@ def worker(request_type: str):
     are_we_done = False
     connection_error_counter = 0
     usm_unknown_security_name_counter = 0
+    err_gen_ku_key_counter = 0
     while are_we_done != True:
         try:
+            # Give our SNMPD server some varing breathing room...
+            sleep(uniform(0.0, 2.5))
+
             sess_type = randint(0, len(SESS_TYPES) - 1)
             sess = Session(**SESS_TYPES[sess_type])
 
@@ -152,10 +157,15 @@ def worker(request_type: str):
             print(
                 f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}"
             )
+            print(f"\t\terr_gen_ku_key_counter: {err_gen_ku_key_counter}")
 
         except RuntimeError as e:
 
-            if "Timeout: No Response from" in str(e):
+            if (
+                "Timeout: No Response from" in str(e)
+                or "Resource temporarily unavailable" in str(e)
+                or "Unknown host" in str(e)
+            ):
                 # We bombarded the SNMP server with too many requests...
                 # print(
                 #     f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
@@ -172,6 +182,15 @@ def worker(request_type: str):
                 usm_unknown_security_name_counter += 1
 
                 if usm_unknown_security_name_counter >= 10:
+                    are_we_done = True
+
+            elif (
+                "Error generating a key (Ku) from the supplied authentication pass phrase"
+                in str(e)
+            ):
+                err_gen_ku_key_counter += 1
+
+                if err_gen_ku_key_counter >= 10:
                     are_we_done = True
 
             else:

@@ -100,6 +100,9 @@ void snmpgetnext_usage(void) {
 }
 
 std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
+   /* completely disable logging otherwise it will default to stderr */
+    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+    
    thread_local int argc;
    thread_local std::unique_ptr<char *[]> argv = create_argv(args, argc);
    thread_local std::vector<std::string> return_vector;
