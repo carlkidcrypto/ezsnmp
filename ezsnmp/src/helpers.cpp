@@ -13,8 +13,8 @@
 std::string print_variable_to_string(oid const *objid,
                                      size_t objidlen,
                                      netsnmp_variable_list const *variable) {
-   thread_local u_char *buf = nullptr;
-   thread_local size_t buf_len = 256, out_len = 0;
+   u_char *buf = nullptr;
+   size_t buf_len = 256, out_len = 0;
 
    if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
       return "[TRUNCATED]";
@@ -38,8 +38,8 @@ std::string print_variable_to_string(oid const *objid,
  */
 /* Slight modifications to raise std::runtime_error instead of print to stderr */
 void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
-   thread_local std::string err;
-   thread_local char *err_cstr = nullptr;
+   std::string err;
+   char *err_cstr = nullptr;
 
    snmp_error(ss, NULL, NULL, &err_cstr);
    err = err_cstr;
@@ -58,11 +58,11 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
  */
 /* Slight modifications to raise std::runtime_error instead of print to stderr */
 void snmp_perror_exception(char const *prog_string) {
-   thread_local int xerr = snmp_errno; // MTCRITICAL_RESOURCE
-   thread_local char const *str = snmp_api_errstring(xerr);
+   int xerr = snmp_errno; // MTCRITICAL_RESOURCE
+   char const *str = snmp_api_errstring(xerr);
 
    // Construct the error message
-   thread_local std::string message = std::string(prog_string) + ": " + str;
+   std::string message = std::string(prog_string) + ": " + str;
 
    // Throw a runtime_error with the message
    throw std::runtime_error(message);
@@ -102,17 +102,17 @@ std::regex const OID_INDEX_RE(R"((
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
 Result parse_result(std::string const &input) {
-   thread_local Result result;
-   thread_local std::stringstream ss(input);
-   thread_local std::string temp;
+   Result result;
+   std::stringstream ss(input);
+   std::string temp;
 
    // Extract OID
    std::getline(ss, result.oid, '=');
    result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
 
    // Extract OID index using regexes (matching Python logic)
-   thread_local std::smatch first_match;
-   thread_local std::smatch second_match;
+   std::smatch first_match;
+   std::smatch second_match;
 
    if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
       std::string temp_oid = second_match[1].str(); // Create temporary strings
@@ -159,7 +159,7 @@ Result parse_result(std::string const &input) {
 }
 
 std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
-   thread_local std::vector<Result> results;
+   std::vector<Result> results;
    for (auto const &input : inputs) {
       results.push_back(parse_result(input));
    }
@@ -170,12 +170,12 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
    // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
    // std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
-   thread_local struct usmUser *actUser = usm_get_userList();
+   struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
-      thread_local struct usmUser *dummy = actUser;
-      thread_local auto act_user_sec_name_str = std::string("");
-      thread_local auto act_user_engine_id_str = std::string("");
+      struct usmUser *dummy = actUser;
+      auto act_user_sec_name_str = std::string("");
+      auto act_user_engine_id_str = std::string("");
 
       if (actUser->secName != NULL) {
          act_user_sec_name_str = std::string(actUser->secName);
