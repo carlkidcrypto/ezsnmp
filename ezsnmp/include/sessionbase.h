@@ -3,11 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "datatypes.h"
 
 class SessionBase {
   private:
+   std::mutex m_args_mutex; 
    std::vector<std::string> m_args;
    std::string m_hostname = "";
    std::string m_port_number = "";
