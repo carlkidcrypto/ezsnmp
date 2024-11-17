@@ -161,6 +161,7 @@ void SessionBase::populate_args() {
       size_t openBracketPos = temp_hostname.find('[');
       size_t closeBracketPos = temp_hostname.find(']');
 
+      // Check for `udp6:[2001:db8::]` or `udp6:[2001:db8::]:162`
       if (IsUdp6InStr != std::string::npos && openBracketPos != std::string::npos &&
           closeBracketPos != std::string::npos) {
          size_t lastColonPos = temp_hostname.find_last_of(':', closeBracketPos + 1);
@@ -172,16 +173,25 @@ void SessionBase::populate_args() {
             temp_hostname = temp_hostname.substr(0, closeBracketPos + 1);
          }
 
-      } else if (IsUdp6InStr == std::string::npos && openBracketPos != std::string::npos &&
+      }
+      // Check for `[2001:db8::]:162`
+      else if (IsUdp6InStr == std::string::npos && openBracketPos != std::string::npos &&
                  closeBracketPos != std::string::npos) {
          // Extract the IPv6 address and port number
-         temp_hostname =
-             temp_hostname.substr(openBracketPos + 1, closeBracketPos - openBracketPos - 1);
+         std::string temp_split_hostname = "";
+         std::string temp_split_port_number = "";
+         temp_split_hostname =
+             temp_hostname.substr(openBracketPos, (closeBracketPos +1 ) - openBracketPos);
          size_t colonPos = temp_hostname.find(':', closeBracketPos);
          if (colonPos != std::string::npos) {
-            temp_port_number = temp_hostname.substr(colonPos + 1);
-            temp_hostname = temp_hostname.substr(0, colonPos);
+            temp_split_port_number = temp_hostname.substr(colonPos + 1);
+            temp_split_hostname = temp_hostname.substr(0, colonPos);
          }
+
+         // Assign temp splits back to temps
+         temp_hostname = temp_split_hostname;
+         temp_port_number = temp_split_port_number;
+
       } else {
          // Count the number of colons to determine if it's an IPv6 address
          int colonCount = std::count(temp_hostname.begin(), temp_hostname.end(), ':');
