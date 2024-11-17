@@ -77,13 +77,17 @@ else:
         if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
             # Check if net-snmp is installed via Brew
             try:
-                brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
+                brew = check_output(
+                    "brew list net-snmp 2>/dev/null", shell=True
+                ).decode()
                 lines = brew.splitlines()
                 include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
                 incdirs.append(include_dir[: include_dir.index("include/net-snmp") + 7])
 
                 if platform == "darwin":
-                    lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
+                    lib_dir = list(
+                        filter(lambda l: "lib/libnetsnmp.dylib" in l, lines)
+                    )[0]
                     libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
 
                 # The homebrew version also depends on the Openssl keg
@@ -129,7 +133,7 @@ else:
             except CalledProcessError:
                 print("A brew command failed...")
                 pass
-    
+
     except CalledProcessError:
         print("Homebrew isn't installed...")
         pass

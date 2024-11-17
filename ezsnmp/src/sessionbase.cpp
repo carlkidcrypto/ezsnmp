@@ -107,7 +107,8 @@ SessionBase::SessionBase(std::string hostname,
       m_boots_time(boots_time),
       m_retries(retries),
       m_timeout(timeout) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 
 SessionBase::~SessionBase() {}
@@ -232,7 +233,8 @@ void SessionBase::check_and_clear_v3_user() {
 }
 
 std::vector<Result> SessionBase::walk(std::string const& mib) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -243,7 +245,8 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -254,7 +257,8 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -265,7 +269,8 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 }
 
 std::vector<Result> SessionBase::get(std::string const& mib) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -276,7 +281,8 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -287,7 +293,8 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -298,7 +305,8 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
 }
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -309,7 +317,8 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 }
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -338,74 +347,90 @@ std::string const& SessionBase::_get_retries() const { return m_retries; }
 std::string const& SessionBase::_get_timeout() const { return m_timeout; }
 void SessionBase::_set_hostname(std::string const& hostname) {
    m_hostname = hostname;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 void SessionBase::_set_port_number(std::string const& port_number) {
    m_port_number = port_number;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 void SessionBase::_set_version(std::string const& version) {
    m_version = version;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 void SessionBase::_set_community(std::string const& community) {
    m_community = community;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 void SessionBase::_set_auth_protocol(std::string const& auth_protocol) {
    m_auth_protocol = auth_protocol;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_auth_passphrase(std::string const& auth_passphrase) {
    m_auth_passphrase = auth_passphrase;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_security_engine_id(std::string const& security_engine_id) {
    m_security_engine_id = security_engine_id;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_context_engine_id(std::string const& context_engine_id) {
    m_context_engine_id = context_engine_id;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_security_level(std::string const& security_level) {
    m_security_level = security_level;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_context(std::string const& context) {
    m_context = context;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_security_username(std::string const& security_username) {
    m_security_username = security_username;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_privacy_protocol(std::string const& privacy_protocol) {
    m_privacy_protocol = privacy_protocol;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_privacy_passphrase(std::string const& privacy_passphrase) {
    m_privacy_passphrase = privacy_passphrase;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
    check_and_clear_v3_user();
 }
 void SessionBase::_set_boots_time(std::string const& boots_time) {
    m_boots_time = boots_time;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 void SessionBase::_set_retries(std::string const& retries) {
    m_retries = retries;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }
 void SessionBase::_set_timeout(std::string const& timeout) {
    m_timeout = timeout;
-   std::lock_guard<std::mutex> lock(m_args_mutex);populate_args();
+   std::lock_guard<std::mutex> lock(m_args_mutex);
+   populate_args();
 }

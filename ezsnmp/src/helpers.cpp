@@ -199,14 +199,14 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
-         //std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
          break;
       } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
-         //std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
