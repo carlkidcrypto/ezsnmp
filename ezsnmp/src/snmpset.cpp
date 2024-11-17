@@ -106,25 +106,25 @@ void snmpset_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpset(std::vector<std::string> const &args) {
-   int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
-   std::vector<std::string> return_vector;
+   thread_local int argc;
+   thread_local std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   thread_local std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
-   netsnmp_pdu *pdu, *response = NULL;
-   netsnmp_variable_list *vars;
-   int arg;
-   int count;
-   int current_name = 0;
-   int current_type = 0;
-   int current_value = 0;
-   char *names[SNMP_MAX_CMDLINE_OIDS];
-   char types[SNMP_MAX_CMDLINE_OIDS];
-   char *values[SNMP_MAX_CMDLINE_OIDS];
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   int status;
-   int failures = 0;
+   thread_local netsnmp_session session, *ss;
+   thread_local netsnmp_pdu *pdu, *response = NULL;
+   thread_local netsnmp_variable_list *vars;
+   thread_local int arg;
+   thread_local int count;
+   thread_local int current_name = 0;
+   thread_local int current_type = 0;
+   thread_local int current_value = 0;
+   thread_local char *names[SNMP_MAX_CMDLINE_OIDS];
+   thread_local char types[SNMP_MAX_CMDLINE_OIDS];
+   thread_local char *values[SNMP_MAX_CMDLINE_OIDS];
+   thread_local oid name[MAX_OID_LEN];
+   thread_local size_t name_length;
+   thread_local int status;
+   thread_local int failures = 0;
 
    SOCK_STARTUP;
 

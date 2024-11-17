@@ -129,17 +129,17 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
-   int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   thread_local int argc;
+   thread_local std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
-   std::vector<std::string> return_vector;
-   netsnmp_session session, *ss;
-   netsnmp_pdu *pdu;
-   netsnmp_pdu *response;
-   netsnmp_variable_list *vars;
-   int arg;
-   int count;
-   int status;
+   thread_local std::vector<std::string> return_vector;
+   thread_local netsnmp_session session, *ss;
+   thread_local netsnmp_pdu *pdu;
+   thread_local netsnmp_pdu *response;
+   thread_local netsnmp_variable_list *vars;
+   thread_local int arg;
+   thread_local int count;
+   thread_local int status;
 
    SOCK_STARTUP;
 

@@ -3,29 +3,28 @@
 
 #include <string>
 #include <vector>
-#include <thread>
 
 #include "datatypes.h"
 
 class SessionBase {
   private:
-   thread_local std::vector<std::string> m_args;
-   thread_local std::string m_hostname = "";
-   thread_local std::string m_port_number = "";
-   thread_local std::string m_version = "";
-   thread_local std::string m_community = "";
-   thread_local std::string m_auth_protocol = "";
-   thread_local std::string m_auth_passphrase = "";
-   thread_local std::string m_security_engine_id = "";
-   thread_local std::string m_context_engine_id = "";
-   thread_local std::string m_security_level = "";
-   thread_local std::string m_context = "";
-   thread_local std::string m_security_username = "";
-   thread_local std::string m_privacy_protocol = "";
-   thread_local std::string m_privacy_passphrase = "";
-   thread_local std::string m_boots_time = "";
-   thread_local std::string m_retries = "";
-   thread_local std::string m_timeout = "";
+   std::vector<std::string> m_args;
+   std::string m_hostname = "";
+   std::string m_port_number = "";
+   std::string m_version = "";
+   std::string m_community = "";
+   std::string m_auth_protocol = "";
+   std::string m_auth_passphrase = "";
+   std::string m_security_engine_id = "";
+   std::string m_context_engine_id = "";
+   std::string m_security_level = "";
+   std::string m_context = "";
+   std::string m_security_username = "";
+   std::string m_privacy_protocol = "";
+   std::string m_privacy_passphrase = "";
+   std::string m_boots_time = "";
+   std::string m_retries = "";
+   std::string m_timeout = "";
    void populate_args();
    void check_and_clear_v3_user();
 

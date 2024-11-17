@@ -114,21 +114,21 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
 }
 
 int snmptrap(std::vector<std::string> const &args) {
-   int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   thread_local int argc;
+   thread_local std::unique_ptr<char *[]> argv = create_argv(args, argc);
 
-   netsnmp_session session, *ss = NULL;
-   netsnmp_pdu *pdu, *response;
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   int arg;
-   int status;
-   char *trap = NULL;
-   char *prognam;
-   int exitval = 1;
+   thread_local netsnmp_session session, *ss = NULL;
+   thread_local netsnmp_pdu *pdu, *response;
+   thread_local oid name[MAX_OID_LEN];
+   thread_local size_t name_length;
+   thread_local int arg;
+   thread_local int status;
+   thread_local char *trap = NULL;
+   thread_local char *prognam;
+   thread_local int exitval = 1;
 #ifndef NETSNMP_DISABLE_SNMPV1
-   char *specific = NULL, *description = NULL, *agent = NULL;
-   in_addr_t *pdu_in_addr_t;
+   thread_local char *specific = NULL, *description = NULL, *agent = NULL;
+   thread_local in_addr_t *pdu_in_addr_t;
 #endif
 
    SOCK_STARTUP;

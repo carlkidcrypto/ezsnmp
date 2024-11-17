@@ -176,25 +176,25 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
-   int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
-   std::vector<std::string> return_vector;
+   thread_local int argc;
+   thread_local std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   thread_local std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
-   netsnmp_pdu *pdu, *response;
-   netsnmp_variable_list *vars;
-   int arg;
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   oid root[MAX_OID_LEN];
-   size_t rootlen;
-   oid end_oid[MAX_OID_LEN];
-   size_t end_len = 0;
-   int count;
-   int running;
-   int status = STAT_ERROR;
-   int check;
-   struct timeval tv1, tv2, tv_a, tv_b;
+   thread_local netsnmp_session session, *ss;
+   thread_local netsnmp_pdu *pdu, *response;
+   thread_local netsnmp_variable_list *vars;
+   thread_local int arg;
+   thread_local oid name[MAX_OID_LEN];
+   thread_local size_t name_length;
+   thread_local oid root[MAX_OID_LEN];
+   thread_local size_t rootlen;
+   thread_local oid end_oid[MAX_OID_LEN];
+   thread_local size_t end_len = 0;
+   thread_local int count;
+   thread_local int running;
+   thread_local int status = STAT_ERROR;
+   thread_local int check;
+   thread_local struct timeval tv1, tv2, tv_a, tv_b;
 
    SOCK_STARTUP;
 
