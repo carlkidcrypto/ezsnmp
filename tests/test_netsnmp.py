@@ -60,28 +60,28 @@ def test_snmp_get_unknown(netsnmp_args):
         snmpget(netsnmp_args)
 
 
-# def test_snmp_get_invalid_instance(netsnmp_args):
-#     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
-#     # invalid object ID, instead it excepts with noSuchName
-#     if netsnmp_args[1] == "1":
-#         with pytest.raises(RuntimeError):
-#             netsnmp_args = netsnmp_args + ["sysContact.1"]
-#             snmpget(netsnmp_args)
-#     else:
-#         netsnmp_args = netsnmp_args + ["sysContact.1"]
-#         res = snmpget(netsnmp_args)
-#         assert res[0].type == "NOSUCHINSTANCE"
+def test_snmp_get_invalid_instance(netsnmp_args):
+    # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
+    # invalid object ID, instead it excepts with noSuchName
+    if netsnmp_args[1] == "1":
+        with pytest.raises(RuntimeError):
+            netsnmp_args = netsnmp_args + ["sysContact.1"]
+            snmpget(netsnmp_args)
+    else:
+        netsnmp_args = netsnmp_args + ["sysContact.1"]
+        res = snmpget(netsnmp_args)
+        assert res[0].type == "NOSUCHINSTANCE"
 
 
-# def test_snmp_get_invalid_object(netsnmp_args):
-#     if netsnmp_args[1] == "1":
-#         with pytest.raises(RuntimeError):
-#             netsnmp_args = netsnmp_args + ["iso"]
-#             snmpget(netsnmp_args)
-#     else:
-#         netsnmp_args = netsnmp_args + ["iso"]
-#         res = snmpget(netsnmp_args)
-#         assert res[0].type == "NOSUCHOBJECT"
+def test_snmp_get_invalid_object(netsnmp_args):
+    if netsnmp_args[1] == "1":
+        with pytest.raises(RuntimeError):
+            netsnmp_args = netsnmp_args + ["iso"]
+            snmpget(netsnmp_args)
+    else:
+        netsnmp_args = netsnmp_args + ["iso"]
+        res = snmpget(netsnmp_args)
+        assert res[0].type == "NOSUCHOBJECT"
 
 
 def test_snmp_set_string(netsnmp_args, request, reset_values):
@@ -254,12 +254,14 @@ def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
             assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
             assert res[0].type == "INTEGER"
             assert res[0].index == "4"
-            assert res[0].value == "expired(5)"
+            # Don't verify the value, this always changes
+            # assert res[0].value == "expired(5)"
 
             assert res[1].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
             assert res[1].type == "INTEGER"
             assert res[1].index == "7"
-            assert res[1].value == "expired(5)"
+            # Don't verify the value, this always changes
+            # assert res[1].value == "expired(5)"
 
     else:
         assert True
