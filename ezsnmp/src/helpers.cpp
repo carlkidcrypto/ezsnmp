@@ -68,7 +68,8 @@ void snmp_perror_exception(char const *prog_string) {
    throw std::runtime_error(message);
 }
 
-// This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc expect
+// This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc
+// expect
 std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {
    argc = args.size() + 1;
    std::unique_ptr<char *[]> argv(new char *[argc + 1]);
