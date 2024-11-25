@@ -105,7 +105,8 @@ jobs:
           else
             mibdir=""
             SNMPD=$(which.exe snmpd)
-          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+          $SNMPD  --version &&
+          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
 
       - name: Lint with flake8
         uses: py-actions/flake8@v2
