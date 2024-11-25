@@ -92,18 +92,18 @@ jobs:
         run: |
           pip install . --verbose
       
-      - name: Set up dependencies
+      - name: Start SNMP daemon
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: mibdir="-M +/var/lib/snmp/mibs";
                  SNMPD=$(which snmpd);
                  $SNMPD  --version;
-                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
 
           macos: mibdir="";
                  SNMPD=$(which snmpd);
                  $SNMPD  --version;
-                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Lint with flake8
         uses: py-actions/flake8@v2
