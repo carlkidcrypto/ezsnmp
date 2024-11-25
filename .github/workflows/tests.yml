@@ -92,21 +92,16 @@ jobs:
         run: |
           pip install . --verbose
       
-      - name: Start SNMP daemon
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]
-          then
-            mibdir=""
-            SNMPD=$(which snmpd)
-          elif [ "$RUNNER_OS" == "macOS" ]
-          then
-            mibdir=""
-            SNMPD=$(which snmpd)
-          else
-            mibdir=""
-            SNMPD=$(which.exe snmpd)
-          $SNMPD  --version
-          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+      - name: Set up dependencies
+        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        with:
+          linux: mibdir="-M +/var/lib/snmp/mibs";
+                 $SNMPD  --version;
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
+
+          macos: mibdir="";
+                 $SNMPD  --version;
+                 $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL;
 
       - name: Lint with flake8
         uses: py-actions/flake8@v2
