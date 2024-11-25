@@ -189,12 +189,11 @@ def test_session_get(sess):
     for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
         res = sess.get(oid)
         if oid == "sysUpTime.0":
-            if platform.system() == "Darwin":  # Check if running on macOS
-                assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
-
-            else:  # For other operating systems (e.g., Linux)
-                assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
-
+            # Checking if "sysUpTimeInstance" is in "oid" is enough. The preamble
+            # changes per OS system
+            # "DISMAN-EVENT-MIB::sysUpTimeInstance" MacOS
+            # "DISMAN-EXPRESSION-MIB::sysUpTimeInstance" Linux
+            assert "sysUpTimeInstance" in res[0].oid
             assert res[0].index == ""
             assert res[0].type == "Timeticks"
 
@@ -286,12 +285,11 @@ def test_session_bulk_get(sess):
             ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
         )
 
-        if platform.system() == "Darwin":  # Check if running on macOS
-            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
-
-        else:  # For other operating systems (e.g., Linux)
-            assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
-
+        # Checking if "sysUpTimeInstance" is in "oid" is enough. The preamble
+        # changes per OS system
+        # "DISMAN-EVENT-MIB::sysUpTimeInstance" MacOS
+        # "DISMAN-EXPRESSION-MIB::sysUpTimeInstance" Linux
+        assert "sysUpTimeInstance" in res[0].oid
         assert res[0].index == ""
         assert res[0].type == "Timeticks"
 

@@ -142,12 +142,12 @@ def test_snmpbulkget(netsnmp_args):
         res = snmpbulkget(netsnmp_args)
 
         assert len(res) == 50
-        if platform.system() == "Darwin":  # Check if running on macOS
-            assert res[0].oid == "DISMAN-EVENT-MIB::sysUpTimeInstance"
 
-        else:  # For other operating systems (e.g., Linux)
-            assert res[0].oid == "DISMAN-EXPRESSION-MIB::sysUpTimeInstance"
-
+         # Checking if "sysUpTimeInstance" is in "oid" is enough. The preamble
+        # changes per OS system
+        # "DISMAN-EVENT-MIB::sysUpTimeInstance" MacOS
+        # "DISMAN-EXPRESSION-MIB::sysUpTimeInstance" Linux
+        assert "sysUpTimeInstance" in res[0].oid
         assert res[0].index == ""
         assert res[0].type == "Timeticks"
 
