@@ -143,7 +143,7 @@ def test_snmpbulkget(netsnmp_args):
 
         assert len(res) == 50
 
-         # Checking if "sysUpTimeInstance" is in "oid" is enough. The preamble
+        # Checking if "sysUpTimeInstance" is in "oid" is enough. The preamble
         # changes per OS system
         # "DISMAN-EVENT-MIB::sysUpTimeInstance" MacOS
         # "DISMAN-EXPRESSION-MIB::sysUpTimeInstance" Linux
