@@ -128,7 +128,7 @@ jobs:
                    '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
                  );
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 ${VALGRIND[@]} pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
           
           macos: pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
