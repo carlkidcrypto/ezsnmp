@@ -56,6 +56,7 @@ jobs:
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+                 sudo apt-get purge libsnmp-dev libperl-dev;
                  brew update;
                  brew install net-snmp;
                  brew install openssl@3;
@@ -89,7 +90,7 @@ jobs:
 
       - name: Build And Install EzSnmp
         run: |
-          pip install .
+          pip install . --verbose
       
       - name: Start SNMP daemon
         run: |
