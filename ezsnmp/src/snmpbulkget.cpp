@@ -222,16 +222,19 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
          if (response->errstat == SNMP_ERR_NOSUCHNAME) {
             // printf("End of MIB.\n");
          } else {
-            fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+            std::string err_msg =
+                   "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
+                   "\n";
             if (response->errindex != 0) {
-               fprintf(stderr, "Failed object: ");
+               err_msg = err_msg + "Failed object: ";
                for (count = 1, vars = response->variables; vars && (count != response->errindex);
                     vars = vars->next_variable, count++)
                   /*EMPTY*/;
                if (vars) {
-                  fprint_objid(stderr, vars->name, vars->name_length);
+                  err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
                }
-               fprintf(stderr, "\n");
+               err_msg = err_msg + "\n";
+               throw std::runtime_error(err_msg);
             }
          }
       }

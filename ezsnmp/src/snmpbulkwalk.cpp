@@ -307,13 +307,12 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                    */
                   if (check &&
                       snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
-                     fflush(stdout);
-                     fprintf(stderr, "Error: OID not increasing: ");
-                     fprint_objid(stderr, name, name_length);
-                     fprintf(stderr, " >= ");
-                     fprint_objid(stderr, vars->name, vars->name_length);
-                     fprintf(stderr, "\n");
-                     running = 0;
+
+                     std::string err_msg = "Error: OID not increasing: ";
+                     err_msg = err_msg + print_objid_to_string(name, name_length) + " >= ";
+                     err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
+
+                     throw std::runtime_error(err_msg);
                   }
                   /*
                    * Check if last variable, and if so, save for next request.
@@ -337,16 +336,19 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
             if (response->errstat == SNMP_ERR_NOSUCHNAME) {
                // printf("End of MIB\n");
             } else {
-               fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+               std::string err_msg =
+                   "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
+                   "\n";
                if (response->errindex != 0) {
-                  fprintf(stderr, "Failed object: ");
+                  err_msg = err_msg + "Failed object: ";
                   for (count = 1, vars = response->variables; vars && count != response->errindex;
                        vars = vars->next_variable, count++)
                      /*EMPTY*/;
                   if (vars) {
-                     fprint_objid(stderr, vars->name, vars->name_length);
+                     err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
                   }
-                  fprintf(stderr, "\n");
+                  err_msg = err_msg + "\n";
+                  throw std::runtime_error(err_msg);
                }
             }
          }
