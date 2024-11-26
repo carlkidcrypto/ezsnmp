@@ -14,7 +14,7 @@ from re import search
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
-compile_args = ["-std=c++17", "-Werror", "-Wno-unguarded-availability-new"]
+compile_args = ["-std=c++17", "-Werror"]
 link_args = []
 netsnmp_version = check_output("net-snmp-config --version", shell=True).decode()
 homebrew_version = None

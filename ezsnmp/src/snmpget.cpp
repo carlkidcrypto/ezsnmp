@@ -214,17 +214,7 @@ retry:
                  vars = vars->next_variable, count++)
                /*EMPTY*/;
             if (vars) {
-               // Create a buffer for capturing output. 256 comes from the max
-               // inside fprint_objid
-               std::vector<char> buffer(256);
-               buffer.clear();
-
-               // Open the buffer as a file
-               FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
-
-               fprint_objid(f1, vars->name, vars->name_length);
-               fclose(f1);
-               err_msg = err_msg + std::string(buffer.data());
+               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
             }
             err_msg = err_msg + "\n";
          }

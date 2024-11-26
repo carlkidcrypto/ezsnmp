@@ -20,5 +20,6 @@ Result parse_result(std::string const &input);
 std::vector<Result> parse_results(std::vector<std::string> const &inputs);
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str);
+std::string print_objid_to_string(const oid * objid, size_t objidlen);
 
 #endif // HELPERS_H
