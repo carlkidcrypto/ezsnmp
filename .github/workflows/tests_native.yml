@@ -116,7 +116,7 @@ jobs:
             )
             echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT
           fi
-          ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
