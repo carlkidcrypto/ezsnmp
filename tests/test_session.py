@@ -428,7 +428,7 @@ def test_session_bulkwalk(sess):
 
 def test_session_walk_all(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.75, 1.25))
+    sleep(uniform(1.0, 2.5))
     res = sess.walk(".")
 
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
