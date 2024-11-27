@@ -11,7 +11,7 @@ faulthandler.enable()
 
 def test_session_invalid_snmp_version():
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     with pytest.raises(RuntimeError):
         sess = Session(version="4")
         sess.get("sysDescr.0")
@@ -20,7 +20,7 @@ def test_session_invalid_snmp_version():
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     with pytest.raises(RuntimeError):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
@@ -29,7 +29,7 @@ def test_session_invalid_hostname(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname_and_port_number(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     with pytest.raises(RuntimeError):
         Session(hostname="localhost:162", port_number="163", version=version)
 
@@ -37,7 +37,7 @@ def test_session_invalid_hostname_and_port_number(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_hostname_and_port_number_split(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     session = Session(hostname="localhost:162", version=version)
     assert session.hostname == "localhost"
     assert session.port_number == "162"
@@ -46,7 +46,7 @@ def test_session_hostname_and_port_number_split(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_port(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     with pytest.raises(RuntimeError):
         session = Session(
             port_number="1234", version=version, timeout="0.2", retries="1"
@@ -57,7 +57,7 @@ def test_session_invalid_port(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     session = Session(hostname="2001:db8::", version=version)
     assert session.hostname == "2001:db8::"
 
@@ -65,7 +65,7 @@ def test_session_ipv6_address(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_and_port_number(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     session = Session(
         hostname="fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa",
         port_number="162",
@@ -79,7 +79,7 @@ def test_session_ipv6_address_and_port_number(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_and_port_number_split(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     session = Session(hostname="[2001:db8::]:161", version=version)
     assert session.hostname == "[2001:db8::]"
     assert session.port_number == "161"
@@ -89,7 +89,7 @@ def test_session_ipv6_address_and_port_number_split(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_with_protocol_and_port_number_split(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     session = Session(hostname="udp6:[2001:db8::]:162", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
     assert session.port_number == "162"
@@ -99,7 +99,7 @@ def test_session_ipv6_address_with_protocol_and_port_number_split(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_with_protocol(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     session = Session(hostname="udp6:[2001:db8::]", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
     del session
@@ -108,7 +108,7 @@ def test_session_ipv6_address_with_protocol(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_is_not_ipv6(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     with pytest.raises(RuntimeError):
         sess = Session(hostname="[foo::bar]:161", version=version)
         sess.get("sysContact.0")
@@ -117,7 +117,7 @@ def test_session_ipv6_is_not_ipv6(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_invalid_hostname_and_port_number(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     with pytest.raises(RuntimeError):
         Session(
             hostname="[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:161",
@@ -128,7 +128,7 @@ def test_session_ipv6_invalid_hostname_and_port_number(version):
 
 def test_session_set_multiple_next(sess, reset_values):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     res = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "6"])
     assert res[0].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[0].index == "'test'"
@@ -186,7 +186,7 @@ def test_session_set_multiple_next(sess, reset_values):
 
 def test_session_set_clear(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     res = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "6"])
     assert res[0].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[0].index == "'test'"
@@ -217,7 +217,7 @@ def test_session_set_clear(sess):
 
 def test_session_get(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
         res = sess.get(oid)
         if oid == "sysUpTime.0":
@@ -245,7 +245,7 @@ def test_session_get(sess):
 
 def test_session_get_next(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     res = sess.get_next(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
 
     assert res[0].oid == "SNMPv2-MIB::sysContact"
@@ -267,7 +267,7 @@ def test_session_get_next(sess):
 
 def test_session_set(sess, reset_values):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     res = sess.get("sysLocation.0")
     assert res[0].value != "my newer location"
 
@@ -282,7 +282,7 @@ def test_session_set(sess, reset_values):
 
 def test_session_set_multiple(sess, reset_values):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     res = sess.get(["sysLocation.0", "nsCacheTimeout.1.3.6.1.2.1.2.2"])
     assert res[0].value != "my newer location"
     assert res[1].value != "160"
@@ -308,7 +308,7 @@ def test_session_set_multiple(sess, reset_values):
 
 def test_session_bulk_get(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     if sess.version == "1":
         with pytest.raises(RuntimeError):
             sess.bulk_get(
@@ -342,7 +342,7 @@ def test_session_bulk_get(sess):
 
 def test_session_get_invalid_instance(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess.version == "1":
@@ -355,7 +355,7 @@ def test_session_get_invalid_instance(sess):
 
 def test_session_get_invalid_object(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     if sess.version == "1":
         with pytest.raises(RuntimeError):
             sess.get("iso")
@@ -366,7 +366,7 @@ def test_session_get_invalid_object(sess):
 
 def test_session_walk(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     res = sess.walk("system")
 
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -394,7 +394,7 @@ def test_session_walk(sess):
 
 def test_session_bulkwalk(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     if sess.version == "1":
         with pytest.raises(RuntimeError):
             sess.bulk_walk("system")
@@ -428,7 +428,7 @@ def test_session_bulkwalk(sess):
 
 def test_session_walk_all(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.5, 1))
     res = sess.walk(".")
 
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -456,7 +456,7 @@ def test_session_walk_all(sess):
 
 def test_session_update():
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     s = Session(version="3")
     assert s.version == "3"
 

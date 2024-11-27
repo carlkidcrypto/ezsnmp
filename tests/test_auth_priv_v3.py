@@ -21,7 +21,7 @@ def test_v3_authentication_md5_privacy_des(sess_v3_md5_des):
 
 def test_v3_authentication_md5_privacy_aes(sess_v3_md5_aes):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     s = Session(**sess_v3_md5_aes)
 
     assert s.auth_passphrase == "auth_pass"
@@ -39,7 +39,7 @@ def test_v3_authentication_md5_privacy_aes(sess_v3_md5_aes):
 
 def test_v3_authentication_sha_privacy_aes(sess_v3_sha_aes):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     s = Session(**sess_v3_sha_aes)
 
     assert s.auth_passphrase == "auth_second"
@@ -57,7 +57,7 @@ def test_v3_authentication_sha_privacy_aes(sess_v3_sha_aes):
 
 def test_v3_authentication_sha_no_priv(sess_v3_sha_no_priv):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     s = Session(**sess_v3_sha_no_priv)
 
     assert s.auth_passphrase == "auth_second"
@@ -75,7 +75,7 @@ def test_v3_authentication_sha_no_priv(sess_v3_sha_no_priv):
 
 def test_v3_authentication_md5_no_priv(sess_v3_md5_no_priv):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.5))
+    sleep(uniform(0.1, 0.25))
     s = Session(**sess_v3_md5_no_priv)
 
     assert s.auth_passphrase == "auth_pass"
