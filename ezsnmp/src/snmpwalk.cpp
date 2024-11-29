@@ -353,10 +353,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                    */
                   if (check &&
                       snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
-
                      std::string err_msg = "Error: OID not increasing: ";
                      err_msg = err_msg + print_objid_to_string(name, name_length) + " >= ";
-                     err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
+                     err_msg =
+                         err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
 
                      throw std::runtime_error(err_msg);
                   }

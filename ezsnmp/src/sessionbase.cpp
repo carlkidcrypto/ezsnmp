@@ -176,12 +176,12 @@ void SessionBase::populate_args() {
       }
       // Check for `[2001:db8::]:162`
       else if (IsUdp6InStr == std::string::npos && openBracketPos != std::string::npos &&
-                 closeBracketPos != std::string::npos) {
+               closeBracketPos != std::string::npos) {
          // Extract the IPv6 address and port number
          std::string temp_split_hostname = "";
          std::string temp_split_port_number = "";
          temp_split_hostname =
-             temp_hostname.substr(openBracketPos, (closeBracketPos +1 ) - openBracketPos);
+             temp_hostname.substr(openBracketPos, (closeBracketPos + 1) - openBracketPos);
          size_t colonPos = temp_hostname.find(':', closeBracketPos);
          if (colonPos != std::string::npos) {
             temp_split_port_number = temp_hostname.substr(colonPos + 1);

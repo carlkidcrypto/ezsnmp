@@ -222,26 +222,26 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
    }
 }
 
-std::string print_objid_to_string(const oid * objid, size_t objidlen) {
-    /* number of subidentifiers */
-    u_char       *buf = NULL;
-    size_t        buf_len = 256, out_len = 0;
-    int           buf_overflow = 0;
-    std::stringstream ss; 
+std::string print_objid_to_string(oid const *objid, size_t objidlen) {
+   /* number of subidentifiers */
+   u_char *buf = NULL;
+   size_t buf_len = 256, out_len = 0;
+   int buf_overflow = 0;
+   std::stringstream ss;
 
-    if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
-        ss << "[TRUNCATED]\n"; 
-        return ss.str();
-    } else {
-        netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1,
-                                           &buf_overflow, objid, objidlen);
-        if (buf_overflow) {
-            ss << buf << " [TRUNCATED]\n"; 
-        } else {
-            ss << buf << "\n"; 
-        }
-    }
+   if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
+      ss << "[TRUNCATED]\n";
+      return ss.str();
+   } else {
+      netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid,
+                                        objidlen);
+      if (buf_overflow) {
+         ss << buf << " [TRUNCATED]\n";
+      } else {
+         ss << buf << "\n";
+      }
+   }
 
-    SNMP_FREE(buf);
-    return ss.str(); 
+   SNMP_FREE(buf);
+   return ss.str();
 }
