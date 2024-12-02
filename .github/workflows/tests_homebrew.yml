@@ -1,0 +1,270 @@
+name: Tests With Homebrew Package Manager
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-source-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_job: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout Sourcecode
+        uses: actions/checkout@v4
+
+      - name: Check for changes in source code
+        id: changed-files
+        uses: tj-actions/changed-files@v45.0.4
+        with:
+          files: |
+            ezsnmp/*.py
+            ezsnmp/*.cpp
+            ezsnmp/*.h
+            tests/*.py
+            tests/*.conf
+            setup.py
+            setup.cfg
+  
+  lint-black-formatting:
+    runs-on: ubuntu-latest
+    needs: check-source-changes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: psf/black@24.10.0
+
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    needs: lint-black-formatting
+    if: needs.check-source-changes.outputs.run_job == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+  
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Set up dependencies
+        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        with:
+          linux: sudo apt-get update;
+                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+                 sudo apt-get purge libsnmp-dev libperl-dev;
+                 brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
+                 sudo systemctl stop snmpd;
+                 sudo download-mibs;
+                 mkdir -p -m 0755 ~/.snmp;
+                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+          
+          macos: brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
+                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/bin:$PATH";
+                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
+                 mkdir -p -m 0755 ~/.snmp;
+                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          allow-prereleases: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pip dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Build And Install EzSnmp
+        run: |
+          pip install . --verbose
+      
+      - name: Start SNMP daemon
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]
+          then
+            mibdir="-M +/var/lib/snmp/mibs"
+            SNMPD=$(which snmpd)
+          elif [ "$RUNNER_OS" == "macOS" ]
+          then
+            mibdir=""
+            SNMPD=$(which snmpd)
+          else
+            mibdir=""
+            SNMPD=$(which.exe snmpd)
+          fi
+          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+
+      - name: Lint with flake8
+        uses: py-actions/flake8@v2
+        continue-on-error: true
+        with:
+          max-line-length: "88"
+          path: "ezsnmp tests"
+
+      - name: Run Tests
+        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        with:
+          linux: wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
+                 VALGRIND=(
+                   'valgrind'
+                   '--tool=memcheck'
+                   '--leak-check=full'
+                   '--show-leak-kinds=definite,indirect,possible'
+                   '--suppressions=./valgrind-python.supp'
+                   '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
+                 );
+                 echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
+                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+          
+          macos: pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
+          path: |
+            test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
+            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+
+      - name: Upload Valgrind Reports
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        with:
+          name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
+          path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
+
+  comment-pytest-coverage-report:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pytest-results_*
+          merge-multiple: false
+
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@v1.1.53
+        with:
+          title: Pytest Coverage Report
+          hide-badge: true
+          hide-report: true
+          create-new-comment: false
+          hide-comment: false
+          report-only-changed-files: false
+          multiple-files: |
+            macos-latest - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
+            macos-latest - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            macos-latest - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
+            ubuntu-latest - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            ubuntu-latest - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
+            ubuntu-latest - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
+            ubuntu-latest - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
+            ubuntu-latest - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+
+  make-stripped-valgrind-files:
+    runs-on: ${{ matrix.os }}
+    needs: build-and-test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: valgrind-report_*
+          merge-multiple: false
+
+      - name: Parse Valgrind Reports
+        run: |
+          python - << "EOF"
+          from re import split
+          with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
+            data = f.read()
+          blocks = split(r'==[0-9]+==\s\n', data)
+          snmp = list(filter(lambda b: 'snmp' in b, blocks[1:]))
+          with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log', 'w') as f:
+            f.write('```sh\n')
+            f.writelines(filter(lambda b: all(filt not in b for filt in ('invalid file descriptor', 'alternative log')), snmp))
+            f.write(blocks[-2])
+            f.write('```\n')
+          EOF
+
+      - name: Upload Stripped Valgrind Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}
+          path: |
+            valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log
+
+  comment-valgrind:
+    runs-on: ubuntu-latest
+    needs: make-stripped-valgrind-files
+  
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: valgrind-stripped_*
+          merge-multiple: false
+
+      - name: Set Env Variables
+        id: valgrind_stripped_vars
+        run: |
+         temp1=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
+         temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
+         temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
+         temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
+         temp5=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp4 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
+
+      - name: Checkout Sourcecode
+        uses: actions/checkout@v4
+
+      - name: Render Valgrind Comment Template
+        id: template
+        uses: chuhlomin/render-template@v1.10
+        with:
+          template: .github/comment-valgrind-template.md
+          vars: |
+           py3_9:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9 }}"
+           py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
+           py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"
+           py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
+           py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
+
+      - name: Create A Comment For PR
+        uses: peter-evans/create-or-update-comment@v4
+        if: github.event_name == 'pull_request'
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.template.outputs.result }}
+
+      - name: Create A Comment For Push
+        uses: peter-evans/commit-comment@v3
+        if: github.event_name == 'push'
+        with:
+          body: ${{ steps.template.outputs.result }}
