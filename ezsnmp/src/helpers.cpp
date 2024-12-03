@@ -68,6 +68,8 @@ void snmp_perror_exception(char const *prog_string) {
    throw std::runtime_error(message);
 }
 
+// This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc
+// expect
 std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {
    argc = args.size() + 1;
    std::unique_ptr<char *[]> argv(new char *[argc + 1]);
@@ -101,6 +103,7 @@ std::regex const OID_INDEX_RE(R"((
 //  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
+// This is a helper to turn OID results into a Result type
 Result parse_result(std::string const &input) {
    Result result;
    std::stringstream ss(input);
@@ -158,6 +161,7 @@ Result parse_result(std::string const &input) {
    return result;
 }
 
+// This is a helper to create a vector of Result types
 std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
    std::vector<Result> results;
    for (auto const &input : inputs) {
@@ -166,6 +170,7 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
    return results;
 }
 
+// This is a helper to remove V3 users from the cache when V3 information changes
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
    // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
@@ -199,14 +204,14 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
-         //std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
          break;
       } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
-         //std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
@@ -215,4 +220,28 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
       }
       actUser = dummy->next;
    }
+}
+
+std::string print_objid_to_string(oid const *objid, size_t objidlen) {
+   /* number of subidentifiers */
+   u_char *buf = NULL;
+   size_t buf_len = 256, out_len = 0;
+   int buf_overflow = 0;
+   std::stringstream ss;
+
+   if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
+      ss << "[TRUNCATED]\n";
+      return ss.str();
+   } else {
+      netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid,
+                                        objidlen);
+      if (buf_overflow) {
+         ss << buf << " [TRUNCATED]\n";
+      } else {
+         ss << buf << "\n";
+      }
+   }
+
+   SNMP_FREE(buf);
+   return ss.str();
 }
