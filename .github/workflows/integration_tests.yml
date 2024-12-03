@@ -49,7 +49,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+                 sudo apt-get install -y snmpd snmp-mibs-downloader;
                  brew update;
                  brew install net-snmp;
                  brew install openssl@3;
@@ -83,7 +83,7 @@ jobs:
 
       - name: Build source
         run: |
-          pip install .
+          pip install . --verbose
       
       - name: Start SNMP daemon
         run: |
@@ -105,6 +105,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: |
+                 export LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH;
                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
                  ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
                  echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;

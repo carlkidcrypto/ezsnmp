@@ -176,6 +176,9 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
+   /* completely disable logging otherwise it will default to stderr */
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+
    int argc;
    std::unique_ptr<char *[]> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
@@ -351,25 +354,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                   if (check &&
                       snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
                      std::string err_msg = "Error: OID not increasing: ";
+                     err_msg = err_msg + print_objid_to_string(name, name_length) + " >= ";
+                     err_msg =
+                         err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
 
-                     // Create a buffer for capturing output. 256 comes from the max
-                     // inside fprint_objid
-                     std::vector<char> buffer(256);
-                     buffer.clear();
-
-                     // Open the buffer as a file
-                     FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
-
-                     fprint_objid(f1, name, name_length);
-                     fclose(f1);
-
-                     err_msg = err_msg + std::string(buffer.data()) + " >= ";
-
-                     buffer.clear();
-                     FILE *f2 = fmemopen(buffer.data(), buffer.size(), "w");
-                     fprint_objid(f2, vars->name, vars->name_length);
-                     fclose(f2);
-                     err_msg = err_msg + std::string(buffer.data()) + "\n";
                      throw std::runtime_error(err_msg);
                   }
                   memmove((char *)name, (char *)vars->name, vars->name_length * sizeof(oid));
@@ -399,17 +387,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                        vars = vars->next_variable, count++)
                      /*EMPTY*/;
                   if (vars) {
-                     // Create a buffer for capturing output. 256 comes from the max
-                     // inside fprint_objid
-                     std::vector<char> buffer(256);
-                     buffer.clear();
-
-                     // Open the buffer as a file
-                     FILE *f1 = fmemopen(buffer.data(), buffer.size(), "w");
-
-                     fprint_objid(f1, vars->name, vars->name_length);
-                     fclose(f1);
-                     err_msg = err_msg + std::string(buffer.data());
+                     err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
                   }
                   err_msg = err_msg + "\n";
                   throw std::runtime_error(err_msg);

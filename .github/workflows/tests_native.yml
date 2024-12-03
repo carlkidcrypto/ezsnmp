@@ -1,4 +1,4 @@
-name: Tests
+name: Tests With Native Package Manager
 
 on:
   push:
@@ -47,31 +47,17 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
-                 brew update;
-                 brew install net-snmp;
-                 brew install openssl@3;
+                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
           
-          macos: brew update;
-                 brew install net-snmp;
-                 brew install openssl@3;
-                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
-                 export PATH="/usr/local/opt/net-snmp/bin:$PATH";
-                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
-                 export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
-                 mkdir -p -m 0755 ~/.snmp;
+          macos: mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
@@ -89,8 +75,9 @@ jobs:
 
       - name: Build And Install EzSnmp
         run: |
-          pip install .
-      
+          export LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH;
+          pip install . --verbose
+
       - name: Start SNMP daemon
         run: |
           if [ "$RUNNER_OS" == "Linux" ]
@@ -115,21 +102,21 @@ jobs:
           path: "ezsnmp tests"
 
       - name: Run Tests
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
-        with:
-          linux: wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
-                 VALGRIND=(
-                   'valgrind'
-                   '--tool=memcheck'
-                   '--leak-check=full'
-                   '--show-leak-kinds=definite,indirect,possible'
-                   '--suppressions=./valgrind-python.supp'
-                   '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
-                 );
-                 echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 ${VALGRIND[@]} pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
-          
-          macos: pytest -s tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]
+          then
+            wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp
+            VALGRIND=(
+              'valgrind'
+              '--tool=memcheck'
+              '--leak-check=full'
+              '--show-leak-kinds=definite,indirect,possible'
+              '--suppressions=./valgrind-python.supp'
+              '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
+            )
+            echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT
+          fi
+          LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH ${VALGRIND[@]} python -m pytest ${PYTEST_ARGS[@]} --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
