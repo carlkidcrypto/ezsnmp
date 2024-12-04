@@ -19,6 +19,9 @@ link_args = []
 system_netsnmp_version = check_output("net-snmp-config --version", shell=True).decode()
 homebrew_version = None
 homebrew_netsnmp_version = None
+libs = []
+libdirs = []
+incdirs = []
 
 for arg in argv:
     if arg.startswith("--debug"):
@@ -67,10 +70,6 @@ else:
     libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
     incdirs = ["ezsnmp/include/"]
-
-    print(f"libs: {libs}")
-    print(f"libdirs: {libdirs}")
-    print(f"incdirs: {incdirs}")
 
     # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
     homebrew_version = check_output("brew --version", shell=True).decode()
@@ -129,8 +128,6 @@ else:
             libdirs.append(temp_path + "/lib")
             incdirs.append(temp_path + "/include")
 
-            print(f"libdirs: {libdirs}")
-            print(f"incdirs: {incdirs}")
             print(f"openssl_ver: {openssl_ver}")
 
         except CalledProcessError:
@@ -143,6 +140,9 @@ print(f"platform: {platform}")
 print(f"system_netsnmp_version: {system_netsnmp_version}")
 print(f"homebrew_version: {homebrew_version}")
 print(f"homebrew_netsnmp_version: {homebrew_netsnmp_version}")
+print(f"libs: {libs}")
+print(f"libdirs: {libdirs}")
+print(f"incdirs: {incdirs}")
 
 
 class RelinkLibraries(BuildCommand):
