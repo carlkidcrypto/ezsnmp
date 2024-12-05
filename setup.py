@@ -49,7 +49,7 @@ if in_tree:
     libdirs = [flag[2:] for flag in s_split(libdirs) if flag[:2] == "-L"]
     incdirs = [flag[2:] for flag in s_split(incdirs) if flag[:2] == "-I"]
 
-# Otherwise, we use the system-installed SNMP libraries
+# Otherwise, we use the system-installed or Homebrew SNMP libraries
 else:
     netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
 
@@ -69,9 +69,7 @@ else:
 
     libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
-    # Adding this in makes it compile on MacOS without homebrew. I need to figure out how to make
-    # this dynamic for macos and linux.
-    incdirs = ["ezsnmp/include/", "/usr/local/Cellar/net-snmp/5.9.4/include"]
+    incdirs = ["ezsnmp/include/"]
 
     try:
         # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
@@ -150,7 +148,15 @@ else:
                 print("A brew command failed...")
 
     except CalledProcessError:
-        print("Brew is not installed...")
+        homebrew_version = None
+        print("Homebrew is not installed...")
+
+        # Add in system includes instead of Homebrew ones
+        for dir in libdirs:
+            if "net-snmp" in dir:
+                netsnmp_incdir = dir.replace("lib", "include")
+                break
+        incdirs = incdirs + [netsnmp_incdir]
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
