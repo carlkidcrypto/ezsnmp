@@ -152,6 +152,7 @@ else:
         print("Homebrew is not installed...")
 
         # Add in system includes instead of Homebrew ones
+        netsnmp_incdir = None
         for dir in libdirs:
             if "net-snmp" in dir:
                 netsnmp_incdir = dir.replace("lib", "include")
