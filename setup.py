@@ -67,10 +67,11 @@ else:
             link_args.append(flag)
             pass_next = False
 
-    # link_args += [flag for flag in s_split(netsnmp_libs) if flag[:2] == '-f']
     libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
-    incdirs = ["ezsnmp/include/"]
+    # Adding this in makes it compile on MacOS without homebrew. I need to figure out how to make
+    # this dynamic for macos and linux.
+    incdirs = ["ezsnmp/include/", "/usr/local/Cellar/net-snmp/5.9.4/include"]
 
     try:
         # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`

@@ -71,7 +71,7 @@ jobs:
 
       - name: Install pip dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
 
       - name: Build And Install EzSnmp
         run: |
