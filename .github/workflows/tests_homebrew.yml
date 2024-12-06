@@ -1,11 +1,16 @@
 name: Tests With Homebrew Package Manager
-
+concurrency: tests
 on:
   push:
     branches: [ main ]
 
   pull_request:
     branches: [ main ]
+  
+  workflow_run:
+    workflows: ["Black"]
+    types:
+      - completed
 
 jobs:
   check-source-changes:
@@ -28,17 +33,9 @@ jobs:
             tests/*.conf
             setup.py
             setup.cfg
-  
-  lint-black-formatting:
-    runs-on: ubuntu-latest
-    needs: check-source-changes
-    steps:
-      - uses: actions/checkout@v4
-      - uses: psf/black@24.10.0
 
   build-and-test:
     runs-on: ${{ matrix.os }}
-    needs: lint-black-formatting
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false

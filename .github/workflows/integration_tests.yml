@@ -1,11 +1,16 @@
 name: Integration Tests
-
+concurrency: integration_tests
 on:
   push:
     branches: [ main ]
 
   pull_request:
     branches: [ main ]
+  
+  workflow_run:
+    workflows: ["Black"]
+    types:
+      - completed
 
 jobs:
   check-source-changes:
