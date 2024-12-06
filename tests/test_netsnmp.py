@@ -193,7 +193,7 @@ def test_snmpwalk(netsnmp_args):
         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
         assert res[4].value == platform.node()
         assert res[5].value == "my original location"
-    
+
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.5, 1.0))
 
