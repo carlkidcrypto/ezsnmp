@@ -195,7 +195,7 @@ def test_snmpwalk(netsnmp_args):
         assert res[5].value == "my original location"
 
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.5, 1.0))
+    sleep(uniform(0.8, 1.3))
 
 
 def test_snmp_walk_res(netsnmp_args):
