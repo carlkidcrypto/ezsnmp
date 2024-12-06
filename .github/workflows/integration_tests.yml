@@ -6,11 +6,6 @@ on:
 
   pull_request:
     branches: [ main ]
-  
-  workflow_run:
-    workflows: ["Black"]
-    types:
-      - completed
 
 jobs:
   check-source-changes:

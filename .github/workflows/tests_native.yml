@@ -7,15 +7,9 @@ on:
   pull_request:
     branches: [ main ]
 
-  workflow_run:
-    workflows: ["Black"]
-    types:
-      - completed
-
 jobs:
   check-source-changes:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_run'
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
