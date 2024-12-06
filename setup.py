@@ -154,10 +154,17 @@ else:
         # Add in system includes instead of Homebrew ones
         netsnmp_incdir = None
         for dir in libdirs:
+            # MacOS
             if "net-snmp" in dir:
                 netsnmp_incdir = dir.replace("lib", "include")
+                incdirs = incdirs + [netsnmp_incdir]
                 break
-        incdirs = incdirs + [netsnmp_incdir]
+
+            # Linux
+            elif "x86_64-linux-gnu" in dir:
+                netsnmp_incdir = ["/usr/include/net-snmp"]
+                incdirs = incdirs + [netsnmp_incdir]
+                break
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
