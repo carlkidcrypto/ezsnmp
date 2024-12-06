@@ -75,7 +75,6 @@ jobs:
 
       - name: Build And Install EzSnmp
         run: |
-          export LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH;
           pip install . --verbose
 
       - name: Start SNMP daemon

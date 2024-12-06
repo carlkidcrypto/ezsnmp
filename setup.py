@@ -162,7 +162,7 @@ else:
 
             # Linux
             elif "x86_64-linux-gnu" in dir:
-                netsnmp_incdir = ["/usr/include/net-snmp"]
+                netsnmp_incdir = "/usr/include/net-snmp"
                 incdirs = incdirs + [netsnmp_incdir]
                 break
 
