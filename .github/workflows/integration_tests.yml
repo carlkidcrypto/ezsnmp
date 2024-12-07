@@ -1,5 +1,5 @@
 name: Integration Tests
-
+concurrency: integration_tests
 on:
   push:
     branches: [ main ]
@@ -105,7 +105,6 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: |
-                 export LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH;
                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
                  ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
                  echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
