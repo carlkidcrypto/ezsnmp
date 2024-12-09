@@ -30,14 +30,15 @@ before-all = """yum -y install wget;
 [tool.cibuildwheel.macos]
 before-all = """mkdir -p $HOME/opt/mports;
           cd $HOME/opt/mports;
-          wget https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5.tar.gz;
+          rm -f MacPorts-2.10.5.tar.gz;
+          curl -L https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5.tar.gz -o MacPorts-2.10.5.tar.gz;
           tar -xzvf MacPorts-2.10.5.tar.gz;
           cd $HOME/opt/mports/MacPorts-2.10.5;
           ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`;
           make;
           make install;
           make distclean;
-          export PATH=$HOME/opt/local/bin:$HOME/opt/local/sbin:$PATH;
+          export PATH=$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH;
           port -N selfupdate;
           port -N clean net-snmp openssl;
           port -N install net-snmp openssl;
