@@ -9,7 +9,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as BuildCommand
 import setuptools.command.build as build
 from setuptools import dist
-# from re import search
+from homebrew import HomeBrew
 
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
@@ -71,6 +71,9 @@ else:
     print(f"libdirs: {libdirs}")
     print(f"incdirs: {incdirs}")
 
+    hb = HomeBrew(libdirs=libdirs, incdirs=incdirs)
+    hb.check_brew_isinstalled()
+
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
@@ -89,6 +92,9 @@ class RelinkLibraries(BuildCommand):
     Non-brew installations and non-macOS systems will not be affected.
     """
 
+    def __init__():
+        pass
+
     def run(self):
         BuildCommand.run(self)
         if platform == "darwin":  # Newer Net-SNMP dylib may not be linked to properly
@@ -98,6 +104,8 @@ class RelinkLibraries(BuildCommand):
                 ).decode()
             except CalledProcessError:
                 return
+            
+            lines = hb.get_lines()
             lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
             b = build.build(dist.Distribution())  # Dynamically determine build path
             b.finalize_options()
@@ -130,7 +138,6 @@ class RelinkLibraries(BuildCommand):
                     shell=True,
                 )
 
-# this lines must stay for setup
 setup(
     ext_modules=[
         Extension(
