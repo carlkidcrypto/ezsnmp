@@ -9,7 +9,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as BuildCommand
 import setuptools.command.build as build
 from setuptools import dist
-from re import search, findall
+from re import search
 
 
 # Install Helpers
@@ -40,56 +40,18 @@ def is_net_snmp_installed_macports():
     Returns:
       str: The net-snmp version if installed, "" otherwise.
     """
-    if is_macports_installed():
-        try:
-            # Use `port installed` to check for the package
-            macports_output = check_output(
-                "port installed net-snmp", shell=True
-            ).decode()
-            # Use regex to match and extract the version
-            pattern = r"net-snmp @(\d+\.\d+\.\d+[_+a-zA-Z0-9]*) \(active\)"
-            match = search(pattern, macports_output)
-            if match:
-                return match.group(1)  # Return the captured version
-            else:
-                return ""
-        except CalledProcessError:
+
+    try:
+        # Use `port installed` to check for the package
+        macports_output = check_output("port installed net-snmp", shell=True).decode()
+        # Use regex to match and extract the version
+        pattern = r"net-snmp @(\d+\.\d+\.\d+[_+a-zA-Z0-9]*) \(active\)"
+        match = search(pattern, macports_output)
+        if match:
+            return match.group(1)
+        else:
             return ""
-    else:
-        return ""
-
-
-def get_net_snmp_paths():
-    """
-    Retrieves the library and include paths for net-snmp
-    installed via MacPorts by parsing the output of 'port contents net-snmp'.
-
-    Returns:
-      tuple: A tuple containing two lists:
-              - The first list contains all matching library paths.
-              - The second list contains all matching include paths.
-             Returns () if net-snmp is not installed or MacPorts is not found.
-    """
-    if is_macports_installed():
-        try:
-            # Use 'port contents' to get file list
-            contents_output = check_output(
-                "port contents net-snmp", shell=True
-            ).decode()
-
-            # Extract all library paths
-            lib_paths = findall(r"^(.+)/lib/libsnmp.*", contents_output, re.MULTILINE)
-
-            # Extract all include paths
-            include_paths = findall(
-                r"^(.+)/include/net-snmp.*", contents_output, re.MULTILINE
-            )
-
-            return lib_paths, include_paths
-
-        except CalledProcessError:
-            return ""
-    else:
+    except CalledProcessError:
         return ""
 
 
@@ -255,6 +217,12 @@ else:
     macports_netsnmp_version = is_net_snmp_installed_macports()
     # macports_openssl_version = is_openssl_installed_macports()
 
+    if macports_version and macports_netsnmp_version:
+        for dir in libdirs:
+            if "/opt/local/lib" in dir:
+                netsnmp_incdir = dir.replace("lib", "include")
+                incdirs = incdirs + [netsnmp_incdir]
+
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
@@ -265,7 +233,7 @@ print(f"homebrew_netsnmp_version: {homebrew_netsnmp_version}")
 print(f"homebrew_openssl_version: {homebrew_openssl_version}")
 print(f"macports_version: {str(macports_version).strip()}")
 print(f"macports_netsnmp_version: {macports_netsnmp_version}")
-print(f"hmacports_openssl_version: {macports_openssl_version}")
+print(f"macports_openssl_version: {macports_openssl_version}")
 print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")

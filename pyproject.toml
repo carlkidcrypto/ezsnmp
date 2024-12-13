@@ -26,8 +26,10 @@ before-all = """yum -y install wget;
                 ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
                 make ;
                 make install ;"""
+repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
+environment = { PATH = "$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH" }
 before-all = """mkdir -p $HOME/opt/mports;
           cd $HOME/opt/mports;
           rm -f MacPorts-2.10.5.tar.gz;
@@ -38,7 +40,6 @@ before-all = """mkdir -p $HOME/opt/mports;
           make;
           make install;
           make distclean;
-          export PATH=$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH;
           port -N selfupdate;
           port -N clean net-snmp openssl;
           port -N install net-snmp openssl;
