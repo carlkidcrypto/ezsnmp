@@ -2,7 +2,6 @@
 manylinux-x86_64-image = "manylinux_2_28"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
 skip = "cp27-* cp36-* cp37-* cp38-* pp*"
-environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_2*"
@@ -29,8 +28,10 @@ before-all = """yum -y install wget;
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-environment = { PATH = "$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH" }
-before-all = """mkdir -p $HOME/opt/mports;
+environment = { PATH = "$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH", MACOSX_DEPLOYMENT_TARGET = "13.0", DYLD_LIBRARY_PATH = "$HOME/opt/local/lib:$DYLD_LIBRARY_PATH" }
+before-all = """
+          rm -rf $HOME/opt/mports;
+          mkdir -p $HOME/opt/mports;
           cd $HOME/opt/mports;
           rm -f MacPorts-2.10.5.tar.gz;
           curl -L https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5.tar.gz -o MacPorts-2.10.5.tar.gz;
