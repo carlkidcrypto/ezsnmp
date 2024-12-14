@@ -30,8 +30,8 @@ repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 [tool.cibuildwheel.macos]
 environment = { PATH = "$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH", MACOSX_DEPLOYMENT_TARGET = "13.0", DYLD_LIBRARY_PATH = "$HOME/opt/local/lib:$DYLD_LIBRARY_PATH" }
 before-all = """
-          rm -rf $HOME/opt/mports;
           mkdir -p $HOME/opt/mports;
+          rm -rf $HOME/opt/mports/*;
           cd $HOME/opt/mports;
           rm -f MacPorts-2.10.5.tar.gz;
           curl -L https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5.tar.gz -o MacPorts-2.10.5.tar.gz;
@@ -42,9 +42,9 @@ before-all = """
           make install;
           make distclean;
           port -N selfupdate;
-          port -N clean net-snmp openssl;
-          port -N install net-snmp openssl;
-          port -N upgrade net-snmp openssl;"""
+          port -N clean net-snmp openss zlib;
+          port -s -N install net-snmp openssl zlib;
+          port -s -N upgrade net-snmp openssl zlib;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [build-system]
