@@ -51,7 +51,30 @@ jobs:
         with:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
           
-          macos: python -m cibuildwheel --output-dir wheelhouse --platform macos;
+          macos: |
+            MACOS_VERSION=$(sw_vers -productVersion)
+            if [[ "$MACOS_VERSION" == "10.15."* ]]; then
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\110.15"/' pyproject.toml
+
+            elif [[ "$MACOS_VERSION" == "11."* ]]; then
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\111.0"/' pyproject.toml
+
+            elif [[ "$MACOS_VERSION" == "12."* ]]; then
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\112.0"/' pyproject.toml
+
+            elif [[ "$MACOS_VERSION" == "13."* ]]; then
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\113.0"/' pyproject.toml
+
+            elif [[ "$MACOS_VERSION" == "14."* ]]; then
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\114.0"/' pyproject.toml
+
+            elif [[ "$MACOS_VERSION" == "15."* ]]; then
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\115.0"/' pyproject.toml
+
+            else
+                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\110.15"/' pyproject.toml
+            fi
+            python -m cibuildwheel --output-dir wheelhouse --platform macos;
 
       - uses: actions/upload-artifact@v4
         with:

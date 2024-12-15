@@ -25,22 +25,26 @@ before-all = """yum -y install wget;
                 ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
                 make ;
                 make install ;"""
+repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-before-all = """mkdir -p $HOME/opt/mports;
+environment = { PATH = "$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0", DYLD_LIBRARY_PATH = "$HOME/opt/local/lib:$DYLD_LIBRARY_PATH" }
+before-all = """
+          mkdir -p $HOME/opt/mports;
+          rm -rf $HOME/opt/mports/*;
           cd $HOME/opt/mports;
-          wget https://github.com/macports/macports-base/releases/download/v2.10.2/MacPorts-2.10.2.tar.gz;
-          tar -xzvf MacPorts-2.10.2.tar.gz;
-          cd $HOME/opt/mports/MacPorts-2.10.2;
+          rm -f MacPorts-2.10.5.tar.gz;
+          curl -L https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5.tar.gz -o MacPorts-2.10.5.tar.gz;
+          tar -xzvf MacPorts-2.10.5.tar.gz;
+          cd $HOME/opt/mports/MacPorts-2.10.5;
           ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`;
           make;
           make install;
           make distclean;
-          export PATH=$HOME/opt/local/bin:$HOME/opt/local/sbin:$PATH;
-          port selfupdate;
-          port clean net-snmp openssl;
-          port install net-snmp openssl;
-          port upgrade net-snmp openssl;"""
+          port -N selfupdate;
+          port -N clean net-snmp openssl;
+          port -N install net-snmp openssl;
+          port -N upgrade net-snmp openssl;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [build-system]
