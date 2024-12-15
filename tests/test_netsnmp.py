@@ -179,8 +179,6 @@ def test_snmpbulkget(netsnmp_args):
 
 
 def test_snmpwalk(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
     if netsnmp_args[1] == "1":
         with pytest.raises(RuntimeError):
             netsnmp_args = netsnmp_args + ["system"]
@@ -195,6 +193,9 @@ def test_snmpwalk(netsnmp_args):
         assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
         assert res[4].value == platform.node()
         assert res[5].value == "my original location"
+
+    # Space out our tests to avoid overwhelming the snmpd server with traffic.
+    sleep(uniform(1.0, 1.5))
 
 
 def test_snmp_walk_res(netsnmp_args):

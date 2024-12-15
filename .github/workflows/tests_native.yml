@@ -1,5 +1,5 @@
 name: Tests With Native Package Manager
-
+concurrency: tests
 on:
   push:
     branches: [ main ]
@@ -28,17 +28,10 @@ jobs:
             tests/*.conf
             setup.py
             setup.cfg
-  
-  lint-black-formatting:
-    runs-on: ubuntu-latest
-    needs: check-source-changes
-    steps:
-      - uses: actions/checkout@v4
-      - uses: psf/black@24.10.0
 
   build-and-test:
     runs-on: ${{ matrix.os }}
-    needs: lint-black-formatting
+    needs: check-source-changes
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
@@ -71,11 +64,10 @@ jobs:
 
       - name: Install pip dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
 
       - name: Build And Install EzSnmp
         run: |
-          export LD_LIBRARY_PATH=$(net-snmp-config --libdir | sed 's/-L//'):$LD_LIBRARY_PATH;
           pip install . --verbose
 
       - name: Start SNMP daemon
