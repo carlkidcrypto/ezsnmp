@@ -71,8 +71,9 @@ else:
     print(f"libdirs: {libdirs}")
     print(f"incdirs: {incdirs}")
 
-    hb = HomeBrew(libdirs=libdirs, incdirs=incdirs)
-    hb.check_brew_isinstalled()
+    hb = HomeBrew()
+    hb.libdirs = libdirs
+    hb.incdirs = incdirs
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
@@ -104,7 +105,7 @@ class RelinkLibraries(BuildCommand):
                 ).decode()
             except CalledProcessError:
                 return
-            
+
             lines = hb.get_lines()
             lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
             b = build.build(dist.Distribution())  # Dynamically determine build path
@@ -137,6 +138,7 @@ class RelinkLibraries(BuildCommand):
                     cmd_to_run,
                     shell=True,
                 )
+
 
 setup(
     ext_modules=[
