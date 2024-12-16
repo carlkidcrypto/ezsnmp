@@ -67,20 +67,24 @@ else:
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
     incdirs = ["ezsnmp/include/"]
 
-    print(f"libs: {libs}")
-    print(f"libdirs: {libdirs}")
-    print(f"incdirs: {incdirs}")
-
     hb = HomeBrew()
-    hb.libdirs = libdirs
-    hb.incdirs = incdirs
+    if hb.libdirs and hb.incdirs:
+        libdirs = hb.libdirs
+        incdirs = hb.incdirs
+        homebrew_version = hb.homebrew_version
+        homebrew_netsnmp_version = hb.homebrew_netsnmp_version
+        homebrew_openssl_version = hb.homebrew_openssl_version
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
 print(f"platform: {platform}")
-print(f"netsnmp_version: {netsnmp_version}")
-print(f"homebrew_version: {homebrew_version}")
+print(f"homebrew_version: {str(homebrew_version).strip()}")
+print(f"homebrew_netsnmp_version: {homebrew_netsnmp_version}")
+print(f"homebrew_openssl_version: {homebrew_openssl_version}")
+print(f"libs: {libs}")
+print(f"libdirs: {libdirs}")
+print(f"incdirs: {incdirs}")
 
 
 class RelinkLibraries(BuildCommand):

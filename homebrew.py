@@ -17,11 +17,23 @@ class HomeBrew:
     def incdirs(self):
         return self._incdirs
 
+    @property
+    def homebrew_version(self):
+        return self._homebrew_version
+
+    @property
+    def homebrew_netsnmp_version(self):
+        return self._netsnmp_version
+
+    @property
+    def homebrew_openssl_version(self):
+        return self._openssl_version
+
     def _check_brew_isinstalled(self):
         # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
         try:
             homebrew_version = check_output("brew --version", shell=True).decode()
-
+            self._homebrew_version = homebrew_version
         except CalledProcessError:
             print("Homebrew isn't installed...")
             pass
@@ -66,8 +78,11 @@ class HomeBrew:
             brew = check_output(
                 "brew info net-snmp", shell=True
             ).decode()  # this may cause error
+
+            self._netsnmp_version = brew
             openssl_ver = self._get_openssl_ver(self, brew)
             self._append_openssl_paths(self, openssl_ver)
+
         except CalledProcessError:
             print("A brew command failed...")
             pass
@@ -86,6 +101,7 @@ class HomeBrew:
                 ),
             )
         )[0]
+        self._openssl_version = openssl_ver
 
         return openssl_ver
 
