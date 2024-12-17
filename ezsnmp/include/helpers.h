@@ -21,5 +21,13 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs);
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str);
 std::string print_objid_to_string(oid const *objid, size_t objidlen);
-
+#if NETSNMP_VERSION_MAJOR < 5 || \
+   (NETSNMP_VERSION_MAJOR == 5 && \
+    (NETSNMP_VERSION_MINOR < 6 || \
+     (NETSNMP_VERSION_MINOR == 6 && \
+      NETSNMP_VERSION_PATCH <= 2 ))) 
+#define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
+void netsnmp_cleanup_session(netsnmp_session *s);
+void netsnmp_get_monotonic_clock(struct timeval* tv);
+#endif
 #endif // HELPERS_H
