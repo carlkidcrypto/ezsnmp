@@ -5,8 +5,8 @@ from subprocess import check_output, CalledProcessError
 
 class HomeBrew:
     def __init__(self):
-        self._libdirs = self.libdirs
-        self._incdirs = self.incdirs
+        self._libdirs = None
+        self._incdirs = None
         self._check_brew_isinstalled()
 
     @property
