@@ -6,48 +6,8 @@ from shlex import split as s_split
 from setuptools import setup, Extension
 from re import search
 
-
-# Install Helpers
-def is_macports_installed():
-    """
-    Checks if MacPorts is installed on the system.
-
-    Returns:
-      str: The MacPorts version if installed, "" otherwise.
-    """
-    try:
-        # Check if the `port` command is available and get the version
-        version_output = check_output("port version", shell=True).decode()
-        # Extract version using regex. It'll match something like: Version: `2.10.5`.
-        match = search(r"Version:\s+(\d+\.\d+\.\d+)", version_output)
-        if match:
-            return match.group(1)
-        else:
-            return ""
-    except CalledProcessError:
-        return ""
-
-
-def is_net_snmp_installed_macports():
-    """
-    Checks if any version of net-snmp is installed via MacPorts.
-
-    Returns:
-      str: The net-snmp version if installed, "" otherwise.
-    """
-
-    try:
-        # Use `port installed` to check for the package
-        macports_output = check_output("port installed net-snmp", shell=True).decode()
-        # Use regex to match and extract the version
-        pattern = r"net-snmp @(\d+\.\d+\.\d+[_+a-zA-Z0-9]*) \(active\)"
-        match = search(pattern, macports_output)
-        if match:
-            return match.group(1)
-        else:
-            return ""
-    except CalledProcessError:
-        return ""
+from macports import MacPorts
+from homebrew import HomeBrew
 
 
 # Determine if a base directory has been provided with the --basedir option
@@ -113,85 +73,14 @@ else:
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
     incdirs = ["ezsnmp/include/"]
 
-    try:
-        # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
-        homebrew_version = check_output("brew --version", shell=True).decode()
-        if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
-            # Check if net-snmp is installed via Brew
-            try:
-                brew = check_output(
-                    "brew list net-snmp 2>/dev/null", shell=True
-                ).decode()
-                lines = brew.splitlines()
-                # extract brew version here...
-                pattern = r"/opt/homebrew/Cellar/net-snmp/(\d+\.\d+\.\d+)/"
-                match = search(pattern, lines[0])
-                if match:
-                    version = match.group(1)
-                    homebrew_netsnmp_version = version
-
-                temp_include_dir = list(
-                    filter(lambda l: "include/net-snmp" in l, lines)
-                )[0]
-                temp_incdirs = []
-                temp_libdirs = []
-                temp_incdirs.append(
-                    temp_include_dir[: temp_include_dir.index("include/net-snmp") + 7]
-                )
-
-                if platform == "darwin":
-                    lib_dir = list(
-                        filter(lambda l: "lib/libnetsnmp.dylib" in l, lines)
-                    )[0]
-                    temp_libdirs.append(
-                        lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3]
-                    )
-
-                # The homebrew version also depends on the Openssl keg
-                brew = check_output("brew info net-snmp", shell=True).decode()
-                homebrew_openssl_version = list(
-                    filter(
-                        lambda o: "openssl" in o,
-                        *map(
-                            str.split,
-                            filter(
-                                lambda l: "openssl" in l,
-                                str(brew.replace("'", "")).split("\n"),
-                            ),
-                        ),
-                    )
-                )[0]
-
-                brew = check_output(
-                    "brew info {0}".format(homebrew_openssl_version), shell=True
-                ).decode()
-                temp = brew.split("\n")
-                # As of 06/04/2024 brew info openssl spits out lines. the fifth one is what we care about
-                # This works for now, but we need a better solution
-                # ==> openssl@3: stable 3.3.0 (bottled)
-                # Cryptography and SSL/TLS Toolkit
-                # https://openssl.org/
-                # Installed
-                # /opt/homebrew/Cellar/openssl@3/3.3.0 (6,977 files, 32.4MB) *
-                # Poured from bottle using the formulae.brew.sh API on 2024-06-04 at 21:17:37
-                # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
-                # License: Apache-2.0
-                # ...
-                # print(temp)
-                temp_path = str(temp[4].split("(")[0]).strip()
-
-                temp_libdirs.append(temp_path + "/lib")
-                temp_incdirs.append(temp_path + "/include")
-
-                libdirs = libdirs + temp_libdirs
-                incdirs = incdirs + temp_incdirs
-
-            except CalledProcessError:
-                print("A brew command failed...")
-
-    except CalledProcessError:
-        homebrew_version = None
-        print("Homebrew is not installed...")
+    homebrew = HomeBrew()
+    # Make HomeBrew() getters return None or "" if libdirs or incdirs aren't found.
+    if homebrew.libdirs and homebrew.incdirs:
+        libdirs = homebrew.libdirs
+        incdirs = homebrew.incdirs
+        homebrew_version = homebrew.homebrew_version
+        homebrew_netsnmp_version = homebrew.homebrew_netsnmp_version
+        homebrew_openssl_version = homebrew.homebrew_openssl_version
 
         # Add in system includes instead of Homebrew ones
         netsnmp_incdir = None
@@ -208,15 +97,16 @@ else:
                 incdirs = incdirs + [netsnmp_incdir]
                 break
 
-    macports_version = is_macports_installed()
-    macports_netsnmp_version = is_net_snmp_installed_macports()
-    # macports_openssl_version = is_openssl_installed_macports()
+        macports = MacPorts()
+        macports_version = macports.is_macports_installed()
+        macports_netsnmp_version = macports.is_net_snmp_installed_macports()
+        # macports_openssl_version = is_openssl_installed_macports()
 
-    if macports_version and macports_netsnmp_version:
-        for dir in libdirs:
-            if "/opt/local/lib" in dir:
-                netsnmp_incdir = dir.replace("lib", "include")
-                incdirs = incdirs + [netsnmp_incdir]
+        if macports_version and macports_netsnmp_version:
+            for dir in libdirs:
+                if "/opt/local/lib" in dir:
+                    netsnmp_incdir = dir.replace("lib", "include")
+                    incdirs = incdirs + [netsnmp_incdir]
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
@@ -228,7 +118,7 @@ print(f"homebrew_netsnmp_version: {homebrew_netsnmp_version}")
 print(f"homebrew_openssl_version: {homebrew_openssl_version}")
 print(f"macports_version: {str(macports_version).strip()}")
 print(f"macports_netsnmp_version: {macports_netsnmp_version}")
-print(f"macports_openssl_version: {macports_openssl_version}")
+# print(f"macports_openssl_version: {macports_openssl_version}")
 print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")
