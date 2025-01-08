@@ -42,6 +42,7 @@ before-all = """
           make install;
           make distclean;
           port -N selfupdate;
+          port -N gettext;
           port -N clean net-snmp openssl;
           port -N install net-snmp openssl;
           port -N upgrade net-snmp openssl;"""
