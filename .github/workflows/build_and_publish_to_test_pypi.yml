@@ -5,7 +5,7 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [ main ]
+    branches: [ hotfix/ga_macos_runners_2 ]
 
 jobs:
   check-source-changes:
