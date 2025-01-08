@@ -11,11 +11,11 @@ platformdirs==4.3.6
 pluggy==1.5.0
 pycodestyle==2.12.1
 pyflakes==3.2.0
-pyparsing==3.2.0
+pyparsing==3.2.1
 termcolor==2.5.0
 tomli==2.2.1
-setuptools==75.6.0
-urllib3==2.2.3
+setuptools==75.7.0
+urllib3==2.3.0
 build==1.2.2
 cibuildwheel==2.22.0
 pip==24.3.1
