@@ -42,8 +42,8 @@ before-all = """
           make install;
           make distclean;
           port -N selfupdate;
-          port -N clean net-snmp openssl gettext;
-          port -N install gettext;
+          port -N clean net-snmp openssl bzip2 libpcap pcre perl5.34 zlib openssl bison flex xz gettext-runtime libtextstyle m4 bison-runtime gettext gettext-tools-libs lzip libedit db48 gdbm readline;
+          port -N install bzip2 libpcap pcre perl5.34 zlib openssl bison flex xz gettext-runtime libtextstyle m4 bison-runtime gettext gettext-tools-libs lzip libedit db48 gdbm readline;
           port -N install net-snmp openssl;
           port -N upgrade net-snmp openssl;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
