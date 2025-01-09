@@ -1,7 +1,7 @@
-ezsnmp.helpers module
+ezsnmp.netsnmp module
 =====================
 
-.. automodule:: ezsnmp.helpers
+.. automodule:: ezsnmp.netsnmp
    :members:
    :undoc-members:
    :show-inheritance:

@@ -6,15 +6,15 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Ez SNMP’s documentation! &mdash; Ez SNMP V1.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
+  <title>Welcome to Ez SNMP’s documentation! &mdash; Ez SNMP V2.0.0a5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=83fd5716"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/documentation_options.js?v=d3fbea5c"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -43,12 +43,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">ezsnmp.exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes.html">ezsnmp.datatypes module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="netsnmp.html">ezsnmp.netsnmp module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variables.html">ezsnmp.variables module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase.html">ezsnmp.sessionbase module</a></li>
 </ul>
 
         </div>
@@ -89,7 +87,7 @@ without compiling it via your package manager:</p>
 </div>
 <p>On Debian / Ubuntu systems:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>-y<span class="p">;</span>
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libsnmp-dev<span class="w"> </span>libperl-dev<span class="w"> </span>snmp-mibs-downloader<span class="p">;</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libsnmp-dev<span class="w"> </span>g++<span class="w"> </span>python3-dev<span class="p">;</span>
 </pre></div>
 </div>
 <p>On macOS systems:</p>
@@ -129,7 +127,7 @@ something like this:</p>
 <p>There are primarily two ways you can use the EzSNMP library.</p>
 <p>The first is with the use of a Session object which is most suitable when you
 are planning on requesting multiple pieces of SNMP data from a source.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">Session</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 
 <span class="c1"># Create an SNMP session to be used for all our requests</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -164,7 +162,7 @@ are planning on requesting multiple pieces of SNMP data from a source.</p>
 </div>
 <p>You may also use EzSNMP via its simple interface which is intended for
 one-off operations where you wish to specify all details in the request:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">snmp_get</span><span class="p">,</span> <span class="n">snmp_set</span><span class="p">,</span> <span class="n">snmp_walk</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">snmp_get</span><span class="p">,</span> <span class="n">snmp_set</span><span class="p">,</span> <span class="n">snmp_walk</span>
 
 <span class="c1"># Grab a single piece of information using an SNMP GET</span>
 <span class="n">snmp_get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -182,76 +180,76 @@ one-off operations where you wish to specify all details in the request:</p>
 </section>
 <section id="example-session-kargs">
 <h2>Example Session Kargs<a class="headerlink" href="#example-session-kargs" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 
 <span class="n">SESS_V1_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-<span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
 <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-<span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+<span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
 <span class="s2">&quot;community&quot;</span><span class="p">:</span> <span class="s2">&quot;public&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SESS_V2_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+    <span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
     <span class="s2">&quot;community&quot;</span><span class="p">:</span> <span class="s2">&quot;public&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SESS_V3_MD5_DES_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+    <span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
     <span class="s2">&quot;auth_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;MD5&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_level&quot;</span><span class="p">:</span> <span class="s2">&quot;authPriv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_username&quot;</span><span class="p">:</span> <span class="s2">&quot;initial_md5_des&quot;</span><span class="p">,</span>
     <span class="s2">&quot;privacy_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;DES&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;privacy_password&quot;</span><span class="p">:</span> <span class="s2">&quot;priv_pass&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auth_password&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_pass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;privacy_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;priv_pass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auth_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_pass&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SESS_V3_MD5_AES_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+    <span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
     <span class="s2">&quot;auth_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;MD5&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_level&quot;</span><span class="p">:</span> <span class="s2">&quot;authPriv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_username&quot;</span><span class="p">:</span> <span class="s2">&quot;initial_md5_aes&quot;</span><span class="p">,</span>
     <span class="s2">&quot;privacy_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;AES&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;privacy_password&quot;</span><span class="p">:</span> <span class="s2">&quot;priv_pass&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auth_password&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_pass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;privacy_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;priv_pass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auth_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_pass&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SESS_V3_SHA_AES_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+    <span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
     <span class="s2">&quot;auth_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;SHA&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_level&quot;</span><span class="p">:</span> <span class="s2">&quot;authPriv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_username&quot;</span><span class="p">:</span> <span class="s2">&quot;secondary_sha_aes&quot;</span><span class="p">,</span>
     <span class="s2">&quot;privacy_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;AES&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;privacy_password&quot;</span><span class="p">:</span> <span class="s2">&quot;priv_second&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auth_password&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_second&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;privacy_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;priv_second&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auth_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_second&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SESS_V3_SHA_NO_PRIV_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+    <span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
     <span class="s2">&quot;auth_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;SHA&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_level&quot;</span><span class="p">:</span> <span class="s2">&quot;authNoPriv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_username&quot;</span><span class="p">:</span> <span class="s2">&quot;secondary_sha_no_priv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auth_password&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_second&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auth_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_second&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">SESS_V3_MD5_NO_PRIV_ARGS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;remote_port&quot;</span><span class="p">:</span> <span class="mi">11161</span><span class="p">,</span>
+    <span class="s2">&quot;port_number&quot;</span><span class="p">:</span> <span class="s2">&quot;11161&quot;</span><span class="p">,</span>
     <span class="s2">&quot;auth_protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;MD5&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;security_level&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_without_privacy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;security_level&quot;</span><span class="p">:</span> <span class="s2">&quot;authNoPriv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;security_username&quot;</span><span class="p">:</span> <span class="s2">&quot;initial_md5_no_priv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;auth_password&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_pass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;auth_passphrase&quot;</span><span class="p">:</span> <span class="s2">&quot;auth_pass&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c1"># Use the kargs you want. For example</span>
@@ -270,12 +268,16 @@ one-off operations where you wish to specify all details in the request:</p>
 <p>Three make a header file for it <cite>snmpwalk.h</cite> and extract methods/functions from the source code.</p>
 <p>Four run the command below to generate the wrap file.</p>
 <p><code class="docutils literal notranslate"><span class="pre">`bash</span>
-<span class="pre">swig</span> <span class="pre">-c++</span> <span class="pre">-python</span> <span class="pre">-builtin</span> <span class="pre">-outdir</span> <span class="pre">ezsnmp/.</span> <span class="pre">-o</span> <span class="pre">ezsnmp/src/ezsnmp_wrap.cpp</span> <span class="pre">ezsnmp/interface/ezsnmp.i</span>
+<span class="pre">swig</span> <span class="pre">-c++</span> <span class="pre">-python</span> <span class="pre">-builtin</span> <span class="pre">-threads</span> <span class="pre">-doxygen</span> <span class="pre">-std=c++17</span> <span class="pre">-outdir</span> <span class="pre">ezsnmp/.</span> <span class="pre">-o</span> <span class="pre">ezsnmp/src/ezsnmp_netsnmp.cpp</span> <span class="pre">ezsnmp/interface/netsnmp.i</span> <span class="pre">&amp;&amp;</span>
+<span class="pre">swig</span> <span class="pre">-c++</span> <span class="pre">-python</span> <span class="pre">-builtin</span> <span class="pre">-threads</span> <span class="pre">-doxygen</span> <span class="pre">-std=c++17</span> <span class="pre">-outdir</span> <span class="pre">ezsnmp/.</span> <span class="pre">-o</span> <span class="pre">ezsnmp/src/ezsnmp_sessionbase.cpp</span> <span class="pre">ezsnmp/interface/sessionbase.i</span> <span class="pre">&amp;&amp;</span>
+<span class="pre">swig</span> <span class="pre">-c++</span> <span class="pre">-python</span> <span class="pre">-builtin</span> <span class="pre">-threads</span> <span class="pre">-doxygen</span> <span class="pre">-std=c++17</span> <span class="pre">-outdir</span> <span class="pre">ezsnmp/.</span> <span class="pre">-o</span> <span class="pre">ezsnmp/src/ezsnmp_datatypes.cpp</span> <span class="pre">ezsnmp/interface/datatypes.i</span>
 <span class="pre">`</span></code></p>
 <ul class="simple">
 <li><p><cite>-c++</cite> to force generation of a <cite>.cpp</cite> file</p></li>
 <li><p><cite>-python</cite> to build a python module</p></li>
 <li><p><cite>-builtin</cite> to build with native python data types. [Python_builtin_types](<a class="reference external" href="https://swig.org/Doc4.0/Python.html#Python_builtin_types">https://swig.org/Doc4.0/Python.html#Python_builtin_types</a>)</p></li>
+<li><p><cite>-doxygen</cite> Convert C++ doxygen comments to pydoc comments in proxy classes [Python_commandline](<a class="reference external" href="https://swig.org/Doc4.0/Python.html#Python_commandline">https://swig.org/Doc4.0/Python.html#Python_commandline</a>)</p></li>
+<li><p><cite>-threads</cite> adds thread support for all modules. [Support_for_Multithreaded_Applications](<a class="reference external" href="https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications">https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications</a>)</p></li>
 </ul>
 <p>Five run</p>
 <p><code class="docutils literal notranslate"><span class="pre">`python3</span>
@@ -306,12 +308,13 @@ etc…</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">ezsnmp.exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variables.html">ezsnmp.variables module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes.html">ezsnmp.datatypes module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="netsnmp.html">ezsnmp.netsnmp module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="session.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase.html">ezsnmp.sessionbase module</a></li>
 </ul>
 </div>
 </section>

@@ -1,7 +1,7 @@
-ezsnmp.variables module
+ezsnmp.datatypes module
 =======================
 
-.. automodule:: ezsnmp.variables
+.. automodule:: ezsnmp.datatypes
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,9 +1,7 @@
 .. toctree::
    :maxdepth: 8
 
-   exceptions
-   ez
-   helpers
+   datatypes
+   netsnmp
    session
-   utils
-   variables
+   sessionbase

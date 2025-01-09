@@ -6,20 +6,20 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Ez SNMP V1.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
+  <title>&lt;no title&gt; &mdash; Ez SNMP V2.0.0a5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=83fd5716"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/documentation_options.js?v=d3fbea5c"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ezsnmp.exceptions module" href="exceptions.html" />
+    <link rel="next" title="ezsnmp.datatypes module" href="datatypes.html" />
     <link rel="prev" title="Welcome to Ez SNMP’s documentation!" href="index.html" /> 
 </head>
 
@@ -44,12 +44,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">ezsnmp.exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes.html">ezsnmp.datatypes module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="netsnmp.html">ezsnmp.netsnmp module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variables.html">ezsnmp.variables module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase.html">ezsnmp.sessionbase module</a></li>
 </ul>
 
         </div>
@@ -78,12 +76,32 @@
              
   <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">ezsnmp.exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ez.html">ezsnmp.ez module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="helpers.html">ezsnmp.helpers module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">ezsnmp.utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variables.html">ezsnmp.variables module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes.html">ezsnmp.datatypes module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="netsnmp.html">ezsnmp.netsnmp module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="session.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.args"><code class="docutils literal notranslate"><span class="pre">Session.args</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.auth_passphrase"><code class="docutils literal notranslate"><span class="pre">Session.auth_passphrase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.auth_protocol"><code class="docutils literal notranslate"><span class="pre">Session.auth_protocol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.boots_time"><code class="docutils literal notranslate"><span class="pre">Session.boots_time</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.community"><code class="docutils literal notranslate"><span class="pre">Session.community</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.context"><code class="docutils literal notranslate"><span class="pre">Session.context</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.context_engine_id"><code class="docutils literal notranslate"><span class="pre">Session.context_engine_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.hostname"><code class="docutils literal notranslate"><span class="pre">Session.hostname</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.port_number"><code class="docutils literal notranslate"><span class="pre">Session.port_number</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.privacy_passphrase"><code class="docutils literal notranslate"><span class="pre">Session.privacy_passphrase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.privacy_protocol"><code class="docutils literal notranslate"><span class="pre">Session.privacy_protocol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.retries"><code class="docutils literal notranslate"><span class="pre">Session.retries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.security_engine_id"><code class="docutils literal notranslate"><span class="pre">Session.security_engine_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.security_level"><code class="docutils literal notranslate"><span class="pre">Session.security_level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.security_username"><code class="docutils literal notranslate"><span class="pre">Session.security_username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.timeout"><code class="docutils literal notranslate"><span class="pre">Session.timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html#ezsnmp.session.Session.version"><code class="docutils literal notranslate"><span class="pre">Session.version</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase.html">ezsnmp.sessionbase module</a></li>
 </ul>
 </div>
 
@@ -92,7 +110,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Ez SNMP’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="exceptions.html" class="btn btn-neutral float-right" title="ezsnmp.exceptions module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="datatypes.html" class="btn btn-neutral float-right" title="ezsnmp.datatypes module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

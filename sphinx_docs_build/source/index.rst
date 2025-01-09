@@ -25,7 +25,7 @@ On Debian / Ubuntu systems:
 .. code-block:: bash
     
     sudo apt update && sudo apt upgrade -y;
-    sudo apt install -y libsnmp-dev libperl-dev snmp-mibs-downloader;
+    sudo apt install -y libsnmp-dev g++ python3-dev;
 
 On macOS systems:
 
