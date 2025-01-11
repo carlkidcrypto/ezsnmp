@@ -24,7 +24,7 @@ jobs:
 
             - name: Setup git-chglog
               run: |
-                  sudo apt install go -y;
+                  sudo snap install go -y;
                   go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest;
 
             - name: Generate CHANGELOG.md
