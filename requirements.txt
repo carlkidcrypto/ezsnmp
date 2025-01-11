@@ -14,7 +14,7 @@ pyflakes==3.2.0
 pyparsing==3.2.1
 termcolor==2.5.0
 tomli==2.2.1
-setuptools==75.7.0
+setuptools==75.8.0
 urllib3==2.3.0
 build==1.2.2
 cibuildwheel==2.22.0
