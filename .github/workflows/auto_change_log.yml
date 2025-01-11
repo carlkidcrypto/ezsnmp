@@ -24,9 +24,8 @@ jobs:
 
             - name: Setup git-chglog
               run: |
-                  CHGLOG_VERSION="0.15.4"
-                  curl -o git-chglog -L "https://github.com/git-chglog/git-chglog/releases/download/${CHGLOG_VERSION}/git-chglog_linux_amd64"
-                  chmod +x git-chglog
+                  sudo apt install go -y;
+                  go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest;
 
             - name: Generate CHANGELOG.md
               id: generate
