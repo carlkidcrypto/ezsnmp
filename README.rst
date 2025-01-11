@@ -1,5 +1,5 @@
 =======
-Ez SNMP
+EzSnmp
 =======
 
 |Python Code Style| |Black| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests| |License|
@@ -20,18 +20,18 @@ Ez SNMP
     :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
 
 .. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp_logo.jpeg
-    :alt: Ez SNMP Logo
+    :alt: EzSnmp Logo
 
 Introduction
 ------------
 
-Ez SNMP is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`__
+EzSnmp is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`__
 
 Why Another Library?
 --------------------
 
 - Simple, because the maintainer of `Easy SNMP` seems to have abandoned the project and or isn't actively working on it.
-- This version (Ez SNMP) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
+- This version (EzSnmp) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
   and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`__
 
 
@@ -43,85 +43,16 @@ How to Support This Project?
 
 `Use this link to buy me a coffee! <https://www.buymeacoffee.com/carlkidcrypto>`__
 
-Quick Start
------------
-
-There are primarily two ways you can use the Ez SNMP library:
-
-1. By using a Session object which is most suitable
-when you want to request multiple pieces of SNMP data from a
-source:
-
-.. code:: python
-
-    from ezsnmp import Session
-
-    # Create an SNMP session to be used for all our requests
-    session = Session(hostname='localhost', community='public', version=2)
-
-    # You may retrieve an individual OID using an SNMP GET
-    location = session.get('sysLocation.0')
-
-    # You may also specify the OID as a tuple (name, index)
-    # Note: the index is specified as a string as it can be of other types than
-    # just a regular integer
-    contact = session.get(('sysContact', '0'))
-
-    # And of course, you may use the numeric OID too
-    description = session.get('.1.3.6.1.2.1.1.1.0')
-
-    # Set a variable using an SNMP SET
-    session.set('sysLocation.0', 'The SNMP Lab')
-
-    # Perform an SNMP walk
-    system_items = session.walk('system')
-
-    # Each returned item can be used normally as its related type (str or int)
-    # but also has several extended attributes with SNMP-specific information
-    for item in system_items:
-        print '{oid}.{oid_index} {snmp_type} = {value}'.format(
-            oid=item.oid,
-            oid_index=item.oid_index,
-            snmp_type=item.snmp_type,
-            value=item.value
-        )
-
-2. By using Ez SNMP via its simple interface which is intended
-for one-off operations (where you wish to specify all details in the
-request):
-
-.. code:: python
-
-    from ezsnmp import snmp_get, snmp_set, snmp_walk
-
-    # Grab a single piece of information using an SNMP GET
-    snmp_get('sysDescr.0', hostname='localhost', community='public', version=1)
-
-    # Perform an SNMP SET to update data
-    snmp_set(
-        'sysLocation.0', 'My Cool Place',
-        hostname='localhost', community='public', version=1
-    )
-
-    # Perform an SNMP walk
-    snmp_walk('system', hostname='localhost', community='public', version=1)
-
-Documentation
--------------
-
-Please check out the `Ez SNMP documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
+Getting Started
+---------------
+Please check out the `EzSnmp documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
 
-You may generate the documentation as follows:
+Want to Contribute?
+-------------------
 
-.. code:: bash
+Check out the development guide at `EzSnmp Development <http://carlkidcrypto.github.io/ezsnmp/development.html>`_.
 
-    # Install Sphinx
-    # See this website for install instructions https://www.sphinx-doc.org/en/master/usage/installation.html
-
-    # Build the documentation into static HTML pages
-    cd sphinx_docs_build
-    make html
 
 Acknowledgments
 ---------------
@@ -137,89 +68,10 @@ possible:
 - **fgimian and nnathan**: the original contributors to this codebase
 - **Kent Coble**: who was the most recent maintainer. `Easy SNMP <https://github.com/easysnmp/easysnmp>`_
 
-Running Tests
--------------
-
-Tests use `Pytest <https://github.com/pytest-dev/pytest>`_. You can run
-them with the following on Linux:
-
-.. code:: bash
-
-    git clone https://github.com/ezsnmp/ezsnmp.git;
-    cd ezsnmp;
-    sudo apt update && sudo apt upgrade -y;
-    sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
-    sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
-    sudo systemctl stop snmpd;
-    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
-    sudo download-mibs;
-    mkdir -p -m 0755 ~/.snmp;
-    echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-    sudo systemctl start snmpd;
-    rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 -m pip install -r requirements.txt;
-    python3 -m pip install . && pytest tests/;
-    # Bottom one for debug. Replace the top one with it if needed.
-    # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
-    # Bottom one for valgrind. Replace the top one with it if needed.
-    # python3 -m pip install . && valgrind --tool=memcheck --leak-check=full --show-leak-kinds=definite,indirect,possible python3 -m pytest .
-    # Bottom one for valgrind using helgrind. Replace the top one with it if needed.
-    # python3 -m pip install . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
-
-
-On MacOS
-
-.. code:: bash
-
-    git clone https://github.com/ezsnmp/ezsnmp.git;
-    cd ezsnmp;
-    sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
-    sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 -m pip install -r requirements.txt;
-    python3 -m pip install . && pytest tests/;
-
-
-Running cibuildwheels
----------------------
-
-For Linux builds on a Linux machine
-
-.. code:: bash
-
-    clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform linux
-
-
-For MacOS builds on a MacOS machine
-
-.. code:: bash
-
-    clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
-
-
-Formatting
-----------
-
-For c++ code:
-
-.. code:: bash
-
-    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
-
-For python3 code:
-
-.. code:: bash
-
-    python3 -m black .
-
-
 License
 -------
 
-Ez SNMP is released under the **BSD** license. Please see the
+EzSnmp is released under the **BSD** license. Please see the
 `LICENSE <https://github.com/ezsnmp/ezsnmp/blob/master/LICENSE>`_
 file for more details.
 
@@ -236,6 +88,6 @@ Copyright (c) 2006 SPARTA, Inc. All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
 
-Copyright (c) 2024 carlkidcrypto All Rights Reserved. This program is
+Copyright (c) 2024-2025 carlkidcrypto All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
