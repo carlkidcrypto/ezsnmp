@@ -23,48 +23,47 @@ jobs:
                   ref: main
 
             - name: Setup git-chglog
-                run: |
-                    CHGLOG_VERSION="0.15.4"
-                    curl -o git-chglog -L "https://github.com/git-chglog/git-chglog/releases/download/${CHGLOG_VERSION}/git-chglog_linux_amd64"
-                    chmod +x git-chglog
+              run: |
+                  CHGLOG_VERSION="0.15.4"
+                  curl -o git-chglog -L "https://github.com/git-chglog/git-chglog/releases/download/${CHGLOG_VERSION}/git-chglog_linux_amd64"
+                  chmod +x git-chglog
 
             - name: Generate CHANGELOG.md
-                id: generate
-                run: |
-                    rm -f CHANGELOG.md
-                    ./git-chglog -o CHANGELOG.md
-                    if git diff --quiet CHANGELOG.md; then
-                        echo "changes=false" >> $GITHUB_OUTPUT
-                    else
-                        echo "changes=true" >> $GITHUB_OUTPUT
-                    fi
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              id: generate
+              run: |
+                  rm -f CHANGELOG.md
+                  ./git-chglog -o CHANGELOG.md
+                  if git diff --quiet CHANGELOG.md; then
+                      echo "changes=false" >> $GITHUB_OUTPUT
+                  else
+                      echo "changes=true" >> $GITHUB_OUTPUT
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Cleanup
-                run: rm git-chglog
-                if: always()
+              run: rm git-chglog
+              if: always()
 
             - name: Create Pull Request
-                if: steps.generate.outputs.changes == 'true'
-                uses: peter-evans/create-pull-request@v4
-                with:
-                    token: ${{ secrets.GITHUB_TOKEN }}
-                    commit-message: "chore: update CHANGELOG.md"
-                    title: "📝 Update Changelog"
-                    body: |
-                        This PR updates the CHANGELOG.md to include all releases.
-                        - Generated using git-chglog
-                        - Triggered by: ${{ github.event_name }}
-                        - Auto-merge enabled
-                    branch: update-changelog-${{ github.run_id }}
-                    base: main
-                    delete-branch: true
-                    labels: documentation, automated-pr
+              if: steps.generate.outputs.changes == 'true'
+              uses: peter-evans/create-pull-request@v4
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  commit-message: "chore: update CHANGELOG.md"
+                  title: "📝 Update Changelog"
+                  body: |
+                      This PR updates the CHANGELOG.md to include all releases.
+                      - Generated using git-chglog
+                      - Triggered by: ${{ github.event_name }}
+                      - Auto-merge enabled
+                  branch: update-changelog-${{ github.run_id }}
+                  base: main
+                  delete-branch: true
+                  labels: documentation, automated-pr
 
             - name: Enable Auto-merge
-                if: steps.generate.outputs.changes == 'true'
-                run: |
-                    gh pr merge --auto --merge "${{ steps.create-pr.outputs.pull-request-number }}"
-                env:
-                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              if: steps.generate.outputs.changes == 'true'
+              run: |
+                  gh pr merge --auto --merge "${{ steps.create-pr.outputs.pull-request-number }}"
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
