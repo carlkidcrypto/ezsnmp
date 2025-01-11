@@ -2,12 +2,16 @@
 EzSnmp
 =======
 
-|Python Code Style| |Black| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests| |License|
+|Python Code Style| |Clang-format Code Style| |Black| |Clang-format| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests Homebrew| |Tests Native| |License|
 
 .. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+.. |Clang-format Code Style| image:: https://img.shields.io/badge/code%20style-clang--format-brightgreen.svg
+    :target: https://clang.llvm.org/docs/ClangFormat.html
 .. |Black| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml/badge.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml
+.. |Clang-format| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/clang_format.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/clang_format.yml
 .. |Pull Request Sphinx Docs Check| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml/badge.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml
 .. |PyPI Distributions| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml/badge.svg
