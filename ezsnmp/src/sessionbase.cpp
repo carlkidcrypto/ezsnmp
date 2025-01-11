@@ -48,33 +48,6 @@ std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
                                                        {"retries", "-r"},
                                                        {"timeout", "-t"}};
 
-/******************************************************************************
- * The class constructor. This is a wrapper around the lower level c++ calls.
- * This allows for reuse of given parameters for multiple calls to functions
- * like: snmpwalk, snmpget, etc...
- *
- * @param [in] hostname
- * @param [in] port_number
- * @param [in] version 1|2c|3 specifies SNMP version to use. Default is `3`.
- * @param [in] community Set the community string. Default `public`
- * @param [in] auth_protocol Set authentication protocol
- *(MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512). Default ``.
- * @param [in] auth_passphrase Set authentication protocol pass phrase. Default
- *``.
- * @param [in] security_engine_id Set security engine ID (e.g.
- *800000020109840301). Default ``.
- * @param [in] context_engine_id Set context engine ID (e.g.
- *800000020109840301). Default ``.
- * @param [in] security_level Set security level
- *(noAuthNoPriv|authNoPriv|authPriv). Default ``.
- * @param [in] context Set context name (e.g. bridge1). Default ``.
- * @param [in] security_username Set security name (e.g. bert). Default ``.
- * @param [in] privacy_protocol Set privacy protocol (DES|AES). Default ``.
- * @param [in] privacy_passphrase Set privacy protocol pass phrase. Default ``.
- * @param [in] boots_time Set destination engine boots/time. Default ``.
- * @param [in] retries Set the number of retries. Default `3`.
- * @param [in] timeout Set the request timeout (in seconds). Default `1`.
- ******************************************************************************/
 SessionBase::SessionBase(std::string hostname,
                          std::string port_number,
                          std::string version,
