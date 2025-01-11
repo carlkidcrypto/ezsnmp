@@ -35,14 +35,10 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10 env for sphinx...
+      - name: Set up Python 3.11 env for sphinx...
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-
-      - name: Install pip dependencies
-          run: |
-            if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
+          python-version: "3.11"
 
       - name: Install Build Requirements
         uses: carlkidcrypto/os-specific-runner@v2.1.1
@@ -55,6 +51,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
+                 if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
                  mkdir source/_static;
                  mkdir source/_templates;
                  make clean && make html SPHINXOPTS="-W"

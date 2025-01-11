@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "EzSnmp"
-copyright = '2024-%Y, carlkidcrypto'
+copyright = "2024-%Y, carlkidcrypto"
 author = "carlkidcrypto"
 
 # The full version, including alpha/beta/rc tags
@@ -32,11 +32,12 @@ release = "V2.0.0b0"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "breathe",]
+extensions = [
+    "sphinx.ext.autodoc",
+    "breathe",
+]
 
-breathe_projects = {
-  "EzSnmp": "../../doxygen_docs_build/doxygen/xml"
-}
+breathe_projects = {"EzSnmp": "../../doxygen_docs_build/doxygen/xml"}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
