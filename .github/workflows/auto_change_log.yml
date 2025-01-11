@@ -16,22 +16,23 @@ jobs:
     update-changelog:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
+            - name: Check out repository code
               uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-                  ref: main
-
+            
             - name: Setup git-chglog
-              run: |
+              uses: carlkidcrypto/os-specific-runner@v2.1.1
+              with:
+                linux: |
                   sudo snap install go --classic;
                   go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest;
 
             - name: Generate CHANGELOG.md
               id: generate
-              run: |
-                  rm -f CHANGELOG.md
-                  ~/go/bin/git-chglog --config /home/runner/work/ezsnmp/ezsnmp/.chglog/config.yml -o CHANGELOG.md
+              uses: carlkidcrypto/os-specific-runner@v2.1.1
+              with:
+                linux: |
+                  rm -f CHANGELOG.md;
+                  ~/go/bin/git-chglog --config /home/runner/work/ezsnmp/ezsnmp/.chglog/config.yml -o CHANGELOG.md;
                   if git diff --quiet CHANGELOG.md; then
                       echo "changes=false" >> $GITHUB_OUTPUT
                   else
