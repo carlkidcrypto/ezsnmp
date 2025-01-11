@@ -31,7 +31,7 @@ jobs:
               id: generate
               run: |
                   rm -f CHANGELOG.md
-                  ./git-chglog -o CHANGELOG.md
+                  ~/go/bin/git-chglog -o CHANGELOG.md
                   if git diff --quiet CHANGELOG.md; then
                       echo "changes=false" >> $GITHUB_OUTPUT
                   else
