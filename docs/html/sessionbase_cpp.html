@@ -1,0 +1,826 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SessionBase C++ Module &mdash; Ez SNMP V2.0.0a5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d3fbea5c"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Python Session Module" href="session_python.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Ez SNMP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SessionBase C++ Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#_CPPv411SessionBase"><code class="docutils literal notranslate"><span class="pre">SessionBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase11SessionBaseENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::SessionBase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBaseD0Ev"><code class="docutils literal notranslate"><span class="pre">SessionBase::~SessionBase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase4walkERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::walk()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase9bulk_walkERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::bulk_walk()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::bulk_walk()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase3getERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase3getERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase8get_nextERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::get_next()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase8bulk_getERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::bulk_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase3setERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase9_get_argsEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase13_get_hostnameEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_hostname()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase16_get_port_numberEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_port_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_versionEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_version()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase14_get_communityEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_community()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase18_get_auth_protocolEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_auth_protocol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase20_get_auth_passphraseEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_auth_passphrase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase23_get_security_engine_idEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_security_engine_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase22_get_context_engine_idEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_context_engine_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase19_get_security_levelEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_security_level()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_contextEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_context()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase22_get_security_usernameEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_security_username()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase21_get_privacy_protocolEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_privacy_protocol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase23_get_privacy_passphraseEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_privacy_passphrase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase15_get_boots_timeEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_boots_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_retriesEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_retries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_timeoutEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_timeout()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase13_set_hostnameERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_hostname()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase16_set_port_numberERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_port_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase12_set_versionERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_version()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase14_set_communityERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_community()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase18_set_auth_protocolERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_auth_protocol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase20_set_auth_passphraseERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_auth_passphrase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase23_set_security_engine_idERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_security_engine_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase22_set_context_engine_idERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_context_engine_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase19_set_security_levelERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_security_level()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase12_set_contextERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_context()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase22_set_security_usernameERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_security_username()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase21_set_privacy_protocolERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_privacy_protocol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase23_set_privacy_passphraseERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_privacy_passphrase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase15_set_boots_timeERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_boots_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase12_set_retriesERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_retries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase12_set_timeoutERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_timeout()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase13populate_argsEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::populate_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase23check_and_clear_v3_userEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::check_and_clear_v3_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase6m_argsE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_args</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase10m_hostnameE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_hostname</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase13m_port_numberE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_port_number</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase9m_versionE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase11m_communityE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_community</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase15m_auth_protocolE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_auth_protocol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase17m_auth_passphraseE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_auth_passphrase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase20m_security_engine_idE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_security_engine_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase19m_context_engine_idE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_context_engine_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase16m_security_levelE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_security_level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase9m_contextE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_context</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase19m_security_usernameE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_security_username</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase18m_privacy_protocolE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_privacy_protocol</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase20m_privacy_passphraseE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_privacy_passphrase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase12m_boots_timeE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_boots_time</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase9m_retriesE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_retries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N11SessionBase9m_timeoutE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_timeout</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Ez SNMP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">&lt;no title&gt;</a></li>
+      <li class="breadcrumb-item active">SessionBase C++ Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/sessionbase_cpp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sessionbase-c-module">
+<h1>SessionBase C++ Module<a class="headerlink" href="#sessionbase-c-module" title="Link to this heading"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv411SessionBase">
+<span id="_CPPv311SessionBase"></span><span id="_CPPv211SessionBase"></span><span id="SessionBase"></span><span class="target" id="classSessionBase"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SessionBase</span></span></span><a class="headerlink" href="#_CPPv411SessionBase" title="Link to this definition"></a><br /></dt>
+<dd><p>Base class for managing SNMP sessions. </p>
+<p>This class provides a base for managing SNMP sessions, including connection parameters, authentication, and basic operations like GET, SET, and WALK. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase11SessionBaseENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringE">
+<span id="_CPPv3N11SessionBase11SessionBaseENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringE"></span><span id="_CPPv2N11SessionBase11SessionBaseENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringE"></span><span id="SessionBase::SessionBase__ss.ss.ss.ss.ss.ss.ss.ss.ss.ss.ss.ss.ss.ss.ss.ss"></span><span class="target" id="classSessionBase_1a96fe799e3c4de483f91540d969a37ec9"></span><span class="sig-name descname"><span class="n"><span class="pre">SessionBase</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">hostname</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;localhost&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">port_number</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">version</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;3&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">community</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;public&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">auth_protocol</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">auth_passphrase</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">security_engine_id</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">context_engine_id</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">security_level</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">context</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">security_username</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">privacy_protocol</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">privacy_passphrase</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">boots_time</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">retries</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;3&quot;</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeout</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;1&quot;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase11SessionBaseENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructor for <a class="reference internal" href="#classSessionBase"><span class="std std-ref">SessionBase</span></a>. </p>
+<p>Initializes a new <a class="reference internal" href="#classSessionBase"><span class="std std-ref">SessionBase</span></a> object with the provided parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hostname</strong> – Hostname or IP address of the SNMP agent (default: “localhost”). </p></li>
+<li><p><strong>port_number</strong> – Port number for the SNMP agent (default: “”). </p></li>
+<li><p><strong>version</strong> – SNMP version (“1”, “2c”, or “3”) (default: “3”). </p></li>
+<li><p><strong>community</strong> – Community string for SNMP v1/v2c (default: “public”). </p></li>
+<li><p><strong>auth_protocol</strong> – Authentication protocol for SNMP v3 (default: “”). </p></li>
+<li><p><strong>auth_passphrase</strong> – Authentication passphrase for SNMP v3 (default: “”). </p></li>
+<li><p><strong>security_engine_id</strong> – Security engine ID for SNMP v3 (default: “”). </p></li>
+<li><p><strong>context_engine_id</strong> – Context engine ID for SNMP v3 (default: “”). </p></li>
+<li><p><strong>security_level</strong> – Security level for SNMP v3 (default: “”). </p></li>
+<li><p><strong>context</strong> – Context name for SNMP v3 (default: “”). </p></li>
+<li><p><strong>security_username</strong> – Security username for SNMP v3 (default: “”). </p></li>
+<li><p><strong>privacy_protocol</strong> – Privacy protocol for SNMP v3 (default: “”). </p></li>
+<li><p><strong>privacy_passphrase</strong> – Privacy passphrase for SNMP v3 (default: “”). </p></li>
+<li><p><strong>boots_time</strong> – System boots time for SNMP v3 (default: “”). </p></li>
+<li><p><strong>retries</strong> – Number of retries for SNMP requests (default: “3”). </p></li>
+<li><p><strong>timeout</strong> – Timeout for SNMP requests (default: “1”). </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBaseD0Ev">
+<span id="_CPPv3N11SessionBaseD0Ev"></span><span id="_CPPv2N11SessionBaseD0Ev"></span><span id="SessionBase::~SessionBase"></span><span class="target" id="classSessionBase_1a739266f0bc45f678b6769d50f01b4fcf"></span><span class="sig-name descname"><span class="n"><span class="pre">~SessionBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBaseD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor for <a class="reference internal" href="#classSessionBase"><span class="std std-ref">SessionBase</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase4walkERKNSt6stringE">
+<span id="_CPPv3N11SessionBase4walkERKNSt6stringE"></span><span id="_CPPv2N11SessionBase4walkERKNSt6stringE"></span><span id="SessionBase::walk__ssCR"></span><span class="target" id="classSessionBase_1a0403643500d7c8331f7a4b4aef30c7e5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">walk</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mib</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase4walkERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP WALK operation. </p>
+<p>Retrieves a subtree of management information using SNMP WALK.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mib</strong> – The OID (Object Identifier) to start the walk from (default: “”). </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase9bulk_walkERKNSt6stringE">
+<span id="_CPPv3N11SessionBase9bulk_walkERKNSt6stringE"></span><span id="_CPPv2N11SessionBase9bulk_walkERKNSt6stringE"></span><span id="SessionBase::bulk_walk__ssCR"></span><span class="target" id="classSessionBase_1a4ffbe83914dda1e9f2d33f9226f3d0ae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bulk_walk</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mib</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase9bulk_walkERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP BULK WALK operation. </p>
+<p>Retrieves a subtree of management information using SNMP BULK WALK.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mib</strong> – The OID to start the walk from. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE"></span><span id="SessionBase::bulk_walk__std::vector:ss:CR"></span><span class="target" id="classSessionBase_1a2f78799637d516ba28aafb5b17299a35"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bulk_walk</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mibs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP BULK WALK operation on multiple OIDs. </p>
+<p>Retrieves subtrees of management information using SNMP BULK WALK for multiple OIDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mibs</strong> – A vector of OIDs to start the walks from. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase3getERKNSt6stringE">
+<span id="_CPPv3N11SessionBase3getERKNSt6stringE"></span><span id="_CPPv2N11SessionBase3getERKNSt6stringE"></span><span id="SessionBase::get__ssCR"></span><span class="target" id="classSessionBase_1a219514c13ba374429b48a86535429b30"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mib</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase3getERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP GET operation. </p>
+<p>Retrieves the value of a specific management information object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mib</strong> – The OID of the object to retrieve (default: “”). </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase3getERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N11SessionBase3getERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N11SessionBase3getERKNSt6vectorINSt6stringEEE"></span><span id="SessionBase::get__std::vector:ss:CR"></span><span class="target" id="classSessionBase_1a9a8e59d71c8ea27972a53112698a086d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mibs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase3getERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP GET operation on multiple OIDs. </p>
+<p>Retrieves the values of multiple management information objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mibs</strong> – A vector of OIDs to retrieve. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase8get_nextERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N11SessionBase8get_nextERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N11SessionBase8get_nextERKNSt6vectorINSt6stringEEE"></span><span id="SessionBase::get_next__std::vector:ss:CR"></span><span class="target" id="classSessionBase_1aff30b5a498ad176b181d9ab89e2fda33"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_next</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mibs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase8get_nextERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP GET NEXT operation on multiple OIDs. </p>
+<p>Retrieves the values of the next lexicographically greater OIDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mibs</strong> – A vector of OIDs to retrieve the next values for. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase8bulk_getERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N11SessionBase8bulk_getERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N11SessionBase8bulk_getERKNSt6vectorINSt6stringEEE"></span><span id="SessionBase::bulk_get__std::vector:ss:CR"></span><span class="target" id="classSessionBase_1aaf531648197c4c80bcb44958ccb15c51"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bulk_get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mibs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase8bulk_getERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP BULK GET operation on multiple OIDs. </p>
+<p>Retrieves the values of multiple management information objects using BULK GET.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mibs</strong> – A vector of OIDs to retrieve. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the retrieved data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase3setERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N11SessionBase3setERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N11SessionBase3setERKNSt6vectorINSt6stringEEE"></span><span id="SessionBase::set__std::vector:ss:CR"></span><span class="target" id="classSessionBase_1ac73a306376c9f9df4f68851f958b0830"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Result</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mibs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase3setERKNSt6vectorINSt6stringEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an SNMP SET operation on multiple OIDs. </p>
+<p>Sets the values of multiple management information objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mibs</strong> – A vector of OIDs and their corresponding values to set. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A vector of Result objects containing the results of the SET operation. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase9_get_argsEv">
+<span id="_CPPv3NK11SessionBase9_get_argsEv"></span><span id="_CPPv2NK11SessionBase9_get_argsEv"></span><span id="SessionBase::_get_argsC"></span><span class="target" id="classSessionBase_1a89b2fd0d633026bf88d0f694e85d5954"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_args</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase9_get_argsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the SNMP command arguments. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the vector of SNMP command arguments. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase13_get_hostnameEv">
+<span id="_CPPv3NK11SessionBase13_get_hostnameEv"></span><span id="_CPPv2NK11SessionBase13_get_hostnameEv"></span><span id="SessionBase::_get_hostnameC"></span><span class="target" id="classSessionBase_1a7b3eff41f33675796fd1860bee1587c2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_hostname</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase13_get_hostnameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the hostname of the SNMP agent. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the hostname. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase16_get_port_numberEv">
+<span id="_CPPv3NK11SessionBase16_get_port_numberEv"></span><span id="_CPPv2NK11SessionBase16_get_port_numberEv"></span><span id="SessionBase::_get_port_numberC"></span><span class="target" id="classSessionBase_1a0ea15ac1281843acf70cb0b636a6ef86"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_port_number</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase16_get_port_numberEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the port number for the SNMP agent. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the port number. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase12_get_versionEv">
+<span id="_CPPv3NK11SessionBase12_get_versionEv"></span><span id="_CPPv2NK11SessionBase12_get_versionEv"></span><span id="SessionBase::_get_versionC"></span><span class="target" id="classSessionBase_1ab0a1dfc42e3e1b60404f5df5d616b519"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_version</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase12_get_versionEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the SNMP version. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the SNMP version. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase14_get_communityEv">
+<span id="_CPPv3NK11SessionBase14_get_communityEv"></span><span id="_CPPv2NK11SessionBase14_get_communityEv"></span><span id="SessionBase::_get_communityC"></span><span class="target" id="classSessionBase_1a3b3419476ba859639a4e602193e6535d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_community</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase14_get_communityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the community string. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the community string. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase18_get_auth_protocolEv">
+<span id="_CPPv3NK11SessionBase18_get_auth_protocolEv"></span><span id="_CPPv2NK11SessionBase18_get_auth_protocolEv"></span><span id="SessionBase::_get_auth_protocolC"></span><span class="target" id="classSessionBase_1ae87d56fa5f6805627db20f075f96aff5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_auth_protocol</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase18_get_auth_protocolEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the authentication protocol. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the authentication protocol. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase20_get_auth_passphraseEv">
+<span id="_CPPv3NK11SessionBase20_get_auth_passphraseEv"></span><span id="_CPPv2NK11SessionBase20_get_auth_passphraseEv"></span><span id="SessionBase::_get_auth_passphraseC"></span><span class="target" id="classSessionBase_1a8f1c5c5a5a65d9cc8e5f0d3e6b3b4729"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_auth_passphrase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase20_get_auth_passphraseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the authentication passphrase. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the authentication passphrase. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase23_get_security_engine_idEv">
+<span id="_CPPv3NK11SessionBase23_get_security_engine_idEv"></span><span id="_CPPv2NK11SessionBase23_get_security_engine_idEv"></span><span id="SessionBase::_get_security_engine_idC"></span><span class="target" id="classSessionBase_1a4717906ec2e7090fdce65e19478a74bb"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_security_engine_id</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase23_get_security_engine_idEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the security engine ID. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the security engine ID. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase22_get_context_engine_idEv">
+<span id="_CPPv3NK11SessionBase22_get_context_engine_idEv"></span><span id="_CPPv2NK11SessionBase22_get_context_engine_idEv"></span><span id="SessionBase::_get_context_engine_idC"></span><span class="target" id="classSessionBase_1a92d625813bb3a2f219ab018032298e6e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_context_engine_id</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase22_get_context_engine_idEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the context engine ID. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the context engine ID. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase19_get_security_levelEv">
+<span id="_CPPv3NK11SessionBase19_get_security_levelEv"></span><span id="_CPPv2NK11SessionBase19_get_security_levelEv"></span><span id="SessionBase::_get_security_levelC"></span><span class="target" id="classSessionBase_1a22b15816f784eb3ae7fb85c1e3e3c2ae"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_security_level</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase19_get_security_levelEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the security level. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the security level. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase12_get_contextEv">
+<span id="_CPPv3NK11SessionBase12_get_contextEv"></span><span id="_CPPv2NK11SessionBase12_get_contextEv"></span><span id="SessionBase::_get_contextC"></span><span class="target" id="classSessionBase_1a78b14e9d4941e83fa97ad8f4c6eba7ef"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_context</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase12_get_contextEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the context name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the context name. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase22_get_security_usernameEv">
+<span id="_CPPv3NK11SessionBase22_get_security_usernameEv"></span><span id="_CPPv2NK11SessionBase22_get_security_usernameEv"></span><span id="SessionBase::_get_security_usernameC"></span><span class="target" id="classSessionBase_1a040b7eaf6d21be560974b9fa349efc2c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_security_username</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase22_get_security_usernameEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the security username. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the security username. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase21_get_privacy_protocolEv">
+<span id="_CPPv3NK11SessionBase21_get_privacy_protocolEv"></span><span id="_CPPv2NK11SessionBase21_get_privacy_protocolEv"></span><span id="SessionBase::_get_privacy_protocolC"></span><span class="target" id="classSessionBase_1a4e960f15ea63c3cd916b07b923fc0271"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_privacy_protocol</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase21_get_privacy_protocolEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the privacy protocol. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the privacy protocol. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase23_get_privacy_passphraseEv">
+<span id="_CPPv3NK11SessionBase23_get_privacy_passphraseEv"></span><span id="_CPPv2NK11SessionBase23_get_privacy_passphraseEv"></span><span id="SessionBase::_get_privacy_passphraseC"></span><span class="target" id="classSessionBase_1a9da360e7a826f7464c8f4f86078012f7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_privacy_passphrase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase23_get_privacy_passphraseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the privacy passphrase. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the privacy passphrase. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase15_get_boots_timeEv">
+<span id="_CPPv3NK11SessionBase15_get_boots_timeEv"></span><span id="_CPPv2NK11SessionBase15_get_boots_timeEv"></span><span id="SessionBase::_get_boots_timeC"></span><span class="target" id="classSessionBase_1a12169ad04bc1250dfdbd6b5453dc1142"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_boots_time</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase15_get_boots_timeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the system boots time. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the system boots time. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase12_get_retriesEv">
+<span id="_CPPv3NK11SessionBase12_get_retriesEv"></span><span id="_CPPv2NK11SessionBase12_get_retriesEv"></span><span id="SessionBase::_get_retriesC"></span><span class="target" id="classSessionBase_1a63fe805aa296b26c875ee08e86f856f5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_retries</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase12_get_retriesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the number of retries. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the number of retries. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11SessionBase12_get_timeoutEv">
+<span id="_CPPv3NK11SessionBase12_get_timeoutEv"></span><span id="_CPPv2NK11SessionBase12_get_timeoutEv"></span><span id="SessionBase::_get_timeoutC"></span><span class="target" id="classSessionBase_1ab0e68356574e58d677e9b89016d4357e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">_get_timeout</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11SessionBase12_get_timeoutEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the timeout value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A constant reference to the timeout value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase13_set_hostnameERKNSt6stringE">
+<span id="_CPPv3N11SessionBase13_set_hostnameERKNSt6stringE"></span><span id="_CPPv2N11SessionBase13_set_hostnameERKNSt6stringE"></span><span id="SessionBase::_set_hostname__ssCR"></span><span class="target" id="classSessionBase_1af7c68b000ae2d60e850ae4ba85fa411b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_hostname</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">hostname</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase13_set_hostnameERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the hostname of the SNMP agent. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hostname</strong> – The new hostname to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase16_set_port_numberERKNSt6stringE">
+<span id="_CPPv3N11SessionBase16_set_port_numberERKNSt6stringE"></span><span id="_CPPv2N11SessionBase16_set_port_numberERKNSt6stringE"></span><span id="SessionBase::_set_port_number__ssCR"></span><span class="target" id="classSessionBase_1a8effd541abaaae7e2ce469bdda0172de"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_port_number</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">port_number</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase16_set_port_numberERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the port number for the SNMP agent. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>port_number</strong> – The new port number to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase12_set_versionERKNSt6stringE">
+<span id="_CPPv3N11SessionBase12_set_versionERKNSt6stringE"></span><span id="_CPPv2N11SessionBase12_set_versionERKNSt6stringE"></span><span id="SessionBase::_set_version__ssCR"></span><span class="target" id="classSessionBase_1a9352b42ab0256d9be6a0394ef3a47a1c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_version</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">version</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase12_set_versionERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the SNMP version. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version</strong> – The new SNMP version to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase14_set_communityERKNSt6stringE">
+<span id="_CPPv3N11SessionBase14_set_communityERKNSt6stringE"></span><span id="_CPPv2N11SessionBase14_set_communityERKNSt6stringE"></span><span id="SessionBase::_set_community__ssCR"></span><span class="target" id="classSessionBase_1a34aaa6c85c822391ea83735edeec6d8c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_community</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">community</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase14_set_communityERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the community string. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>community</strong> – The new community string to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase18_set_auth_protocolERKNSt6stringE">
+<span id="_CPPv3N11SessionBase18_set_auth_protocolERKNSt6stringE"></span><span id="_CPPv2N11SessionBase18_set_auth_protocolERKNSt6stringE"></span><span id="SessionBase::_set_auth_protocol__ssCR"></span><span class="target" id="classSessionBase_1a65dbba8afc17968da13f3ed748390264"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_auth_protocol</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">auth_protocol</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase18_set_auth_protocolERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the authentication protocol. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>auth_protocol</strong> – The new authentication protocol to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase20_set_auth_passphraseERKNSt6stringE">
+<span id="_CPPv3N11SessionBase20_set_auth_passphraseERKNSt6stringE"></span><span id="_CPPv2N11SessionBase20_set_auth_passphraseERKNSt6stringE"></span><span id="SessionBase::_set_auth_passphrase__ssCR"></span><span class="target" id="classSessionBase_1a9fde9b8df5498b4598501d99ea149e26"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_auth_passphrase</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">auth_passphrase</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase20_set_auth_passphraseERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the authentication passphrase. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>auth_passphrase</strong> – The new authentication passphrase to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase23_set_security_engine_idERKNSt6stringE">
+<span id="_CPPv3N11SessionBase23_set_security_engine_idERKNSt6stringE"></span><span id="_CPPv2N11SessionBase23_set_security_engine_idERKNSt6stringE"></span><span id="SessionBase::_set_security_engine_id__ssCR"></span><span class="target" id="classSessionBase_1a860ec4f566b4cb6892807b48890486a0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_security_engine_id</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">security_engine_id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase23_set_security_engine_idERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the security engine ID. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>security_engine_id</strong> – The new security engine ID to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase22_set_context_engine_idERKNSt6stringE">
+<span id="_CPPv3N11SessionBase22_set_context_engine_idERKNSt6stringE"></span><span id="_CPPv2N11SessionBase22_set_context_engine_idERKNSt6stringE"></span><span id="SessionBase::_set_context_engine_id__ssCR"></span><span class="target" id="classSessionBase_1adca753f557a056f2e1cd4ee6aeefc9fd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_context_engine_id</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">context_engine_id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase22_set_context_engine_idERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the context engine ID. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context_engine_id</strong> – The new context engine ID to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase19_set_security_levelERKNSt6stringE">
+<span id="_CPPv3N11SessionBase19_set_security_levelERKNSt6stringE"></span><span id="_CPPv2N11SessionBase19_set_security_levelERKNSt6stringE"></span><span id="SessionBase::_set_security_level__ssCR"></span><span class="target" id="classSessionBase_1abd2a32cc1597fa81939f3f3f25706790"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_security_level</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">security_level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase19_set_security_levelERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the security level. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>security_level</strong> – The new security level to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase12_set_contextERKNSt6stringE">
+<span id="_CPPv3N11SessionBase12_set_contextERKNSt6stringE"></span><span id="_CPPv2N11SessionBase12_set_contextERKNSt6stringE"></span><span id="SessionBase::_set_context__ssCR"></span><span class="target" id="classSessionBase_1afe127c4ce466f6c495da6bb43875faa3"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_context</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">context</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase12_set_contextERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the context name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – The new context name to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase22_set_security_usernameERKNSt6stringE">
+<span id="_CPPv3N11SessionBase22_set_security_usernameERKNSt6stringE"></span><span id="_CPPv2N11SessionBase22_set_security_usernameERKNSt6stringE"></span><span id="SessionBase::_set_security_username__ssCR"></span><span class="target" id="classSessionBase_1a04cf53dbc524b8d7c63bf027f2b03ad8"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_security_username</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">security_username</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase22_set_security_usernameERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the security username. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>security_username</strong> – The new security username to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase21_set_privacy_protocolERKNSt6stringE">
+<span id="_CPPv3N11SessionBase21_set_privacy_protocolERKNSt6stringE"></span><span id="_CPPv2N11SessionBase21_set_privacy_protocolERKNSt6stringE"></span><span id="SessionBase::_set_privacy_protocol__ssCR"></span><span class="target" id="classSessionBase_1a4519cffa518d3923c415327874279b13"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_privacy_protocol</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">privacy_protocol</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase21_set_privacy_protocolERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the privacy protocol. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>privacy_protocol</strong> – The new privacy protocol to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase23_set_privacy_passphraseERKNSt6stringE">
+<span id="_CPPv3N11SessionBase23_set_privacy_passphraseERKNSt6stringE"></span><span id="_CPPv2N11SessionBase23_set_privacy_passphraseERKNSt6stringE"></span><span id="SessionBase::_set_privacy_passphrase__ssCR"></span><span class="target" id="classSessionBase_1a6c69c40711dbc3288d9699180b050dab"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_privacy_passphrase</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">privacy_passphrase</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase23_set_privacy_passphraseERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the privacy passphrase. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>privacy_passphrase</strong> – The new privacy passphrase to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase15_set_boots_timeERKNSt6stringE">
+<span id="_CPPv3N11SessionBase15_set_boots_timeERKNSt6stringE"></span><span id="_CPPv2N11SessionBase15_set_boots_timeERKNSt6stringE"></span><span id="SessionBase::_set_boots_time__ssCR"></span><span class="target" id="classSessionBase_1a3a38632aa7a28f27a8278b52c45e939d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_boots_time</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">boots_time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase15_set_boots_timeERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the system boots time. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boots_time</strong> – The new system boots time to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase12_set_retriesERKNSt6stringE">
+<span id="_CPPv3N11SessionBase12_set_retriesERKNSt6stringE"></span><span id="_CPPv2N11SessionBase12_set_retriesERKNSt6stringE"></span><span id="SessionBase::_set_retries__ssCR"></span><span class="target" id="classSessionBase_1a727c5bf247f91131c5b226ae39cb724f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_retries</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">retries</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase12_set_retriesERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the number of retries. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>retries</strong> – The new number of retries to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase12_set_timeoutERKNSt6stringE">
+<span id="_CPPv3N11SessionBase12_set_timeoutERKNSt6stringE"></span><span id="_CPPv2N11SessionBase12_set_timeoutERKNSt6stringE"></span><span id="SessionBase::_set_timeout__ssCR"></span><span class="target" id="classSessionBase_1aa063a801f9d171b2e672e7e4197dea4e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_set_timeout</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">timeout</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase12_set_timeoutERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the timeout value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – The new timeout value to set. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase13populate_argsEv">
+<span id="_CPPv3N11SessionBase13populate_argsEv"></span><span id="_CPPv2N11SessionBase13populate_argsEv"></span><span id="SessionBase::populate_args"></span><span class="target" id="classSessionBase_1aa3b1ae87553e5b30e17665034207b946"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">populate_args</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase13populate_argsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Populates the m_args vector with SNMP command arguments. </p>
+<p>This private method constructs the command-line arguments for the SNMP command based on the session parameters. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase23check_and_clear_v3_userEv">
+<span id="_CPPv3N11SessionBase23check_and_clear_v3_userEv"></span><span id="_CPPv2N11SessionBase23check_and_clear_v3_userEv"></span><span id="SessionBase::check_and_clear_v3_user"></span><span class="target" id="classSessionBase_1ae3fdc34d8b3395b593c1a357456880ab"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">check_and_clear_v3_user</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase23check_and_clear_v3_userEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks and clears SNMP v3 user parameters if not applicable. </p>
+<p>This private method ensures that SNMP v3 user-related parameters are cleared if the SNMP version is not 3. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase6m_argsE">
+<span id="_CPPv3N11SessionBase6m_argsE"></span><span id="_CPPv2N11SessionBase6m_argsE"></span><span id="SessionBase::m_args__std::vector:ss:"></span><span class="target" id="classSessionBase_1a9facc300687dcf9664e28ea18f9ae596"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_args</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase6m_argsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Vector to store SNMP command arguments. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase10m_hostnameE">
+<span id="_CPPv3N11SessionBase10m_hostnameE"></span><span id="_CPPv2N11SessionBase10m_hostnameE"></span><span id="SessionBase::m_hostname__ss"></span><span class="target" id="classSessionBase_1a74a02fe4b51fdfa7725d0cbc9270716f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_hostname</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase10m_hostnameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Hostname or IP address of the SNMP agent. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase13m_port_numberE">
+<span id="_CPPv3N11SessionBase13m_port_numberE"></span><span id="_CPPv2N11SessionBase13m_port_numberE"></span><span id="SessionBase::m_port_number__ss"></span><span class="target" id="classSessionBase_1a573cf37b6ba24a61f6053e684c19b965"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_port_number</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase13m_port_numberE" title="Link to this definition"></a><br /></dt>
+<dd><p>Port number for the SNMP agent. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase9m_versionE">
+<span id="_CPPv3N11SessionBase9m_versionE"></span><span id="_CPPv2N11SessionBase9m_versionE"></span><span id="SessionBase::m_version__ss"></span><span class="target" id="classSessionBase_1a3dd174cb12441c64cc89af69128ac03e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_version</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase9m_versionE" title="Link to this definition"></a><br /></dt>
+<dd><p>SNMP version (“1”, “2c”, or “3”). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase11m_communityE">
+<span id="_CPPv3N11SessionBase11m_communityE"></span><span id="_CPPv2N11SessionBase11m_communityE"></span><span id="SessionBase::m_community__ss"></span><span class="target" id="classSessionBase_1a94b531bf7356a5ae44bc521966a1f20f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_community</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase11m_communityE" title="Link to this definition"></a><br /></dt>
+<dd><p>Community string for SNMP v1/v2c. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase15m_auth_protocolE">
+<span id="_CPPv3N11SessionBase15m_auth_protocolE"></span><span id="_CPPv2N11SessionBase15m_auth_protocolE"></span><span id="SessionBase::m_auth_protocol__ss"></span><span class="target" id="classSessionBase_1a3dd8186e8f742412d56fa56dfb074eca"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_auth_protocol</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase15m_auth_protocolE" title="Link to this definition"></a><br /></dt>
+<dd><p>Authentication protocol for SNMP v3 (e.g., “MD5”, “SHA”). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase17m_auth_passphraseE">
+<span id="_CPPv3N11SessionBase17m_auth_passphraseE"></span><span id="_CPPv2N11SessionBase17m_auth_passphraseE"></span><span id="SessionBase::m_auth_passphrase__ss"></span><span class="target" id="classSessionBase_1a45a49143ff62db9863f0b770f34fb5f8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_auth_passphrase</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase17m_auth_passphraseE" title="Link to this definition"></a><br /></dt>
+<dd><p>Authentication passphrase for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase20m_security_engine_idE">
+<span id="_CPPv3N11SessionBase20m_security_engine_idE"></span><span id="_CPPv2N11SessionBase20m_security_engine_idE"></span><span id="SessionBase::m_security_engine_id__ss"></span><span class="target" id="classSessionBase_1a0285b7d4f333af00869aea54f3245798"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_security_engine_id</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase20m_security_engine_idE" title="Link to this definition"></a><br /></dt>
+<dd><p>Security engine ID for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase19m_context_engine_idE">
+<span id="_CPPv3N11SessionBase19m_context_engine_idE"></span><span id="_CPPv2N11SessionBase19m_context_engine_idE"></span><span id="SessionBase::m_context_engine_id__ss"></span><span class="target" id="classSessionBase_1a0d9983ad098ac716b7cc77ca956566af"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_context_engine_id</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase19m_context_engine_idE" title="Link to this definition"></a><br /></dt>
+<dd><p>Context engine ID for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase16m_security_levelE">
+<span id="_CPPv3N11SessionBase16m_security_levelE"></span><span id="_CPPv2N11SessionBase16m_security_levelE"></span><span id="SessionBase::m_security_level__ss"></span><span class="target" id="classSessionBase_1a5ac9b557096f69b9433bcc3208bcb0af"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_security_level</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase16m_security_levelE" title="Link to this definition"></a><br /></dt>
+<dd><p>Security level for SNMP v3 (e.g., “noAuthNoPriv”, “authNoPriv”, “authPriv”). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase9m_contextE">
+<span id="_CPPv3N11SessionBase9m_contextE"></span><span id="_CPPv2N11SessionBase9m_contextE"></span><span id="SessionBase::m_context__ss"></span><span class="target" id="classSessionBase_1a44ee8ad51cdc1e49037850bb73a4b610"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_context</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase9m_contextE" title="Link to this definition"></a><br /></dt>
+<dd><p>Context name for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase19m_security_usernameE">
+<span id="_CPPv3N11SessionBase19m_security_usernameE"></span><span id="_CPPv2N11SessionBase19m_security_usernameE"></span><span id="SessionBase::m_security_username__ss"></span><span class="target" id="classSessionBase_1a4d53b3644b9e3ffc55b55f2aece048ca"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_security_username</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase19m_security_usernameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Security username for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase18m_privacy_protocolE">
+<span id="_CPPv3N11SessionBase18m_privacy_protocolE"></span><span id="_CPPv2N11SessionBase18m_privacy_protocolE"></span><span id="SessionBase::m_privacy_protocol__ss"></span><span class="target" id="classSessionBase_1abb1c2fb1c2d2bcc6e199e161ebfef982"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_privacy_protocol</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase18m_privacy_protocolE" title="Link to this definition"></a><br /></dt>
+<dd><p>Privacy protocol for SNMP v3 (e.g., “DES”, “AES”). </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase20m_privacy_passphraseE">
+<span id="_CPPv3N11SessionBase20m_privacy_passphraseE"></span><span id="_CPPv2N11SessionBase20m_privacy_passphraseE"></span><span id="SessionBase::m_privacy_passphrase__ss"></span><span class="target" id="classSessionBase_1a9b40e617a8529af77468f101ea406d6d"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_privacy_passphrase</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase20m_privacy_passphraseE" title="Link to this definition"></a><br /></dt>
+<dd><p>Privacy passphrase for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase12m_boots_timeE">
+<span id="_CPPv3N11SessionBase12m_boots_timeE"></span><span id="_CPPv2N11SessionBase12m_boots_timeE"></span><span id="SessionBase::m_boots_time__ss"></span><span class="target" id="classSessionBase_1ab70d23e4ddfeb35d241a672a86ba845c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_boots_time</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase12m_boots_timeE" title="Link to this definition"></a><br /></dt>
+<dd><p>System boots time for SNMP v3. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase9m_retriesE">
+<span id="_CPPv3N11SessionBase9m_retriesE"></span><span id="_CPPv2N11SessionBase9m_retriesE"></span><span id="SessionBase::m_retries__ss"></span><span class="target" id="classSessionBase_1a2309953d4d382f52a0d33a4ec69cafc1"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_retries</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase9m_retriesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of retries for SNMP requests. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase9m_timeoutE">
+<span id="_CPPv3N11SessionBase9m_timeoutE"></span><span id="_CPPv2N11SessionBase9m_timeoutE"></span><span id="SessionBase::m_timeout__ss"></span><span class="target" id="classSessionBase_1ae703b59180875d412bb1aa5dd055e936"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_timeout</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N11SessionBase9m_timeoutE" title="Link to this definition"></a><br /></dt>
+<dd><p>Timeout for SNMP requests. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="session_python.html" class="btn btn-neutral float-left" title="Python Session Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, carlkidcrypto.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

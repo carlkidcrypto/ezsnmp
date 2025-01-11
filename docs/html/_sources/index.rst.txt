@@ -265,14 +265,6 @@ Within the patches directory run the following command.
 diff -Naurw ~/Downloads/net-snmp-master/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
 ```
 
-consider the following names for the api.
-`snmp` is redundant in the name since the module `ezsnmp` already has it in its' name.
-snmpwalk --> ezsnmp.walk
-snmpbulkwalk --> ezsnmp.bulk_walk
-snmpget --> ezsnmp.get
-snmpbulkget --> ezsnmp.bulk_get
-etc...
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

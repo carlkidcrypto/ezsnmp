@@ -43,10 +43,8 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="datatypes.html">ezsnmp.datatypes module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="netsnmp.html">ezsnmp.netsnmp module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sessionbase.html">ezsnmp.sessionbase module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 </ul>
 
         </div>
@@ -298,23 +296,17 @@ one-off operations where you wish to specify all details in the request:</p>
 <p><code class="docutils literal notranslate"><span class="pre">`bash</span>
 <span class="pre">diff</span> <span class="pre">-Naurw</span> <span class="pre">~/Downloads/net-snmp-master/apps/snmpwalk.c</span> <span class="pre">../src/snmpwalk.cpp</span> <span class="pre">&gt;</span> <span class="pre">snmpwalk.patch</span>
 <span class="pre">`</span></code></p>
-<p>consider the following names for the api.
-<cite>snmp</cite> is redundant in the name since the module <cite>ezsnmp</cite> already has it in its’ name.
-snmpwalk –&gt; ezsnmp.walk
-snmpbulkwalk –&gt; ezsnmp.bulk_walk
-snmpget –&gt; ezsnmp.get
-snmpbulkget –&gt; ezsnmp.bulk_get
-etc…</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="datatypes.html">ezsnmp.datatypes module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="netsnmp.html">ezsnmp.netsnmp module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="session.html">ezsnmp.session module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="session.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="session_python.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sessionbase.html">ezsnmp.sessionbase module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sessionbase_cpp.html#_CPPv411SessionBase"><code class="docutils literal notranslate"><span class="pre">SessionBase</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

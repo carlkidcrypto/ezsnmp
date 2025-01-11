@@ -1,7 +1,5 @@
 .. toctree::
    :maxdepth: 8
 
-   datatypes
-   netsnmp
-   session
-   sessionbase
+   session_python
+   sessionbase_cpp
