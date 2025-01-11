@@ -14,8 +14,10 @@ EzSnmp
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml
 .. |TestPyPI Distributions| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml/badge.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml
-.. |Tests| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests.yml
+.. |Tests Homebrew| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml
+.. |Tests Native| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml/badge.svg
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
 

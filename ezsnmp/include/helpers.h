@@ -22,8 +22,8 @@
  * @return A string representation of the variable binding.
  */
 std::string print_variable_to_string(oid const *objid,
-                                    size_t objidlen,
-                                    netsnmp_variable_list const *variable);
+                                     size_t objidlen,
+                                     netsnmp_variable_list const *variable);
 
 /**
  * @brief Throws an exception with SNMP session error information.
@@ -69,7 +69,6 @@ std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int 
  */
 Result parse_result(std::string const &input);
 
-
 /**
  * @brief Parses multiple SNMP result strings.
  *
@@ -91,7 +90,7 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs);
  * @param context_engine_id_str The context engine ID.
  */
 void remove_v3_user_from_cache(std::string const &security_name_str,
-                              std::string const &context_engine_id_str);
+                               std::string const &context_engine_id_str);
 
 /**
  * @brief Converts an OID to its string representation.
