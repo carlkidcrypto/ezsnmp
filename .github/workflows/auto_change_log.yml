@@ -23,7 +23,6 @@ jobs:
               uses: carlkidcrypto/os-specific-runner@v2.1.1
               with:
                 linux: |
-                  sudo apt install git -y;
                   sudo snap install go --classic;
                   go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest;
 
@@ -33,6 +32,7 @@ jobs:
               with:
                 linux: |
                   rm -f CHANGELOG.md;
+                  echo "PATH=$PATH:/usr/bin" >> $GITHUB_ENV;
                   ~/go/bin/git-chglog --config /home/runner/work/ezsnmp/ezsnmp/.chglog/config.yml -o CHANGELOG.md;
                   if git diff --quiet CHANGELOG.md; then
                       echo "changes=false" >> $GITHUB_OUTPUT
