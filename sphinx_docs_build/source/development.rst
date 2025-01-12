@@ -131,7 +131,7 @@ For MacOS builds on a MacOS machine
 Formatting
 ----------
 
-For c++ code:
+For c++ code using clang-format 20+:
 
 .. code:: bash
 

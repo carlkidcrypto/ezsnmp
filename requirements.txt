@@ -3,7 +3,6 @@ attrs==24.3.0
 black==24.10.0
 click== 8.1.8
 colorama==0.4.6
-coverage==7.6.10
 flake8==7.1.1
 packaging==24.2
 pathspec==0.12.1

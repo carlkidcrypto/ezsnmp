@@ -27,8 +27,8 @@ void snmpbulkwalk_usage(void);
  * @return A vector of strings containing the printed output.
  */
 std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
-                                                        oid *theoid,
-                                                        size_t theoid_len);
+                                                         oid *theoid,
+                                                         size_t theoid_len);
 
 /**
  * @brief Processes command-line options for the snmpbulkwalk command.
