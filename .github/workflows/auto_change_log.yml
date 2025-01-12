@@ -23,6 +23,7 @@ jobs:
               uses: carlkidcrypto/os-specific-runner@v2.1.1
               with:
                 linux: |
+                  sudo apt install git -y;
                   sudo snap install go --classic;
                   go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest;
 
@@ -39,10 +40,6 @@ jobs:
                       echo "changes=true" >> $GITHUB_OUTPUT
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Cleanup
-              run: rm git-chglog
-              if: always()
 
             - name: Create Pull Request
               if: steps.generate.outputs.changes == 'true'
