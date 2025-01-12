@@ -1,17 +1,14 @@
-.. Ez SNMP documentation master file, created by
-   sphinx-quickstart on Thu Dec 28 15:32:26 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to Ez SNMP's documentation!
+Welcome to EzSnmp's documentation!
 ===================================
 
-Installation
+Introduction
 ------------
-EzSNMP has been tested and is supported on systems running Net-SNMP
-5.9.x and newer. All non-EOL versions of Python 3 are fully supported.
+EzSnmp has been tested and is supported on systems running net-snmp
+5.9.x and newer. All Python versions 3.9 and above are fully supported.
 
-If your OS ships with a supported version of Net-SNMP, then you can install it
+Installation via Package Manager
+--------------------------------
+If your OS ships with a supported version of net-snmp, then you can install it
 without compiling it via your package manager:
 
 On RHEL / CentOS systems:
@@ -25,7 +22,7 @@ On Debian / Ubuntu systems:
 .. code-block:: bash
     
     sudo apt update && sudo apt upgrade -y;
-    sudo apt install -y libsnmp-dev libperl-dev snmp-mibs-downloader;
+    sudo apt install -y libsnmp-dev g++ python3-dev;
 
 On macOS systems:
 
@@ -33,12 +30,14 @@ On macOS systems:
 
     brew install net-snmp
 
-If your OS doesn't ship with Net-SNMP 5.9.x or newer, please follow instructions
-provided on the `Net-SNMP install page <http://www.net-snmp.org/docs/INSTALL.html>`_
-to build and install Net-SNMP on your system.
+Installation via Bulidng net-snmp from Source
+---------------------------------------------
+If your OS doesn't ship with net-snmp 5.9.x or newer, please follow instructions
+provided on the `net-snmp install page <http://www.net-snmp.org/docs/INSTALL.html>`_
+to build and install net-snmp on your system.
 
 You'll also need to ensure that you have the following packages installed so
-that EzSNMP installs correctly:
+that EzSnmp installs correctly:
 
 On RHEL / CentOS systems:
 
@@ -58,13 +57,16 @@ On macOS systems:
 
     brew install gcc
 
-Install EzSNMP via pip as follows:
+Install EzSnmp via pip as follows:
 
 .. code-block:: bash
 
     pip install ezsnmp
 
-Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSNMP compatiabile
+Installation Troubleshooting
+----------------------------
+
+Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSnmp compatiabile
 with as many as possible linux distros. Occasionally it isn't perfect. If you have issues try
 something like this:
 
@@ -75,7 +77,7 @@ something like this:
 
 Quick Start
 -----------
-There are primarily two ways you can use the EzSNMP library.
+There are primarily two ways you can use the EzSnmp library.
 
 The first is with the use of a Session object which is most suitable when you
 are planning on requesting multiple pieces of SNMP data from a source.
@@ -114,7 +116,7 @@ are planning on requesting multiple pieces of SNMP data from a source.
             value=item.value
         )
 
-You may also use EzSNMP via its simple interface which is intended for
+You may also use EzSnmp via its simple interface which is intended for
 one-off operations where you wish to specify all details in the request:
 
 .. code-block:: python
@@ -216,62 +218,6 @@ Example Session Kargs
 
     # Do stuff with res
     print(res)
-
-Making The SWIG Interface Files
--------------------------------
-
-One look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
-
-Two copy the c file over, for example `snmpwalk.c`. Then rename to change the extension to `.cpp`.
-
-Three make a header file for it `snmpwalk.h` and extract methods/functions from the source code.
-
-Four run the command below to generate the wrap file.
-
-```bash
-swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmp.cpp ezsnmp/interface/netsnmp.i &&
-swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_sessionbase.cpp ezsnmp/interface/sessionbase.i &&
-swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i
-```
-
-* `-c++` to force generation of a `.cpp` file
-* `-python` to build a python module
-* `-builtin` to build with native python data types. [Python_builtin_types](https://swig.org/Doc4.0/Python.html#Python_builtin_types)
-* `-doxygen` Convert C++ doxygen comments to pydoc comments in proxy classes [Python_commandline](https://swig.org/Doc4.0/Python.html#Python_commandline)
-* `-threads` adds thread support for all modules. [Support_for_Multithreaded_Applications](https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications)
-
-Five run
-
-```python3
-clear && rm -drf build ezsnmp.egg-info && python3 -m pip install .
-```
-
-Six run it in python3
-
-.. code-block:: bash
-
-    python3
-    >>> import ezsnmp
-    >>> args = ["-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
-    >>> retval = ezsnmp.snmpwalk(args)
-    >>> print(retval)
-
-Making The Patch Files
-----------------------
-
-Within the patches directory run the following command.
-
-```bash
-diff -Naurw ~/Downloads/net-snmp-master/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
-```
-
-consider the following names for the api.
-`snmp` is redundant in the name since the module `ezsnmp` already has it in its' name.
-snmpwalk --> ezsnmp.walk
-snmpbulkwalk --> ezsnmp.bulk_walk
-snmpget --> ezsnmp.get
-snmpbulkget --> ezsnmp.bulk_get
-etc...
 
 .. toctree::
    :maxdepth: 2

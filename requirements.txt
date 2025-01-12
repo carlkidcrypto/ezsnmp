@@ -1,9 +1,8 @@
 atomicwrites==1.4.1
 attrs==24.3.0
 black==24.10.0
-click== 8.1.7
+click== 8.1.8
 colorama==0.4.6
-coverage==7.6.9
 flake8==7.1.1
 packaging==24.2
 pathspec==0.12.1
@@ -11,11 +10,11 @@ platformdirs==4.3.6
 pluggy==1.5.0
 pycodestyle==2.12.1
 pyflakes==3.2.0
-pyparsing==3.2.0
+pyparsing==3.2.1
 termcolor==2.5.0
 tomli==2.2.1
-setuptools==75.6.0
-urllib3==2.2.3
+setuptools==75.8.0
+urllib3==2.3.0
 build==1.2.2
 cibuildwheel==2.22.0
 pip==24.3.1
