@@ -40,11 +40,11 @@ public:
  * @brief Exception class for handling SNMP timeout errors.
  *
  * This class represents an error that occurs when an SNMP operation times out.
- * It inherits from EzSnmpConnectionError.
+ * It inherits from EzSnmpError.
  *
  * @param message A descriptive message about the timeout error.
  */
-class EzSnmpTimeoutError : public EzSnmpConnectionError {
+class EzSnmpTimeoutError : public EzSnmpError {
 public:
     EzSnmpTimeoutError(const std::string& message);
 };

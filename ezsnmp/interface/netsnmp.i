@@ -3,6 +3,7 @@
 
 %include "stl.i"
 %include "datatypes.i"
+%include "exceptions.i"
 
 %feature("python:annotations", "c");
 

@@ -238,6 +238,7 @@ setup(
         Extension(
             name="ezsnmp/_netsnmp",
             sources=[
+                "ezsnmp/src/ezsnmp_exceptions.cpp",
                 "ezsnmp/src/ezsnmp_netsnmp.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/helpers.cpp",
@@ -258,6 +259,7 @@ setup(
         Extension(
             name="ezsnmp/_sessionbase",
             sources=[
+                "ezsnmp/src/ezsnmp_exceptions.cpp",
                 "ezsnmp/src/ezsnmp_sessionbase.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/sessionbase.cpp",

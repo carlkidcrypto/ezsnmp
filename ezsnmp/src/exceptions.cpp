@@ -8,7 +8,7 @@ const char* EzSnmpError::what() const noexcept {
 
 EzSnmpConnectionError::EzSnmpConnectionError(const std::string& message) : EzSnmpError(message) {}
 
-EzSnmpTimeoutError::EzSnmpTimeoutError(const std::string& message) : EzSnmpConnectionError(message) {}
+EzSnmpTimeoutError::EzSnmpTimeoutError(const std::string& message) : EzSnmpError(message) {}
 
 EzSnmpUnknownObjectIDError::EzSnmpUnknownObjectIDError(const std::string& message) : EzSnmpError(message) {}
 
