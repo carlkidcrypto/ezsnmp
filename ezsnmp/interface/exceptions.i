@@ -48,7 +48,7 @@
     }
 };
 
-%exceptionclass Error;
+%exceptionclass GenericError;
 %exceptionclass ConnectionError;
 %exceptionclass TimeoutError;
 %exceptionclass UnknownObjectIDError;

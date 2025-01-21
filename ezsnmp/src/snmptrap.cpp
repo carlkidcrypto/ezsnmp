@@ -72,7 +72,7 @@ oid objid_sysuptime[] = {1, 3, 6, 1, 2, 1, 1, 3, 0};
 oid objid_snmptrap[] = {1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0};
 int inform = 0;
 
-#include <stdexcept>
+#include "exceptions.h"
 
 #include "helpers.h"
 #include "snmptrap.h"
@@ -106,7 +106,7 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
                default:
                   std::string err_msg =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw std::runtime_error(err_msg);
+                  throw ParseError(err_msg);
             }
          }
          break;
@@ -152,13 +152,13 @@ int snmptrap(std::vector<std::string> const &args) {
    /** parse args (also initializes session) */
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+         throw ParseError("NETSNMP_PARSE_ARGS_ERROR");
 
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+         throw ParseError("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         throw ParseError("NETSNMP_PARSE_ARGS_ERROR_USAGE");
       default:
          break;
    }

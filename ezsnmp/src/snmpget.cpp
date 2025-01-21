@@ -68,7 +68,7 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-#include <stdexcept>
+#include "exceptions.h"
 
 #include "helpers.h"
 #include "snmpget.h"
@@ -85,7 +85,7 @@ void snmpget_optProc(int argc, char *const *argv, int opt) {
                default:
                   std::string err_msg =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw std::runtime_error(err_msg);
+                  throw ParseError(err_msg);
             }
          }
          break;
@@ -129,13 +129,13 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
     */
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+         throw ParseError("NETSNMP_PARSE_ARGS_ERROR");
 
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+         throw ParseError("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         throw ParseError("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -143,14 +143,14 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
 
    if (arg >= argc) {
       std::string err_msg = "Missing object name\n";
-      throw std::runtime_error(err_msg);
+      throw GenericError(err_msg);
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
       std::string err_msg =
           "Too many object identifiers specified. "
           "Only " +
           std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
-      throw std::runtime_error(err_msg);
+      throw GenericError(err_msg);
    }
 
    /*
@@ -230,12 +230,12 @@ retry:
                goto retry;
             }
          }
-         throw std::runtime_error(err_msg);
+         throw PacketError(err_msg);
 
       } /* endif -- SNMP_ERR_NOERROR */
    } else if (status == STAT_TIMEOUT) {
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-      throw std::runtime_error(err_msg);
+      throw TimeoutError(err_msg);
    } else { /* status == STAT_ERROR */
       snmp_sess_perror_exception("snmpget", ss);
 

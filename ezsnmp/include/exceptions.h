@@ -10,8 +10,6 @@
  *
  * This class extends the standard std::exception class to provide
  * detailed error messages specific to SNMP operations.
- *
- * @note This class is part of the ezsnmp library.
  */
 class GenericError : public std::exception {
 public:
@@ -126,7 +124,7 @@ public:
  * @class ParseError
  * @brief Exception class for handling SNMP parse errors.
  *
- * This exception is thrown when an error occurs while parsing SNMP data.
+ * This exception is thrown when an error occurs while parsing SNMP command line arguments.
  *
  * @extends GenericError
  *

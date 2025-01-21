@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="snmpwalk.i" href="snmpwalk_interface.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Development Guide - EzSnmp V2.0.0b0 documentation</title>
+        <title>Development Guide - EzSnmp V2.0.0b1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp V2.0.0b0 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp V2.0.0b1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">EzSnmp V2.0.0b0 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp V2.0.0b1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -201,10 +201,12 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions_interface.html">exceptions.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="netsnmp_interface.html">netsnmp.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
@@ -280,7 +282,8 @@ make<span class="w"> </span>html
 <p>Four run the command below to generate the wrap file.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_netsnmp.cpp<span class="w"> </span>ezsnmp/interface/netsnmp.i<span class="w"> </span><span class="o">&amp;&amp;</span>
 swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_sessionbase.cpp<span class="w"> </span>ezsnmp/interface/sessionbase.i<span class="w"> </span><span class="o">&amp;&amp;</span>
-swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_datatypes.cpp<span class="w"> </span>ezsnmp/interface/datatypes.i
+swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_datatypes.cpp<span class="w"> </span>ezsnmp/interface/datatypes.i<span class="w"> </span><span class="o">&amp;&amp;</span>
+swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_exceptions.cpp<span class="w"> </span>ezsnmp/interface/exceptions.i
 </pre></div>
 </div>
 <ul class="simple">
@@ -363,7 +366,7 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
 </section>
 <section id="formatting">
 <h2>Formatting<a class="headerlink" href="#formatting" title="Link to this heading">¶</a></h2>
-<p>For c++ code:</p>
+<p>For c++ code using clang-format 20+:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>find<span class="w"> </span>.<span class="w"> </span>-iname<span class="w"> </span><span class="s1">&#39;*.h&#39;</span><span class="w"> </span>-o<span class="w"> </span>-iname<span class="w"> </span><span class="s1">&#39;*.cpp&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>clang-format<span class="w"> </span>-i<span class="w"> </span>--style<span class="o">=</span>file:.clang-format
 </pre></div>
 </div>
@@ -439,7 +442,7 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=26a2042e"></script>
+</div><script src="_static/documentation_options.js?v=82da8037"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

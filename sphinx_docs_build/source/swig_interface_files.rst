@@ -8,6 +8,7 @@ For more information on the SWIG interface files, see the `SWIG documentation <h
    :maxdepth: 10
 
    datatypes_interface
+   exceptions_interface 
    netsnmp_interface
    sessionbase_interface
    snmpbulkget_interface

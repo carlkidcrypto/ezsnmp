@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SessionBase C++ Module" href="sessionbase_cpp.html" /><link rel="prev" title="Datatypes C++ Module" href="datatypes_cpp.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SessionBase C++ Module" href="sessionbase_cpp.html" /><link rel="prev" title="Exceptions C++ Module" href="exceptions_cpp.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Python Session Module - EzSnmp V2.0.0b0 documentation</title>
+        <title>Python Session Module - EzSnmp V2.0.0b1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp V2.0.0b0 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp V2.0.0b1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">EzSnmp V2.0.0b0 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp V2.0.0b1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -201,10 +201,12 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Python Session Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions_interface.html">exceptions.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="netsnmp_interface.html">netsnmp.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
@@ -268,109 +270,216 @@ for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">community</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'public'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_passphrase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_engine_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_engine_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_passphrase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boots_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.__init__" title="Link to this definition">¶</a></dt>
-<dd><p>Initialize the Session object with NetSNMP session parameters.</p>
+<dd><p>Initialize the SessionBase object with NetSNMP session parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hostname</strong> (<em>str</em>) – The hostname or IP address of the SNMP agent.</p></li>
+<li><p><strong>port_number</strong> (<em>str</em>) – The port number of the SNMP agent.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The SNMP version to use (1, 2c, or 3).</p></li>
+<li><p><strong>community</strong> (<em>str</em>) – The community string for SNMPv1/v2c.</p></li>
+<li><p><strong>auth_protocol</strong> (<em>str</em>) – The authentication protocol (e.g., ‘MD5’, ‘SHA’).</p></li>
+<li><p><strong>auth_passphrase</strong> (<em>str</em>) – The authentication passphrase.</p></li>
+<li><p><strong>security_engine_id</strong> (<em>str</em>) – The security engine ID.</p></li>
+<li><p><strong>context_engine_id</strong> (<em>str</em>) – The context engine ID.</p></li>
+<li><p><strong>security_level</strong> (<em>str</em>) – The security level (e.g., ‘noAuthNoPriv’, ‘authNoPriv’, ‘authPriv’).</p></li>
+<li><p><strong>context</strong> (<em>str</em>) – The context.</p></li>
+<li><p><strong>security_username</strong> (<em>str</em>) – The security username.</p></li>
+<li><p><strong>privacy_protocol</strong> (<em>str</em>) – The privacy protocol (e.g., ‘DES’, ‘AES’).</p></li>
+<li><p><strong>privacy_passphrase</strong> (<em>str</em>) – The privacy passphrase.</p></li>
+<li><p><strong>boots_time</strong> (<em>str</em>) – The boots time.</p></li>
+<li><p><strong>retries</strong> (<em>str</em>) – The number of retries.</p></li>
+<li><p><strong>timeout</strong> (<em>str</em>) – The timeout value in seconds.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.args">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#ezsnmp.session.Session.args" title="Link to this definition">¶</a></dt>
 <dd><p>Get the list of arguments used for NetSNMP commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.auth_passphrase">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_passphrase</span></span><a class="headerlink" href="#ezsnmp.session.Session.auth_passphrase" title="Link to this definition">¶</a></dt>
 <dd><p>Get the authentication passphrase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.auth_protocol">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_protocol</span></span><a class="headerlink" href="#ezsnmp.session.Session.auth_protocol" title="Link to this definition">¶</a></dt>
 <dd><p>Get the authentication protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.boots_time">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">boots_time</span></span><a class="headerlink" href="#ezsnmp.session.Session.boots_time" title="Link to this definition">¶</a></dt>
 <dd><p>Get the boots time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.community">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">community</span></span><a class="headerlink" href="#ezsnmp.session.Session.community" title="Link to this definition">¶</a></dt>
 <dd><p>Get the community string for SNMPv1/v2c.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.context">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context</span></span><a class="headerlink" href="#ezsnmp.session.Session.context" title="Link to this definition">¶</a></dt>
 <dd><p>Get the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.context_engine_id">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context_engine_id</span></span><a class="headerlink" href="#ezsnmp.session.Session.context_engine_id" title="Link to this definition">¶</a></dt>
 <dd><p>Get the context engine ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.hostname">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hostname</span></span><a class="headerlink" href="#ezsnmp.session.Session.hostname" title="Link to this definition">¶</a></dt>
 <dd><p>Get the hostname or IP address of the SNMP agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.port_number">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">port_number</span></span><a class="headerlink" href="#ezsnmp.session.Session.port_number" title="Link to this definition">¶</a></dt>
 <dd><p>Get the port number of the SNMP agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.privacy_passphrase">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">privacy_passphrase</span></span><a class="headerlink" href="#ezsnmp.session.Session.privacy_passphrase" title="Link to this definition">¶</a></dt>
 <dd><p>Get the privacy passphrase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.privacy_protocol">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">privacy_protocol</span></span><a class="headerlink" href="#ezsnmp.session.Session.privacy_protocol" title="Link to this definition">¶</a></dt>
 <dd><p>Get the privacy protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.retries">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retries</span></span><a class="headerlink" href="#ezsnmp.session.Session.retries" title="Link to this definition">¶</a></dt>
 <dd><p>Get the number of retries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.security_engine_id">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">security_engine_id</span></span><a class="headerlink" href="#ezsnmp.session.Session.security_engine_id" title="Link to this definition">¶</a></dt>
 <dd><p>Get the security engine ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.security_level">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">security_level</span></span><a class="headerlink" href="#ezsnmp.session.Session.security_level" title="Link to this definition">¶</a></dt>
 <dd><p>Get the security level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.security_username">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">security_username</span></span><a class="headerlink" href="#ezsnmp.session.Session.security_username" title="Link to this definition">¶</a></dt>
 <dd><p>Get the security username.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.timeout">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><a class="headerlink" href="#ezsnmp.session.Session.timeout" title="Link to this definition">¶</a></dt>
 <dd><p>Get the timeout value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.version">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><a class="headerlink" href="#ezsnmp.session.Session.version" title="Link to this definition">¶</a></dt>
 <dd><p>Get the SNMP version being used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -391,14 +500,14 @@ for managing NetSNMP sessions.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="datatypes_cpp.html">
+          <a class="prev-page" href="exceptions_cpp.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Datatypes C++ Module</div>
+                <div class="title">Exceptions C++ Module</div>
                 
               </div>
             </a>
@@ -465,7 +574,7 @@ for managing NetSNMP sessions.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=26a2042e"></script>
+</div><script src="_static/documentation_options.js?v=82da8037"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
