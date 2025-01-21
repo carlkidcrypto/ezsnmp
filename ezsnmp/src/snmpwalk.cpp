@@ -78,7 +78,6 @@ int numprinted = 0;
 char *end_name = NULL;
 
 #include "exceptions.h"
-
 #include "helpers.h"
 #include "snmpwalk.h"
 

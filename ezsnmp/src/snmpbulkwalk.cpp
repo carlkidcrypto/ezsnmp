@@ -75,7 +75,6 @@ int snmpbulkwalk_numprinted = 0;
 int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
 #include "exceptions.h"
-
 #include "helpers.h"
 #include "snmpbulkwalk.h"
 

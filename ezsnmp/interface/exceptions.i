@@ -45,6 +45,9 @@
     } catch (const std::invalid_argument& e) {
     PyErr_SetString(PyExc_ValueError, e.what());
     SWIG_fail;
+    }catch (const GenericError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+    SWIG_fail;
     }
 };
 

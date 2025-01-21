@@ -12,11 +12,12 @@
  * detailed error messages specific to SNMP operations.
  */
 class GenericError : public std::exception {
-public:
-    GenericError(const std::string& message);
-    virtual const char* what() const noexcept override;
-private:
-    std::string m_msg;
+  public:
+   GenericError(std::string const& message);
+   virtual char const* what() const noexcept override;
+
+  private:
+   std::string m_msg;
 };
 
 /**
@@ -29,8 +30,8 @@ private:
  * @param message A descriptive error message.
  */
 class ConnectionError : public GenericError {
-public:
-    ConnectionError(const std::string& message);
+  public:
+   ConnectionError(std::string const& message);
 };
 
 /**
@@ -43,8 +44,8 @@ public:
  * @param message A descriptive message about the timeout error.
  */
 class TimeoutError : public GenericError {
-public:
-    TimeoutError(const std::string& message);
+  public:
+   TimeoutError(std::string const& message);
 };
 
 /**
@@ -59,8 +60,8 @@ public:
  * @param message A string containing the error message.
  */
 class UnknownObjectIDError : public GenericError {
-public:
-    UnknownObjectIDError(const std::string& message);
+  public:
+   UnknownObjectIDError(std::string const& message);
 };
 
 /**
@@ -74,8 +75,8 @@ public:
  * @extends GenericError
  */
 class NoSuchNameError : public GenericError {
-public:
-    NoSuchNameError(const std::string& message);
+  public:
+   NoSuchNameError(std::string const& message);
 };
 
 /**
@@ -87,8 +88,8 @@ public:
  * @param message A detailed error message.
  */
 class NoSuchObjectError : public GenericError {
-public:
-    NoSuchObjectError(const std::string& message);
+  public:
+   NoSuchObjectError(std::string const& message);
 };
 
 /**
@@ -101,8 +102,8 @@ public:
  * @extends GenericError
  */
 class NoSuchInstanceError : public GenericError {
-public:
-    NoSuchInstanceError(const std::string& message);
+  public:
+   NoSuchInstanceError(std::string const& message);
 };
 
 /**
@@ -116,8 +117,8 @@ public:
  * @param message A descriptive error message.
  */
 class UndeterminedTypeError : public GenericError {
-public:
-    UndeterminedTypeError(const std::string& message);
+  public:
+   UndeterminedTypeError(std::string const& message);
 };
 
 /**
@@ -131,8 +132,8 @@ public:
  * @param message A descriptive error message.
  */
 class ParseError : public GenericError {
-public:
-    ParseError(const std::string& message);
+  public:
+   ParseError(std::string const& message);
 };
 
 /**
@@ -146,8 +147,8 @@ public:
  * @param message A descriptive error message.
  */
 class PacketError : public GenericError {
-public:
-    PacketError(const std::string& message);
+  public:
+   PacketError(std::string const& message);
 };
 
 #endif // EXCEPTIONS_H

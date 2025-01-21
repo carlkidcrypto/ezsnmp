@@ -7373,6 +7373,9 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Result, SWIG_BUILTIN_INIT |  0 );
@@ -7433,6 +7436,9 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -7505,6 +7511,9 @@ SWIGINTERN int _wrap_new_GenericError(PyObject *self, PyObject *args, PyObject *
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_GenericError, SWIG_BUILTIN_INIT |  0 );
@@ -7569,6 +7578,9 @@ SWIGINTERN PyObject *_wrap_GenericError_what(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_FromCharPtr((const char *)result);
@@ -7629,6 +7641,9 @@ SWIGINTERN PyObject *_wrap_delete_GenericError(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -7701,6 +7716,9 @@ SWIGINTERN int _wrap_new_ConnectionError(PyObject *self, PyObject *args, PyObjec
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ConnectionError, SWIG_BUILTIN_INIT |  0 );
@@ -7763,6 +7781,9 @@ SWIGINTERN PyObject *_wrap_delete_ConnectionError(PyObject *self, PyObject *args
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -7835,6 +7856,9 @@ SWIGINTERN int _wrap_new_TimeoutError(PyObject *self, PyObject *args, PyObject *
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_TimeoutError, SWIG_BUILTIN_INIT |  0 );
@@ -7897,6 +7921,9 @@ SWIGINTERN PyObject *_wrap_delete_TimeoutError(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -7969,6 +7996,9 @@ SWIGINTERN int _wrap_new_UnknownObjectIDError(PyObject *self, PyObject *args, Py
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_UnknownObjectIDError, SWIG_BUILTIN_INIT |  0 );
@@ -8031,6 +8061,9 @@ SWIGINTERN PyObject *_wrap_delete_UnknownObjectIDError(PyObject *self, PyObject 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8103,6 +8136,9 @@ SWIGINTERN int _wrap_new_NoSuchNameError(PyObject *self, PyObject *args, PyObjec
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchNameError, SWIG_BUILTIN_INIT |  0 );
@@ -8165,6 +8201,9 @@ SWIGINTERN PyObject *_wrap_delete_NoSuchNameError(PyObject *self, PyObject *args
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8237,6 +8276,9 @@ SWIGINTERN int _wrap_new_NoSuchObjectError(PyObject *self, PyObject *args, PyObj
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchObjectError, SWIG_BUILTIN_INIT |  0 );
@@ -8299,6 +8341,9 @@ SWIGINTERN PyObject *_wrap_delete_NoSuchObjectError(PyObject *self, PyObject *ar
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8371,6 +8416,9 @@ SWIGINTERN int _wrap_new_NoSuchInstanceError(PyObject *self, PyObject *args, PyO
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchInstanceError, SWIG_BUILTIN_INIT |  0 );
@@ -8433,6 +8481,9 @@ SWIGINTERN PyObject *_wrap_delete_NoSuchInstanceError(PyObject *self, PyObject *
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8505,6 +8556,9 @@ SWIGINTERN int _wrap_new_UndeterminedTypeError(PyObject *self, PyObject *args, P
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_UndeterminedTypeError, SWIG_BUILTIN_INIT |  0 );
@@ -8567,6 +8621,9 @@ SWIGINTERN PyObject *_wrap_delete_UndeterminedTypeError(PyObject *self, PyObject
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8639,6 +8696,9 @@ SWIGINTERN int _wrap_new_ParseError(PyObject *self, PyObject *args, PyObject *kw
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ParseError, SWIG_BUILTIN_INIT |  0 );
@@ -8701,6 +8761,9 @@ SWIGINTERN PyObject *_wrap_delete_ParseError(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8773,6 +8836,9 @@ SWIGINTERN int _wrap_new_PacketError(PyObject *self, PyObject *args, PyObject *k
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PacketError, SWIG_BUILTIN_INIT |  0 );
@@ -8835,6 +8901,9 @@ SWIGINTERN PyObject *_wrap_delete_PacketError(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -8902,6 +8971,9 @@ SWIGINTERN PyObject *_wrap__string_list_iterator(PyObject *self, PyObject *args)
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
@@ -8963,6 +9035,9 @@ SWIGINTERN PyObject *_wrap__string_list___nonzero__(PyObject *self, PyObject *ar
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -9026,6 +9101,9 @@ SWIGINTERN PyObject *_wrap__string_list___bool__(PyObject *self, PyObject *args)
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
@@ -9087,6 +9165,9 @@ SWIGINTERN PyObject *_wrap__string_list___len__(PyObject *self, PyObject *args) 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -9173,6 +9254,9 @@ SWIGINTERN PyObject *_wrap__string_list___getslice__(PyObject *self, PyObject *a
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t, SWIG_POINTER_OWN |  0 );
@@ -9255,6 +9339,9 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_0(PyObject *self, Py_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -9351,6 +9438,9 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self, Py_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -9501,6 +9591,9 @@ SWIGINTERN PyObject *_wrap__string_list___delslice__(PyObject *self, PyObject *a
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -9576,6 +9669,9 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_0(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -9650,6 +9746,9 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_0(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -9738,6 +9837,9 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -9814,6 +9916,9 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_1(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -9887,6 +9992,9 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_1(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -10007,6 +10115,9 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_1(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -10141,6 +10252,9 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_2(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -10217,6 +10331,9 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_3(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -10367,6 +10484,9 @@ SWIGINTERN PyObject *_wrap__string_list_pop(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_std_string(static_cast< std::string >(result));
@@ -10443,6 +10563,9 @@ SWIGINTERN PyObject *_wrap__string_list_append(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -10498,6 +10621,9 @@ SWIGINTERN int _wrap_new__string_list__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -10566,6 +10692,9 @@ SWIGINTERN int _wrap_new__string_list__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t, SWIG_BUILTIN_INIT |  0 );
@@ -10630,6 +10759,9 @@ SWIGINTERN PyObject *_wrap__string_list_empty(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
@@ -10691,6 +10823,9 @@ SWIGINTERN PyObject *_wrap__string_list_size(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -10766,6 +10901,9 @@ SWIGINTERN PyObject *_wrap__string_list_swap(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -10827,6 +10965,9 @@ SWIGINTERN PyObject *_wrap__string_list_begin(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -10891,6 +11032,9 @@ SWIGINTERN PyObject *_wrap__string_list_end(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
@@ -10953,6 +11097,9 @@ SWIGINTERN PyObject *_wrap__string_list_rbegin(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11017,6 +11164,9 @@ SWIGINTERN PyObject *_wrap__string_list_rend(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::reverse_iterator & >(result)),
@@ -11078,6 +11228,9 @@ SWIGINTERN PyObject *_wrap__string_list_clear(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11141,6 +11294,9 @@ SWIGINTERN PyObject *_wrap__string_list_get_allocator(PyObject *self, PyObject *
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj((new std::vector< std::string >::allocator_type(result)), SWIGTYPE_p_std__allocatorT_std__string_t, SWIG_POINTER_OWN |  0 );
@@ -11203,6 +11359,9 @@ SWIGINTERN int _wrap_new__string_list__SWIG_2(PyObject *self, Py_ssize_t nobjs, 
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t, SWIG_BUILTIN_INIT |  0 );
@@ -11263,6 +11422,9 @@ SWIGINTERN PyObject *_wrap__string_list_pop_back(PyObject *self, PyObject *args)
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11332,6 +11494,9 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_0(PyObject *self, Py_ssize_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11408,6 +11573,9 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_0(PyObject *self, Py_ssize_t
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11499,6 +11667,9 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_1(PyObject *self, Py_ssize_t
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11625,6 +11796,9 @@ SWIGINTERN int _wrap_new__string_list__SWIG_3(PyObject *self, Py_ssize_t nobjs, 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11761,6 +11935,9 @@ SWIGINTERN PyObject *_wrap__string_list_push_back(PyObject *self, PyObject *args
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -11825,6 +12002,9 @@ SWIGINTERN PyObject *_wrap__string_list_front(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
@@ -11887,6 +12067,9 @@ SWIGINTERN PyObject *_wrap__string_list_back(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -11972,6 +12155,9 @@ SWIGINTERN PyObject *_wrap__string_list_assign(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -12055,6 +12241,9 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_1(PyObject *self, Py_ssize_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -12198,6 +12387,9 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_0(PyObject *self, Py_ssize_
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
@@ -12296,6 +12488,9 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_1(PyObject *self, Py_ssize_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -12429,6 +12624,9 @@ SWIGINTERN PyObject *_wrap__string_list_reserve(PyObject *self, PyObject *args) 
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -12491,6 +12689,9 @@ SWIGINTERN PyObject *_wrap__string_list_capacity(PyObject *self, PyObject *args)
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_size_t(static_cast< size_t >(result));
@@ -12551,6 +12752,9 @@ SWIGINTERN PyObject *_wrap_delete__string_list(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -12628,6 +12832,9 @@ SWIGINTERN PyObject *_wrap__result_list_iterator(PyObject *self, PyObject *args)
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
@@ -12689,6 +12896,9 @@ SWIGINTERN PyObject *_wrap__result_list___nonzero__(PyObject *self, PyObject *ar
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -12752,6 +12962,9 @@ SWIGINTERN PyObject *_wrap__result_list___bool__(PyObject *self, PyObject *args)
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
@@ -12813,6 +13026,9 @@ SWIGINTERN PyObject *_wrap__result_list___len__(PyObject *self, PyObject *args) 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -12899,6 +13115,9 @@ SWIGINTERN PyObject *_wrap__result_list___getslice__(PyObject *self, PyObject *a
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t, SWIG_POINTER_OWN |  0 );
@@ -12981,6 +13200,9 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_0(PyObject *self, Py_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -13077,6 +13299,9 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self, Py_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -13227,6 +13452,9 @@ SWIGINTERN PyObject *_wrap__result_list___delslice__(PyObject *self, PyObject *a
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -13302,6 +13530,9 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_0(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -13376,6 +13607,9 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_0(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -13464,6 +13698,9 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -13540,6 +13777,9 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_1(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -13613,6 +13853,9 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_1(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -13733,6 +13976,9 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_1(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -13865,6 +14111,9 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_2(PyObject *self, Py_s
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -13939,6 +14188,9 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_3(PyObject *self, Py_s
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -14089,6 +14341,9 @@ SWIGINTERN PyObject *_wrap__result_list_pop(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj((new std::vector< Result >::value_type(result)), SWIGTYPE_p_Result, SWIG_POINTER_OWN |  0 );
@@ -14163,6 +14418,9 @@ SWIGINTERN PyObject *_wrap__result_list_append(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -14216,6 +14474,9 @@ SWIGINTERN int _wrap_new__result_list__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -14284,6 +14545,9 @@ SWIGINTERN int _wrap_new__result_list__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t, SWIG_BUILTIN_INIT |  0 );
@@ -14348,6 +14612,9 @@ SWIGINTERN PyObject *_wrap__result_list_empty(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
@@ -14409,6 +14676,9 @@ SWIGINTERN PyObject *_wrap__result_list_size(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -14484,6 +14754,9 @@ SWIGINTERN PyObject *_wrap__result_list_swap(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -14545,6 +14818,9 @@ SWIGINTERN PyObject *_wrap__result_list_begin(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -14609,6 +14885,9 @@ SWIGINTERN PyObject *_wrap__result_list_end(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< Result >::iterator & >(result)),
@@ -14671,6 +14950,9 @@ SWIGINTERN PyObject *_wrap__result_list_rbegin(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -14735,6 +15017,9 @@ SWIGINTERN PyObject *_wrap__result_list_rend(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< Result >::reverse_iterator & >(result)),
@@ -14796,6 +15081,9 @@ SWIGINTERN PyObject *_wrap__result_list_clear(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -14859,6 +15147,9 @@ SWIGINTERN PyObject *_wrap__result_list_get_allocator(PyObject *self, PyObject *
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj((new std::vector< Result >::allocator_type(result)), SWIGTYPE_p_std__allocatorT_Result_t, SWIG_POINTER_OWN |  0 );
@@ -14921,6 +15212,9 @@ SWIGINTERN int _wrap_new__result_list__SWIG_2(PyObject *self, Py_ssize_t nobjs, 
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t, SWIG_BUILTIN_INIT |  0 );
@@ -14981,6 +15275,9 @@ SWIGINTERN PyObject *_wrap__result_list_pop_back(PyObject *self, PyObject *args)
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15050,6 +15347,9 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_0(PyObject *self, Py_ssize_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15126,6 +15426,9 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_0(PyObject *self, Py_ssize_t
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15217,6 +15520,9 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_1(PyObject *self, Py_ssize_t
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15341,6 +15647,9 @@ SWIGINTERN int _wrap_new__result_list__SWIG_3(PyObject *self, Py_ssize_t nobjs, 
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15473,6 +15782,9 @@ SWIGINTERN PyObject *_wrap__result_list_push_back(PyObject *self, PyObject *args
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -15534,6 +15846,9 @@ SWIGINTERN PyObject *_wrap__result_list_front(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15597,6 +15912,9 @@ SWIGINTERN PyObject *_wrap__result_list_back(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15680,6 +15998,9 @@ SWIGINTERN PyObject *_wrap__result_list_assign(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -15759,6 +16080,9 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_1(PyObject *self, Py_ssize_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -15898,6 +16222,9 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_0(PyObject *self, Py_ssize_
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< Result >::iterator & >(result)),
@@ -15992,6 +16319,9 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_1(PyObject *self, Py_ssize_
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -16123,6 +16453,9 @@ SWIGINTERN PyObject *_wrap__result_list_reserve(PyObject *self, PyObject *args) 
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_Py_Void();
@@ -16185,6 +16518,9 @@ SWIGINTERN PyObject *_wrap__result_list_capacity(PyObject *self, PyObject *args)
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_size_t(static_cast< size_t >(result));
@@ -16245,6 +16581,9 @@ SWIGINTERN PyObject *_wrap_delete__result_list(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -16327,6 +16666,9 @@ SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
@@ -16397,6 +16739,9 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -16469,6 +16814,9 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
@@ -16539,6 +16887,9 @@ SWIGINTERN PyObject *_wrap_snmpgetnext(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -16611,6 +16962,9 @@ SWIGINTERN PyObject *_wrap_snmpset(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = swig::from(static_cast< std::vector< Result,std::allocator< Result > > >(result));
@@ -16682,6 +17036,9 @@ SWIGINTERN PyObject *_wrap_snmptrap(PyObject *self, PyObject *args) {
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
       SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+      SWIG_fail;
     }
   }
   resultobj = SWIG_From_int(static_cast< int >(result));
@@ -16752,6 +17109,9 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
       PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }catch (const GenericError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
       SWIG_fail;
     }
   }
@@ -17358,8 +17718,6 @@ static PyHeapTypeObject SwigPyBuiltin__GenericError_type = {
 		"\n"
 		"This class extends the standard std::exception class to provide\n"
 		"detailed error messages specific to SNMP operations.\n"
-		"\n"
-		"Notes: This class is part of the ezsnmp library.\n"
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
@@ -19285,7 +19643,7 @@ static PyHeapTypeObject SwigPyBuiltin__ParseError_type = {
     "\n"
 		"Exception class for handling SNMP parse errors.\n"
 		"\n"
-		"This exception is thrown when an error occurs while parsing SNMP data.\n"
+		"This exception is thrown when an error occurs while parsing SNMP command line arguments.\n"
 		"\n"
 		"\n"
 		"\n"

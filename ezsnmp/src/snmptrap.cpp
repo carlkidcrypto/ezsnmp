@@ -73,7 +73,6 @@ oid objid_snmptrap[] = {1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0};
 int inform = 0;
 
 #include "exceptions.h"
-
 #include "helpers.h"
 #include "snmptrap.h"
 

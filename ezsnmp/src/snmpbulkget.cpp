@@ -76,7 +76,6 @@ struct nameStruct {
 int names;
 
 #include "exceptions.h"
-
 #include "helpers.h"
 #include "snmpbulkget.h"
 

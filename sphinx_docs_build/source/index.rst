@@ -219,6 +219,27 @@ Example Session Kargs
     # Do stuff with res
     print(res)
 
+
+EzSnmp Exception Handling
+-------------------------
+
+EzSnmp provides a custom exception class `EzSnmpException` to handle errors that may occur during SNMP operations. This allows you to catch and manage exceptions specific to EzSnmp more effectively.
+
+Here's an example of how to use the `EzSnmpException` class:
+
+.. code-block:: python
+
+    from ezsnmp import Session, Exceptions
+
+    try:
+        session = Session(hostname='localhost', community='public', version=2)
+        result = session.get('sysDescr.0')
+        print(result)
+    except Exceptions.GenericError as e:
+        print(f"An error occurred: {e}")
+
+By catching `EzSnmpException`, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

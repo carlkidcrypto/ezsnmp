@@ -1,11 +1,12 @@
 
 #include "helpers.h"
-#include "exceptions.h"
 
 #include <cstring>
 #include <iostream>
 #include <regex>
 #include <sstream>
+
+#include "exceptions.h"
 
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
