@@ -1,7 +1,7 @@
 %module datatypes
 %feature("autodoc", "0");
 
-%include "std_string.i"
+%include <std_string.i>
 
 %{
 #include "datatypes.h"

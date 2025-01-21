@@ -1,7 +1,7 @@
 %module netsnmp
 %feature("autodoc", "0");
 
-%include "stl.i"
+%include <stl.i>
 %include "datatypes.i"
 %include "exceptions.i"
 

@@ -1,6 +1,6 @@
 %module netsnmp
-%include "argcargv.i"
-%include "stl.i"
+%include <argcargv.i>
+%include <stl.i>
 %include "exceptions.i"
 
 %{
