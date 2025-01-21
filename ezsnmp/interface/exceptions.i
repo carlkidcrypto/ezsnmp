@@ -12,28 +12,34 @@
 %exception {
     try {
         $action
-    } catch (const EzSnmpConnectionError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
     SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
     SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
     SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
     SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
     SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
     SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
     SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+    SWIG_fail;
+    }catch (const PacketError& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+    SWIG_fail;
+    }catch (const std::runtime_error& e) {
     PyErr_SetString(PyExc_RuntimeError, e.what());
     SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -42,14 +48,16 @@
     }
 };
 
-%exceptionclass EzSnmpError;
-%exceptionclass EzSnmpConnectionError;
-%exceptionclass EzSnmpTimeoutError;
-%exceptionclass EzSnmpUnknownObjectIDError;
-%exceptionclass EzSnmpNoSuchNameError;
-%exceptionclass EzSnmpNoSuchObjectError;
-%exceptionclass EzSnmpNoSuchInstanceError;
-%exceptionclass EzSnmpUndeterminedTypeError;
+%exceptionclass Error;
+%exceptionclass ConnectionError;
+%exceptionclass TimeoutError;
+%exceptionclass UnknownObjectIDError;
+%exceptionclass NoSuchNameError;
+%exceptionclass NoSuchObjectError;
+%exceptionclass NoSuchInstanceError;
+%exceptionclass UndeterminedTypeError;
+%exceptionclass ParseError;
+%exceptionclass PacketError;
 
 // Include the header file
 %include "../include/exceptions.h"

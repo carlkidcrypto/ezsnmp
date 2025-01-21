@@ -5,7 +5,7 @@
 #include <string>
 
 /**
- * @class EzSnmpError
+ * @class GenericError
  * @brief Exception class for handling SNMP errors in the ezsnmp library.
  *
  * This class extends the standard std::exception class to provide
@@ -13,113 +13,143 @@
  *
  * @note This class is part of the ezsnmp library.
  */
-class EzSnmpError : public std::exception {
+class GenericError : public std::exception {
 public:
-    EzSnmpError(const std::string& message);
+    GenericError(const std::string& message);
     virtual const char* what() const noexcept override;
 private:
     std::string m_msg;
 };
 
 /**
- * @class EzSnmpConnectionError
+ * @class ConnectionError
  * @brief Exception class for SNMP connection errors.
  *
  * This class represents an error that occurs during an SNMP connection attempt.
- * It inherits from the EzSnmpError base class.
+ * It inherits from the GenericError base class.
  *
  * @param message A descriptive error message.
  */
-class EzSnmpConnectionError : public EzSnmpError {
+class ConnectionError : public GenericError {
 public:
-    EzSnmpConnectionError(const std::string& message);
+    ConnectionError(const std::string& message);
 };
 
 /**
- * @class EzSnmpTimeoutError
+ * @class TimeoutError
  * @brief Exception class for handling SNMP timeout errors.
  *
  * This class represents an error that occurs when an SNMP operation times out.
- * It inherits from EzSnmpError.
+ * It inherits from GenericError.
  *
  * @param message A descriptive message about the timeout error.
  */
-class EzSnmpTimeoutError : public EzSnmpError {
+class TimeoutError : public GenericError {
 public:
-    EzSnmpTimeoutError(const std::string& message);
+    TimeoutError(const std::string& message);
 };
 
 /**
- * @class EzSnmpUnknownObjectIDError
+ * @class UnknownObjectIDError
  * @brief Exception class for unknown SNMP Object ID errors.
  *
  * This exception is thrown when an unknown SNMP Object ID is encountered.
  *
- * @details This class inherits from EzSnmpError and provides additional
+ * @details This class inherits from GenericError and provides additional
  * information about the error through its message.
  *
  * @param message A string containing the error message.
  */
-class EzSnmpUnknownObjectIDError : public EzSnmpError {
+class UnknownObjectIDError : public GenericError {
 public:
-    EzSnmpUnknownObjectIDError(const std::string& message);
+    UnknownObjectIDError(const std::string& message);
 };
 
 /**
- * @class EzSnmpNoSuchNameError
+ * @class NoSuchNameError
  * @brief Exception class for handling SNMP "No Such Name" errors.
  *
  * This class represents an error that occurs when an SNMP operation
  * encounters a "No Such Name" error, indicating that the requested
  * object does not exist.
  *
- * @extends EzSnmpError
+ * @extends GenericError
  */
-class EzSnmpNoSuchNameError : public EzSnmpError {
+class NoSuchNameError : public GenericError {
 public:
-    EzSnmpNoSuchNameError(const std::string& message);
+    NoSuchNameError(const std::string& message);
 };
 
 /**
- * @class EzSnmpNoSuchObjectError
+ * @class NoSuchObjectError
  * @brief Exception class for handling SNMP "No Such Object" errors.
  *
  * This exception is thrown when an SNMP operation encounters a "No Such Object" error.
  *
  * @param message A detailed error message.
  */
-class EzSnmpNoSuchObjectError : public EzSnmpError {
+class NoSuchObjectError : public GenericError {
 public:
-    EzSnmpNoSuchObjectError(const std::string& message);
+    NoSuchObjectError(const std::string& message);
 };
 
 /**
- * @class EzSnmpNoSuchInstanceError
+ * @class NoSuchInstanceError
  * @brief Exception class for handling SNMP "No Such Instance" errors.
  *
  * This exception is thrown when an SNMP operation encounters a "No Such Instance" error,
  * indicating that the requested instance does not exist.
  *
- * @extends EzSnmpError
+ * @extends GenericError
  */
-class EzSnmpNoSuchInstanceError : public EzSnmpError {
+class NoSuchInstanceError : public GenericError {
 public:
-    EzSnmpNoSuchInstanceError(const std::string& message);
+    NoSuchInstanceError(const std::string& message);
 };
 
 /**
- * @class EzSnmpUndeterminedTypeError
+ * @class UndeterminedTypeError
  * @brief Exception class for undetermined SNMP type errors.
  *
  * This exception is thrown when an SNMP type cannot be determined.
  *
- * @extends EzSnmpError
+ * @extends GenericError
  *
  * @param message A descriptive error message.
  */
-class EzSnmpUndeterminedTypeError : public EzSnmpError {
+class UndeterminedTypeError : public GenericError {
 public:
-    EzSnmpUndeterminedTypeError(const std::string& message);
+    UndeterminedTypeError(const std::string& message);
+};
+
+/**
+ * @class ParseError
+ * @brief Exception class for handling SNMP parse errors.
+ *
+ * This exception is thrown when an error occurs while parsing SNMP data.
+ *
+ * @extends GenericError
+ *
+ * @param message A descriptive error message.
+ */
+class ParseError : public GenericError {
+public:
+    ParseError(const std::string& message);
+};
+
+/**
+ * @class PacketError
+ * @brief Exception class for handling SNMP packet errors.
+ *
+ * This exception is thrown when an error occurs related to SNMP packet processing.
+ *
+ * @extends GenericError
+ *
+ * @param message A descriptive error message.
+ */
+class PacketError : public GenericError {
+public:
+    PacketError(const std::string& message);
 };
 
 #endif // EXCEPTIONS_H

@@ -74,7 +74,7 @@ oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int snmpbulkwalk_numprinted = 0;
 int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
-#include <stdexcept>
+#include "exceptions.h"
 
 #include "helpers.h"
 #include "snmpbulkwalk.h"
@@ -166,7 +166,7 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
                default:
                   std::string err_msg =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw std::runtime_error(err_msg);
+                  throw ParseError(err_msg);
             }
          }
          break;
@@ -208,13 +208,13 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
     */
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
+         throw ParseError("NETSNMP_PARSE_ARGS_ERROR");
 
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+         throw ParseError("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         throw ParseError("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -312,7 +312,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                      err_msg =
                          err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
 
-                     throw std::runtime_error(err_msg);
+                     throw GenericError(err_msg);
                   }
                   /*
                    * Check if last variable, and if so, save for next request.
@@ -348,13 +348,13 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                      err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
                   }
                   err_msg = err_msg + "\n";
-                  throw std::runtime_error(err_msg);
+                  throw PacketError(err_msg);
                }
             }
          }
       } else if (status == STAT_TIMEOUT) {
          std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-         throw std::runtime_error(err_msg);
+         throw TimeoutError(err_msg);
 
       } else { /* status == STAT_ERROR */
          snmp_sess_perror_exception("snmpbulkwalk", ss);

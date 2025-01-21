@@ -1,21 +1,25 @@
 #include "exceptions.h"
 
-EzSnmpError::EzSnmpError(const std::string& message) : m_msg(message) {}
+GenericError::GenericError(const std::string& message) : m_msg(message) {}
 
-const char* EzSnmpError::what() const noexcept {
+const char* GenericError::what() const noexcept {
     return m_msg.c_str();
 }
 
-EzSnmpConnectionError::EzSnmpConnectionError(const std::string& message) : EzSnmpError(message) {}
+ConnectionError::ConnectionError(const std::string& message) : GenericError(message) {}
 
-EzSnmpTimeoutError::EzSnmpTimeoutError(const std::string& message) : EzSnmpError(message) {}
+TimeoutError::TimeoutError(const std::string& message) : GenericError(message) {}
 
-EzSnmpUnknownObjectIDError::EzSnmpUnknownObjectIDError(const std::string& message) : EzSnmpError(message) {}
+UnknownObjectIDError::UnknownObjectIDError(const std::string& message) : GenericError(message) {}
 
-EzSnmpNoSuchNameError::EzSnmpNoSuchNameError(const std::string& message) : EzSnmpError(message) {}
+NoSuchNameError::NoSuchNameError(const std::string& message) : GenericError(message) {}
 
-EzSnmpNoSuchObjectError::EzSnmpNoSuchObjectError(const std::string& message) : EzSnmpError(message) {}
+NoSuchObjectError::NoSuchObjectError(const std::string& message) : GenericError(message) {}
 
-EzSnmpNoSuchInstanceError::EzSnmpNoSuchInstanceError(const std::string& message) : EzSnmpError(message) {}
+NoSuchInstanceError::NoSuchInstanceError(const std::string& message) : GenericError(message) {}
 
-EzSnmpUndeterminedTypeError::EzSnmpUndeterminedTypeError(const std::string& message) : EzSnmpError(message) {}
+UndeterminedTypeError::UndeterminedTypeError(const std::string& message) : GenericError(message) {}
+
+ParseError::ParseError(const std::string& message) : GenericError(message) {}
+
+PacketError::PacketError(const std::string& message) : GenericError(message) {}

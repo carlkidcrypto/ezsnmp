@@ -1,5 +1,6 @@
 
 #include "helpers.h"
+#include "exceptions.h"
 
 #include <cstring>
 #include <iostream>
@@ -36,7 +37,7 @@ std::string print_variable_to_string(oid const *objid,
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
  */
-/* Slight modifications to raise std::runtime_error instead of print to stderr */
+/* Slight modifications to raise GenericError instead of print to stderr */
 void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    std::string err;
    char *err_cstr = nullptr;
@@ -50,13 +51,13 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    std::string message = std::string(prog_string) + ": " + err;
 
    // Throw a runtime_error with the message
-   throw std::runtime_error(message);
+   throw GenericError(message);
 }
 
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L505-L511
  */
-/* Slight modifications to raise std::runtime_error instead of print to stderr */
+/* Slight modifications to raise GenericError instead of print to stderr */
 void snmp_perror_exception(char const *prog_string) {
    int xerr = snmp_errno; // MTCRITICAL_RESOURCE
    char const *str = snmp_api_errstring(xerr);
@@ -65,7 +66,7 @@ void snmp_perror_exception(char const *prog_string) {
    std::string message = std::string(prog_string) + ": " + str;
 
    // Throw a runtime_error with the message
-   throw std::runtime_error(message);
+   throw GenericError(message);
 }
 
 // This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc

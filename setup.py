@@ -236,10 +236,34 @@ print(f"incdirs: {incdirs}")
 setup(
     ext_modules=[
         Extension(
-            name="ezsnmp/_netsnmp",
+            name="ezsnmp/_datatypes",
+            sources=[
+                "ezsnmp/src/ezsnmp_datatypes.cpp",
+                "ezsnmp/src/datatypes.cpp",
+            ],
+            library_dirs=libdirs,
+            include_dirs=incdirs,
+            libraries=libs,
+            extra_compile_args=compile_args,
+            extra_link_args=link_args,
+        ),
+        Extension(
+            name="ezsnmp/_exceptions",
             sources=[
                 "ezsnmp/src/ezsnmp_exceptions.cpp",
+                "ezsnmp/src/exceptions.cpp",
+            ],
+            library_dirs=libdirs,
+            include_dirs=incdirs,
+            libraries=libs,
+            extra_compile_args=compile_args,
+            extra_link_args=link_args,
+        ),
+        Extension(
+            name="ezsnmp/_netsnmp",
+            sources=[
                 "ezsnmp/src/ezsnmp_netsnmp.cpp",
+                "ezsnmp/src/exceptions.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
@@ -259,8 +283,8 @@ setup(
         Extension(
             name="ezsnmp/_sessionbase",
             sources=[
-                "ezsnmp/src/ezsnmp_exceptions.cpp",
                 "ezsnmp/src/ezsnmp_sessionbase.cpp",
+                "ezsnmp/src/exceptions.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/sessionbase.cpp",
                 "ezsnmp/src/helpers.cpp",
@@ -271,18 +295,6 @@ setup(
                 "ezsnmp/src/snmpwalk.cpp",
                 "ezsnmp/src/snmpset.cpp",
                 "ezsnmp/src/snmptrap.cpp",
-            ],
-            library_dirs=libdirs,
-            include_dirs=incdirs,
-            libraries=libs,
-            extra_compile_args=compile_args,
-            extra_link_args=link_args,
-        ),
-        Extension(
-            name="ezsnmp/_datatypes",
-            sources=[
-                "ezsnmp/src/ezsnmp_datatypes.cpp",
-                "ezsnmp/src/datatypes.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,

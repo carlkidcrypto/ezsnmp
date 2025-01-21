@@ -3924,32 +3924,34 @@ SwigPyBuiltin_iternextfunc_closure(SwigPyWrapperFunction wrapper, PyObject *a) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_EzSnmpConnectionError swig_types[0]
-#define SWIGTYPE_p_EzSnmpError swig_types[1]
-#define SWIGTYPE_p_EzSnmpNoSuchInstanceError swig_types[2]
-#define SWIGTYPE_p_EzSnmpNoSuchNameError swig_types[3]
-#define SWIGTYPE_p_EzSnmpNoSuchObjectError swig_types[4]
-#define SWIGTYPE_p_EzSnmpTimeoutError swig_types[5]
-#define SWIGTYPE_p_EzSnmpUndeterminedTypeError swig_types[6]
-#define SWIGTYPE_p_EzSnmpUnknownObjectIDError swig_types[7]
-#define SWIGTYPE_p_Result swig_types[8]
-#define SWIGTYPE_p_SwigPyObject swig_types[9]
-#define SWIGTYPE_p_allocator_type swig_types[10]
-#define SWIGTYPE_p_char swig_types[11]
-#define SWIGTYPE_p_difference_type swig_types[12]
-#define SWIGTYPE_p_p_PyObject swig_types[13]
-#define SWIGTYPE_p_p_char swig_types[14]
-#define SWIGTYPE_p_size_type swig_types[15]
-#define SWIGTYPE_p_std__allocatorT_Result_t swig_types[16]
-#define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[17]
-#define SWIGTYPE_p_std__exception swig_types[18]
-#define SWIGTYPE_p_std__invalid_argument swig_types[19]
-#define SWIGTYPE_p_std__vectorT_Result_t swig_types[20]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[21]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[22]
-#define SWIGTYPE_p_value_type swig_types[23]
-static swig_type_info *swig_types[25];
-static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
+#define SWIGTYPE_p_ConnectionError swig_types[0]
+#define SWIGTYPE_p_GenericError swig_types[1]
+#define SWIGTYPE_p_NoSuchInstanceError swig_types[2]
+#define SWIGTYPE_p_NoSuchNameError swig_types[3]
+#define SWIGTYPE_p_NoSuchObjectError swig_types[4]
+#define SWIGTYPE_p_PacketError swig_types[5]
+#define SWIGTYPE_p_ParseError swig_types[6]
+#define SWIGTYPE_p_Result swig_types[7]
+#define SWIGTYPE_p_SwigPyObject swig_types[8]
+#define SWIGTYPE_p_TimeoutError swig_types[9]
+#define SWIGTYPE_p_UndeterminedTypeError swig_types[10]
+#define SWIGTYPE_p_UnknownObjectIDError swig_types[11]
+#define SWIGTYPE_p_allocator_type swig_types[12]
+#define SWIGTYPE_p_char swig_types[13]
+#define SWIGTYPE_p_difference_type swig_types[14]
+#define SWIGTYPE_p_p_PyObject swig_types[15]
+#define SWIGTYPE_p_p_char swig_types[16]
+#define SWIGTYPE_p_size_type swig_types[17]
+#define SWIGTYPE_p_std__allocatorT_Result_t swig_types[18]
+#define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[19]
+#define SWIGTYPE_p_std__exception swig_types[20]
+#define SWIGTYPE_p_std__invalid_argument swig_types[21]
+#define SWIGTYPE_p_std__vectorT_Result_t swig_types[22]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[23]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[24]
+#define SWIGTYPE_p_value_type swig_types[25]
+static swig_type_info *swig_types[27];
+static swig_module_info swig_module = {swig_types, 26, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -7338,28 +7340,34 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
         result = (Result *)new Result();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7393,28 +7401,34 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7431,23 +7445,23 @@ fail:
 
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_Result) /* defines _wrap_delete_Result_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_GenericError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpError *result = 0 ;
+  GenericError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_GenericError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_GenericError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_GenericError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_GenericError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -7455,31 +7469,37 @@ SWIGINTERN int _wrap_new_EzSnmpError(PyObject *self, PyObject *args, PyObject *k
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpError *)new EzSnmpError((std::string const &)*arg1);
+        result = (GenericError *)new GenericError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7487,7 +7507,7 @@ SWIGINTERN int _wrap_new_EzSnmpError(PyObject *self, PyObject *args, PyObject *k
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_GenericError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -7496,48 +7516,54 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_EzSnmpError_what(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_GenericError_what(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpError *arg1 = (EzSnmpError *) 0 ;
+  GenericError *arg1 = (GenericError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   char *result = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "EzSnmpError_what", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpError, 0 |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "GenericError_what", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_GenericError, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "EzSnmpError_what" "', argument " "1"" of type '" "EzSnmpError const *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericError_what" "', argument " "1"" of type '" "GenericError const *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpError * >(argp1);
+  arg1 = reinterpret_cast< GenericError * >(argp1);
   {
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (char *)((EzSnmpError const *)arg1)->what();
+        result = (char *)((GenericError const *)arg1)->what();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7552,18 +7578,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_GenericError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpError *arg1 = (EzSnmpError *) 0 ;
+  GenericError *arg1 = (GenericError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_GenericError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_GenericError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpError" "', argument " "1"" of type '" "EzSnmpError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_GenericError" "', argument " "1"" of type '" "GenericError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpError * >(argp1);
+  arg1 = reinterpret_cast< GenericError * >(argp1);
   {
     try {
       {
@@ -7571,28 +7597,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpError(PyObject *self, PyObject *args) {
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7607,25 +7639,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpError) /* defines _wrap_delete_EzSnmpError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_GenericError) /* defines _wrap_delete_GenericError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpConnectionError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_ConnectionError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpConnectionError *result = 0 ;
+  ConnectionError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpConnectionError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpConnectionError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_ConnectionError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_ConnectionError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpConnectionError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_ConnectionError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpConnectionError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_ConnectionError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -7633,31 +7665,37 @@ SWIGINTERN int _wrap_new_EzSnmpConnectionError(PyObject *self, PyObject *args, P
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpConnectionError *)new EzSnmpConnectionError((std::string const &)*arg1);
+        result = (ConnectionError *)new ConnectionError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7665,7 +7703,7 @@ SWIGINTERN int _wrap_new_EzSnmpConnectionError(PyObject *self, PyObject *args, P
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpConnectionError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ConnectionError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -7674,18 +7712,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpConnectionError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_ConnectionError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpConnectionError *arg1 = (EzSnmpConnectionError *) 0 ;
+  ConnectionError *arg1 = (ConnectionError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpConnectionError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpConnectionError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_ConnectionError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_ConnectionError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpConnectionError" "', argument " "1"" of type '" "EzSnmpConnectionError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ConnectionError" "', argument " "1"" of type '" "ConnectionError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpConnectionError * >(argp1);
+  arg1 = reinterpret_cast< ConnectionError * >(argp1);
   {
     try {
       {
@@ -7693,28 +7731,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpConnectionError(PyObject *self, PyObject
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7729,25 +7773,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpConnectionError) /* defines _wrap_delete_EzSnmpConnectionError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_ConnectionError) /* defines _wrap_delete_ConnectionError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpTimeoutError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_TimeoutError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpTimeoutError *result = 0 ;
+  TimeoutError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpTimeoutError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpTimeoutError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_TimeoutError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_TimeoutError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpTimeoutError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_TimeoutError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpTimeoutError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_TimeoutError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -7755,31 +7799,37 @@ SWIGINTERN int _wrap_new_EzSnmpTimeoutError(PyObject *self, PyObject *args, PyOb
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpTimeoutError *)new EzSnmpTimeoutError((std::string const &)*arg1);
+        result = (TimeoutError *)new TimeoutError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7787,7 +7837,7 @@ SWIGINTERN int _wrap_new_EzSnmpTimeoutError(PyObject *self, PyObject *args, PyOb
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpTimeoutError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_TimeoutError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -7796,18 +7846,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpTimeoutError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_TimeoutError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpTimeoutError *arg1 = (EzSnmpTimeoutError *) 0 ;
+  TimeoutError *arg1 = (TimeoutError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpTimeoutError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpTimeoutError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_TimeoutError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TimeoutError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpTimeoutError" "', argument " "1"" of type '" "EzSnmpTimeoutError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_TimeoutError" "', argument " "1"" of type '" "TimeoutError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpTimeoutError * >(argp1);
+  arg1 = reinterpret_cast< TimeoutError * >(argp1);
   {
     try {
       {
@@ -7815,28 +7865,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpTimeoutError(PyObject *self, PyObject *a
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7851,25 +7907,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpTimeoutError) /* defines _wrap_delete_EzSnmpTimeoutError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_TimeoutError) /* defines _wrap_delete_TimeoutError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpUnknownObjectIDError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_UnknownObjectIDError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpUnknownObjectIDError *result = 0 ;
+  UnknownObjectIDError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpUnknownObjectIDError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpUnknownObjectIDError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_UnknownObjectIDError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_UnknownObjectIDError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpUnknownObjectIDError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_UnknownObjectIDError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpUnknownObjectIDError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_UnknownObjectIDError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -7877,31 +7933,37 @@ SWIGINTERN int _wrap_new_EzSnmpUnknownObjectIDError(PyObject *self, PyObject *ar
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpUnknownObjectIDError *)new EzSnmpUnknownObjectIDError((std::string const &)*arg1);
+        result = (UnknownObjectIDError *)new UnknownObjectIDError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7909,7 +7971,7 @@ SWIGINTERN int _wrap_new_EzSnmpUnknownObjectIDError(PyObject *self, PyObject *ar
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpUnknownObjectIDError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_UnknownObjectIDError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -7918,18 +7980,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpUnknownObjectIDError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_UnknownObjectIDError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpUnknownObjectIDError *arg1 = (EzSnmpUnknownObjectIDError *) 0 ;
+  UnknownObjectIDError *arg1 = (UnknownObjectIDError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpUnknownObjectIDError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpUnknownObjectIDError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_UnknownObjectIDError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_UnknownObjectIDError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpUnknownObjectIDError" "', argument " "1"" of type '" "EzSnmpUnknownObjectIDError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_UnknownObjectIDError" "', argument " "1"" of type '" "UnknownObjectIDError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpUnknownObjectIDError * >(argp1);
+  arg1 = reinterpret_cast< UnknownObjectIDError * >(argp1);
   {
     try {
       {
@@ -7937,28 +7999,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpUnknownObjectIDError(PyObject *self, PyO
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -7973,25 +8041,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpUnknownObjectIDError) /* defines _wrap_delete_EzSnmpUnknownObjectIDError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UnknownObjectIDError) /* defines _wrap_delete_UnknownObjectIDError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpNoSuchNameError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_NoSuchNameError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpNoSuchNameError *result = 0 ;
+  NoSuchNameError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpNoSuchNameError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpNoSuchNameError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_NoSuchNameError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_NoSuchNameError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpNoSuchNameError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_NoSuchNameError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpNoSuchNameError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_NoSuchNameError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -7999,31 +8067,37 @@ SWIGINTERN int _wrap_new_EzSnmpNoSuchNameError(PyObject *self, PyObject *args, P
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpNoSuchNameError *)new EzSnmpNoSuchNameError((std::string const &)*arg1);
+        result = (NoSuchNameError *)new NoSuchNameError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8031,7 +8105,7 @@ SWIGINTERN int _wrap_new_EzSnmpNoSuchNameError(PyObject *self, PyObject *args, P
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpNoSuchNameError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchNameError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -8040,18 +8114,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpNoSuchNameError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_NoSuchNameError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpNoSuchNameError *arg1 = (EzSnmpNoSuchNameError *) 0 ;
+  NoSuchNameError *arg1 = (NoSuchNameError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpNoSuchNameError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpNoSuchNameError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_NoSuchNameError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_NoSuchNameError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpNoSuchNameError" "', argument " "1"" of type '" "EzSnmpNoSuchNameError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_NoSuchNameError" "', argument " "1"" of type '" "NoSuchNameError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpNoSuchNameError * >(argp1);
+  arg1 = reinterpret_cast< NoSuchNameError * >(argp1);
   {
     try {
       {
@@ -8059,28 +8133,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpNoSuchNameError(PyObject *self, PyObject
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8095,25 +8175,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpNoSuchNameError) /* defines _wrap_delete_EzSnmpNoSuchNameError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchNameError) /* defines _wrap_delete_NoSuchNameError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpNoSuchObjectError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_NoSuchObjectError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpNoSuchObjectError *result = 0 ;
+  NoSuchObjectError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpNoSuchObjectError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpNoSuchObjectError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_NoSuchObjectError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_NoSuchObjectError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpNoSuchObjectError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_NoSuchObjectError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpNoSuchObjectError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_NoSuchObjectError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -8121,31 +8201,37 @@ SWIGINTERN int _wrap_new_EzSnmpNoSuchObjectError(PyObject *self, PyObject *args,
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpNoSuchObjectError *)new EzSnmpNoSuchObjectError((std::string const &)*arg1);
+        result = (NoSuchObjectError *)new NoSuchObjectError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8153,7 +8239,7 @@ SWIGINTERN int _wrap_new_EzSnmpNoSuchObjectError(PyObject *self, PyObject *args,
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpNoSuchObjectError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchObjectError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -8162,18 +8248,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpNoSuchObjectError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_NoSuchObjectError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpNoSuchObjectError *arg1 = (EzSnmpNoSuchObjectError *) 0 ;
+  NoSuchObjectError *arg1 = (NoSuchObjectError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpNoSuchObjectError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpNoSuchObjectError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_NoSuchObjectError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_NoSuchObjectError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpNoSuchObjectError" "', argument " "1"" of type '" "EzSnmpNoSuchObjectError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_NoSuchObjectError" "', argument " "1"" of type '" "NoSuchObjectError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpNoSuchObjectError * >(argp1);
+  arg1 = reinterpret_cast< NoSuchObjectError * >(argp1);
   {
     try {
       {
@@ -8181,28 +8267,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpNoSuchObjectError(PyObject *self, PyObje
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8217,25 +8309,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpNoSuchObjectError) /* defines _wrap_delete_EzSnmpNoSuchObjectError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchObjectError) /* defines _wrap_delete_NoSuchObjectError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpNoSuchInstanceError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_NoSuchInstanceError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpNoSuchInstanceError *result = 0 ;
+  NoSuchInstanceError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpNoSuchInstanceError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpNoSuchInstanceError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_NoSuchInstanceError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_NoSuchInstanceError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpNoSuchInstanceError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_NoSuchInstanceError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpNoSuchInstanceError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_NoSuchInstanceError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -8243,31 +8335,37 @@ SWIGINTERN int _wrap_new_EzSnmpNoSuchInstanceError(PyObject *self, PyObject *arg
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpNoSuchInstanceError *)new EzSnmpNoSuchInstanceError((std::string const &)*arg1);
+        result = (NoSuchInstanceError *)new NoSuchInstanceError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8275,7 +8373,7 @@ SWIGINTERN int _wrap_new_EzSnmpNoSuchInstanceError(PyObject *self, PyObject *arg
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpNoSuchInstanceError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchInstanceError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -8284,18 +8382,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpNoSuchInstanceError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_NoSuchInstanceError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpNoSuchInstanceError *arg1 = (EzSnmpNoSuchInstanceError *) 0 ;
+  NoSuchInstanceError *arg1 = (NoSuchInstanceError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpNoSuchInstanceError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpNoSuchInstanceError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_NoSuchInstanceError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_NoSuchInstanceError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpNoSuchInstanceError" "', argument " "1"" of type '" "EzSnmpNoSuchInstanceError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_NoSuchInstanceError" "', argument " "1"" of type '" "NoSuchInstanceError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpNoSuchInstanceError * >(argp1);
+  arg1 = reinterpret_cast< NoSuchInstanceError * >(argp1);
   {
     try {
       {
@@ -8303,28 +8401,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpNoSuchInstanceError(PyObject *self, PyOb
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8339,25 +8443,25 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpNoSuchInstanceError) /* defines _wrap_delete_EzSnmpNoSuchInstanceError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchInstanceError) /* defines _wrap_delete_NoSuchInstanceError_destructor_closure */
 
-SWIGINTERN int _wrap_new_EzSnmpUndeterminedTypeError(PyObject *self, PyObject *args, PyObject *kwargs) {
+SWIGINTERN int _wrap_new_UndeterminedTypeError(PyObject *self, PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   PyObject *swig_obj[1] ;
-  EzSnmpUndeterminedTypeError *result = 0 ;
+  UndeterminedTypeError *result = 0 ;
   
-  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_EzSnmpUndeterminedTypeError")) SWIG_fail;
-  if (!SWIG_Python_UnpackTuple(args, "new_EzSnmpUndeterminedTypeError", 1, 1, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_UndeterminedTypeError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_UndeterminedTypeError", 1, 1, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_EzSnmpUndeterminedTypeError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_UndeterminedTypeError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_EzSnmpUndeterminedTypeError" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_UndeterminedTypeError" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
@@ -8365,31 +8469,37 @@ SWIGINTERN int _wrap_new_EzSnmpUndeterminedTypeError(PyObject *self, PyObject *a
     try {
       {
         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-        result = (EzSnmpUndeterminedTypeError *)new EzSnmpUndeterminedTypeError((std::string const &)*arg1);
+        result = (UndeterminedTypeError *)new UndeterminedTypeError((std::string const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8397,7 +8507,7 @@ SWIGINTERN int _wrap_new_EzSnmpUndeterminedTypeError(PyObject *self, PyObject *a
       SWIG_fail;
     }
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_EzSnmpUndeterminedTypeError, SWIG_BUILTIN_INIT |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_UndeterminedTypeError, SWIG_BUILTIN_INIT |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj == Py_None ? -1 : 0;
 fail:
@@ -8406,18 +8516,18 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_EzSnmpUndeterminedTypeError(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_delete_UndeterminedTypeError(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
-  EzSnmpUndeterminedTypeError *arg1 = (EzSnmpUndeterminedTypeError *) 0 ;
+  UndeterminedTypeError *arg1 = (UndeterminedTypeError *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "delete_EzSnmpUndeterminedTypeError", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_EzSnmpUndeterminedTypeError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_Python_UnpackTuple(args, "delete_UndeterminedTypeError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_UndeterminedTypeError, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_EzSnmpUndeterminedTypeError" "', argument " "1"" of type '" "EzSnmpUndeterminedTypeError *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_UndeterminedTypeError" "', argument " "1"" of type '" "UndeterminedTypeError *""'"); 
   }
-  arg1 = reinterpret_cast< EzSnmpUndeterminedTypeError * >(argp1);
+  arg1 = reinterpret_cast< UndeterminedTypeError * >(argp1);
   {
     try {
       {
@@ -8425,28 +8535,34 @@ SWIGINTERN PyObject *_wrap_delete_EzSnmpUndeterminedTypeError(PyObject *self, Py
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8461,7 +8577,275 @@ fail:
 }
 
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_EzSnmpUndeterminedTypeError) /* defines _wrap_delete_EzSnmpUndeterminedTypeError_destructor_closure */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UndeterminedTypeError) /* defines _wrap_delete_UndeterminedTypeError_destructor_closure */
+
+SWIGINTERN int _wrap_new_ParseError(PyObject *self, PyObject *args, PyObject *kwargs) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
+  ParseError *result = 0 ;
+  
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_ParseError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_ParseError", 1, 1, swig_obj)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_ParseError" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_ParseError" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  {
+    try {
+      {
+        SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+        result = (ParseError *)new ParseError((std::string const &)*arg1);
+        SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
+      SWIG_fail;
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
+      SWIG_fail;
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
+      SWIG_fail;
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
+      SWIG_fail;
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
+      PyErr_SetString(PyExc_RuntimeError, e.what());
+      SWIG_fail;
+    } catch (const std::invalid_argument& e) {
+      PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ParseError, SWIG_BUILTIN_INIT |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_ParseError(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  ParseError *arg1 = (ParseError *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "delete_ParseError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_ParseError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ParseError" "', argument " "1"" of type '" "ParseError *""'"); 
+  }
+  arg1 = reinterpret_cast< ParseError * >(argp1);
+  {
+    try {
+      {
+        SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+        delete arg1;
+        SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
+      SWIG_fail;
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
+      SWIG_fail;
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
+      SWIG_fail;
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
+      SWIG_fail;
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
+      PyErr_SetString(PyExc_RuntimeError, e.what());
+      SWIG_fail;
+    } catch (const std::invalid_argument& e) {
+      PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_ParseError) /* defines _wrap_delete_ParseError_destructor_closure */
+
+SWIGINTERN int _wrap_new_PacketError(PyObject *self, PyObject *args, PyObject *kwargs) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[1] ;
+  PacketError *result = 0 ;
+  
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_PacketError")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_PacketError", 1, 1, swig_obj)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_PacketError" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_PacketError" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  {
+    try {
+      {
+        SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+        result = (PacketError *)new PacketError((std::string const &)*arg1);
+        SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
+      SWIG_fail;
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
+      SWIG_fail;
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
+      SWIG_fail;
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
+      SWIG_fail;
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
+      PyErr_SetString(PyExc_RuntimeError, e.what());
+      SWIG_fail;
+    } catch (const std::invalid_argument& e) {
+      PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PacketError, SWIG_BUILTIN_INIT |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_PacketError(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  PacketError *arg1 = (PacketError *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "delete_PacketError", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_PacketError, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_PacketError" "', argument " "1"" of type '" "PacketError *""'"); 
+  }
+  arg1 = reinterpret_cast< PacketError * >(argp1);
+  {
+    try {
+      {
+        SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+        delete arg1;
+        SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
+      SWIG_fail;
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
+      SWIG_fail;
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
+      SWIG_fail;
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
+      SWIG_fail;
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
+      SWIG_fail;
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
+      PyErr_SetString(PyExc_RuntimeError, e.what());
+      SWIG_fail;
+    } catch (const std::invalid_argument& e) {
+      PyErr_SetString(PyExc_ValueError, e.what());
+      SWIG_fail;
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_PacketError) /* defines _wrap_delete_PacketError_destructor_closure */
 
 SWIGINTERN PyObject *_wrap__string_list_iterator(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
@@ -8485,28 +8869,34 @@ SWIGINTERN PyObject *_wrap__string_list_iterator(PyObject *self, PyObject *args)
         result = (swig::SwigPyIterator *)std_vector_Sl_std_string_Sg__iterator(arg1,arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8541,28 +8931,34 @@ SWIGINTERN PyObject *_wrap__string_list___nonzero__(PyObject *self, PyObject *ar
         result = (bool)std_vector_Sl_std_string_Sg____nonzero__((std::vector< std::string > const *)arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8597,28 +8993,34 @@ SWIGINTERN PyObject *_wrap__string_list___bool__(PyObject *self, PyObject *args)
         result = (bool)std_vector_Sl_std_string_Sg____bool__((std::vector< std::string > const *)arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8653,28 +9055,34 @@ SWIGINTERN PyObject *_wrap__string_list___len__(PyObject *self, PyObject *args) 
         result = std_vector_Sl_std_string_Sg____len__((std::vector< std::string > const *)arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8732,28 +9140,34 @@ SWIGINTERN PyObject *_wrap__string_list___getslice__(PyObject *self, PyObject *a
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8809,28 +9223,34 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_0(PyObject *self, Py_
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -8899,28 +9319,34 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self, Py_
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9042,28 +9468,34 @@ SWIGINTERN PyObject *_wrap__string_list___delslice__(PyObject *self, PyObject *a
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9111,28 +9543,34 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_0(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9180,28 +9618,34 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_0(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9261,28 +9705,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9331,28 +9781,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_1(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9399,28 +9855,34 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_1(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9513,28 +9975,34 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_1(PyObject *self, Py_s
       } catch(std::out_of_range &_e) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9640,28 +10108,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_2(PyObject *self, Py_s
       } catch(std::out_of_range &_e) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9711,28 +10185,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_3(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9854,28 +10334,34 @@ SWIGINTERN PyObject *_wrap__string_list_pop(PyObject *self, PyObject *args) {
       } catch(std::out_of_range &_e) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9924,28 +10410,34 @@ SWIGINTERN PyObject *_wrap__string_list_append(PyObject *self, PyObject *args) {
         std_vector_Sl_std_string_Sg__append(arg1,(std::string const &)*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -9974,28 +10466,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< std::string > *)new std::vector< std::string >();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10035,28 +10533,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< std::string > *)new std::vector< std::string >((std::vector< std::string > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10093,28 +10597,34 @@ SWIGINTERN PyObject *_wrap__string_list_empty(PyObject *self, PyObject *args) {
         result = (bool)((std::vector< std::string > const *)arg1)->empty();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10149,28 +10659,34 @@ SWIGINTERN PyObject *_wrap__string_list_size(PyObject *self, PyObject *args) {
         result = ((std::vector< std::string > const *)arg1)->size();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10217,28 +10733,34 @@ SWIGINTERN PyObject *_wrap__string_list_swap(PyObject *self, PyObject *args) {
         (arg1)->swap(*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10273,28 +10795,34 @@ SWIGINTERN PyObject *_wrap__string_list_begin(PyObject *self, PyObject *args) {
         result = (arg1)->begin();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10330,28 +10858,34 @@ SWIGINTERN PyObject *_wrap__string_list_end(PyObject *self, PyObject *args) {
         result = (arg1)->end();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10387,28 +10921,34 @@ SWIGINTERN PyObject *_wrap__string_list_rbegin(PyObject *self, PyObject *args) {
         result = (arg1)->rbegin();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10444,28 +10984,34 @@ SWIGINTERN PyObject *_wrap__string_list_rend(PyObject *self, PyObject *args) {
         result = (arg1)->rend();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10500,28 +11046,34 @@ SWIGINTERN PyObject *_wrap__string_list_clear(PyObject *self, PyObject *args) {
         (arg1)->clear();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10556,28 +11108,34 @@ SWIGINTERN PyObject *_wrap__string_list_get_allocator(PyObject *self, PyObject *
         result = ((std::vector< std::string > const *)arg1)->get_allocator();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10612,28 +11170,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_2(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< std::string > *)new std::vector< std::string >(arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10667,28 +11231,34 @@ SWIGINTERN PyObject *_wrap__string_list_pop_back(PyObject *self, PyObject *args)
         (arg1)->pop_back();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10730,28 +11300,34 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_0(PyObject *self, Py_ssize_
         (arg1)->resize(arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10800,28 +11376,34 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_0(PyObject *self, Py_ssize_t
         result = std_vector_Sl_std_string_Sg__erase__SWIG_0(arg1,SWIG_STD_MOVE(arg2));
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -10885,28 +11467,34 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_1(PyObject *self, Py_ssize_t
         result = std_vector_Sl_std_string_Sg__erase__SWIG_1(arg1,SWIG_STD_MOVE(arg2),SWIG_STD_MOVE(arg3));
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11005,28 +11593,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_3(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< std::string > *)new std::vector< std::string >(arg1,(std::vector< std::string >::value_type const &)*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11134,28 +11728,34 @@ SWIGINTERN PyObject *_wrap__string_list_push_back(PyObject *self, PyObject *args
         (arg1)->push_back((std::vector< std::string >::value_type const &)*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11192,28 +11792,34 @@ SWIGINTERN PyObject *_wrap__string_list_front(PyObject *self, PyObject *args) {
         result = (std::vector< std::string >::value_type *) &((std::vector< std::string > const *)arg1)->front();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11249,28 +11855,34 @@ SWIGINTERN PyObject *_wrap__string_list_back(PyObject *self, PyObject *args) {
         result = (std::vector< std::string >::value_type *) &((std::vector< std::string > const *)arg1)->back();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11327,28 +11939,34 @@ SWIGINTERN PyObject *_wrap__string_list_assign(PyObject *self, PyObject *args) {
         (arg1)->assign(arg2,(std::vector< std::string >::value_type const &)*arg3);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11405,28 +12023,34 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_1(PyObject *self, Py_ssize_
         (arg1)->resize(arg2,(std::vector< std::string >::value_type const &)*arg3);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11541,28 +12165,34 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_0(PyObject *self, Py_ssize_
         result = std_vector_Sl_std_string_Sg__insert__SWIG_0(arg1,SWIG_STD_MOVE(arg2),(std::string const &)*arg3);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11634,28 +12264,34 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_1(PyObject *self, Py_ssize_
         std_vector_Sl_std_string_Sg__insert__SWIG_1(arg1,SWIG_STD_MOVE(arg2),SWIG_STD_MOVE(arg3),(std::string const &)*arg4);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11760,28 +12396,34 @@ SWIGINTERN PyObject *_wrap__string_list_reserve(PyObject *self, PyObject *args) 
         (arg1)->reserve(arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11816,28 +12458,34 @@ SWIGINTERN PyObject *_wrap__string_list_capacity(PyObject *self, PyObject *args)
         result = ((std::vector< std::string > const *)arg1)->capacity();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11871,28 +12519,34 @@ SWIGINTERN PyObject *_wrap_delete__string_list(PyObject *self, PyObject *args) {
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11941,28 +12595,34 @@ SWIGINTERN PyObject *_wrap__result_list_iterator(PyObject *self, PyObject *args)
         result = (swig::SwigPyIterator *)std_vector_Sl_Result_Sg__iterator(arg1,arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -11997,28 +12657,34 @@ SWIGINTERN PyObject *_wrap__result_list___nonzero__(PyObject *self, PyObject *ar
         result = (bool)std_vector_Sl_Result_Sg____nonzero__((std::vector< Result > const *)arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12053,28 +12719,34 @@ SWIGINTERN PyObject *_wrap__result_list___bool__(PyObject *self, PyObject *args)
         result = (bool)std_vector_Sl_Result_Sg____bool__((std::vector< Result > const *)arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12109,28 +12781,34 @@ SWIGINTERN PyObject *_wrap__result_list___len__(PyObject *self, PyObject *args) 
         result = std_vector_Sl_Result_Sg____len__((std::vector< Result > const *)arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12188,28 +12866,34 @@ SWIGINTERN PyObject *_wrap__result_list___getslice__(PyObject *self, PyObject *a
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12265,28 +12949,34 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_0(PyObject *self, Py_
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12355,28 +13045,34 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self, Py_
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12498,28 +13194,34 @@ SWIGINTERN PyObject *_wrap__result_list___delslice__(PyObject *self, PyObject *a
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12567,28 +13269,34 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_0(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12636,28 +13344,34 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_0(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12717,28 +13431,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12787,28 +13507,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_1(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12855,28 +13581,34 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_1(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -12969,28 +13701,34 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_1(PyObject *self, Py_s
       } catch(std::out_of_range &_e) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13094,28 +13832,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_2(PyObject *self, Py_s
       } catch(std::out_of_range &_e) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13163,28 +13907,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_3(PyObject *self, Py_s
       } catch(std::invalid_argument &_e) {
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13306,28 +14056,34 @@ SWIGINTERN PyObject *_wrap__result_list_pop(PyObject *self, PyObject *args) {
       } catch(std::out_of_range &_e) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13374,28 +14130,34 @@ SWIGINTERN PyObject *_wrap__result_list_append(PyObject *self, PyObject *args) {
         std_vector_Sl_Result_Sg__append(arg1,(Result const &)*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13422,28 +14184,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< Result > *)new std::vector< Result >();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13483,28 +14251,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< Result > *)new std::vector< Result >((std::vector< Result > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13541,28 +14315,34 @@ SWIGINTERN PyObject *_wrap__result_list_empty(PyObject *self, PyObject *args) {
         result = (bool)((std::vector< Result > const *)arg1)->empty();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13597,28 +14377,34 @@ SWIGINTERN PyObject *_wrap__result_list_size(PyObject *self, PyObject *args) {
         result = ((std::vector< Result > const *)arg1)->size();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13665,28 +14451,34 @@ SWIGINTERN PyObject *_wrap__result_list_swap(PyObject *self, PyObject *args) {
         (arg1)->swap(*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13721,28 +14513,34 @@ SWIGINTERN PyObject *_wrap__result_list_begin(PyObject *self, PyObject *args) {
         result = (arg1)->begin();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13778,28 +14576,34 @@ SWIGINTERN PyObject *_wrap__result_list_end(PyObject *self, PyObject *args) {
         result = (arg1)->end();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13835,28 +14639,34 @@ SWIGINTERN PyObject *_wrap__result_list_rbegin(PyObject *self, PyObject *args) {
         result = (arg1)->rbegin();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13892,28 +14702,34 @@ SWIGINTERN PyObject *_wrap__result_list_rend(PyObject *self, PyObject *args) {
         result = (arg1)->rend();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -13948,28 +14764,34 @@ SWIGINTERN PyObject *_wrap__result_list_clear(PyObject *self, PyObject *args) {
         (arg1)->clear();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14004,28 +14826,34 @@ SWIGINTERN PyObject *_wrap__result_list_get_allocator(PyObject *self, PyObject *
         result = ((std::vector< Result > const *)arg1)->get_allocator();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14060,28 +14888,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_2(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< Result > *)new std::vector< Result >(arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14115,28 +14949,34 @@ SWIGINTERN PyObject *_wrap__result_list_pop_back(PyObject *self, PyObject *args)
         (arg1)->pop_back();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14178,28 +15018,34 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_0(PyObject *self, Py_ssize_
         (arg1)->resize(arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14248,28 +15094,34 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_0(PyObject *self, Py_ssize_t
         result = std_vector_Sl_Result_Sg__erase__SWIG_0(arg1,SWIG_STD_MOVE(arg2));
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14333,28 +15185,34 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_1(PyObject *self, Py_ssize_t
         result = std_vector_Sl_Result_Sg__erase__SWIG_1(arg1,SWIG_STD_MOVE(arg2),SWIG_STD_MOVE(arg3));
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14451,28 +15309,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_3(PyObject *self, Py_ssize_t nobjs, 
         result = (std::vector< Result > *)new std::vector< Result >(arg1,(std::vector< Result >::value_type const &)*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14576,28 +15440,34 @@ SWIGINTERN PyObject *_wrap__result_list_push_back(PyObject *self, PyObject *args
         (arg1)->push_back((std::vector< Result >::value_type const &)*arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14632,28 +15502,34 @@ SWIGINTERN PyObject *_wrap__result_list_front(PyObject *self, PyObject *args) {
         result = (std::vector< Result >::value_type *) &((std::vector< Result > const *)arg1)->front();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14689,28 +15565,34 @@ SWIGINTERN PyObject *_wrap__result_list_back(PyObject *self, PyObject *args) {
         result = (std::vector< Result >::value_type *) &((std::vector< Result > const *)arg1)->back();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14765,28 +15647,34 @@ SWIGINTERN PyObject *_wrap__result_list_assign(PyObject *self, PyObject *args) {
         (arg1)->assign(arg2,(std::vector< Result >::value_type const &)*arg3);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14839,28 +15727,34 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_1(PyObject *self, Py_ssize_
         (arg1)->resize(arg2,(std::vector< Result >::value_type const &)*arg3);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -14971,28 +15865,34 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_0(PyObject *self, Py_ssize_
         result = std_vector_Sl_Result_Sg__insert__SWIG_0(arg1,SWIG_STD_MOVE(arg2),(Result const &)*arg3);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15060,28 +15960,34 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_1(PyObject *self, Py_ssize_
         std_vector_Sl_Result_Sg__insert__SWIG_1(arg1,SWIG_STD_MOVE(arg2),SWIG_STD_MOVE(arg3),(Result const &)*arg4);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15184,28 +16090,34 @@ SWIGINTERN PyObject *_wrap__result_list_reserve(PyObject *self, PyObject *args) 
         (arg1)->reserve(arg2);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15240,28 +16152,34 @@ SWIGINTERN PyObject *_wrap__result_list_capacity(PyObject *self, PyObject *args)
         result = ((std::vector< Result > const *)arg1)->capacity();
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15295,28 +16213,34 @@ SWIGINTERN PyObject *_wrap_delete__result_list(PyObject *self, PyObject *args) {
         delete arg1;
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15370,28 +16294,34 @@ SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
         result = snmpbulkget((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15435,28 +16365,34 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
         result = snmpbulkwalk((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15500,28 +16436,34 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
         result = snmpget((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15565,28 +16507,34 @@ SWIGINTERN PyObject *_wrap_snmpgetnext(PyObject *self, PyObject *args) {
         result = snmpgetnext((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15630,28 +16578,34 @@ SWIGINTERN PyObject *_wrap_snmpset(PyObject *self, PyObject *args) {
         result = snmpset((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15695,28 +16649,34 @@ SWIGINTERN PyObject *_wrap_snmptrap(PyObject *self, PyObject *args) {
         result = (int)snmptrap((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -15760,28 +16720,34 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
         result = snmpwalk((std::vector< std::string,std::allocator< std::string > > const &)*arg1);
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
-    } catch (const EzSnmpConnectionError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpConnectionError), e.what());
+    } catch (const ConnectionError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpTimeoutError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpTimeoutError), e.what());
+    } catch (const TimeoutError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUnknownObjectIDError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchNameError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchNameError), e.what());
+    } catch (const NoSuchNameError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchObjectError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchObjectError), e.what());
+    } catch (const NoSuchObjectError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpNoSuchInstanceError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpNoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
       SWIG_fail;
-    } catch (const EzSnmpUndeterminedTypeError& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_EzSnmpUndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
       SWIG_fail;
-    } catch (const std::runtime_error& e) {
+    } catch (const ParseError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+      SWIG_fail;
+    }catch (const PacketError& e) {
+      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+      SWIG_fail;
+    }catch (const std::runtime_error& e) {
       PyErr_SetString(PyExc_RuntimeError, e.what());
       SWIG_fail;
     } catch (const std::invalid_argument& e) {
@@ -16323,14 +17289,14 @@ static PyHeapTypeObject SwigPyBuiltin__Result_type = {
 
 SWIGINTERN SwigPyClientData SwigPyBuiltin__Result_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__Result_type};
 
-static SwigPyGetSet EzSnmpError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpError", &EzSnmpError___dict___getset },
+static SwigPyGetSet GenericError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__GenericError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"GenericError", &GenericError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__GenericError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -16343,12 +17309,12 @@ SwigPyBuiltin__EzSnmpError_richcompare(PyObject *self, PyObject *other, int op) 
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpError_methods[] = {
-  { "what", _wrap_EzSnmpError_what, METH_NOARGS, "what(self) -> char const *" },
+SWIGINTERN PyMethodDef SwigPyBuiltin__GenericError_methods[] = {
+  { "what", _wrap_GenericError_what, METH_NOARGS, "what(self) -> char const *" },
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpError_type = {
+static PyHeapTypeObject SwigPyBuiltin__GenericError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -16356,10 +17322,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpError",                    /* tp_name */
+    "netsnmp.GenericError",                   /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpError_destructor_closure,                  /* tp_dealloc */
+    _wrap_delete_GenericError_destructor_closure,                 /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -16373,15 +17339,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpError_type.as_number,                   /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpError_type.as_sequence,                 /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpError_type.as_mapping,                  /* tp_as_mapping */
+    &SwigPyBuiltin__GenericError_type.as_number,                  /* tp_as_number */
+    &SwigPyBuiltin__GenericError_type.as_sequence,                /* tp_as_sequence */
+    &SwigPyBuiltin__GenericError_type.as_mapping,                 /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpError_type.as_buffer,                   /* tp_as_buffer */
+    &SwigPyBuiltin__GenericError_type.as_buffer,                  /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -16397,19 +17363,19 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpError_type = {
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpError_richcompare,   /* tp_richcompare */
+    SwigPyBuiltin__GenericError_richcompare,  /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpError_methods,       /* tp_methods */
+    SwigPyBuiltin__GenericError_methods,      /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpError_getset,        /* tp_getset */
+    SwigPyBuiltin__GenericError_getset,       /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpError,                    /* tp_init */
+    _wrap_new_GenericError,                   /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -16563,16 +17529,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__GenericError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__GenericError_type};
 
-static SwigPyGetSet EzSnmpConnectionError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpConnectionError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpConnectionError", &EzSnmpConnectionError___dict___getset },
+static SwigPyGetSet ConnectionError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__ConnectionError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"ConnectionError", &ConnectionError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpConnectionError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__ConnectionError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -16585,11 +17551,11 @@ SwigPyBuiltin__EzSnmpConnectionError_richcompare(PyObject *self, PyObject *other
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpConnectionError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__ConnectionError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpConnectionError_type = {
+static PyHeapTypeObject SwigPyBuiltin__ConnectionError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -16597,10 +17563,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpConnectionError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpConnectionError",          /* tp_name */
+    "netsnmp.ConnectionError",                /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpConnectionError_destructor_closure,        /* tp_dealloc */
+    _wrap_delete_ConnectionError_destructor_closure,              /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -16614,15 +17580,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpConnectionError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpConnectionError_type.as_number,         /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpConnectionError_type.as_sequence,       /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpConnectionError_type.as_mapping,        /* tp_as_mapping */
+    &SwigPyBuiltin__ConnectionError_type.as_number,               /* tp_as_number */
+    &SwigPyBuiltin__ConnectionError_type.as_sequence,             /* tp_as_sequence */
+    &SwigPyBuiltin__ConnectionError_type.as_mapping,              /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpConnectionError_type.as_buffer,         /* tp_as_buffer */
+    &SwigPyBuiltin__ConnectionError_type.as_buffer,               /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -16632,25 +17598,25 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpConnectionError_type = {
 		"Exception class for SNMP connection errors.\n"
 		"\n"
 		"This class represents an error that occurs during an SNMP connection attempt.\n"
-		"It inherits from the EzSnmpError base class.\n"
+		"It inherits from the GenericError base class.\n"
 		"\n"
 		":param message: A descriptive error message.\n"
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpConnectionError_richcompare,             /* tp_richcompare */
+    SwigPyBuiltin__ConnectionError_richcompare,                   /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpConnectionError_methods,                 /* tp_methods */
+    SwigPyBuiltin__ConnectionError_methods,   /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpConnectionError_getset,                  /* tp_getset */
+    SwigPyBuiltin__ConnectionError_getset,    /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpConnectionError,          /* tp_init */
+    _wrap_new_ConnectionError,                /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -16804,16 +17770,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpConnectionError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpConnectionError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpConnectionError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__ConnectionError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__ConnectionError_type};
 
-static SwigPyGetSet EzSnmpTimeoutError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpTimeoutError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpTimeoutError", &EzSnmpTimeoutError___dict___getset },
+static SwigPyGetSet TimeoutError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__TimeoutError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"TimeoutError", &TimeoutError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpTimeoutError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__TimeoutError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -16826,11 +17792,11 @@ SwigPyBuiltin__EzSnmpTimeoutError_richcompare(PyObject *self, PyObject *other, i
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpTimeoutError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__TimeoutError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpTimeoutError_type = {
+static PyHeapTypeObject SwigPyBuiltin__TimeoutError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -16838,10 +17804,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpTimeoutError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpTimeoutError",             /* tp_name */
+    "netsnmp.TimeoutError",                   /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpTimeoutError_destructor_closure,           /* tp_dealloc */
+    _wrap_delete_TimeoutError_destructor_closure,                 /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -16855,15 +17821,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpTimeoutError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpTimeoutError_type.as_number,            /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpTimeoutError_type.as_sequence,          /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpTimeoutError_type.as_mapping,           /* tp_as_mapping */
+    &SwigPyBuiltin__TimeoutError_type.as_number,                  /* tp_as_number */
+    &SwigPyBuiltin__TimeoutError_type.as_sequence,                /* tp_as_sequence */
+    &SwigPyBuiltin__TimeoutError_type.as_mapping,                 /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpTimeoutError_type.as_buffer,            /* tp_as_buffer */
+    &SwigPyBuiltin__TimeoutError_type.as_buffer,                  /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -16873,25 +17839,25 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpTimeoutError_type = {
 		"Exception class for handling SNMP timeout errors.\n"
 		"\n"
 		"This class represents an error that occurs when an SNMP operation times out.\n"
-		"It inherits from EzSnmpError.\n"
+		"It inherits from GenericError.\n"
 		"\n"
 		":param message: A descriptive message about the timeout error.\n"
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpTimeoutError_richcompare,                /* tp_richcompare */
+    SwigPyBuiltin__TimeoutError_richcompare,  /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpTimeoutError_methods,/* tp_methods */
+    SwigPyBuiltin__TimeoutError_methods,      /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpTimeoutError_getset, /* tp_getset */
+    SwigPyBuiltin__TimeoutError_getset,       /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpTimeoutError,             /* tp_init */
+    _wrap_new_TimeoutError,                   /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -17045,16 +18011,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpTimeoutError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpTimeoutError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpTimeoutError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__TimeoutError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__TimeoutError_type};
 
-static SwigPyGetSet EzSnmpUnknownObjectIDError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpUnknownObjectIDError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpUnknownObjectIDError", &EzSnmpUnknownObjectIDError___dict___getset },
+static SwigPyGetSet UnknownObjectIDError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__UnknownObjectIDError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"UnknownObjectIDError", &UnknownObjectIDError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpUnknownObjectIDError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__UnknownObjectIDError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -17067,11 +18033,11 @@ SwigPyBuiltin__EzSnmpUnknownObjectIDError_richcompare(PyObject *self, PyObject *
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpUnknownObjectIDError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__UnknownObjectIDError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpUnknownObjectIDError_type = {
+static PyHeapTypeObject SwigPyBuiltin__UnknownObjectIDError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -17079,10 +18045,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUnknownObjectIDError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpUnknownObjectIDError",     /* tp_name */
+    "netsnmp.UnknownObjectIDError",           /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpUnknownObjectIDError_destructor_closure,   /* tp_dealloc */
+    _wrap_delete_UnknownObjectIDError_destructor_closure,         /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -17096,15 +18062,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUnknownObjectIDError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpUnknownObjectIDError_type.as_number,    /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpUnknownObjectIDError_type.as_sequence,  /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpUnknownObjectIDError_type.as_mapping,   /* tp_as_mapping */
+    &SwigPyBuiltin__UnknownObjectIDError_type.as_number,          /* tp_as_number */
+    &SwigPyBuiltin__UnknownObjectIDError_type.as_sequence,        /* tp_as_sequence */
+    &SwigPyBuiltin__UnknownObjectIDError_type.as_mapping,         /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpUnknownObjectIDError_type.as_buffer,    /* tp_as_buffer */
+    &SwigPyBuiltin__UnknownObjectIDError_type.as_buffer,          /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -17115,26 +18081,26 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUnknownObjectIDError_type = {
 		"\n"
 		"This exception is thrown when an unknown SNMP Object ID is encountered.\n"
 		"\n"
-		"This class inherits from EzSnmpError and provides additional\n"
+		"This class inherits from GenericError and provides additional\n"
 		"information about the error through its message.\n"
 		"\n"
 		":param message: A string containing the error message.\n"
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpUnknownObjectIDError_richcompare,        /* tp_richcompare */
+    SwigPyBuiltin__UnknownObjectIDError_richcompare,              /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpUnknownObjectIDError_methods,            /* tp_methods */
+    SwigPyBuiltin__UnknownObjectIDError_methods,                  /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpUnknownObjectIDError_getset,             /* tp_getset */
+    SwigPyBuiltin__UnknownObjectIDError_getset,                   /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpUnknownObjectIDError,     /* tp_init */
+    _wrap_new_UnknownObjectIDError,           /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -17288,16 +18254,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUnknownObjectIDError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpUnknownObjectIDError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpUnknownObjectIDError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__UnknownObjectIDError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__UnknownObjectIDError_type};
 
-static SwigPyGetSet EzSnmpNoSuchNameError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpNoSuchNameError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpNoSuchNameError", &EzSnmpNoSuchNameError___dict___getset },
+static SwigPyGetSet NoSuchNameError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__NoSuchNameError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"NoSuchNameError", &NoSuchNameError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpNoSuchNameError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__NoSuchNameError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -17310,11 +18276,11 @@ SwigPyBuiltin__EzSnmpNoSuchNameError_richcompare(PyObject *self, PyObject *other
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpNoSuchNameError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__NoSuchNameError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchNameError_type = {
+static PyHeapTypeObject SwigPyBuiltin__NoSuchNameError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -17322,10 +18288,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchNameError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpNoSuchNameError",          /* tp_name */
+    "netsnmp.NoSuchNameError",                /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpNoSuchNameError_destructor_closure,        /* tp_dealloc */
+    _wrap_delete_NoSuchNameError_destructor_closure,              /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -17339,15 +18305,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchNameError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpNoSuchNameError_type.as_number,         /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpNoSuchNameError_type.as_sequence,       /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpNoSuchNameError_type.as_mapping,        /* tp_as_mapping */
+    &SwigPyBuiltin__NoSuchNameError_type.as_number,               /* tp_as_number */
+    &SwigPyBuiltin__NoSuchNameError_type.as_sequence,             /* tp_as_sequence */
+    &SwigPyBuiltin__NoSuchNameError_type.as_mapping,              /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpNoSuchNameError_type.as_buffer,         /* tp_as_buffer */
+    &SwigPyBuiltin__NoSuchNameError_type.as_buffer,               /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -17363,19 +18329,19 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchNameError_type = {
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpNoSuchNameError_richcompare,             /* tp_richcompare */
+    SwigPyBuiltin__NoSuchNameError_richcompare,                   /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpNoSuchNameError_methods,                 /* tp_methods */
+    SwigPyBuiltin__NoSuchNameError_methods,   /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpNoSuchNameError_getset,                  /* tp_getset */
+    SwigPyBuiltin__NoSuchNameError_getset,    /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpNoSuchNameError,          /* tp_init */
+    _wrap_new_NoSuchNameError,                /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -17529,16 +18495,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchNameError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpNoSuchNameError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpNoSuchNameError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__NoSuchNameError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__NoSuchNameError_type};
 
-static SwigPyGetSet EzSnmpNoSuchObjectError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpNoSuchObjectError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpNoSuchObjectError", &EzSnmpNoSuchObjectError___dict___getset },
+static SwigPyGetSet NoSuchObjectError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__NoSuchObjectError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"NoSuchObjectError", &NoSuchObjectError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpNoSuchObjectError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__NoSuchObjectError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -17551,11 +18517,11 @@ SwigPyBuiltin__EzSnmpNoSuchObjectError_richcompare(PyObject *self, PyObject *oth
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpNoSuchObjectError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__NoSuchObjectError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchObjectError_type = {
+static PyHeapTypeObject SwigPyBuiltin__NoSuchObjectError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -17563,10 +18529,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchObjectError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpNoSuchObjectError",        /* tp_name */
+    "netsnmp.NoSuchObjectError",              /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpNoSuchObjectError_destructor_closure,      /* tp_dealloc */
+    _wrap_delete_NoSuchObjectError_destructor_closure,            /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -17580,15 +18546,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchObjectError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpNoSuchObjectError_type.as_number,       /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpNoSuchObjectError_type.as_sequence,     /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpNoSuchObjectError_type.as_mapping,      /* tp_as_mapping */
+    &SwigPyBuiltin__NoSuchObjectError_type.as_number,             /* tp_as_number */
+    &SwigPyBuiltin__NoSuchObjectError_type.as_sequence,           /* tp_as_sequence */
+    &SwigPyBuiltin__NoSuchObjectError_type.as_mapping,            /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpNoSuchObjectError_type.as_buffer,       /* tp_as_buffer */
+    &SwigPyBuiltin__NoSuchObjectError_type.as_buffer,             /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -17603,19 +18569,19 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchObjectError_type = {
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpNoSuchObjectError_richcompare,           /* tp_richcompare */
+    SwigPyBuiltin__NoSuchObjectError_richcompare,                 /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpNoSuchObjectError_methods,               /* tp_methods */
+    SwigPyBuiltin__NoSuchObjectError_methods, /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpNoSuchObjectError_getset,                /* tp_getset */
+    SwigPyBuiltin__NoSuchObjectError_getset,  /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpNoSuchObjectError,        /* tp_init */
+    _wrap_new_NoSuchObjectError,              /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -17769,16 +18735,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchObjectError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpNoSuchObjectError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpNoSuchObjectError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__NoSuchObjectError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__NoSuchObjectError_type};
 
-static SwigPyGetSet EzSnmpNoSuchInstanceError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpNoSuchInstanceError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpNoSuchInstanceError", &EzSnmpNoSuchInstanceError___dict___getset },
+static SwigPyGetSet NoSuchInstanceError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__NoSuchInstanceError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"NoSuchInstanceError", &NoSuchInstanceError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpNoSuchInstanceError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__NoSuchInstanceError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -17791,11 +18757,11 @@ SwigPyBuiltin__EzSnmpNoSuchInstanceError_richcompare(PyObject *self, PyObject *o
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpNoSuchInstanceError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__NoSuchInstanceError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchInstanceError_type = {
+static PyHeapTypeObject SwigPyBuiltin__NoSuchInstanceError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -17803,10 +18769,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchInstanceError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpNoSuchInstanceError",      /* tp_name */
+    "netsnmp.NoSuchInstanceError",            /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpNoSuchInstanceError_destructor_closure,    /* tp_dealloc */
+    _wrap_delete_NoSuchInstanceError_destructor_closure,          /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -17820,15 +18786,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchInstanceError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpNoSuchInstanceError_type.as_number,     /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpNoSuchInstanceError_type.as_sequence,   /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpNoSuchInstanceError_type.as_mapping,    /* tp_as_mapping */
+    &SwigPyBuiltin__NoSuchInstanceError_type.as_number,           /* tp_as_number */
+    &SwigPyBuiltin__NoSuchInstanceError_type.as_sequence,         /* tp_as_sequence */
+    &SwigPyBuiltin__NoSuchInstanceError_type.as_mapping,          /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpNoSuchInstanceError_type.as_buffer,     /* tp_as_buffer */
+    &SwigPyBuiltin__NoSuchInstanceError_type.as_buffer,           /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -17843,19 +18809,19 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchInstanceError_type = {
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpNoSuchInstanceError_richcompare,         /* tp_richcompare */
+    SwigPyBuiltin__NoSuchInstanceError_richcompare,               /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpNoSuchInstanceError_methods,             /* tp_methods */
+    SwigPyBuiltin__NoSuchInstanceError_methods,                   /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpNoSuchInstanceError_getset,              /* tp_getset */
+    SwigPyBuiltin__NoSuchInstanceError_getset,/* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpNoSuchInstanceError,      /* tp_init */
+    _wrap_new_NoSuchInstanceError,            /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -18009,16 +18975,16 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpNoSuchInstanceError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpNoSuchInstanceError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpNoSuchInstanceError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__NoSuchInstanceError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__NoSuchInstanceError_type};
 
-static SwigPyGetSet EzSnmpUndeterminedTypeError___dict___getset = { SwigPyObject_get___dict__, 0 };
-SWIGINTERN PyGetSetDef SwigPyBuiltin__EzSnmpUndeterminedTypeError_getset[] = {
-    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"EzSnmpUndeterminedTypeError", &EzSnmpUndeterminedTypeError___dict___getset },
+static SwigPyGetSet UndeterminedTypeError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__UndeterminedTypeError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"UndeterminedTypeError", &UndeterminedTypeError___dict___getset },
     { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
 };
 
 SWIGINTERN PyObject *
-SwigPyBuiltin__EzSnmpUndeterminedTypeError_richcompare(PyObject *self, PyObject *other, int op) {
+SwigPyBuiltin__UndeterminedTypeError_richcompare(PyObject *self, PyObject *other, int op) {
   PyObject *result = NULL;
   if (!result && !PyErr_Occurred()) {
     if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
@@ -18031,11 +18997,11 @@ SwigPyBuiltin__EzSnmpUndeterminedTypeError_richcompare(PyObject *self, PyObject 
   return result;
 }
 
-SWIGINTERN PyMethodDef SwigPyBuiltin__EzSnmpUndeterminedTypeError_methods[] = {
+SWIGINTERN PyMethodDef SwigPyBuiltin__UndeterminedTypeError_methods[] = {
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
-static PyHeapTypeObject SwigPyBuiltin__EzSnmpUndeterminedTypeError_type = {
+static PyHeapTypeObject SwigPyBuiltin__UndeterminedTypeError_type = {
   {
 #if PY_VERSION_HEX >= 0x03000000
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -18043,10 +19009,10 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUndeterminedTypeError_type = {
     PyObject_HEAD_INIT(NULL)
     0,                                        /* ob_size */
 #endif
-    "netsnmp.EzSnmpUndeterminedTypeError",    /* tp_name */
+    "netsnmp.UndeterminedTypeError",          /* tp_name */
     sizeof(SwigPyObject),                     /* tp_basicsize */
     0,                                        /* tp_itemsize */
-    _wrap_delete_EzSnmpUndeterminedTypeError_destructor_closure,  /* tp_dealloc */
+    _wrap_delete_UndeterminedTypeError_destructor_closure,        /* tp_dealloc */
 #if PY_VERSION_HEX < 0x030800b4
     (printfunc) 0,                            /* tp_print */
 #else
@@ -18060,15 +19026,15 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUndeterminedTypeError_type = {
     (cmpfunc) 0,                              /* tp_compare */
 #endif
     (reprfunc) 0,                             /* tp_repr */
-    &SwigPyBuiltin__EzSnmpUndeterminedTypeError_type.as_number,   /* tp_as_number */
-    &SwigPyBuiltin__EzSnmpUndeterminedTypeError_type.as_sequence, /* tp_as_sequence */
-    &SwigPyBuiltin__EzSnmpUndeterminedTypeError_type.as_mapping,  /* tp_as_mapping */
+    &SwigPyBuiltin__UndeterminedTypeError_type.as_number,         /* tp_as_number */
+    &SwigPyBuiltin__UndeterminedTypeError_type.as_sequence,       /* tp_as_sequence */
+    &SwigPyBuiltin__UndeterminedTypeError_type.as_mapping,        /* tp_as_mapping */
     SwigPyObject_hash,                        /* tp_hash */
     (ternaryfunc) 0,                          /* tp_call */
     (reprfunc) 0,                             /* tp_str */
     (getattrofunc) 0,                         /* tp_getattro */
     (setattrofunc) 0,                         /* tp_setattro */
-    &SwigPyBuiltin__EzSnmpUndeterminedTypeError_type.as_buffer,   /* tp_as_buffer */
+    &SwigPyBuiltin__UndeterminedTypeError_type.as_buffer,         /* tp_as_buffer */
 #if PY_VERSION_HEX >= 0x03000000
     Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
 #else
@@ -18085,19 +19051,19 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUndeterminedTypeError_type = {
 		"",/* tp_doc */
     (traverseproc) 0,                         /* tp_traverse */
     (inquiry) 0,                              /* tp_clear */
-    SwigPyBuiltin__EzSnmpUndeterminedTypeError_richcompare,       /* tp_richcompare */
+    SwigPyBuiltin__UndeterminedTypeError_richcompare,             /* tp_richcompare */
     0,                                        /* tp_weaklistoffset */
     (getiterfunc) 0,                          /* tp_iter */
     (iternextfunc) 0,                         /* tp_iternext */
-    SwigPyBuiltin__EzSnmpUndeterminedTypeError_methods,           /* tp_methods */
+    SwigPyBuiltin__UndeterminedTypeError_methods,                 /* tp_methods */
     0,                                        /* tp_members */
-    SwigPyBuiltin__EzSnmpUndeterminedTypeError_getset,            /* tp_getset */
+    SwigPyBuiltin__UndeterminedTypeError_getset,                  /* tp_getset */
     0,                                        /* tp_base */
     0,                                        /* tp_dict */
     (descrgetfunc) 0,                         /* tp_descr_get */
     (descrsetfunc) 0,                         /* tp_descr_set */
     offsetof(SwigPyObject, dict),             /* tp_dictoffset */
-    _wrap_new_EzSnmpUndeterminedTypeError,    /* tp_init */
+    _wrap_new_UndeterminedTypeError,          /* tp_init */
     (allocfunc) 0,                            /* tp_alloc */
     (newfunc) 0,                              /* tp_new */
     (freefunc) 0,                             /* tp_free */
@@ -18251,7 +19217,491 @@ static PyHeapTypeObject SwigPyBuiltin__EzSnmpUndeterminedTypeError_type = {
 #endif
 };
 
-SWIGINTERN SwigPyClientData SwigPyBuiltin__EzSnmpUndeterminedTypeError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__EzSnmpUndeterminedTypeError_type};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__UndeterminedTypeError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__UndeterminedTypeError_type};
+
+static SwigPyGetSet ParseError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__ParseError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"ParseError", &ParseError___dict___getset },
+    { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__ParseError_richcompare(PyObject *self, PyObject *other, int op) {
+  PyObject *result = NULL;
+  if (!result && !PyErr_Occurred()) {
+    if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+      result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+    } else {
+      result = Py_NotImplemented;
+      Py_INCREF(result);
+    }
+  }
+  return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__ParseError_methods[] = {
+  { NULL, NULL, 0, NULL } /* Sentinel */
+};
+
+static PyHeapTypeObject SwigPyBuiltin__ParseError_type = {
+  {
+#if PY_VERSION_HEX >= 0x03000000
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                        /* ob_size */
+#endif
+    "netsnmp.ParseError",                     /* tp_name */
+    sizeof(SwigPyObject),                     /* tp_basicsize */
+    0,                                        /* tp_itemsize */
+    _wrap_delete_ParseError_destructor_closure,                   /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+    (printfunc) 0,                            /* tp_print */
+#else
+    (Py_ssize_t) 0,                           /* tp_vectorcall_offset */
+#endif
+    (getattrfunc) 0,                          /* tp_getattr */
+    (setattrfunc) 0,                          /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+    0,                                        /* tp_compare */
+#else
+    (cmpfunc) 0,                              /* tp_compare */
+#endif
+    (reprfunc) 0,                             /* tp_repr */
+    &SwigPyBuiltin__ParseError_type.as_number,/* tp_as_number */
+    &SwigPyBuiltin__ParseError_type.as_sequence,                  /* tp_as_sequence */
+    &SwigPyBuiltin__ParseError_type.as_mapping,                   /* tp_as_mapping */
+    SwigPyObject_hash,                        /* tp_hash */
+    (ternaryfunc) 0,                          /* tp_call */
+    (reprfunc) 0,                             /* tp_str */
+    (getattrofunc) 0,                         /* tp_getattro */
+    (setattrofunc) 0,                         /* tp_setattro */
+    &SwigPyBuiltin__ParseError_type.as_buffer,/* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+    "\n"
+		"Exception class for handling SNMP parse errors.\n"
+		"\n"
+		"This exception is thrown when an error occurs while parsing SNMP data.\n"
+		"\n"
+		"\n"
+		"\n"
+		":param message: A descriptive error message.\n"
+		"",/* tp_doc */
+    (traverseproc) 0,                         /* tp_traverse */
+    (inquiry) 0,                              /* tp_clear */
+    SwigPyBuiltin__ParseError_richcompare,    /* tp_richcompare */
+    0,                                        /* tp_weaklistoffset */
+    (getiterfunc) 0,                          /* tp_iter */
+    (iternextfunc) 0,                         /* tp_iternext */
+    SwigPyBuiltin__ParseError_methods,        /* tp_methods */
+    0,                                        /* tp_members */
+    SwigPyBuiltin__ParseError_getset,         /* tp_getset */
+    0,                                        /* tp_base */
+    0,                                        /* tp_dict */
+    (descrgetfunc) 0,                         /* tp_descr_get */
+    (descrsetfunc) 0,                         /* tp_descr_set */
+    offsetof(SwigPyObject, dict),             /* tp_dictoffset */
+    _wrap_new_ParseError,                     /* tp_init */
+    (allocfunc) 0,                            /* tp_alloc */
+    (newfunc) 0,                              /* tp_new */
+    (freefunc) 0,                             /* tp_free */
+    (inquiry) 0,                              /* tp_is_gc */
+    (PyObject *) 0,                           /* tp_bases */
+    (PyObject *) 0,                           /* tp_mro */
+    (PyObject *) 0,                           /* tp_cache */
+    (PyObject *) 0,                           /* tp_subclasses */
+    (PyObject *) 0,                           /* tp_weaklist */
+    (destructor) 0,                           /* tp_del */
+    (int) 0,                                  /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+    (destructor) 0,                           /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+    (vectorcallfunc) 0,                       /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+    0,                                        /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+    (char) 0,                                 /* tp_watched */
+#endif
+#ifdef COUNT_ALLOCS
+    (Py_ssize_t) 0,                           /* tp_allocs */
+    (Py_ssize_t) 0,                           /* tp_frees */
+    (Py_ssize_t) 0,                           /* tp_maxalloc */
+    0,                                        /* tp_prev */
+    0,                                        /* tp_next */
+#endif
+  },
+#if PY_VERSION_HEX >= 0x03050000
+  {
+    (unaryfunc) 0,                            /* am_await */
+    (unaryfunc) 0,                            /* am_aiter */
+    (unaryfunc) 0,                            /* am_anext */
+# if PY_VERSION_HEX >= 0x030a0000
+    (sendfunc) 0,                             /* am_send */
+# endif
+  },
+#endif
+  {
+    (binaryfunc) 0,                           /* nb_add */
+    (binaryfunc) 0,                           /* nb_subtract */
+    (binaryfunc) 0,                           /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_remainder */
+    (binaryfunc) 0,                           /* nb_divmod */
+    (ternaryfunc) 0,                          /* nb_power */
+    (unaryfunc) 0,                            /* nb_negative */
+    (unaryfunc) 0,                            /* nb_positive */
+    (unaryfunc) 0,                            /* nb_absolute */
+    (inquiry) 0,                              /* nb_nonzero */
+    (unaryfunc) 0,                            /* nb_invert */
+    (binaryfunc) 0,                           /* nb_lshift */
+    (binaryfunc) 0,                           /* nb_rshift */
+    (binaryfunc) 0,                           /* nb_and */
+    (binaryfunc) 0,                           /* nb_xor */
+    (binaryfunc) 0,                           /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+    (coercion) 0,                             /* nb_coerce */
+#endif
+    (unaryfunc) 0,                            /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                               /* nb_reserved */
+#else
+    (unaryfunc) 0,                            /* nb_long */
+#endif
+    (unaryfunc) 0,                            /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+    (unaryfunc) 0,                            /* nb_oct */
+    (unaryfunc) 0,                            /* nb_hex */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_add */
+    (binaryfunc) 0,                           /* nb_inplace_subtract */
+    (binaryfunc) 0,                           /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_inplace_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_remainder */
+    (ternaryfunc) 0,                          /* nb_inplace_power */
+    (binaryfunc) 0,                           /* nb_inplace_lshift */
+    (binaryfunc) 0,                           /* nb_inplace_rshift */
+    (binaryfunc) 0,                           /* nb_inplace_and */
+    (binaryfunc) 0,                           /* nb_inplace_xor */
+    (binaryfunc) 0,                           /* nb_inplace_or */
+    (binaryfunc) 0,                           /* nb_floor_divide */
+    (binaryfunc) 0,                           /* nb_true_divide */
+    (binaryfunc) 0,                           /* nb_inplace_floor_divide */
+    (binaryfunc) 0,                           /* nb_inplace_true_divide */
+    (unaryfunc) 0,                            /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+    (binaryfunc) 0,                           /* nb_matrix_multiply */
+    (binaryfunc) 0,                           /* nb_inplace_matrix_multiply */
+#endif
+  },
+  {
+    (lenfunc) 0,                              /* mp_length */
+    (binaryfunc) 0,                           /* mp_subscript */
+    (objobjargproc) 0,                        /* mp_ass_subscript */
+  },
+  {
+    (lenfunc) 0,                              /* sq_length */
+    (binaryfunc) 0,                           /* sq_concat */
+    (ssizeargfunc) 0,                         /* sq_repeat */
+    (ssizeargfunc) 0,                         /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                               /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                    /* sq_slice */
+#endif
+    (ssizeobjargproc) 0,                      /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                               /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,                 /* sq_ass_slice */
+#endif
+    (objobjproc) 0,                           /* sq_contains */
+    (binaryfunc) 0,                           /* sq_inplace_concat */
+    (ssizeargfunc) 0,                         /* sq_inplace_repeat */
+  },
+  {
+#if PY_VERSION_HEX < 0x03000000
+    (readbufferproc) 0,                       /* bf_getreadbuffer */
+    (writebufferproc) 0,                      /* bf_getwritebuffer */
+    (segcountproc) 0,                         /* bf_getsegcount */
+    (charbufferproc) 0,                       /* bf_getcharbuffer */
+#endif
+    (getbufferproc) 0,                        /* bf_getbuffer */
+    (releasebufferproc) 0,                    /* bf_releasebuffer */
+  },
+    (PyObject *) 0,                           /* ht_name */
+    (PyObject *) 0,                           /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *) 0,                           /* ht_qualname */
+    0,                                        /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *) 0,                           /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *) 0,                               /* _ht_tpname */
+  {
+    (PyObject *) 0,                           /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+    (uint32_t) 0,                             /* getitem_version */
+#endif
+  }
+#endif
+};
+
+SWIGINTERN SwigPyClientData SwigPyBuiltin__ParseError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__ParseError_type};
+
+static SwigPyGetSet PacketError___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__PacketError_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"PacketError", &PacketError___dict___getset },
+    { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__PacketError_richcompare(PyObject *self, PyObject *other, int op) {
+  PyObject *result = NULL;
+  if (!result && !PyErr_Occurred()) {
+    if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+      result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+    } else {
+      result = Py_NotImplemented;
+      Py_INCREF(result);
+    }
+  }
+  return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__PacketError_methods[] = {
+  { NULL, NULL, 0, NULL } /* Sentinel */
+};
+
+static PyHeapTypeObject SwigPyBuiltin__PacketError_type = {
+  {
+#if PY_VERSION_HEX >= 0x03000000
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                        /* ob_size */
+#endif
+    "netsnmp.PacketError",                    /* tp_name */
+    sizeof(SwigPyObject),                     /* tp_basicsize */
+    0,                                        /* tp_itemsize */
+    _wrap_delete_PacketError_destructor_closure,                  /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+    (printfunc) 0,                            /* tp_print */
+#else
+    (Py_ssize_t) 0,                           /* tp_vectorcall_offset */
+#endif
+    (getattrfunc) 0,                          /* tp_getattr */
+    (setattrfunc) 0,                          /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+    0,                                        /* tp_compare */
+#else
+    (cmpfunc) 0,                              /* tp_compare */
+#endif
+    (reprfunc) 0,                             /* tp_repr */
+    &SwigPyBuiltin__PacketError_type.as_number,                   /* tp_as_number */
+    &SwigPyBuiltin__PacketError_type.as_sequence,                 /* tp_as_sequence */
+    &SwigPyBuiltin__PacketError_type.as_mapping,                  /* tp_as_mapping */
+    SwigPyObject_hash,                        /* tp_hash */
+    (ternaryfunc) 0,                          /* tp_call */
+    (reprfunc) 0,                             /* tp_str */
+    (getattrofunc) 0,                         /* tp_getattro */
+    (setattrofunc) 0,                         /* tp_setattro */
+    &SwigPyBuiltin__PacketError_type.as_buffer,                   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+    "\n"
+		"Exception class for handling SNMP packet errors.\n"
+		"\n"
+		"This exception is thrown when an error occurs related to SNMP packet processing.\n"
+		"\n"
+		"\n"
+		"\n"
+		":param message: A descriptive error message.\n"
+		"",/* tp_doc */
+    (traverseproc) 0,                         /* tp_traverse */
+    (inquiry) 0,                              /* tp_clear */
+    SwigPyBuiltin__PacketError_richcompare,   /* tp_richcompare */
+    0,                                        /* tp_weaklistoffset */
+    (getiterfunc) 0,                          /* tp_iter */
+    (iternextfunc) 0,                         /* tp_iternext */
+    SwigPyBuiltin__PacketError_methods,       /* tp_methods */
+    0,                                        /* tp_members */
+    SwigPyBuiltin__PacketError_getset,        /* tp_getset */
+    0,                                        /* tp_base */
+    0,                                        /* tp_dict */
+    (descrgetfunc) 0,                         /* tp_descr_get */
+    (descrsetfunc) 0,                         /* tp_descr_set */
+    offsetof(SwigPyObject, dict),             /* tp_dictoffset */
+    _wrap_new_PacketError,                    /* tp_init */
+    (allocfunc) 0,                            /* tp_alloc */
+    (newfunc) 0,                              /* tp_new */
+    (freefunc) 0,                             /* tp_free */
+    (inquiry) 0,                              /* tp_is_gc */
+    (PyObject *) 0,                           /* tp_bases */
+    (PyObject *) 0,                           /* tp_mro */
+    (PyObject *) 0,                           /* tp_cache */
+    (PyObject *) 0,                           /* tp_subclasses */
+    (PyObject *) 0,                           /* tp_weaklist */
+    (destructor) 0,                           /* tp_del */
+    (int) 0,                                  /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+    (destructor) 0,                           /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+    (vectorcallfunc) 0,                       /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+    0,                                        /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+    (char) 0,                                 /* tp_watched */
+#endif
+#ifdef COUNT_ALLOCS
+    (Py_ssize_t) 0,                           /* tp_allocs */
+    (Py_ssize_t) 0,                           /* tp_frees */
+    (Py_ssize_t) 0,                           /* tp_maxalloc */
+    0,                                        /* tp_prev */
+    0,                                        /* tp_next */
+#endif
+  },
+#if PY_VERSION_HEX >= 0x03050000
+  {
+    (unaryfunc) 0,                            /* am_await */
+    (unaryfunc) 0,                            /* am_aiter */
+    (unaryfunc) 0,                            /* am_anext */
+# if PY_VERSION_HEX >= 0x030a0000
+    (sendfunc) 0,                             /* am_send */
+# endif
+  },
+#endif
+  {
+    (binaryfunc) 0,                           /* nb_add */
+    (binaryfunc) 0,                           /* nb_subtract */
+    (binaryfunc) 0,                           /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_remainder */
+    (binaryfunc) 0,                           /* nb_divmod */
+    (ternaryfunc) 0,                          /* nb_power */
+    (unaryfunc) 0,                            /* nb_negative */
+    (unaryfunc) 0,                            /* nb_positive */
+    (unaryfunc) 0,                            /* nb_absolute */
+    (inquiry) 0,                              /* nb_nonzero */
+    (unaryfunc) 0,                            /* nb_invert */
+    (binaryfunc) 0,                           /* nb_lshift */
+    (binaryfunc) 0,                           /* nb_rshift */
+    (binaryfunc) 0,                           /* nb_and */
+    (binaryfunc) 0,                           /* nb_xor */
+    (binaryfunc) 0,                           /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+    (coercion) 0,                             /* nb_coerce */
+#endif
+    (unaryfunc) 0,                            /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                               /* nb_reserved */
+#else
+    (unaryfunc) 0,                            /* nb_long */
+#endif
+    (unaryfunc) 0,                            /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+    (unaryfunc) 0,                            /* nb_oct */
+    (unaryfunc) 0,                            /* nb_hex */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_add */
+    (binaryfunc) 0,                           /* nb_inplace_subtract */
+    (binaryfunc) 0,                           /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_inplace_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_remainder */
+    (ternaryfunc) 0,                          /* nb_inplace_power */
+    (binaryfunc) 0,                           /* nb_inplace_lshift */
+    (binaryfunc) 0,                           /* nb_inplace_rshift */
+    (binaryfunc) 0,                           /* nb_inplace_and */
+    (binaryfunc) 0,                           /* nb_inplace_xor */
+    (binaryfunc) 0,                           /* nb_inplace_or */
+    (binaryfunc) 0,                           /* nb_floor_divide */
+    (binaryfunc) 0,                           /* nb_true_divide */
+    (binaryfunc) 0,                           /* nb_inplace_floor_divide */
+    (binaryfunc) 0,                           /* nb_inplace_true_divide */
+    (unaryfunc) 0,                            /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+    (binaryfunc) 0,                           /* nb_matrix_multiply */
+    (binaryfunc) 0,                           /* nb_inplace_matrix_multiply */
+#endif
+  },
+  {
+    (lenfunc) 0,                              /* mp_length */
+    (binaryfunc) 0,                           /* mp_subscript */
+    (objobjargproc) 0,                        /* mp_ass_subscript */
+  },
+  {
+    (lenfunc) 0,                              /* sq_length */
+    (binaryfunc) 0,                           /* sq_concat */
+    (ssizeargfunc) 0,                         /* sq_repeat */
+    (ssizeargfunc) 0,                         /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                               /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                    /* sq_slice */
+#endif
+    (ssizeobjargproc) 0,                      /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                               /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,                 /* sq_ass_slice */
+#endif
+    (objobjproc) 0,                           /* sq_contains */
+    (binaryfunc) 0,                           /* sq_inplace_concat */
+    (ssizeargfunc) 0,                         /* sq_inplace_repeat */
+  },
+  {
+#if PY_VERSION_HEX < 0x03000000
+    (readbufferproc) 0,                       /* bf_getreadbuffer */
+    (writebufferproc) 0,                      /* bf_getwritebuffer */
+    (segcountproc) 0,                         /* bf_getsegcount */
+    (charbufferproc) 0,                       /* bf_getcharbuffer */
+#endif
+    (getbufferproc) 0,                        /* bf_getbuffer */
+    (releasebufferproc) 0,                    /* bf_releasebuffer */
+  },
+    (PyObject *) 0,                           /* ht_name */
+    (PyObject *) 0,                           /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *) 0,                           /* ht_qualname */
+    0,                                        /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *) 0,                           /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *) 0,                               /* _ht_tpname */
+  {
+    (PyObject *) 0,                           /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+    (uint32_t) 0,                             /* getitem_version */
+#endif
+  }
+#endif
+};
+
+SWIGINTERN SwigPyClientData SwigPyBuiltin__PacketError_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__PacketError_type};
 
 static SwigPyGetSet _string_list___dict___getset = { SwigPyObject_get___dict__, 0 };
 SWIGINTERN PyGetSetDef SwigPyBuiltin__std__vectorT_std__string_t_getset[] = {
@@ -18832,61 +20282,75 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__std__vectorT_Result_t_clientdata = {0
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_EzSnmpConnectionErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpConnectionError *) x));
+static void *_p_ConnectionErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((ConnectionError *) x));
 }
-static void *_p_EzSnmpNoSuchInstanceErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpNoSuchInstanceError *) x));
+static void *_p_NoSuchInstanceErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((NoSuchInstanceError *) x));
 }
-static void *_p_EzSnmpNoSuchNameErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpNoSuchNameError *) x));
+static void *_p_NoSuchNameErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((NoSuchNameError *) x));
 }
-static void *_p_EzSnmpNoSuchObjectErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpNoSuchObjectError *) x));
+static void *_p_NoSuchObjectErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((NoSuchObjectError *) x));
 }
-static void *_p_EzSnmpTimeoutErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpTimeoutError *) x));
+static void *_p_PacketErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((PacketError *) x));
 }
-static void *_p_EzSnmpUndeterminedTypeErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpUndeterminedTypeError *) x));
+static void *_p_ParseErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((ParseError *) x));
 }
-static void *_p_EzSnmpUnknownObjectIDErrorTo_p_EzSnmpError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((EzSnmpError *)  ((EzSnmpUnknownObjectIDError *) x));
+static void *_p_TimeoutErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((TimeoutError *) x));
 }
-static void *_p_EzSnmpConnectionErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpConnectionError *) x));
+static void *_p_UndeterminedTypeErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((UndeterminedTypeError *) x));
 }
-static void *_p_EzSnmpErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *)  ((EzSnmpError *) x));
+static void *_p_UnknownObjectIDErrorTo_p_GenericError(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GenericError *)  ((UnknownObjectIDError *) x));
 }
-static void *_p_EzSnmpNoSuchInstanceErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpNoSuchInstanceError *) x));
+static void *_p_ConnectionErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((ConnectionError *) x));
 }
-static void *_p_EzSnmpNoSuchNameErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpNoSuchNameError *) x));
+static void *_p_GenericErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *)  ((GenericError *) x));
 }
-static void *_p_EzSnmpNoSuchObjectErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpNoSuchObjectError *) x));
+static void *_p_NoSuchInstanceErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((NoSuchInstanceError *) x));
 }
-static void *_p_EzSnmpTimeoutErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpTimeoutError *) x));
+static void *_p_NoSuchNameErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((NoSuchNameError *) x));
 }
-static void *_p_EzSnmpUndeterminedTypeErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpUndeterminedTypeError *) x));
+static void *_p_NoSuchObjectErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((NoSuchObjectError *) x));
 }
-static void *_p_EzSnmpUnknownObjectIDErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((std::exception *) (EzSnmpError *) ((EzSnmpUnknownObjectIDError *) x));
+static void *_p_PacketErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((PacketError *) x));
 }
-static swig_type_info _swigt__p_EzSnmpConnectionError = {"_p_EzSnmpConnectionError", "EzSnmpConnectionError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpConnectionError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpError = {"_p_EzSnmpError", "EzSnmpError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpNoSuchInstanceError = {"_p_EzSnmpNoSuchInstanceError", "EzSnmpNoSuchInstanceError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpNoSuchInstanceError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpNoSuchNameError = {"_p_EzSnmpNoSuchNameError", "EzSnmpNoSuchNameError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpNoSuchNameError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpNoSuchObjectError = {"_p_EzSnmpNoSuchObjectError", "EzSnmpNoSuchObjectError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpNoSuchObjectError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpTimeoutError = {"_p_EzSnmpTimeoutError", "EzSnmpTimeoutError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpTimeoutError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpUndeterminedTypeError = {"_p_EzSnmpUndeterminedTypeError", "EzSnmpUndeterminedTypeError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpUndeterminedTypeError_clientdata, 0};
-static swig_type_info _swigt__p_EzSnmpUnknownObjectIDError = {"_p_EzSnmpUnknownObjectIDError", "EzSnmpUnknownObjectIDError *", 0, 0, (void*)&SwigPyBuiltin__EzSnmpUnknownObjectIDError_clientdata, 0};
+static void *_p_ParseErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((ParseError *) x));
+}
+static void *_p_TimeoutErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((TimeoutError *) x));
+}
+static void *_p_UndeterminedTypeErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((UndeterminedTypeError *) x));
+}
+static void *_p_UnknownObjectIDErrorTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((std::exception *) (GenericError *) ((UnknownObjectIDError *) x));
+}
+static swig_type_info _swigt__p_ConnectionError = {"_p_ConnectionError", "ConnectionError *", 0, 0, (void*)&SwigPyBuiltin__ConnectionError_clientdata, 0};
+static swig_type_info _swigt__p_GenericError = {"_p_GenericError", "GenericError *", 0, 0, (void*)&SwigPyBuiltin__GenericError_clientdata, 0};
+static swig_type_info _swigt__p_NoSuchInstanceError = {"_p_NoSuchInstanceError", "NoSuchInstanceError *", 0, 0, (void*)&SwigPyBuiltin__NoSuchInstanceError_clientdata, 0};
+static swig_type_info _swigt__p_NoSuchNameError = {"_p_NoSuchNameError", "NoSuchNameError *", 0, 0, (void*)&SwigPyBuiltin__NoSuchNameError_clientdata, 0};
+static swig_type_info _swigt__p_NoSuchObjectError = {"_p_NoSuchObjectError", "NoSuchObjectError *", 0, 0, (void*)&SwigPyBuiltin__NoSuchObjectError_clientdata, 0};
+static swig_type_info _swigt__p_PacketError = {"_p_PacketError", "PacketError *", 0, 0, (void*)&SwigPyBuiltin__PacketError_clientdata, 0};
+static swig_type_info _swigt__p_ParseError = {"_p_ParseError", "ParseError *", 0, 0, (void*)&SwigPyBuiltin__ParseError_clientdata, 0};
 static swig_type_info _swigt__p_Result = {"_p_Result", "std::vector< Result >::value_type *|Result *", 0, 0, (void*)&SwigPyBuiltin__Result_clientdata, 0};
 static swig_type_info _swigt__p_SwigPyObject = {"_p_SwigPyObject", "SwigPyObject *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_TimeoutError = {"_p_TimeoutError", "TimeoutError *", 0, 0, (void*)&SwigPyBuiltin__TimeoutError_clientdata, 0};
+static swig_type_info _swigt__p_UndeterminedTypeError = {"_p_UndeterminedTypeError", "UndeterminedTypeError *", 0, 0, (void*)&SwigPyBuiltin__UndeterminedTypeError_clientdata, 0};
+static swig_type_info _swigt__p_UnknownObjectIDError = {"_p_UnknownObjectIDError", "UnknownObjectIDError *", 0, 0, (void*)&SwigPyBuiltin__UnknownObjectIDError_clientdata, 0};
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
@@ -18903,16 +20367,18 @@ static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_EzSnmpConnectionError,
-  &_swigt__p_EzSnmpError,
-  &_swigt__p_EzSnmpNoSuchInstanceError,
-  &_swigt__p_EzSnmpNoSuchNameError,
-  &_swigt__p_EzSnmpNoSuchObjectError,
-  &_swigt__p_EzSnmpTimeoutError,
-  &_swigt__p_EzSnmpUndeterminedTypeError,
-  &_swigt__p_EzSnmpUnknownObjectIDError,
+  &_swigt__p_ConnectionError,
+  &_swigt__p_GenericError,
+  &_swigt__p_NoSuchInstanceError,
+  &_swigt__p_NoSuchNameError,
+  &_swigt__p_NoSuchObjectError,
+  &_swigt__p_PacketError,
+  &_swigt__p_ParseError,
   &_swigt__p_Result,
   &_swigt__p_SwigPyObject,
+  &_swigt__p_TimeoutError,
+  &_swigt__p_UndeterminedTypeError,
+  &_swigt__p_UnknownObjectIDError,
   &_swigt__p_allocator_type,
   &_swigt__p_char,
   &_swigt__p_difference_type,
@@ -18929,16 +20395,18 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_value_type,
 };
 
-static swig_cast_info _swigc__p_EzSnmpConnectionError[] = {  {&_swigt__p_EzSnmpConnectionError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpError[] = {  {&_swigt__p_EzSnmpError, 0, 0, 0},  {&_swigt__p_EzSnmpConnectionError, _p_EzSnmpConnectionErrorTo_p_EzSnmpError, 0, 0},  {&_swigt__p_EzSnmpNoSuchInstanceError, _p_EzSnmpNoSuchInstanceErrorTo_p_EzSnmpError, 0, 0},  {&_swigt__p_EzSnmpNoSuchNameError, _p_EzSnmpNoSuchNameErrorTo_p_EzSnmpError, 0, 0},  {&_swigt__p_EzSnmpNoSuchObjectError, _p_EzSnmpNoSuchObjectErrorTo_p_EzSnmpError, 0, 0},  {&_swigt__p_EzSnmpTimeoutError, _p_EzSnmpTimeoutErrorTo_p_EzSnmpError, 0, 0},  {&_swigt__p_EzSnmpUndeterminedTypeError, _p_EzSnmpUndeterminedTypeErrorTo_p_EzSnmpError, 0, 0},  {&_swigt__p_EzSnmpUnknownObjectIDError, _p_EzSnmpUnknownObjectIDErrorTo_p_EzSnmpError, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpNoSuchInstanceError[] = {  {&_swigt__p_EzSnmpNoSuchInstanceError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpNoSuchNameError[] = {  {&_swigt__p_EzSnmpNoSuchNameError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpNoSuchObjectError[] = {  {&_swigt__p_EzSnmpNoSuchObjectError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpTimeoutError[] = {  {&_swigt__p_EzSnmpTimeoutError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpUndeterminedTypeError[] = {  {&_swigt__p_EzSnmpUndeterminedTypeError, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_EzSnmpUnknownObjectIDError[] = {  {&_swigt__p_EzSnmpUnknownObjectIDError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ConnectionError[] = {  {&_swigt__p_ConnectionError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_GenericError[] = {  {&_swigt__p_GenericError, 0, 0, 0},  {&_swigt__p_ConnectionError, _p_ConnectionErrorTo_p_GenericError, 0, 0},  {&_swigt__p_NoSuchInstanceError, _p_NoSuchInstanceErrorTo_p_GenericError, 0, 0},  {&_swigt__p_NoSuchNameError, _p_NoSuchNameErrorTo_p_GenericError, 0, 0},  {&_swigt__p_NoSuchObjectError, _p_NoSuchObjectErrorTo_p_GenericError, 0, 0},  {&_swigt__p_PacketError, _p_PacketErrorTo_p_GenericError, 0, 0},  {&_swigt__p_ParseError, _p_ParseErrorTo_p_GenericError, 0, 0},  {&_swigt__p_TimeoutError, _p_TimeoutErrorTo_p_GenericError, 0, 0},  {&_swigt__p_UndeterminedTypeError, _p_UndeterminedTypeErrorTo_p_GenericError, 0, 0},  {&_swigt__p_UnknownObjectIDError, _p_UnknownObjectIDErrorTo_p_GenericError, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_NoSuchInstanceError[] = {  {&_swigt__p_NoSuchInstanceError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_NoSuchNameError[] = {  {&_swigt__p_NoSuchNameError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_NoSuchObjectError[] = {  {&_swigt__p_NoSuchObjectError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PacketError[] = {  {&_swigt__p_PacketError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ParseError[] = {  {&_swigt__p_ParseError, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Result[] = {  {&_swigt__p_Result, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SwigPyObject[] = {  {&_swigt__p_SwigPyObject, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_TimeoutError[] = {  {&_swigt__p_TimeoutError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_UndeterminedTypeError[] = {  {&_swigt__p_UndeterminedTypeError, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_UnknownObjectIDError[] = {  {&_swigt__p_UnknownObjectIDError, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -18947,7 +20415,7 @@ static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0
 static swig_cast_info _swigc__p_size_type[] = {  {&_swigt__p_size_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_Result_t[] = {  {&_swigt__p_std__allocatorT_Result_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__string_t[] = {  {&_swigt__p_std__allocatorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_EzSnmpConnectionError, _p_EzSnmpConnectionErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpError, _p_EzSnmpErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpNoSuchInstanceError, _p_EzSnmpNoSuchInstanceErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpNoSuchNameError, _p_EzSnmpNoSuchNameErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpNoSuchObjectError, _p_EzSnmpNoSuchObjectErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpTimeoutError, _p_EzSnmpTimeoutErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpUndeterminedTypeError, _p_EzSnmpUndeterminedTypeErrorTo_p_std__exception, 0, 0},  {&_swigt__p_EzSnmpUnknownObjectIDError, _p_EzSnmpUnknownObjectIDErrorTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_ConnectionError, _p_ConnectionErrorTo_p_std__exception, 0, 0},  {&_swigt__p_GenericError, _p_GenericErrorTo_p_std__exception, 0, 0},  {&_swigt__p_NoSuchInstanceError, _p_NoSuchInstanceErrorTo_p_std__exception, 0, 0},  {&_swigt__p_NoSuchNameError, _p_NoSuchNameErrorTo_p_std__exception, 0, 0},  {&_swigt__p_NoSuchObjectError, _p_NoSuchObjectErrorTo_p_std__exception, 0, 0},  {&_swigt__p_PacketError, _p_PacketErrorTo_p_std__exception, 0, 0},  {&_swigt__p_ParseError, _p_ParseErrorTo_p_std__exception, 0, 0},  {&_swigt__p_TimeoutError, _p_TimeoutErrorTo_p_std__exception, 0, 0},  {&_swigt__p_UndeterminedTypeError, _p_UndeterminedTypeErrorTo_p_std__exception, 0, 0},  {&_swigt__p_UnknownObjectIDError, _p_UnknownObjectIDErrorTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Result_t[] = {  {&_swigt__p_std__vectorT_Result_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__string_t[] = {  {&_swigt__p_std__vectorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -18955,16 +20423,18 @@ static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__Sw
 static swig_cast_info _swigc__p_value_type[] = {  {&_swigt__p_value_type, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_EzSnmpConnectionError,
-  _swigc__p_EzSnmpError,
-  _swigc__p_EzSnmpNoSuchInstanceError,
-  _swigc__p_EzSnmpNoSuchNameError,
-  _swigc__p_EzSnmpNoSuchObjectError,
-  _swigc__p_EzSnmpTimeoutError,
-  _swigc__p_EzSnmpUndeterminedTypeError,
-  _swigc__p_EzSnmpUnknownObjectIDError,
+  _swigc__p_ConnectionError,
+  _swigc__p_GenericError,
+  _swigc__p_NoSuchInstanceError,
+  _swigc__p_NoSuchNameError,
+  _swigc__p_NoSuchObjectError,
+  _swigc__p_PacketError,
+  _swigc__p_ParseError,
   _swigc__p_Result,
   _swigc__p_SwigPyObject,
+  _swigc__p_TimeoutError,
+  _swigc__p_UndeterminedTypeError,
+  _swigc__p_UnknownObjectIDError,
   _swigc__p_allocator_type,
   _swigc__p_char,
   _swigc__p_difference_type,
@@ -19494,8 +20964,8 @@ SWIG_init(void) {
   SwigPyBuiltin_AddPublicSymbol(public_interface, "Result");
   d = md;
   
-  /* type '::EzSnmpError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpError_type;
+  /* type '::GenericError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__GenericError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
@@ -19505,7 +20975,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'GenericError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19513,21 +20983,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpError");
+  PyModule_AddObject(m, "GenericError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "GenericError");
   d = md;
   
-  /* type '::EzSnmpConnectionError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpConnectionError_type;
+  /* type '::ConnectionError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__ConnectionError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpConnectionError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'ConnectionError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19539,7 +21009,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpConnectionError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'ConnectionError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19547,21 +21017,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpConnectionError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpConnectionError");
+  PyModule_AddObject(m, "ConnectionError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "ConnectionError");
   d = md;
   
-  /* type '::EzSnmpTimeoutError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpTimeoutError_type;
+  /* type '::TimeoutError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__TimeoutError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpTimeoutError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'TimeoutError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19573,7 +21043,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpTimeoutError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'TimeoutError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19581,21 +21051,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpTimeoutError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpTimeoutError");
+  PyModule_AddObject(m, "TimeoutError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "TimeoutError");
   d = md;
   
-  /* type '::EzSnmpUnknownObjectIDError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpUnknownObjectIDError_type;
+  /* type '::UnknownObjectIDError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__UnknownObjectIDError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpUnknownObjectIDError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'UnknownObjectIDError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19607,7 +21077,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpUnknownObjectIDError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'UnknownObjectIDError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19615,21 +21085,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpUnknownObjectIDError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpUnknownObjectIDError");
+  PyModule_AddObject(m, "UnknownObjectIDError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "UnknownObjectIDError");
   d = md;
   
-  /* type '::EzSnmpNoSuchNameError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpNoSuchNameError_type;
+  /* type '::NoSuchNameError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__NoSuchNameError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpNoSuchNameError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchNameError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19641,7 +21111,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpNoSuchNameError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchNameError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19649,21 +21119,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpNoSuchNameError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpNoSuchNameError");
+  PyModule_AddObject(m, "NoSuchNameError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "NoSuchNameError");
   d = md;
   
-  /* type '::EzSnmpNoSuchObjectError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpNoSuchObjectError_type;
+  /* type '::NoSuchObjectError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__NoSuchObjectError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpNoSuchObjectError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchObjectError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19675,7 +21145,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpNoSuchObjectError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchObjectError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19683,21 +21153,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpNoSuchObjectError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpNoSuchObjectError");
+  PyModule_AddObject(m, "NoSuchObjectError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "NoSuchObjectError");
   d = md;
   
-  /* type '::EzSnmpNoSuchInstanceError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpNoSuchInstanceError_type;
+  /* type '::NoSuchInstanceError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__NoSuchInstanceError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpNoSuchInstanceError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchInstanceError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19709,7 +21179,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpNoSuchInstanceError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchInstanceError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19717,21 +21187,21 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpNoSuchInstanceError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpNoSuchInstanceError");
+  PyModule_AddObject(m, "NoSuchInstanceError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "NoSuchInstanceError");
   d = md;
   
-  /* type '::EzSnmpUndeterminedTypeError' */
-  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__EzSnmpUndeterminedTypeError_type;
+  /* type '::UndeterminedTypeError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__UndeterminedTypeError_type;
   builtin_pytype->tp_dict = d = PyDict_New();
   SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
   builtin_pytype->tp_new = PyType_GenericNew;
   builtin_base_count = 0;
-  builtin_basetype = SWIG_MangledTypeQuery("_p_EzSnmpError");
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
   if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
     builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
   } else {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpUndeterminedTypeError' as base 'EzSnmpError' has not been initialized.\n");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'UndeterminedTypeError' as base 'GenericError' has not been initialized.\n");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19743,7 +21213,7 @@ SWIG_init(void) {
   PyDict_SetItemString(d, "this", this_descr);
   PyDict_SetItemString(d, "thisown", thisown_descr);
   if (PyType_Ready(builtin_pytype) < 0) {
-    PyErr_SetString(PyExc_TypeError, "Could not create type 'EzSnmpUndeterminedTypeError'.");
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'UndeterminedTypeError'.");
 #if PY_VERSION_HEX >= 0x03000000
     return NULL;
 #else
@@ -19751,8 +21221,76 @@ SWIG_init(void) {
 #endif
   }
   Py_INCREF(builtin_pytype);
-  PyModule_AddObject(m, "EzSnmpUndeterminedTypeError", (PyObject *)builtin_pytype);
-  SwigPyBuiltin_AddPublicSymbol(public_interface, "EzSnmpUndeterminedTypeError");
+  PyModule_AddObject(m, "UndeterminedTypeError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "UndeterminedTypeError");
+  d = md;
+  
+  /* type '::ParseError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__ParseError_type;
+  builtin_pytype->tp_dict = d = PyDict_New();
+  SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
+  builtin_pytype->tp_new = PyType_GenericNew;
+  builtin_base_count = 0;
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
+  if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
+    builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
+  } else {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'ParseError' as base 'GenericError' has not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  builtin_bases[builtin_base_count] = NULL;
+  SwigPyBuiltin_InitBases(builtin_pytype, builtin_bases);
+  PyDict_SetItemString(d, "this", this_descr);
+  PyDict_SetItemString(d, "thisown", thisown_descr);
+  if (PyType_Ready(builtin_pytype) < 0) {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'ParseError'.");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  Py_INCREF(builtin_pytype);
+  PyModule_AddObject(m, "ParseError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "ParseError");
+  d = md;
+  
+  /* type '::PacketError' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__PacketError_type;
+  builtin_pytype->tp_dict = d = PyDict_New();
+  SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
+  builtin_pytype->tp_new = PyType_GenericNew;
+  builtin_base_count = 0;
+  builtin_basetype = SWIG_MangledTypeQuery("_p_GenericError");
+  if (builtin_basetype && builtin_basetype->clientdata && ((SwigPyClientData *) builtin_basetype->clientdata)->pytype) {
+    builtin_bases[builtin_base_count++] = ((SwigPyClientData *) builtin_basetype->clientdata)->pytype;
+  } else {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'PacketError' as base 'GenericError' has not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  builtin_bases[builtin_base_count] = NULL;
+  SwigPyBuiltin_InitBases(builtin_pytype, builtin_bases);
+  PyDict_SetItemString(d, "this", this_descr);
+  PyDict_SetItemString(d, "thisown", thisown_descr);
+  if (PyType_Ready(builtin_pytype) < 0) {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'PacketError'.");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  Py_INCREF(builtin_pytype);
+  PyModule_AddObject(m, "PacketError", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "PacketError");
   d = md;
   
   /* type 'std::vector< std::string >' */
