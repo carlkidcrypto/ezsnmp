@@ -1,5 +1,5 @@
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
+#ifndef EXCEPTIONSBASE_H
+#define EXCEPTIONSBASE_H
 
 #include <exception>
 #include <string>
@@ -151,4 +151,4 @@ class PacketError : public GenericError {
    PacketError(std::string const& message);
 };
 
-#endif // EXCEPTIONS_H
+#endif // EXCEPTIONSBASE_H

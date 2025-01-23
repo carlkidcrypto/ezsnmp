@@ -66,7 +66,7 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-#include "exceptions.h"
+#include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpgetnext.h"
 

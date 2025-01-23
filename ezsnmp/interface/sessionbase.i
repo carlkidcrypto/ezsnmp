@@ -3,7 +3,7 @@
 
 %include <stl.i>
 %include "datatypes.i"
-%include "exceptions.i"
+%include "exceptionsbase.i"
 
 %feature("kwargs") SessionBase::SessionBase;
 %feature("python:annotations", "c");

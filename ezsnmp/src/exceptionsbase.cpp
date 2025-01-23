@@ -1,4 +1,4 @@
-#include "exceptions.h"
+#include "exceptionsbase.h"
 
 GenericError::GenericError(std::string const& message) : m_msg(message) {}
 

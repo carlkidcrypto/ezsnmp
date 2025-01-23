@@ -248,10 +248,10 @@ setup(
             extra_link_args=link_args,
         ),
         Extension(
-            name="ezsnmp/_exceptions",
+            name="ezsnmp/_exceptionsbase",
             sources=[
-                "ezsnmp/src/ezsnmp_exceptions.cpp",
-                "ezsnmp/src/exceptions.cpp",
+                "ezsnmp/src/ezsnmp_exceptionsbase.cpp",
+                "ezsnmp/src/exceptionsbase.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,
@@ -263,7 +263,7 @@ setup(
             name="ezsnmp/_netsnmp",
             sources=[
                 "ezsnmp/src/ezsnmp_netsnmp.cpp",
-                "ezsnmp/src/exceptions.cpp",
+                "ezsnmp/src/exceptionsbase.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
@@ -284,7 +284,7 @@ setup(
             name="ezsnmp/_sessionbase",
             sources=[
                 "ezsnmp/src/ezsnmp_sessionbase.cpp",
-                "ezsnmp/src/exceptions.cpp",
+                "ezsnmp/src/exceptionsbase.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/sessionbase.cpp",
                 "ezsnmp/src/helpers.cpp",

@@ -65,7 +65,7 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
-#include "exceptions.h"
+#include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
 

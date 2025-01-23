@@ -1,7 +1,7 @@
 %module netsnmp
 %include <argcargv.i>
 %include <stl.i>
-%include "exceptions.i"
+%include "exceptionsbase.i"
 
 %{
 #include "snmpbulkget.h"

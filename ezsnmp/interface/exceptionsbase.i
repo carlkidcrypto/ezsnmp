@@ -1,8 +1,8 @@
-%module exceptions
+%module exceptionsbase
 %feature("autodoc", "0");
 
 %{
-#include "exceptions.h"
+#include "exceptionsbase.h"
 %}
 
 %include <std_string.i>
@@ -39,12 +39,6 @@
     }catch (const PacketError& e) {
     PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
     SWIG_fail;
-    }catch (const std::runtime_error& e) {
-    PyErr_SetString(PyExc_RuntimeError, e.what());
-    SWIG_fail;
-    } catch (const std::invalid_argument& e) {
-    PyErr_SetString(PyExc_ValueError, e.what());
-    SWIG_fail;
     }catch (const GenericError& e) {
     PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
     SWIG_fail;
@@ -63,4 +57,4 @@
 %exceptionclass PacketError;
 
 // Include the header file
-%include "../include/exceptions.h"
+%include "../include/exceptionsbase.h"

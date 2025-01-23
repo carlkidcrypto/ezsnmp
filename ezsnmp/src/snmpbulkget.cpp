@@ -75,7 +75,7 @@ struct nameStruct {
 } *name, *namep;
 int names;
 
-#include "exceptions.h"
+#include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkget.h"
 

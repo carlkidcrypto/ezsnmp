@@ -74,7 +74,7 @@ oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int snmpbulkwalk_numprinted = 0;
 int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
-#include "exceptions.h"
+#include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkwalk.h"
 
