@@ -12,49 +12,49 @@
 %exception {
     try {
         $action
-    } catch (const ConnectionError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionError), e.what());
+    } catch (const ConnectionErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
     SWIG_fail;
-    } catch (const TimeoutError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutError), e.what());
+    } catch (const TimeoutErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
     SWIG_fail;
-    } catch (const UnknownObjectIDError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDError), e.what());
+    } catch (const UnknownObjectIDErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
     SWIG_fail;
-    } catch (const NoSuchNameError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameError), e.what());
+    } catch (const NoSuchNameErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
     SWIG_fail;
-    } catch (const NoSuchObjectError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectError), e.what());
+    } catch (const NoSuchObjectErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
     SWIG_fail;
-    } catch (const NoSuchInstanceError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceError), e.what());
+    } catch (const NoSuchInstanceErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
     SWIG_fail;
-    } catch (const UndeterminedTypeError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeError), e.what());
+    } catch (const UndeterminedTypeErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
     SWIG_fail;
-    } catch (const ParseError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseError), e.what());
+    } catch (const ParseErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
     SWIG_fail;
-    }catch (const PacketError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketError), e.what());
+    }catch (const PacketErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
     SWIG_fail;
-    }catch (const GenericError& e) {
-    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericError), e.what());
+    }catch (const GenericErrorBase& e) {
+    PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
     SWIG_fail;
     }
 };
 
-%exceptionclass GenericError;
-%exceptionclass ConnectionError;
-%exceptionclass TimeoutError;
-%exceptionclass UnknownObjectIDError;
-%exceptionclass NoSuchNameError;
-%exceptionclass NoSuchObjectError;
-%exceptionclass NoSuchInstanceError;
-%exceptionclass UndeterminedTypeError;
-%exceptionclass ParseError;
-%exceptionclass PacketError;
+%exceptionclass GenericErrorBase;
+%exceptionclass ConnectionErrorBase;
+%exceptionclass TimeoutErrorBase;
+%exceptionclass UnknownObjectIDErrorBase;
+%exceptionclass NoSuchNameErrorBase;
+%exceptionclass NoSuchObjectErrorBase;
+%exceptionclass NoSuchInstanceErrorBase;
+%exceptionclass UndeterminedTypeErrorBase;
+%exceptionclass ParseErrorBase;
+%exceptionclass PacketErrorBase;
 
 // Include the header file
 %include "../include/exceptionsbase.h"

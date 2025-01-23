@@ -167,7 +167,7 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
                default:
                   std::string err_msg =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseError(err_msg);
+                  throw ParseErrorBase(err_msg);
             }
          }
          break;
@@ -223,13 +223,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
     */
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseError("NETSNMP_PARSE_ARGS_ERROR");
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseError("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseError("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -357,7 +357,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                      err_msg =
                          err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
 
-                     throw GenericError(err_msg);
+                     throw GenericErrorBase(err_msg);
                   }
                   memmove((char *)name, (char *)vars->name, vars->name_length * sizeof(oid));
                   name_length = vars->name_length;
@@ -389,13 +389,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
                      err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
                   }
                   err_msg = err_msg + "\n";
-                  throw PacketError(err_msg);
+                  throw PacketErrorBase(err_msg);
                }
             }
          }
       } else if (status == STAT_TIMEOUT) {
          std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-         throw TimeoutError(err_msg);
+         throw TimeoutErrorBase(err_msg);
       } else { /* status == STAT_ERROR */
          snmp_sess_perror_exception("snmpwalk", ss);
       }

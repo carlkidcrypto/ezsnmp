@@ -1,23 +1,23 @@
 #include "exceptionsbase.h"
 
-GenericError::GenericError(std::string const& message) : m_msg(message) {}
+GenericErrorBase::GenericErrorBase(std::string const& message) : m_msg(message) {}
 
-char const* GenericError::what() const noexcept { return m_msg.c_str(); }
+char const* GenericErrorBase::what() const noexcept { return m_msg.c_str(); }
 
-ConnectionError::ConnectionError(std::string const& message) : GenericError(message) {}
+ConnectionErrorBase::ConnectionErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-TimeoutError::TimeoutError(std::string const& message) : GenericError(message) {}
+TimeoutErrorBase::TimeoutErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-UnknownObjectIDError::UnknownObjectIDError(std::string const& message) : GenericError(message) {}
+UnknownObjectIDErrorBase::UnknownObjectIDErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-NoSuchNameError::NoSuchNameError(std::string const& message) : GenericError(message) {}
+NoSuchNameErrorBase::NoSuchNameErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-NoSuchObjectError::NoSuchObjectError(std::string const& message) : GenericError(message) {}
+NoSuchObjectErrorBase::NoSuchObjectErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-NoSuchInstanceError::NoSuchInstanceError(std::string const& message) : GenericError(message) {}
+NoSuchInstanceErrorBase::NoSuchInstanceErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-UndeterminedTypeError::UndeterminedTypeError(std::string const& message) : GenericError(message) {}
+UndeterminedTypeErrorBase::UndeterminedTypeErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-ParseError::ParseError(std::string const& message) : GenericError(message) {}
+ParseErrorBase::ParseErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-PacketError::PacketError(std::string const& message) : GenericError(message) {}
+PacketErrorBase::PacketErrorBase(std::string const& message) : GenericErrorBase(message) {}

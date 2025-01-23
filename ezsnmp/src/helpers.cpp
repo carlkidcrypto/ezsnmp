@@ -52,7 +52,7 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    std::string message = std::string(prog_string) + ": " + err;
 
    // Throw a runtime_error with the message
-   throw GenericError(message);
+   throw GenericErrorBase(message);
 }
 
 /* straight copy from
@@ -67,7 +67,7 @@ void snmp_perror_exception(char const *prog_string) {
    std::string message = std::string(prog_string) + ": " + str;
 
    // Throw a runtime_error with the message
-   throw GenericError(message);
+   throw GenericErrorBase(message);
 }
 
 // This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc

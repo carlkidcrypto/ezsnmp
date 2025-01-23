@@ -82,7 +82,7 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
                default:
                   std::string err_msg =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseError(err_msg);
+                  throw ParseErrorBase(err_msg);
             }
          }
          break;
@@ -125,13 +125,13 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
     */
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseError("NETSNMP_PARSE_ARGS_ERROR");
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
       case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseError("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
       case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseError("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
       default:
          break;
@@ -223,7 +223,7 @@ retry:
       }
    } else if (status == STAT_TIMEOUT) {
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-      throw TimeoutError(err_msg);
+      throw TimeoutErrorBase(err_msg);
    } else { /* status == STAT_ERROR */
       snmp_sess_perror_exception("snmpgetnext", ss);
    }
