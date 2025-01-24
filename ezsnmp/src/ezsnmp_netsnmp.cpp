@@ -4795,6 +4795,17 @@ SWIG_From_std_string  (const std::string& s)
 
 #include "exceptionsbase.h"
 
+static PyObject *pGenericErrorBase;
+static PyObject *pConnectionErrorBase;
+static PyObject *pTimeoutErrorBase;
+static PyObject *pUnknownObjectIDErrorBase;
+static PyObject *pNoSuchNameErrorBase;
+static PyObject *pNoSuchObjectErrorBase;
+static PyObject *pNoSuchInstanceErrorBase;
+static PyObject *pUndeterminedTypeErrorBase;
+static PyObject *pParseErrorBase;
+static PyObject *pPacketErrorBase;
+
 
 SWIGINTERNINLINE PyObject * 
 SWIG_FromCharPtr(const char *cptr)
@@ -7341,34 +7352,34 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7399,34 +7410,34 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7467,34 +7478,34 @@ SWIGINTERN int _wrap_new_GenericErrorBase(PyObject *self, PyObject *args, PyObje
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7528,34 +7539,34 @@ SWIGINTERN PyObject *_wrap_GenericErrorBase_what(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7586,34 +7597,34 @@ SWIGINTERN PyObject *_wrap_delete_GenericErrorBase(PyObject *self, PyObject *arg
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7654,34 +7665,34 @@ SWIGINTERN int _wrap_new_ConnectionErrorBase(PyObject *self, PyObject *args, PyO
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7714,34 +7725,34 @@ SWIGINTERN PyObject *_wrap_delete_ConnectionErrorBase(PyObject *self, PyObject *
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7782,34 +7793,34 @@ SWIGINTERN int _wrap_new_TimeoutErrorBase(PyObject *self, PyObject *args, PyObje
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7842,34 +7853,34 @@ SWIGINTERN PyObject *_wrap_delete_TimeoutErrorBase(PyObject *self, PyObject *arg
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7910,34 +7921,34 @@ SWIGINTERN int _wrap_new_UnknownObjectIDErrorBase(PyObject *self, PyObject *args
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -7970,34 +7981,34 @@ SWIGINTERN PyObject *_wrap_delete_UnknownObjectIDErrorBase(PyObject *self, PyObj
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8038,34 +8049,34 @@ SWIGINTERN int _wrap_new_NoSuchNameErrorBase(PyObject *self, PyObject *args, PyO
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8098,34 +8109,34 @@ SWIGINTERN PyObject *_wrap_delete_NoSuchNameErrorBase(PyObject *self, PyObject *
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8166,34 +8177,34 @@ SWIGINTERN int _wrap_new_NoSuchObjectErrorBase(PyObject *self, PyObject *args, P
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8226,34 +8237,34 @@ SWIGINTERN PyObject *_wrap_delete_NoSuchObjectErrorBase(PyObject *self, PyObject
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8294,34 +8305,34 @@ SWIGINTERN int _wrap_new_NoSuchInstanceErrorBase(PyObject *self, PyObject *args,
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8354,34 +8365,34 @@ SWIGINTERN PyObject *_wrap_delete_NoSuchInstanceErrorBase(PyObject *self, PyObje
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8422,34 +8433,34 @@ SWIGINTERN int _wrap_new_UndeterminedTypeErrorBase(PyObject *self, PyObject *arg
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8482,34 +8493,34 @@ SWIGINTERN PyObject *_wrap_delete_UndeterminedTypeErrorBase(PyObject *self, PyOb
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8550,34 +8561,34 @@ SWIGINTERN int _wrap_new_ParseErrorBase(PyObject *self, PyObject *args, PyObject
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8610,34 +8621,34 @@ SWIGINTERN PyObject *_wrap_delete_ParseErrorBase(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8678,34 +8689,34 @@ SWIGINTERN int _wrap_new_PacketErrorBase(PyObject *self, PyObject *args, PyObjec
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8738,34 +8749,34 @@ SWIGINTERN PyObject *_wrap_delete_PacketErrorBase(PyObject *self, PyObject *args
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8801,34 +8812,34 @@ SWIGINTERN PyObject *_wrap__string_list_iterator(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8860,34 +8871,34 @@ SWIGINTERN PyObject *_wrap__string_list___nonzero__(PyObject *self, PyObject *ar
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8919,34 +8930,34 @@ SWIGINTERN PyObject *_wrap__string_list___bool__(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -8978,34 +8989,34 @@ SWIGINTERN PyObject *_wrap__string_list___len__(PyObject *self, PyObject *args) 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9060,34 +9071,34 @@ SWIGINTERN PyObject *_wrap__string_list___getslice__(PyObject *self, PyObject *a
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9140,34 +9151,34 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_0(PyObject *self, Py_
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9233,34 +9244,34 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self, Py_
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9379,34 +9390,34 @@ SWIGINTERN PyObject *_wrap__string_list___delslice__(PyObject *self, PyObject *a
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9451,34 +9462,34 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_0(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9523,34 +9534,34 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_0(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9607,34 +9618,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9680,34 +9691,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_1(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9751,34 +9762,34 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_1(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9868,34 +9879,34 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_1(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -9998,34 +10009,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_2(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10072,34 +10083,34 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_3(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10218,34 +10229,34 @@ SWIGINTERN PyObject *_wrap__string_list_pop(PyObject *self, PyObject *args) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10291,34 +10302,34 @@ SWIGINTERN PyObject *_wrap__string_list_append(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10344,34 +10355,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10408,34 +10419,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10469,34 +10480,34 @@ SWIGINTERN PyObject *_wrap__string_list_empty(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10528,34 +10539,34 @@ SWIGINTERN PyObject *_wrap__string_list_size(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10599,34 +10610,34 @@ SWIGINTERN PyObject *_wrap__string_list_swap(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10658,34 +10669,34 @@ SWIGINTERN PyObject *_wrap__string_list_begin(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10718,34 +10729,34 @@ SWIGINTERN PyObject *_wrap__string_list_end(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10778,34 +10789,34 @@ SWIGINTERN PyObject *_wrap__string_list_rbegin(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10838,34 +10849,34 @@ SWIGINTERN PyObject *_wrap__string_list_rend(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10897,34 +10908,34 @@ SWIGINTERN PyObject *_wrap__string_list_clear(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -10956,34 +10967,34 @@ SWIGINTERN PyObject *_wrap__string_list_get_allocator(PyObject *self, PyObject *
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11015,34 +11026,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_2(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11073,34 +11084,34 @@ SWIGINTERN PyObject *_wrap__string_list_pop_back(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11139,34 +11150,34 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_0(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11212,34 +11223,34 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_0(PyObject *self, Py_ssize_t
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11300,34 +11311,34 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_1(PyObject *self, Py_ssize_t
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11423,34 +11434,34 @@ SWIGINTERN int _wrap_new__string_list__SWIG_3(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11555,34 +11566,34 @@ SWIGINTERN PyObject *_wrap__string_list_push_back(PyObject *self, PyObject *args
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11616,34 +11627,34 @@ SWIGINTERN PyObject *_wrap__string_list_front(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11676,34 +11687,34 @@ SWIGINTERN PyObject *_wrap__string_list_back(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11757,34 +11768,34 @@ SWIGINTERN PyObject *_wrap__string_list_assign(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11838,34 +11849,34 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_1(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -11977,34 +11988,34 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_0(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12073,34 +12084,34 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_1(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12202,34 +12213,34 @@ SWIGINTERN PyObject *_wrap__string_list_reserve(PyObject *self, PyObject *args) 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12261,34 +12272,34 @@ SWIGINTERN PyObject *_wrap__string_list_capacity(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12319,34 +12330,34 @@ SWIGINTERN PyObject *_wrap_delete__string_list(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12392,34 +12403,34 @@ SWIGINTERN PyObject *_wrap__result_list_iterator(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12451,34 +12462,34 @@ SWIGINTERN PyObject *_wrap__result_list___nonzero__(PyObject *self, PyObject *ar
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12510,34 +12521,34 @@ SWIGINTERN PyObject *_wrap__result_list___bool__(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12569,34 +12580,34 @@ SWIGINTERN PyObject *_wrap__result_list___len__(PyObject *self, PyObject *args) 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12651,34 +12662,34 @@ SWIGINTERN PyObject *_wrap__result_list___getslice__(PyObject *self, PyObject *a
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12731,34 +12742,34 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_0(PyObject *self, Py_
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12824,34 +12835,34 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self, Py_
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -12970,34 +12981,34 @@ SWIGINTERN PyObject *_wrap__result_list___delslice__(PyObject *self, PyObject *a
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13042,34 +13053,34 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_0(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13114,34 +13125,34 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_0(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13198,34 +13209,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13271,34 +13282,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_1(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13342,34 +13353,34 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_1(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13459,34 +13470,34 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_1(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13587,34 +13598,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_2(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13659,34 +13670,34 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_3(PyObject *self, Py_s
         SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13805,34 +13816,34 @@ SWIGINTERN PyObject *_wrap__result_list_pop(PyObject *self, PyObject *args) {
         SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13876,34 +13887,34 @@ SWIGINTERN PyObject *_wrap__result_list_append(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13927,34 +13938,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -13991,34 +14002,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14052,34 +14063,34 @@ SWIGINTERN PyObject *_wrap__result_list_empty(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14111,34 +14122,34 @@ SWIGINTERN PyObject *_wrap__result_list_size(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14182,34 +14193,34 @@ SWIGINTERN PyObject *_wrap__result_list_swap(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14241,34 +14252,34 @@ SWIGINTERN PyObject *_wrap__result_list_begin(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14301,34 +14312,34 @@ SWIGINTERN PyObject *_wrap__result_list_end(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14361,34 +14372,34 @@ SWIGINTERN PyObject *_wrap__result_list_rbegin(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14421,34 +14432,34 @@ SWIGINTERN PyObject *_wrap__result_list_rend(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14480,34 +14491,34 @@ SWIGINTERN PyObject *_wrap__result_list_clear(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14539,34 +14550,34 @@ SWIGINTERN PyObject *_wrap__result_list_get_allocator(PyObject *self, PyObject *
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14598,34 +14609,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_2(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14656,34 +14667,34 @@ SWIGINTERN PyObject *_wrap__result_list_pop_back(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14722,34 +14733,34 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_0(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14795,34 +14806,34 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_0(PyObject *self, Py_ssize_t
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -14883,34 +14894,34 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_1(PyObject *self, Py_ssize_t
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15004,34 +15015,34 @@ SWIGINTERN int _wrap_new__result_list__SWIG_3(PyObject *self, Py_ssize_t nobjs, 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15132,34 +15143,34 @@ SWIGINTERN PyObject *_wrap__result_list_push_back(PyObject *self, PyObject *args
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15191,34 +15202,34 @@ SWIGINTERN PyObject *_wrap__result_list_front(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15251,34 +15262,34 @@ SWIGINTERN PyObject *_wrap__result_list_back(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15330,34 +15341,34 @@ SWIGINTERN PyObject *_wrap__result_list_assign(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15407,34 +15418,34 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_1(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15542,34 +15553,34 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_0(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15634,34 +15645,34 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_1(PyObject *self, Py_ssize_
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15761,34 +15772,34 @@ SWIGINTERN PyObject *_wrap__result_list_reserve(PyObject *self, PyObject *args) 
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15820,34 +15831,34 @@ SWIGINTERN PyObject *_wrap__result_list_capacity(PyObject *self, PyObject *args)
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15878,34 +15889,34 @@ SWIGINTERN PyObject *_wrap_delete__result_list(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -15956,34 +15967,34 @@ SWIGINTERN PyObject *_wrap_snmpbulkget(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -16024,34 +16035,34 @@ SWIGINTERN PyObject *_wrap_snmpbulkwalk(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -16092,34 +16103,34 @@ SWIGINTERN PyObject *_wrap_snmpget(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -16160,34 +16171,34 @@ SWIGINTERN PyObject *_wrap_snmpgetnext(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -16228,34 +16239,34 @@ SWIGINTERN PyObject *_wrap_snmpset(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -16296,34 +16307,34 @@ SWIGINTERN PyObject *_wrap_snmptrap(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -16364,34 +16375,34 @@ SWIGINTERN PyObject *_wrap_snmpwalk(PyObject *self, PyObject *args) {
         SWIG_PYTHON_THREAD_END_ALLOW;
       }
     } catch (const ConnectionErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ConnectionErrorBase), e.what());
+      PyErr_SetString(pConnectionErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const TimeoutErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_TimeoutErrorBase), e.what());
+      PyErr_SetString(pTimeoutErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UnknownObjectIDErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UnknownObjectIDErrorBase), e.what());
+      PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchNameErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchNameErrorBase), e.what());
+      PyErr_SetString(pNoSuchNameErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchObjectErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchObjectErrorBase), e.what());
+      PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const NoSuchInstanceErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_NoSuchInstanceErrorBase), e.what());
+      PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const UndeterminedTypeErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_UndeterminedTypeErrorBase), e.what());
+      PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     } catch (const ParseErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_ParseErrorBase), e.what());
+      PyErr_SetString(pParseErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const PacketErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_PacketErrorBase), e.what());
+    } catch (const PacketErrorBase& e) {
+      PyErr_SetString(pPacketErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
-    }catch (const GenericErrorBase& e) {
-      PyErr_SetString(SWIG_Python_ExceptionType(SWIGTYPE_p_GenericErrorBase), e.what());
+    } catch (const GenericErrorBase& e) {
+      PyErr_SetString(pGenericErrorBase, const_cast<char*>(e.what()));
       SWIG_fail;
     }
   }
@@ -20601,6 +20612,48 @@ SWIG_init(void) {
   PyModule_AddObject(m, "Result", (PyObject *)builtin_pytype);
   SwigPyBuiltin_AddPublicSymbol(public_interface, "Result");
   d = md;
+  
+  
+  pGenericErrorBase = PyErr_NewException("_exceptions.GenericErrorBase", NULL, NULL);
+  Py_INCREF(pGenericErrorBase);
+  PyModule_AddObject(m, "GenericErrorBase", pGenericErrorBase);
+  
+  pConnectionErrorBase = PyErr_NewException("_exceptions.ConnectionErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pConnectionErrorBase);
+  PyModule_AddObject(m, "ConnectionErrorBase", pConnectionErrorBase);
+  
+  pTimeoutErrorBase = PyErr_NewException("_exceptions.TimeoutErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pTimeoutErrorBase);
+  PyModule_AddObject(m, "TimeoutErrorBase", pTimeoutErrorBase);
+  
+  pUnknownObjectIDErrorBase = PyErr_NewException("_exceptions.UnknownObjectIDErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pUnknownObjectIDErrorBase);
+  PyModule_AddObject(m, "UnknownObjectIDErrorBase", pUnknownObjectIDErrorBase);
+  
+  pNoSuchNameErrorBase = PyErr_NewException("_exceptions.NoSuchNameErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pNoSuchNameErrorBase);
+  PyModule_AddObject(m, "NoSuchNameErrorBase", pNoSuchNameErrorBase);
+  
+  pNoSuchObjectErrorBase = PyErr_NewException("_exceptions.NoSuchObjectErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pNoSuchObjectErrorBase);
+  PyModule_AddObject(m, "NoSuchObjectErrorBase", pNoSuchObjectErrorBase);
+  
+  pNoSuchInstanceErrorBase = PyErr_NewException("_exceptions.NoSuchInstanceErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pNoSuchInstanceErrorBase);
+  PyModule_AddObject(m, "NoSuchInstanceErrorBase", pNoSuchInstanceErrorBase);
+  
+  pUndeterminedTypeErrorBase = PyErr_NewException("_exceptions.UndeterminedTypeErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pUndeterminedTypeErrorBase);
+  PyModule_AddObject(m, "UndeterminedTypeErrorBase", pUndeterminedTypeErrorBase);
+  
+  pParseErrorBase = PyErr_NewException("_exceptions.ParseErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pParseErrorBase);
+  PyModule_AddObject(m, "ParseErrorBase", pParseErrorBase);
+  
+  pPacketErrorBase = PyErr_NewException("_exceptions.PacketErrorBase", pGenericErrorBase, NULL);
+  Py_INCREF(pPacketErrorBase);
+  PyModule_AddObject(m, "PacketErrorBase", pPacketErrorBase);
+  
   
   /* type '::GenericErrorBase' */
   builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__GenericErrorBase_type;
