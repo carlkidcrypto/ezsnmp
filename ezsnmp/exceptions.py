@@ -11,122 +11,82 @@ from .exceptionsbase import (
     PacketErrorBase,
 )
 
-class _HiddenBase(GenericErrorBase): 
-    class GenericError(Exception):
-        """
-        A generic error for the ezsnmp library.
+class GenericError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], GenericErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-GenericError = _HiddenBase.GenericError
+class ConnectionError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], ConnectionErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-class _HiddenBase(ConnectionErrorBase): 
-    class ConnectionError(Exception):
-        """
-        An error indicating a connection issue.
+class TimeoutError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], TimeoutErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-ConnectionError = _HiddenBase.ConnectionError
+class UnknownObjectIDError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], UnknownObjectIDErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-class _HiddenBase(TimeoutErrorBase): 
-    class TimeoutError(Exception):
-        """
-        An error indicating a timeout.
+class NoSuchNameError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], NoSuchNameErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-TimeoutError = _HiddenBase.TimeoutError
+class NoSuchObjectError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], NoSuchObjectErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-class _HiddenBase(UnknownObjectIDErrorBase): 
-    class UnknownObjectIDError(Exception):
-        """
-        An error indicating an unknown object ID.
+class NoSuchInstanceError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], NoSuchInstanceErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-UnknownObjectIDError = _HiddenBase.UnknownObjectIDError
+class UndeterminedTypeError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], UndeterminedTypeErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-class _HiddenBase(NoSuchNameErrorBase): 
-    class NoSuchNameError(Exception):
-        """
-        An error indicating that no such name exists.
+class ParseError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], ParseErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)
 
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-NoSuchNameError = _HiddenBase.NoSuchNameError
-
-class _HiddenBase(NoSuchObjectErrorBase): 
-    class NoSuchObjectError(Exception):
-        """
-        An error indicating that no such object exists.
-
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-NoSuchObjectError = _HiddenBase.NoSuchObjectError
-
-class _HiddenBase(NoSuchInstanceErrorBase): 
-    class NoSuchInstanceError(Exception):
-        """
-        An error indicating that no such instance exists.
-
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-NoSuchInstanceError = _HiddenBase.NoSuchInstanceError
-
-class _HiddenBase(UndeterminedTypeErrorBase): 
-    class UndeterminedTypeError(Exception):
-        """
-        An error indicating an undetermined type.
-
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-UndeterminedTypeError = _HiddenBase.UndeterminedTypeError
-
-class _HiddenBase(ParseErrorBase): 
-    class ParseError(Exception):
-        """
-        An error indicating a parsing issue.
-
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-ParseError = _HiddenBase.ParseError
-
-class _HiddenBase(PacketErrorBase): 
-    class PacketError(Exception):
-        """
-        An error indicating a packet issue.
-
-        :param message: The error message.
-        :type message: str
-        """
-        def __init__(self, message=""):
-            super().__init__(message)
-PacketError = _HiddenBase.PacketError
+class PacketError(Exception):
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], PacketErrorBase):
+            super().__init__(*args[1:], **kwargs)
+            self.__cause__ = args[0]
+        else:
+            super().__init__(*args, **kwargs)

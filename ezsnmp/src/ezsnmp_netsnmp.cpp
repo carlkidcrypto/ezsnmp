@@ -20614,43 +20614,43 @@ SWIG_init(void) {
   d = md;
   
   
-  pGenericErrorBase = PyErr_NewException("_exceptions.GenericErrorBase", NULL, NULL);
+  pGenericErrorBase = PyErr_NewException("_exceptionsbase.GenericErrorBase", NULL, NULL);
   Py_INCREF(pGenericErrorBase);
   PyModule_AddObject(m, "GenericErrorBase", pGenericErrorBase);
   
-  pConnectionErrorBase = PyErr_NewException("_exceptions.ConnectionErrorBase", pGenericErrorBase, NULL);
+  pConnectionErrorBase = PyErr_NewException("_exceptionsbase.ConnectionErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pConnectionErrorBase);
   PyModule_AddObject(m, "ConnectionErrorBase", pConnectionErrorBase);
   
-  pTimeoutErrorBase = PyErr_NewException("_exceptions.TimeoutErrorBase", pGenericErrorBase, NULL);
+  pTimeoutErrorBase = PyErr_NewException("_exceptionsbase.TimeoutErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pTimeoutErrorBase);
   PyModule_AddObject(m, "TimeoutErrorBase", pTimeoutErrorBase);
   
-  pUnknownObjectIDErrorBase = PyErr_NewException("_exceptions.UnknownObjectIDErrorBase", pGenericErrorBase, NULL);
+  pUnknownObjectIDErrorBase = PyErr_NewException("_exceptionsbase.UnknownObjectIDErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pUnknownObjectIDErrorBase);
   PyModule_AddObject(m, "UnknownObjectIDErrorBase", pUnknownObjectIDErrorBase);
   
-  pNoSuchNameErrorBase = PyErr_NewException("_exceptions.NoSuchNameErrorBase", pGenericErrorBase, NULL);
+  pNoSuchNameErrorBase = PyErr_NewException("_exceptionsbase.NoSuchNameErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pNoSuchNameErrorBase);
   PyModule_AddObject(m, "NoSuchNameErrorBase", pNoSuchNameErrorBase);
   
-  pNoSuchObjectErrorBase = PyErr_NewException("_exceptions.NoSuchObjectErrorBase", pGenericErrorBase, NULL);
+  pNoSuchObjectErrorBase = PyErr_NewException("_exceptionsbase.NoSuchObjectErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pNoSuchObjectErrorBase);
   PyModule_AddObject(m, "NoSuchObjectErrorBase", pNoSuchObjectErrorBase);
   
-  pNoSuchInstanceErrorBase = PyErr_NewException("_exceptions.NoSuchInstanceErrorBase", pGenericErrorBase, NULL);
+  pNoSuchInstanceErrorBase = PyErr_NewException("_exceptionsbase.NoSuchInstanceErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pNoSuchInstanceErrorBase);
   PyModule_AddObject(m, "NoSuchInstanceErrorBase", pNoSuchInstanceErrorBase);
   
-  pUndeterminedTypeErrorBase = PyErr_NewException("_exceptions.UndeterminedTypeErrorBase", pGenericErrorBase, NULL);
+  pUndeterminedTypeErrorBase = PyErr_NewException("_exceptionsbase.UndeterminedTypeErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pUndeterminedTypeErrorBase);
   PyModule_AddObject(m, "UndeterminedTypeErrorBase", pUndeterminedTypeErrorBase);
   
-  pParseErrorBase = PyErr_NewException("_exceptions.ParseErrorBase", pGenericErrorBase, NULL);
+  pParseErrorBase = PyErr_NewException("_exceptionsbase.ParseErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pParseErrorBase);
   PyModule_AddObject(m, "ParseErrorBase", pParseErrorBase);
   
-  pPacketErrorBase = PyErr_NewException("_exceptions.PacketErrorBase", pGenericErrorBase, NULL);
+  pPacketErrorBase = PyErr_NewException("_exceptionsbase.PacketErrorBase", pGenericErrorBase, NULL);
   Py_INCREF(pPacketErrorBase);
   PyModule_AddObject(m, "PacketErrorBase", pPacketErrorBase);
   

@@ -1,7 +1,7 @@
 import platform
 
 import pytest
-from ezsnmp import (
+from ezsnmp.netsnmpwrapper import (
     snmpget,
     snmpset,
     snmpbulkget,
@@ -69,7 +69,7 @@ def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
 def test_snmp_get_unknown(netsnmp_args):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(TimeoutError):
+    with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["sysDescripto.0"]
         snmpget(netsnmp_args)
 
