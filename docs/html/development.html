@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="snmpwalk.i" href="snmpwalk_interface.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Exceptions C++ Module" href="exceptionsbase_cpp.html" /><link rel="prev" title="Datatypes C++ Module" href="datatypes_cpp.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Development Guide - EzSnmp V2.0.0b1 documentation</title>
@@ -201,13 +201,14 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions_cpp.html">Exceptions C++ Module</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Development Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_interface.html">exceptions.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="netsnmp_interface.html">netsnmp.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
@@ -218,7 +219,6 @@
 <li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Development Guide</a></li>
 </ul>
 
 </div>
@@ -280,10 +280,10 @@ make<span class="w"> </span>html
 <p>Two copy the c file over, for example <cite>snmpwalk.c</cite>. Then rename to change the extension to <cite>.cpp</cite>.</p>
 <p>Three make a header file for it <cite>snmpwalk.h</cite> and extract methods/functions from the source code.</p>
 <p>Four run the command below to generate the wrap file.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_netsnmp.cpp<span class="w"> </span>ezsnmp/interface/netsnmp.i<span class="w"> </span><span class="o">&amp;&amp;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_netsnmpbase.cpp<span class="w"> </span>ezsnmp/interface/netsnmpbase.i<span class="w"> </span><span class="o">&amp;&amp;</span>
 swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_sessionbase.cpp<span class="w"> </span>ezsnmp/interface/sessionbase.i<span class="w"> </span><span class="o">&amp;&amp;</span>
 swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_datatypes.cpp<span class="w"> </span>ezsnmp/interface/datatypes.i<span class="w"> </span><span class="o">&amp;&amp;</span>
-swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_exceptions.cpp<span class="w"> </span>ezsnmp/interface/exceptions.i
+swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> </span>-builtin<span class="w"> </span>-threads<span class="w"> </span>-doxygen<span class="w"> </span>-std<span class="o">=</span>c++17<span class="w"> </span>-outdir<span class="w"> </span>ezsnmp/.<span class="w"> </span>-o<span class="w"> </span>ezsnmp/src/ezsnmp_exceptionsbase.cpp<span class="w"> </span>ezsnmp/interface/exceptionsbase.i
 </pre></div>
 </div>
 <ul class="simple">
@@ -330,7 +330,7 @@ mkdir<span class="w"> </span>-p<span class="w"> </span>-m<span class="w"> </span
 <span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;mibs +ALL&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.snmp/snmp.conf<span class="p">;</span>
 sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>snmpd<span class="p">;</span>
 rm<span class="w"> </span>-drf<span class="w"> </span>build/<span class="w"> </span>dist/<span class="w"> </span>ezsnmp.egg-info<span class="p">;</span>
-python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="p">;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>tests/requirements.txt<span class="p">;</span>
 python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pytest<span class="w"> </span>tests/<span class="p">;</span>
 <span class="c1"># Bottom one for debug. Replace the top one with it if needed.</span>
 <span class="c1"># python3 -m pip install . &amp;&amp; gdb -ex run -ex bt -ex quit --args python3 -m pytest .;</span>
@@ -348,7 +348,7 @@ sudo<span class="w"> </span>cp<span class="w"> </span>tests/snmpd.conf<span clas
 sudo<span class="w"> </span>launchctl<span class="w"> </span>unload<span class="w"> </span>/System/Library/LaunchDaemons/org.net-snmp.snmpd.plist<span class="p">;</span>
 sudo<span class="w"> </span>launchctl<span class="w"> </span>load<span class="w"> </span>-w<span class="w"> </span>/System/Library/LaunchDaemons/org.net-snmp.snmpd.plist<span class="p">;</span>
 rm<span class="w"> </span>-drf<span class="w"> </span>build/<span class="w"> </span>dist/<span class="w"> </span>ezsnmp.egg-info<span class="p">;</span>
-python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="p">;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>tests/requirements.txt<span class="p">;</span>
 python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pytest<span class="w"> </span>tests/<span class="p">;</span>
 </pre></div>
 </div>
@@ -382,15 +382,23 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
       <footer>
         
         <div class="related-pages">
-          
-          <a class="prev-page" href="snmpwalk_interface.html">
+          <a class="next-page" href="exceptionsbase_cpp.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Exceptions C++ Module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="datatypes_cpp.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">snmpwalk.i</div>
+                <div class="title">Datatypes C++ Module</div>
                 
               </div>
             </a>

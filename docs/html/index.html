@@ -201,13 +201,14 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions_cpp.html">Exceptions C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_interface.html">exceptions.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="netsnmp_interface.html">netsnmp.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
@@ -218,7 +219,6 @@
 <li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 </ul>
 
 </div>
@@ -455,38 +455,45 @@ one-off operations where you wish to specify all details in the request:</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="ezsnmp-exception-handling">
+<h2>EzSnmp Exception Handling<a class="headerlink" href="#ezsnmp-exception-handling" title="Link to this heading">¶</a></h2>
+<p>EzSnmp provides a custom exception class <cite>EzSnmpException</cite> to handle errors that may occur during SNMP operations. This allows you to catch and manage exceptions specific to EzSnmp more effectively.</p>
+<p>Here’s an example of how to use the <cite>EzSnmpException</cite> class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">Exceptions</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">Exceptions</span><span class="o">.</span><span class="n">GenericError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By catching <cite>EzSnmpException</cite>, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-patch-files">Making The Patch Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests">Running Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#running-cibuildwheels">Running cibuildwheels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#formatting">Formatting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions_cpp.html">Exceptions C++ Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv412GenericError"><code class="docutils literal notranslate"><span class="pre">GenericError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv415ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv412TimeoutError"><code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv420UnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv415NoSuchNameError"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv417NoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv419NoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv421UndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv410ParseError"><code class="docutils literal notranslate"><span class="pre">ParseError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_cpp.html#_CPPv411PacketError"><code class="docutils literal notranslate"><span class="pre">PacketError</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Python Session Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="session_python.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sessionbase_cpp.html#_CPPv411SessionBase"><code class="docutils literal notranslate"><span class="pre">SessionBase</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_interface.html">exceptions.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="netsnmp_interface.html">netsnmp.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
@@ -495,15 +502,6 @@ one-off operations where you wish to specify all details in the request:</p>
 <li class="toctree-l2"><a class="reference internal" href="snmpset_interface.html">snmpset.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmptrap_interface.html">snmptrap.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development.html#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-patch-files">Making The Patch Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests">Running Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#running-cibuildwheels">Running cibuildwheels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#formatting">Formatting</a></li>
 </ul>
 </li>
 </ul>
@@ -571,6 +569,7 @@ one-off operations where you wish to specify all details in the request:</p>
 <li><a class="reference internal" href="#installation-troubleshooting">Installation Troubleshooting</a></li>
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
 <li><a class="reference internal" href="#example-session-kargs">Example Session Kargs</a></li>
+<li><a class="reference internal" href="#ezsnmp-exception-handling">EzSnmp Exception Handling</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
