@@ -3,6 +3,7 @@
 
    datatypes_cpp
    development
+   exceptions_python
    exceptionsbase_cpp
    session_python
    sessionbase_cpp

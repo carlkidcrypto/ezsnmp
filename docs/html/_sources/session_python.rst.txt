@@ -1,4 +1,4 @@
-Python Session Module
+Session Python Module
 =====================
 
 .. automodule:: ezsnmp.session

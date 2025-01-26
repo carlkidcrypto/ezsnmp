@@ -1,70 +1,70 @@
 Exceptions C++ Module
 =====================
 
-.. doxygenclass:: GenericError
+.. doxygenclass:: ConnectionErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: ConnectionError
+.. doxygenclass:: GenericErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: TimeoutError
+.. doxygenclass:: NoSuchInstanceErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: UnknownObjectIDError
+.. doxygenclass:: NoSuchNameErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: NoSuchNameError
+.. doxygenclass:: NoSuchObjectErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: NoSuchObjectError
+.. doxygenclass:: PacketErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: NoSuchInstanceError
+.. doxygenclass:: ParseErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: UndeterminedTypeError
+.. doxygenclass:: TimeoutErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: ParseError
+.. doxygenclass:: UndeterminedTypeErrorBase
    :project: EzSnmp
    :members:
    :private-members:
    :undoc-members:
    :protected-members:
 
-.. doxygenclass:: PacketError
+.. doxygenclass:: UnknownObjectIDErrorBase
    :project: EzSnmp
    :members:
    :private-members:
