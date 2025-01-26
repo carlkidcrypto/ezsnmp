@@ -2,6 +2,10 @@ Exceptions Python Module
 ========================
 
 .. automodule:: ezsnmp.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :no-index:
+
+.. autoclass:: ezsnmp.exceptions.ConnectionError
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :special-members: __init__

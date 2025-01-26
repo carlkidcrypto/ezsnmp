@@ -260,66 +260,24 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-ezsnmp.exceptions">
-<span id="exceptions-python-module"></span><h1>Exceptions Python Module<a class="headerlink" href="#module-ezsnmp.exceptions" title="Link to this heading">¶</a></h1>
-<dl class="py exception">
+          <section id="exceptions-python-module">
+<h1>Exceptions Python Module<a class="headerlink" href="#exceptions-python-module" title="Link to this heading">¶</a></h1>
+<dl class="py class">
 <dt class="sig sig-object py" id="ezsnmp.exceptions.ConnectionError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ConnectionError" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ConnectionError" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.ConnectionError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ConnectionError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for SNMP connection errors.</p>
+<p>This class represents an error that occurs during an SNMP connection attempt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – A descriptive error message.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.GenericError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">GenericError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.GenericError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchInstanceError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchInstanceError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchInstanceError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchNameError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchNameError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchNameError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchObjectError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchObjectError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchObjectError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.PacketError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">PacketError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.PacketError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.ParseError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">ParseError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ParseError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.TimeoutError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">TimeoutError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.TimeoutError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.UndeterminedTypeError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">UndeterminedTypeError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.UndeterminedTypeError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ezsnmp.exceptions.UnknownObjectIDError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnknownObjectIDError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.UnknownObjectIDError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 </section>
@@ -380,16 +338,10 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Exceptions Python Module</a><ul>
-<li><a class="reference internal" href="#ezsnmp.exceptions.ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.GenericError"><code class="docutils literal notranslate"><span class="pre">GenericError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchNameError"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.PacketError"><code class="docutils literal notranslate"><span class="pre">PacketError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.ParseError"><code class="docutils literal notranslate"><span class="pre">ParseError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.TimeoutError"><code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.UndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code></a></li>
-<li><a class="reference internal" href="#ezsnmp.exceptions.UnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code></a></li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.ConnectionError.__init__"><code class="docutils literal notranslate"><span class="pre">ConnectionError.__init__()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
