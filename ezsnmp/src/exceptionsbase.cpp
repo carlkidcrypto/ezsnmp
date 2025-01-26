@@ -8,15 +8,19 @@ ConnectionErrorBase::ConnectionErrorBase(std::string const& message) : GenericEr
 
 TimeoutErrorBase::TimeoutErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-UnknownObjectIDErrorBase::UnknownObjectIDErrorBase(std::string const& message) : GenericErrorBase(message) {}
+UnknownObjectIDErrorBase::UnknownObjectIDErrorBase(std::string const& message)
+    : GenericErrorBase(message) {}
 
 NoSuchNameErrorBase::NoSuchNameErrorBase(std::string const& message) : GenericErrorBase(message) {}
 
-NoSuchObjectErrorBase::NoSuchObjectErrorBase(std::string const& message) : GenericErrorBase(message) {}
+NoSuchObjectErrorBase::NoSuchObjectErrorBase(std::string const& message)
+    : GenericErrorBase(message) {}
 
-NoSuchInstanceErrorBase::NoSuchInstanceErrorBase(std::string const& message) : GenericErrorBase(message) {}
+NoSuchInstanceErrorBase::NoSuchInstanceErrorBase(std::string const& message)
+    : GenericErrorBase(message) {}
 
-UndeterminedTypeErrorBase::UndeterminedTypeErrorBase(std::string const& message) : GenericErrorBase(message) {}
+UndeterminedTypeErrorBase::UndeterminedTypeErrorBase(std::string const& message)
+    : GenericErrorBase(message) {}
 
 ParseErrorBase::ParseErrorBase(std::string const& message) : GenericErrorBase(message) {}
 

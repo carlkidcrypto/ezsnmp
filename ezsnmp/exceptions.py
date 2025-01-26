@@ -11,6 +11,7 @@ from .exceptionsbase import (
     PacketErrorBase,
 )
 
+
 class GenericError(Exception):
     def __init__(self, *args, **kwargs):
         if args and isinstance(args[0], GenericErrorBase):
@@ -18,6 +19,7 @@ class GenericError(Exception):
             self.__cause__ = args[0]
         else:
             super().__init__(*args, **kwargs)
+
 
 class ConnectionError(Exception):
     def __init__(self, *args, **kwargs):
@@ -27,6 +29,7 @@ class ConnectionError(Exception):
         else:
             super().__init__(*args, **kwargs)
 
+
 class TimeoutError(Exception):
     def __init__(self, *args, **kwargs):
         if args and isinstance(args[0], TimeoutErrorBase):
@@ -34,6 +37,7 @@ class TimeoutError(Exception):
             self.__cause__ = args[0]
         else:
             super().__init__(*args, **kwargs)
+
 
 class UnknownObjectIDError(Exception):
     def __init__(self, *args, **kwargs):
@@ -43,6 +47,7 @@ class UnknownObjectIDError(Exception):
         else:
             super().__init__(*args, **kwargs)
 
+
 class NoSuchNameError(Exception):
     def __init__(self, *args, **kwargs):
         if args and isinstance(args[0], NoSuchNameErrorBase):
@@ -50,6 +55,7 @@ class NoSuchNameError(Exception):
             self.__cause__ = args[0]
         else:
             super().__init__(*args, **kwargs)
+
 
 class NoSuchObjectError(Exception):
     def __init__(self, *args, **kwargs):
@@ -59,6 +65,7 @@ class NoSuchObjectError(Exception):
         else:
             super().__init__(*args, **kwargs)
 
+
 class NoSuchInstanceError(Exception):
     def __init__(self, *args, **kwargs):
         if args and isinstance(args[0], NoSuchInstanceErrorBase):
@@ -66,6 +73,7 @@ class NoSuchInstanceError(Exception):
             self.__cause__ = args[0]
         else:
             super().__init__(*args, **kwargs)
+
 
 class UndeterminedTypeError(Exception):
     def __init__(self, *args, **kwargs):
@@ -75,6 +83,7 @@ class UndeterminedTypeError(Exception):
         else:
             super().__init__(*args, **kwargs)
 
+
 class ParseError(Exception):
     def __init__(self, *args, **kwargs):
         if args and isinstance(args[0], ParseErrorBase):
@@ -82,6 +91,7 @@ class ParseError(Exception):
             self.__cause__ = args[0]
         else:
             super().__init__(*args, **kwargs)
+
 
 class PacketError(Exception):
     def __init__(self, *args, **kwargs):

@@ -1,15 +1,23 @@
-from .netsnmp import snmpbulkget, snmpget, snmpbulkwalk, snmpset, snmptrap, snmpwalk
-from .session import Session
 from .datatypes import Result
 from .exceptions import (
-    GenericError,
     ConnectionError,
-    TimeoutError,
-    UnknownObjectIDError,
+    GenericError,
+    NoSuchInstanceError,
     NoSuchNameError,
     NoSuchObjectError,
-    NoSuchInstanceError,
-    UndeterminedTypeError,
-    ParseError,
     PacketError,
+    ParseError,
+    TimeoutError,
+    UndeterminedTypeError,
+    UnknownObjectIDError,
 )
+from .netsnmp import (
+    snmpbulkget,
+    snmpbulkwalk,
+    snmpget,
+    snmpgetnext,
+    snmpset,
+    snmptrap,
+    snmpwalk,
+)
+from .session import Session

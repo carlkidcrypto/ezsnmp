@@ -1,24 +1,25 @@
 from .netsnmpbase import (
     snmpbulkget as netsnmp_snmpbulkget,
+    snmpbulkwalk as netsnmp_snmpbulkwalk,
     snmpget as netsnmp_snmpget,
     snmpgetnext as netsnmp_snmpgetnext,
-    snmpbulkwalk as netsnmp_snmpbulkwalk,
     snmpset as netsnmp_snmpset,
     snmptrap as netsnmp_snmptrap,
-    snmpwalk as netsnmp_snmpwalk
+    snmpwalk as netsnmp_snmpwalk,
 )
 from .exceptions import (
-    GenericError,
     ConnectionError,
-    TimeoutError,
-    UnknownObjectIDError,
+    GenericError,
+    NoSuchInstanceError,
     NoSuchNameError,
     NoSuchObjectError,
-    NoSuchInstanceError,
-    UndeterminedTypeError,
-    ParseError,
     PacketError,
+    ParseError,
+    TimeoutError,
+    UndeterminedTypeError,
+    UnknownObjectIDError,
 )
+
 
 def _handle_error(e):
     """
@@ -30,42 +31,43 @@ def _handle_error(e):
     :param e: The exception object to be handled and mapped.
     :type e: Exception
 
-    :raises GenericError: If the exception type is `GenericErrorBase`.
     :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
-    :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
-    :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+    :raises GenericError: If the exception type is `GenericErrorBase`.
+    :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
     :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
     :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
-    :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
-    :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
-    :raises ParseError: If the exception type is `ParseErrorBase`.
     :raises PacketError: If the exception type is `PacketErrorBase`.
+    :raises ParseError: If the exception type is `ParseErrorBase`.
+    :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+    :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+    :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
     :raises Exception: If the exception type does not match any of the above, the original
     exception `e` is raised.
     """
 
-    if 'GenericErrorBase' in str(type(e)):
-        raise GenericError(str(e))
-    elif 'ConnectionErrorBase' in str(type(e)):
+    if "ConnectionErrorBase" in str(type(e)):
         raise ConnectionError(str(e))
-    elif 'TimeoutErrorBase' in str(type(e)):
-        raise TimeoutError(str(e))
-    elif 'UnknownObjectIDErrorBase' in str(type(e)):
-        raise UnknownObjectIDError(str(e))
-    elif 'NoSuchNameErrorBase' in str(type(e)):
-        raise NoSuchNameError(str(e))
-    elif 'NoSuchObjectErrorBase' in str(type(e)):
-        raise NoSuchObjectError(str(e))
-    elif 'NoSuchInstanceErrorBase' in str(type(e)):
+    elif "GenericErrorBase" in str(type(e)):
+        raise GenericError(str(e))
+    elif "NoSuchInstanceErrorBase" in str(type(e)):
         raise NoSuchInstanceError(str(e))
-    elif 'UndeterminedTypeErrorBase' in str(type(e)):
-        raise UndeterminedTypeError(str(e))
-    elif 'ParseErrorBase' in str(type(e)):
-        raise ParseError(str(e))
-    elif 'PacketErrorBase' in str(type(e)):
+    elif "NoSuchNameErrorBase" in str(type(e)):
+        raise NoSuchNameError(str(e))
+    elif "NoSuchObjectErrorBase" in str(type(e)):
+        raise NoSuchObjectError(str(e))
+    elif "PacketErrorBase" in str(type(e)):
         raise PacketError(str(e))
+    elif "ParseErrorBase" in str(type(e)):
+        raise ParseError(str(e))
+    elif "TimeoutErrorBase" in str(type(e)):
+        raise TimeoutError(str(e))
+    elif "UndeterminedTypeErrorBase" in str(type(e)):
+        raise UndeterminedTypeError(str(e))
+    elif "UnknownObjectIDErrorBase" in str(type(e)):
+        raise UnknownObjectIDError(str(e))
     else:
         raise e
+
 
 def snmpget(netsnmp_args):
     """
@@ -84,8 +86,9 @@ def snmpget(netsnmp_args):
     try:
         result = netsnmp_snmpget(netsnmp_args)
         return result
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
+
 
 def snmpgetnext(netsnmp_args):
     """
@@ -104,8 +107,9 @@ def snmpgetnext(netsnmp_args):
     try:
         result = netsnmp_snmpgetnext(netsnmp_args)
         return result
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
+
 
 def snmpwalk(netsnmp_args):
     """
@@ -124,8 +128,9 @@ def snmpwalk(netsnmp_args):
     try:
         result = netsnmp_snmpwalk(netsnmp_args)
         return result
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
+
 
 def snmpbulkget(netsnmp_args):
     """
@@ -143,8 +148,9 @@ def snmpbulkget(netsnmp_args):
     try:
         result = netsnmp_snmpbulkget(netsnmp_args)
         return result
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
+
 
 def snmpbulkwalk(netsnmp_args):
     """
@@ -162,8 +168,9 @@ def snmpbulkwalk(netsnmp_args):
     try:
         result = netsnmp_snmpbulkwalk(netsnmp_args)
         return result
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
+
 
 def snmpset(netsnmp_args):
     """
@@ -182,8 +189,9 @@ def snmpset(netsnmp_args):
     try:
         result = netsnmp_snmpset(netsnmp_args)
         return result
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
+
 
 def snmptrap(netsnmp_args):
     """
@@ -198,5 +206,5 @@ def snmptrap(netsnmp_args):
     """
     try:
         netsnmp_snmptrap(netsnmp_args)
-    except Exception as e :
+    except Exception as e:
         _handle_error(e)
