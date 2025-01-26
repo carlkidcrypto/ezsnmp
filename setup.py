@@ -260,9 +260,9 @@ setup(
             extra_link_args=link_args,
         ),
         Extension(
-            name="ezsnmp/_netsnmp",
+            name="ezsnmp/_netsnmpbase",
             sources=[
-                "ezsnmp/src/ezsnmp_netsnmp.cpp",
+                "ezsnmp/src/ezsnmp_netsnmpbase.cpp",
                 "ezsnmp/src/exceptionsbase.cpp",
                 "ezsnmp/src/datatypes.cpp",
                 "ezsnmp/src/helpers.cpp",

@@ -1,5 +1,5 @@
-netsnmp.i
+netsnmpbase.i
 =========
 
-.. literalinclude:: ../../ezsnmp/interface/netsnmp.i
+.. literalinclude:: ../../ezsnmp/interface/netsnmpbase.i
    :language: c++

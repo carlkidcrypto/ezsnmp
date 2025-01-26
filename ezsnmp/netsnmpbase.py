@@ -7,6 +7,6 @@
 from sys import version_info as _swig_python_version_info
 # Pull in all the attributes from the low-level C/C++ module
 if __package__ or "." in __name__:
-    from ._exceptionsbase import *
+    from ._netsnmpbase import *
 else:
-    from _exceptionsbase import *
+    from _netsnmpbase import *

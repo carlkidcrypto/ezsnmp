@@ -1,4 +1,4 @@
-%module netsnmp
+%module netsnmpbase
 %feature("autodoc", "0");
 
 %include <stl.i>
