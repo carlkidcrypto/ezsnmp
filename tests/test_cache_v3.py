@@ -1,5 +1,6 @@
 import pytest
-from ezsnmp import Session
+from ezsnmp.session import Session
+from ezsnmp.exceptions import TimeoutError
 from time import sleep
 from random import uniform
 import faulthandler
@@ -42,7 +43,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
     s.privacy_passphrase = "wrong_pass"
     assert s.privacy_passphrase == "wrong_pass"
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TimeoutError):
         assert s.args == (
             "-A",
             "auth_pass",
@@ -72,7 +73,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
     d["privacy_passphrase"] = "wrong_pass"
     s = Session(**d)
     assert s.privacy_passphrase == "wrong_pass"
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TimeoutError):
         assert s.args == (
             "-A",
             "auth_pass",
