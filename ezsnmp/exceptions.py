@@ -154,6 +154,7 @@ def _handle_error(e):
     :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
     :raises Exception: If the exception type does not match any of the above, the original
     exception `e` is raised.
+
     """
 
     if "ConnectionErrorBase" in str(type(e)):
