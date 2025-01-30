@@ -10,6 +10,7 @@ from .exceptions import (
     TimeoutError,
     UndeterminedTypeError,
     UnknownObjectIDError,
+    _handle_error,
 )
 from .netsnmp import (
     snmpbulkget,
