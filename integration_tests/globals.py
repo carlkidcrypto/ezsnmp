@@ -1,4 +1,4 @@
-""""
+"""
 A module that contains global variables and functions that are used in the integration tests.
 """
 
@@ -157,7 +157,7 @@ def worker(request_type: str):
             del sess
             are_we_done = True
 
-        except RuntimeError as e:
+        except Exception as e:
 
             if (
                 "Timeout: No Response from" in str(e)
