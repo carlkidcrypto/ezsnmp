@@ -25,8 +25,8 @@ def snmpget(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP GET operation.
     """
     try:
-        result = netsnmp_snmpget(netsnmp_args)
-        return result
+        return netsnmp_snmpget(netsnmp_args)
+
     except Exception as e:
         _handle_error(e)
 
@@ -46,8 +46,8 @@ def snmpgetnext(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP GETNEXT operation.
     """
     try:
-        result = netsnmp_snmpgetnext(netsnmp_args)
-        return result
+        return netsnmp_snmpgetnext(netsnmp_args)
+
     except Exception as e:
         _handle_error(e)
 
@@ -67,8 +67,8 @@ def snmpwalk(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP walk operation.
     """
     try:
-        result = netsnmp_snmpwalk(netsnmp_args)
-        return result
+        return netsnmp_snmpwalk(netsnmp_args)
+
     except Exception as e:
         _handle_error(e)
 
@@ -87,8 +87,8 @@ def snmpbulkget(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP bulk get operation.
     """
     try:
-        result = netsnmp_snmpbulkget(netsnmp_args)
-        return result
+        return netsnmp_snmpbulkget(netsnmp_args)
+
     except Exception as e:
         _handle_error(e)
 
@@ -107,8 +107,8 @@ def snmpbulkwalk(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP bulk walk operation.
     """
     try:
-        result = netsnmp_snmpbulkwalk(netsnmp_args)
-        return result
+        return netsnmp_snmpbulkwalk(netsnmp_args)
+
     except Exception as e:
         _handle_error(e)
 
@@ -128,8 +128,7 @@ def snmpset(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP set operation.
     """
     try:
-        result = netsnmp_snmpset(netsnmp_args)
-        return result
+        return netsnmp_snmpset(netsnmp_args)
     except Exception as e:
         _handle_error(e)
 
@@ -146,6 +145,6 @@ def snmptrap(netsnmp_args):
     :raises Exception: If an error occurs during the SNMP trap operation.
     """
     try:
-        netsnmp_snmptrap(netsnmp_args)
+        return netsnmp_snmptrap(netsnmp_args)
     except Exception as e:
         _handle_error(e)

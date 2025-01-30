@@ -131,6 +131,7 @@ class UnknownObjectIDError(Exception):
         """
         super().__init__(message)
 
+
 def _handle_error(e):
     """
     Handle and map C++ error types to corresponding Python exceptions.

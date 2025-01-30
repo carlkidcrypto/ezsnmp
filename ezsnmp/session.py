@@ -368,48 +368,48 @@ class Session(SessionBase):
 
     def walk(self, oid=""):
         try:
-            self._session_base.walk(oid)
+            return self._session_base.walk(oid)
         except Exception as e:
             _handle_error(e)
 
     def bulk_walk(self, oid=""):
         try:
-            self._session_base.bulk_walk(oid)
+            return self._session_base.bulk_walk(oid)
         except Exception as e:
             _handle_error(e)
 
     def bulk_walk(self, oids=[]):
         try:
-            self._session_base.bulk_walk(oids)
+            return self._session_base.bulk_walk(oids)
         except Exception as e:
             _handle_error(e)
 
     def get(self, oid=""):
         try:
-            self._session_base.get(oid)
+            return self._session_base.get(oid)
         except Exception as e:
             _handle_error(e)
 
     def get(self, oids=[]):
         try:
-            self._session_base.get(oids)
+            return self._session_base.get(oids)
         except Exception as e:
             _handle_error(e)
 
     def get_next(self, oids=[]):
         try:
-            self._session_base.get_next(oids)
+            return self._session_base.get_next(oids)
         except Exception as e:
             _handle_error(e)
 
     def bulk_get(self, oids=[]):
         try:
-            self._session_base.bulk_get(oids)
+            return self._session_base.bulk_get(oids)
         except Exception as e:
             _handle_error(e)
 
     def set(self, oids=[]):
         try:
-            self._session_base.set(oids)
+            return self._session_base.set(oids)
         except Exception as e:
             _handle_error(e)
