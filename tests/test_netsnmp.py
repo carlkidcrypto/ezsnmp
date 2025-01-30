@@ -1,13 +1,15 @@
 import platform
 
 import pytest
-from ezsnmp import (
+from ezsnmp.netsnmp import (
     snmpget,
     snmpset,
     snmpbulkget,
     snmpwalk,
     snmpbulkwalk,
 )
+
+from ezsnmp.exceptions import GenericError, PacketError
 
 from time import sleep
 from random import uniform
@@ -67,7 +69,7 @@ def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
 def test_snmp_get_unknown(netsnmp_args):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["sysDescripto.0"]
         snmpget(netsnmp_args)
 
@@ -80,7 +82,7 @@ def test_snmp_get_invalid_instance(netsnmp_args):
     if netsnmp_args[1] == "1":
 
         if platform.system() != "Darwin":
-            with pytest.raises(RuntimeError):
+            with pytest.raises(PacketError):
                 netsnmp_args = netsnmp_args + ["sysContact.1"]
                 # On Mac `snmpwalk -v 1 -c public localhost:11161 sysContact.1`
                 # produces no output, but on Ubuntu it does...
@@ -95,7 +97,7 @@ def test_snmp_get_invalid_object(netsnmp_args):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     if netsnmp_args[1] == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["iso"]
             snmpget(netsnmp_args)
     else:
@@ -144,7 +146,7 @@ def test_snmpbulkget(netsnmp_args):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     if netsnmp_args[1] == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + [
                 "sysUpTime",
                 "sysORLastChange",
@@ -180,7 +182,7 @@ def test_snmpbulkget(netsnmp_args):
 
 def test_snmpwalk(netsnmp_args):
     if netsnmp_args[1] == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]
             res = snmpbulkwalk(netsnmp_args)
 
@@ -231,7 +233,7 @@ def test_snmp_bulkwalk_res(netsnmp_args):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     if netsnmp_args[1] == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]
             snmpbulkwalk(netsnmp_args)
     else:
@@ -264,7 +266,7 @@ def test_snmp_bulkwalk_res(netsnmp_args):
 def test_snmp_walk_unknown(netsnmp_args):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["systemo123"]
         snmpwalk(netsnmp_args)
 
@@ -275,7 +277,7 @@ def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
 
     if platform.system() != "Darwin":
         if netsnmp_args[1] == "1":
-            with pytest.raises(RuntimeError):
+            with pytest.raises(PacketError):
                 netsnmp_args = netsnmp_args + [
                     "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
                 ]
