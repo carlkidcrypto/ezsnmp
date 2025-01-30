@@ -92,7 +92,8 @@ class Session(SessionBase):
 
         :type: list
         """
-        return self._session_base._get_args()
+        result = self._session_base._get_args()
+        return result
 
     @property
     def hostname(self):
@@ -100,7 +101,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_hostname()
+        result = self._session_base._get_hostname()
+        return result
 
     @hostname.setter
     def hostname(self, value):
@@ -117,7 +119,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_port_number()
+        result = self._session_base._get_port_number()
+        return result
 
     @port_number.setter
     def port_number(self, value):
@@ -134,7 +137,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_version()
+        result = self._session_base._get_version()
+        return result
 
     @version.setter
     def version(self, value):
@@ -151,7 +155,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_community()
+        result = self._session_base._get_community()
+        return result
 
     @community.setter
     def community(self, value):
@@ -168,7 +173,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_auth_protocol()
+        result = self._session_base._get_auth_protocol()
+        return result
 
     @auth_protocol.setter
     def auth_protocol(self, value):
@@ -185,7 +191,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_auth_passphrase()
+        result = self._session_base._get_auth_passphrase()
+        return result
 
     @auth_passphrase.setter
     def auth_passphrase(self, value):
@@ -202,7 +209,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_security_engine_id()
+        result = self._session_base._get_security_engine_id()
+        return result
 
     @security_engine_id.setter
     def security_engine_id(self, value):
@@ -219,7 +227,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_context_engine_id()
+        result = self._session_base._get_context_engine_id()
+        return result
 
     @context_engine_id.setter
     def context_engine_id(self, value):
@@ -236,7 +245,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_security_level()
+        result = self._session_base._get_security_level()
+        return result
 
     @security_level.setter
     def security_level(self, value):
@@ -253,7 +263,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_context()
+        result = self._session_base._get_context()
+        return result
 
     @context.setter
     def context(self, value):
@@ -270,7 +281,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_security_username()
+        result = self._session_base._get_security_username()
+        return result
 
     @security_username.setter
     def security_username(self, value):
@@ -287,7 +299,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_privacy_protocol()
+        result = self._session_base._get_privacy_protocol()
+        return result
 
     @privacy_protocol.setter
     def privacy_protocol(self, value):
@@ -304,7 +317,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_privacy_passphrase()
+        result = self._session_base._get_privacy_passphrase()
+        return result
 
     @privacy_passphrase.setter
     def privacy_passphrase(self, value):
@@ -321,7 +335,8 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_boots_time()
+        result = self._session_base._get_boots_time()
+        return result
 
     @boots_time.setter
     def boots_time(self, value):
@@ -338,7 +353,8 @@ class Session(SessionBase):
 
         :type: int
         """
-        return self._session_base._get_retries()
+        result = self._session_base._get_retries()
+        return result
 
     @retries.setter
     def retries(self, value):
@@ -355,7 +371,8 @@ class Session(SessionBase):
 
         :type: int
         """
-        return self._session_base._get_timeout()
+        result = self._session_base._get_timeout()
+        return result
 
     @timeout.setter
     def timeout(self, value):
@@ -368,48 +385,56 @@ class Session(SessionBase):
 
     def walk(self, oid=""):
         try:
-            return self._session_base.walk(oid)
+            result = self._session_base.walk(oid)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def bulk_walk(self, oid=""):
         try:
-            return self._session_base.bulk_walk(oid)
+            result = self._session_base.bulk_walk(oid)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def bulk_walk(self, oids=[]):
         try:
-            return self._session_base.bulk_walk(oids)
+            result = self._session_base.bulk_walk(oids)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def get(self, oid=""):
         try:
-            return self._session_base.get(oid)
+            result = self._session_base.get(oid)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def get(self, oids=[]):
         try:
-            return self._session_base.get(oids)
+            result = self._session_base.get(oids)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def get_next(self, oids=[]):
         try:
-            return self._session_base.get_next(oids)
+            result = self._session_base.get_next(oids)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def bulk_get(self, oids=[]):
         try:
-            return self._session_base.bulk_get(oids)
+            result = self._session_base.bulk_get(oids)
+            return result
         except Exception as e:
             _handle_error(e)
 
     def set(self, oids=[]):
         try:
-            return self._session_base.set(oids)
+            result = self._session_base.set(oids)
+            return result
         except Exception as e:
             _handle_error(e)

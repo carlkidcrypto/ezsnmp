@@ -2,7 +2,7 @@ import platform
 import pytest
 
 from ezsnmp.session import Session
-from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError
+from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError, PacketError
 from time import sleep
 from random import uniform
 import faulthandler
@@ -311,7 +311,7 @@ def test_session_bulk_get(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     if sess.version == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             sess.bulk_get(
                 [
                     "sysUpTime",
@@ -347,7 +347,7 @@ def test_session_get_invalid_instance(sess):
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess.version == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
@@ -358,7 +358,7 @@ def test_session_get_invalid_object(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     if sess.version == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             sess.get("iso")
     else:
         res = sess.get("iso")
@@ -397,7 +397,7 @@ def test_session_bulkwalk(sess):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     if sess.version == "1":
-        with pytest.raises(RuntimeError):
+        with pytest.raises(PacketError):
             sess.bulk_walk("system")
 
     else:

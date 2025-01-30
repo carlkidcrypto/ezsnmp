@@ -63,6 +63,12 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
       throw TimeoutErrorBase(message);
    }
 
+   if (message.find("Cannot send V2 PDU on V1 session") != std::string::npos) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
+
+      throw PacketErrorBase(message);
+   }
+
    // Throw a runtime_error with the message
    throw GenericErrorBase(message);
 }
