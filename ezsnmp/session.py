@@ -1,4 +1,5 @@
 from .sessionbase import SessionBase
+from .exceptions import _handle_error
 
 
 class Session(SessionBase):
@@ -61,24 +62,29 @@ class Session(SessionBase):
         :param timeout: The timeout value in seconds.
         :type timeout: str
         """
-        super().__init__(
-            hostname,
-            port_number,
-            version,
-            community,
-            auth_protocol,
-            auth_passphrase,
-            security_engine_id,
-            context_engine_id,
-            security_level,
-            context,
-            security_username,
-            privacy_protocol,
-            privacy_passphrase,
-            boots_time,
-            retries,
-            timeout,
-        )
+
+        try:
+            self._session_base = SessionBase(
+                hostname,
+                port_number,
+                version,
+                community,
+                auth_protocol,
+                auth_passphrase,
+                security_engine_id,
+                context_engine_id,
+                security_level,
+                context,
+                security_username,
+                privacy_protocol,
+                privacy_passphrase,
+                boots_time,
+                retries,
+                timeout,
+            )
+
+        except Exception as e:
+            _handle_error(e)
 
     @property
     def args(self):
@@ -86,7 +92,7 @@ class Session(SessionBase):
 
         :type: list
         """
-        return self._get_args()
+        return self._session_base._get_args()
 
     @property
     def hostname(self):
@@ -94,7 +100,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_hostname()
+        return self._session_base._get_hostname()
 
     @hostname.setter
     def hostname(self, value):
@@ -103,7 +109,7 @@ class Session(SessionBase):
         :param value: The hostname or IP address to set.
         :type value: str
         """
-        self._set_hostname(value)
+        self._session_base._set_hostname(value)
 
     @property
     def port_number(self):
@@ -111,7 +117,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_port_number()
+        return self._session_base._get_port_number()
 
     @port_number.setter
     def port_number(self, value):
@@ -120,7 +126,7 @@ class Session(SessionBase):
         :param value: The port number to set.
         :type value: str
         """
-        self._set_port_number(value)
+        self._session_base._set_port_number(value)
 
     @property
     def version(self):
@@ -128,7 +134,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_version()
+        return self._session_base._get_version()
 
     @version.setter
     def version(self, value):
@@ -137,7 +143,7 @@ class Session(SessionBase):
         :param value: The SNMP version to set (1, 2c, or 3).
         :type value: str
         """
-        self._set_version(value)
+        self._session_base._set_version(value)
 
     @property
     def community(self):
@@ -145,7 +151,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_community()
+        return self._session_base._get_community()
 
     @community.setter
     def community(self, value):
@@ -154,7 +160,7 @@ class Session(SessionBase):
         :param value: The community string to set.
         :type value: str
         """
-        self._set_community(value)
+        self._session_base._set_community(value)
 
     @property
     def auth_protocol(self):
@@ -162,7 +168,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_auth_protocol()
+        return self._session_base._get_auth_protocol()
 
     @auth_protocol.setter
     def auth_protocol(self, value):
@@ -171,7 +177,7 @@ class Session(SessionBase):
         :param value: The authentication protocol to set (e.g., 'MD5', 'SHA').
         :type value: str
         """
-        self._set_auth_protocol(value)
+        self._session_base._set_auth_protocol(value)
 
     @property
     def auth_passphrase(self):
@@ -179,7 +185,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_auth_passphrase()
+        return self._session_base._get_auth_passphrase()
 
     @auth_passphrase.setter
     def auth_passphrase(self, value):
@@ -188,7 +194,7 @@ class Session(SessionBase):
         :param value: The authentication passphrase to set.
         :type value: str
         """
-        self._set_auth_passphrase(value)
+        self._session_base._set_auth_passphrase(value)
 
     @property
     def security_engine_id(self):
@@ -196,7 +202,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_security_engine_id()
+        return self._session_base._get_security_engine_id()
 
     @security_engine_id.setter
     def security_engine_id(self, value):
@@ -205,7 +211,7 @@ class Session(SessionBase):
         :param value: The security engine ID to set.
         :type value: str
         """
-        self._set_security_engine_id(value)
+        self._session_base._set_security_engine_id(value)
 
     @property
     def context_engine_id(self):
@@ -213,7 +219,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_context_engine_id()
+        return self._session_base._get_context_engine_id()
 
     @context_engine_id.setter
     def context_engine_id(self, value):
@@ -222,7 +228,7 @@ class Session(SessionBase):
         :param value: The context engine ID to set.
         :type value: str
         """
-        self._set_context_engine_id(value)
+        self._session_base._set_context_engine_id(value)
 
     @property
     def security_level(self):
@@ -230,7 +236,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_security_level()
+        return self._session_base._get_security_level()
 
     @security_level.setter
     def security_level(self, value):
@@ -239,7 +245,7 @@ class Session(SessionBase):
         :param value: The security level to set (e.g., 'noAuthNoPriv', 'authNoPriv', 'authPriv').
         :type value: str
         """
-        self._set_security_level(value)
+        self._session_base._set_security_level(value)
 
     @property
     def context(self):
@@ -247,7 +253,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_context()
+        return self._session_base._get_context()
 
     @context.setter
     def context(self, value):
@@ -256,7 +262,7 @@ class Session(SessionBase):
         :param value: The context to set.
         :type value: str
         """
-        self._set_context(value)
+        self._session_base._set_context(value)
 
     @property
     def security_username(self):
@@ -264,7 +270,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_security_username()
+        return self._session_base._get_security_username()
 
     @security_username.setter
     def security_username(self, value):
@@ -273,7 +279,7 @@ class Session(SessionBase):
         :param value: The security username to set.
         :type value: str
         """
-        self._set_security_username(value)
+        self._session_base._set_security_username(value)
 
     @property
     def privacy_protocol(self):
@@ -281,7 +287,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_privacy_protocol()
+        return self._session_base._get_privacy_protocol()
 
     @privacy_protocol.setter
     def privacy_protocol(self, value):
@@ -290,7 +296,7 @@ class Session(SessionBase):
         :param value: The privacy protocol to set (e.g., 'DES', 'AES').
         :type value: str
         """
-        self._set_privacy_protocol(value)
+        self._session_base._set_privacy_protocol(value)
 
     @property
     def privacy_passphrase(self):
@@ -298,7 +304,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_privacy_passphrase()
+        return self._session_base._get_privacy_passphrase()
 
     @privacy_passphrase.setter
     def privacy_passphrase(self, value):
@@ -307,7 +313,7 @@ class Session(SessionBase):
         :param value: The privacy passphrase to set.
         :type value: str
         """
-        self._set_privacy_passphrase(value)
+        self._session_base._set_privacy_passphrase(value)
 
     @property
     def boots_time(self):
@@ -315,7 +321,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._get_boots_time()
+        return self._session_base._get_boots_time()
 
     @boots_time.setter
     def boots_time(self, value):
@@ -324,7 +330,7 @@ class Session(SessionBase):
         :param value: The boots time to set.
         :type value: str
         """
-        self._set_boots_time(value)
+        self._session_base._set_boots_time(value)
 
     @property
     def retries(self):
@@ -332,7 +338,7 @@ class Session(SessionBase):
 
         :type: int
         """
-        return self._get_retries()
+        return self._session_base._get_retries()
 
     @retries.setter
     def retries(self, value):
@@ -341,7 +347,7 @@ class Session(SessionBase):
         :param value: The number of retries to set.
         :type value: int
         """
-        self._set_retries(value)
+        self._session_base._set_retries(value)
 
     @property
     def timeout(self):
@@ -349,7 +355,7 @@ class Session(SessionBase):
 
         :type: int
         """
-        return self._get_timeout()
+        return self._session_base._get_timeout()
 
     @timeout.setter
     def timeout(self, value):
@@ -358,4 +364,52 @@ class Session(SessionBase):
         :param value: The timeout value to set in seconds.
         :type value: int
         """
-        self._set_timeout(value)
+        self._session_base._set_timeout(value)
+
+    def walk(self, oid=""):
+        try:
+            self._session_base.walk(oid)
+        except Exception as e:
+            _handle_error(e)
+
+    def bulk_walk(self, oid=""):
+        try:
+            self._session_base.bulk_walk(oid)
+        except Exception as e:
+            _handle_error(e)
+
+    def bulk_walk(self, oids=[]):
+        try:
+            self._session_base.bulk_walk(oids)
+        except Exception as e:
+            _handle_error(e)
+
+    def get(self, oid=""):
+        try:
+            self._session_base.get(oid)
+        except Exception as e:
+            _handle_error(e)
+
+    def get(self, oids=[]):
+        try:
+            self._session_base.get(oids)
+        except Exception as e:
+            _handle_error(e)
+
+    def get_next(self, oids=[]):
+        try:
+            self._session_base.get_next(oids)
+        except Exception as e:
+            _handle_error(e)
+
+    def bulk_get(self, oids=[]):
+        try:
+            self._session_base.bulk_get(oids)
+        except Exception as e:
+            _handle_error(e)
+
+    def set(self, oids=[]):
+        try:
+            self._session_base.set(oids)
+        except Exception as e:
+            _handle_error(e)

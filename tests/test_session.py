@@ -2,6 +2,7 @@ import platform
 import pytest
 
 from ezsnmp.session import Session
+from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError
 from time import sleep
 from random import uniform
 import faulthandler
@@ -12,7 +13,7 @@ faulthandler.enable()
 def test_session_invalid_snmp_version():
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ParseError):
         sess = Session(version="4")
         sess.get("sysDescr.0")
 
@@ -21,7 +22,7 @@ def test_session_invalid_snmp_version():
 def test_session_invalid_hostname(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ConnectionError):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
 
@@ -30,7 +31,7 @@ def test_session_invalid_hostname(version):
 def test_session_invalid_hostname_and_port_number(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ParseError):
         Session(hostname="localhost:162", port_number="163", version=version)
 
 
@@ -47,7 +48,7 @@ def test_session_hostname_and_port_number_split(version):
 def test_session_invalid_port(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TimeoutError):
         session = Session(
             port_number="1234", version=version, timeout="0.2", retries="1"
         )
@@ -109,7 +110,7 @@ def test_session_ipv6_address_with_protocol(version):
 def test_session_ipv6_is_not_ipv6(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ConnectionError):
         sess = Session(hostname="[foo::bar]:161", version=version)
         sess.get("sysContact.0")
 
@@ -118,7 +119,7 @@ def test_session_ipv6_is_not_ipv6(version):
 def test_session_ipv6_invalid_hostname_and_port_number(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ParseError):
         Session(
             hostname="[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:161",
             port_number="162",

@@ -43,13 +43,25 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    std::string err;
    char *err_cstr = nullptr;
 
-   snmp_error(ss, NULL, NULL, &err_cstr);
+   snmp_error(ss, nullptr, nullptr, &err_cstr);
    err = err_cstr;
    SNMP_FREE(err_cstr);
    snmp_close(ss);
 
    // Construct the error message
    std::string message = std::string(prog_string) + ": " + err;
+
+   if (message.find("Unknown host") != std::string::npos) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
+
+      throw ConnectionErrorBase(message);
+   }
+
+   if (message.find("Timeout") != std::string::npos) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
+
+      throw TimeoutErrorBase(message);
+   }
 
    // Throw a runtime_error with the message
    throw GenericErrorBase(message);

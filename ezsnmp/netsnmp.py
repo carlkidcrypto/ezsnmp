@@ -7,66 +7,7 @@ from .netsnmpbase import (
     snmptrap as netsnmp_snmptrap,
     snmpwalk as netsnmp_snmpwalk,
 )
-from .exceptions import (
-    ConnectionError,
-    GenericError,
-    NoSuchInstanceError,
-    NoSuchNameError,
-    NoSuchObjectError,
-    PacketError,
-    ParseError,
-    TimeoutError,
-    UndeterminedTypeError,
-    UnknownObjectIDError,
-)
-
-
-def _handle_error(e):
-    """
-    Handle and map C++ error types to corresponding Python exceptions.
-    This function inspects the type of the given exception `e` and raises
-    a corresponding Python exception that can be caught. It maps various
-    C++ error base types to custom Python exceptions.
-
-    :param e: The exception object to be handled and mapped.
-    :type e: Exception
-
-    :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
-    :raises GenericError: If the exception type is `GenericErrorBase`.
-    :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
-    :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
-    :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
-    :raises PacketError: If the exception type is `PacketErrorBase`.
-    :raises ParseError: If the exception type is `ParseErrorBase`.
-    :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
-    :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
-    :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
-    :raises Exception: If the exception type does not match any of the above, the original
-    exception `e` is raised.
-    """
-
-    if "ConnectionErrorBase" in str(type(e)):
-        raise ConnectionError(str(e))
-    elif "GenericErrorBase" in str(type(e)):
-        raise GenericError(str(e))
-    elif "NoSuchInstanceErrorBase" in str(type(e)):
-        raise NoSuchInstanceError(str(e))
-    elif "NoSuchNameErrorBase" in str(type(e)):
-        raise NoSuchNameError(str(e))
-    elif "NoSuchObjectErrorBase" in str(type(e)):
-        raise NoSuchObjectError(str(e))
-    elif "PacketErrorBase" in str(type(e)):
-        raise PacketError(str(e))
-    elif "ParseErrorBase" in str(type(e)):
-        raise ParseError(str(e))
-    elif "TimeoutErrorBase" in str(type(e)):
-        raise TimeoutError(str(e))
-    elif "UndeterminedTypeErrorBase" in str(type(e)):
-        raise UndeterminedTypeError(str(e))
-    elif "UnknownObjectIDErrorBase" in str(type(e)):
-        raise UnknownObjectIDError(str(e))
-    else:
-        raise e
+from .exceptions import _handle_error
 
 
 def snmpget(netsnmp_args):
