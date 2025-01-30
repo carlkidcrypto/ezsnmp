@@ -153,7 +153,7 @@ def _handle_error(e):
     :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
     :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
     :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
-    :raises Exception: If the exception type does not match any of the above, the original 
+    :raises Exception: If the exception type does not match any of the above, the original
                        exception `e` is raised.
     """
 
