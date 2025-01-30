@@ -29,9 +29,10 @@ Four run the command below to generate the wrap file.
 
 .. code-block:: bash
 
-    swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmp.cpp ezsnmp/interface/netsnmp.i &&
+    swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmpbase.cpp ezsnmp/interface/netsnmpbase.i &&
     swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_sessionbase.cpp ezsnmp/interface/sessionbase.i &&
-    swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i
+    swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i &&
+    swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_exceptionsbase.cpp ezsnmp/interface/exceptionsbase.i
 
 
 * `-c++` to force generation of a `.cpp` file
@@ -86,7 +87,7 @@ them with the following on Linux:
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
     rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 -m pip install -r requirements.txt;
+    python3 -m pip install -r tests/requirements.txt;
     python3 -m pip install . && pytest tests/;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
@@ -107,7 +108,7 @@ On MacOS
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 -m pip install -r requirements.txt;
+    python3 -m pip install -r tests/requirements.txt;
     python3 -m pip install . && pytest tests/;
 
 

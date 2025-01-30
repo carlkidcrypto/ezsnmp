@@ -1,8 +1,9 @@
-%module netsnmp
+%module netsnmpbase
 %feature("autodoc", "0");
 
-%include "stl.i"
+%include <stl.i>
 %include "datatypes.i"
+%include "exceptionsbase.i"
 
 %feature("python:annotations", "c");
 

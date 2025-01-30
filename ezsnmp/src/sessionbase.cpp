@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include "helpers.h"
+#include "exceptionsbase.h"
 #include "snmpbulkget.h"
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
@@ -184,7 +185,7 @@ void SessionBase::populate_args() {
       // Now check that the port number wasn't provided both via hostname and port_number inputs
       // args
       if (!temp_port_number.empty() && !input_arg_name_map["port_number"].empty()) {
-         throw std::runtime_error(
+         throw ParseErrorBase(
              "Error: Provide either 'hostname' with port included (e.g., localhost:1234, "
              "[2001:db8::]:161, etc) or 'hostname' and 'port_number' separately, not both.");
       }
