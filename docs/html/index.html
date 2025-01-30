@@ -459,19 +459,20 @@ one-off operations where you wish to specify all details in the request:</p>
 </section>
 <section id="ezsnmp-exception-handling">
 <h2>EzSnmp Exception Handling<a class="headerlink" href="#ezsnmp-exception-handling" title="Link to this heading">¶</a></h2>
-<p>EzSnmp provides a custom exception class <cite>EzSnmpException</cite> to handle errors that may occur during SNMP operations. This allows you to catch and manage exceptions specific to EzSnmp more effectively.</p>
-<p>Here’s an example of how to use the <cite>EzSnmpException</cite> class:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">Exceptions</span>
+<p>EzSnmp provides custom exception classes contained in <cite>exceptions</cite> to handle errors that may occur during SNMP operations.
+This allows you to catch and manage exceptions specific to EzSnmp more effectively.</p>
+<p>Here’s an example of how to use one of the exceptions classes.:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">exceptions</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">Exceptions</span><span class="o">.</span><span class="n">GenericError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="k">except</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">GenericError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>By catching <cite>EzSnmpException</cite>, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.</p>
+<p>By catching exceptions, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>

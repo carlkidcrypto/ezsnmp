@@ -135,6 +135,7 @@ class UnknownObjectIDError(Exception):
 def _handle_error(e):
     """
     Handle and map C++ error types to corresponding Python exceptions.
+
     This function inspects the type of the given exception `e` and raises
     a corresponding Python exception that can be caught. It maps various
     C++ error base types to custom Python exceptions.
@@ -152,9 +153,8 @@ def _handle_error(e):
     :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
     :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
     :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
-    :raises Exception: If the exception type does not match any of the above, the original
-    exception `e` is raised.
-
+    :raises Exception: If the exception type does not match any of the above, the original 
+                       exception `e` is raised.
     """
 
     if "ConnectionErrorBase" in str(type(e)):
