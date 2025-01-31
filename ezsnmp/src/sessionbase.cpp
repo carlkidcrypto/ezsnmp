@@ -34,7 +34,7 @@
 // General communication options
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
-std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
+static std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
                                                        {"community", "-c"},
                                                        {"auth_protocol", "-a"},
                                                        {"auth_passphrase", "-A"},
@@ -90,7 +90,7 @@ void SessionBase::populate_args() {
    m_args.clear();
 
    // Convert arguments to m_argc and m_argv
-   std::map<std::string, std::string> input_arg_name_map = {
+   static std::map<std::string, std::string> input_arg_name_map = {
        {"hostname", m_hostname},
        {"port_number", m_port_number},
        {"version", m_version},
