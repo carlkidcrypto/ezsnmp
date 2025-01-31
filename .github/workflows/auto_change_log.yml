@@ -13,54 +13,57 @@ jobs:
     update-changelog:
         runs-on: ubuntu-latest
         steps:
-            - name: Check out repository code
-              uses: actions/checkout@v4
-              with:                                                                                           
-                fetch-depth: 0 
-            
+            - name: Checkout repository code
+                uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+
             - name: Setup git-chglog
-              uses: carlkidcrypto/os-specific-runner@v2.1.1
-              with:
-                linux: |
-                  sudo snap install go --classic;
-                  go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest;
+                uses: carlkidcrypto/os-specific-runner@v2.1.1
+                with:
+                    linux: |
+                        sudo snap install go --classic
+                        go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 
             - name: Generate CHANGELOG.md
-              id: generate
-              uses: carlkidcrypto/os-specific-runner@v2.1.1
-              with:
-                linux: |
-                  rm -f CHANGELOG.md;
-                  echo "PATH=$PATH:/usr/bin" >> $GITHUB_ENV;
-                  ~/go/bin/git-chglog --config /home/runner/work/ezsnmp/ezsnmp/.chglog/config.yml -o CHANGELOG.md;
-                  if git diff --quiet CHANGELOG.md; then
-                      echo "changes=false" >> $GITHUB_OUTPUT
-                  else
-                      echo "changes=true" >> $GITHUB_OUTPUT
-                  fi;
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                id: generate
+                uses: carlkidcrypto/os-specific-runner@v2.1.1
+                with:
+                    linux: |
+                        rm -f CHANGELOG.md
+                        echo "PATH=$PATH:/usr/bin" >> $GITHUB_ENV
+                        ~/go/bin/git-chglog --config /home/runner/work/ezsnmp/ezsnmp/.chglog/config.yml -o CHANGELOG.md
+                        git add CHANGELOG.md  # Add the CHANGELOG.md file
+                        if git diff --quiet; then
+                            echo "changes=false" >> $GITHUB_OUTPUT
+                        else
+                            echo "changes=true" >> $GITHUB_OUTPUT
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Create Pull Request
-              if: steps.generate.outputs.changes == 'true'
-              uses: peter-evans/create-pull-request@v4
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  commit-message: "chore: update CHANGELOG.md"
-                  title: "📝 Update Changelog"
-                  body: |
-                      This PR updates the CHANGELOG.md to include all releases.
-                      - Generated using git-chglog
-                      - Triggered by: ${{ github.event_name }}
-                      - Auto-merge enabled
-                  branch: update-changelog-${{ github.run_id }}
-                  base: main
-                  delete-branch: true
-                  labels: documentation, automated-pr
+                id: create-pr
+                if: steps.generate.outputs.changes == 'true'
+                uses: peter-evans/create-pull-request@v4
+                with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    commit-message: "chore: update CHANGELOG.md"
+                    title: "📝 Update Changelog"
+                    body: |
+                        This PR updates the CHANGELOG.md to include all releases.
+                        - Generated using git-chglog
+                        - Triggered by: ${{ github.event_name }}
+                        - Auto-merge enabled
+                    branch: update-changelog-${{ github.run_id }}
+                    base: main
+                    delete-branch: true
+                    labels: documentation, automated-pr
 
             - name: Enable Auto-merge
-              if: steps.generate.outputs.changes == 'true'
-              run: |
-                  gh pr merge --auto --merge "${{ steps.create-pr.outputs.pull-request-number }}"
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                if: steps.generate.outputs.changes == 'true'
+                run: |
+                    PR_URL="${{ steps.create-pr.outputs.pull-request-url }}" # Get the PR URL
+                    PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$') # Extract the number
+                    gh pr merge --auto --merge "$PR_NUMBER" # Use the extracted number
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
