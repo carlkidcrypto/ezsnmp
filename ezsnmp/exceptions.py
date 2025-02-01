@@ -1,16 +1,3 @@
-class ConnectionError(Exception):
-    def __init__(self, message):
-        """
-        Exception raised for SNMP connection errors.
-
-        This class represents an error that occurs during an SNMP connection attempt.
-
-        :param message: A descriptive error message.
-        :type message: str
-        """
-        super().__init__(message)
-
-
 class GenericError(Exception):
     def __init__(self, message):
         """
@@ -24,8 +11,19 @@ class GenericError(Exception):
         """
         super().__init__(message)
 
+class ConnectionError(GenericError):
+    def __init__(self, message):
+        """
+        Exception raised for SNMP connection errors.
 
-class NoSuchInstanceError(Exception):
+        This class represents an error that occurs during an SNMP connection attempt.
+
+        :param message: A descriptive error message.
+        :type message: str
+        """
+        super().__init__(message)
+
+class NoSuchInstanceError(GenericError):
     def __init__(self, message):
         """
         Exception raised for handling SNMP "No Such Instance" errors.
@@ -39,7 +37,7 @@ class NoSuchInstanceError(Exception):
         super().__init__(message)
 
 
-class NoSuchNameError(Exception):
+class NoSuchNameError(GenericError):
     def __init__(self, message):
         """
         Exception raised for handling SNMP "No Such Name" errors.
@@ -54,7 +52,7 @@ class NoSuchNameError(Exception):
         super().__init__(message)
 
 
-class NoSuchObjectError(Exception):
+class NoSuchObjectError(GenericError):
     def __init__(self, message):
         """
         Exception raised for handling SNMP "No Such Object" errors.
@@ -67,7 +65,7 @@ class NoSuchObjectError(Exception):
         super().__init__(message)
 
 
-class PacketError(Exception):
+class PacketError(GenericError):
     def __init__(self, message):
         """
         Exception raised for handling SNMP packet errors.
@@ -80,7 +78,7 @@ class PacketError(Exception):
         super().__init__(message)
 
 
-class ParseError(Exception):
+class ParseError(GenericError):
     def __init__(self, message):
         """
         Exception raised for handling SNMP parse errors.
@@ -93,7 +91,7 @@ class ParseError(Exception):
         super().__init__(message)
 
 
-class TimeoutError(Exception):
+class TimeoutError(GenericError):
     def __init__(self, message):
         """
         Exception raised for handling SNMP timeout errors.
@@ -106,7 +104,7 @@ class TimeoutError(Exception):
         super().__init__(message)
 
 
-class UndeterminedTypeError(Exception):
+class UndeterminedTypeError(GenericError):
     def __init__(self, message):
         """
         Exception raised for undetermined SNMP type errors.
@@ -119,7 +117,7 @@ class UndeterminedTypeError(Exception):
         super().__init__(message)
 
 
-class UnknownObjectIDError(Exception):
+class UnknownObjectIDError(GenericError):
     def __init__(self, message):
         """
         Exception raised for unknown SNMP Object ID errors.
