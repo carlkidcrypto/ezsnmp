@@ -11,6 +11,7 @@ class GenericError(Exception):
         """
         super().__init__(message)
 
+
 class ConnectionError(GenericError):
     def __init__(self, message):
         """
@@ -22,6 +23,7 @@ class ConnectionError(GenericError):
         :type message: str
         """
         super().__init__(message)
+
 
 class NoSuchInstanceError(GenericError):
     def __init__(self, message):
