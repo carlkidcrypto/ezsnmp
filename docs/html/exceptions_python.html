@@ -262,6 +262,48 @@
         <article role="main" id="furo-main-content">
           <section id="exceptions-python-module">
 <h1>Exceptions Python Module<a class="headerlink" href="#exceptions-python-module" title="Link to this heading">¶</a></h1>
+<p>Differences between V1.X.X and V2.X.X of the EzSnmp Exception Handling</p>
+<p>The primary difference between V1.X.X and V2.X.X lies in how exceptions are structured and handled.</p>
+<ul>
+<li><p><strong>Base Exception Class:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>V1.X.X:</strong> Uses <code class="docutils literal notranslate"><span class="pre">EzSNMPError</span></code> as the base exception class. Specific error types inherit from this
+class (e.g., <code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code>).</p></li>
+<li><p><strong>V2.X.X:</strong> Uses <code class="docutils literal notranslate"><span class="pre">GenericError</span></code> as the base exception class. All other exceptions inherit from
+<code class="docutils literal notranslate"><span class="pre">GenericError</span></code>. It adds a <code class="docutils literal notranslate"><span class="pre">message</span></code> attribute for more descriptive error reporting.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Specific Exception Classes:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>V1.X.X:</strong> Defines individual exception classes for various EzSnmp errors, such as
+<code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPUnknownObjectIDError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchNameError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchObjectError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchInstanceError</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">EzSNMPUndeterminedTypeError</span></code>.</p></li>
+<li><p><strong>V2.X.X:</strong> While retaining many of the same error types (<code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code>, <code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code>, <code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code>, <code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code>, <code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code>), V2.X.X adds new ones related to packet and parsing errors: <code class="docutils literal notranslate"><span class="pre">PacketError</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ParseError</span></code>. Crucially, all inherit from <code class="docutils literal notranslate"><span class="pre">GenericError</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Error Handling:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>V1.X.X:</strong> Implicit exception handling. The code relies on catching specific exception types.</p></li>
+<li><p><strong>V2.X.X:</strong> Introduces <code class="docutils literal notranslate"><span class="pre">_handle_error(e)</span></code>. This function maps exceptions from a lower-level C++ library
+(e.g., <code class="docutils literal notranslate"><span class="pre">ConnectionErrorBase</span></code>) to the corresponding Python exception classes. This provides a cleaner
+Python interface, abstracting C++ error types.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>In summary, V2.X.X offers a more robust and structured approach. <code class="docutils literal notranslate"><span class="pre">_handle_error</span></code> for mapping C++ exceptions
+improves usability and maintainability. The common base class (<code class="docutils literal notranslate"><span class="pre">GenericError</span></code>) and more specific exception
+types facilitate organized error handling. The addition of <code class="docutils literal notranslate"><span class="pre">PacketError</span></code> and <code class="docutils literal notranslate"><span class="pre">ParseError</span></code> enhances error
+reporting.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="ezsnmp.exceptions.ConnectionError">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ConnectionError" title="Link to this definition">¶</a></dt>
