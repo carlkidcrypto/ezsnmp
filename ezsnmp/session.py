@@ -1,5 +1,5 @@
 from .sessionbase import SessionBase
-from .exceptions import _handle_error
+from .exceptions import _handle_error, GenericError
 
 
 class Session(SessionBase):
@@ -37,7 +37,7 @@ class Session(SessionBase):
         :type version: str
         :param community: The community string for SNMPv1/v2c.
         :type community: str
-        :param auth_protocol: The authentication protocol (e.g., 'MD5', 'SHA').
+        :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
         :type auth_protocol: str
         :param auth_passphrase: The authentication passphrase.
         :type auth_passphrase: str
@@ -45,13 +45,13 @@ class Session(SessionBase):
         :type security_engine_id: str
         :param context_engine_id: The context engine ID.
         :type context_engine_id: str
-        :param security_level: The security level (e.g., 'noAuthNoPriv', 'authNoPriv', 'authPriv').
+        :param security_level: The security level (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
         :type security_level: str
         :param context: The context.
         :type context: str
         :param security_username: The security username.
         :type security_username: str
-        :param privacy_protocol: The privacy protocol (e.g., 'DES', 'AES').
+        :param privacy_protocol: The privacy protocol (e.g., "DES", "AES").
         :type privacy_protocol: str
         :param privacy_passphrase: The privacy passphrase.
         :type privacy_passphrase: str
@@ -83,7 +83,7 @@ class Session(SessionBase):
                 timeout,
             )
 
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
     @property
@@ -180,7 +180,7 @@ class Session(SessionBase):
     def auth_protocol(self, value):
         """Set the authentication protocol.
 
-        :param value: The authentication protocol to set (e.g., 'MD5', 'SHA').
+        :param value: The authentication protocol to set (e.g., "MD5", "SHA").
         :type value: str
         """
         self._session_base._set_auth_protocol(value)
@@ -252,7 +252,7 @@ class Session(SessionBase):
     def security_level(self, value):
         """Set the security level.
 
-        :param value: The security level to set (e.g., 'noAuthNoPriv', 'authNoPriv', 'authPriv').
+        :param value: The security level to set (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
         :type value: str
         """
         self._session_base._set_security_level(value)
@@ -306,7 +306,7 @@ class Session(SessionBase):
     def privacy_protocol(self, value):
         """Set the privacy protocol.
 
-        :param value: The privacy protocol to set (e.g., 'DES', 'AES').
+        :param value: The privacy protocol to set (e.g., "DES", "AES").
         :type value: str
         """
         self._session_base._set_privacy_protocol(value)
@@ -383,58 +383,336 @@ class Session(SessionBase):
         """
         self._session_base._set_timeout(value)
 
-    def walk(self, oid=""):
+    def walk(self, oid="."):
+        """
+        Walks through the SNMP tree starting from the given OID.
+        This method performs an SNMP walk operation, which retrieves a subtree of
+        management values from the SNMP agent, starting from the specified OID.
+
+        :param oid: The starting OID for the SNMP walk. If not specified, the walk
+                will start from the root.
+        :type oid: str
+
+        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+                exception `e` is raised.
+
+        Example:
+            >>> session = Session()
+            >>> results = session.walk("1.3.6.1.2.1")
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.walk(oid)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
-    def bulk_walk(self, oid=""):
+    def bulk_walk(self, oid="."):
+        """
+        Performs a bulk SNMP walk operation to retrieve a collection of values.
+        The bulk walk operation is designed to return multiple OIDs in a single request,
+        making it more efficient than regular walk operations for retrieving large amounts of data.
+
+        :param oid: The base OID to start the walk from, defaults to "."
+        :type oid: str
+        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+                exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.bulk_walk("1.3.6.1.2.1")
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.bulk_walk(oid)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
     def bulk_walk(self, oids=[]):
+        """
+        Performs a bulk SNMP walk operation to retrieve a collection of values from multiple OIDs.
+        The bulk walk operation is designed to return multiple OIDs in a single request,
+        making it more efficient than regular walk operations for retrieving large amounts of data.
+
+        :param oids: List of base OIDs to start the walks from
+        :type oids: list[str]
+        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.bulk_walk(["1.3.6.1.2.1.1", "1.3.6.1.2.1.2"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.bulk_walk(oids)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
-    def get(self, oid=""):
+    def get(self, oid="."):
+        """
+        Performs an SNMP GET operation to retrieve the value of a single OID.
+
+        :param oid: The Object Identifier (OID) to retrieve the value from
+        :type oid: str
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> result = session.get("1.3.6.1.2.1.1.1.0")
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.get(oid)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
     def get(self, oids=[]):
+        """
+        Performs an SNMP GET operation to retrieve values for multiple OIDs.
+
+        :param oids: List of Object Identifiers (OIDs) to retrieve values from
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.get(oids)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
     def get_next(self, oids=[]):
+        """
+        Performs an SNMP GET-NEXT operation to retrieve values for the next objects after the specified OIDs.
+
+        :param oids: List of Object Identifiers (OIDs) to get next values from
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.get_next(["1.3.6.1.2.1.1.1.0"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.get_next(oids)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
     def bulk_get(self, oids=[]):
+        """
+        Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.
+
+        :param oids: List of Object Identifiers (OIDs) to retrieve values from
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.bulk_get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.bulk_get(oids)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)
 
     def set(self, oids=[]):
+        """
+        Performs an SNMP SET operation to set values for multiple OIDs.
+
+        :param oids: List containing groups of OID, type and value. Each group should be a sequence of
+            [oid, type, value] where type is a string indicating the SNMP data type
+            (e.g. 'i' for INTEGER, 's' for STRING, 'o' for OBJECT IDENTIFIER)
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.set([
+            ...     ".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116", "o", ".1.3.6.1.6.1.1",
+            ...     ".1.3.6.1.6.3.12.1.2.1.3.116.101.115.116", "s", "1234",
+            ...     ".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "4"
+            ... ])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
         try:
             result = self._session_base.set(oids)
             return result
-        except Exception as e:
+        except GenericError as e:
             _handle_error(e)

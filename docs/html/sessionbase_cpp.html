@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -206,6 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SessionBase C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
@@ -254,7 +255,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -262,6 +263,164 @@
         <article role="main" id="furo-main-content">
           <section id="sessionbase-c-module">
 <h1>SessionBase C++ Module<a class="headerlink" href="#sessionbase-c-module" title="Link to this heading">¶</a></h1>
+</section>
+<section id="analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">
+<h1>Analysis of Snmpwalk Options and SessionBase Constructor Mapping<a class="headerlink" href="#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping" title="Link to this heading">¶</a></h1>
+<p>This document analyzes how the command-line options of the <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code> tool
+correspond to the parameters of the <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code> C++ constructor.  It
+identifies direct matches, options without direct counterparts, and implicit or
+default behaviors. Note this behavior is identical/very similar for the other
+supported methods like <code class="docutils literal notranslate"><span class="pre">snmpget</span></code>, <code class="docutils literal notranslate"><span class="pre">snmpbulkwalk</span></code>, etc.</p>
+<section id="direct-mappings">
+<h2>Direct Mappings<a class="headerlink" href="#direct-mappings" title="Link to this heading">¶</a></h2>
+<p>Several <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code>, <code class="docutils literal notranslate"><span class="pre">snmpget</span></code>, <code class="docutils literal notranslate"><span class="pre">etc..</span></code> options have direct equivalents in the <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code>
+constructor:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">1|2c|3</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">version</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">COMMUNITY</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">community</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span> <span class="pre">PROTOCOL</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">auth_protocol</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-A</span> <span class="pre">PASSPHRASE</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">auth_passphrase</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">ENGINE-ID</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">security_engine_id</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-E</span> <span class="pre">ENGINE-ID</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">context_engine_id</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">LEVEL</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">security_level</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">CONTEXT</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">context</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u</span> <span class="pre">USER-NAME</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">security_username</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x</span> <span class="pre">PROTOCOL</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">privacy_protocol</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-X</span> <span class="pre">PASSPHRASE</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">privacy_passphrase</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-Z</span> <span class="pre">BOOTS,TIME</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">boots_time</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">RETRIES</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">retries</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">TIMEOUT</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">timeout</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AGENT</span></code> (hostname) -&gt; <code class="docutils literal notranslate"><span class="pre">hostname</span></code></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">[OID]</span></code> argument given to <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code> specifies the target OID for the
+walk.  While not a parameter of the <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code> <em>constructor</em>, it
+represents the <em>action</em> to be performed. <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code> sets up a session,
+and contains a <code class="docutils literal notranslate"><span class="pre">walk</span></code> method that then uses the OID as its input parameter.</p>
+</section>
+<section id="no-direct-mapping-or-implicit-default">
+<h2>No Direct Mapping (or Implicit/Default)<a class="headerlink" href="#no-direct-mapping-or-implicit-default" title="Link to this heading">¶</a></h2>
+<p>The following <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code> options do <em>not</em> correspond to <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code>
+constructor parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h,</span> <span class="pre">--help</span></code>, <code class="docutils literal notranslate"><span class="pre">-H</span></code>, <code class="docutils literal notranslate"><span class="pre">-V,</span> <span class="pre">--version</span></code>, <code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">-D[TOKEN[,...]]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">MIB[:...]</span></code>, <code class="docutils literal notranslate"><span class="pre">-M</span> <span class="pre">DIR[:...]</span></code>, <code class="docutils literal notranslate"><span class="pre">-P</span> <span class="pre">MIBOPTS</span></code>, <code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">OUTOPTS</span></code>,
+<code class="docutils literal notranslate"><span class="pre">-I</span> <span class="pre">INOPTS</span></code>, <code class="docutils literal notranslate"><span class="pre">-L</span> <span class="pre">LOGOPTS</span></code>, <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">APPOPTS</span></code></p></li>
+</ul>
+<p>These options influence <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code>’s operation (help, version display,
+debugging, MIB loading, output format, etc.). They are handled by the lower
+level <code class="docutils literal notranslate"><span class="pre">NetsnmpBase</span></code> functions. The <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code> constructor is designed
+for core SNMP session setup, not the specifics of the <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code> tool or
+other SNMP operations.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">port_number</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">SessionBase</span></code> constructor has no
+direct equivalent in <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code>. <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code> defaults to the standard
+SNMP port (161).  The constructor parameter allows overriding this, but this
+cannot be set through <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code>’s options.</p>
+</section>
+<section id="summary-table">
+<h2>Summary Table<a class="headerlink" href="#summary-table" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>snmpwalk Option</p></th>
+<th class="head"><p>SessionBase Parameter</p></th>
+<th class="head"><p>Direct Map?</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-v 1|2c|3</p></td>
+<td><p>version</p></td>
+<td><p>Yes</p></td>
+<td><p>-v followed by the version (1, 2c, or 3)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-c COMMUNITY</p></td>
+<td><p>community</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-a PROTOCOL</p></td>
+<td><p>auth_protocol</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-A PASSPHRASE</p></td>
+<td><p>auth_passphrase</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-e ENGINE-ID</p></td>
+<td><p>security_engine_id</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-E ENGINE-ID</p></td>
+<td><p>context_engine_id</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-l LEVEL</p></td>
+<td><p>security_level</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-n CONTEXT</p></td>
+<td><p>context</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-u USER-NAME</p></td>
+<td><p>security_username</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-x PROTOCOL</p></td>
+<td><p>privacy_protocol</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-X PASSPHRASE</p></td>
+<td><p>privacy_passphrase</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-Z BOOTS,TIME</p></td>
+<td><p>boots_time</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>-r RETRIES</p></td>
+<td><p>retries</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>-t TIMEOUT</p></td>
+<td><p>timeout</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>AGENT (hostname)</p></td>
+<td><p>hostname</p></td>
+<td><p>Yes</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>[OID]</p></td>
+<td><p>(N/A - Action)</p></td>
+<td><p>No</p></td>
+<td><p>OID is the target of methods like walk, bulk_walk, get, etc., and is not a constructor parameter.</p></td>
+</tr>
+<tr class="row-even"><td><p>port_number</p></td>
+<td><p>port_number</p></td>
+<td><p>No (Implicit)</p></td>
+<td><p>snmpwalk and methods alike use the default port 161. Parameter allows overriding.</p></td>
+</tr>
+<tr class="row-odd"><td><p>All other options</p></td>
+<td><p>(N/A - Tool Options)</p></td>
+<td><p>No</p></td>
+<td><p>These control snmpwalk’s and methods alike behavior, not the core SessionBase. If one wants more control, use the NetSnmpBase functions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <dl class="cpp class">
 <dt class="sig sig-object cpp" id="_CPPv411SessionBase">
 <span id="_CPPv311SessionBase"></span><span id="_CPPv211SessionBase"></span><span id="SessionBase"></span><span class="target" id="classSessionBase"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SessionBase</span></span></span><a class="headerlink" href="#_CPPv411SessionBase" title="Link to this definition">¶</a><br /></dt>
@@ -913,6 +1072,7 @@
 </dd></dl>
 
 </section>
+</section>
 
         </article>
       </div>
@@ -957,91 +1117,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">SessionBase C++ Module</a><ul>
-<li><a class="reference internal" href="#_CPPv411SessionBase"><code class="docutils literal notranslate"><span class="pre">SessionBase</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase11SessionBaseENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringENSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::SessionBase()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBaseD0Ev"><code class="docutils literal notranslate"><span class="pre">SessionBase::~SessionBase()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase4walkERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::walk()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase9bulk_walkERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::bulk_walk()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::bulk_walk()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase3getERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::get()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase3getERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::get()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase8get_nextERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::get_next()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase8bulk_getERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::bulk_get()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase3setERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">SessionBase::set()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase9_get_argsEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_args()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase13_get_hostnameEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_hostname()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase16_get_port_numberEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_port_number()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_versionEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_version()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase14_get_communityEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_community()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase18_get_auth_protocolEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_auth_protocol()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase20_get_auth_passphraseEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_auth_passphrase()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase23_get_security_engine_idEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_security_engine_id()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase22_get_context_engine_idEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_context_engine_id()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase19_get_security_levelEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_security_level()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_contextEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_context()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase22_get_security_usernameEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_security_username()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase21_get_privacy_protocolEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_privacy_protocol()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase23_get_privacy_passphraseEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_privacy_passphrase()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase15_get_boots_timeEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_boots_time()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_retriesEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_retries()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK11SessionBase12_get_timeoutEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::_get_timeout()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase13_set_hostnameERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_hostname()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase16_set_port_numberERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_port_number()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase12_set_versionERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_version()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase14_set_communityERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_community()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase18_set_auth_protocolERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_auth_protocol()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase20_set_auth_passphraseERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_auth_passphrase()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase23_set_security_engine_idERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_security_engine_id()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase22_set_context_engine_idERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_context_engine_id()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase19_set_security_levelERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_security_level()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase12_set_contextERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_context()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase22_set_security_usernameERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_security_username()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase21_set_privacy_protocolERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_privacy_protocol()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase23_set_privacy_passphraseERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_privacy_passphrase()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase15_set_boots_timeERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_boots_time()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase12_set_retriesERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_retries()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase12_set_timeoutERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase::_set_timeout()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase13populate_argsEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::populate_args()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase23check_and_clear_v3_userEv"><code class="docutils literal notranslate"><span class="pre">SessionBase::check_and_clear_v3_user()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase6m_argsE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_args</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase10m_hostnameE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_hostname</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase13m_port_numberE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_port_number</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase9m_versionE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_version</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase11m_communityE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_community</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase15m_auth_protocolE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_auth_protocol</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase17m_auth_passphraseE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_auth_passphrase</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase20m_security_engine_idE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_security_engine_id</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase19m_context_engine_idE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_context_engine_id</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase16m_security_levelE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_security_level</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase9m_contextE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_context</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase19m_security_usernameE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_security_username</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase18m_privacy_protocolE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_privacy_protocol</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase20m_privacy_passphraseE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_privacy_passphrase</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase12m_boots_timeE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_boots_time</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase9m_retriesE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_retries</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N11SessionBase9m_timeoutE"><code class="docutils literal notranslate"><span class="pre">SessionBase::m_timeout</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

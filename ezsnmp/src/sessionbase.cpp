@@ -22,15 +22,16 @@
 //   -c COMMUNITY          set the community string
 // SNMP Version 3 specific
 //   -a PROTOCOL           set authentication protocol
-//   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512) -A PASSPHRASE         set
-//   authentication protocol pass phrase -e ENGINE-ID          set security
-//   engine ID (e.g. 800000020109840301) -E ENGINE-ID          set context
-//   engine ID (e.g. 800000020109840301) -l LEVEL              set security
-//   level (noAuthNoPriv|authNoPriv|authPriv) -n CONTEXT            set context
-//   name (e.g. bridge1) -u USER-NAME          set security name (e.g. bert) -x
-//   PROTOCOL           set privacy protocol (DES|AES) -X PASSPHRASE         set
-//   privacy protocol pass phrase -Z BOOTS,TIME         set destination engine
-//   boots/time
+//   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512)
+//   -A PASSPHRASE         set authentication protocol pass phrase
+//   -e ENGINE-ID          set security engine ID (e.g. 800000020109840301)
+//   -E ENGINE-ID          set context engine ID (e.g. 800000020109840301)
+//   -l LEVEL              set security level (noAuthNoPriv|authNoPriv|authPriv)
+//   -n CONTEXT            set context name (e.g. bridge1)
+//   -u USER-NAME          set security name (e.g. bert)
+//   -x PROTOCOL           set privacy protocol (DES|AES)
+//   -X PASSPHRASE         set privacy protocol pass phrase
+//   -Z BOOTS,TIME         set destination engine boots/time
 // General communication options
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
