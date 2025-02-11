@@ -14,15 +14,35 @@ def snmpget(netsnmp_args):
     """
     Perform an SNMP GET operation using the provided arguments.
 
-    This function uses the `netsnmp_snmpget` method to perform an SNMP GET
-    operation and returns the result. If an exception occurs during the
-    operation, it handles the error using the `_handle_error` function.
+    This function uses the `netsnmp_snmpget` function to perform an SNMP GET
+    operation and returns the result. 
 
-    :param netsnmp_args: The arguments required for the SNMP GET operation.
-    :type netsnmp_args: dict
-    :return: The result of the SNMP GET operation.
-    :rtype: Any
-    :raises Exception: If an error occurs during the SNMP GET operation.
+    :param netsnmp_args: The arguments required for the SNMP GET operation
+    :type netsnmp_args: list
+    :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+    :rtype: tuple[Result]
+
+    :raises ConnectionError: If the exception type is `ConnectionErrorBase`
+    :raises GenericError: If the exception type is `GenericErrorBase`
+    :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`
+    :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase` 
+    :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`
+    :raises PacketError: If the exception type is `PacketErrorBase`
+    :raises ParseError: If the exception type is `ParseErrorBase`
+    :raises TimeoutError: If the exception type is `TimeoutErrorBase`
+    :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`
+    :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`
+    :raises Exception: If the exception type does not match any of the above
+
+    Example:
+        >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
+        >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
+        >>> result = snmpget(netsnmp_args)
+        >>> print("OID:", result.oid)
+        >>> print("Index:", result.index)
+        >>> print("Value:", result.value)
+        >>> print("Type:", result.type)
     """
     try:
         result = netsnmp_snmpget(netsnmp_args)
@@ -36,14 +56,34 @@ def snmpgetnext(netsnmp_args):
     Perform an SNMP GETNEXT operation using the provided arguments.
 
     This function uses the `netsnmp_snmpgetnext` function to perform an SNMP GETNEXT
-    operation and returns the result. If an exception occurs during the operation,
-    it handles the error using the `_handle_error` function.
+    operation and returns the result.
 
-    :param netsnmp_args: The arguments required for the SNMP GETNEXT operation.
-    :type netsnmp_args: dict
-    :return: The result of the SNMP GETNEXT operation.
-    :rtype: dict
-    :raises Exception: If an error occurs during the SNMP GETNEXT operation.
+    :param netsnmp_args: The arguments required for the SNMP GETNEXT operation
+    :type netsnmp_args: list
+    :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+    :rtype: tuple[Result]
+
+    :raises ConnectionError: If the exception type is `ConnectionErrorBase`
+    :raises GenericError: If the exception type is `GenericErrorBase` 
+    :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`
+    :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`
+    :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`
+    :raises PacketError: If the exception type is `PacketErrorBase`
+    :raises ParseError: If the exception type is `ParseErrorBase`
+    :raises TimeoutError: If the exception type is `TimeoutErrorBase`
+    :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`
+    :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`
+    :raises Exception: If the exception type does not match any of the above
+
+    Example:
+        >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
+        >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
+        >>> result = snmpgetnext(netsnmp_args)
+        >>> print("OID:", result.oid)
+        >>> print("Index:", result.index)
+        >>> print("Value:", result.value)
+        >>> print("Type:", result.type)
     """
     try:
         result = netsnmp_snmpgetnext(netsnmp_args)
