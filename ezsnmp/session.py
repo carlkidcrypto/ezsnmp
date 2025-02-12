@@ -26,6 +26,9 @@ class Session(SessionBase):
         boots_time="",
         retries="3",
         timeout="1",
+        print_enums_numerically="",
+        print_full_oids="",
+        print_oids_numerically="",
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
@@ -61,6 +64,12 @@ class Session(SessionBase):
         :type retries: str
         :param timeout: The timeout value in seconds.
         :type timeout: str
+        :param print_enums_numerically: Whether to print enums numerically.
+        :type print_enums_numerically: str
+        :param print_full_oids: Whether to print full OIDs.
+        :type print_full_oids: str
+        :param print_oids_numerically: Whether to print OIDs numerically.
+        :type print_oids_numerically: str
         """
 
         try:
@@ -81,6 +90,9 @@ class Session(SessionBase):
                 boots_time,
                 retries,
                 timeout,
+                print_enums_numerically,
+                print_full_oids,
+                print_oids_numerically,
             )
 
         except GenericError as e:

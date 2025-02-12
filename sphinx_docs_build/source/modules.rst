@@ -1,6 +1,7 @@
 .. toctree::
    :maxdepth: 8
 
+   migration_guide
    datatypes_cpp
    development
    exceptions_python
