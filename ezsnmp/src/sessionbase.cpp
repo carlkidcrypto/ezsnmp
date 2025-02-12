@@ -6,8 +6,8 @@
 #include <map>
 #include <stdexcept>
 
-#include "helpers.h"
 #include "exceptionsbase.h"
+#include "helpers.h"
 #include "snmpbulkget.h"
 #include "snmpbulkwalk.h"
 #include "snmpget.h"
@@ -35,20 +35,37 @@
 // General communication options
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
-std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
-                                                       {"community", "-c"},
-                                                       {"auth_protocol", "-a"},
-                                                       {"auth_passphrase", "-A"},
-                                                       {"security_engine_id", "-e"},
-                                                       {"context_engine_id", "-E"},
-                                                       {"security_level", "-l"},
-                                                       {"context", "-n"},
-                                                       {"security_username", "-u"},
-                                                       {"privacy_protocol", "-x"},
-                                                       {"privacy_passphrase", "-X"},
-                                                       {"boots_time", "-Z"},
-                                                       {"retries", "-r"},
-                                                       {"timeout", "-t"}};
+//
+// General options
+//   -m MIB[:...]          load given list of MIBs (ALL loads everything)
+//   -M DIR[:...]          look in given list of directories for MIBs
+//     (default:
+//     $HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf)
+//   -O OUTOPTS            Toggle various defaults controlling output display:
+//                           e:  print enums numerically
+//                           f:  print full OIDs on output
+//                           n:  print OIDs numerically
+static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
+    {"version", "-v"},
+    {"community", "-c"},
+    {"auth_protocol", "-a"},
+    {"auth_passphrase", "-A"},
+    {"security_engine_id", "-e"},
+    {"context_engine_id", "-E"},
+    {"security_level", "-l"},
+    {"context", "-n"},
+    {"security_username", "-u"},
+    {"privacy_protocol", "-x"},
+    {"privacy_passphrase", "-X"},
+    {"boots_time", "-Z"},
+    {"retries", "-r"},
+    {"timeout", "-t"},
+    {"load_mibs", "-m"},
+    {"mib_directories", "-M"},
+    {"print_enums_numerically", "-Oe"},
+    {"print_full_oids", "-Of"},
+    {"print_oids_numerically", "-On"},
+};
 
 SessionBase::SessionBase(std::string hostname,
                          std::string port_number,
@@ -65,7 +82,10 @@ SessionBase::SessionBase(std::string hostname,
                          std::string privacy_passphrase,
                          std::string boots_time,
                          std::string retries,
-                         std::string timeout)
+                         std::string timeout,
+                         std::string print_enums_numerically,
+                         std::string print_full_oids,
+                         std::string print_oids_numerically)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -81,7 +101,10 @@ SessionBase::SessionBase(std::string hostname,
       m_privacy_passphrase(privacy_passphrase),
       m_boots_time(boots_time),
       m_retries(retries),
-      m_timeout(timeout) {
+      m_timeout(timeout),
+      m_print_enums_numerically(print_enums_numerically),
+      m_print_full_oids(print_full_oids),
+      m_print_oids_numerically(print_oids_numerically) {
    populate_args();
 }
 
@@ -107,12 +130,15 @@ void SessionBase::populate_args() {
        {"privacy_passphrase", m_privacy_passphrase},
        {"boots_time", m_boots_time},
        {"retries", m_retries},
-       {"timeout", m_timeout}};
+       {"timeout", m_timeout},
+       {"print_enums_numerically", m_print_enums_numerically},
+       {"print_full_oids", m_print_full_oids},
+       {"print_oids_numerically", m_print_oids_numerically}};
 
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
          // Copy the cml parameter flag i.e -a, -A, -x, etc...
-         m_args.push_back(cml_param_lookup[key]);
+         m_args.push_back(CML_PARAM_LOOKUP[key]);
 
          // Copy the input paramater value...
          m_args.push_back(val);

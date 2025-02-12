@@ -411,6 +411,7 @@ class Session(SessionBase):
                 exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.walk("1.3.6.1.2.1")
             >>> for item in results:
@@ -453,6 +454,7 @@ class Session(SessionBase):
                 exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.bulk_walk("1.3.6.1.2.1")
             >>> for item in results:
@@ -495,6 +497,7 @@ class Session(SessionBase):
             exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.bulk_walk(["1.3.6.1.2.1.1", "1.3.6.1.2.1.2"])
             >>> for item in results:
@@ -535,6 +538,7 @@ class Session(SessionBase):
             exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> result = session.get("1.3.6.1.2.1.1.1.0")
             >>> for item in results:
@@ -575,6 +579,7 @@ class Session(SessionBase):
             exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
             >>> for item in results:
@@ -615,6 +620,7 @@ class Session(SessionBase):
             exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.get_next(["1.3.6.1.2.1.1.1.0"])
             >>> for item in results:
@@ -655,6 +661,7 @@ class Session(SessionBase):
             exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.bulk_get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
             >>> for item in results:
@@ -697,6 +704,7 @@ class Session(SessionBase):
             exception `e` is raised.
 
         Example:
+            >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.set([
             ...     ".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116", "o", ".1.3.6.1.6.1.1",

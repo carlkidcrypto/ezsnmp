@@ -15,7 +15,7 @@ def snmpget(netsnmp_args=[]):
     Perform an SNMP GET operation using the provided arguments.
 
     This function uses the `netsnmp_snmpget` function to perform an SNMP GET
-    operation and returns the result. 
+    operation and returns the result.
 
     :param netsnmp_args: The arguments required for the SNMP GET operation
     :type netsnmp_args: list
@@ -26,7 +26,7 @@ def snmpget(netsnmp_args=[]):
     :raises ConnectionError: If the exception type is `ConnectionErrorBase`
     :raises GenericError: If the exception type is `GenericErrorBase`
     :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`
-    :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase` 
+    :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`
     :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`
     :raises PacketError: If the exception type is `PacketErrorBase`
     :raises ParseError: If the exception type is `ParseErrorBase`
@@ -66,7 +66,7 @@ def snmpgetnext(netsnmp_args=[]):
     :rtype: tuple[Result]
 
     :raises ConnectionError: If the exception type is `ConnectionErrorBase`
-    :raises GenericError: If the exception type is `GenericErrorBase` 
+    :raises GenericError: If the exception type is `GenericErrorBase`
     :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`
     :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`
     :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`
@@ -228,7 +228,7 @@ def snmpset(netsnmp_args=[]):
     operation and returns the result.
 
     :param netsnmp_args: The arguments required for the SNMP SET operation
-    :type netsnmp_args: list 
+    :type netsnmp_args: list
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -302,4 +302,6 @@ def snmptrap(netsnmp_args=[]):
         return result
     except Exception as e:
         _handle_error(e)
+
+
 # UPDATE THIS ONE NEXT WITH EXAMPLES LIKE YOU DID IN SESSION
