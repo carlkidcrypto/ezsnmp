@@ -411,7 +411,7 @@ class Session(SessionBase):
                 exception `e` is raised.
 
         Example:
-            >>> session = Session()
+            >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.walk("1.3.6.1.2.1")
             >>> for item in results:
             ...     print("OID:", item.oid)
