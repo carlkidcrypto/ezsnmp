@@ -26,9 +26,11 @@ class Session(SessionBase):
         boots_time="",
         retries="3",
         timeout="1",
-        print_enums_numerically="",
-        print_full_oids="",
-        print_oids_numerically="",
+        load_mibs="",
+        mib_directories="",
+        print_enums_numerically=False,
+        print_full_oids=False,
+        print_oids_numerically=False,
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
@@ -64,12 +66,16 @@ class Session(SessionBase):
         :type retries: str
         :param timeout: The timeout value in seconds.
         :type timeout: str
+        :param load_mibs: Comma-separated string of MIB modules to load.
+        :type load_mibs: str 
+        :param mib_directories: Comma-separated string of directories to search for MIB files.
+        :type mib_directories: str
         :param print_enums_numerically: Whether to print enums numerically.
-        :type print_enums_numerically: str
+        :type print_enums_numerically: bool
         :param print_full_oids: Whether to print full OIDs.
-        :type print_full_oids: str
+        :type print_full_oids: bool
         :param print_oids_numerically: Whether to print OIDs numerically.
-        :type print_oids_numerically: str
+        :type print_oids_numerically: bool
         """
 
         try:
@@ -90,6 +96,8 @@ class Session(SessionBase):
                 boots_time,
                 retries,
                 timeout,
+                load_mibs,
+                mib_directories,
                 print_enums_numerically,
                 print_full_oids,
                 print_oids_numerically,

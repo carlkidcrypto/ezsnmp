@@ -62,9 +62,9 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"timeout", "-t"},
     {"load_mibs", "-m"},
     {"mib_directories", "-M"},
-    {"print_enums_numerically", "-Oe"},
-    {"print_full_oids", "-Of"},
-    {"print_oids_numerically", "-On"},
+    {"print_enums_numerically", "-O e"},
+    {"print_full_oids", "-O f"},
+    {"print_oids_numerically", "-O n"},
 };
 
 SessionBase::SessionBase(std::string hostname,
@@ -83,9 +83,11 @@ SessionBase::SessionBase(std::string hostname,
                          std::string boots_time,
                          std::string retries,
                          std::string timeout,
-                         std::string print_enums_numerically,
-                         std::string print_full_oids,
-                         std::string print_oids_numerically)
+                         std::string load_mibs,
+                         std::string mib_directories,
+                         bool print_enums_numerically,
+                         bool print_full_oids,
+                         bool print_oids_numerically)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -102,6 +104,8 @@ SessionBase::SessionBase(std::string hostname,
       m_boots_time(boots_time),
       m_retries(retries),
       m_timeout(timeout),
+      m_load_mibs(load_mibs),
+      m_mib_directories(mib_directories),
       m_print_enums_numerically(print_enums_numerically),
       m_print_full_oids(print_full_oids),
       m_print_oids_numerically(print_oids_numerically) {
@@ -131,18 +135,26 @@ void SessionBase::populate_args() {
        {"boots_time", m_boots_time},
        {"retries", m_retries},
        {"timeout", m_timeout},
-       {"print_enums_numerically", m_print_enums_numerically},
-       {"print_full_oids", m_print_full_oids},
-       {"print_oids_numerically", m_print_oids_numerically}};
+       {"load_mibs", m_load_mibs},
+       {"mib_directories", m_mib_directories}};
 
+   // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
-         // Copy the cml parameter flag i.e -a, -A, -x, etc...
          m_args.push_back(CML_PARAM_LOOKUP[key]);
-
-         // Copy the input paramater value...
          m_args.push_back(val);
       }
+   }
+
+   // Handle boolean parameters
+   if (m_print_enums_numerically) {
+      m_args.push_back(CML_PARAM_LOOKUP["print_enums_numerically"]);
+   }
+   if (m_print_full_oids) {
+      m_args.push_back(CML_PARAM_LOOKUP["print_full_oids"]);
+   }
+   if (m_print_oids_numerically) {
+      m_args.push_back(CML_PARAM_LOOKUP["print_oids_numerically"]);
    }
 
    // Add and make the host address
