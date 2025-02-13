@@ -466,6 +466,7 @@ def test_session_update():
 
     del s
 
+
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_mixed_enums(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
@@ -475,9 +476,9 @@ def test_session_print_options_mixed_enums(version):
         version=version,
         print_enums_numerically=True,
         print_full_oids=False,
-        print_oids_numerically=False
+        print_oids_numerically=False,
     )
-    
+
     # Verify only enum option was set
     args = session.args
     assert "-O E" in args
@@ -490,18 +491,19 @@ def test_session_print_options_mixed_enums(version):
     assert res[0].oid.endswith("sysDescr")
     del session
 
+
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_mixed_full_oids(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25)) 
+    sleep(uniform(0.1, 0.25))
     session = Session(
         hostname="localhost",
         version=version,
         print_enums_numerically=False,
         print_full_oids=True,
-        print_oids_numerically=False
+        print_oids_numerically=False,
     )
-    
+
     # Verify only full oids option was set
     args = session.args
     assert "-O E" not in args
@@ -514,21 +516,22 @@ def test_session_print_options_mixed_full_oids(version):
     assert res[0].oid.endswith("sysDescr")
     del session
 
+
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_mixed_numeric_oids(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     session = Session(
-        hostname="localhost", 
+        hostname="localhost",
         version=version,
         print_enums_numerically=False,
         print_full_oids=False,
-        print_oids_numerically=True
+        print_oids_numerically=True,
     )
-    
+
     # Verify only numeric oids option was set
     args = session.args
-    assert "-O E" not in args 
+    assert "-O E" not in args
     assert "-O f" not in args
     assert "-O n" in args
 
@@ -537,6 +540,7 @@ def test_session_print_options_mixed_numeric_oids(version):
     assert len(res) == 1
     assert res[0].oid.endswith("sysDescr")
     del session
+
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_all_set(version):
@@ -547,13 +551,13 @@ def test_session_print_options_all_set(version):
         version=version,
         print_enums_numerically=True,
         print_full_oids=True,
-        print_oids_numerically=True
+        print_oids_numerically=True,
     )
-    
+
     # Verify all options were set
     args = session.args
     assert "-O E" in args
-    assert "-O f" in args 
+    assert "-O f" in args
     assert "-O n" in args
 
     # Verify session can do snmpget
@@ -562,7 +566,8 @@ def test_session_print_options_all_set(version):
     assert res[0].oid.endswith("sysDescr")
     del session
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"]) 
+
+@pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_two_set(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
@@ -571,9 +576,9 @@ def test_session_print_options_two_set(version):
         version=version,
         print_enums_numerically=True,
         print_full_oids=True,
-        print_oids_numerically=False
+        print_oids_numerically=False,
     )
-    
+
     # Verify two options were set
     args = session.args
     assert "-O E" in args
