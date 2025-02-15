@@ -67,7 +67,7 @@ class Session(SessionBase):
         :param timeout: The timeout value in seconds.
         :type timeout: str
         :param load_mibs: Comma-separated string of MIB modules to load.
-        :type load_mibs: str
+        :type load_mibs: str 
         :param mib_directories: Comma-separated string of directories to search for MIB files.
         :type mib_directories: str
         :param print_enums_numerically: Whether to print enums numerically.
@@ -103,7 +103,7 @@ class Session(SessionBase):
                 print_oids_numerically,
             )
 
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     @property
@@ -445,7 +445,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.walk(oid)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def bulk_walk(self, oid="."):
@@ -488,7 +488,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.bulk_walk(oid)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def bulk_walk(self, oids=[]):
@@ -531,7 +531,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.bulk_walk(oids)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def get(self, oid="."):
@@ -572,7 +572,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.get(oid)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def get(self, oids=[]):
@@ -613,7 +613,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.get(oids)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def get_next(self, oids=[]):
@@ -654,7 +654,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.get_next(oids)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def bulk_get(self, oids=[]):
@@ -695,7 +695,7 @@ class Session(SessionBase):
         try:
             result = self._session_base.bulk_get(oids)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)
 
     def set(self, oids=[]):
@@ -742,5 +742,5 @@ class Session(SessionBase):
         try:
             result = self._session_base.set(oids)
             return result
-        except GenericError as e:
+        except Exception as e:
             _handle_error(e)

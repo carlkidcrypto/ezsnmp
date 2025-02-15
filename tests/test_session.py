@@ -472,7 +472,7 @@ def test_session_print_options_mixed_enums(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     session = Session(
-        hostname="localhost",
+        hostname="localhost:11161",
         version=version,
         print_enums_numerically=True,
         print_full_oids=False,
@@ -481,14 +481,23 @@ def test_session_print_options_mixed_enums(version):
 
     # Verify only enum option was set
     args = session.args
-    assert "-O E" in args
-    assert "-O f" not in args
-    assert "-O n" not in args
+    print(args)
+    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'e', 'localhost:11161')
 
     # Verify session can do snmpget
-    res = session.get("sysDescr.0")
+    res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid.endswith("sysDescr")
+    assert res[0].oid == "IF-MIB::ifAdminStatus"
+    assert res[0].value == "1"
+    assert res[0].type == "INTEGER"
+    assert res[0].index == "1"
+
+    # With print_enums_numerically=False
+    # IF-MIB::ifAdminStatus
+    # up(1)
+    # INTEGER
+    # 1
+
     del session
 
 
@@ -497,23 +506,32 @@ def test_session_print_options_mixed_full_oids(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     session = Session(
-        hostname="localhost",
+        hostname="localhost:11161",
         version=version,
         print_enums_numerically=False,
         print_full_oids=True,
         print_oids_numerically=False,
     )
 
-    # Verify only full oids option was set
+    # Verify only enum option was set
     args = session.args
-    assert "-O E" not in args
-    assert "-O f" in args
-    assert "-O n" not in args
+    print(args)
+    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'f', 'localhost:11161')
 
     # Verify session can do snmpget
-    res = session.get("sysDescr.0")
+    res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid.endswith("sysDescr")
+    assert res[0].oid == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
+    assert res[0].value == "up(1)"
+    assert res[0].type == "INTEGER"
+    assert res[0].index == "1"
+
+    # With print_enums_numerically=False
+    # IF-MIB::ifAdminStatus
+    # up(1)
+    # INTEGER
+    # 1
+
     del session
 
 
@@ -522,23 +540,32 @@ def test_session_print_options_mixed_numeric_oids(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     session = Session(
-        hostname="localhost",
+        hostname="localhost:11161",
         version=version,
         print_enums_numerically=False,
         print_full_oids=False,
         print_oids_numerically=True,
     )
 
-    # Verify only numeric oids option was set
+    # Verify only enum option was set
     args = session.args
-    assert "-O E" not in args
-    assert "-O f" not in args
-    assert "-O n" in args
+    print(args)
+    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'n', 'localhost:11161')
 
     # Verify session can do snmpget
-    res = session.get("sysDescr.0")
+    res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid.endswith("sysDescr")
+    assert res[0].oid == ".1.3.6.1.2.1.2.2.1.7"
+    assert res[0].value == "up(1)"
+    assert res[0].type == "INTEGER"
+    assert res[0].index == "1"
+
+    # With print_enums_numerically=False
+    # IF-MIB::ifAdminStatus
+    # up(1)
+    # INTEGER
+    # 1
+
     del session
 
 
@@ -547,23 +574,32 @@ def test_session_print_options_all_set(version):
     # Space out our tests to avoid overwhelming the snmpd server with traffic.
     sleep(uniform(0.1, 0.25))
     session = Session(
-        hostname="localhost",
+        hostname="localhost:11161",
         version=version,
         print_enums_numerically=True,
         print_full_oids=True,
         print_oids_numerically=True,
     )
 
-    # Verify all options were set
+    # Verify only enum option was set
     args = session.args
-    assert "-O E" in args
-    assert "-O f" in args
-    assert "-O n" in args
+    print(args)
+    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'e', '-O', 'f', '-O', 'n', 'localhost:11161')
 
     # Verify session can do snmpget
-    res = session.get("sysDescr.0")
+    res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid.endswith("sysDescr")
+    assert res[0].oid == ".1.3.6.1.2.1.2.2.1.7"
+    assert res[0].value == "1"
+    assert res[0].type == "INTEGER"
+    assert res[0].index == "1"
+
+    # With print_enums_numerically=False
+    # IF-MIB::ifAdminStatus
+    # up(1)
+    # INTEGER
+    # 1
+
     del session
 
 
@@ -579,14 +615,23 @@ def test_session_print_options_two_set(version):
         print_oids_numerically=False,
     )
 
-    # Verify two options were set
+    # Verify only enum option was set
     args = session.args
-    assert "-O E" in args
-    assert "-O f" in args
-    assert "-O n" not in args
+    print(args)
+    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'e', 'localhost:11161')
 
     # Verify session can do snmpget
-    res = session.get("sysDescr.0")
+    res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid.endswith("sysDescr")
+    assert res[0].oid == "IF-MIB::ifAdminStatus"
+    assert res[0].value == "1"
+    assert res[0].type == "INTEGER"
+    assert res[0].index == "1"
+
+    # With print_enums_numerically=False
+    # IF-MIB::ifAdminStatus
+    # up(1)
+    # INTEGER
+    # 1
+
     del session

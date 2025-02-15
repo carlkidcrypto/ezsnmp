@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstring>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 
 #include "exceptionsbase.h"
@@ -146,15 +147,32 @@ void SessionBase::populate_args() {
       }
    }
 
+   // Helper function to split string by delimiter
+   auto split_string = [](const std::string& str_in, char delimiter) -> std::vector<std::string> {
+      std::vector<std::string> tokens;
+      std::string token;
+      std::istringstream tokenStream(str_in);
+      while (std::getline(tokenStream, token, delimiter)) {
+         tokens.push_back(token);
+      }
+      return tokens;
+   };
+
    // Handle boolean parameters
    if (m_print_enums_numerically) {
-      m_args.push_back(CML_PARAM_LOOKUP["print_enums_numerically"]);
+      auto parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
+      m_args.push_back(parts[0]);
+      m_args.push_back(parts[1]);
    }
    if (m_print_full_oids) {
-      m_args.push_back(CML_PARAM_LOOKUP["print_full_oids"]);
+      auto parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
+      m_args.push_back(parts[0]);
+      m_args.push_back(parts[1]);
    }
    if (m_print_oids_numerically) {
-      m_args.push_back(CML_PARAM_LOOKUP["print_oids_numerically"]);
+      auto parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
+      m_args.push_back(parts[0]);
+      m_args.push_back(parts[1]);
    }
 
    // Add and make the host address
