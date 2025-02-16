@@ -3,16 +3,13 @@ import pytest
 
 from ezsnmp.session import Session
 from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError, PacketError
-from time import sleep
-from random import uniform
 import faulthandler
 
 faulthandler.enable()
 
 
 def test_session_invalid_snmp_version():
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(ParseError):
         sess = Session(version="4")
         sess.get("sysDescr.0")
@@ -20,8 +17,7 @@ def test_session_invalid_snmp_version():
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(ConnectionError):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
@@ -29,16 +25,14 @@ def test_session_invalid_hostname(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_hostname_and_port_number(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(ParseError):
         Session(hostname="localhost:162", port_number="163", version=version)
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_hostname_and_port_number_split(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     session = Session(hostname="localhost:162", version=version)
     assert session.hostname == "localhost"
     assert session.port_number == "162"
@@ -46,8 +40,7 @@ def test_session_hostname_and_port_number_split(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_invalid_port(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(TimeoutError):
         session = Session(
             port_number="1234", version=version, timeout="0.2", retries="1"
@@ -57,16 +50,14 @@ def test_session_invalid_port(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     session = Session(hostname="2001:db8::", version=version)
     assert session.hostname == "2001:db8::"
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_and_port_number(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     session = Session(
         hostname="fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa",
         port_number="162",
@@ -79,8 +70,7 @@ def test_session_ipv6_address_and_port_number(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_and_port_number_split(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     session = Session(hostname="[2001:db8::]:161", version=version)
     assert session.hostname == "[2001:db8::]"
     assert session.port_number == "161"
@@ -89,8 +79,7 @@ def test_session_ipv6_address_and_port_number_split(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_with_protocol_and_port_number_split(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     session = Session(hostname="udp6:[2001:db8::]:162", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
     assert session.port_number == "162"
@@ -99,8 +88,7 @@ def test_session_ipv6_address_with_protocol_and_port_number_split(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_address_with_protocol(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     session = Session(hostname="udp6:[2001:db8::]", version=version)
     assert session.hostname == "udp6:[2001:db8::]"
     del session
@@ -108,8 +96,7 @@ def test_session_ipv6_address_with_protocol(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_is_not_ipv6(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(ConnectionError):
         sess = Session(hostname="[foo::bar]:161", version=version)
         sess.get("sysContact.0")
@@ -117,8 +104,7 @@ def test_session_ipv6_is_not_ipv6(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_ipv6_invalid_hostname_and_port_number(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(ParseError):
         Session(
             hostname="[fd5d:12c9:2201:1:bc9c:f8ff:fe5c:57fa]:161",
@@ -128,8 +114,7 @@ def test_session_ipv6_invalid_hostname_and_port_number(version):
 
 
 def test_session_set_multiple_next(sess, reset_values):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     res = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "6"])
     assert res[0].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[0].index == "'test'"
@@ -186,8 +171,7 @@ def test_session_set_multiple_next(sess, reset_values):
 
 
 def test_session_set_clear(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     res = sess.set([".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "6"])
     assert res[0].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[0].index == "'test'"
@@ -217,8 +201,7 @@ def test_session_set_clear(sess):
 
 
 def test_session_get(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
         res = sess.get(oid)
         if oid == "sysUpTime.0":
@@ -245,8 +228,7 @@ def test_session_get(sess):
 
 
 def test_session_get_next(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     res = sess.get_next(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
 
     assert res[0].oid == "SNMPv2-MIB::sysContact"
@@ -267,8 +249,7 @@ def test_session_get_next(sess):
 
 
 def test_session_set(sess, reset_values):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     res = sess.get("sysLocation.0")
     assert res[0].value != "my newer location"
 
@@ -282,8 +263,7 @@ def test_session_set(sess, reset_values):
 
 
 def test_session_set_multiple(sess, reset_values):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     res = sess.get(["sysLocation.0", "nsCacheTimeout.1.3.6.1.2.1.2.2"])
     assert res[0].value != "my newer location"
     assert res[1].value != "160"
@@ -308,8 +288,7 @@ def test_session_set_multiple(sess, reset_values):
 
 
 def test_session_bulk_get(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     if sess.version == "1":
         with pytest.raises(PacketError):
             sess.bulk_get(
@@ -342,8 +321,7 @@ def test_session_bulk_get(sess):
 
 
 def test_session_get_invalid_instance(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess.version == "1":
@@ -355,8 +333,7 @@ def test_session_get_invalid_instance(sess):
 
 
 def test_session_get_invalid_object(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     if sess.version == "1":
         with pytest.raises(PacketError):
             sess.get("iso")
@@ -366,8 +343,7 @@ def test_session_get_invalid_object(sess):
 
 
 def test_session_walk(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     res = sess.walk("system")
 
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -394,8 +370,7 @@ def test_session_walk(sess):
 
 
 def test_session_bulkwalk(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     if sess.version == "1":
         with pytest.raises(PacketError):
             sess.bulk_walk("system")
@@ -428,8 +403,7 @@ def test_session_bulkwalk(sess):
 
 
 def test_session_walk_all(sess):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(1.0, 2.5))
+
     res = sess.walk(".")
 
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -456,8 +430,7 @@ def test_session_walk_all(sess):
 
 
 def test_session_update():
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     s = Session(version="3")
     assert s.version == "3"
 
@@ -469,20 +442,77 @@ def test_session_update():
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_mixed_enums(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
-    session = Session(
-        hostname="localhost:11161",
-        version=version,
-        print_enums_numerically=True,
-        print_full_oids=False,
-        print_oids_numerically=False,
-    )
 
-    # Verify only enum option was set
-    args = session.args
-    print(args)
-    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'e', 'localhost:11161')
+    if version == "3":
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_enums_numerically=True,
+            print_full_oids=False,
+            print_oids_numerically=False,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "e",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_enums_numerically=True,
+            print_full_oids=False,
+            print_oids_numerically=False,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            f"{version}",
+            "-O",
+            "e",
+            "localhost:11161",
+        )
 
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
@@ -503,25 +533,85 @@ def test_session_print_options_mixed_enums(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_mixed_full_oids(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
-    session = Session(
-        hostname="localhost:11161",
-        version=version,
-        print_enums_numerically=False,
-        print_full_oids=True,
-        print_oids_numerically=False,
-    )
 
-    # Verify only enum option was set
-    args = session.args
-    print(args)
-    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'f', 'localhost:11161')
+    if version == "3":
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_enums_numerically=False,
+            print_full_oids=True,
+            print_oids_numerically=False,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "f",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_enums_numerically=False,
+            print_full_oids=True,
+            print_oids_numerically=False,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            f"{version}",
+            "-O",
+            "f",
+            "localhost:11161",
+        )
 
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
+    assert (
+        res[0].oid
+        == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
+    )
     assert res[0].value == "up(1)"
     assert res[0].type == "INTEGER"
     assert res[0].index == "1"
@@ -537,20 +627,77 @@ def test_session_print_options_mixed_full_oids(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_mixed_numeric_oids(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
-    session = Session(
-        hostname="localhost:11161",
-        version=version,
-        print_enums_numerically=False,
-        print_full_oids=False,
-        print_oids_numerically=True,
-    )
 
-    # Verify only enum option was set
-    args = session.args
-    print(args)
-    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'n', 'localhost:11161')
+    if version == "3":
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_enums_numerically=False,
+            print_full_oids=False,
+            print_oids_numerically=True,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "n",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_enums_numerically=False,
+            print_full_oids=False,
+            print_oids_numerically=True,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            f"{version}",
+            "-O",
+            "n",
+            "localhost:11161",
+        )
 
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
@@ -571,20 +718,85 @@ def test_session_print_options_mixed_numeric_oids(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_all_set(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
-    session = Session(
-        hostname="localhost:11161",
-        version=version,
-        print_enums_numerically=True,
-        print_full_oids=True,
-        print_oids_numerically=True,
-    )
 
-    # Verify only enum option was set
-    args = session.args
-    print(args)
-    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'e', '-O', 'f', '-O', 'n', 'localhost:11161')
+    if version == "3":
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_enums_numerically=True,
+            print_full_oids=True,
+            print_oids_numerically=True,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "e",
+            "-O",
+            "f",
+            "-O",
+            "n",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_enums_numerically=True,
+            print_full_oids=True,
+            print_oids_numerically=True,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            f"{version}",
+            "-O",
+            "e",
+            "-O",
+            "f",
+            "-O",
+            "n",
+            "localhost:11161",
+        )
 
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
@@ -605,25 +817,87 @@ def test_session_print_options_all_set(version):
 
 @pytest.mark.parametrize("version", ["1", "2c", "3"])
 def test_session_print_options_two_set(version):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
-    session = Session(
-        hostname="localhost",
-        version=version,
-        print_enums_numerically=True,
-        print_full_oids=True,
-        print_oids_numerically=False,
-    )
 
-    # Verify only enum option was set
-    args = session.args
-    print(args)
-    assert args == ('-c', 'public', '-r', '3', '-t', '1', '-v', f'{version}', '-O', 'e', 'localhost:11161')
+    if version == "3":
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_enums_numerically=True,
+            print_full_oids=True,
+            print_oids_numerically=False,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "e",
+            "-O",
+            "f",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_enums_numerically=True,
+            print_full_oids=True,
+            print_oids_numerically=False,
+        )
+
+        # Verify only enum option was set
+        args = session.args
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            f"{version}",
+            "-O",
+            "e",
+            "-O",
+            "f",
+            "localhost:11161",
+        )
 
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert res[0].oid == "IF-MIB::ifAdminStatus"
+    assert (
+        res[0].oid
+        == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
+    )
     assert res[0].value == "1"
     assert res[0].type == "INTEGER"
     assert res[0].index == "1"

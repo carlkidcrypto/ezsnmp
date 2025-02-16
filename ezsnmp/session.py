@@ -67,7 +67,7 @@ class Session(SessionBase):
         :param timeout: The timeout value in seconds.
         :type timeout: str
         :param load_mibs: Comma-separated string of MIB modules to load.
-        :type load_mibs: str 
+        :type load_mibs: str
         :param mib_directories: Comma-separated string of directories to search for MIB files.
         :type mib_directories: str
         :param print_enums_numerically: Whether to print enums numerically.
