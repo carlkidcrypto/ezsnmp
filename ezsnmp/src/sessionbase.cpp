@@ -68,24 +68,24 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_oids_numerically", "-O n"},
 };
 
-SessionBase::SessionBase(std::string hostname,
-                         std::string port_number,
-                         std::string version,
-                         std::string community,
-                         std::string auth_protocol,
-                         std::string auth_passphrase,
-                         std::string security_engine_id,
-                         std::string context_engine_id,
-                         std::string security_level,
-                         std::string context,
-                         std::string security_username,
-                         std::string privacy_protocol,
-                         std::string privacy_passphrase,
-                         std::string boots_time,
-                         std::string retries,
-                         std::string timeout,
-                         std::string load_mibs,
-                         std::string mib_directories,
+SessionBase::SessionBase(std::string const& hostname,
+                         std::string const& port_number,
+                         std::string const& version,
+                         std::string const& community,
+                         std::string const& auth_protocol,
+                         std::string const& auth_passphrase,
+                         std::string const& security_engine_id,
+                         std::string const& context_engine_id,
+                         std::string const& security_level,
+                         std::string const& context,
+                         std::string const& security_username,
+                         std::string const& privacy_protocol,
+                         std::string const& privacy_passphrase,
+                         std::string const& boots_time,
+                         std::string const& retries,
+                         std::string const& timeout,
+                         std::string const& load_mibs,
+                         std::string const& mib_directories,
                          bool print_enums_numerically,
                          bool print_full_oids,
                          bool print_oids_numerically)
@@ -148,7 +148,7 @@ void SessionBase::populate_args() {
    }
 
    // Helper function to split string by delimiter
-   auto split_string = [](const std::string& str_in, char delimiter) -> std::vector<std::string> {
+   auto split_string = [](std::string const& str_in, char delimiter) -> std::vector<std::string> {
       std::vector<std::string> tokens;
       std::string token;
       std::istringstream tokenStream(str_in);
@@ -160,17 +160,17 @@ void SessionBase::populate_args() {
 
    // Handle boolean parameters
    if (m_print_enums_numerically) {
-      auto parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
+      auto const& parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
       m_args.push_back(parts[0]);
       m_args.push_back(parts[1]);
    }
    if (m_print_full_oids) {
-      auto parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
+      auto const& parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
       m_args.push_back(parts[0]);
       m_args.push_back(parts[1]);
    }
    if (m_print_oids_numerically) {
-      auto parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
+      auto const& parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
       m_args.push_back(parts[0]);
       m_args.push_back(parts[1]);
    }
@@ -269,7 +269,9 @@ void SessionBase::populate_args() {
 }
 
 void SessionBase::check_and_clear_v3_user() {
-   remove_v3_user_from_cache(m_security_username, m_context_engine_id);
+   if (m_version == "3") {
+      remove_v3_user_from_cache(m_security_username, m_context_engine_id);
+   }
 }
 
 std::vector<Result> SessionBase::walk(std::string const& mib) {
