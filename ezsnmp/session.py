@@ -108,9 +108,9 @@ class Session(SessionBase):
 
     @property
     def args(self):
-        """Get the list of arguments used for NetSNMP commands.
+        """Get the tuple of arguments used for NetSNMP commands.
 
-        :type: list
+        :type: tuple
         """
         result = self._session_base._get_args()
         return result

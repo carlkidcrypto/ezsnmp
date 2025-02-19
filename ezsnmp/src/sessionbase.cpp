@@ -160,19 +160,25 @@ void SessionBase::populate_args() {
 
    // Handle boolean parameters
    if (m_print_enums_numerically) {
-      auto const& parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
-      m_args.push_back(parts[0]);
-      m_args.push_back(parts[1]);
+      auto const& enum_parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
+      std::string option = enum_parts[0];
+      std::string value = enum_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
    }
    if (m_print_full_oids) {
-      auto const& parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
-      m_args.push_back(parts[0]);
-      m_args.push_back(parts[1]);
+      auto const& full_parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
+      std::string option = full_parts[0]; 
+      std::string value = full_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
    }
    if (m_print_oids_numerically) {
-      auto const& parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
-      m_args.push_back(parts[0]);
-      m_args.push_back(parts[1]);
+      auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
+      std::string option = num_parts[0];
+      std::string value = num_parts[1]; 
+      m_args.push_back(option);
+      m_args.push_back(value);
    }
 
    // Add and make the host address
