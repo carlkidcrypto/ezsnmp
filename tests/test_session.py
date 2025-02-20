@@ -1083,10 +1083,7 @@ def test_session_print_options_two_set_true_false_true(version):
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert (
-        res[0].oid
-        == ".1.3.6.1.2.1.2.2.1.7"
-    )
+    assert res[0].oid == ".1.3.6.1.2.1.2.2.1.7"
     assert res[0].value == "1"
     assert res[0].type == "INTEGER"
     assert res[0].index == "1"
