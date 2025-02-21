@@ -6237,6 +6237,21 @@ SWIGINTERN void std_vector_Sl_Result_Sg__insert__SWIG_1(std::vector<Result> *sel
 
 #include "sessionbase.h"
 
+SWIGINTERN int SWIG_AsVal_bool(PyObject *obj, bool *val) {
+   int r;
+   if (!PyBool_Check(obj)) {
+      return SWIG_ERROR;
+   }
+   r = PyObject_IsTrue(obj);
+   if (r == -1) {
+      return SWIG_ERROR;
+   }
+   if (val) {
+      *val = r ? true : false;
+   }
+   return SWIG_OK;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -8737,9 +8752,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UnknownObjectIDErrorBase) /* defines
-                                                                    _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
-                                                                  */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UnknownObjectIDErrorBase) /* defines
+                                              _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
+                                            */
 
 SWIGINTERN int _wrap_new_NoSuchNameErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -9222,9 +9238,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchInstanceErrorBase) /* defines
-                                                                   _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
-                                                                 */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_NoSuchInstanceErrorBase) /* defines
+                                             _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
+                                           */
 
 SWIGINTERN int _wrap_new_UndeterminedTypeErrorBase(PyObject *self,
                                                    PyObject *args,
@@ -9387,9 +9404,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UndeterminedTypeErrorBase) /* defines
-                                                                     _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
-                                                                   */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UndeterminedTypeErrorBase) /* defines
+                                               _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
+                                             */
 
 SWIGINTERN int _wrap_new_ParseErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -18705,6 +18723,17 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    std::string arg14 = (std::string) "";
    std::string arg15 = (std::string) "3";
    std::string arg16 = (std::string) "1";
+   std::string arg17 = (std::string) "";
+   std::string arg18 = (std::string) "";
+   bool arg19 = (bool)false;
+   bool arg20 = (bool)false;
+   bool arg21 = (bool)false;
+   bool val19;
+   int ecode19 = 0;
+   bool val20;
+   int ecode20 = 0;
+   bool val21;
+   int ecode21 = 0;
    PyObject *obj1 = 0;
    PyObject *obj2 = 0;
    PyObject *obj3 = 0;
@@ -18721,6 +18750,11 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    PyObject *obj14 = 0;
    PyObject *obj15 = 0;
    PyObject *obj16 = 0;
+   PyObject *obj17 = 0;
+   PyObject *obj18 = 0;
+   PyObject *obj19 = 0;
+   PyObject *obj20 = 0;
+   PyObject *obj21 = 0;
    char *kwnames[] = {(char *)"hostname",
                       (char *)"port_number",
                       (char *)"version",
@@ -18737,12 +18771,18 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
                       (char *)"boots_time",
                       (char *)"retries",
                       (char *)"timeout",
+                      (char *)"load_mibs",
+                      (char *)"mib_directories",
+                      (char *)"print_enums_numerically",
+                      (char *)"print_full_oids",
+                      (char *)"print_oids_numerically",
                       NULL};
    SessionBase *result = 0;
 
-   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOOOOOOOOOOOOO:new_SessionBase", kwnames,
+   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOOOOOOOOOOOOOOOOOO:new_SessionBase", kwnames,
                                     &obj1, &obj2, &obj3, &obj4, &obj5, &obj6, &obj7, &obj8, &obj9,
-                                    &obj10, &obj11, &obj12, &obj13, &obj14, &obj15, &obj16)) {
+                                    &obj10, &obj11, &obj12, &obj13, &obj14, &obj15, &obj16, &obj17,
+                                    &obj18, &obj19, &obj20, &obj21)) {
       SWIG_fail;
    }
    if (obj1) {
@@ -19065,6 +19105,88 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
          }
       }
    }
+   if (obj17) {
+      {
+         std::string *ptr = (std::string *)0;
+         int res = SWIG_AsPtr_std_string(obj17, &ptr);
+         if (!SWIG_IsOK(res) || !ptr) {
+            SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)),
+                                "in method '"
+                                "new_SessionBase"
+                                "', argument "
+                                "17"
+                                " of type '"
+                                "std::string"
+                                "'");
+         }
+         arg17 = *ptr;
+         if (SWIG_IsNewObj(res)) {
+            delete ptr;
+         }
+      }
+   }
+   if (obj18) {
+      {
+         std::string *ptr = (std::string *)0;
+         int res = SWIG_AsPtr_std_string(obj18, &ptr);
+         if (!SWIG_IsOK(res) || !ptr) {
+            SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)),
+                                "in method '"
+                                "new_SessionBase"
+                                "', argument "
+                                "18"
+                                " of type '"
+                                "std::string"
+                                "'");
+         }
+         arg18 = *ptr;
+         if (SWIG_IsNewObj(res)) {
+            delete ptr;
+         }
+      }
+   }
+   if (obj19) {
+      ecode19 = SWIG_AsVal_bool(obj19, &val19);
+      if (!SWIG_IsOK(ecode19)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode19),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "19"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg19 = static_cast<bool>(val19);
+   }
+   if (obj20) {
+      ecode20 = SWIG_AsVal_bool(obj20, &val20);
+      if (!SWIG_IsOK(ecode20)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode20),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "20"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg20 = static_cast<bool>(val20);
+   }
+   if (obj21) {
+      ecode21 = SWIG_AsVal_bool(obj21, &val21);
+      if (!SWIG_IsOK(ecode21)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode21),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "21"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg21 = static_cast<bool>(val21);
+   }
    {
       try {
          {
@@ -19074,7 +19196,8 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
                 SWIG_STD_MOVE(arg5), SWIG_STD_MOVE(arg6), SWIG_STD_MOVE(arg7), SWIG_STD_MOVE(arg8),
                 SWIG_STD_MOVE(arg9), SWIG_STD_MOVE(arg10), SWIG_STD_MOVE(arg11),
                 SWIG_STD_MOVE(arg12), SWIG_STD_MOVE(arg13), SWIG_STD_MOVE(arg14),
-                SWIG_STD_MOVE(arg15), SWIG_STD_MOVE(arg16));
+                SWIG_STD_MOVE(arg15), SWIG_STD_MOVE(arg16), SWIG_STD_MOVE(arg17),
+                SWIG_STD_MOVE(arg18), arg19, arg20, arg21);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (ConnectionErrorBase const &e) {
@@ -28345,6 +28468,16 @@ SWIGINTERN PyGetSetDef SwigPyBuiltin__SessionBase_getset[] = {
              ":param retries: Number of retries for SNMP requests (default: \"3\").\n"
              ":type timeout: string, optional\n"
              ":param timeout: Timeout for SNMP requests (default: \"1\").\n"
+             ":type load_mibs: string, optional\n"
+             ":param load_mibs: Load given list of MIBs (default: \"\").\n"
+             ":type mib_directories: string, optional\n"
+             ":param mib_directories: Directories to search for MIBs (default: \"\").\n"
+             ":type print_enums_numerically: boolean, optional\n"
+             ":param print_enums_numerically: Print enums numerically (default: false).\n"
+             ":type print_full_oids: boolean, optional\n"
+             ":param print_full_oids: Print full OIDs on output (default: false).\n"
+             ":type print_oids_numerically: boolean, optional\n"
+             ":param print_oids_numerically: Print OIDs numerically (default: false).\n"
              "",
      &SessionBase___dict___getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
