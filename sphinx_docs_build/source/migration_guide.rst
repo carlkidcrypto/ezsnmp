@@ -1,0 +1,68 @@
+Migration Guide: V1.X.X to V2.X.X
+=================================
+
+This guide outlines the changes required to migrate from V1.X.X to V2.X.X.
+
+Major Changes
+-------------
+
+- The ``Session`` class has been refactored to use string parameters instead of mixed types
+- Many parameters have been removed or renamed for clarity
+- Default values have been modified for several parameters
+
+Parameter Changes
+-----------------
+
+Renamed Parameters
+~~~~~~~~~~~~~~~~~~
+
+- ``remote_port`` → ``port_number``
+- ``privacy_password`` → ``privacy_passphrase``
+- ``auth_password`` → ``auth_passphrase``
+- ``use_numeric`` → ``print_oids_numerically``
+- ``use_long_names`` → ``print_full_oids``
+
+Removed Parameters
+~~~~~~~~~~~~~~~~~~
+
+The following parameters have been removed in V2.X.X:
+
+- ``local_port``
+- ``engine_boots`` 
+- ``engine_time``
+- ``our_identity``
+- ``their_identity``
+- ``their_hostname``
+- ``trust_cert``
+- ``use_sprint_value``
+- ``use_enums``
+- ``best_guess``
+- ``retry_no_such``
+- ``abort_on_nonexistent``
+
+Migration Example
+-----------------
+
+Old code (V1.X.X):
+
+.. code-block:: python
+
+     session = Session(
+          hostname="example.com",
+          version=3,
+          remote_port=161,
+          timeout=1,
+          use_numeric=True
+     )
+
+New code (V2.X.X):
+
+.. code-block:: python
+
+     session = Session(
+          hostname="example.com",
+          version="3",
+          port_number="161",
+          timeout="1",
+          print_oids_numerically="true"
+     )
