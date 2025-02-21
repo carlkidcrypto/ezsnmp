@@ -10,7 +10,7 @@ The primary difference between V1.X.X and V2.X.X lies in how exceptions are stru
     * **V1.X.X:** Uses ``EzSNMPError`` as the base exception class. Specific error types inherit from this 
       class (e.g., ``EzSNMPConnectionError``, ``EzSNMPTimeoutError``).
     * **V2.X.X:** Uses ``GenericError`` as the base exception class. All other exceptions inherit from 
-      ``GenericError``. It adds a ``message`` attribute for more descriptive error reporting.
+      ``GenericError``.
 
 * **Specific Exception Classes:**
 
@@ -26,9 +26,9 @@ The primary difference between V1.X.X and V2.X.X lies in how exceptions are stru
 * **Error Handling:**
 
     * **V1.X.X:** Implicit exception handling. The code relies on catching specific exception types.
-    * **V2.X.X:** Introduces ``_handle_error(e)``. This function maps exceptions from a lower-level C++ library 
-      (e.g., ``ConnectionErrorBase``) to the corresponding Python exception classes. This provides a cleaner 
-      Python interface, abstracting C++ error types.
+    * **V2.X.X:** Introduces ``_handle_error(e)``. This function maps exceptions from the lower-level C++ 
+      net-snmp wrapper (e.g., ``ConnectionErrorBase``) to the corresponding Python exception classes. This 
+      provides a cleaner Python interface, abstracting C++ error types.
 
 In summary, V2.X.X offers a more robust and structured approach. ``_handle_error`` for mapping C++ exceptions 
 improves usability and maintainability. The common base class (``GenericError``) and more specific exception 

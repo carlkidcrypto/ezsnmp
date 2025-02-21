@@ -15,25 +15,30 @@
  */
 class SessionBase {
   private:
-   std::vector<std::string> m_args;  ///< Vector to store SNMP command arguments.
-   std::string m_hostname = "";      ///< Hostname or IP address of the SNMP agent.
-   std::string m_port_number = "";   ///< Port number for the SNMP agent.
-   std::string m_version = "";       ///< SNMP version ("1", "2c", or "3").
-   std::string m_community = "";     ///< Community string for SNMP v1/v2c.
-   std::string m_auth_protocol = ""; ///< Authentication protocol for SNMP v3 (e.g., "MD5", "SHA").
-   std::string m_auth_passphrase = "";    ///< Authentication passphrase for SNMP v3.
-   std::string m_security_engine_id = ""; ///< Security engine ID for SNMP v3.
-   std::string m_context_engine_id = "";  ///< Context engine ID for SNMP v3.
-   std::string m_security_level =
-       ""; ///< Security level for SNMP v3 (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
-   std::string m_context = "";            ///< Context name for SNMP v3.
-   std::string m_security_username = "";  ///< Security username for SNMP v3.
-   std::string m_privacy_protocol = "";   ///< Privacy protocol for SNMP v3 (e.g., "DES", "AES").
-   std::string m_privacy_passphrase = ""; ///< Privacy passphrase for SNMP v3.
-   std::string m_boots_time = "";         ///< System boots time for SNMP v3.
-   std::string m_retries = "";            ///< Number of retries for SNMP requests.
-   std::string m_timeout = "";            ///< Timeout for SNMP requests.
-
+   std::vector<std::string> m_args; ///< Vector to store SNMP command arguments.
+   std::string m_hostname = "";     ///< Hostname or IP address of the SNMP agent [AGENT].
+   std::string m_port_number = "";  ///< Port number for the SNMP agent.
+   std::string m_version = "";      ///< SNMP version (1|2c|3).
+   std::string m_community = "";    ///< Community string (COMMUNITY).
+   std::string m_auth_protocol =
+       ""; ///< Authentication protocol (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512).
+   std::string m_auth_passphrase = ""; ///< Authentication protocol pass phrase (PASSPHRASE).
+   std::string m_security_engine_id =
+       ""; ///< Security engine ID (ENGINE-ID e.g. 800000020109840301).
+   std::string m_context_engine_id = ""; ///< Context engine ID (ENGINE-ID e.g. 800000020109840301).
+   std::string m_security_level = "";    ///< Security level (noAuthNoPriv|authNoPriv|authPriv).
+   std::string m_context = "";           ///< Context name (CONTEXT e.g. bridge1).
+   std::string m_security_username = ""; ///< Security name (USER-NAME e.g. bert).
+   std::string m_privacy_protocol = "";  ///< Privacy protocol (DES|AES|AES-192|AES-256).
+   std::string m_privacy_passphrase = "";  ///< Privacy protocol pass phrase (PASSPHRASE).
+   std::string m_boots_time = "";          ///< Destination engine boots/time (BOOTS,TIME).
+   std::string m_retries = "";             ///< Number of retries (RETRIES).
+   std::string m_timeout = "";             ///< Request timeout in seconds (TIMEOUT).
+   std::string m_load_mibs = "";           ///< Load given list of MIBs (MIB[:...]).
+   std::string m_mib_directories = "";     ///< Directories to search for MIBs (DIR[:...]).
+   bool m_print_enums_numerically = false; ///< Print enums numerically (-O e).
+   bool m_print_full_oids = false;         ///< Print full OIDs on output (-O f).
+   bool m_print_oids_numerically = false;  ///< Print OIDs numerically (-O n).
    /**
     * @brief Populates the m_args vector with SNMP command arguments.
     *
@@ -72,23 +77,33 @@ class SessionBase {
     * @param boots_time System boots time for SNMP v3 (default: "").
     * @param retries Number of retries for SNMP requests (default: "3").
     * @param timeout Timeout for SNMP requests (default: "1").
+    * @param load_mibs Load given list of MIBs (default: "").
+    * @param mib_directories Directories to search for MIBs (default: "").
+    * @param print_enums_numerically Print enums numerically (default: false).
+    * @param print_full_oids Print full OIDs on output (default: false).
+    * @param print_oids_numerically Print OIDs numerically (default: false).
     */
-   SessionBase(std::string hostname = "localhost",
-               std::string port_number = "",
-               std::string version = "3",
-               std::string community = "public",
-               std::string auth_protocol = "",
-               std::string auth_passphrase = "",
-               std::string security_engine_id = "",
-               std::string context_engine_id = "",
-               std::string security_level = "",
-               std::string context = "",
-               std::string security_username = "",
-               std::string privacy_protocol = "",
-               std::string privacy_passphrase = "",
-               std::string boots_time = "",
-               std::string retries = "3",
-               std::string timeout = "1");
+   SessionBase(std::string const& hostname = "localhost",
+               std::string const& port_number = "",
+               std::string const& version = "3",
+               std::string const& community = "public",
+               std::string const& auth_protocol = "",
+               std::string const& auth_passphrase = "",
+               std::string const& security_engine_id = "",
+               std::string const& context_engine_id = "",
+               std::string const& security_level = "",
+               std::string const& context = "",
+               std::string const& security_username = "",
+               std::string const& privacy_protocol = "",
+               std::string const& privacy_passphrase = "",
+               std::string const& boots_time = "",
+               std::string const& retries = "3",
+               std::string const& timeout = "1",
+               std::string const& load_mibs = "",
+               std::string const& mib_directories = "",
+               bool print_enums_numerically = false,
+               bool print_full_oids = false,
+               bool print_oids_numerically = false);
 
    /**
     * @brief Destructor for SessionBase.
