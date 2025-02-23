@@ -31,13 +31,18 @@ ninja -C "$BUILD_DIR" test
 echo "Capturing coverage data with lcov..."
 lcov --capture --directory "$BUILD_DIR" --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
 
+# Remove unwanted coverage data
+echo "Removing unwanted coverage data..."
+lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info
+
 # Generate HTML coverage report
 echo "Generating HTML coverage report..."
-genhtml -o "$COVERAGE_DIR" coverage.info
+genhtml -o "$COVERAGE_DIR" updated_coverage.info
 
 # Clean up coverage info file
 echo "Cleaning up coverage info file..."
 rm coverage.info
+rm updated_coverage.info
 
 echo "Coverage report generated in $COVERAGE_DIR/index.html"
 

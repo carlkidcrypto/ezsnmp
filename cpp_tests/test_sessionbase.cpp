@@ -937,49 +937,58 @@ INSTANTIATE_TEST_SUITE_P(
     testing::Combine(
         testing::Values("1", "2c", "3"),
         testing::Values(
-            PrintOptions{
-                // print_enums_numerically: Print enum values as numbers (e.g. 1) instead of text
-                // (e.g. up)
-                true,
-                // print_full_oids: Print full OIDs (e.g. .1.3.6.1.2.1.2.2.1.7) instead of MIB names
-                false,
-                // print_oids_numerically: Print OID components numerically
-                false,
-                {"e"},
-                {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
-
-            PrintOptions{// print_enums_numerically: false - Print enums as text
+            PrintOptions{// Case 1: All false
                          false,
-                         // print_full_oids: false - Use MIB names
                          false,
-                         // print_oids_numerically: false - Use text OID components
                          false,
                          {},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up"}},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)"}},
 
-            PrintOptions{// print_enums_numerically: false - Print enums as text
-                         false,
-                         // print_full_oids: true - Print full numeric OIDs
+            PrintOptions{// Case 2: enums true, others false
                          true,
-                         // print_oids_numerically: false - Use text OID components
+                         false,
+                         false,
+                         {"e"},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
+
+            PrintOptions{// Case 3: full_oids true, others false
+                         false,
+                         true,
                          false,
                          {"f"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
 
-            PrintOptions{// print_enums_numerically: false - Print enums as text
+            PrintOptions{// Case 4: oids_numeric true, others false
                          false,
-                         // print_full_oids: false - Use MIB names
                          false,
-                         // print_oids_numerically: true - Print OID components numerically
                          true,
                          {"n"},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up"}},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)"}},
 
-            PrintOptions{// print_enums_numerically: true - Print enums as numbers
+            PrintOptions{// Case 5: enums and full_oids true, oids_numeric false
                          true,
-                         // print_full_oids: true - Print full OIDs
                          true,
-                         // print_oids_numerically: true - Print OIDs numerically
+                         false,
+                         {"e", "f"},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}},
+
+            PrintOptions{// Case 6: enums and oids_numeric true, full_oids false
+                         true,
+                         false,
+                         true,
+                         {"e", "n"},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
+
+            PrintOptions{// Case 7: full_oids and oids_numeric true, enums false
+                         false,
+                         true,
+                         true,
+                         {"f", "n"},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
+
+            PrintOptions{// Case 8: All true
+                         true,
+                         true,
                          true,
                          {"e", "f", "n"},
                          {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}})));
