@@ -24,7 +24,7 @@ Installing Dependencies
 
 1. Install the required dependencies for the tests::
 
-    sudo apt-get install libsnmp-dev pkg-config
+    sudo apt-get install libsnmp-dev pkg-config lcov
 
 Building and Running Tests
 --------------------------
@@ -49,3 +49,22 @@ Or alternatively::
 The test results will be displayed in the terminal. For detailed output, use::
 
     meson test -v
+
+Running Specific Tests and Coverage
+----------------------------------
+
+1. To run a specific test suite::
+
+    clear && ninja -C build/ && ./build/test_sessionbase
+
+2. To run all test suites::
+
+    clear && ninja -C build/ test
+
+
+Coverage Reports
+----------------
+
+1. To generate coverage reports, run the following commands::
+
+    clear && ./get_test_coverage.sh 

@@ -1,4 +1,7 @@
-project('ezsnmp_tests', 'cpp')
+project('ezsnmp_tests',  'cpp', default_options: ['cpp_std=c++17'])
+
+add_project_arguments('-fprofile-arcs', '-ftest-coverage', language: 'cpp')
+add_project_link_arguments('-lgcov', language: 'cpp')
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)

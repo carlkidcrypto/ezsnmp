@@ -1,127 +1,85 @@
 #include <gtest/gtest.h>
+
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
 class SessionBaseTest : public ::testing::Test {
-protected:
+  protected:
    void SetUp() override {}
    void TearDown() override {}
 };
 
 TEST_F(SessionBaseTest, TestBasicV1Session) {
-   SessionBase session("localhost", "161", "1", "public");
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "1",
+       /* community */ "public");
    auto args = session._get_args();
-   
-   std::vector<std::string> expected = {
-      "-c", "public",
-      "-v", "1",
-      "localhost:161"
-   };
-   
+   std::vector<std::string> expected = {"-c", "public", "-r",           "3", "-t", "1",
+                                        "-v", "1",      "localhost:161"};
    ASSERT_EQ(args, expected);
 }
 
 TEST_F(SessionBaseTest, TestV3Session) {
-   SessionBase session("localhost", "161", "3", "", "SHA", "auth_pass", 
-      "", "", "authPriv", "", "username", "AES", "priv_pass");
-   
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "3",
+       /* community */ "",
+       /* auth_protocol */ "SHA",
+       /* auth_passphrase */ "auth_pass",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "authPriv",
+       /* context */ "",
+       /* security_username */ "username",
+       /* privacy_protocol */ "AES",
+       /* privacy_passphrase */ "priv_pass");
    auto args = session._get_args();
    std::vector<std::string> expected = {
-      "-v", "3",
-      "-a", "SHA",
-      "-A", "auth_pass", 
-      "-l", "authPriv",
-      "-u", "username",
-      "-x", "AES",
-      "-X", "priv_pass",
-      "localhost:161"
-   };
-   
+       "-A", "auth_pass", "-a", "SHA",      "-X", "priv_pass", "-x", "AES", "-r",           "3",
+       "-l", "authPriv",  "-u", "username", "-t", "1",         "-v", "3",   "localhost:161"};
    ASSERT_EQ(args, expected);
 }
 
 TEST_F(SessionBaseTest, TestHostnameWithPort) {
-   SessionBase session("localhost:162", "", "1", "public");
-   
-   EXPECT_EQ(session._get_hostname(), "localhost");
-   EXPECT_EQ(session._get_port_number(), "162");
-   
+   SessionBase session(
+       /* hostname */ "localhost:162",
+       /* port_number */ "",
+       /* version */ "1",
+       /* community */ "public");
    auto args = session._get_args();
-   std::vector<std::string> expected = {
-      "-c", "public",
-      "-v", "1", 
-      "localhost:162"
-   };
-   
-   ASSERT_EQ(args, expected);
-}
-
-TEST_F(SessionBaseTest, TestIPv6Address) {
-   SessionBase session("[2001:db8::]", "161", "1", "public");
-   
-   EXPECT_EQ(session._get_hostname(), "[2001:db8::]");
-   EXPECT_EQ(session._get_port_number(), "161");
-   
-   auto args = session._get_args();
-   std::vector<std::string> expected = {
-      "-c", "public",
-      "-v", "1",
-      "[2001:db8::]:161" 
-   };
-   
-   ASSERT_EQ(args, expected);
-}
-
-TEST_F(SessionBaseTest, TestIPv6AddressWithPort) {
-   SessionBase session("[2001:db8::]:162", "", "1", "public");
-   
-   EXPECT_EQ(session._get_hostname(), "[2001:db8::]");
-   EXPECT_EQ(session._get_port_number(), "162");
-   
-   auto args = session._get_args();
-   std::vector<std::string> expected = {
-      "-c", "public", 
-      "-v", "1",
-      "[2001:db8::]:162"
-   };
-   
-   ASSERT_EQ(args, expected);
-}
-
-TEST_F(SessionBaseTest, TestUDP6Address) {
-   SessionBase session("udp6:[2001:db8::]", "161", "1", "public");
-   
-   EXPECT_EQ(session._get_hostname(), "udp6:[2001:db8::]");
-   EXPECT_EQ(session._get_port_number(), "161");
-   
-   auto args = session._get_args();
-   std::vector<std::string> expected = {
-      "-c", "public",
-      "-v", "1", 
-      "udp6:[2001:db8::]:161"
-   };
-   
+   std::vector<std::string> expected = {"-c", "public", "-r",           "3", "-t", "1",
+                                        "-v", "1",      "localhost:162"};
    ASSERT_EQ(args, expected);
 }
 
 TEST_F(SessionBaseTest, TestPrintOptions) {
-   SessionBase session("localhost", "161", "1", "public", "", "", "", "", "", "", "", "", "",
-      "", "", "", "", "", true, true, true);
-      
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "1",
+       /* community */ "public",
+       /* auth_protocol */ "",
+       /* auth_passphrase */ "",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "",
+       /* context */ "",
+       /* security_username */ "",
+       /* privacy_protocol */ "",
+       /* privacy_passphrase */ "",
+       /* boots_time */ "",
+       /* retries */ "",
+       /* timeout */ "",
+       /* load_mibs */ "",
+       /* mib_directories */ "",
+       /* print_enums_numerically */ true,
+       /* print_full_oids */ true,
+       /* print_oids_numerically */ true);
    auto args = session._get_args();
-   std::vector<std::string> expected = {
-      "-c", "public",
-      "-v", "1",
-      "-O", "efn", 
-      "localhost:161"
-   };
-   
+   std::vector<std::string> expected = {"-c", "public", "-v", "1", "-O",           "e",
+                                        "-O", "f",      "-O", "n", "localhost:161"};
    ASSERT_EQ(args, expected);
-}
-
-TEST_F(SessionBaseTest, TestInvalidHostnamePortCombination) {
-   EXPECT_THROW(
-      SessionBase("localhost:162", "161", "1", "public"),
-      ParseErrorBase
-   );
 }

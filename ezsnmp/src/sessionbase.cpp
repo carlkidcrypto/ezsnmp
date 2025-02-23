@@ -168,7 +168,7 @@ void SessionBase::populate_args() {
    }
    if (m_print_full_oids) {
       auto const& full_parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
-      std::string option = full_parts[0]; 
+      std::string option = full_parts[0];
       std::string value = full_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
@@ -176,7 +176,7 @@ void SessionBase::populate_args() {
    if (m_print_oids_numerically) {
       auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
       std::string option = num_parts[0];
-      std::string value = num_parts[1]; 
+      std::string value = num_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
