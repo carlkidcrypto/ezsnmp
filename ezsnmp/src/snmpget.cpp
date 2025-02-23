@@ -205,7 +205,7 @@ retry:
          }
       } else {
          std::string err_msg =
-             "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+             "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
 
          if (response->errindex != 0) {
             err_msg = err_msg + "Failed object: ";

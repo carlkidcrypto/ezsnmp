@@ -138,15 +138,15 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    }
 
    if (arg >= argc) {
-      fprintf(stderr, "Missing object name\n");
-      snmpgetnext_usage();
-      goto out;
+      std::string err_msg = "Missing object name\n";
+      throw GenericErrorBase(err_msg);
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
-      fprintf(stderr, "Too many object identifiers specified. ");
-      fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-      snmpgetnext_usage();
-      goto out;
+      std::string err_msg =
+          "Too many object identifiers specified. "
+          "Only " +
+          std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
+      throw GenericErrorBase(err_msg);
    }
 
    /*
@@ -198,15 +198,18 @@ retry:
             return_vector.push_back(str_value);
          }
       } else {
-         fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+         std::string err_msg =
+             "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+
          if (response->errindex != 0) {
-            fprintf(stderr, "Failed object: ");
+            err_msg = err_msg + "Failed object: ";
             for (count = 1, vars = response->variables; vars && count != response->errindex;
-                 vars = vars->next_variable, count++);
+                 vars = vars->next_variable, count++)
+               /*EMPTY*/;
             if (vars) {
-               fprint_objid(stderr, vars->name, vars->name_length);
+               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
             }
-            fprintf(stderr, "\n");
+            err_msg = err_msg + "\n";
          }
 
          /*
@@ -220,6 +223,7 @@ retry:
                goto retry;
             }
          }
+         throw PacketErrorBase(err_msg);
       }
    } else if (status == STAT_TIMEOUT) {
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
