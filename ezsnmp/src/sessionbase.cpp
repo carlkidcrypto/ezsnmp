@@ -201,7 +201,7 @@ void SessionBase::populate_args() {
       // Check for `udp6:[2001:db8::]` or `udp6:[2001:db8::]:162`
       if (IsUdp6InStr != std::string::npos && openBracketPos != std::string::npos &&
           closeBracketPos != std::string::npos) {
-         size_t lastColonPos = temp_hostname.find_last_of(':', closeBracketPos + 1);
+         size_t lastColonPos = temp_hostname.find(':', closeBracketPos + 1);
 
          // Do a check if something like `udp6:[2001:db8::]:162` was provided
          if (lastColonPos != std::string::npos) {
