@@ -9,6 +9,65 @@ class SessionBaseTest : public ::testing::Test {
    void TearDown() override {}
 };
 
+TEST_F(SessionBaseTest, TestIPv6AddressWithPort) {
+   SessionBase session("[2001:db8::]:162", "", "1", "public");
+
+   EXPECT_EQ(session._get_hostname(), "[2001:db8::]");
+   EXPECT_EQ(session._get_port_number(), "162");
+
+   auto args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public",          "-r", "3", "-t", "1", "-v",
+                                        "1",  "[2001:db8::]:162"};
+
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestUDP6Address) {
+   SessionBase session("udp6:[2001:db8::]", "161", "1", "public");
+
+   EXPECT_EQ(session._get_hostname(), "udp6:[2001:db8::]");
+   EXPECT_EQ(session._get_port_number(), "161");
+
+   auto args = session._get_args();
+   std::vector<std::string> expected = {
+       "-c", "public", "-r", "3", "-t", "1", "-v", "1", "udp6:[2001:db8::]:161"};
+
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestPrintOptions) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "1",
+       /* community */ "public",
+       /* auth_protocol */ "",
+       /* auth_passphrase */ "",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "",
+       /* context */ "",
+       /* security_username */ "",
+       /* privacy_protocol */ "",
+       /* privacy_passphrase */ "",
+       /* boots_time */ "",
+       /* retries */ "",
+       /* timeout */ "",
+       /* load_mibs */ "",
+       /* mib_directories */ "",
+       /* print_enums_numerically */ true,
+       /* print_full_oids */ true,
+       /* print_oids_numerically */ true);
+   auto args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public", "-v", "1", "-O",           "e",
+                                        "-O", "f",      "-O", "n", "localhost:161"};
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestInvalidHostnamePortCombination) {
+   EXPECT_THROW(SessionBase("localhost:162", "161", "1", "public"), ParseErrorBase);
+}
+
 TEST_F(SessionBaseTest, TestBasicV1Session) {
    SessionBase session(
        /* hostname */ "localhost",
@@ -261,4 +320,249 @@ TEST_F(SessionBaseTest, TestSetters) {
                                         "-v",         "3",
                                         "newhost:162"};
    ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestWalkSingleMib) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "5");
+   auto result = session.walk("SNMPv2-MIB::sysORDescr");
+
+   EXPECT_EQ(result[0].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
+             "Architecture MIB.");
+   EXPECT_EQ(result[1].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(result[2].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
+             "information definitions for the SNMP User-based Security Model.");
+   EXPECT_EQ(result[3].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
+             "SNMPv2 entities");
+   EXPECT_EQ(result[4].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access "
+             "Control Model for SNMP.");
+   EXPECT_EQ(result[5].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
+             "managing TCP implementations");
+   EXPECT_EQ(result[6].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+             "managing UDP implementations");
+   EXPECT_EQ(result[7].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+             "managing IP and ICMP implementations");
+   EXPECT_EQ(result[8].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
+             "managing SNMP Notification, plus filtering.");
+   EXPECT_EQ(result[9].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
+             "logging SNMP Notifications.");
+}
+
+TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "5");
+   auto result = session.bulk_walk("SNMPv2-MIB::sysORDescr");
+
+   EXPECT_EQ(result[0].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
+             "Architecture MIB.");
+   EXPECT_EQ(result[1].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(result[2].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
+             "information definitions for the SNMP User-based Security Model.");
+   EXPECT_EQ(result[3].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
+             "SNMPv2 entities");
+   EXPECT_EQ(result[4].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access "
+             "Control Model for SNMP.");
+   EXPECT_EQ(result[5].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
+             "managing TCP implementations");
+   EXPECT_EQ(result[6].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+             "managing UDP implementations");
+   EXPECT_EQ(result[7].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+             "managing IP and ICMP implementations");
+   EXPECT_EQ(result[8].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
+             "managing SNMP Notification, plus filtering.");
+   EXPECT_EQ(result[9].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
+             "logging SNMP Notifications.");
+}
+
+// BROKEN< THERE"S A BUG HERE. bulkwalk only walks one OID.
+// TEST_F(SessionBaseTest, TestBulkWalkMultipleMibs) {
+//     SessionBase session(
+//         "localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "", "3", "5");
+//     std::vector<std::string> mibs = {
+//         "sysORDescr",
+//         "sysORID"
+//     };
+//     auto result = session.bulk_walk(mibs);
+//     ASSERT_FALSE(result.empty());
+
+//     // Check sysORDescr entries
+//     EXPECT_EQ(result[0].to_string(), "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value:
+//     The SNMP Management Architecture MIB."); EXPECT_EQ(result[1].to_string(), "oid:
+//     SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message Processing and
+//     Dispatching."); EXPECT_EQ(result[2].to_string(), "oid: SNMPv2-MIB::sysORDescr, index: 3,
+//     type: STRING, value: The management information definitions for the SNMP User-based Security
+//     Model."); EXPECT_EQ(result[3].to_string(), "oid: SNMPv2-MIB::sysORDescr, index: 4, type:
+//     STRING, value: The MIB module for SNMPv2 entities"); EXPECT_EQ(result[4].to_string(), "oid:
+//     SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access Control Model for
+//     SNMP."); EXPECT_EQ(result[5].to_string(), "oid: SNMPv2-MIB::sysORDescr, index: 6, type:
+//     STRING, value: The MIB module for managing TCP implementations");
+//     EXPECT_EQ(result[6].to_string(), "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value:
+//     The MIB module for managing UDP implementations"); EXPECT_EQ(result[7].to_string(), "oid:
+//     SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for managing IP and
+//     ICMP implementations"); EXPECT_EQ(result[8].to_string(), "oid: SNMPv2-MIB::sysORDescr, index:
+//     9, type: STRING, value: The MIB modules for managing SNMP Notification, plus filtering.");
+//     EXPECT_EQ(result[9].to_string(), "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING,
+//     value: The MIB module for logging SNMP Notifications.");
+
+//     // Check sysORID entries
+//     EXPECT_EQ(result[10].to_string(), "oid: SNMPv2-MIB::sysORID, index: 1, type: OBJID, value:
+//     SNMPv2-SMI::mib-2.49.1"); EXPECT_EQ(result[11].to_string(), "oid: SNMPv2-MIB::sysORID, index:
+//     2, type: OBJID, value: SNMP-MPD-MIB::snmpMPDMIB"); EXPECT_EQ(result[12].to_string(), "oid:
+//     SNMPv2-MIB::sysORID, index: 3, type: OBJID, value: SNMP-USER-BASED-SM-MIB::usmMIB");
+//     EXPECT_EQ(result[13].to_string(), "oid: SNMPv2-MIB::sysORID, index: 4, type: OBJID, value:
+//     SNMPv2-MIB::snmpMIB"); EXPECT_EQ(result[14].to_string(), "oid: SNMPv2-MIB::sysORID, index: 5,
+//     type: OBJID, value: SNMP-VIEW-BASED-ACM-MIB::vacmBasicGroup");
+//     EXPECT_EQ(result[15].to_string(), "oid: SNMPv2-MIB::sysORID, index: 6, type: OBJID, value:
+//     TCP-MIB::tcpMIB"); EXPECT_EQ(result[16].to_string(), "oid: SNMPv2-MIB::sysORID, index: 7,
+//     type: OBJID, value: UDP-MIB::udpMIB"); EXPECT_EQ(result[17].to_string(), "oid:
+//     SNMPv2-MIB::sysORID, index: 8, type: OBJID, value: IP-MIB::ip");
+//     EXPECT_EQ(result[18].to_string(), "oid: SNMPv2-MIB::sysORID, index: 9, type: OBJID, value:
+//     SNMP-NOTIFICATION-MIB::snmpNotificationMIB"); EXPECT_EQ(result[19].to_string(), "oid:
+//     SNMPv2-MIB::sysORID, index: 10, type: OBJID, value:
+//     NOTIFICATION-LOG-MIB::notificationLogMIB");
+// }
+
+TEST_F(SessionBaseTest, TestGetSingleMib) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "5");
+
+   // First get the current value and verify args
+   auto initial_result = session.get("SNMPv2-MIB::sysLocation.0");
+   ASSERT_FALSE(initial_result.empty());
+   EXPECT_EQ(initial_result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+
+   auto get_args = session._get_args();
+   std::vector<std::string> expected_get_args = {"-c",
+                                                 "public",
+                                                 "-r",
+                                                 "3",
+                                                 "-t",
+                                                 "5",
+                                                 "-v",
+                                                 "2c",
+                                                 "localhost:11161",
+                                                 "SNMPv2-MIB::sysLocation.0"};
+   ASSERT_EQ(get_args, expected_get_args);
+
+   // Set the new value and verify args
+   std::vector<std::string> set_mibs = {"SNMPv2-MIB::sysLocation.0", "s", "my newer location"};
+   auto set_result = session.set(set_mibs);
+   ASSERT_FALSE(set_result.empty());
+   EXPECT_EQ(set_result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my newer location");
+
+   auto set_args = session._get_args();
+   std::vector<std::string> expected_set_args = {"-c",
+                                                 "public",
+                                                 "-r",
+                                                 "3",
+                                                 "-t",
+                                                 "5",
+                                                 "-v",
+                                                 "2c",
+                                                 "localhost:11161",
+                                                 "SNMPv2-MIB::sysLocation.0",
+                                                 "s",
+                                                 "my newer location"};
+   ASSERT_EQ(set_args, expected_set_args);
+
+   // Verify the new value and args
+   auto final_result = session.get("SNMPv2-MIB::sysLocation.0");
+   ASSERT_FALSE(final_result.empty());
+   EXPECT_EQ(final_result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my newer location");
+
+   get_args = session._get_args();
+   ASSERT_EQ(get_args, expected_get_args);
+
+   // Set back to default and verify args
+   set_mibs = {"SNMPv2-MIB::sysLocation.0", "s", "my original location"};
+   set_result = session.set(set_mibs);
+   ASSERT_FALSE(set_result.empty());
+   EXPECT_EQ(set_result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+
+   set_args = session._get_args();
+   expected_set_args = {"-c",
+                        "public",
+                        "-r",
+                        "3",
+                        "-t",
+                        "5",
+                        "-v",
+                        "2c",
+                        "localhost:11161",
+                        "SNMPv2-MIB::sysLocation.0",
+                        "s",
+                        "my original location"};
+   ASSERT_EQ(set_args, expected_set_args);
+}
+
+TEST_F(SessionBaseTest, TestGetV3MD5DES) {
+   SessionBase session("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv", "",
+                       "initial_md5_des", "DES", "priv_pass", "", "3", "5");
+   auto result = session.get("SNMPv2-MIB::sysLocation.0");
+   ASSERT_FALSE(result.empty());
+   EXPECT_EQ(result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+}
+
+TEST_F(SessionBaseTest, TestGetV3SHAAES) {
+   SessionBase session("localhost", "11161", "3", "", "SHA", "auth_second", "", "", "authPriv", "",
+                       "secondary_sha_aes", "AES", "priv_second", "", "3", "5");
+   auto result = session.get("SNMPv2-MIB::sysLocation.0");
+   ASSERT_FALSE(result.empty());
+   EXPECT_EQ(result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+}
+
+TEST_F(SessionBaseTest, TestGetV3SHANoPriv) {
+   SessionBase session("localhost", "11161", "3", "", "SHA", "auth_second", "", "", "authNoPriv",
+                       "", "secondary_sha_no_priv", "", "", "", "3", "5");
+   auto result = session.get("SNMPv2-MIB::sysLocation.0");
+   ASSERT_FALSE(result.empty());
+   EXPECT_EQ(result[0].to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+}
+
+TEST_F(SessionBaseTest, TestSet) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "5");
+   std::vector<std::string> mibs = {"SNMPv2-MIB::sysContact.0", "s", "contact@example.com"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto result = session.set(mibs);
+          } catch (std::runtime_error const& e) {
+             EXPECT_STREQ(e.what(),
+                          "Error in packet.\nReason: notWritable (That object does not support "
+                          "modification)\nFailed object: SNMPv2-MIB::sysContact.0");
+             throw;
+          }
+       },
+       std::runtime_error);
 }

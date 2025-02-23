@@ -16,7 +16,7 @@ test_datatypes = executable(
     'test_datatypes',
     [
         'test_datatypes.cpp',
-        '../ezsnmp/src/datatypes.cpp'
+        '../ezsnmp/src/datatypes.cpp',
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
@@ -34,7 +34,8 @@ test_sessionbase = executable(
         '../ezsnmp/src/snmpget.cpp',
         '../ezsnmp/src/snmpgetnext.cpp',
         '../ezsnmp/src/snmpset.cpp',
-        '../ezsnmp/src/snmpwalk.cpp'
+        '../ezsnmp/src/snmpwalk.cpp',
+        '../ezsnmp/src/datatypes.cpp',
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
