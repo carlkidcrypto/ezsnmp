@@ -35,6 +35,24 @@ TEST_F(SessionBaseTest, TestUDP6Address) {
    ASSERT_EQ(args, expected);
 }
 
+TEST_F(SessionBaseTest, TestUDP6AddressWithPort) {
+    // Test an IPv6 address with udp6 prefix and port number after closing bracket
+    SessionBase session("udp6:[2001:db8::]:161", "", "1", "public");
+ 
+    // Verify hostname extraction (should include udp6: prefix and brackets)
+    EXPECT_EQ(session._get_hostname(), "udp6:[2001:db8::]");
+    
+    // Verify port number extraction from after the closing bracket
+    EXPECT_EQ(session._get_port_number(), "161");
+ 
+    // Verify complete args construction
+    auto args = session._get_args();
+    std::vector<std::string> expected = {
+        "-c", "public", "-r", "3", "-t", "1", "-v", "1", "udp6:[2001:db8::]:161"};
+ 
+    ASSERT_EQ(args, expected);
+}
+
 TEST_F(SessionBaseTest, TestPrintOptions) {
    SessionBase session(
        /* hostname */ "localhost",
@@ -790,3 +808,103 @@ TEST_F(SessionBaseTest, TestBulkGetEmptyMibs) {
                                              "2c", "localhost:11161"};
    ASSERT_EQ(args, expected_args);
 }
+
+struct PrintOptions {
+    bool print_enums_numerically;
+    bool print_full_oids;
+    bool print_oids_numerically;
+    std::string expected_flag;
+};
+
+class SessionsParamTest : public ::testing::TestWithParam<std::tuple<std::string, PrintOptions>> {
+protected:
+    void SetUp() override {}
+    void TearDown() override {}
+};
+
+TEST_P(SessionsParamTest, TestSessionPrintOptions) {
+    const auto& [version, print_opts] = GetParam();
+    
+    if (version == "3") {
+        SessionBase session(
+            /* hostname */ "localhost",
+            /* port_number */ "11161", 
+            /* version */ "3",
+            /* community */ "",
+            /* auth_protocol */ "SHA",
+            /* auth_passphrase */ "auth_second",
+            /* security_engine_id */ "",
+            /* context_engine_id */ "",
+            /* security_level */ "authPriv",
+            /* context */ "",
+            /* security_username */ "secondary_sha_aes",
+            /* privacy_protocol */ "AES",
+            /* privacy_passphrase */ "priv_second",
+            /* boots_time */ "",
+            /* retries */ "",
+            /* timeout */ "",
+            /* load_mibs */ "",
+            /* mib_directories */ "",
+            /* print_enums_numerically */ print_opts.print_enums_numerically,
+            /* print_full_oids */ print_opts.print_full_oids,
+            /* print_oids_numerically */ print_opts.print_oids_numerically);
+
+        auto args = session._get_args();
+        std::vector<std::string> expected = {
+            "-A", "auth_second",
+            "-a", "SHA", 
+            "-X", "priv_second",
+            "-x", "AES",
+            "-l", "authPriv", 
+            "-u", "secondary_sha_aes",
+            "-v", "3",
+            "-O", print_opts.expected_flag,
+            "localhost:11161"
+        };
+        ASSERT_EQ(args, expected);
+    }
+    else {
+        SessionBase session(
+            /* hostname */ "localhost:11161",
+            /* port_number */ "",
+            /* version */ version,
+            /* community */ "public",
+            /* auth_protocol */ "",
+            /* auth_passphrase */ "",
+            /* security_engine_id */ "",
+            /* context_engine_id */ "",
+            /* security_level */ "",
+            /* context */ "",
+            /* security_username */ "",
+            /* privacy_protocol */ "",
+            /* privacy_passphrase */ "",
+            /* boots_time */ "",
+            /* retries */ "",
+            /* timeout */ "",
+            /* load_mibs */ "",
+            /* mib_directories */ "",
+            /* print_enums_numerically */ print_opts.print_enums_numerically,
+            /* print_full_oids */ print_opts.print_full_oids,
+            /* print_oids_numerically */ print_opts.print_oids_numerically);
+
+        auto args = session._get_args();
+        std::vector<std::string> expected = {
+            "-c", "public",
+            "-v", version,
+            "-O", print_opts.expected_flag,
+            "localhost:11161"
+        };
+        ASSERT_EQ(args, expected);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(SessionVersions, SessionsParamTest, 
+    testing::Combine(
+        testing::Values("1", "2c", "3"),
+        testing::Values(
+            PrintOptions{true, false, false, "e"},   // print_enums_numerically
+            PrintOptions{false, true, false, "f"},   // print_full_oids
+            PrintOptions{false, false, true, "n"}    // print_oids_numerically
+        )
+    )
+);
