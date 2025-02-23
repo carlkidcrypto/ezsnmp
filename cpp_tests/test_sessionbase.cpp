@@ -36,21 +36,21 @@ TEST_F(SessionBaseTest, TestUDP6Address) {
 }
 
 TEST_F(SessionBaseTest, TestUDP6AddressWithPort) {
-    // Test an IPv6 address with udp6 prefix and port number after closing bracket
-    SessionBase session("udp6:[2001:db8::]:161", "", "1", "public");
- 
-    // Verify hostname extraction (should include udp6: prefix and brackets)
-    EXPECT_EQ(session._get_hostname(), "udp6:[2001:db8::]");
-    
-    // Verify port number extraction from after the closing bracket
-    EXPECT_EQ(session._get_port_number(), "161");
- 
-    // Verify complete args construction
-    auto args = session._get_args();
-    std::vector<std::string> expected = {
-        "-c", "public", "-r", "3", "-t", "1", "-v", "1", "udp6:[2001:db8::]:161"};
- 
-    ASSERT_EQ(args, expected);
+   // Test an IPv6 address with udp6 prefix and port number after closing bracket
+   SessionBase session("udp6:[2001:db8::]:161", "", "1", "public");
+
+   // Verify hostname extraction (should include udp6: prefix and brackets)
+   EXPECT_EQ(session._get_hostname(), "udp6:[2001:db8::]");
+
+   // Verify port number extraction from after the closing bracket
+   EXPECT_EQ(session._get_port_number(), "161");
+
+   // Verify complete args construction
+   auto args = session._get_args();
+   std::vector<std::string> expected = {
+       "-c", "public", "-r", "3", "-t", "1", "-v", "1", "udp6:[2001:db8::]:161"};
+
+   ASSERT_EQ(args, expected);
 }
 
 TEST_F(SessionBaseTest, TestPrintOptions) {
@@ -810,101 +810,176 @@ TEST_F(SessionBaseTest, TestBulkGetEmptyMibs) {
 }
 
 struct PrintOptions {
-    bool print_enums_numerically;
-    bool print_full_oids;
-    bool print_oids_numerically;
-    std::string expected_flag;
+   bool print_enums_numerically;
+   bool print_full_oids;
+   bool print_oids_numerically;
+   std::vector<std::string> expected_flags;
+   std::vector<std::string> expected_get_output;
+
+   // Add pretty printing for test failures
+   friend std::ostream& operator<<(std::ostream& os, PrintOptions const& po) {
+      os << "PrintOptions{enums_numeric=" << (po.print_enums_numerically ? "true" : "false")
+         << ", full_oids=" << (po.print_full_oids ? "true" : "false")
+         << ", oids_numeric=" << (po.print_oids_numerically ? "true" : "false") << ", flags=[";
+      for (size_t i = 0; i < po.expected_flags.size(); i++) {
+         if (i > 0) {
+            os << ",";
+         }
+         os << po.expected_flags[i];
+      }
+      os << "]}";
+      return os;
+   }
 };
 
 class SessionsParamTest : public ::testing::TestWithParam<std::tuple<std::string, PrintOptions>> {
-protected:
-    void SetUp() override {}
-    void TearDown() override {}
+  protected:
+   void SetUp() override {}
+   void TearDown() override {}
 };
 
 TEST_P(SessionsParamTest, TestSessionPrintOptions) {
-    const auto& [version, print_opts] = GetParam();
-    
-    if (version == "3") {
-        SessionBase session(
-            /* hostname */ "localhost",
-            /* port_number */ "11161", 
-            /* version */ "3",
-            /* community */ "",
-            /* auth_protocol */ "SHA",
-            /* auth_passphrase */ "auth_second",
-            /* security_engine_id */ "",
-            /* context_engine_id */ "",
-            /* security_level */ "authPriv",
-            /* context */ "",
-            /* security_username */ "secondary_sha_aes",
-            /* privacy_protocol */ "AES",
-            /* privacy_passphrase */ "priv_second",
-            /* boots_time */ "",
-            /* retries */ "",
-            /* timeout */ "",
-            /* load_mibs */ "",
-            /* mib_directories */ "",
-            /* print_enums_numerically */ print_opts.print_enums_numerically,
-            /* print_full_oids */ print_opts.print_full_oids,
-            /* print_oids_numerically */ print_opts.print_oids_numerically);
+   auto const& [version, print_opts] = GetParam();
 
-        auto args = session._get_args();
-        std::vector<std::string> expected = {
-            "-A", "auth_second",
-            "-a", "SHA", 
-            "-X", "priv_second",
-            "-x", "AES",
-            "-l", "authPriv", 
-            "-u", "secondary_sha_aes",
-            "-v", "3",
-            "-O", print_opts.expected_flag,
-            "localhost:11161"
-        };
-        ASSERT_EQ(args, expected);
-    }
-    else {
-        SessionBase session(
-            /* hostname */ "localhost:11161",
-            /* port_number */ "",
-            /* version */ version,
-            /* community */ "public",
-            /* auth_protocol */ "",
-            /* auth_passphrase */ "",
-            /* security_engine_id */ "",
-            /* context_engine_id */ "",
-            /* security_level */ "",
-            /* context */ "",
-            /* security_username */ "",
-            /* privacy_protocol */ "",
-            /* privacy_passphrase */ "",
-            /* boots_time */ "",
-            /* retries */ "",
-            /* timeout */ "",
-            /* load_mibs */ "",
-            /* mib_directories */ "",
-            /* print_enums_numerically */ print_opts.print_enums_numerically,
-            /* print_full_oids */ print_opts.print_full_oids,
-            /* print_oids_numerically */ print_opts.print_oids_numerically);
+   if (version == "3") {
+      SessionBase session(
+          /* hostname */ "localhost",
+          /* port_number */ "11161",
+          /* version */ "3",
+          /* community */ "",
+          /* auth_protocol */ "SHA",
+          /* auth_passphrase */ "auth_second",
+          /* security_engine_id */ "",
+          /* context_engine_id */ "",
+          /* security_level */ "authPriv",
+          /* context */ "",
+          /* security_username */ "secondary_sha_aes",
+          /* privacy_protocol */ "AES",
+          /* privacy_passphrase */ "priv_second",
+          /* boots_time */ "",
+          /* retries */ "",
+          /* timeout */ "",
+          /* load_mibs */ "",
+          /* mib_directories */ "",
+          /* print_enums_numerically */ print_opts.print_enums_numerically,
+          /* print_full_oids */ print_opts.print_full_oids,
+          /* print_oids_numerically */ print_opts.print_oids_numerically);
 
-        auto args = session._get_args();
-        std::vector<std::string> expected = {
-            "-c", "public",
-            "-v", version,
-            "-O", print_opts.expected_flag,
-            "localhost:11161"
-        };
-        ASSERT_EQ(args, expected);
-    }
+      auto args = session._get_args();
+      std::vector<std::string> expected = {"-A", "auth_second",
+                                           "-a", "SHA",
+                                           "-X", "priv_second",
+                                           "-x", "AES",
+                                           "-l", "authPriv",
+                                           "-u", "secondary_sha_aes",
+                                           "-v", "3"};
+
+      // Add print options flags
+      for (auto const& flag : print_opts.expected_flags) {
+         expected.push_back("-O");
+         expected.push_back(flag);
+      }
+
+      expected.push_back("localhost:11161");
+      ASSERT_EQ(args, expected);
+
+      // Verify get output with print options
+      auto results = session.get("ifAdminStatus.1");
+      ASSERT_EQ(results.size(), 1);
+      EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
+
+   } else {
+      SessionBase session(
+          /* hostname */ "localhost:11161",
+          /* port_number */ "",
+          /* version */ version,
+          /* community */ "public",
+          /* auth_protocol */ "",
+          /* auth_passphrase */ "",
+          /* security_engine_id */ "",
+          /* context_engine_id */ "",
+          /* security_level */ "",
+          /* context */ "",
+          /* security_username */ "",
+          /* privacy_protocol */ "",
+          /* privacy_passphrase */ "",
+          /* boots_time */ "",
+          /* retries */ "",
+          /* timeout */ "",
+          /* load_mibs */ "",
+          /* mib_directories */ "",
+          /* print_enums_numerically */ print_opts.print_enums_numerically,
+          /* print_full_oids */ print_opts.print_full_oids,
+          /* print_oids_numerically */ print_opts.print_oids_numerically);
+
+      auto args = session._get_args();
+      std::vector<std::string> expected = {"-c", "public", "-v", version};
+
+      // Add print options flags
+      for (auto const& flag : print_opts.expected_flags) {
+         expected.push_back("-O");
+         expected.push_back(flag);
+      }
+
+      expected.push_back("localhost:11161");
+      ASSERT_EQ(args, expected);
+
+      // Verify get output with print options
+      auto results = session.get("ifAdminStatus.1");
+      ASSERT_EQ(results.size(), 1);
+      EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
+   }
 }
 
-INSTANTIATE_TEST_SUITE_P(SessionVersions, SessionsParamTest, 
+INSTANTIATE_TEST_SUITE_P(
+    SessionVersions,
+    SessionsParamTest,
     testing::Combine(
         testing::Values("1", "2c", "3"),
         testing::Values(
-            PrintOptions{true, false, false, "e"},   // print_enums_numerically
-            PrintOptions{false, true, false, "f"},   // print_full_oids
-            PrintOptions{false, false, true, "n"}    // print_oids_numerically
-        )
-    )
-);
+            PrintOptions{
+                // print_enums_numerically: Print enum values as numbers (e.g. 1) instead of text
+                // (e.g. up)
+                true,
+                // print_full_oids: Print full OIDs (e.g. .1.3.6.1.2.1.2.2.1.7) instead of MIB names
+                false,
+                // print_oids_numerically: Print OID components numerically
+                false,
+                {"e"},
+                {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
+
+            PrintOptions{// print_enums_numerically: false - Print enums as text
+                         false,
+                         // print_full_oids: false - Use MIB names
+                         false,
+                         // print_oids_numerically: false - Use text OID components
+                         false,
+                         {},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up"}},
+
+            PrintOptions{// print_enums_numerically: false - Print enums as text
+                         false,
+                         // print_full_oids: true - Print full numeric OIDs
+                         true,
+                         // print_oids_numerically: false - Use text OID components
+                         false,
+                         {"f"},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up"}},
+
+            PrintOptions{// print_enums_numerically: false - Print enums as text
+                         false,
+                         // print_full_oids: false - Use MIB names
+                         false,
+                         // print_oids_numerically: true - Print OID components numerically
+                         true,
+                         {"n"},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up"}},
+
+            PrintOptions{// print_enums_numerically: true - Print enums as numbers
+                         true,
+                         // print_full_oids: true - Print full OIDs
+                         true,
+                         // print_oids_numerically: true - Print OIDs numerically
+                         true,
+                         {"e", "f", "n"},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}})));
