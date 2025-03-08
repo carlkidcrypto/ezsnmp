@@ -83,9 +83,6 @@ class Session(SessionBase):
         # This is the case, since at the end of the day we are building a command line string
         # to pass to the NetSNMP command line tool.
         try:
-            # Convert version 2 to '2c'
-            if str(version) == "2":
-                version = "2c"
 
             self._session_base = SessionBase(
                 hostname,
