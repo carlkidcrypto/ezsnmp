@@ -2,6 +2,7 @@ from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
 from typing import Union
 
+
 class Session(SessionBase):
     """
     Python wrapper class for SessionBase, providing a Pythonic interface
@@ -24,7 +25,7 @@ class Session(SessionBase):
         privacy_protocol: str = "",
         privacy_passphrase: str = "",
         boots_time: str = "",
-        retries: Union[str, int] = "3", 
+        retries: Union[str, int] = "3",
         timeout: Union[str, int] = "1",
         load_mibs: str = "",
         mib_directories: str = "",
@@ -83,9 +84,9 @@ class Session(SessionBase):
         # to pass to the NetSNMP command line tool.
         try:
             # Convert version 2 to '2c'
-            if str(version) == '2':
-                version = '2c'
-                
+            if str(version) == "2":
+                version = "2c"
+
             self._session_base = SessionBase(
                 hostname,
                 str(port_number),
