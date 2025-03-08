@@ -15,7 +15,7 @@ def test_session_invalid_snmp_version():
         sess.get("sysDescr.0")
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_invalid_hostname(version):
 
     with pytest.raises(ConnectionError):
@@ -23,14 +23,14 @@ def test_session_invalid_hostname(version):
         session.get("sysContact.0")
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_invalid_hostname_and_port_number(version):
 
     with pytest.raises(ParseError):
         Session(hostname="localhost:162", port_number="163", version=version)
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_hostname_and_port_number_split(version):
 
     session = Session(hostname="localhost:162", version=version)
@@ -38,7 +38,7 @@ def test_session_hostname_and_port_number_split(version):
     assert session.port_number == "162"
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_invalid_port(version):
 
     with pytest.raises(TimeoutError):
@@ -48,14 +48,14 @@ def test_session_invalid_port(version):
         session.get("sysContact.0")
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_address(version):
 
     session = Session(hostname="2001:db8::", version=version)
     assert session.hostname == "2001:db8::"
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_address_and_port_number(version):
 
     session = Session(
@@ -68,7 +68,7 @@ def test_session_ipv6_address_and_port_number(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_address_and_port_number_split(version):
 
     session = Session(hostname="[2001:db8::]:161", version=version)
@@ -77,7 +77,7 @@ def test_session_ipv6_address_and_port_number_split(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_address_with_protocol_and_port_number_split(version):
 
     session = Session(hostname="udp6:[2001:db8::]:162", version=version)
@@ -86,7 +86,7 @@ def test_session_ipv6_address_with_protocol_and_port_number_split(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_address_with_protocol(version):
 
     session = Session(hostname="udp6:[2001:db8::]", version=version)
@@ -94,7 +94,7 @@ def test_session_ipv6_address_with_protocol(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_is_not_ipv6(version):
 
     with pytest.raises(ConnectionError):
@@ -102,7 +102,7 @@ def test_session_ipv6_is_not_ipv6(version):
         sess.get("sysContact.0")
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_invalid_hostname_and_port_number(version):
 
     with pytest.raises(ParseError):
@@ -440,7 +440,7 @@ def test_session_update():
     del s
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_enums_numerically(version):
 
     if version == "3":
@@ -531,7 +531,7 @@ def test_session_print_enums_numerically(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_full_oids(version):
 
     if version == "3":
@@ -625,7 +625,7 @@ def test_session_print_full_oids(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_oids_numerically(version):
 
     if version == "3":
@@ -716,7 +716,7 @@ def test_session_print_oids_numerically(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_all_set(version):
 
     if version == "3":
@@ -815,7 +815,7 @@ def test_session_print_options_all_set(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_true_true_false(version):
 
     if version == "3":
@@ -911,7 +911,7 @@ def test_session_print_options_two_set_true_true_false(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_false_true_true(version):
 
     if version == "3":
@@ -1004,7 +1004,7 @@ def test_session_print_options_two_set_false_true_true(version):
     del session
 
 
-@pytest.mark.parametrize("version", ["1", "2c", "3"])
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_true_false_true(version):
 
     if version == "3":
