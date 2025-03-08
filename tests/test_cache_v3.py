@@ -1,15 +1,12 @@
 import pytest
-from ezsnmp import Session
-from time import sleep
-from random import uniform
+from ezsnmp.session import Session
+from ezsnmp.exceptions import TimeoutError
 import faulthandler
 
 faulthandler.enable()
 
 
 def test_v3_not_caching_user(sess_v3_md5_des):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
     s = Session(**sess_v3_md5_des)
     assert s.args == (
         "-A",
@@ -29,7 +26,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
         "-u",
         "initial_md5_des",
         "-t",
-        "1",
+        "5",
         "-v",
         "3",
         "localhost:11161",
@@ -42,7 +39,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
     s.privacy_passphrase = "wrong_pass"
     assert s.privacy_passphrase == "wrong_pass"
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TimeoutError):
         assert s.args == (
             "-A",
             "auth_pass",
@@ -61,7 +58,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
             "-u",
             "initial_md5_des",
             "-t",
-            "1",
+            "5",
             "-v",
             "3",
             "localhost:11161",
@@ -72,7 +69,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
     d["privacy_passphrase"] = "wrong_pass"
     s = Session(**d)
     assert s.privacy_passphrase == "wrong_pass"
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TimeoutError):
         assert s.args == (
             "-A",
             "auth_pass",
@@ -91,7 +88,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
             "-u",
             "initial_md5_des",
             "-t",
-            "1",
+            "5",
             "-v",
             "3",
             "localhost:11161",
@@ -118,7 +115,7 @@ def test_v3_not_caching_user(sess_v3_md5_des):
         "-u",
         "initial_md5_des",
         "-t",
-        "1",
+        "5",
         "-v",
         "3",
         "localhost:11161",

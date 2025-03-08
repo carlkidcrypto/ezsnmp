@@ -4006,23 +4006,34 @@ SWIGINTERN PyObject *SwigPyBuiltin_iternextfunc_closure(SwigPyWrapperFunction wr
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_Result swig_types[0]
-#define SWIGTYPE_p_SessionBase swig_types[1]
-#define SWIGTYPE_p_SwigPyObject swig_types[2]
-#define SWIGTYPE_p_allocator_type swig_types[3]
-#define SWIGTYPE_p_char swig_types[4]
-#define SWIGTYPE_p_difference_type swig_types[5]
-#define SWIGTYPE_p_p_PyObject swig_types[6]
-#define SWIGTYPE_p_size_type swig_types[7]
-#define SWIGTYPE_p_std__allocatorT_Result_t swig_types[8]
-#define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[9]
-#define SWIGTYPE_p_std__invalid_argument swig_types[10]
-#define SWIGTYPE_p_std__vectorT_Result_t swig_types[11]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[12]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[13]
-#define SWIGTYPE_p_value_type swig_types[14]
-static swig_type_info *swig_types[16];
-static swig_module_info swig_module = {swig_types, 15, 0, 0, 0, 0};
+#define SWIGTYPE_p_ConnectionErrorBase swig_types[0]
+#define SWIGTYPE_p_GenericErrorBase swig_types[1]
+#define SWIGTYPE_p_NoSuchInstanceErrorBase swig_types[2]
+#define SWIGTYPE_p_NoSuchNameErrorBase swig_types[3]
+#define SWIGTYPE_p_NoSuchObjectErrorBase swig_types[4]
+#define SWIGTYPE_p_PacketErrorBase swig_types[5]
+#define SWIGTYPE_p_ParseErrorBase swig_types[6]
+#define SWIGTYPE_p_Result swig_types[7]
+#define SWIGTYPE_p_SessionBase swig_types[8]
+#define SWIGTYPE_p_SwigPyObject swig_types[9]
+#define SWIGTYPE_p_TimeoutErrorBase swig_types[10]
+#define SWIGTYPE_p_UndeterminedTypeErrorBase swig_types[11]
+#define SWIGTYPE_p_UnknownObjectIDErrorBase swig_types[12]
+#define SWIGTYPE_p_allocator_type swig_types[13]
+#define SWIGTYPE_p_char swig_types[14]
+#define SWIGTYPE_p_difference_type swig_types[15]
+#define SWIGTYPE_p_p_PyObject swig_types[16]
+#define SWIGTYPE_p_size_type swig_types[17]
+#define SWIGTYPE_p_std__allocatorT_Result_t swig_types[18]
+#define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[19]
+#define SWIGTYPE_p_std__exception swig_types[20]
+#define SWIGTYPE_p_std__invalid_argument swig_types[21]
+#define SWIGTYPE_p_std__vectorT_Result_t swig_types[22]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[23]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[24]
+#define SWIGTYPE_p_value_type swig_types[25]
+static swig_type_info *swig_types[27];
+static swig_module_info swig_module = {swig_types, 26, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4830,6 +4841,23 @@ SWIGINTERNINLINE PyObject *SWIG_FromCharPtrAndSize(char const *carray, size_t si
 
 SWIGINTERNINLINE PyObject *SWIG_From_std_string(std::string const &s) {
    return SWIG_FromCharPtrAndSize(s.data(), s.size());
+}
+
+#include "exceptionsbase.h"
+
+static PyObject *pGenericErrorBase;
+static PyObject *pConnectionErrorBase;
+static PyObject *pTimeoutErrorBase;
+static PyObject *pUnknownObjectIDErrorBase;
+static PyObject *pNoSuchNameErrorBase;
+static PyObject *pNoSuchObjectErrorBase;
+static PyObject *pNoSuchInstanceErrorBase;
+static PyObject *pUndeterminedTypeErrorBase;
+static PyObject *pParseErrorBase;
+static PyObject *pPacketErrorBase;
+
+SWIGINTERNINLINE PyObject *SWIG_FromCharPtr(char const *cptr) {
+   return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
 }
 
 namespace swig {
@@ -6208,6 +6236,21 @@ SWIGINTERN void std_vector_Sl_Result_Sg__insert__SWIG_1(std::vector<Result> *sel
 }
 
 #include "sessionbase.h"
+
+SWIGINTERN int SWIG_AsVal_bool(PyObject *obj, bool *val) {
+   int r;
+   if (!PyBool_Check(obj)) {
+      return SWIG_ERROR;
+   }
+   r = PyObject_IsTrue(obj);
+   if (r == -1) {
+      return SWIG_ERROR;
+   }
+   if (val) {
+      *val = r ? true : false;
+   }
+   return SWIG_OK;
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -7893,11 +7936,35 @@ SWIGINTERN int _wrap_new_Result(PyObject *self, PyObject *args, PyObject *kwargs
             result = (Result *)new Result();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -7936,11 +8003,35 @@ SWIGINTERN PyObject *_wrap_delete_Result(PyObject *self, PyObject *args) {
             delete arg1;
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -7951,6 +8042,1692 @@ fail:
 }
 
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_Result) /* defines _wrap_delete_Result_destructor_closure */
+
+SWIGINTERN int _wrap_new_GenericErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   GenericErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_GenericErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_GenericErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_GenericErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_GenericErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (GenericErrorBase *)new GenericErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_GenericErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_GenericErrorBase_what(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   GenericErrorBase *arg1 = (GenericErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   char *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "GenericErrorBase_what", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_GenericErrorBase, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "GenericErrorBase_what"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "GenericErrorBase const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<GenericErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (char *)((GenericErrorBase const *)arg1)->what();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_FromCharPtr((char const *)result);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_delete_GenericErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   GenericErrorBase *arg1 = (GenericErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_GenericErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_GenericErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_GenericErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "GenericErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<GenericErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_GenericErrorBase) /* defines _wrap_delete_GenericErrorBase_destructor_closure */
+
+SWIGINTERN int _wrap_new_ConnectionErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   ConnectionErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_ConnectionErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_ConnectionErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_ConnectionErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_ConnectionErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (ConnectionErrorBase *)new ConnectionErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ConnectionErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_ConnectionErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   ConnectionErrorBase *arg1 = (ConnectionErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_ConnectionErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_ConnectionErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_ConnectionErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "ConnectionErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<ConnectionErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_ConnectionErrorBase) /* defines _wrap_delete_ConnectionErrorBase_destructor_closure
+                                       */
+
+SWIGINTERN int _wrap_new_TimeoutErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   TimeoutErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_TimeoutErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_TimeoutErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_TimeoutErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_TimeoutErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (TimeoutErrorBase *)new TimeoutErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_TimeoutErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_TimeoutErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   TimeoutErrorBase *arg1 = (TimeoutErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_TimeoutErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_TimeoutErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_TimeoutErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "TimeoutErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<TimeoutErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_TimeoutErrorBase) /* defines _wrap_delete_TimeoutErrorBase_destructor_closure */
+
+SWIGINTERN int _wrap_new_UnknownObjectIDErrorBase(PyObject *self,
+                                                  PyObject *args,
+                                                  PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   UnknownObjectIDErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_UnknownObjectIDErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_UnknownObjectIDErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_UnknownObjectIDErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_UnknownObjectIDErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (UnknownObjectIDErrorBase *)new UnknownObjectIDErrorBase(
+                (std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_UnknownObjectIDErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_UnknownObjectIDErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   UnknownObjectIDErrorBase *arg1 = (UnknownObjectIDErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_UnknownObjectIDErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 =
+       SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_UnknownObjectIDErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_UnknownObjectIDErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "UnknownObjectIDErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<UnknownObjectIDErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UnknownObjectIDErrorBase) /* defines
+                                              _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
+                                            */
+
+SWIGINTERN int _wrap_new_NoSuchNameErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   NoSuchNameErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_NoSuchNameErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_NoSuchNameErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_NoSuchNameErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_NoSuchNameErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (NoSuchNameErrorBase *)new NoSuchNameErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchNameErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_NoSuchNameErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   NoSuchNameErrorBase *arg1 = (NoSuchNameErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_NoSuchNameErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_NoSuchNameErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_NoSuchNameErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "NoSuchNameErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<NoSuchNameErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_NoSuchNameErrorBase) /* defines _wrap_delete_NoSuchNameErrorBase_destructor_closure
+                                       */
+
+SWIGINTERN int _wrap_new_NoSuchObjectErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   NoSuchObjectErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_NoSuchObjectErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_NoSuchObjectErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_NoSuchObjectErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_NoSuchObjectErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (NoSuchObjectErrorBase *)new NoSuchObjectErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchObjectErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_NoSuchObjectErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   NoSuchObjectErrorBase *arg1 = (NoSuchObjectErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_NoSuchObjectErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_NoSuchObjectErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_NoSuchObjectErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "NoSuchObjectErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<NoSuchObjectErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_NoSuchObjectErrorBase) /* defines
+                                           _wrap_delete_NoSuchObjectErrorBase_destructor_closure */
+
+SWIGINTERN int _wrap_new_NoSuchInstanceErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   NoSuchInstanceErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_NoSuchInstanceErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_NoSuchInstanceErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_NoSuchInstanceErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_NoSuchInstanceErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (NoSuchInstanceErrorBase *)new NoSuchInstanceErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_NoSuchInstanceErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_NoSuchInstanceErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   NoSuchInstanceErrorBase *arg1 = (NoSuchInstanceErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_NoSuchInstanceErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 =
+       SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_NoSuchInstanceErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_NoSuchInstanceErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "NoSuchInstanceErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<NoSuchInstanceErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_NoSuchInstanceErrorBase) /* defines
+                                             _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
+                                           */
+
+SWIGINTERN int _wrap_new_UndeterminedTypeErrorBase(PyObject *self,
+                                                   PyObject *args,
+                                                   PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   UndeterminedTypeErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_UndeterminedTypeErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_UndeterminedTypeErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_UndeterminedTypeErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_UndeterminedTypeErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (UndeterminedTypeErrorBase *)new UndeterminedTypeErrorBase(
+                (std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_UndeterminedTypeErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_UndeterminedTypeErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   UndeterminedTypeErrorBase *arg1 = (UndeterminedTypeErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_UndeterminedTypeErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 =
+       SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_UndeterminedTypeErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_UndeterminedTypeErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "UndeterminedTypeErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<UndeterminedTypeErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UndeterminedTypeErrorBase) /* defines
+                                               _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
+                                             */
+
+SWIGINTERN int _wrap_new_ParseErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   ParseErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_ParseErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_ParseErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_ParseErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_ParseErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (ParseErrorBase *)new ParseErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ParseErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_ParseErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   ParseErrorBase *arg1 = (ParseErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_ParseErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_ParseErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_ParseErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "ParseErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<ParseErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_ParseErrorBase) /* defines _wrap_delete_ParseErrorBase_destructor_closure */
+
+SWIGINTERN int _wrap_new_PacketErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::string *arg1 = 0;
+   int res1 = SWIG_OLDOBJ;
+   PyObject *swig_obj[1];
+   PacketErrorBase *result = 0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_PacketErrorBase")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_PacketErrorBase", 1, 1, swig_obj)) {
+      SWIG_fail;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res1)) {
+         SWIG_exception_fail(SWIG_ArgError(res1),
+                             "in method '"
+                             "new_PacketErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "new_PacketErrorBase"
+                             "', argument "
+                             "1"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg1 = ptr;
+   }
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (PacketErrorBase *)new PacketErrorBase((std::string const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PacketErrorBase,
+                                  SWIG_BUILTIN_INIT | 0);
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   if (SWIG_IsNewObj(res1)) {
+      delete arg1;
+   }
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_PacketErrorBase(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   PacketErrorBase *arg1 = (PacketErrorBase *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_PacketErrorBase", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_PacketErrorBase, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_PacketErrorBase"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "PacketErrorBase *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<PacketErrorBase *>(argp1);
+   {
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            delete arg1;
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_PacketErrorBase) /* defines _wrap_delete_PacketErrorBase_destructor_closure */
 
 SWIGINTERN PyObject *_wrap__string_list_iterator(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
@@ -7977,9 +9754,43 @@ SWIGINTERN PyObject *_wrap__string_list_iterator(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (swig::SwigPyIterator *)std_vector_Sl_std_string_Sg__iterator(arg1, arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (swig::SwigPyIterator *)std_vector_Sl_std_string_Sg__iterator(arg1, arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
                                   SWIG_POINTER_OWN | 0);
@@ -8011,10 +9822,44 @@ SWIGINTERN PyObject *_wrap__string_list___nonzero__(PyObject *self, PyObject *ar
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result =
-          (bool)std_vector_Sl_std_string_Sg____nonzero__((std::vector<std::string> const *)arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (bool)std_vector_Sl_std_string_Sg____nonzero__(
+                (std::vector<std::string> const *)arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_bool(static_cast<bool>(result));
    return resultobj;
@@ -8045,9 +9890,44 @@ SWIGINTERN PyObject *_wrap__string_list___bool__(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (bool)std_vector_Sl_std_string_Sg____bool__((std::vector<std::string> const *)arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (bool)std_vector_Sl_std_string_Sg____bool__((std::vector<std::string> const *)arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_bool(static_cast<bool>(result));
    return resultobj;
@@ -8078,9 +9958,43 @@ SWIGINTERN PyObject *_wrap__string_list___len__(PyObject *self, PyObject *args) 
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = std_vector_Sl_std_string_Sg____len__((std::vector<std::string> const *)arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_std_string_Sg____len__((std::vector<std::string> const *)arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_size_t(static_cast<size_t>(result));
    return resultobj;
@@ -8141,18 +10055,52 @@ SWIGINTERN PyObject *_wrap__string_list___getslice__(PyObject *self, PyObject *a
                           "'");
    }
    arg3 = static_cast<std::vector<std::string>::difference_type>(val3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<std::string, std::allocator<std::string> > *)
-             std_vector_Sl_std_string_Sg____getslice__(arg1, SWIG_STD_MOVE(arg2),
-                                                       SWIG_STD_MOVE(arg3));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result = (std::vector<std::string, std::allocator<std::string> > *)
+                   std_vector_Sl_std_string_Sg____getslice__(arg1, SWIG_STD_MOVE(arg2),
+                                                             SWIG_STD_MOVE(arg3));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t,
                                   SWIG_POINTER_OWN | 0);
@@ -8214,17 +10162,51 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_0(PyObject *self,
                           "'");
    }
    arg3 = static_cast<std::vector<std::string>::difference_type>(val3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____setslice____SWIG_0(arg1, SWIG_STD_MOVE(arg2),
-                                                           SWIG_STD_MOVE(arg3));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____setslice____SWIG_0(arg1, SWIG_STD_MOVE(arg2),
+                                                                 SWIG_STD_MOVE(arg3));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -8314,18 +10296,52 @@ SWIGINTERN PyObject *_wrap__string_list___setslice____SWIG_1(PyObject *self,
       }
       arg4 = ptr;
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____setslice____SWIG_1(
-             arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
-             (std::vector<std::string, std::allocator<std::string> > const &)*arg4);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____setslice____SWIG_1(
+                   arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
+                   (std::vector<std::string, std::allocator<std::string> > const &)*arg4);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res4)) {
@@ -8460,16 +10476,51 @@ SWIGINTERN PyObject *_wrap__string_list___delslice__(PyObject *self, PyObject *a
                           "'");
    }
    arg3 = static_cast<std::vector<std::string>::difference_type>(val3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____delslice__(arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____delslice__(arg1, SWIG_STD_MOVE(arg2),
+                                                         SWIG_STD_MOVE(arg3));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -8515,16 +10566,50 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_0(PyObject *self,
                           "'");
    }
    arg2 = static_cast<std::vector<std::string>::difference_type>(val2);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____delitem____SWIG_0(arg1, SWIG_STD_MOVE(arg2));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____delitem____SWIG_0(arg1, SWIG_STD_MOVE(arg2));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -8570,17 +10655,51 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_0(PyObject *self,
       }
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<std::string, std::allocator<std::string> > *)
-             std_vector_Sl_std_string_Sg____getitem____SWIG_0(arg1, arg2);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result = (std::vector<std::string, std::allocator<std::string> > *)
+                   std_vector_Sl_std_string_Sg____getitem____SWIG_0(arg1, arg2);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t,
                                   SWIG_POINTER_OWN | 0);
@@ -8655,17 +10774,52 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_0(PyObject *self,
       }
       arg3 = ptr;
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____setitem____SWIG_0(
-             arg1, arg2, (std::vector<std::string, std::allocator<std::string> > const &)*arg3);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____setitem____SWIG_0(
+                   arg1, arg2,
+                   (std::vector<std::string, std::allocator<std::string> > const &)*arg3);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res3)) {
@@ -8716,16 +10870,50 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_1(PyObject *self,
       }
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____setitem____SWIG_1(arg1, arg2);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____setitem____SWIG_1(arg1, arg2);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -8770,16 +10958,50 @@ SWIGINTERN PyObject *_wrap__string_list___delitem____SWIG_1(PyObject *self,
       }
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____delitem____SWIG_1(arg1, arg2);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____delitem____SWIG_1(arg1, arg2);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -8874,19 +11096,55 @@ SWIGINTERN PyObject *_wrap__string_list___getitem____SWIG_1(PyObject *self,
                           "'");
    }
    arg2 = static_cast<std::vector<std::string>::difference_type>(val2);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result =
-             (std::vector<std::string>::value_type
-                  *)&std_vector_Sl_std_string_Sg____getitem____SWIG_1((std::
-                                                                           vector<std::string> const
-                                                                               *)arg1,
-                                                                      SWIG_STD_MOVE(arg2));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result =
+                   (std::vector<std::string>::value_type
+                        *)&std_vector_Sl_std_string_Sg____getitem____SWIG_1((std::
+                                                                                 vector<
+                                                                                     std::
+                                                                                         string> const
+                                                                                     *)arg1,
+                                                                            SWIG_STD_MOVE(arg2));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
    }
    resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
    (void)swig::container_owner<
@@ -9012,15 +11270,49 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_2(PyObject *self,
       }
       arg3 = ptr;
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____setitem____SWIG_2(arg1, SWIG_STD_MOVE(arg2),
-                                                          (std::string const &)*arg3);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____setitem____SWIG_2(arg1, SWIG_STD_MOVE(arg2),
+                                                                (std::string const &)*arg3);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res3)) {
@@ -9072,16 +11364,50 @@ SWIGINTERN PyObject *_wrap__string_list___setitem____SWIG_3(PyObject *self,
                           "'");
    }
    arg2 = static_cast<std::vector<std::string>::difference_type>(val2);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_std_string_Sg____setitem____SWIG_3(arg1, SWIG_STD_MOVE(arg2));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_std_string_Sg____setitem____SWIG_3(arg1, SWIG_STD_MOVE(arg2));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -9202,14 +11528,48 @@ SWIGINTERN PyObject *_wrap__string_list_pop(PyObject *self, PyObject *args) {
                           "'");
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = std_vector_Sl_std_string_Sg__pop(arg1);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result = std_vector_Sl_std_string_Sg__pop(arg1);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
    }
    resultobj = SWIG_From_std_string(static_cast<std::string>(result));
    return resultobj;
@@ -9269,9 +11629,43 @@ SWIGINTERN PyObject *_wrap__string_list_append(PyObject *self, PyObject *args) {
       arg2 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      std_vector_Sl_std_string_Sg__append(arg1, (std::string const &)*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            std_vector_Sl_std_string_Sg__append(arg1, (std::string const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res2)) {
@@ -9295,9 +11689,43 @@ SWIGINTERN int _wrap_new__string_list__SWIG_0(PyObject *self,
       SWIG_fail;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<std::string> *)new std::vector<std::string>();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<std::string> *)new std::vector<std::string>();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -9345,10 +11773,44 @@ SWIGINTERN int _wrap_new__string_list__SWIG_1(PyObject *self,
       arg1 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<std::string> *)new std::vector<std::string>(
-          (std::vector<std::string> const &)*arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<std::string> *)new std::vector<std::string>(
+                (std::vector<std::string> const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -9386,9 +11848,43 @@ SWIGINTERN PyObject *_wrap__string_list_empty(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (bool)((std::vector<std::string> const *)arg1)->empty();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (bool)((std::vector<std::string> const *)arg1)->empty();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_bool(static_cast<bool>(result));
    return resultobj;
@@ -9419,9 +11915,43 @@ SWIGINTERN PyObject *_wrap__string_list_size(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((std::vector<std::string> const *)arg1)->size();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = ((std::vector<std::string> const *)arg1)->size();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_size_t(static_cast<size_t>(result));
    return resultobj;
@@ -9479,9 +12009,43 @@ SWIGINTERN PyObject *_wrap__string_list_swap(PyObject *self, PyObject *args) {
    }
    arg2 = reinterpret_cast<std::vector<std::string> *>(argp2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->swap(*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->swap(*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -9512,9 +12076,43 @@ SWIGINTERN PyObject *_wrap__string_list_begin(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->begin();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->begin();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<std::string>::iterator const &>(result)),
@@ -9547,9 +12145,43 @@ SWIGINTERN PyObject *_wrap__string_list_end(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->end();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->end();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<std::string>::iterator const &>(result)),
@@ -9582,9 +12214,43 @@ SWIGINTERN PyObject *_wrap__string_list_rbegin(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->rbegin();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->rbegin();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(
@@ -9618,9 +12284,43 @@ SWIGINTERN PyObject *_wrap__string_list_rend(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->rend();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->rend();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(
@@ -9653,9 +12353,43 @@ SWIGINTERN PyObject *_wrap__string_list_clear(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->clear();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->clear();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -9686,9 +12420,43 @@ SWIGINTERN PyObject *_wrap__string_list_get_allocator(PyObject *self, PyObject *
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((std::vector<std::string> const *)arg1)->get_allocator();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = ((std::vector<std::string> const *)arg1)->get_allocator();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj((new std::vector<std::string>::allocator_type(result)),
                                   SWIGTYPE_p_std__allocatorT_std__string_t, SWIG_POINTER_OWN | 0);
@@ -9722,9 +12490,43 @@ SWIGINTERN int _wrap_new__string_list__SWIG_2(PyObject *self,
    }
    arg1 = static_cast<std::vector<std::string>::size_type>(val1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<std::string> *)new std::vector<std::string>(SWIG_STD_MOVE(arg1));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<std::string> *)new std::vector<std::string>(SWIG_STD_MOVE(arg1));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -9755,9 +12557,43 @@ SWIGINTERN PyObject *_wrap__string_list_pop_back(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->pop_back();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->pop_back();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -9804,9 +12640,43 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_0(PyObject *self,
    }
    arg2 = static_cast<std::vector<std::string>::size_type>(val2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->resize(SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->resize(SWIG_STD_MOVE(arg2));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -9869,9 +12739,43 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_0(PyObject *self,
       }
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = std_vector_Sl_std_string_Sg__erase__SWIG_0(arg1, SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_std_string_Sg__erase__SWIG_0(arg1, SWIG_STD_MOVE(arg2));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<std::string>::iterator const &>(result)),
@@ -9966,10 +12870,44 @@ SWIGINTERN PyObject *_wrap__string_list_erase__SWIG_1(PyObject *self,
       }
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = std_vector_Sl_std_string_Sg__erase__SWIG_1(arg1, SWIG_STD_MOVE(arg2),
-                                                          SWIG_STD_MOVE(arg3));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_std_string_Sg__erase__SWIG_1(arg1, SWIG_STD_MOVE(arg2),
+                                                                SWIG_STD_MOVE(arg3));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<std::string>::iterator const &>(result)),
@@ -10094,10 +13032,44 @@ SWIGINTERN int _wrap_new__string_list__SWIG_3(PyObject *self,
       arg2 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<std::string> *)new std::vector<std::string>(
-          SWIG_STD_MOVE(arg1), (std::vector<std::string>::value_type const &)*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<std::string> *)new std::vector<std::string>(
+                SWIG_STD_MOVE(arg1), (std::vector<std::string>::value_type const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -10225,9 +13197,43 @@ SWIGINTERN PyObject *_wrap__string_list_push_back(PyObject *self, PyObject *args
       arg2 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->push_back((std::vector<std::string>::value_type const &)*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->push_back((std::vector<std::string>::value_type const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res2)) {
@@ -10264,10 +13270,45 @@ SWIGINTERN PyObject *_wrap__string_list_front(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<std::string>::value_type *)&((std::vector<std::string> const *)arg1)
-                   ->front();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (std::vector<std::string>::value_type *)&((std::vector<std::string> const *)arg1)
+                    ->front();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
    (void)swig::container_owner<
@@ -10301,10 +13342,45 @@ SWIGINTERN PyObject *_wrap__string_list_back(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result =
-          (std::vector<std::string>::value_type *)&((std::vector<std::string> const *)arg1)->back();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (std::vector<std::string>::value_type *)&((std::vector<std::string> const *)arg1)
+                    ->back();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_std_string(static_cast<std::string>(*result));
    (void)swig::container_owner<
@@ -10381,9 +13457,44 @@ SWIGINTERN PyObject *_wrap__string_list_assign(PyObject *self, PyObject *args) {
       arg3 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->assign(SWIG_STD_MOVE(arg2), (std::vector<std::string>::value_type const &)*arg3);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->assign(SWIG_STD_MOVE(arg2),
+                           (std::vector<std::string>::value_type const &)*arg3);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res3)) {
@@ -10464,9 +13575,44 @@ SWIGINTERN PyObject *_wrap__string_list_resize__SWIG_1(PyObject *self,
       arg3 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->resize(SWIG_STD_MOVE(arg2), (std::vector<std::string>::value_type const &)*arg3);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->resize(SWIG_STD_MOVE(arg2),
+                           (std::vector<std::string>::value_type const &)*arg3);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res3)) {
@@ -10617,10 +13763,44 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_0(PyObject *self,
       arg3 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = std_vector_Sl_std_string_Sg__insert__SWIG_0(arg1, SWIG_STD_MOVE(arg2),
-                                                           (std::string const &)*arg3);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_std_string_Sg__insert__SWIG_0(arg1, SWIG_STD_MOVE(arg2),
+                                                                 (std::string const &)*arg3);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<std::string>::iterator const &>(result)),
@@ -10733,10 +13913,44 @@ SWIGINTERN PyObject *_wrap__string_list_insert__SWIG_1(PyObject *self,
       arg4 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      std_vector_Sl_std_string_Sg__insert__SWIG_1(arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
-                                                  (std::string const &)*arg4);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            std_vector_Sl_std_string_Sg__insert__SWIG_1(
+                arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3), (std::string const &)*arg4);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res4)) {
@@ -10858,9 +14072,43 @@ SWIGINTERN PyObject *_wrap__string_list_reserve(PyObject *self, PyObject *args) 
    }
    arg2 = static_cast<std::vector<std::string>::size_type>(val2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->reserve(SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->reserve(SWIG_STD_MOVE(arg2));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -10891,9 +14139,43 @@ SWIGINTERN PyObject *_wrap__string_list_capacity(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<std::string> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((std::vector<std::string> const *)arg1)->capacity();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = ((std::vector<std::string> const *)arg1)->capacity();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_size_t(static_cast<size_t>(result));
    return resultobj;
@@ -10930,11 +14212,35 @@ SWIGINTERN PyObject *_wrap_delete__string_list(PyObject *self, PyObject *args) {
             delete arg1;
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -10988,9 +14294,43 @@ SWIGINTERN PyObject *_wrap__result_list_iterator(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (swig::SwigPyIterator *)std_vector_Sl_Result_Sg__iterator(arg1, arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (swig::SwigPyIterator *)std_vector_Sl_Result_Sg__iterator(arg1, arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
                                   SWIG_POINTER_OWN | 0);
@@ -11022,9 +14362,43 @@ SWIGINTERN PyObject *_wrap__result_list___nonzero__(PyObject *self, PyObject *ar
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (bool)std_vector_Sl_Result_Sg____nonzero__((std::vector<Result> const *)arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (bool)std_vector_Sl_Result_Sg____nonzero__((std::vector<Result> const *)arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_bool(static_cast<bool>(result));
    return resultobj;
@@ -11055,9 +14429,43 @@ SWIGINTERN PyObject *_wrap__result_list___bool__(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (bool)std_vector_Sl_Result_Sg____bool__((std::vector<Result> const *)arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (bool)std_vector_Sl_Result_Sg____bool__((std::vector<Result> const *)arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_bool(static_cast<bool>(result));
    return resultobj;
@@ -11088,9 +14496,43 @@ SWIGINTERN PyObject *_wrap__result_list___len__(PyObject *self, PyObject *args) 
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = std_vector_Sl_Result_Sg____len__((std::vector<Result> const *)arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_Result_Sg____len__((std::vector<Result> const *)arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_size_t(static_cast<size_t>(result));
    return resultobj;
@@ -11151,18 +14593,52 @@ SWIGINTERN PyObject *_wrap__result_list___getslice__(PyObject *self, PyObject *a
                           "'");
    }
    arg3 = static_cast<std::vector<Result>::difference_type>(val3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result =
-             (std::vector<Result, std::allocator<Result> > *)std_vector_Sl_Result_Sg____getslice__(
-                 arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result = (std::vector<Result, std::allocator<Result> > *)
+                   std_vector_Sl_Result_Sg____getslice__(arg1, SWIG_STD_MOVE(arg2),
+                                                         SWIG_STD_MOVE(arg3));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t,
                                   SWIG_POINTER_OWN | 0);
@@ -11224,17 +14700,51 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_0(PyObject *self,
                           "'");
    }
    arg3 = static_cast<std::vector<Result>::difference_type>(val3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____setslice____SWIG_0(arg1, SWIG_STD_MOVE(arg2),
-                                                       SWIG_STD_MOVE(arg3));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____setslice____SWIG_0(arg1, SWIG_STD_MOVE(arg2),
+                                                             SWIG_STD_MOVE(arg3));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -11324,18 +14834,52 @@ SWIGINTERN PyObject *_wrap__result_list___setslice____SWIG_1(PyObject *self,
       }
       arg4 = ptr;
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____setslice____SWIG_1(
-             arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
-             (std::vector<Result, std::allocator<Result> > const &)*arg4);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____setslice____SWIG_1(
+                   arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
+                   (std::vector<Result, std::allocator<Result> > const &)*arg4);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res4)) {
@@ -11467,16 +15011,51 @@ SWIGINTERN PyObject *_wrap__result_list___delslice__(PyObject *self, PyObject *a
                           "'");
    }
    arg3 = static_cast<std::vector<Result>::difference_type>(val3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____delslice__(arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____delslice__(arg1, SWIG_STD_MOVE(arg2),
+                                                     SWIG_STD_MOVE(arg3));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -11522,16 +15101,50 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_0(PyObject *self,
                           "'");
    }
    arg2 = static_cast<std::vector<Result>::difference_type>(val2);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____delitem____SWIG_0(arg1, SWIG_STD_MOVE(arg2));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____delitem____SWIG_0(arg1, SWIG_STD_MOVE(arg2));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -11577,17 +15190,51 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_0(PyObject *self,
       }
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<Result, std::allocator<Result> > *)
-             std_vector_Sl_Result_Sg____getitem____SWIG_0(arg1, arg2);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result = (std::vector<Result, std::allocator<Result> > *)
+                   std_vector_Sl_Result_Sg____getitem____SWIG_0(arg1, arg2);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t,
                                   SWIG_POINTER_OWN | 0);
@@ -11662,17 +15309,51 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_0(PyObject *self,
       }
       arg3 = ptr;
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____setitem____SWIG_0(
-             arg1, arg2, (std::vector<Result, std::allocator<Result> > const &)*arg3);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____setitem____SWIG_0(
+                   arg1, arg2, (std::vector<Result, std::allocator<Result> > const &)*arg3);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    if (SWIG_IsNewObj(res3)) {
@@ -11723,16 +15404,50 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_1(PyObject *self,
       }
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____setitem____SWIG_1(arg1, arg2);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____setitem____SWIG_1(arg1, arg2);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -11777,16 +15492,50 @@ SWIGINTERN PyObject *_wrap__result_list___delitem____SWIG_1(PyObject *self,
       }
       arg2 = (SWIGPY_SLICEOBJECT *)swig_obj[1];
    }
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____delitem____SWIG_1(arg1, arg2);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____delitem____SWIG_1(arg1, arg2);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -11879,15 +15628,50 @@ SWIGINTERN PyObject *_wrap__result_list___getitem____SWIG_1(PyObject *self,
                           "'");
    }
    arg2 = static_cast<std::vector<Result>::difference_type>(val2);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = (std::vector<Result>::value_type *)&std_vector_Sl_Result_Sg____getitem____SWIG_1(
-             (std::vector<Result> const *)arg1, SWIG_STD_MOVE(arg2));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result =
+                   (std::vector<Result>::value_type *)&std_vector_Sl_Result_Sg____getitem____SWIG_1(
+                       (std::vector<Result> const *)arg1, SWIG_STD_MOVE(arg2));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Result, 0 | 0);
    (void)swig::container_owner<
@@ -12007,15 +15791,49 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_2(PyObject *self,
                           "'");
    }
    arg3 = reinterpret_cast<std::vector<Result>::value_type *>(argp3);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____setitem____SWIG_2(arg1, SWIG_STD_MOVE(arg2),
-                                                      (Result const &)*arg3);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____setitem____SWIG_2(arg1, SWIG_STD_MOVE(arg2),
+                                                            (Result const &)*arg3);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12061,16 +15879,50 @@ SWIGINTERN PyObject *_wrap__result_list___setitem____SWIG_3(PyObject *self,
                           "'");
    }
    arg2 = static_cast<std::vector<Result>::difference_type>(val2);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         std_vector_Sl_Result_Sg____setitem____SWIG_3(arg1, SWIG_STD_MOVE(arg2));
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               std_vector_Sl_Result_Sg____setitem____SWIG_3(arg1, SWIG_STD_MOVE(arg2));
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         } catch (std::invalid_argument &_e) {
+            SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
-   } catch (std::invalid_argument &_e) {
-      SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12185,14 +16037,48 @@ SWIGINTERN PyObject *_wrap__result_list_pop(PyObject *self, PyObject *args) {
                           "'");
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
-   try {
-      {
-         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-         result = std_vector_Sl_Result_Sg__pop(arg1);
-         SWIG_PYTHON_THREAD_END_ALLOW;
+   {
+      try {
+         try {
+            {
+               SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+               result = std_vector_Sl_Result_Sg__pop(arg1);
+               SWIG_PYTHON_THREAD_END_ALLOW;
+            }
+         } catch (std::out_of_range &_e) {
+            SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
       }
-   } catch (std::out_of_range &_e) {
-      SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
    }
    resultobj = SWIG_NewPointerObj((new std::vector<Result>::value_type(result)), SWIGTYPE_p_Result,
                                   SWIG_POINTER_OWN | 0);
@@ -12251,9 +16137,43 @@ SWIGINTERN PyObject *_wrap__result_list_append(PyObject *self, PyObject *args) {
    }
    arg2 = reinterpret_cast<std::vector<Result>::value_type *>(argp2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      std_vector_Sl_Result_Sg__append(arg1, (Result const &)*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            std_vector_Sl_Result_Sg__append(arg1, (Result const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12271,9 +16191,43 @@ SWIGINTERN int _wrap_new__result_list__SWIG_0(PyObject *self,
       SWIG_fail;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<Result> *)new std::vector<Result>();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<Result> *)new std::vector<Result>();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -12321,9 +16275,44 @@ SWIGINTERN int _wrap_new__result_list__SWIG_1(PyObject *self,
       arg1 = ptr;
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<Result> *)new std::vector<Result>((std::vector<Result> const &)*arg1);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (std::vector<Result> *)new std::vector<Result>((std::vector<Result> const &)*arg1);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -12361,9 +16350,43 @@ SWIGINTERN PyObject *_wrap__result_list_empty(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (bool)((std::vector<Result> const *)arg1)->empty();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (bool)((std::vector<Result> const *)arg1)->empty();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_bool(static_cast<bool>(result));
    return resultobj;
@@ -12394,9 +16417,43 @@ SWIGINTERN PyObject *_wrap__result_list_size(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((std::vector<Result> const *)arg1)->size();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = ((std::vector<Result> const *)arg1)->size();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_size_t(static_cast<size_t>(result));
    return resultobj;
@@ -12454,9 +16511,43 @@ SWIGINTERN PyObject *_wrap__result_list_swap(PyObject *self, PyObject *args) {
    }
    arg2 = reinterpret_cast<std::vector<Result> *>(argp2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->swap(*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->swap(*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12487,9 +16578,43 @@ SWIGINTERN PyObject *_wrap__result_list_begin(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->begin();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->begin();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<Result>::iterator const &>(result)),
@@ -12522,9 +16647,43 @@ SWIGINTERN PyObject *_wrap__result_list_end(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->end();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->end();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<Result>::iterator const &>(result)),
@@ -12557,9 +16716,43 @@ SWIGINTERN PyObject *_wrap__result_list_rbegin(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->rbegin();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->rbegin();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj =
        SWIG_NewPointerObj(swig::make_output_iterator(
@@ -12593,9 +16786,43 @@ SWIGINTERN PyObject *_wrap__result_list_rend(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (arg1)->rend();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (arg1)->rend();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj =
        SWIG_NewPointerObj(swig::make_output_iterator(
@@ -12628,9 +16855,43 @@ SWIGINTERN PyObject *_wrap__result_list_clear(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->clear();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->clear();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12661,9 +16922,43 @@ SWIGINTERN PyObject *_wrap__result_list_get_allocator(PyObject *self, PyObject *
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((std::vector<Result> const *)arg1)->get_allocator();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = ((std::vector<Result> const *)arg1)->get_allocator();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj((new std::vector<Result>::allocator_type(result)),
                                   SWIGTYPE_p_std__allocatorT_Result_t, SWIG_POINTER_OWN | 0);
@@ -12697,9 +16992,43 @@ SWIGINTERN int _wrap_new__result_list__SWIG_2(PyObject *self,
    }
    arg1 = static_cast<std::vector<Result>::size_type>(val1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<Result> *)new std::vector<Result>(SWIG_STD_MOVE(arg1));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<Result> *)new std::vector<Result>(SWIG_STD_MOVE(arg1));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -12730,9 +17059,43 @@ SWIGINTERN PyObject *_wrap__result_list_pop_back(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->pop_back();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->pop_back();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12779,9 +17142,43 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_0(PyObject *self,
    }
    arg2 = static_cast<std::vector<Result>::size_type>(val2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->resize(SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->resize(SWIG_STD_MOVE(arg2));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -12844,9 +17241,43 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_0(PyObject *self,
       }
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = std_vector_Sl_Result_Sg__erase__SWIG_0(arg1, SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_Result_Sg__erase__SWIG_0(arg1, SWIG_STD_MOVE(arg2));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<Result>::iterator const &>(result)),
@@ -12941,10 +17372,44 @@ SWIGINTERN PyObject *_wrap__result_list_erase__SWIG_1(PyObject *self,
       }
    }
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result =
-          std_vector_Sl_Result_Sg__erase__SWIG_1(arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_Result_Sg__erase__SWIG_1(arg1, SWIG_STD_MOVE(arg2),
+                                                            SWIG_STD_MOVE(arg3));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<Result>::iterator const &>(result)),
@@ -13063,10 +17528,44 @@ SWIGINTERN int _wrap_new__result_list__SWIG_3(PyObject *self,
    }
    arg2 = reinterpret_cast<std::vector<Result>::value_type *>(argp2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<Result> *)new std::vector<Result>(
-          SWIG_STD_MOVE(arg1), (std::vector<Result>::value_type const &)*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = (std::vector<Result> *)new std::vector<Result>(
+                SWIG_STD_MOVE(arg1), (std::vector<Result>::value_type const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_Result_t,
                                   SWIG_BUILTIN_INIT | 0);
@@ -13185,9 +17684,43 @@ SWIGINTERN PyObject *_wrap__result_list_push_back(PyObject *self, PyObject *args
    }
    arg2 = reinterpret_cast<std::vector<Result>::value_type *>(argp2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->push_back((std::vector<Result>::value_type const &)*arg2);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->push_back((std::vector<Result>::value_type const &)*arg2);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -13218,9 +17751,44 @@ SWIGINTERN PyObject *_wrap__result_list_front(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<Result>::value_type *)&((std::vector<Result> const *)arg1)->front();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (std::vector<Result>::value_type *)&((std::vector<Result> const *)arg1)->front();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Result, 0 | 0);
    (void)swig::container_owner<
@@ -13253,9 +17821,44 @@ SWIGINTERN PyObject *_wrap__result_list_back(PyObject *self, PyObject *args) {
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = (std::vector<Result>::value_type *)&((std::vector<Result> const *)arg1)->back();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result =
+                (std::vector<Result>::value_type *)&((std::vector<Result> const *)arg1)->back();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Result, 0 | 0);
    (void)swig::container_owner<
@@ -13329,9 +17932,43 @@ SWIGINTERN PyObject *_wrap__result_list_assign(PyObject *self, PyObject *args) {
    }
    arg3 = reinterpret_cast<std::vector<Result>::value_type *>(argp3);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->assign(SWIG_STD_MOVE(arg2), (std::vector<Result>::value_type const &)*arg3);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->assign(SWIG_STD_MOVE(arg2), (std::vector<Result>::value_type const &)*arg3);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -13404,9 +18041,43 @@ SWIGINTERN PyObject *_wrap__result_list_resize__SWIG_1(PyObject *self,
    }
    arg3 = reinterpret_cast<std::vector<Result>::value_type *>(argp3);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->resize(SWIG_STD_MOVE(arg2), (std::vector<Result>::value_type const &)*arg3);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->resize(SWIG_STD_MOVE(arg2), (std::vector<Result>::value_type const &)*arg3);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -13547,10 +18218,44 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_0(PyObject *self,
    }
    arg3 = reinterpret_cast<std::vector<Result>::value_type *>(argp3);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result =
-          std_vector_Sl_Result_Sg__insert__SWIG_0(arg1, SWIG_STD_MOVE(arg2), (Result const &)*arg3);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = std_vector_Sl_Result_Sg__insert__SWIG_0(arg1, SWIG_STD_MOVE(arg2),
+                                                             (Result const &)*arg3);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_NewPointerObj(
        swig::make_output_iterator(static_cast<std::vector<Result>::iterator const &>(result)),
@@ -13655,10 +18360,44 @@ SWIGINTERN PyObject *_wrap__result_list_insert__SWIG_1(PyObject *self,
    }
    arg4 = reinterpret_cast<std::vector<Result>::value_type *>(argp4);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      std_vector_Sl_Result_Sg__insert__SWIG_1(arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
-                                              (Result const &)*arg4);
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            std_vector_Sl_Result_Sg__insert__SWIG_1(arg1, SWIG_STD_MOVE(arg2), SWIG_STD_MOVE(arg3),
+                                                    (Result const &)*arg4);
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -13770,9 +18509,43 @@ SWIGINTERN PyObject *_wrap__result_list_reserve(PyObject *self, PyObject *args) 
    }
    arg2 = static_cast<std::vector<Result>::size_type>(val2);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      (arg1)->reserve(SWIG_STD_MOVE(arg2));
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            (arg1)->reserve(SWIG_STD_MOVE(arg2));
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_Py_Void();
    return resultobj;
@@ -13803,9 +18576,43 @@ SWIGINTERN PyObject *_wrap__result_list_capacity(PyObject *self, PyObject *args)
    }
    arg1 = reinterpret_cast<std::vector<Result> *>(argp1);
    {
-      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((std::vector<Result> const *)arg1)->capacity();
-      SWIG_PYTHON_THREAD_END_ALLOW;
+      try {
+         {
+            SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+            result = ((std::vector<Result> const *)arg1)->capacity();
+            SWIG_PYTHON_THREAD_END_ALLOW;
+         }
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      }
    }
    resultobj = SWIG_From_size_t(static_cast<size_t>(result));
    return resultobj;
@@ -13841,11 +18648,35 @@ SWIGINTERN PyObject *_wrap_delete__result_list(PyObject *self, PyObject *args) {
             delete arg1;
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -13892,6 +18723,17 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    std::string arg14 = (std::string) "";
    std::string arg15 = (std::string) "3";
    std::string arg16 = (std::string) "1";
+   std::string arg17 = (std::string) "";
+   std::string arg18 = (std::string) "";
+   bool arg19 = (bool)false;
+   bool arg20 = (bool)false;
+   bool arg21 = (bool)false;
+   bool val19;
+   int ecode19 = 0;
+   bool val20;
+   int ecode20 = 0;
+   bool val21;
+   int ecode21 = 0;
    PyObject *obj1 = 0;
    PyObject *obj2 = 0;
    PyObject *obj3 = 0;
@@ -13908,6 +18750,11 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    PyObject *obj14 = 0;
    PyObject *obj15 = 0;
    PyObject *obj16 = 0;
+   PyObject *obj17 = 0;
+   PyObject *obj18 = 0;
+   PyObject *obj19 = 0;
+   PyObject *obj20 = 0;
+   PyObject *obj21 = 0;
    char *kwnames[] = {(char *)"hostname",
                       (char *)"port_number",
                       (char *)"version",
@@ -13924,12 +18771,18 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
                       (char *)"boots_time",
                       (char *)"retries",
                       (char *)"timeout",
+                      (char *)"load_mibs",
+                      (char *)"mib_directories",
+                      (char *)"print_enums_numerically",
+                      (char *)"print_full_oids",
+                      (char *)"print_oids_numerically",
                       NULL};
    SessionBase *result = 0;
 
-   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOOOOOOOOOOOOO:new_SessionBase", kwnames,
+   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOOOOOOOOOOOOOOOOOO:new_SessionBase", kwnames,
                                     &obj1, &obj2, &obj3, &obj4, &obj5, &obj6, &obj7, &obj8, &obj9,
-                                    &obj10, &obj11, &obj12, &obj13, &obj14, &obj15, &obj16)) {
+                                    &obj10, &obj11, &obj12, &obj13, &obj14, &obj15, &obj16, &obj17,
+                                    &obj18, &obj19, &obj20, &obj21)) {
       SWIG_fail;
    }
    if (obj1) {
@@ -14252,6 +19105,88 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
          }
       }
    }
+   if (obj17) {
+      {
+         std::string *ptr = (std::string *)0;
+         int res = SWIG_AsPtr_std_string(obj17, &ptr);
+         if (!SWIG_IsOK(res) || !ptr) {
+            SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)),
+                                "in method '"
+                                "new_SessionBase"
+                                "', argument "
+                                "17"
+                                " of type '"
+                                "std::string"
+                                "'");
+         }
+         arg17 = *ptr;
+         if (SWIG_IsNewObj(res)) {
+            delete ptr;
+         }
+      }
+   }
+   if (obj18) {
+      {
+         std::string *ptr = (std::string *)0;
+         int res = SWIG_AsPtr_std_string(obj18, &ptr);
+         if (!SWIG_IsOK(res) || !ptr) {
+            SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)),
+                                "in method '"
+                                "new_SessionBase"
+                                "', argument "
+                                "18"
+                                " of type '"
+                                "std::string"
+                                "'");
+         }
+         arg18 = *ptr;
+         if (SWIG_IsNewObj(res)) {
+            delete ptr;
+         }
+      }
+   }
+   if (obj19) {
+      ecode19 = SWIG_AsVal_bool(obj19, &val19);
+      if (!SWIG_IsOK(ecode19)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode19),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "19"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg19 = static_cast<bool>(val19);
+   }
+   if (obj20) {
+      ecode20 = SWIG_AsVal_bool(obj20, &val20);
+      if (!SWIG_IsOK(ecode20)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode20),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "20"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg20 = static_cast<bool>(val20);
+   }
+   if (obj21) {
+      ecode21 = SWIG_AsVal_bool(obj21, &val21);
+      if (!SWIG_IsOK(ecode21)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode21),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "21"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg21 = static_cast<bool>(val21);
+   }
    {
       try {
          {
@@ -14261,14 +19196,39 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
                 SWIG_STD_MOVE(arg5), SWIG_STD_MOVE(arg6), SWIG_STD_MOVE(arg7), SWIG_STD_MOVE(arg8),
                 SWIG_STD_MOVE(arg9), SWIG_STD_MOVE(arg10), SWIG_STD_MOVE(arg11),
                 SWIG_STD_MOVE(arg12), SWIG_STD_MOVE(arg13), SWIG_STD_MOVE(arg14),
-                SWIG_STD_MOVE(arg15), SWIG_STD_MOVE(arg16));
+                SWIG_STD_MOVE(arg15), SWIG_STD_MOVE(arg16), SWIG_STD_MOVE(arg17),
+                SWIG_STD_MOVE(arg18), arg19, arg20, arg21);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14307,11 +19267,35 @@ SWIGINTERN PyObject *_wrap_delete_SessionBase(PyObject *self, PyObject *args) {
             delete arg1;
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14380,11 +19364,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_walk__SWIG_0(PyObject *self,
             result = (arg1)->walk((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14431,11 +19439,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_walk__SWIG_1(PyObject *self,
             result = (arg1)->walk();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14545,11 +19577,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_walk__SWIG_0(PyObject *self,
             result = (arg1)->bulk_walk((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14626,11 +19682,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_walk__SWIG_1(PyObject *self,
                 (std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14752,11 +19832,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_0(PyObject *self,
             result = (arg1)->get((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14803,11 +19907,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_1(PyObject *self,
             result = (arg1)->get();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -14878,11 +20006,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_get__SWIG_2(PyObject *self,
                 (arg1)->get((std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15015,11 +20167,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_get_next(PyObject *self, PyObject *args) 
                 (std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15096,11 +20272,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_bulk_get(PyObject *self, PyObject *args) 
                 (std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15177,11 +20377,35 @@ SWIGINTERN PyObject *_wrap_SessionBase_set(PyObject *self, PyObject *args) {
                 (arg1)->set((std::vector<std::string, std::allocator<std::string> > const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15228,11 +20452,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_args(PyObject *self, PyObject *args)
                          ->_get_args();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15272,11 +20520,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_hostname(PyObject *self, PyObject *a
             result = (std::string *)&((SessionBase const *)arg1)->_get_hostname();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15315,11 +20587,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_port_number(PyObject *self, PyObject
             result = (std::string *)&((SessionBase const *)arg1)->_get_port_number();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15358,11 +20654,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_version(PyObject *self, PyObject *ar
             result = (std::string *)&((SessionBase const *)arg1)->_get_version();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15401,11 +20721,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_community(PyObject *self, PyObject *
             result = (std::string *)&((SessionBase const *)arg1)->_get_community();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15444,11 +20788,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_auth_protocol(PyObject *self, PyObje
             result = (std::string *)&((SessionBase const *)arg1)->_get_auth_protocol();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15487,11 +20855,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_auth_passphrase(PyObject *self, PyOb
             result = (std::string *)&((SessionBase const *)arg1)->_get_auth_passphrase();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15530,11 +20922,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_security_engine_id(PyObject *self, P
             result = (std::string *)&((SessionBase const *)arg1)->_get_security_engine_id();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15573,11 +20989,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_context_engine_id(PyObject *self, Py
             result = (std::string *)&((SessionBase const *)arg1)->_get_context_engine_id();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15616,11 +21056,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_security_level(PyObject *self, PyObj
             result = (std::string *)&((SessionBase const *)arg1)->_get_security_level();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15659,11 +21123,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_context(PyObject *self, PyObject *ar
             result = (std::string *)&((SessionBase const *)arg1)->_get_context();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15702,11 +21190,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_security_username(PyObject *self, Py
             result = (std::string *)&((SessionBase const *)arg1)->_get_security_username();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15745,11 +21257,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_privacy_protocol(PyObject *self, PyO
             result = (std::string *)&((SessionBase const *)arg1)->_get_privacy_protocol();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15788,11 +21324,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_privacy_passphrase(PyObject *self, P
             result = (std::string *)&((SessionBase const *)arg1)->_get_privacy_passphrase();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15831,11 +21391,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_boots_time(PyObject *self, PyObject 
             result = (std::string *)&((SessionBase const *)arg1)->_get_boots_time();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15874,11 +21458,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_retries(PyObject *self, PyObject *ar
             result = (std::string *)&((SessionBase const *)arg1)->_get_retries();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15917,11 +21525,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__get_timeout(PyObject *self, PyObject *ar
             result = (std::string *)&((SessionBase const *)arg1)->_get_timeout();
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -15989,11 +21621,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_hostname(PyObject *self, PyObject *a
             (arg1)->_set_hostname((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16067,11 +21723,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_port_number(PyObject *self, PyObject
             (arg1)->_set_port_number((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16145,11 +21825,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_version(PyObject *self, PyObject *ar
             (arg1)->_set_version((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16223,11 +21927,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_community(PyObject *self, PyObject *
             (arg1)->_set_community((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16301,11 +22029,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_auth_protocol(PyObject *self, PyObje
             (arg1)->_set_auth_protocol((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16379,11 +22131,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_auth_passphrase(PyObject *self, PyOb
             (arg1)->_set_auth_passphrase((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16457,11 +22233,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_security_engine_id(PyObject *self, P
             (arg1)->_set_security_engine_id((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16535,11 +22335,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_context_engine_id(PyObject *self, Py
             (arg1)->_set_context_engine_id((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16613,11 +22437,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_security_level(PyObject *self, PyObj
             (arg1)->_set_security_level((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16691,11 +22539,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_context(PyObject *self, PyObject *ar
             (arg1)->_set_context((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16769,11 +22641,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_security_username(PyObject *self, Py
             (arg1)->_set_security_username((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16847,11 +22743,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_privacy_protocol(PyObject *self, PyO
             (arg1)->_set_privacy_protocol((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -16925,11 +22845,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_privacy_passphrase(PyObject *self, P
             (arg1)->_set_privacy_passphrase((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -17003,11 +22947,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_boots_time(PyObject *self, PyObject 
             (arg1)->_set_boots_time((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -17081,11 +23049,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_retries(PyObject *self, PyObject *ar
             (arg1)->_set_retries((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -17159,11 +23151,35 @@ SWIGINTERN PyObject *_wrap_SessionBase__set_timeout(PyObject *self, PyObject *ar
             (arg1)->_set_timeout((std::string const &)*arg2);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
-      } catch (std::runtime_error const &e) {
-         PyErr_SetString(PyExc_RuntimeError, e.what());
+      } catch (ConnectionErrorBase const &e) {
+         PyErr_SetString(pConnectionErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
-      } catch (std::invalid_argument const &e) {
-         PyErr_SetString(PyExc_ValueError, e.what());
+      } catch (TimeoutErrorBase const &e) {
+         PyErr_SetString(pTimeoutErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UnknownObjectIDErrorBase const &e) {
+         PyErr_SetString(pUnknownObjectIDErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchNameErrorBase const &e) {
+         PyErr_SetString(pNoSuchNameErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchObjectErrorBase const &e) {
+         PyErr_SetString(pNoSuchObjectErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (NoSuchInstanceErrorBase const &e) {
+         PyErr_SetString(pNoSuchInstanceErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (UndeterminedTypeErrorBase const &e) {
+         PyErr_SetString(pUndeterminedTypeErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (ParseErrorBase const &e) {
+         PyErr_SetString(pParseErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (PacketErrorBase const &e) {
+         PyErr_SetString(pPacketErrorBase, const_cast<char *>(e.what()));
+         SWIG_fail;
+      } catch (GenericErrorBase const &e) {
+         PyErr_SetString(pGenericErrorBase, const_cast<char *>(e.what()));
          SWIG_fail;
       }
    }
@@ -17569,15 +23585,15 @@ static SwigPyGetSet Result_oid_getset = {_wrap_Result_oid_get, _wrap_Result_oid_
 static SwigPyGetSet Result_index_getset = {_wrap_Result_index_get, _wrap_Result_index_set};
 SWIGINTERN PyGetSetDef SwigPyBuiltin__Result_getset[] = {
     {(char *)"type", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"type", &Result_type_getset},
-    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"oid",
-     &Result___dict___getset},
+     (char *)"Data type of the retrieved value.", &Result_type_getset},
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0,
+     (char *)"Object Identifier (OID) of the retrieved data.", &Result___dict___getset},
     {(char *)"value", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"value", &Result_value_getset},
+     (char *)"Actual value of the retrieved data.", &Result_value_getset},
     {(char *)"oid", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"oid", &Result_oid_getset},
+     (char *)"Object Identifier (OID) of the retrieved data.", &Result_oid_getset},
     {(char *)"index", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"index", &Result_index_getset},
+     (char *)"Index of the retrieved data (if applicable).", &Result_index_getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
 };
 
@@ -17595,7 +23611,16 @@ SWIGINTERN PyObject *SwigPyBuiltin__Result_richcompare(PyObject *self, PyObject 
 }
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
-    {"to_string", _wrap_Result_to_string, METH_NOARGS, "to_string(self) -> std::string"},
+    {"to_string", _wrap_Result_to_string, METH_NOARGS,
+     "\n"
+     "Converts the Result object to a string representation.\n"
+     "\n"
+     "This method generates a human-readable string representation of the\n"
+     "Result object, including all its members.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A string representation of the Result object.\n"
+     ""},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -17638,7 +23663,12 @@ static PyHeapTypeObject SwigPyBuiltin__Result_type = {
 #else
         Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
 #endif
-        "::Result",                        /* tp_doc */
+        "\n"
+        "Structure to represent an SNMP result.\n"
+        "\n"
+        "This structure holds the information retrieved from an SNMP operation,\n"
+        "including the OID, index, type, and value of the retrieved data.\n"
+        "",                                /* tp_doc */
         (traverseproc)0,                   /* tp_traverse */
         (inquiry)0,                        /* tp_clear */
         SwigPyBuiltin__Result_richcompare, /* tp_richcompare */
@@ -17839,20 +23869,3294 @@ static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type,
    PyMemberDef members[] = {
        {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
        {NULL, 0, 0, 0, NULL}};
-   PyType_Slot slots[] = {{Py_tp_init, (void *)_wrap_new_Result},
-                          {Py_tp_dealloc, (void *)_wrap_delete_Result_destructor_closure},
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_Result},
+       {Py_tp_dealloc, (void *)_wrap_delete_Result_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc,
+        (void *)"\n"
+                "Structure to represent an SNMP result.\n"
+                "\n"
+                "This structure holds the information retrieved from an SNMP operation,\n"
+                "including the OID, index, type, and value of the retrieved data.\n"
+                ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__Result_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__Result_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__Result_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.Result", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__Result_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet GenericErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__GenericErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"GenericErrorBase",
+     &GenericErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__GenericErrorBase_richcompare(PyObject *self,
+                                                                 PyObject *other,
+                                                                 int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__GenericErrorBase_methods[] = {
+    {"what", _wrap_GenericErrorBase_what, METH_NOARGS, "what(self) -> char const *"},
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__GenericErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.GenericErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                             /* tp_basicsize */
+        0,                                                /* tp_itemsize */
+        _wrap_delete_GenericErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                       /* tp_repr */
+        &SwigPyBuiltin__GenericErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__GenericErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__GenericErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                 /* tp_hash */
+        (ternaryfunc)0,                                    /* tp_call */
+        (reprfunc)0,                                       /* tp_str */
+        (getattrofunc)0,                                   /* tp_getattro */
+        (setattrofunc)0,                                   /* tp_setattro */
+        &SwigPyBuiltin__GenericErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP errors in the ezsnmp library.\n"
+        "\n"
+        "This class extends the standard std::exception class to provide\n"
+        "detailed error messages specific to SNMP operations.\n"
+        "",                                          /* tp_doc */
+        (traverseproc)0,                             /* tp_traverse */
+        (inquiry)0,                                  /* tp_clear */
+        SwigPyBuiltin__GenericErrorBase_richcompare, /* tp_richcompare */
+        0,                                           /* tp_weaklistoffset */
+        (getiterfunc)0,                              /* tp_iter */
+        (iternextfunc)0,                             /* tp_iternext */
+        SwigPyBuiltin__GenericErrorBase_methods,     /* tp_methods */
+        0,                                           /* tp_members */
+        SwigPyBuiltin__GenericErrorBase_getset,      /* tp_getset */
+        0,                                           /* tp_base */
+        0,                                           /* tp_dict */
+        (descrgetfunc)0,                             /* tp_descr_get */
+        (descrsetfunc)0,                             /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                /* tp_dictoffset */
+        _wrap_new_GenericErrorBase,                  /* tp_init */
+        (allocfunc)0,                                /* tp_alloc */
+        (newfunc)0,                                  /* tp_new */
+        (freefunc)0,                                 /* tp_free */
+        (inquiry)0,                                  /* tp_is_gc */
+        (PyObject *)0,                               /* tp_bases */
+        (PyObject *)0,                               /* tp_mro */
+        (PyObject *)0,                               /* tp_cache */
+        (PyObject *)0,                               /* tp_subclasses */
+        (PyObject *)0,                               /* tp_weaklist */
+        (destructor)0,                               /* tp_del */
+        (int)0,                                      /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__GenericErrorBase_type_create(PyTypeObject *type,
+                                                                 PyTypeObject **bases,
+                                                                 PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__GenericErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'GenericErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__GenericErrorBase_type_create(PyTypeObject *type,
+                                                                 PyTypeObject **bases,
+                                                                 PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_GenericErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_GenericErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"\n"
+                           "Exception class for handling SNMP errors in the ezsnmp library.\n"
+                           "\n"
+                           "This class extends the standard std::exception class to provide\n"
+                           "detailed error messages specific to SNMP operations.\n"
+                           ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__GenericErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__GenericErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__GenericErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.GenericErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__GenericErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet ConnectionErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__ConnectionErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"ConnectionErrorBase",
+     &ConnectionErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__ConnectionErrorBase_richcompare(PyObject *self,
+                                                                    PyObject *other,
+                                                                    int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__ConnectionErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__ConnectionErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.ConnectionErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                                /* tp_basicsize */
+        0,                                                   /* tp_itemsize */
+        _wrap_delete_ConnectionErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                          /* tp_repr */
+        &SwigPyBuiltin__ConnectionErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__ConnectionErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__ConnectionErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                    /* tp_hash */
+        (ternaryfunc)0,                                       /* tp_call */
+        (reprfunc)0,                                          /* tp_str */
+        (getattrofunc)0,                                      /* tp_getattro */
+        (setattrofunc)0,                                      /* tp_setattro */
+        &SwigPyBuiltin__ConnectionErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for SNMP connection errors.\n"
+        "\n"
+        "This class represents an error that occurs during an SNMP connection attempt.\n"
+        "It inherits from the GenericErrorBase base class.\n"
+        "\n"
+        ":param message: A descriptive error message.\n"
+        "",                                             /* tp_doc */
+        (traverseproc)0,                                /* tp_traverse */
+        (inquiry)0,                                     /* tp_clear */
+        SwigPyBuiltin__ConnectionErrorBase_richcompare, /* tp_richcompare */
+        0,                                              /* tp_weaklistoffset */
+        (getiterfunc)0,                                 /* tp_iter */
+        (iternextfunc)0,                                /* tp_iternext */
+        SwigPyBuiltin__ConnectionErrorBase_methods,     /* tp_methods */
+        0,                                              /* tp_members */
+        SwigPyBuiltin__ConnectionErrorBase_getset,      /* tp_getset */
+        0,                                              /* tp_base */
+        0,                                              /* tp_dict */
+        (descrgetfunc)0,                                /* tp_descr_get */
+        (descrsetfunc)0,                                /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                   /* tp_dictoffset */
+        _wrap_new_ConnectionErrorBase,                  /* tp_init */
+        (allocfunc)0,                                   /* tp_alloc */
+        (newfunc)0,                                     /* tp_new */
+        (freefunc)0,                                    /* tp_free */
+        (inquiry)0,                                     /* tp_is_gc */
+        (PyObject *)0,                                  /* tp_bases */
+        (PyObject *)0,                                  /* tp_mro */
+        (PyObject *)0,                                  /* tp_cache */
+        (PyObject *)0,                                  /* tp_subclasses */
+        (PyObject *)0,                                  /* tp_weaklist */
+        (destructor)0,                                  /* tp_del */
+        (int)0,                                         /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__ConnectionErrorBase_type_create(PyTypeObject *type,
+                                                                    PyTypeObject **bases,
+                                                                    PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__ConnectionErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'ConnectionErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__ConnectionErrorBase_type_create(PyTypeObject *type,
+                                                                    PyTypeObject **bases,
+                                                                    PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_ConnectionErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_ConnectionErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc,
+        (void *)"\n"
+                "Exception class for SNMP connection errors.\n"
+                "\n"
+                "This class represents an error that occurs during an SNMP connection attempt.\n"
+                "It inherits from the GenericErrorBase base class.\n"
+                "\n"
+                ":param message: A descriptive error message.\n"
+                ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__ConnectionErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__ConnectionErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__ConnectionErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.ConnectionErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__ConnectionErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet TimeoutErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__TimeoutErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"TimeoutErrorBase",
+     &TimeoutErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__TimeoutErrorBase_richcompare(PyObject *self,
+                                                                 PyObject *other,
+                                                                 int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__TimeoutErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__TimeoutErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.TimeoutErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                             /* tp_basicsize */
+        0,                                                /* tp_itemsize */
+        _wrap_delete_TimeoutErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                       /* tp_repr */
+        &SwigPyBuiltin__TimeoutErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__TimeoutErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__TimeoutErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                 /* tp_hash */
+        (ternaryfunc)0,                                    /* tp_call */
+        (reprfunc)0,                                       /* tp_str */
+        (getattrofunc)0,                                   /* tp_getattro */
+        (setattrofunc)0,                                   /* tp_setattro */
+        &SwigPyBuiltin__TimeoutErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP timeout errors.\n"
+        "\n"
+        "This class represents an error that occurs when an SNMP operation times out.\n"
+        "It inherits from GenericErrorBase.\n"
+        "\n"
+        ":param message: A descriptive message about the timeout error.\n"
+        "",                                          /* tp_doc */
+        (traverseproc)0,                             /* tp_traverse */
+        (inquiry)0,                                  /* tp_clear */
+        SwigPyBuiltin__TimeoutErrorBase_richcompare, /* tp_richcompare */
+        0,                                           /* tp_weaklistoffset */
+        (getiterfunc)0,                              /* tp_iter */
+        (iternextfunc)0,                             /* tp_iternext */
+        SwigPyBuiltin__TimeoutErrorBase_methods,     /* tp_methods */
+        0,                                           /* tp_members */
+        SwigPyBuiltin__TimeoutErrorBase_getset,      /* tp_getset */
+        0,                                           /* tp_base */
+        0,                                           /* tp_dict */
+        (descrgetfunc)0,                             /* tp_descr_get */
+        (descrsetfunc)0,                             /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                /* tp_dictoffset */
+        _wrap_new_TimeoutErrorBase,                  /* tp_init */
+        (allocfunc)0,                                /* tp_alloc */
+        (newfunc)0,                                  /* tp_new */
+        (freefunc)0,                                 /* tp_free */
+        (inquiry)0,                                  /* tp_is_gc */
+        (PyObject *)0,                               /* tp_bases */
+        (PyObject *)0,                               /* tp_mro */
+        (PyObject *)0,                               /* tp_cache */
+        (PyObject *)0,                               /* tp_subclasses */
+        (PyObject *)0,                               /* tp_weaklist */
+        (destructor)0,                               /* tp_del */
+        (int)0,                                      /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__TimeoutErrorBase_type_create(PyTypeObject *type,
+                                                                 PyTypeObject **bases,
+                                                                 PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__TimeoutErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'TimeoutErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__TimeoutErrorBase_type_create(PyTypeObject *type,
+                                                                 PyTypeObject **bases,
+                                                                 PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_TimeoutErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_TimeoutErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc,
+        (void *)"\n"
+                "Exception class for handling SNMP timeout errors.\n"
+                "\n"
+                "This class represents an error that occurs when an SNMP operation times out.\n"
+                "It inherits from GenericErrorBase.\n"
+                "\n"
+                ":param message: A descriptive message about the timeout error.\n"
+                ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__TimeoutErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__TimeoutErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__TimeoutErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.TimeoutErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__TimeoutErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet UnknownObjectIDErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__UnknownObjectIDErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"UnknownObjectIDErrorBase",
+     &UnknownObjectIDErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__UnknownObjectIDErrorBase_richcompare(PyObject *self,
+                                                                         PyObject *other,
+                                                                         int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__UnknownObjectIDErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__UnknownObjectIDErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.UnknownObjectIDErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                                     /* tp_basicsize */
+        0,                                                        /* tp_itemsize */
+        _wrap_delete_UnknownObjectIDErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                               /* tp_repr */
+        &SwigPyBuiltin__UnknownObjectIDErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__UnknownObjectIDErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__UnknownObjectIDErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                         /* tp_hash */
+        (ternaryfunc)0,                                            /* tp_call */
+        (reprfunc)0,                                               /* tp_str */
+        (getattrofunc)0,                                           /* tp_getattro */
+        (setattrofunc)0,                                           /* tp_setattro */
+        &SwigPyBuiltin__UnknownObjectIDErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for unknown SNMP Object ID errors.\n"
+        "\n"
+        "This exception is thrown when an unknown SNMP Object ID is encountered.\n"
+        "\n"
+        "This class inherits from GenericErrorBase and provides additional\n"
+        "information about the error through its message.\n"
+        "\n"
+        ":param message: A string containing the error message.\n"
+        "",                                                  /* tp_doc */
+        (traverseproc)0,                                     /* tp_traverse */
+        (inquiry)0,                                          /* tp_clear */
+        SwigPyBuiltin__UnknownObjectIDErrorBase_richcompare, /* tp_richcompare */
+        0,                                                   /* tp_weaklistoffset */
+        (getiterfunc)0,                                      /* tp_iter */
+        (iternextfunc)0,                                     /* tp_iternext */
+        SwigPyBuiltin__UnknownObjectIDErrorBase_methods,     /* tp_methods */
+        0,                                                   /* tp_members */
+        SwigPyBuiltin__UnknownObjectIDErrorBase_getset,      /* tp_getset */
+        0,                                                   /* tp_base */
+        0,                                                   /* tp_dict */
+        (descrgetfunc)0,                                     /* tp_descr_get */
+        (descrsetfunc)0,                                     /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                        /* tp_dictoffset */
+        _wrap_new_UnknownObjectIDErrorBase,                  /* tp_init */
+        (allocfunc)0,                                        /* tp_alloc */
+        (newfunc)0,                                          /* tp_new */
+        (freefunc)0,                                         /* tp_free */
+        (inquiry)0,                                          /* tp_is_gc */
+        (PyObject *)0,                                       /* tp_bases */
+        (PyObject *)0,                                       /* tp_mro */
+        (PyObject *)0,                                       /* tp_cache */
+        (PyObject *)0,                                       /* tp_subclasses */
+        (PyObject *)0,                                       /* tp_weaklist */
+        (destructor)0,                                       /* tp_del */
+        (int)0,                                              /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__UnknownObjectIDErrorBase_type_create(PyTypeObject *type,
+                                                                         PyTypeObject **bases,
+                                                                         PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__UnknownObjectIDErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'UnknownObjectIDErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__UnknownObjectIDErrorBase_type_create(PyTypeObject *type,
+                                                                         PyTypeObject **bases,
+                                                                         PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_UnknownObjectIDErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_UnknownObjectIDErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc,
+        (void *)"\n"
+                "Exception class for unknown SNMP Object ID errors.\n"
+                "\n"
+                "This exception is thrown when an unknown SNMP Object ID is encountered.\n"
+                "\n"
+                "This class inherits from GenericErrorBase and provides additional\n"
+                "information about the error through its message.\n"
+                "\n"
+                ":param message: A string containing the error message.\n"
+                ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__UnknownObjectIDErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__UnknownObjectIDErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__UnknownObjectIDErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.UnknownObjectIDErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__UnknownObjectIDErrorBase_clientdata = {0, 0, 0, 0,
+                                                                                  0, 0, 0};
+
+static SwigPyGetSet NoSuchNameErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__NoSuchNameErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"NoSuchNameErrorBase",
+     &NoSuchNameErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__NoSuchNameErrorBase_richcompare(PyObject *self,
+                                                                    PyObject *other,
+                                                                    int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__NoSuchNameErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__NoSuchNameErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.NoSuchNameErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                                /* tp_basicsize */
+        0,                                                   /* tp_itemsize */
+        _wrap_delete_NoSuchNameErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                          /* tp_repr */
+        &SwigPyBuiltin__NoSuchNameErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__NoSuchNameErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__NoSuchNameErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                    /* tp_hash */
+        (ternaryfunc)0,                                       /* tp_call */
+        (reprfunc)0,                                          /* tp_str */
+        (getattrofunc)0,                                      /* tp_getattro */
+        (setattrofunc)0,                                      /* tp_setattro */
+        &SwigPyBuiltin__NoSuchNameErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP \"No Such Name\" errors.\n"
+        "\n"
+        "This class represents an error that occurs when an SNMP operation\n"
+        "encounters a \"No Such Name\" error, indicating that the requested\n"
+        "object does not exist.\n"
+        "\n"
+        "",                                             /* tp_doc */
+        (traverseproc)0,                                /* tp_traverse */
+        (inquiry)0,                                     /* tp_clear */
+        SwigPyBuiltin__NoSuchNameErrorBase_richcompare, /* tp_richcompare */
+        0,                                              /* tp_weaklistoffset */
+        (getiterfunc)0,                                 /* tp_iter */
+        (iternextfunc)0,                                /* tp_iternext */
+        SwigPyBuiltin__NoSuchNameErrorBase_methods,     /* tp_methods */
+        0,                                              /* tp_members */
+        SwigPyBuiltin__NoSuchNameErrorBase_getset,      /* tp_getset */
+        0,                                              /* tp_base */
+        0,                                              /* tp_dict */
+        (descrgetfunc)0,                                /* tp_descr_get */
+        (descrsetfunc)0,                                /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                   /* tp_dictoffset */
+        _wrap_new_NoSuchNameErrorBase,                  /* tp_init */
+        (allocfunc)0,                                   /* tp_alloc */
+        (newfunc)0,                                     /* tp_new */
+        (freefunc)0,                                    /* tp_free */
+        (inquiry)0,                                     /* tp_is_gc */
+        (PyObject *)0,                                  /* tp_bases */
+        (PyObject *)0,                                  /* tp_mro */
+        (PyObject *)0,                                  /* tp_cache */
+        (PyObject *)0,                                  /* tp_subclasses */
+        (PyObject *)0,                                  /* tp_weaklist */
+        (destructor)0,                                  /* tp_del */
+        (int)0,                                         /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__NoSuchNameErrorBase_type_create(PyTypeObject *type,
+                                                                    PyTypeObject **bases,
+                                                                    PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__NoSuchNameErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchNameErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__NoSuchNameErrorBase_type_create(PyTypeObject *type,
+                                                                    PyTypeObject **bases,
+                                                                    PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_NoSuchNameErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_NoSuchNameErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"\n"
+                           "Exception class for handling SNMP \"No Such Name\" errors.\n"
+                           "\n"
+                           "This class represents an error that occurs when an SNMP operation\n"
+                           "encounters a \"No Such Name\" error, indicating that the requested\n"
+                           "object does not exist.\n"
+                           "\n"
+                           ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__NoSuchNameErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__NoSuchNameErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__NoSuchNameErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.NoSuchNameErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__NoSuchNameErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet NoSuchObjectErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__NoSuchObjectErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"NoSuchObjectErrorBase",
+     &NoSuchObjectErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__NoSuchObjectErrorBase_richcompare(PyObject *self,
+                                                                      PyObject *other,
+                                                                      int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__NoSuchObjectErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__NoSuchObjectErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.NoSuchObjectErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                                  /* tp_basicsize */
+        0,                                                     /* tp_itemsize */
+        _wrap_delete_NoSuchObjectErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                            /* tp_repr */
+        &SwigPyBuiltin__NoSuchObjectErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__NoSuchObjectErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__NoSuchObjectErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                      /* tp_hash */
+        (ternaryfunc)0,                                         /* tp_call */
+        (reprfunc)0,                                            /* tp_str */
+        (getattrofunc)0,                                        /* tp_getattro */
+        (setattrofunc)0,                                        /* tp_setattro */
+        &SwigPyBuiltin__NoSuchObjectErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP \"No Such Object\" errors.\n"
+        "\n"
+        "This exception is thrown when an SNMP operation encounters a \"No Such Object\" error.\n"
+        "\n"
+        ":param message: A detailed error message.\n"
+        "",                                               /* tp_doc */
+        (traverseproc)0,                                  /* tp_traverse */
+        (inquiry)0,                                       /* tp_clear */
+        SwigPyBuiltin__NoSuchObjectErrorBase_richcompare, /* tp_richcompare */
+        0,                                                /* tp_weaklistoffset */
+        (getiterfunc)0,                                   /* tp_iter */
+        (iternextfunc)0,                                  /* tp_iternext */
+        SwigPyBuiltin__NoSuchObjectErrorBase_methods,     /* tp_methods */
+        0,                                                /* tp_members */
+        SwigPyBuiltin__NoSuchObjectErrorBase_getset,      /* tp_getset */
+        0,                                                /* tp_base */
+        0,                                                /* tp_dict */
+        (descrgetfunc)0,                                  /* tp_descr_get */
+        (descrsetfunc)0,                                  /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                     /* tp_dictoffset */
+        _wrap_new_NoSuchObjectErrorBase,                  /* tp_init */
+        (allocfunc)0,                                     /* tp_alloc */
+        (newfunc)0,                                       /* tp_new */
+        (freefunc)0,                                      /* tp_free */
+        (inquiry)0,                                       /* tp_is_gc */
+        (PyObject *)0,                                    /* tp_bases */
+        (PyObject *)0,                                    /* tp_mro */
+        (PyObject *)0,                                    /* tp_cache */
+        (PyObject *)0,                                    /* tp_subclasses */
+        (PyObject *)0,                                    /* tp_weaklist */
+        (destructor)0,                                    /* tp_del */
+        (int)0,                                           /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__NoSuchObjectErrorBase_type_create(PyTypeObject *type,
+                                                                      PyTypeObject **bases,
+                                                                      PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__NoSuchObjectErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchObjectErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__NoSuchObjectErrorBase_type_create(PyTypeObject *type,
+                                                                      PyTypeObject **bases,
+                                                                      PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_NoSuchObjectErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_NoSuchObjectErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"\n"
+                           "Exception class for handling SNMP \"No Such Object\" errors.\n"
+                           "\n"
+                           "This exception is thrown when an SNMP operation encounters a \"No Such "
+                           "Object\" error.\n"
+                           "\n"
+                           ":param message: A detailed error message.\n"
+                           ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__NoSuchObjectErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__NoSuchObjectErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__NoSuchObjectErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.NoSuchObjectErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__NoSuchObjectErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet NoSuchInstanceErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__NoSuchInstanceErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"NoSuchInstanceErrorBase",
+     &NoSuchInstanceErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__NoSuchInstanceErrorBase_richcompare(PyObject *self,
+                                                                        PyObject *other,
+                                                                        int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__NoSuchInstanceErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__NoSuchInstanceErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.NoSuchInstanceErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                                    /* tp_basicsize */
+        0,                                                       /* tp_itemsize */
+        _wrap_delete_NoSuchInstanceErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                              /* tp_repr */
+        &SwigPyBuiltin__NoSuchInstanceErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__NoSuchInstanceErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__NoSuchInstanceErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                        /* tp_hash */
+        (ternaryfunc)0,                                           /* tp_call */
+        (reprfunc)0,                                              /* tp_str */
+        (getattrofunc)0,                                          /* tp_getattro */
+        (setattrofunc)0,                                          /* tp_setattro */
+        &SwigPyBuiltin__NoSuchInstanceErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP \"No Such Instance\" errors.\n"
+        "\n"
+        "This exception is thrown when an SNMP operation encounters a \"No Such Instance\" error,\n"
+        "indicating that the requested instance does not exist.\n"
+        "\n"
+        "",                                                 /* tp_doc */
+        (traverseproc)0,                                    /* tp_traverse */
+        (inquiry)0,                                         /* tp_clear */
+        SwigPyBuiltin__NoSuchInstanceErrorBase_richcompare, /* tp_richcompare */
+        0,                                                  /* tp_weaklistoffset */
+        (getiterfunc)0,                                     /* tp_iter */
+        (iternextfunc)0,                                    /* tp_iternext */
+        SwigPyBuiltin__NoSuchInstanceErrorBase_methods,     /* tp_methods */
+        0,                                                  /* tp_members */
+        SwigPyBuiltin__NoSuchInstanceErrorBase_getset,      /* tp_getset */
+        0,                                                  /* tp_base */
+        0,                                                  /* tp_dict */
+        (descrgetfunc)0,                                    /* tp_descr_get */
+        (descrsetfunc)0,                                    /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                       /* tp_dictoffset */
+        _wrap_new_NoSuchInstanceErrorBase,                  /* tp_init */
+        (allocfunc)0,                                       /* tp_alloc */
+        (newfunc)0,                                         /* tp_new */
+        (freefunc)0,                                        /* tp_free */
+        (inquiry)0,                                         /* tp_is_gc */
+        (PyObject *)0,                                      /* tp_bases */
+        (PyObject *)0,                                      /* tp_mro */
+        (PyObject *)0,                                      /* tp_cache */
+        (PyObject *)0,                                      /* tp_subclasses */
+        (PyObject *)0,                                      /* tp_weaklist */
+        (destructor)0,                                      /* tp_del */
+        (int)0,                                             /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__NoSuchInstanceErrorBase_type_create(PyTypeObject *type,
+                                                                        PyTypeObject **bases,
+                                                                        PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__NoSuchInstanceErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'NoSuchInstanceErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__NoSuchInstanceErrorBase_type_create(PyTypeObject *type,
+                                                                        PyTypeObject **bases,
+                                                                        PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_NoSuchInstanceErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_NoSuchInstanceErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"\n"
+                           "Exception class for handling SNMP \"No Such Instance\" errors.\n"
+                           "\n"
+                           "This exception is thrown when an SNMP operation encounters a \"No Such "
+                           "Instance\" error,\n"
+                           "indicating that the requested instance does not exist.\n"
+                           "\n"
+                           ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__NoSuchInstanceErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__NoSuchInstanceErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__NoSuchInstanceErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.NoSuchInstanceErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__NoSuchInstanceErrorBase_clientdata = {0, 0, 0, 0,
+                                                                                 0, 0, 0};
+
+static SwigPyGetSet UndeterminedTypeErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__UndeterminedTypeErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"UndeterminedTypeErrorBase",
+     &UndeterminedTypeErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__UndeterminedTypeErrorBase_richcompare(PyObject *self,
+                                                                          PyObject *other,
+                                                                          int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__UndeterminedTypeErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__UndeterminedTypeErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.UndeterminedTypeErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                                      /* tp_basicsize */
+        0,                                                         /* tp_itemsize */
+        _wrap_delete_UndeterminedTypeErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                                /* tp_repr */
+        &SwigPyBuiltin__UndeterminedTypeErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__UndeterminedTypeErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__UndeterminedTypeErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                          /* tp_hash */
+        (ternaryfunc)0,                                             /* tp_call */
+        (reprfunc)0,                                                /* tp_str */
+        (getattrofunc)0,                                            /* tp_getattro */
+        (setattrofunc)0,                                            /* tp_setattro */
+        &SwigPyBuiltin__UndeterminedTypeErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for undetermined SNMP type errors.\n"
+        "\n"
+        "This exception is thrown when an SNMP type cannot be determined.\n"
+        "\n"
+        "\n"
+        "\n"
+        ":param message: A descriptive error message.\n"
+        "",                                                   /* tp_doc */
+        (traverseproc)0,                                      /* tp_traverse */
+        (inquiry)0,                                           /* tp_clear */
+        SwigPyBuiltin__UndeterminedTypeErrorBase_richcompare, /* tp_richcompare */
+        0,                                                    /* tp_weaklistoffset */
+        (getiterfunc)0,                                       /* tp_iter */
+        (iternextfunc)0,                                      /* tp_iternext */
+        SwigPyBuiltin__UndeterminedTypeErrorBase_methods,     /* tp_methods */
+        0,                                                    /* tp_members */
+        SwigPyBuiltin__UndeterminedTypeErrorBase_getset,      /* tp_getset */
+        0,                                                    /* tp_base */
+        0,                                                    /* tp_dict */
+        (descrgetfunc)0,                                      /* tp_descr_get */
+        (descrsetfunc)0,                                      /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                         /* tp_dictoffset */
+        _wrap_new_UndeterminedTypeErrorBase,                  /* tp_init */
+        (allocfunc)0,                                         /* tp_alloc */
+        (newfunc)0,                                           /* tp_new */
+        (freefunc)0,                                          /* tp_free */
+        (inquiry)0,                                           /* tp_is_gc */
+        (PyObject *)0,                                        /* tp_bases */
+        (PyObject *)0,                                        /* tp_mro */
+        (PyObject *)0,                                        /* tp_cache */
+        (PyObject *)0,                                        /* tp_subclasses */
+        (PyObject *)0,                                        /* tp_weaklist */
+        (destructor)0,                                        /* tp_del */
+        (int)0,                                               /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__UndeterminedTypeErrorBase_type_create(PyTypeObject *type,
+                                                                          PyTypeObject **bases,
+                                                                          PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__UndeterminedTypeErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'UndeterminedTypeErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__UndeterminedTypeErrorBase_type_create(PyTypeObject *type,
+                                                                          PyTypeObject **bases,
+                                                                          PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_UndeterminedTypeErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_UndeterminedTypeErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"\n"
+                           "Exception class for undetermined SNMP type errors.\n"
+                           "\n"
+                           "This exception is thrown when an SNMP type cannot be determined.\n"
+                           "\n"
+                           "\n"
+                           "\n"
+                           ":param message: A descriptive error message.\n"
+                           ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__UndeterminedTypeErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__UndeterminedTypeErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__UndeterminedTypeErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.UndeterminedTypeErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__UndeterminedTypeErrorBase_clientdata = {0, 0, 0, 0,
+                                                                                   0, 0, 0};
+
+static SwigPyGetSet ParseErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__ParseErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"ParseErrorBase",
+     &ParseErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__ParseErrorBase_richcompare(PyObject *self,
+                                                               PyObject *other,
+                                                               int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__ParseErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__ParseErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.ParseErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                           /* tp_basicsize */
+        0,                                              /* tp_itemsize */
+        _wrap_delete_ParseErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                     /* tp_repr */
+        &SwigPyBuiltin__ParseErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__ParseErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__ParseErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                               /* tp_hash */
+        (ternaryfunc)0,                                  /* tp_call */
+        (reprfunc)0,                                     /* tp_str */
+        (getattrofunc)0,                                 /* tp_getattro */
+        (setattrofunc)0,                                 /* tp_setattro */
+        &SwigPyBuiltin__ParseErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP parse errors.\n"
+        "\n"
+        "This exception is thrown when an error occurs while parsing SNMP command line arguments.\n"
+        "\n"
+        "\n"
+        "\n"
+        ":param message: A descriptive error message.\n"
+        "",                                        /* tp_doc */
+        (traverseproc)0,                           /* tp_traverse */
+        (inquiry)0,                                /* tp_clear */
+        SwigPyBuiltin__ParseErrorBase_richcompare, /* tp_richcompare */
+        0,                                         /* tp_weaklistoffset */
+        (getiterfunc)0,                            /* tp_iter */
+        (iternextfunc)0,                           /* tp_iternext */
+        SwigPyBuiltin__ParseErrorBase_methods,     /* tp_methods */
+        0,                                         /* tp_members */
+        SwigPyBuiltin__ParseErrorBase_getset,      /* tp_getset */
+        0,                                         /* tp_base */
+        0,                                         /* tp_dict */
+        (descrgetfunc)0,                           /* tp_descr_get */
+        (descrsetfunc)0,                           /* tp_descr_set */
+        offsetof(SwigPyObject, dict),              /* tp_dictoffset */
+        _wrap_new_ParseErrorBase,                  /* tp_init */
+        (allocfunc)0,                              /* tp_alloc */
+        (newfunc)0,                                /* tp_new */
+        (freefunc)0,                               /* tp_free */
+        (inquiry)0,                                /* tp_is_gc */
+        (PyObject *)0,                             /* tp_bases */
+        (PyObject *)0,                             /* tp_mro */
+        (PyObject *)0,                             /* tp_cache */
+        (PyObject *)0,                             /* tp_subclasses */
+        (PyObject *)0,                             /* tp_weaklist */
+        (destructor)0,                             /* tp_del */
+        (int)0,                                    /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__ParseErrorBase_type_create(PyTypeObject *type,
+                                                               PyTypeObject **bases,
+                                                               PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__ParseErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'ParseErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__ParseErrorBase_type_create(PyTypeObject *type,
+                                                               PyTypeObject **bases,
+                                                               PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {{Py_tp_init, (void *)_wrap_new_ParseErrorBase},
+                          {Py_tp_dealloc, (void *)_wrap_delete_ParseErrorBase_destructor_closure},
                           {Py_tp_alloc, (void *)(allocfunc)0},
                           {Py_tp_free, (void *)(freefunc)0},
                           {Py_tp_is_gc, (void *)(inquiry)0},
                           {Py_tp_del, (void *)(destructor)0},
-                          {Py_tp_doc, (void *)"::Result"},
+                          {Py_tp_doc, (void *)"\n"
+                                              "Exception class for handling SNMP parse errors.\n"
+                                              "\n"
+                                              "This exception is thrown when an error occurs while "
+                                              "parsing SNMP command line arguments.\n"
+                                              "\n"
+                                              "\n"
+                                              "\n"
+                                              ":param message: A descriptive error message.\n"
+                                              ""},
                           {Py_tp_repr, (void *)(reprfunc)0},
                           {Py_tp_str, (void *)(reprfunc)0},
                           {Py_tp_traverse, (void *)(traverseproc)0},
                           {Py_tp_clear, (void *)(inquiry)0},
-                          {Py_tp_richcompare, (void *)SwigPyBuiltin__Result_richcompare},
-                          {Py_tp_methods, (void *)SwigPyBuiltin__Result_methods},
-                          {Py_tp_getset, (void *)SwigPyBuiltin__Result_getset},
+                          {Py_tp_richcompare, (void *)SwigPyBuiltin__ParseErrorBase_richcompare},
+                          {Py_tp_methods, (void *)SwigPyBuiltin__ParseErrorBase_methods},
+                          {Py_tp_getset, (void *)SwigPyBuiltin__ParseErrorBase_getset},
                           {Py_tp_hash, (void *)SwigPyObject_hash},
                           {Py_tp_call, (void *)(ternaryfunc)0},
                           {Py_tp_getattro, (void *)(getattrofunc)0},
@@ -17907,7 +27211,7 @@ static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type,
                           {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
                           {Py_tp_members, members},
                           {0, NULL}};
-   PyType_Spec spec = {"sessionbase.Result", sizeof(SwigPyObject), 0,
+   PyType_Spec spec = {"sessionbase.ParseErrorBase", sizeof(SwigPyObject), 0,
                        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
    PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
    PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
@@ -17918,7 +27222,372 @@ static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type,
    return pytype;
 }
 #endif
-SWIGINTERN SwigPyClientData SwigPyBuiltin__Result_clientdata = {0, 0, 0, 0, 0, 0, 0};
+SWIGINTERN SwigPyClientData SwigPyBuiltin__ParseErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet PacketErrorBase___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__PacketErrorBase_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"PacketErrorBase",
+     &PacketErrorBase___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__PacketErrorBase_richcompare(PyObject *self,
+                                                                PyObject *other,
+                                                                int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__PacketErrorBase_methods[] = {
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__PacketErrorBase_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "sessionbase.PacketErrorBase",               /* tp_name */
+        sizeof(SwigPyObject),                            /* tp_basicsize */
+        0,                                               /* tp_itemsize */
+        _wrap_delete_PacketErrorBase_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                      /* tp_repr */
+        &SwigPyBuiltin__PacketErrorBase_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__PacketErrorBase_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__PacketErrorBase_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                /* tp_hash */
+        (ternaryfunc)0,                                   /* tp_call */
+        (reprfunc)0,                                      /* tp_str */
+        (getattrofunc)0,                                  /* tp_getattro */
+        (setattrofunc)0,                                  /* tp_setattro */
+        &SwigPyBuiltin__PacketErrorBase_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "\n"
+        "Exception class for handling SNMP packet errors.\n"
+        "\n"
+        "This exception is thrown when an error occurs related to SNMP packet processing.\n"
+        "\n"
+        "\n"
+        "\n"
+        ":param message: A descriptive error message.\n"
+        "",                                         /* tp_doc */
+        (traverseproc)0,                            /* tp_traverse */
+        (inquiry)0,                                 /* tp_clear */
+        SwigPyBuiltin__PacketErrorBase_richcompare, /* tp_richcompare */
+        0,                                          /* tp_weaklistoffset */
+        (getiterfunc)0,                             /* tp_iter */
+        (iternextfunc)0,                            /* tp_iternext */
+        SwigPyBuiltin__PacketErrorBase_methods,     /* tp_methods */
+        0,                                          /* tp_members */
+        SwigPyBuiltin__PacketErrorBase_getset,      /* tp_getset */
+        0,                                          /* tp_base */
+        0,                                          /* tp_dict */
+        (descrgetfunc)0,                            /* tp_descr_get */
+        (descrsetfunc)0,                            /* tp_descr_set */
+        offsetof(SwigPyObject, dict),               /* tp_dictoffset */
+        _wrap_new_PacketErrorBase,                  /* tp_init */
+        (allocfunc)0,                               /* tp_alloc */
+        (newfunc)0,                                 /* tp_new */
+        (freefunc)0,                                /* tp_free */
+        (inquiry)0,                                 /* tp_is_gc */
+        (PyObject *)0,                              /* tp_bases */
+        (PyObject *)0,                              /* tp_mro */
+        (PyObject *)0,                              /* tp_cache */
+        (PyObject *)0,                              /* tp_subclasses */
+        (PyObject *)0,                              /* tp_weaklist */
+        (destructor)0,                              /* tp_del */
+        (int)0,                                     /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        (binaryfunc)0, /* nb_add */
+        (binaryfunc)0, /* nb_subtract */
+        (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        (binaryfunc)0, /* nb_inplace_add */
+        (binaryfunc)0, /* nb_inplace_subtract */
+        (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__PacketErrorBase_type_create(PyTypeObject *type,
+                                                                PyTypeObject **bases,
+                                                                PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__PacketErrorBase_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'PacketErrorBase'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__PacketErrorBase_type_create(PyTypeObject *type,
+                                                                PyTypeObject **bases,
+                                                                PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_PacketErrorBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_PacketErrorBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc,
+        (void *)"\n"
+                "Exception class for handling SNMP packet errors.\n"
+                "\n"
+                "This exception is thrown when an error occurs related to SNMP packet processing.\n"
+                "\n"
+                "\n"
+                "\n"
+                ":param message: A descriptive error message.\n"
+                ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__PacketErrorBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__PacketErrorBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__PacketErrorBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"sessionbase.PacketErrorBase", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__PacketErrorBase_clientdata = {0, 0, 0, 0, 0, 0, 0};
 
 static SwigPyGetSet _string_list___dict___getset = {SwigPyObject_get___dict__, 0};
 SWIGINTERN PyGetSetDef SwigPyBuiltin__std__vectorT_std__string_t_getset[] = {
@@ -18761,7 +28430,55 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__std__vectorT_Result_t_clientdata = {0
 
 static SwigPyGetSet SessionBase___dict___getset = {SwigPyObject_get___dict__, 0};
 SWIGINTERN PyGetSetDef SwigPyBuiltin__SessionBase_getset[] = {
-    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"SessionBase",
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0,
+     (char *)"\n"
+             "Constructor for SessionBase.\n"
+             "\n"
+             "Initializes a new SessionBase object with the provided parameters.\n"
+             "\n"
+             ":type hostname: string, optional\n"
+             ":param hostname: Hostname or IP address of the SNMP agent (default: \"localhost\").\n"
+             ":type port_number: string, optional\n"
+             ":param port_number: Port number for the SNMP agent (default: \"\").\n"
+             ":type version: string, optional\n"
+             ":param version: SNMP version (\"1\", \"2c\", or \"3\") (default: \"3\").\n"
+             ":type community: string, optional\n"
+             ":param community: Community string for SNMP v1/v2c (default: \"public\").\n"
+             ":type auth_protocol: string, optional\n"
+             ":param auth_protocol: Authentication protocol for SNMP v3 (default: \"\").\n"
+             ":type auth_passphrase: string, optional\n"
+             ":param auth_passphrase: Authentication passphrase for SNMP v3 (default: \"\").\n"
+             ":type security_engine_id: string, optional\n"
+             ":param security_engine_id: Security engine ID for SNMP v3 (default: \"\").\n"
+             ":type context_engine_id: string, optional\n"
+             ":param context_engine_id: Context engine ID for SNMP v3 (default: \"\").\n"
+             ":type security_level: string, optional\n"
+             ":param security_level: Security level for SNMP v3 (default: \"\").\n"
+             ":type context: string, optional\n"
+             ":param context: Context name for SNMP v3 (default: \"\").\n"
+             ":type security_username: string, optional\n"
+             ":param security_username: Security username for SNMP v3 (default: \"\").\n"
+             ":type privacy_protocol: string, optional\n"
+             ":param privacy_protocol: Privacy protocol for SNMP v3 (default: \"\").\n"
+             ":type privacy_passphrase: string, optional\n"
+             ":param privacy_passphrase: Privacy passphrase for SNMP v3 (default: \"\").\n"
+             ":type boots_time: string, optional\n"
+             ":param boots_time: System boots time for SNMP v3 (default: \"\").\n"
+             ":type retries: string, optional\n"
+             ":param retries: Number of retries for SNMP requests (default: \"3\").\n"
+             ":type timeout: string, optional\n"
+             ":param timeout: Timeout for SNMP requests (default: \"1\").\n"
+             ":type load_mibs: string, optional\n"
+             ":param load_mibs: Load given list of MIBs (default: \"\").\n"
+             ":type mib_directories: string, optional\n"
+             ":param mib_directories: Directories to search for MIBs (default: \"\").\n"
+             ":type print_enums_numerically: boolean, optional\n"
+             ":param print_enums_numerically: Print enums numerically (default: false).\n"
+             ":type print_full_oids: boolean, optional\n"
+             ":param print_full_oids: Print full OIDs on output (default: false).\n"
+             ":type print_oids_numerically: boolean, optional\n"
+             ":param print_oids_numerically: Print OIDs numerically (default: false).\n"
+             "",
      &SessionBase___dict___getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
 };
@@ -18782,79 +28499,333 @@ SWIGINTERN PyObject *SwigPyBuiltin__SessionBase_richcompare(PyObject *self,
 }
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__SessionBase_methods[] = {
-    {"walk", _wrap_SessionBase_walk, METH_VARARGS, "walk(self, mib=\"\") -> _result_list"},
+    {"walk", _wrap_SessionBase_walk, METH_VARARGS,
+     "\n"
+     "Performs an SNMP WALK operation.\n"
+     "\n"
+     "Retrieves a subtree of management information using SNMP WALK.\n"
+     "\n"
+     ":type mib: string, optional\n"
+     ":param mib: The OID (Object Identifier) to start the walk from (default: \"\").\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
+     ""},
     {"bulk_walk", _wrap_SessionBase_bulk_walk, METH_VARARGS,
      "\n"
-     "bulk_walk(self, mib) -> _result_list\n"
-     "bulk_walk(self, mibs) -> _result_list\n"
+     "*Overload 1:*\n"
+     "\n"
+     "Performs an SNMP BULK WALK operation.\n"
+     "\n"
+     "Retrieves a subtree of management information using SNMP BULK WALK.\n"
+     "\n"
+     ":type mib: string\n"
+     ":param mib: The OID to start the walk from.\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
+     "\n"
+     "|\n"
+     "\n"
+     "*Overload 2:*\n"
+     "\n"
+     "Performs an SNMP BULK WALK operation on multiple OIDs.\n"
+     "\n"
+     "Retrieves subtrees of management information using SNMP BULK WALK for multiple OIDs.\n"
+     "\n"
+     ":type mibs: std::vector< std::string,std::allocator< std::string > >\n"
+     ":param mibs: A vector of OIDs to start the walks from.\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
      ""},
     {"get", _wrap_SessionBase_get, METH_VARARGS,
      "\n"
-     "get(self, mib=\"\") -> _result_list\n"
-     "get(self, mibs) -> _result_list\n"
+     "*Overload 1:*\n"
+     "\n"
+     "Performs an SNMP GET operation.\n"
+     "\n"
+     "Retrieves the value of a specific management information object.\n"
+     "\n"
+     ":type mib: string, optional\n"
+     ":param mib: The OID of the object to retrieve (default: \"\").\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
+     "\n"
+     "|\n"
+     "\n"
+     "*Overload 2:*\n"
+     "\n"
+     "Performs an SNMP GET operation on multiple OIDs.\n"
+     "\n"
+     "Retrieves the values of multiple management information objects.\n"
+     "\n"
+     ":type mibs: std::vector< std::string,std::allocator< std::string > >\n"
+     ":param mibs: A vector of OIDs to retrieve.\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
      ""},
-    {"get_next", _wrap_SessionBase_get_next, METH_O, "get_next(self, mibs) -> _result_list"},
-    {"bulk_get", _wrap_SessionBase_bulk_get, METH_O, "bulk_get(self, mibs) -> _result_list"},
-    {"set", _wrap_SessionBase_set, METH_O, "set(self, mibs) -> _result_list"},
-    {"_get_args", _wrap_SessionBase__get_args, METH_NOARGS, "_get_args(self) -> _string_list"},
+    {"get_next", _wrap_SessionBase_get_next, METH_O,
+     "\n"
+     "Performs an SNMP GET NEXT operation on multiple OIDs.\n"
+     "\n"
+     "Retrieves the values of the next lexicographically greater OIDs.\n"
+     "\n"
+     ":type mibs: std::vector< std::string,std::allocator< std::string > >\n"
+     ":param mibs: A vector of OIDs to retrieve the next values for.\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
+     ""},
+    {"bulk_get", _wrap_SessionBase_bulk_get, METH_O,
+     "\n"
+     "Performs an SNMP BULK GET operation on multiple OIDs.\n"
+     "\n"
+     "Retrieves the values of multiple management information objects using BULK GET.\n"
+     "\n"
+     ":type mibs: std::vector< std::string,std::allocator< std::string > >\n"
+     ":param mibs: A vector of OIDs to retrieve.\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the retrieved data.\n"
+     ""},
+    {"set", _wrap_SessionBase_set, METH_O,
+     "\n"
+     "Performs an SNMP SET operation on multiple OIDs.\n"
+     "\n"
+     "Sets the values of multiple management information objects.\n"
+     "\n"
+     ":type mibs: std::vector< std::string,std::allocator< std::string > >\n"
+     ":param mibs: A vector of OIDs and their corresponding values to set.\n"
+     ":rtype: std::vector< Result,std::allocator< Result > >\n"
+     ":return: A vector of Result objects containing the results of the SET operation.\n"
+     ""},
+    {"_get_args", _wrap_SessionBase__get_args, METH_NOARGS,
+     "\n"
+     "Returns the SNMP command arguments.\n"
+     "\n"
+     ":rtype: std::vector< std::string,std::allocator< std::string > >\n"
+     ":return: A constant reference to the vector of SNMP command arguments.\n"
+     ""},
     {"_get_hostname", _wrap_SessionBase__get_hostname, METH_NOARGS,
-     "_get_hostname(self) -> std::string const &"},
+     "\n"
+     "Returns the hostname of the SNMP agent.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the hostname.\n"
+     ""},
     {"_get_port_number", _wrap_SessionBase__get_port_number, METH_NOARGS,
-     "_get_port_number(self) -> std::string const &"},
+     "\n"
+     "Returns the port number for the SNMP agent.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the port number.\n"
+     ""},
     {"_get_version", _wrap_SessionBase__get_version, METH_NOARGS,
-     "_get_version(self) -> std::string const &"},
+     "\n"
+     "Returns the SNMP version.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the SNMP version.\n"
+     ""},
     {"_get_community", _wrap_SessionBase__get_community, METH_NOARGS,
-     "_get_community(self) -> std::string const &"},
+     "\n"
+     "Returns the community string.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the community string.\n"
+     ""},
     {"_get_auth_protocol", _wrap_SessionBase__get_auth_protocol, METH_NOARGS,
-     "_get_auth_protocol(self) -> std::string const &"},
+     "\n"
+     "Returns the authentication protocol.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the authentication protocol.\n"
+     ""},
     {"_get_auth_passphrase", _wrap_SessionBase__get_auth_passphrase, METH_NOARGS,
-     "_get_auth_passphrase(self) -> std::string const &"},
+     "\n"
+     "Returns the authentication passphrase.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the authentication passphrase.\n"
+     ""},
     {"_get_security_engine_id", _wrap_SessionBase__get_security_engine_id, METH_NOARGS,
-     "_get_security_engine_id(self) -> std::string const &"},
+     "\n"
+     "Returns the security engine ID.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the security engine ID.\n"
+     ""},
     {"_get_context_engine_id", _wrap_SessionBase__get_context_engine_id, METH_NOARGS,
-     "_get_context_engine_id(self) -> std::string const &"},
+     "\n"
+     "Returns the context engine ID.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the context engine ID.\n"
+     ""},
     {"_get_security_level", _wrap_SessionBase__get_security_level, METH_NOARGS,
-     "_get_security_level(self) -> std::string const &"},
+     "\n"
+     "Returns the security level.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the security level.\n"
+     ""},
     {"_get_context", _wrap_SessionBase__get_context, METH_NOARGS,
-     "_get_context(self) -> std::string const &"},
+     "\n"
+     "Returns the context name.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the context name.\n"
+     ""},
     {"_get_security_username", _wrap_SessionBase__get_security_username, METH_NOARGS,
-     "_get_security_username(self) -> std::string const &"},
+     "\n"
+     "Returns the security username.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the security username.\n"
+     ""},
     {"_get_privacy_protocol", _wrap_SessionBase__get_privacy_protocol, METH_NOARGS,
-     "_get_privacy_protocol(self) -> std::string const &"},
+     "\n"
+     "Returns the privacy protocol.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the privacy protocol.\n"
+     ""},
     {"_get_privacy_passphrase", _wrap_SessionBase__get_privacy_passphrase, METH_NOARGS,
-     "_get_privacy_passphrase(self) -> std::string const &"},
+     "\n"
+     "Returns the privacy passphrase.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the privacy passphrase.\n"
+     ""},
     {"_get_boots_time", _wrap_SessionBase__get_boots_time, METH_NOARGS,
-     "_get_boots_time(self) -> std::string const &"},
+     "\n"
+     "Returns the system boots time.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the system boots time.\n"
+     ""},
     {"_get_retries", _wrap_SessionBase__get_retries, METH_NOARGS,
-     "_get_retries(self) -> std::string const &"},
+     "\n"
+     "Returns the number of retries.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the number of retries.\n"
+     ""},
     {"_get_timeout", _wrap_SessionBase__get_timeout, METH_NOARGS,
-     "_get_timeout(self) -> std::string const &"},
-    {"_set_hostname", _wrap_SessionBase__set_hostname, METH_O, "_set_hostname(self, hostname)"},
+     "\n"
+     "Returns the timeout value.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A constant reference to the timeout value.\n"
+     ""},
+    {"_set_hostname", _wrap_SessionBase__set_hostname, METH_O,
+     "\n"
+     "Sets the hostname of the SNMP agent.\n"
+     "\n"
+     ":type hostname: string\n"
+     ":param hostname: The new hostname to set.\n"
+     ""},
     {"_set_port_number", _wrap_SessionBase__set_port_number, METH_O,
-     "_set_port_number(self, port_number)"},
-    {"_set_version", _wrap_SessionBase__set_version, METH_O, "_set_version(self, version)"},
-    {"_set_community", _wrap_SessionBase__set_community, METH_O, "_set_community(self, community)"},
+     "\n"
+     "Sets the port number for the SNMP agent.\n"
+     "\n"
+     ":type port_number: string\n"
+     ":param port_number: The new port number to set.\n"
+     ""},
+    {"_set_version", _wrap_SessionBase__set_version, METH_O,
+     "\n"
+     "Sets the SNMP version.\n"
+     "\n"
+     ":type version: string\n"
+     ":param version: The new SNMP version to set.\n"
+     ""},
+    {"_set_community", _wrap_SessionBase__set_community, METH_O,
+     "\n"
+     "Sets the community string.\n"
+     "\n"
+     ":type community: string\n"
+     ":param community: The new community string to set.\n"
+     ""},
     {"_set_auth_protocol", _wrap_SessionBase__set_auth_protocol, METH_O,
-     "_set_auth_protocol(self, auth_protocol)"},
+     "\n"
+     "Sets the authentication protocol.\n"
+     "\n"
+     ":type auth_protocol: string\n"
+     ":param auth_protocol: The new authentication protocol to set.\n"
+     ""},
     {"_set_auth_passphrase", _wrap_SessionBase__set_auth_passphrase, METH_O,
-     "_set_auth_passphrase(self, auth_passphrase)"},
+     "\n"
+     "Sets the authentication passphrase.\n"
+     "\n"
+     ":type auth_passphrase: string\n"
+     ":param auth_passphrase: The new authentication passphrase to set.\n"
+     ""},
     {"_set_security_engine_id", _wrap_SessionBase__set_security_engine_id, METH_O,
-     "_set_security_engine_id(self, security_engine_id)"},
+     "\n"
+     "Sets the security engine ID.\n"
+     "\n"
+     ":type security_engine_id: string\n"
+     ":param security_engine_id: The new security engine ID to set.\n"
+     ""},
     {"_set_context_engine_id", _wrap_SessionBase__set_context_engine_id, METH_O,
-     "_set_context_engine_id(self, context_engine_id)"},
+     "\n"
+     "Sets the context engine ID.\n"
+     "\n"
+     ":type context_engine_id: string\n"
+     ":param context_engine_id: The new context engine ID to set.\n"
+     ""},
     {"_set_security_level", _wrap_SessionBase__set_security_level, METH_O,
-     "_set_security_level(self, security_level)"},
-    {"_set_context", _wrap_SessionBase__set_context, METH_O, "_set_context(self, context)"},
+     "\n"
+     "Sets the security level.\n"
+     "\n"
+     ":type security_level: string\n"
+     ":param security_level: The new security level to set.\n"
+     ""},
+    {"_set_context", _wrap_SessionBase__set_context, METH_O,
+     "\n"
+     "Sets the context name.\n"
+     "\n"
+     ":type context: string\n"
+     ":param context: The new context name to set.\n"
+     ""},
     {"_set_security_username", _wrap_SessionBase__set_security_username, METH_O,
-     "_set_security_username(self, security_username)"},
+     "\n"
+     "Sets the security username.\n"
+     "\n"
+     ":type security_username: string\n"
+     ":param security_username: The new security username to set.\n"
+     ""},
     {"_set_privacy_protocol", _wrap_SessionBase__set_privacy_protocol, METH_O,
-     "_set_privacy_protocol(self, privacy_protocol)"},
+     "\n"
+     "Sets the privacy protocol.\n"
+     "\n"
+     ":type privacy_protocol: string\n"
+     ":param privacy_protocol: The new privacy protocol to set.\n"
+     ""},
     {"_set_privacy_passphrase", _wrap_SessionBase__set_privacy_passphrase, METH_O,
-     "_set_privacy_passphrase(self, privacy_passphrase)"},
+     "\n"
+     "Sets the privacy passphrase.\n"
+     "\n"
+     ":type privacy_passphrase: string\n"
+     ":param privacy_passphrase: The new privacy passphrase to set.\n"
+     ""},
     {"_set_boots_time", _wrap_SessionBase__set_boots_time, METH_O,
-     "_set_boots_time(self, boots_time)"},
-    {"_set_retries", _wrap_SessionBase__set_retries, METH_O, "_set_retries(self, retries)"},
-    {"_set_timeout", _wrap_SessionBase__set_timeout, METH_O, "_set_timeout(self, timeout)"},
+     "\n"
+     "Sets the system boots time.\n"
+     "\n"
+     ":type boots_time: string\n"
+     ":param boots_time: The new system boots time to set.\n"
+     ""},
+    {"_set_retries", _wrap_SessionBase__set_retries, METH_O,
+     "\n"
+     "Sets the number of retries.\n"
+     "\n"
+     ":type retries: string\n"
+     ":param retries: The new number of retries to set.\n"
+     ""},
+    {"_set_timeout", _wrap_SessionBase__set_timeout, METH_O,
+     "\n"
+     "Sets the timeout value.\n"
+     "\n"
+     ":type timeout: string\n"
+     ":param timeout: The new timeout value to set.\n"
+     ""},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -18897,7 +28868,13 @@ static PyHeapTypeObject SwigPyBuiltin__SessionBase_type = {
 #else
         Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
 #endif
-        "::SessionBase",                        /* tp_doc */
+        "\n"
+        "Base class for managing SNMP sessions.\n"
+        "\n"
+        "This class provides a base for managing SNMP sessions, including\n"
+        "connection parameters, authentication, and basic operations like\n"
+        "GET, SET, and WALK.\n"
+        "",                                     /* tp_doc */
         (traverseproc)0,                        /* tp_traverse */
         (inquiry)0,                             /* tp_clear */
         SwigPyBuiltin__SessionBase_richcompare, /* tp_richcompare */
@@ -19098,74 +29075,81 @@ static PyTypeObject *SwigPyBuiltin__SessionBase_type_create(PyTypeObject *type,
    PyMemberDef members[] = {
        {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
        {NULL, 0, 0, 0, NULL}};
-   PyType_Slot slots[] = {{Py_tp_init, (void *)_wrap_new_SessionBase},
-                          {Py_tp_dealloc, (void *)_wrap_delete_SessionBase_destructor_closure},
-                          {Py_tp_alloc, (void *)(allocfunc)0},
-                          {Py_tp_free, (void *)(freefunc)0},
-                          {Py_tp_is_gc, (void *)(inquiry)0},
-                          {Py_tp_del, (void *)(destructor)0},
-                          {Py_tp_doc, (void *)"::SessionBase"},
-                          {Py_tp_repr, (void *)(reprfunc)0},
-                          {Py_tp_str, (void *)(reprfunc)0},
-                          {Py_tp_traverse, (void *)(traverseproc)0},
-                          {Py_tp_clear, (void *)(inquiry)0},
-                          {Py_tp_richcompare, (void *)SwigPyBuiltin__SessionBase_richcompare},
-                          {Py_tp_methods, (void *)SwigPyBuiltin__SessionBase_methods},
-                          {Py_tp_getset, (void *)SwigPyBuiltin__SessionBase_getset},
-                          {Py_tp_hash, (void *)SwigPyObject_hash},
-                          {Py_tp_call, (void *)(ternaryfunc)0},
-                          {Py_tp_getattro, (void *)(getattrofunc)0},
-                          {Py_tp_setattro, (void *)(setattrofunc)0},
-                          {Py_tp_descr_get, (void *)(descrgetfunc)0},
-                          {Py_tp_descr_set, (void *)(descrsetfunc)0},
-                          {Py_mp_length, (void *)(lenfunc)0},
-                          {Py_mp_subscript, (void *)(binaryfunc)0},
-                          {Py_mp_ass_subscript, (void *)(objobjargproc)0},
-                          {Py_tp_iter, (void *)(getiterfunc)0},
-                          {Py_tp_iternext, (void *)(iternextfunc)0},
-                          {Py_nb_add, (void *)(binaryfunc)0},
-                          {Py_nb_subtract, (void *)(binaryfunc)0},
-                          {Py_nb_multiply, (void *)(binaryfunc)0},
-                          {Py_nb_remainder, (void *)(binaryfunc)0},
-                          {Py_nb_divmod, (void *)(binaryfunc)0},
-                          {Py_nb_power, (void *)(ternaryfunc)0},
-                          {Py_nb_negative, (void *)(unaryfunc)0},
-                          {Py_nb_positive, (void *)(unaryfunc)0},
-                          {Py_nb_absolute, (void *)(unaryfunc)0},
-                          {Py_nb_bool, (void *)(inquiry)0},
-                          {Py_nb_invert, (void *)(unaryfunc)0},
-                          {Py_nb_lshift, (void *)(binaryfunc)0},
-                          {Py_nb_rshift, (void *)(binaryfunc)0},
-                          {Py_nb_and, (void *)(binaryfunc)0},
-                          {Py_nb_xor, (void *)(binaryfunc)0},
-                          {Py_nb_or, (void *)(binaryfunc)0},
-                          {Py_nb_int, (void *)(unaryfunc)0},
-                          {Py_nb_float, (void *)(unaryfunc)0},
-                          {Py_nb_inplace_add, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_power, (void *)(ternaryfunc)0},
-                          {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_and, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_xor, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_or, (void *)(binaryfunc)0},
-                          {Py_nb_floor_divide, (void *)(binaryfunc)0},
-                          {Py_nb_true_divide, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
-                          {Py_nb_index, (void *)(unaryfunc)0},
-                          {Py_sq_length, (void *)(lenfunc)0},
-                          {Py_sq_concat, (void *)(binaryfunc)0},
-                          {Py_sq_repeat, (void *)(ssizeargfunc)0},
-                          {Py_sq_item, (void *)(ssizeargfunc)0},
-                          {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
-                          {Py_sq_contains, (void *)(objobjproc)0},
-                          {Py_sq_inplace_concat, (void *)(binaryfunc)0},
-                          {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
-                          {Py_tp_members, members},
-                          {0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_SessionBase},
+       {Py_tp_dealloc, (void *)_wrap_delete_SessionBase_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"\n"
+                           "Base class for managing SNMP sessions.\n"
+                           "\n"
+                           "This class provides a base for managing SNMP sessions, including\n"
+                           "connection parameters, authentication, and basic operations like\n"
+                           "GET, SET, and WALK.\n"
+                           ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__SessionBase_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__SessionBase_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__SessionBase_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
    PyType_Spec spec = {"sessionbase.SessionBase", sizeof(SwigPyObject), 0,
                        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
    PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
@@ -19181,6 +29165,118 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__SessionBase_clientdata = {0, 0, 0, 0,
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static void *_p_ConnectionErrorBaseTo_p_GenericErrorBase(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((ConnectionErrorBase *)x));
+}
+static void *_p_NoSuchInstanceErrorBaseTo_p_GenericErrorBase(void *x,
+                                                             int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((NoSuchInstanceErrorBase *)x));
+}
+static void *_p_NoSuchNameErrorBaseTo_p_GenericErrorBase(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((NoSuchNameErrorBase *)x));
+}
+static void *_p_NoSuchObjectErrorBaseTo_p_GenericErrorBase(void *x,
+                                                           int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((NoSuchObjectErrorBase *)x));
+}
+static void *_p_PacketErrorBaseTo_p_GenericErrorBase(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((PacketErrorBase *)x));
+}
+static void *_p_ParseErrorBaseTo_p_GenericErrorBase(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((ParseErrorBase *)x));
+}
+static void *_p_TimeoutErrorBaseTo_p_GenericErrorBase(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((TimeoutErrorBase *)x));
+}
+static void *_p_UndeterminedTypeErrorBaseTo_p_GenericErrorBase(void *x,
+                                                               int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((UndeterminedTypeErrorBase *)x));
+}
+static void *_p_UnknownObjectIDErrorBaseTo_p_GenericErrorBase(void *x,
+                                                              int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((GenericErrorBase *)((UnknownObjectIDErrorBase *)x));
+}
+static void *_p_ConnectionErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((ConnectionErrorBase *)x));
+}
+static void *_p_GenericErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)((GenericErrorBase *)x));
+}
+static void *_p_NoSuchInstanceErrorBaseTo_p_std__exception(void *x,
+                                                           int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((NoSuchInstanceErrorBase *)x));
+}
+static void *_p_NoSuchNameErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((NoSuchNameErrorBase *)x));
+}
+static void *_p_NoSuchObjectErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((NoSuchObjectErrorBase *)x));
+}
+static void *_p_PacketErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((PacketErrorBase *)x));
+}
+static void *_p_ParseErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((ParseErrorBase *)x));
+}
+static void *_p_TimeoutErrorBaseTo_p_std__exception(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((TimeoutErrorBase *)x));
+}
+static void *_p_UndeterminedTypeErrorBaseTo_p_std__exception(void *x,
+                                                             int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((UndeterminedTypeErrorBase *)x));
+}
+static void *_p_UnknownObjectIDErrorBaseTo_p_std__exception(void *x,
+                                                            int *SWIGUNUSEDPARM(newmemory)) {
+   return (void *)((std::exception *)(GenericErrorBase *)((UnknownObjectIDErrorBase *)x));
+}
+static swig_type_info _swigt__p_ConnectionErrorBase = {
+    "_p_ConnectionErrorBase",
+    "ConnectionErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__ConnectionErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_GenericErrorBase = {
+    "_p_GenericErrorBase",
+    "GenericErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__GenericErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_NoSuchInstanceErrorBase = {
+    "_p_NoSuchInstanceErrorBase",
+    "NoSuchInstanceErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__NoSuchInstanceErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_NoSuchNameErrorBase = {
+    "_p_NoSuchNameErrorBase",
+    "NoSuchNameErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__NoSuchNameErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_NoSuchObjectErrorBase = {
+    "_p_NoSuchObjectErrorBase",
+    "NoSuchObjectErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__NoSuchObjectErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_PacketErrorBase = {
+    "_p_PacketErrorBase",
+    "PacketErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__PacketErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_ParseErrorBase = {"_p_ParseErrorBase",
+                                                  "ParseErrorBase *",
+                                                  0,
+                                                  0,
+                                                  (void *)&SwigPyBuiltin__ParseErrorBase_clientdata,
+                                                  0};
 static swig_type_info _swigt__p_Result = {
     "_p_Result", "std::vector< Result >::value_type *|Result *", 0,
     0,           (void *)&SwigPyBuiltin__Result_clientdata,      0};
@@ -19188,6 +29284,27 @@ static swig_type_info _swigt__p_SessionBase = {
     "_p_SessionBase", "SessionBase *", 0, 0, (void *)&SwigPyBuiltin__SessionBase_clientdata, 0};
 static swig_type_info _swigt__p_SwigPyObject = {
     "_p_SwigPyObject", "SwigPyObject *", 0, 0, (void *)0, 0};
+static swig_type_info _swigt__p_TimeoutErrorBase = {
+    "_p_TimeoutErrorBase",
+    "TimeoutErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__TimeoutErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_UndeterminedTypeErrorBase = {
+    "_p_UndeterminedTypeErrorBase",
+    "UndeterminedTypeErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__UndeterminedTypeErrorBase_clientdata,
+    0};
+static swig_type_info _swigt__p_UnknownObjectIDErrorBase = {
+    "_p_UnknownObjectIDErrorBase",
+    "UnknownObjectIDErrorBase *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__UnknownObjectIDErrorBase_clientdata,
+    0};
 static swig_type_info _swigt__p_allocator_type = {
     "_p_allocator_type", "allocator_type *", 0, 0, (void *)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void *)0, 0};
@@ -19209,6 +29326,8 @@ static swig_type_info _swigt__p_std__allocatorT_std__string_t = {
     0,
     (void *)0,
     0};
+static swig_type_info _swigt__p_std__exception = {
+    "_p_std__exception", "std::exception *", 0, 0, (void *)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {
     "_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void *)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Result_t = {
@@ -19235,9 +29354,19 @@ static swig_type_info _swigt__p_swig__SwigPyIterator = {
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void *)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
+    &_swigt__p_ConnectionErrorBase,
+    &_swigt__p_GenericErrorBase,
+    &_swigt__p_NoSuchInstanceErrorBase,
+    &_swigt__p_NoSuchNameErrorBase,
+    &_swigt__p_NoSuchObjectErrorBase,
+    &_swigt__p_PacketErrorBase,
+    &_swigt__p_ParseErrorBase,
     &_swigt__p_Result,
     &_swigt__p_SessionBase,
     &_swigt__p_SwigPyObject,
+    &_swigt__p_TimeoutErrorBase,
+    &_swigt__p_UndeterminedTypeErrorBase,
+    &_swigt__p_UnknownObjectIDErrorBase,
     &_swigt__p_allocator_type,
     &_swigt__p_char,
     &_swigt__p_difference_type,
@@ -19245,6 +29374,7 @@ static swig_type_info *swig_type_initial[] = {
     &_swigt__p_size_type,
     &_swigt__p_std__allocatorT_Result_t,
     &_swigt__p_std__allocatorT_std__string_t,
+    &_swigt__p_std__exception,
     &_swigt__p_std__invalid_argument,
     &_swigt__p_std__vectorT_Result_t,
     &_swigt__p_std__vectorT_std__string_t,
@@ -19252,9 +29382,39 @@ static swig_type_info *swig_type_initial[] = {
     &_swigt__p_value_type,
 };
 
+static swig_cast_info _swigc__p_ConnectionErrorBase[] = {{&_swigt__p_ConnectionErrorBase, 0, 0, 0},
+                                                         {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_GenericErrorBase[] = {
+    {&_swigt__p_GenericErrorBase, 0, 0, 0},
+    {&_swigt__p_ConnectionErrorBase, _p_ConnectionErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_NoSuchInstanceErrorBase, _p_NoSuchInstanceErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_NoSuchNameErrorBase, _p_NoSuchNameErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_NoSuchObjectErrorBase, _p_NoSuchObjectErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_PacketErrorBase, _p_PacketErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_ParseErrorBase, _p_ParseErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_TimeoutErrorBase, _p_TimeoutErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_UndeterminedTypeErrorBase, _p_UndeterminedTypeErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {&_swigt__p_UnknownObjectIDErrorBase, _p_UnknownObjectIDErrorBaseTo_p_GenericErrorBase, 0, 0},
+    {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_NoSuchInstanceErrorBase[] = {
+    {&_swigt__p_NoSuchInstanceErrorBase, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_NoSuchNameErrorBase[] = {{&_swigt__p_NoSuchNameErrorBase, 0, 0, 0},
+                                                         {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_NoSuchObjectErrorBase[] = {
+    {&_swigt__p_NoSuchObjectErrorBase, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PacketErrorBase[] = {{&_swigt__p_PacketErrorBase, 0, 0, 0},
+                                                     {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ParseErrorBase[] = {{&_swigt__p_ParseErrorBase, 0, 0, 0},
+                                                    {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Result[] = {{&_swigt__p_Result, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SessionBase[] = {{&_swigt__p_SessionBase, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SwigPyObject[] = {{&_swigt__p_SwigPyObject, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_TimeoutErrorBase[] = {{&_swigt__p_TimeoutErrorBase, 0, 0, 0},
+                                                      {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_UndeterminedTypeErrorBase[] = {
+    {&_swigt__p_UndeterminedTypeErrorBase, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_UnknownObjectIDErrorBase[] = {
+    {&_swigt__p_UnknownObjectIDErrorBase, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_allocator_type[] = {{&_swigt__p_allocator_type, 0, 0, 0},
                                                     {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {{&_swigt__p_char, 0, 0, 0}, {0, 0, 0, 0}};
@@ -19266,6 +29426,19 @@ static swig_cast_info _swigc__p_std__allocatorT_Result_t[] = {
     {&_swigt__p_std__allocatorT_Result_t, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__string_t[] = {
     {&_swigt__p_std__allocatorT_std__string_t, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__exception[] = {
+    {&_swigt__p_std__exception, 0, 0, 0},
+    {&_swigt__p_ConnectionErrorBase, _p_ConnectionErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_GenericErrorBase, _p_GenericErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_NoSuchInstanceErrorBase, _p_NoSuchInstanceErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_NoSuchNameErrorBase, _p_NoSuchNameErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_NoSuchObjectErrorBase, _p_NoSuchObjectErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_PacketErrorBase, _p_PacketErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_ParseErrorBase, _p_ParseErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_TimeoutErrorBase, _p_TimeoutErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_UndeterminedTypeErrorBase, _p_UndeterminedTypeErrorBaseTo_p_std__exception, 0, 0},
+    {&_swigt__p_UnknownObjectIDErrorBase, _p_UnknownObjectIDErrorBaseTo_p_std__exception, 0, 0},
+    {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {
     {&_swigt__p_std__invalid_argument, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Result_t[] = {
@@ -19277,9 +29450,19 @@ static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {
 static swig_cast_info _swigc__p_value_type[] = {{&_swigt__p_value_type, 0, 0, 0}, {0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+    _swigc__p_ConnectionErrorBase,
+    _swigc__p_GenericErrorBase,
+    _swigc__p_NoSuchInstanceErrorBase,
+    _swigc__p_NoSuchNameErrorBase,
+    _swigc__p_NoSuchObjectErrorBase,
+    _swigc__p_PacketErrorBase,
+    _swigc__p_ParseErrorBase,
     _swigc__p_Result,
     _swigc__p_SessionBase,
     _swigc__p_SwigPyObject,
+    _swigc__p_TimeoutErrorBase,
+    _swigc__p_UndeterminedTypeErrorBase,
+    _swigc__p_UnknownObjectIDErrorBase,
     _swigc__p_allocator_type,
     _swigc__p_char,
     _swigc__p_difference_type,
@@ -19287,6 +29470,7 @@ static swig_cast_info *swig_cast_initial[] = {
     _swigc__p_size_type,
     _swigc__p_std__allocatorT_Result_t,
     _swigc__p_std__allocatorT_std__string_t,
+    _swigc__p_std__exception,
     _swigc__p_std__invalid_argument,
     _swigc__p_std__vectorT_Result_t,
     _swigc__p_std__vectorT_std__string_t,
@@ -19301,7 +29485,7 @@ static swig_const_info swig_const_table[] = {{0, 0, 0, 0.0, 0, 0}};
 #ifdef __cplusplus
 }
 #endif
-static PyTypeObject *builtin_bases[2];
+static PyTypeObject *builtin_bases[3];
 
 /* -----------------------------------------------------------------------------
  * Type initialization:
@@ -19795,6 +29979,390 @@ void
    SWIG_Py_INCREF((PyObject *)builtin_pytype);
    PyModule_AddObject(m, "Result", (PyObject *)builtin_pytype);
    SwigPyBuiltin_AddPublicSymbol(public_interface, "Result");
+   d = md;
+
+   pGenericErrorBase = PyErr_NewException("_exceptionsbase.GenericErrorBase", NULL, NULL);
+   Py_INCREF(pGenericErrorBase);
+   PyModule_AddObject(m, "GenericErrorBase", pGenericErrorBase);
+
+   pConnectionErrorBase =
+       PyErr_NewException("_exceptionsbase.ConnectionErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pConnectionErrorBase);
+   PyModule_AddObject(m, "ConnectionErrorBase", pConnectionErrorBase);
+
+   pTimeoutErrorBase =
+       PyErr_NewException("_exceptionsbase.TimeoutErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pTimeoutErrorBase);
+   PyModule_AddObject(m, "TimeoutErrorBase", pTimeoutErrorBase);
+
+   pUnknownObjectIDErrorBase =
+       PyErr_NewException("_exceptionsbase.UnknownObjectIDErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pUnknownObjectIDErrorBase);
+   PyModule_AddObject(m, "UnknownObjectIDErrorBase", pUnknownObjectIDErrorBase);
+
+   pNoSuchNameErrorBase =
+       PyErr_NewException("_exceptionsbase.NoSuchNameErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pNoSuchNameErrorBase);
+   PyModule_AddObject(m, "NoSuchNameErrorBase", pNoSuchNameErrorBase);
+
+   pNoSuchObjectErrorBase =
+       PyErr_NewException("_exceptionsbase.NoSuchObjectErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pNoSuchObjectErrorBase);
+   PyModule_AddObject(m, "NoSuchObjectErrorBase", pNoSuchObjectErrorBase);
+
+   pNoSuchInstanceErrorBase =
+       PyErr_NewException("_exceptionsbase.NoSuchInstanceErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pNoSuchInstanceErrorBase);
+   PyModule_AddObject(m, "NoSuchInstanceErrorBase", pNoSuchInstanceErrorBase);
+
+   pUndeterminedTypeErrorBase =
+       PyErr_NewException("_exceptionsbase.UndeterminedTypeErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pUndeterminedTypeErrorBase);
+   PyModule_AddObject(m, "UndeterminedTypeErrorBase", pUndeterminedTypeErrorBase);
+
+   pParseErrorBase = PyErr_NewException("_exceptionsbase.ParseErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pParseErrorBase);
+   PyModule_AddObject(m, "ParseErrorBase", pParseErrorBase);
+
+   pPacketErrorBase =
+       PyErr_NewException("_exceptionsbase.PacketErrorBase", pGenericErrorBase, NULL);
+   Py_INCREF(pPacketErrorBase);
+   PyModule_AddObject(m, "PacketErrorBase", pPacketErrorBase);
+
+   /* type '::GenericErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__GenericErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__GenericErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "GenericErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "GenericErrorBase");
+   d = md;
+
+   /* type '::ConnectionErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'ConnectionErrorBase' as base 'GenericErrorBase' has "
+                      "not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__ConnectionErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__ConnectionErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "ConnectionErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "ConnectionErrorBase");
+   d = md;
+
+   /* type '::TimeoutErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'TimeoutErrorBase' as base 'GenericErrorBase' has not "
+                      "been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__TimeoutErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__TimeoutErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "TimeoutErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "TimeoutErrorBase");
+   d = md;
+
+   /* type '::UnknownObjectIDErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'UnknownObjectIDErrorBase' as base 'GenericErrorBase' "
+                      "has not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__UnknownObjectIDErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__UnknownObjectIDErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "UnknownObjectIDErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "UnknownObjectIDErrorBase");
+   d = md;
+
+   /* type '::NoSuchNameErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'NoSuchNameErrorBase' as base 'GenericErrorBase' has "
+                      "not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__NoSuchNameErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__NoSuchNameErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "NoSuchNameErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "NoSuchNameErrorBase");
+   d = md;
+
+   /* type '::NoSuchObjectErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'NoSuchObjectErrorBase' as base 'GenericErrorBase' "
+                      "has not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__NoSuchObjectErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__NoSuchObjectErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "NoSuchObjectErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "NoSuchObjectErrorBase");
+   d = md;
+
+   /* type '::NoSuchInstanceErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'NoSuchInstanceErrorBase' as base 'GenericErrorBase' "
+                      "has not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__NoSuchInstanceErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__NoSuchInstanceErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "NoSuchInstanceErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "NoSuchInstanceErrorBase");
+   d = md;
+
+   /* type '::UndeterminedTypeErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'UndeterminedTypeErrorBase' as base "
+                      "'GenericErrorBase' has not been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype =
+       SwigPyBuiltin__UndeterminedTypeErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__UndeterminedTypeErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "UndeterminedTypeErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "UndeterminedTypeErrorBase");
+   d = md;
+
+   /* type '::ParseErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'ParseErrorBase' as base 'GenericErrorBase' has not "
+                      "been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__ParseErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__ParseErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "ParseErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "ParseErrorBase");
+   d = md;
+
+   /* type '::PacketErrorBase' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_basetype = SWIG_MangledTypeQuery("_p_GenericErrorBase");
+   if (builtin_basetype && builtin_basetype->clientdata &&
+       ((SwigPyClientData *)builtin_basetype->clientdata)->pytype) {
+      builtin_bases[builtin_base_count++] =
+          ((SwigPyClientData *)builtin_basetype->clientdata)->pytype;
+   } else {
+      PyErr_SetString(PyExc_TypeError,
+                      "Could not create type 'PacketErrorBase' as base 'GenericErrorBase' has not "
+                      "been initialized.\n");
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__PacketErrorBase_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__PacketErrorBase_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "PacketErrorBase", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "PacketErrorBase");
    d = md;
 
    /* type 'std::vector< std::string >' */

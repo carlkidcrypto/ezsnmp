@@ -1,0 +1,638 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Exceptions C++ Module" href="exceptionsbase_cpp.html" /><link rel="prev" title="Development Guide" href="development.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>Exceptions Python Module - EzSnmp V2.0.0b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">EzSnmp V2.0.0b2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">EzSnmp V2.0.0b2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Exceptions Python Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpget_interface.html">snmpget.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpgetnext_interface.html">snmpgetnext.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpset_interface.html">snmpset.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmptrap_interface.html">snmptrap.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/exceptions_python.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="exceptions-python-module">
+<h1>Exceptions Python Module<a class="headerlink" href="#exceptions-python-module" title="Link to this heading">¶</a></h1>
+<p>Differences between V1.X.X and V2.X.X of the EzSnmp Exception Handling</p>
+<p>The primary difference between V1.X.X and V2.X.X lies in how exceptions are structured and handled.</p>
+<ul>
+<li><p><strong>Base Exception Class:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>V1.X.X:</strong> Uses <code class="docutils literal notranslate"><span class="pre">EzSNMPError</span></code> as the base exception class. Specific error types inherit from this
+class (e.g., <code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code>).</p></li>
+<li><p><strong>V2.X.X:</strong> Uses <code class="docutils literal notranslate"><span class="pre">GenericError</span></code> as the base exception class. All other exceptions inherit from
+<code class="docutils literal notranslate"><span class="pre">GenericError</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Specific Exception Classes:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>V1.X.X:</strong> Defines individual exception classes for various EzSnmp errors, such as
+<code class="docutils literal notranslate"><span class="pre">EzSNMPConnectionError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPTimeoutError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPUnknownObjectIDError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchNameError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchObjectError</span></code>, <code class="docutils literal notranslate"><span class="pre">EzSNMPNoSuchInstanceError</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">EzSNMPUndeterminedTypeError</span></code>.</p></li>
+<li><p><strong>V2.X.X:</strong> While retaining many of the same error types (<code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code>, <code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code>, <code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code>, <code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code>, <code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code>), V2.X.X adds new ones related to packet and parsing errors: <code class="docutils literal notranslate"><span class="pre">PacketError</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ParseError</span></code>. Crucially, all inherit from <code class="docutils literal notranslate"><span class="pre">GenericError</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Error Handling:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>V1.X.X:</strong> Implicit exception handling. The code relies on catching specific exception types.</p></li>
+<li><p><strong>V2.X.X:</strong> Introduces <code class="docutils literal notranslate"><span class="pre">_handle_error(e)</span></code>. This function maps exceptions from the lower-level C++
+net-snmp wrapper (e.g., <code class="docutils literal notranslate"><span class="pre">ConnectionErrorBase</span></code>) to the corresponding Python exception classes. This
+provides a cleaner Python interface, abstracting C++ error types.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>In summary, V2.X.X offers a more robust and structured approach. <code class="docutils literal notranslate"><span class="pre">_handle_error</span></code> for mapping C++ exceptions
+improves usability and maintainability. The common base class (<code class="docutils literal notranslate"><span class="pre">GenericError</span></code>) and more specific exception
+types facilitate organized error handling. The addition of <code class="docutils literal notranslate"><span class="pre">PacketError</span></code> and <code class="docutils literal notranslate"><span class="pre">ParseError</span></code> enhances error
+reporting.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.ConnectionError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ConnectionError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.ConnectionError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ConnectionError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for SNMP connection errors.</p>
+<p>This class represents an error that occurs during an SNMP connection attempt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – A descriptive error message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.GenericError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">GenericError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.GenericError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.GenericError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.GenericError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP errors in the ezsnmp library.</p>
+<p>This class extends the standard Exception class to provide
+detailed error messages specific to SNMP operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Explanation of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchInstanceError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchInstanceError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchInstanceError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchInstanceError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchInstanceError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP “No Such Instance” errors.</p>
+<p>This exception is thrown when an SNMP operation encounters a “No Such Instance” error,
+indicating that the requested instance does not exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Explanation of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchNameError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchNameError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchNameError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchNameError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchNameError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP “No Such Name” errors.</p>
+<p>This class represents an error that occurs when an SNMP operation
+encounters a “No Such Name” error, indicating that the requested
+object does not exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Explanation of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchObjectError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchObjectError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchObjectError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.NoSuchObjectError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.NoSuchObjectError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP “No Such Object” errors.</p>
+<p>This exception is thrown when an SNMP operation encounters a “No Such Object” error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Explanation of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.PacketError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">PacketError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.PacketError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.PacketError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.PacketError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP packet errors.</p>
+<p>This exception is thrown when an error occurs related to SNMP packet processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Explanation of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.ParseError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">ParseError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ParseError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.ParseError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.ParseError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP parse errors.</p>
+<p>This exception is thrown when an error occurs while parsing SNMP command line arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Explanation of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.TimeoutError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">TimeoutError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.TimeoutError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.TimeoutError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.TimeoutError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for handling SNMP timeout errors.</p>
+<p>This class represents an error that occurs when an SNMP operation times out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – A descriptive message about the timeout error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.UndeterminedTypeError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">UndeterminedTypeError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.UndeterminedTypeError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.UndeterminedTypeError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.UndeterminedTypeError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for undetermined SNMP type errors.</p>
+<p>This exception is thrown when an SNMP type cannot be determined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – A descriptive error message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.UnknownObjectIDError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnknownObjectIDError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.UnknownObjectIDError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericError</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ezsnmp.exceptions.UnknownObjectIDError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions.UnknownObjectIDError.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Exception raised for unknown SNMP Object ID errors.</p>
+<p>This exception is thrown when an unknown SNMP Object ID is encountered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – A string containing the error message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ezsnmp.exceptions._handle_error">
+<span class="sig-prename descclassname"><span class="pre">ezsnmp.exceptions.</span></span><span class="sig-name descname"><span class="pre">_handle_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.exceptions._handle_error" title="Link to this definition">¶</a></dt>
+<dd><p>Handle and map C++ error types to corresponding Python exceptions.</p>
+<p>This function inspects the type of the given exception <cite>e</cite> and raises
+a corresponding Python exception that can be caught. It maps various
+C++ error base types to custom Python exceptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>Exception</em>) – The exception object to be handled and mapped.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="exceptionsbase_cpp.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Exceptions C++ Module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="development.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Development Guide</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024-2025, carlkidcrypto
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Exceptions Python Module</a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.ConnectionError.__init__"><code class="docutils literal notranslate"><span class="pre">ConnectionError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.GenericError"><code class="docutils literal notranslate"><span class="pre">GenericError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.GenericError.__init__"><code class="docutils literal notranslate"><span class="pre">GenericError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchInstanceError.__init__"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchNameError"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchNameError.__init__"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.NoSuchObjectError.__init__"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.PacketError"><code class="docutils literal notranslate"><span class="pre">PacketError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.PacketError.__init__"><code class="docutils literal notranslate"><span class="pre">PacketError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.ParseError"><code class="docutils literal notranslate"><span class="pre">ParseError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.ParseError.__init__"><code class="docutils literal notranslate"><span class="pre">ParseError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.TimeoutError"><code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.TimeoutError.__init__"><code class="docutils literal notranslate"><span class="pre">TimeoutError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.UndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.UndeterminedTypeError.__init__"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions.UnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code></a><ul>
+<li><a class="reference internal" href="#ezsnmp.exceptions.UnknownObjectIDError.__init__"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ezsnmp.exceptions._handle_error"><code class="docutils literal notranslate"><span class="pre">_handle_error()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=b5220a5d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

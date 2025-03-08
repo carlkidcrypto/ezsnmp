@@ -4,8 +4,10 @@
 #include <cassert>
 #include <cstring>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 
+#include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkget.h"
 #include "snmpbulkwalk.h"
@@ -21,76 +23,72 @@
 //   -c COMMUNITY          set the community string
 // SNMP Version 3 specific
 //   -a PROTOCOL           set authentication protocol
-//   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512) -A PASSPHRASE         set
-//   authentication protocol pass phrase -e ENGINE-ID          set security
-//   engine ID (e.g. 800000020109840301) -E ENGINE-ID          set context
-//   engine ID (e.g. 800000020109840301) -l LEVEL              set security
-//   level (noAuthNoPriv|authNoPriv|authPriv) -n CONTEXT            set context
-//   name (e.g. bridge1) -u USER-NAME          set security name (e.g. bert) -x
-//   PROTOCOL           set privacy protocol (DES|AES) -X PASSPHRASE         set
-//   privacy protocol pass phrase -Z BOOTS,TIME         set destination engine
-//   boots/time
+//   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512)
+//   -A PASSPHRASE         set authentication protocol pass phrase
+//   -e ENGINE-ID          set security engine ID (e.g. 800000020109840301)
+//   -E ENGINE-ID          set context engine ID (e.g. 800000020109840301)
+//   -l LEVEL              set security level (noAuthNoPriv|authNoPriv|authPriv)
+//   -n CONTEXT            set context name (e.g. bridge1)
+//   -u USER-NAME          set security name (e.g. bert)
+//   -x PROTOCOL           set privacy protocol (DES|AES)
+//   -X PASSPHRASE         set privacy protocol pass phrase
+//   -Z BOOTS,TIME         set destination engine boots/time
 // General communication options
 //   -r RETRIES            set the number of retries
 //   -t TIMEOUT            set the request timeout (in seconds)
-std::map<std::string, std::string> cml_param_lookup = {{"version", "-v"},
-                                                       {"community", "-c"},
-                                                       {"auth_protocol", "-a"},
-                                                       {"auth_passphrase", "-A"},
-                                                       {"security_engine_id", "-e"},
-                                                       {"context_engine_id", "-E"},
-                                                       {"security_level", "-l"},
-                                                       {"context", "-n"},
-                                                       {"security_username", "-u"},
-                                                       {"privacy_protocol", "-x"},
-                                                       {"privacy_passphrase", "-X"},
-                                                       {"boots_time", "-Z"},
-                                                       {"retries", "-r"},
-                                                       {"timeout", "-t"}};
+//
+// General options
+//   -m MIB[:...]          load given list of MIBs (ALL loads everything)
+//   -M DIR[:...]          look in given list of directories for MIBs
+//     (default:
+//     $HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf)
+//   -O OUTOPTS            Toggle various defaults controlling output display:
+//                           e:  print enums numerically
+//                           f:  print full OIDs on output
+//                           n:  print OIDs numerically
+static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
+    {"version", "-v"},
+    {"community", "-c"},
+    {"auth_protocol", "-a"},
+    {"auth_passphrase", "-A"},
+    {"security_engine_id", "-e"},
+    {"context_engine_id", "-E"},
+    {"security_level", "-l"},
+    {"context", "-n"},
+    {"security_username", "-u"},
+    {"privacy_protocol", "-x"},
+    {"privacy_passphrase", "-X"},
+    {"boots_time", "-Z"},
+    {"retries", "-r"},
+    {"timeout", "-t"},
+    {"load_mibs", "-m"},
+    {"mib_directories", "-M"},
+    {"print_enums_numerically", "-O e"},
+    {"print_full_oids", "-O f"},
+    {"print_oids_numerically", "-O n"},
+};
 
-/******************************************************************************
- * The class constructor. This is a wrapper around the lower level c++ calls.
- * This allows for reuse of given parameters for multiple calls to functions
- * like: snmpwalk, snmpget, etc...
- *
- * @param [in] hostname
- * @param [in] port_number
- * @param [in] version 1|2c|3 specifies SNMP version to use. Default is `3`.
- * @param [in] community Set the community string. Default `public`
- * @param [in] auth_protocol Set authentication protocol
- *(MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512). Default ``.
- * @param [in] auth_passphrase Set authentication protocol pass phrase. Default
- *``.
- * @param [in] security_engine_id Set security engine ID (e.g.
- *800000020109840301). Default ``.
- * @param [in] context_engine_id Set context engine ID (e.g.
- *800000020109840301). Default ``.
- * @param [in] security_level Set security level
- *(noAuthNoPriv|authNoPriv|authPriv). Default ``.
- * @param [in] context Set context name (e.g. bridge1). Default ``.
- * @param [in] security_username Set security name (e.g. bert). Default ``.
- * @param [in] privacy_protocol Set privacy protocol (DES|AES). Default ``.
- * @param [in] privacy_passphrase Set privacy protocol pass phrase. Default ``.
- * @param [in] boots_time Set destination engine boots/time. Default ``.
- * @param [in] retries Set the number of retries. Default `3`.
- * @param [in] timeout Set the request timeout (in seconds). Default `1`.
- ******************************************************************************/
-SessionBase::SessionBase(std::string hostname,
-                         std::string port_number,
-                         std::string version,
-                         std::string community,
-                         std::string auth_protocol,
-                         std::string auth_passphrase,
-                         std::string security_engine_id,
-                         std::string context_engine_id,
-                         std::string security_level,
-                         std::string context,
-                         std::string security_username,
-                         std::string privacy_protocol,
-                         std::string privacy_passphrase,
-                         std::string boots_time,
-                         std::string retries,
-                         std::string timeout)
+SessionBase::SessionBase(std::string const& hostname,
+                         std::string const& port_number,
+                         std::string const& version,
+                         std::string const& community,
+                         std::string const& auth_protocol,
+                         std::string const& auth_passphrase,
+                         std::string const& security_engine_id,
+                         std::string const& context_engine_id,
+                         std::string const& security_level,
+                         std::string const& context,
+                         std::string const& security_username,
+                         std::string const& privacy_protocol,
+                         std::string const& privacy_passphrase,
+                         std::string const& boots_time,
+                         std::string const& retries,
+                         std::string const& timeout,
+                         std::string const& load_mibs,
+                         std::string const& mib_directories,
+                         bool print_enums_numerically,
+                         bool print_full_oids,
+                         bool print_oids_numerically)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -106,7 +104,12 @@ SessionBase::SessionBase(std::string hostname,
       m_privacy_passphrase(privacy_passphrase),
       m_boots_time(boots_time),
       m_retries(retries),
-      m_timeout(timeout) {
+      m_timeout(timeout),
+      m_load_mibs(load_mibs),
+      m_mib_directories(mib_directories),
+      m_print_enums_numerically(print_enums_numerically),
+      m_print_full_oids(print_full_oids),
+      m_print_oids_numerically(print_oids_numerically) {
    populate_args();
 }
 
@@ -132,16 +135,50 @@ void SessionBase::populate_args() {
        {"privacy_passphrase", m_privacy_passphrase},
        {"boots_time", m_boots_time},
        {"retries", m_retries},
-       {"timeout", m_timeout}};
+       {"timeout", m_timeout},
+       {"load_mibs", m_load_mibs},
+       {"mib_directories", m_mib_directories}};
 
+   // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
-         // Copy the cml parameter flag i.e -a, -A, -x, etc...
-         m_args.push_back(cml_param_lookup[key]);
-
-         // Copy the input paramater value...
+         m_args.push_back(CML_PARAM_LOOKUP[key]);
          m_args.push_back(val);
       }
+   }
+
+   // Helper function to split string by delimiter
+   auto split_string = [](std::string const& str_in, char delimiter) -> std::vector<std::string> {
+      std::vector<std::string> tokens;
+      std::string token;
+      std::istringstream tokenStream(str_in);
+      while (std::getline(tokenStream, token, delimiter)) {
+         tokens.push_back(token);
+      }
+      return tokens;
+   };
+
+   // Handle boolean parameters
+   if (m_print_enums_numerically) {
+      auto const& enum_parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
+      std::string option = enum_parts[0];
+      std::string value = enum_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
+   }
+   if (m_print_full_oids) {
+      auto const& full_parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
+      std::string option = full_parts[0]; 
+      std::string value = full_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
+   }
+   if (m_print_oids_numerically) {
+      auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
+      std::string option = num_parts[0];
+      std::string value = num_parts[1]; 
+      m_args.push_back(option);
+      m_args.push_back(value);
    }
 
    // Add and make the host address
@@ -211,7 +248,7 @@ void SessionBase::populate_args() {
       // Now check that the port number wasn't provided both via hostname and port_number inputs
       // args
       if (!temp_port_number.empty() && !input_arg_name_map["port_number"].empty()) {
-         throw std::runtime_error(
+         throw ParseErrorBase(
              "Error: Provide either 'hostname' with port included (e.g., localhost:1234, "
              "[2001:db8::]:161, etc) or 'hostname' and 'port_number' separately, not both.");
       }
@@ -238,7 +275,9 @@ void SessionBase::populate_args() {
 }
 
 void SessionBase::check_and_clear_v3_user() {
-   remove_v3_user_from_cache(m_security_username, m_context_engine_id);
+   if (m_version == "3") {
+      remove_v3_user_from_cache(m_security_username, m_context_engine_id);
+   }
 }
 
 std::vector<Result> SessionBase::walk(std::string const& mib) {

@@ -19,12 +19,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Ez SNMP"
-copyright = "2024, carlkidcrypto"
+project = "EzSnmp"
+copyright = "2024-%Y, carlkidcrypto"
 author = "carlkidcrypto"
 
 # The full version, including alpha/beta/rc tags
-release = "V2.0.0a3"
+release = "V2.0.0b2"
 
 
 # -- General configuration ---------------------------------------------------
@@ -32,7 +32,12 @@ release = "V2.0.0a3"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "breathe",
+]
+
+breathe_projects = {"EzSnmp": "../../doxygen_docs_build/doxygen/xml"}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -48,7 +53,7 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

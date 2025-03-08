@@ -4852,15 +4852,15 @@ static SwigPyGetSet Result_oid_getset = {_wrap_Result_oid_get, _wrap_Result_oid_
 static SwigPyGetSet Result_index_getset = {_wrap_Result_index_get, _wrap_Result_index_set};
 SWIGINTERN PyGetSetDef SwigPyBuiltin__Result_getset[] = {
     {(char *)"type", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"type", &Result_type_getset},
-    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"oid",
-     &Result___dict___getset},
+     (char *)"Data type of the retrieved value.", &Result_type_getset},
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0,
+     (char *)"Object Identifier (OID) of the retrieved data.", &Result___dict___getset},
     {(char *)"value", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"value", &Result_value_getset},
+     (char *)"Actual value of the retrieved data.", &Result_value_getset},
     {(char *)"oid", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"oid", &Result_oid_getset},
+     (char *)"Object Identifier (OID) of the retrieved data.", &Result_oid_getset},
     {(char *)"index", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
-     (char *)"index", &Result_index_getset},
+     (char *)"Index of the retrieved data (if applicable).", &Result_index_getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
 };
 
@@ -4878,7 +4878,16 @@ SWIGINTERN PyObject *SwigPyBuiltin__Result_richcompare(PyObject *self, PyObject 
 }
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
-    {"to_string", _wrap_Result_to_string, METH_NOARGS, "to_string(self) -> std::string"},
+    {"to_string", _wrap_Result_to_string, METH_NOARGS,
+     "\n"
+     "Converts the Result object to a string representation.\n"
+     "\n"
+     "This method generates a human-readable string representation of the\n"
+     "Result object, including all its members.\n"
+     "\n"
+     ":rtype: string\n"
+     ":return: A string representation of the Result object.\n"
+     ""},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -4921,7 +4930,12 @@ static PyHeapTypeObject SwigPyBuiltin__Result_type = {
 #else
         Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
 #endif
-        "::Result",                        /* tp_doc */
+        "\n"
+        "Structure to represent an SNMP result.\n"
+        "\n"
+        "This structure holds the information retrieved from an SNMP operation,\n"
+        "including the OID, index, type, and value of the retrieved data.\n"
+        "",                                /* tp_doc */
         (traverseproc)0,                   /* tp_traverse */
         (inquiry)0,                        /* tp_clear */
         SwigPyBuiltin__Result_richcompare, /* tp_richcompare */
@@ -5122,74 +5136,81 @@ static PyTypeObject *SwigPyBuiltin__Result_type_create(PyTypeObject *type,
    PyMemberDef members[] = {
        {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
        {NULL, 0, 0, 0, NULL}};
-   PyType_Slot slots[] = {{Py_tp_init, (void *)_wrap_new_Result},
-                          {Py_tp_dealloc, (void *)_wrap_delete_Result_destructor_closure},
-                          {Py_tp_alloc, (void *)(allocfunc)0},
-                          {Py_tp_free, (void *)(freefunc)0},
-                          {Py_tp_is_gc, (void *)(inquiry)0},
-                          {Py_tp_del, (void *)(destructor)0},
-                          {Py_tp_doc, (void *)"::Result"},
-                          {Py_tp_repr, (void *)(reprfunc)0},
-                          {Py_tp_str, (void *)(reprfunc)0},
-                          {Py_tp_traverse, (void *)(traverseproc)0},
-                          {Py_tp_clear, (void *)(inquiry)0},
-                          {Py_tp_richcompare, (void *)SwigPyBuiltin__Result_richcompare},
-                          {Py_tp_methods, (void *)SwigPyBuiltin__Result_methods},
-                          {Py_tp_getset, (void *)SwigPyBuiltin__Result_getset},
-                          {Py_tp_hash, (void *)SwigPyObject_hash},
-                          {Py_tp_call, (void *)(ternaryfunc)0},
-                          {Py_tp_getattro, (void *)(getattrofunc)0},
-                          {Py_tp_setattro, (void *)(setattrofunc)0},
-                          {Py_tp_descr_get, (void *)(descrgetfunc)0},
-                          {Py_tp_descr_set, (void *)(descrsetfunc)0},
-                          {Py_mp_length, (void *)(lenfunc)0},
-                          {Py_mp_subscript, (void *)(binaryfunc)0},
-                          {Py_mp_ass_subscript, (void *)(objobjargproc)0},
-                          {Py_tp_iter, (void *)(getiterfunc)0},
-                          {Py_tp_iternext, (void *)(iternextfunc)0},
-                          {Py_nb_add, (void *)(binaryfunc)0},
-                          {Py_nb_subtract, (void *)(binaryfunc)0},
-                          {Py_nb_multiply, (void *)(binaryfunc)0},
-                          {Py_nb_remainder, (void *)(binaryfunc)0},
-                          {Py_nb_divmod, (void *)(binaryfunc)0},
-                          {Py_nb_power, (void *)(ternaryfunc)0},
-                          {Py_nb_negative, (void *)(unaryfunc)0},
-                          {Py_nb_positive, (void *)(unaryfunc)0},
-                          {Py_nb_absolute, (void *)(unaryfunc)0},
-                          {Py_nb_bool, (void *)(inquiry)0},
-                          {Py_nb_invert, (void *)(unaryfunc)0},
-                          {Py_nb_lshift, (void *)(binaryfunc)0},
-                          {Py_nb_rshift, (void *)(binaryfunc)0},
-                          {Py_nb_and, (void *)(binaryfunc)0},
-                          {Py_nb_xor, (void *)(binaryfunc)0},
-                          {Py_nb_or, (void *)(binaryfunc)0},
-                          {Py_nb_int, (void *)(unaryfunc)0},
-                          {Py_nb_float, (void *)(unaryfunc)0},
-                          {Py_nb_inplace_add, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_power, (void *)(ternaryfunc)0},
-                          {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_and, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_xor, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_or, (void *)(binaryfunc)0},
-                          {Py_nb_floor_divide, (void *)(binaryfunc)0},
-                          {Py_nb_true_divide, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
-                          {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
-                          {Py_nb_index, (void *)(unaryfunc)0},
-                          {Py_sq_length, (void *)(lenfunc)0},
-                          {Py_sq_concat, (void *)(binaryfunc)0},
-                          {Py_sq_repeat, (void *)(ssizeargfunc)0},
-                          {Py_sq_item, (void *)(ssizeargfunc)0},
-                          {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
-                          {Py_sq_contains, (void *)(objobjproc)0},
-                          {Py_sq_inplace_concat, (void *)(binaryfunc)0},
-                          {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
-                          {Py_tp_members, members},
-                          {0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_Result},
+       {Py_tp_dealloc, (void *)_wrap_delete_Result_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc,
+        (void *)"\n"
+                "Structure to represent an SNMP result.\n"
+                "\n"
+                "This structure holds the information retrieved from an SNMP operation,\n"
+                "including the OID, index, type, and value of the retrieved data.\n"
+                ""},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__Result_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__Result_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__Result_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
    PyType_Spec spec = {"datatypes.Result", sizeof(SwigPyObject), 0,
                        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
    PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
