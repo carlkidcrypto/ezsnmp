@@ -1,5 +1,6 @@
 from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
+from typing import Union
 
 
 class Session(SessionBase):
@@ -10,36 +11,36 @@ class Session(SessionBase):
 
     def __init__(
         self,
-        hostname="localhost",
-        port_number="",
-        version="3",
-        community="public",
-        auth_protocol="",
-        auth_passphrase="",
-        security_engine_id="",
-        context_engine_id="",
-        security_level="",
-        context="",
-        security_username="",
-        privacy_protocol="",
-        privacy_passphrase="",
-        boots_time="",
-        retries="3",
-        timeout="1",
-        load_mibs="",
-        mib_directories="",
-        print_enums_numerically=False,
-        print_full_oids=False,
-        print_oids_numerically=False,
+        hostname: str = "localhost",
+        port_number: Union[str, int] = "",
+        version: Union[str, int] = "3",
+        community: str = "public",
+        auth_protocol: str = "",
+        auth_passphrase: str = "",
+        security_engine_id: str = "",
+        context_engine_id: str = "",
+        security_level: str = "",
+        context: str = "",
+        security_username: str = "",
+        privacy_protocol: str = "",
+        privacy_passphrase: str = "",
+        boots_time: str = "",
+        retries: Union[str, int] = "3",
+        timeout: Union[str, int] = "1",
+        load_mibs: str = "",
+        mib_directories: str = "",
+        print_enums_numerically: bool = False,
+        print_full_oids: bool = False,
+        print_oids_numerically: bool = False,
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
         :param hostname: The hostname or IP address of the SNMP agent.
         :type hostname: str
         :param port_number: The port number of the SNMP agent.
-        :type port_number: str
+        :type port_number: Union[str, int]
         :param version: The SNMP version to use (1, 2c, or 3).
-        :type version: str
+        :type version: Union[str, int]
         :param community: The community string for SNMPv1/v2c.
         :type community: str
         :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
@@ -63,9 +64,9 @@ class Session(SessionBase):
         :param boots_time: The boots time.
         :type boots_time: str
         :param retries: The number of retries.
-        :type retries: str
+        :type retries: Union[str, int]
         :param timeout: The timeout value in seconds.
-        :type timeout: str
+        :type timeout: Union[str, int]
         :param load_mibs: Comma-separated string of MIB modules to load.
         :type load_mibs: str
         :param mib_directories: Comma-separated string of directories to search for MIB files.
@@ -78,11 +79,15 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         """
 
+        # Note that underlying SesionBase object depends on all parameters to be strings.
+        # This is the case, since at the end of the day we are building a command line string
+        # to pass to the NetSNMP command line tool.
         try:
+
             self._session_base = SessionBase(
                 hostname,
-                port_number,
-                version,
+                str(port_number),
+                str(version),
                 community,
                 auth_protocol,
                 auth_passphrase,
@@ -94,8 +99,8 @@ class Session(SessionBase):
                 privacy_protocol,
                 privacy_passphrase,
                 boots_time,
-                retries,
-                timeout,
+                str(retries),
+                str(timeout),
                 load_mibs,
                 mib_directories,
                 print_enums_numerically,
