@@ -278,8 +278,8 @@ for managing NetSNMP sessions.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hostname</strong> (<em>str</em>) – The hostname or IP address of the SNMP agent.</p></li>
-<li><p><strong>port_number</strong> (<em>str</em>) – The port number of the SNMP agent.</p></li>
-<li><p><strong>version</strong> (<em>str</em>) – The SNMP version to use (1, 2c, or 3).</p></li>
+<li><p><strong>port_number</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The port number of the SNMP agent.</p></li>
+<li><p><strong>version</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The SNMP version to use (1, 2c, or 3).</p></li>
 <li><p><strong>community</strong> (<em>str</em>) – The community string for SNMPv1/v2c.</p></li>
 <li><p><strong>auth_protocol</strong> (<em>str</em>) – The authentication protocol (e.g., “MD5”, “SHA”).</p></li>
 <li><p><strong>auth_passphrase</strong> (<em>str</em>) – The authentication passphrase.</p></li>
@@ -291,8 +291,8 @@ for managing NetSNMP sessions.</p>
 <li><p><strong>privacy_protocol</strong> (<em>str</em>) – The privacy protocol (e.g., “DES”, “AES”).</p></li>
 <li><p><strong>privacy_passphrase</strong> (<em>str</em>) – The privacy passphrase.</p></li>
 <li><p><strong>boots_time</strong> (<em>str</em>) – The boots time.</p></li>
-<li><p><strong>retries</strong> (<em>str</em>) – The number of retries.</p></li>
-<li><p><strong>timeout</strong> (<em>str</em>) – The timeout value in seconds.</p></li>
+<li><p><strong>retries</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The number of retries.</p></li>
+<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The timeout value in seconds.</p></li>
 <li><p><strong>load_mibs</strong> (<em>str</em>) – Comma-separated string of MIB modules to load.</p></li>
 <li><p><strong>mib_directories</strong> (<em>str</em>) – Comma-separated string of directories to search for MIB files.</p></li>
 <li><p><strong>print_enums_numerically</strong> (<em>bool</em>) – Whether to print enums numerically.</p></li>
