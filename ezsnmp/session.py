@@ -40,7 +40,7 @@ class Session(SessionBase):
         :param port_number: The port number of the SNMP agent.
         :type port_number: Union[str, int]
         :param version: The SNMP version to use (1, 2c, or 3).
-        :type version: Union[str, int] 
+        :type version: Union[str, int]
         :param community: The community string for SNMPv1/v2c.
         :type community: str
         :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
