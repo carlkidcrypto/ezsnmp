@@ -38,9 +38,9 @@ class Session(SessionBase):
         :param hostname: The hostname or IP address of the SNMP agent.
         :type hostname: str
         :param port_number: The port number of the SNMP agent.
-        :type port_number: str
+        :type port_number: Union[str, int]
         :param version: The SNMP version to use (1, 2c, or 3).
-        :type version: str
+        :type version: Union[str, int] 
         :param community: The community string for SNMPv1/v2c.
         :type community: str
         :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
@@ -64,9 +64,9 @@ class Session(SessionBase):
         :param boots_time: The boots time.
         :type boots_time: str
         :param retries: The number of retries.
-        :type retries: str
+        :type retries: Union[str, int]
         :param timeout: The timeout value in seconds.
-        :type timeout: str
+        :type timeout: Union[str, int]
         :param load_mibs: Comma-separated string of MIB modules to load.
         :type load_mibs: str
         :param mib_directories: Comma-separated string of directories to search for MIB files.
