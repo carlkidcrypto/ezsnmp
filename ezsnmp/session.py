@@ -1,6 +1,6 @@
 from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
-
+from typing import Union
 
 class Session(SessionBase):
     """
@@ -11,8 +11,8 @@ class Session(SessionBase):
     def __init__(
         self,
         hostname="localhost",
-        port_number="",
-        version="3",
+        port_number: Union[str, int] = "",
+        version: Union[str, int] = "3",
         community="public",
         auth_protocol="",
         auth_passphrase="",
@@ -24,8 +24,8 @@ class Session(SessionBase):
         privacy_protocol="",
         privacy_passphrase="",
         boots_time="",
-        retries="3",
-        timeout="1",
+        retries: Union[str, int] = "3", 
+        timeout: Union[str, int] = "1",
         load_mibs="",
         mib_directories="",
         print_enums_numerically=False,
@@ -78,11 +78,18 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         """
 
+        # Note that underlying SesionBase object depends on all parameters to be strings.
+        # This is the case, since at the end of the day we are building a command line string
+        # to pass to the NetSNMP command line tool.
         try:
+            # Convert version 2 to '2c'
+            if str(version) == '2':
+                version = '2c'
+                
             self._session_base = SessionBase(
                 hostname,
-                port_number,
-                version,
+                str(port_number),
+                str(version),
                 community,
                 auth_protocol,
                 auth_passphrase,
@@ -94,8 +101,8 @@ class Session(SessionBase):
                 privacy_protocol,
                 privacy_passphrase,
                 boots_time,
-                retries,
-                timeout,
+                str(retries),
+                str(timeout),
                 load_mibs,
                 mib_directories,
                 print_enums_numerically,
