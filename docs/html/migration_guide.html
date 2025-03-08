@@ -283,11 +283,13 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">auth_password</span></code> → <code class="docutils literal notranslate"><span class="pre">auth_passphrase</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">use_numeric</span></code> → <code class="docutils literal notranslate"><span class="pre">print_oids_numerically</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">use_long_names</span></code> → <code class="docutils literal notranslate"><span class="pre">print_full_oids</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_enums</span></code> → <code class="docutils literal notranslate"><span class="pre">print_enums_numerically</span></code></p></li>
 </ul>
 </section>
 <section id="removed-parameters">
 <h3>Removed Parameters<a class="headerlink" href="#removed-parameters" title="Link to this heading">¶</a></h3>
-<p>The following parameters have been removed in V2.X.X:</p>
+<p>The following parameters have been removed in V2.X.X and will be reintroduced in future releases,
+as we focus on stabilizing core functionality:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">local_port</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">engine_boots</span></code></p></li>
@@ -297,7 +299,6 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">their_hostname</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">trust_cert</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">use_sprint_value</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">use_enums</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">best_guess</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">retry_no_such</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">abort_on_nonexistent</span></code></p></li>
@@ -322,7 +323,17 @@
      <span class="n">version</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">,</span>
      <span class="n">port_number</span><span class="o">=</span><span class="s2">&quot;161&quot;</span><span class="p">,</span>
      <span class="n">timeout</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-     <span class="n">print_oids_numerically</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+     <span class="n">print_oids_numerically</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span>
+     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;example.com&quot;</span><span class="p">,</span>
+     <span class="n">version</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+     <span class="n">port_number</span><span class="o">=</span><span class="mi">161</span><span class="p">,</span>
+     <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+     <span class="n">print_oids_numerically</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 </pre></div>
 </div>
