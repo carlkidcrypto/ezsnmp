@@ -21,11 +21,13 @@ Renamed Parameters
 - ``auth_password`` → ``auth_passphrase``
 - ``use_numeric`` → ``print_oids_numerically``
 - ``use_long_names`` → ``print_full_oids``
+- ``use_enums`` → ``print_enums_numerically``
 
 Removed Parameters
 ~~~~~~~~~~~~~~~~~~
 
-The following parameters have been removed in V2.X.X:
+The following parameters have been removed in V2.X.X and will be reintroduced in future releases, 
+as we focus on stabilizing core functionality:
 
 - ``local_port``
 - ``engine_boots`` 
@@ -35,7 +37,6 @@ The following parameters have been removed in V2.X.X:
 - ``their_hostname``
 - ``trust_cert``
 - ``use_sprint_value``
-- ``use_enums``
 - ``best_guess``
 - ``retry_no_such``
 - ``abort_on_nonexistent``
@@ -64,5 +65,17 @@ New code (V2.X.X):
           version="3",
           port_number="161",
           timeout="1",
-          print_oids_numerically="true"
+          print_oids_numerically=True
+     )
+
+or
+
+.. code-block:: python
+
+     session = Session(
+          hostname="example.com",
+          version=3,
+          port_number=161,
+          timeout=1,
+          print_oids_numerically=True
      )
