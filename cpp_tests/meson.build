@@ -1,12 +1,15 @@
 project('ezsnmp_tests',  'cpp', default_options: ['cpp_std=c++17'])
 
-add_project_arguments('-fprofile-arcs', '-ftest-coverage', language: 'cpp')
-add_project_link_arguments('-lgcov', language: 'cpp')
+# This no worky on mac
+# add_project_arguments('-fprofile-arcs', '-ftest-coverage', language: 'cpp')
+# add_project_link_arguments('-lgcov', language: 'cpp')
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
-netsnmp_dep = dependency('netsnmp')  # Add this line
+
+# MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
+netsnmp_dep = dependency('netsnmp')
 
 # Include parent directory for ezsnmp headers
 include_dirs = include_directories('..', '../ezsnmp/include')

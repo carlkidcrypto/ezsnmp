@@ -81,13 +81,13 @@ them with the following on Linux:
     sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
     sudo systemctl stop snmpd;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;
     sudo download-mibs;
     mkdir -p -m 0755 ~/.snmp;
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
     rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 -m pip install -r tests/requirements.txt;
+    python3 -m pip install -r python_tests/requirements.txt;
     python3 -m pip install . && pytest python_tests/;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
@@ -104,11 +104,11 @@ On MacOS
     git clone https://github.com/ezsnmp/ezsnmp.git;
     cd ezsnmp;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ dist/ ezsnmp.egg-info;
-    python3 -m pip install -r tests/requirements.txt;
+    python3 -m pip install -r python_tests/requirements.txt;
     python3 -m pip install . && pytest python_tests/;
 
 

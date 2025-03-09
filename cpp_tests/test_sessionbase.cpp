@@ -345,36 +345,54 @@ TEST_F(SessionBaseTest, TestWalkSingleMib) {
                        "3", "5");
    auto result = session.walk("SNMPv2-MIB::sysORDescr");
 
-   EXPECT_EQ(result[0].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
-             "Architecture MIB.");
-   EXPECT_EQ(result[1].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
-   EXPECT_EQ(result[2].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
-             "information definitions for the SNMP User-based Security Model.");
-   EXPECT_EQ(result[3].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
-             "SNMPv2 entities");
-   EXPECT_EQ(result[4].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access "
-             "Control Model for SNMP.");
-   EXPECT_EQ(result[5].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
-             "managing TCP implementations");
-   EXPECT_EQ(result[6].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
-             "managing UDP implementations");
-   EXPECT_EQ(result[7].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
-             "managing IP and ICMP implementations");
-   EXPECT_EQ(result[8].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
-             "managing SNMP Notification, plus filtering.");
-   EXPECT_EQ(result[9].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
-             "logging SNMP Notifications.");
+   #ifdef __APPLE__
+      EXPECT_EQ(result[0].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(result[1].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(result[2].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+                "Architecture MIB.");
+      EXPECT_EQ(result[3].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
+                "managing SNMP Notification, plus filtering.");
+      EXPECT_EQ(result[4].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
+                "logging SNMP Notifications.");
+   #else
+      EXPECT_EQ(result[0].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
+                "Architecture MIB.");
+      EXPECT_EQ(result[1].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(result[2].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
+                "information definitions for the SNMP User-based Security Model.");
+      EXPECT_EQ(result[3].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
+                "SNMPv2 entities");
+      EXPECT_EQ(result[4].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access "
+                "Control Model for SNMP.");
+      EXPECT_EQ(result[5].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
+                "managing TCP implementations");
+      EXPECT_EQ(result[6].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+                "managing UDP implementations");
+      EXPECT_EQ(result[7].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+                "managing IP and ICMP implementations");
+      EXPECT_EQ(result[8].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
+                "managing SNMP Notification, plus filtering.");
+      EXPECT_EQ(result[9].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
+                "logging SNMP Notifications.");
+   #endif
 }
 
 TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
@@ -382,36 +400,54 @@ TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
                        "3", "5");
    auto result = session.bulk_walk("SNMPv2-MIB::sysORDescr");
 
-   EXPECT_EQ(result[0].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
-             "Architecture MIB.");
-   EXPECT_EQ(result[1].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
-   EXPECT_EQ(result[2].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
-             "information definitions for the SNMP User-based Security Model.");
-   EXPECT_EQ(result[3].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
-             "SNMPv2 entities");
-   EXPECT_EQ(result[4].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access "
-             "Control Model for SNMP.");
-   EXPECT_EQ(result[5].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
-             "managing TCP implementations");
-   EXPECT_EQ(result[6].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
-             "managing UDP implementations");
-   EXPECT_EQ(result[7].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
-             "managing IP and ICMP implementations");
-   EXPECT_EQ(result[8].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
-             "managing SNMP Notification, plus filtering.");
-   EXPECT_EQ(result[9].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
-             "logging SNMP Notifications.");
+   #ifdef __APPLE__
+      EXPECT_EQ(result[0].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(result[1].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(result[2].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+                "Architecture MIB.");
+      EXPECT_EQ(result[3].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
+                "managing SNMP Notification, plus filtering.");
+      EXPECT_EQ(result[4].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
+                "logging SNMP Notifications.");
+   #else
+      EXPECT_EQ(result[0].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
+                "Architecture MIB.");
+      EXPECT_EQ(result[1].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(result[2].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
+                "information definitions for the SNMP User-based Security Model.");
+      EXPECT_EQ(result[3].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
+                "SNMPv2 entities");
+      EXPECT_EQ(result[4].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: View-based Access "
+                "Control Model for SNMP.");
+      EXPECT_EQ(result[5].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
+                "managing TCP implementations");
+      EXPECT_EQ(result[6].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+                "managing UDP implementations");
+      EXPECT_EQ(result[7].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+                "managing IP and ICMP implementations");
+      EXPECT_EQ(result[8].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
+                "managing SNMP Notification, plus filtering.");
+      EXPECT_EQ(result[9].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
+                "logging SNMP Notifications.");
+   #endif
 }
 
 // BROKEN< THERE"S A BUG HERE. bulkwalk only walks one OID.
@@ -596,6 +632,17 @@ TEST_F(SessionBaseTest, TestGetMultipleMibs) {
    ASSERT_EQ(results.size(), 3);
 
    // Verify individual results
+   #ifdef __APPLE__
+   EXPECT_EQ(results[0].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[1].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[2].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+             "Architecture MIB.");
+   #else
    EXPECT_EQ(results[0].to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
              "Architecture MIB.");
@@ -605,6 +652,7 @@ TEST_F(SessionBaseTest, TestGetMultipleMibs) {
    EXPECT_EQ(results[2].to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
              "information definitions for the SNMP User-based Security Model.");
+   #endif
 
    // Verify the constructed arguments
    auto args = session._get_args();
@@ -634,15 +682,27 @@ TEST_F(SessionBaseTest, TestGetNext) {
    ASSERT_EQ(results.size(), 3);
 
    // Verify individual results
-   EXPECT_EQ(results[0].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
-   EXPECT_EQ(results[1].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
-             "information definitions for the SNMP User-based Security Model.");
-   EXPECT_EQ(results[2].to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
-             "SNMPv2 entities");
+   #ifdef __APPLE__
+      EXPECT_EQ(results[0].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(results[1].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(results[2].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+                "Architecture MIB.");
+   #else
+      EXPECT_EQ(results[0].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+                "Processing and Dispatching.");
+      EXPECT_EQ(results[1].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The management "
+                "information definitions for the SNMP User-based Security Model.");
+      EXPECT_EQ(results[2].to_string(),
+                "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB module for "
+                "SNMPv2 entities");
+   #endif
 
    // Verify the constructed arguments
    auto args = session._get_args();
