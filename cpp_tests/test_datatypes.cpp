@@ -63,7 +63,7 @@ TEST(ResultTest, AssignmentOperatorTest) {
    Result r2;
    r2 = r1;
    EXPECT_EQ(r1.to_string(), r2.to_string());
-   
+
    // Modify r2 after assignment
    r2.oid = "new::oid";
    r2.value = "789";
@@ -102,19 +102,19 @@ TEST(ResultTest, MoveOperatorTest) {
 }
 TEST(ResultTest, VectorOfResultsTest) {
    std::vector<Result> results;
-   
+
    Result r1;
    r1.oid = "oid1";
    r1.index = "1";
-   r1.type = "STRING"; 
+   r1.type = "STRING";
    r1.value = "value1";
-   
+
    Result r2;
    r2.oid = "oid2";
    r2.index = "2";
    r2.type = "INTEGER";
    r2.value = "123";
-   
+
    results.push_back(r1);
    results.push_back(r2);
 
@@ -126,4 +126,3 @@ TEST(ResultTest, VectorOfResultsTest) {
    results[0].value = "new_value";
    EXPECT_EQ(results[0].to_string(), "oid: oid1, index: 1, type: STRING, value: new_value");
 }
-

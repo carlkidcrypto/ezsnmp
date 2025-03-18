@@ -983,8 +983,8 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
 
       expected.push_back("localhost:11161");
       std::cout << "args: ";
-      for (const auto& arg : args) {
-          std::cout << arg << " ";
+      for (auto const& arg : args) {
+         std::cout << arg << " ";
       }
       std::cout << std::endl;
       ASSERT_EQ(args, expected);
@@ -1016,12 +1016,14 @@ INSTANTIATE_TEST_SUITE_P(
                          {"e"},
                          {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
 
-            PrintOptions{// Case 3: full_oids true, others false
-                         false,
-                         true,
-                         false,
-                         {"f"},
-                         {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, index: 1, type: INTEGER, value: up(1)"}},
+            PrintOptions{
+                // Case 3: full_oids true, others false
+                false,
+                true,
+                false,
+                {"f"},
+                {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
+                 "index: 1, type: INTEGER, value: up(1)"}},
 
             PrintOptions{// Case 4: oids_numeric true, others false
                          false,
@@ -1030,12 +1032,14 @@ INSTANTIATE_TEST_SUITE_P(
                          {"n"},
                          {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
 
-            PrintOptions{// Case 5: enums and full_oids true, oids_numeric false
-                         true,
-                         true,
-                         false,
-                         {"e", "f"},
-                         {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
+            PrintOptions{
+                // Case 5: enums and full_oids true, oids_numeric false
+                true,
+                true,
+                false,
+                {"e", "f"},
+                {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
+                 "index: 1, type: INTEGER, value: 1"}},
 
             PrintOptions{// Case 6: enums and oids_numeric true, full_oids false
                          true,

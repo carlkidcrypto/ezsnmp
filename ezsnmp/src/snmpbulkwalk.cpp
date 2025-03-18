@@ -107,7 +107,7 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
    if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
       for (vars = response->variables; vars; vars = vars->next_variable) {
          snmpbulkwalk_numprinted++;
-         auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
          str_values.push_back(str_value);
       }
    }
@@ -297,7 +297,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                   continue;
                }
                snmpbulkwalk_numprinted++;
-               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+               auto const &str_value =
+                   print_variable_to_string(vars->name, vars->name_length, vars);
                return_vector.push_back(str_value);
                if ((vars->type != SNMP_ENDOFMIBVIEW) && (vars->type != SNMP_NOSUCHOBJECT) &&
                    (vars->type != SNMP_NOSUCHINSTANCE)) {

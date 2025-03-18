@@ -211,7 +211,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
           * check resulting variables
           */
          for (vars = response->variables; vars; vars = vars->next_variable) {
-            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
             return_vector.push_back(str_value);
          }
       } else {
