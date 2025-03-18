@@ -25,6 +25,17 @@ test_datatypes = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
 )
 
+test_helpers = executable(
+    'test_helpers',
+    [
+        'test_helpers.cpp',
+        '../ezsnmp/src/helpers.cpp',
+        '../ezsnmp/src/exceptionsbase.cpp',
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep]
+)
+
 test_sessionbase = executable(
     'test_sessionbase',
     [

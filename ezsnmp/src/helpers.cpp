@@ -159,23 +159,18 @@ Result parse_result(std::string const &input) {
    std::getline(ss, temp, ':');
    result.type = temp.substr(temp.find_last_of(' ') + 1);
 
-   // Extract value
+   // Extract value and trim leading/trailing whitespace
    std::getline(ss, temp);
-   result.value = temp.substr(1, temp.size());
+   result.value = temp.substr(1);
+   result.value = result.value.substr(0, result.value.find_last_not_of(" \t\n\r") + 1);
 
    // Check for "No Such Object" in the value
    if (result.value.find("No Such Object") != std::string::npos) {
       result.type = "NOSUCHOBJECT";
    }
-
    // Check for "No Such Instance" in the value
    else if (result.value.find("No Such Instance") != std::string::npos) {
       result.type = "NOSUCHINSTANCE";
-   }
-
-   // Check for "No Such Object" in the value
-   else if (result.value.find("No Such Object") != std::string::npos) {
-      result.type = "NOSUCHOBJECT";
    }
 
    return result;
