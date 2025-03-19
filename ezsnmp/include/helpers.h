@@ -46,6 +46,25 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss);
  */
 void snmp_perror_exception(char const *prog_string);
 
+
+/**
+ * @struct Deleter
+ * @brief A custom deleter for freeing dynamically allocated memory in an array of C-style strings.
+ *
+ * This struct provides an overloaded function call operator to free memory
+ * allocated for each element in a null-terminated array of C-style strings,
+ * starting from the second element (index 1).
+ *
+ * @note The first element (index 0) is not freed by this deleter.
+ */
+struct Deleter {
+    void operator()(char **ptr) const {
+       for (int i = 1; ptr[i] != nullptr; ++i) {
+          free(ptr[i]);
+       }
+    }
+ };
+
 /**
  * @brief Creates an array of C-style strings from a vector of strings.
  *
@@ -56,7 +75,7 @@ void snmp_perror_exception(char const *prog_string);
  * @param argc An integer to store the number of arguments.
  * @return A unique pointer to the array of C-style strings.
  */
-std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc);
+std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &args, int &argc);
 
 /**
  * @brief Parses a single SNMP result string.

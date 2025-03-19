@@ -71,6 +71,7 @@ SOFTWARE.
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpget.h"
+#include <iostream>
 
 void snmpget_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
@@ -104,21 +105,21 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
-   int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   int argc = 0;
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
-   netsnmp_pdu *pdu;
-   netsnmp_pdu *response;
-   netsnmp_variable_list *vars;
-   int arg;
-   int count;
+   netsnmp_session session, *ss = NULL;
+   netsnmp_pdu *pdu = NULL;
+   netsnmp_pdu *response = NULL;
+   netsnmp_variable_list *vars = NULL;
+   int arg = 0;
+   int count = 0;
    int current_name = 0;
-   char *names[SNMP_MAX_CMDLINE_OIDS];
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   int status;
+   char *names[SNMP_MAX_CMDLINE_OIDS] = {0};
+   oid name[MAX_OID_LEN] = {0};
+   size_t name_length = 0;
+   int status = -1;
    int failures = 0;
 
    SOCK_STARTUP;
@@ -201,7 +202,13 @@ retry:
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
             auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            // bug can be here!! The address is the same, we need to ensure the value gets copied over properly and then
+            // cleared.
+            std::cout << "str_value - 1: " << str_value << std::endl;
+            std::cout << "str_value addr - 1: " << &str_value << std::endl;
             return_vector.push_back(str_value);
+            std::cout << "str_value - 2: " << str_value << std::endl;
+            std::cout << "str_value addr - 2: " << &str_value << std::endl;
          }
       } else {
          std::string err_msg =

@@ -55,6 +55,19 @@ test_sessionbase = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
 )
 
+test_snmpget = executable(
+    'test_snmpget',
+    [
+        'test_snmpget.cpp',
+        '../ezsnmp/src/snmpget.cpp',
+        '../ezsnmp/src/helpers.cpp',
+        '../ezsnmp/src/datatypes.cpp',
+        '../ezsnmp/src/exceptionsbase.cpp',
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep]
+)
+
 # Register tests
 test('datatypes_test', test_datatypes)
 test('sessionbase_test', test_sessionbase)

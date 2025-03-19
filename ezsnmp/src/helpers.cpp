@@ -90,14 +90,18 @@ void snmp_perror_exception(char const *prog_string) {
 
 // This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc
 // expect
-std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {
+std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &args, int &argc) {
    argc = args.size() + 1;
-   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+   std::unique_ptr<char *[], Deleter> argv(new char *[argc + 1]);
 
    argv[0] = const_cast<char *>("netsnmp");
 
    for (int i = 0; i < static_cast<int>(args.size()); ++i) {
       argv[i + 1] = strdup(args[i].c_str());
+
+      if (argv[i + 1] == nullptr) {
+         throw std::runtime_error("Memory allocation failed for argv element");
+      }
    }
    argv[argc] = nullptr;
 

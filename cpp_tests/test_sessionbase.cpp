@@ -925,7 +925,7 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* print_full_oids */ print_opts.print_full_oids,
           /* print_oids_numerically */ print_opts.print_oids_numerically);
 
-      auto args = session._get_args();
+      auto const& args = session._get_args();
       std::vector<std::string> expected = {"-A", "auth_second",
                                            "-a", "SHA",
                                            "-X", "priv_second",
@@ -972,7 +972,7 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* print_full_oids */ print_opts.print_full_oids,
           /* print_oids_numerically */ print_opts.print_oids_numerically);
 
-      auto args = session._get_args();
+      auto const& args = session._get_args();
       std::vector<std::string> expected = {"-c", "public", "-v", version};
 
       // Add print options flags
@@ -986,11 +986,21 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
       for (auto const& arg : args) {
          std::cout << arg << " ";
       }
+
       std::cout << std::endl;
       ASSERT_EQ(args, expected);
 
       // Verify get output with print options
       auto results = session.get("ifAdminStatus.1");
+      std::cout << "Vector address: " << &results << std::endl;
+      for (auto const& result : results) {
+         std::cout << "Result: " << result.to_string() << std::endl
+                   << "  OID: " << result.oid << std::endl
+                   << "  Type: " << result.type << std::endl
+                   << "  Value: " << result.value << std::endl
+                   << "  Index: " << result.index << std::endl
+                   << "result address: " << &result << std::endl;
+      }
       ASSERT_EQ(results.size(), 1);
       EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
    }

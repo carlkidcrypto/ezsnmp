@@ -109,7 +109,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args) {
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
    int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
    netsnmp_session session, *ss;
