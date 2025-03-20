@@ -5,7 +5,7 @@
  *
  */
 /**********************************************************************
-    Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 

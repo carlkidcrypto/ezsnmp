@@ -4,7 +4,7 @@
  *
  */
 /***********************************************************************
-   Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
@@ -68,10 +68,11 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
+#include <iostream>
+
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpget.h"
-#include <iostream>
 
 void snmpget_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
@@ -202,8 +203,8 @@ retry:
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
             auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-            // bug can be here!! The address is the same, we need to ensure the value gets copied over properly and then
-            // cleared.
+            // bug can be here!! The address is the same, we need to ensure the value gets copied
+            // over properly and then cleared.
             std::cout << "str_value - 1: " << str_value << std::endl;
             std::cout << "str_value addr - 1: " << &str_value << std::endl;
             return_vector.push_back(str_value);

@@ -46,7 +46,6 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss);
  */
 void snmp_perror_exception(char const *prog_string);
 
-
 /**
  * @struct Deleter
  * @brief A custom deleter for freeing dynamically allocated memory in an array of C-style strings.
@@ -58,12 +57,12 @@ void snmp_perror_exception(char const *prog_string);
  * @note The first element (index 0) is not freed by this deleter.
  */
 struct Deleter {
-    void operator()(char **ptr) const {
-       for (int i = 1; ptr[i] != nullptr; ++i) {
-          free(ptr[i]);
-       }
-    }
- };
+   void operator()(char **ptr) const {
+      for (int i = 1; ptr[i] != nullptr; ++i) {
+         free(ptr[i]);
+      }
+   }
+};
 
 /**
  * @brief Creates an array of C-style strings from a vector of strings.

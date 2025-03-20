@@ -38,3 +38,4 @@ wheelhouse/**
 **venv**
 /cpp_tests/coverage_html
 cpp_tests/coverage.info
+ezsnmp/patches/net-snmp-master/**
