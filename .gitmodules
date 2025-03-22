@@ -1,0 +1,3 @@
+[submodule "ezsnmp/patches/net-snmp"]
+	path = ezsnmp/patches/net-snmp
+	url = https://github.com/net-snmp/net-snmp.git
