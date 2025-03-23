@@ -93,13 +93,9 @@ void snmpget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-void snmpget_usage(void) {
-   fprintf(stderr, "USAGE: snmpget ");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " OID [OID]...\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
+void clear_net_snmp_library_data() {
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 0); // Clear -On && Clear -Of
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -Oe
 }
 
 std::vector<Result> snmpget(std::vector<std::string> const &args) {
@@ -203,13 +199,7 @@ retry:
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
             auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-            // bug can be here!! The address is the same, we need to ensure the value gets copied
-            // over properly and then cleared.
-            std::cout << "str_value - 1: " << str_value << std::endl;
-            std::cout << "str_value addr - 1: " << &str_value << std::endl;
             return_vector.push_back(str_value);
-            std::cout << "str_value - 2: " << str_value << std::endl;
-            std::cout << "str_value addr - 2: " << &str_value << std::endl;
          }
       } else {
          std::string err_msg =
@@ -254,5 +244,6 @@ retry:
 
    netsnmp_cleanup_session(&session);
    SOCK_CLEANUP;
+   clear_net_snmp_library_data();
    return parse_results(return_vector);
 } /* end main() */
