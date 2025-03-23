@@ -982,25 +982,12 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
       }
 
       expected.push_back("localhost:11161");
-      std::cout << "args: ";
-      for (auto const& arg : args) {
-         std::cout << arg << " ";
-      }
 
-      std::cout << std::endl;
       ASSERT_EQ(args, expected);
 
       // Verify get output with print options
       auto results = session.get("ifAdminStatus.1");
-      std::cout << "Vector address: " << &results << std::endl;
-      for (auto const& result : results) {
-         std::cout << "Result: " << result.to_string() << std::endl
-                   << "  OID: " << result.oid << std::endl
-                   << "  Type: " << result.type << std::endl
-                   << "  Value: " << result.value << std::endl
-                   << "  Index: " << result.index << std::endl
-                   << "result address: " << &result << std::endl;
-      }
+
       ASSERT_EQ(results.size(), 1);
       EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
    }

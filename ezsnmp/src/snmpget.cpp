@@ -68,8 +68,6 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-#include <iostream>
-
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpget.h"
@@ -91,11 +89,6 @@ void snmpget_optProc(int argc, char *const *argv, int opt) {
          }
          break;
    }
-}
-
-void clear_net_snmp_library_data() {
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 0); // Clear -On && Clear -Of
-   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -Oe
 }
 
 std::vector<Result> snmpget(std::vector<std::string> const &args) {
@@ -243,7 +236,7 @@ retry:
    }
 
    netsnmp_cleanup_session(&session);
-   SOCK_CLEANUP;
    clear_net_snmp_library_data();
+   SOCK_CLEANUP;
    return parse_results(return_vector);
 } /* end main() */

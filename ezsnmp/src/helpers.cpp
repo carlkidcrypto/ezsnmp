@@ -264,3 +264,9 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
    SNMP_FREE(buf);
    return ss.str();
 }
+
+void clear_net_snmp_library_data() {
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                      0); // Clear -On && Clear -Of
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -Oe
+}

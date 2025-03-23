@@ -149,8 +149,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "-O", "e", "localhost:11161", "IF-MIB::ifAdminStatus.1"};
 
-   std::string expected_result =
-       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
+   std::string expected_result = "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
 
    for (int i = 0; i < 5; ++i) {
       auto results = snmpget(args);

@@ -122,4 +122,15 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
  */
 std::string print_objid_to_string(oid const *objid, size_t objidlen);
 
+/**
+ * @brief Cleans up the Net-SNMP library's global data to ensure proper resource management.
+ *
+ * This function addresses issues caused by residual global variables in the Net-SNMP library.
+ * These variables are typically used in one-off command-line operations, but in scenarios
+ * involving multiple calls to functions like snmpget(), proper cleanup is essential to
+ * prevent unexpected behavior. The solution involves clearing the options read by the library
+ * just before returning.
+ */
+void clear_net_snmp_library_data();
+
 #endif // HELPERS_H
