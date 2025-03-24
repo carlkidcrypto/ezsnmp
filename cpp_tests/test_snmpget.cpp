@@ -158,30 +158,30 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
    }
 }
 
-// TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
-//    std::vector<std::string> base_args = {
-//        "-v", "2c", "-c", "public", "localhost:11161", "IF-MIB::ifAdminStatus.1"};
+TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
+   std::vector<std::string> base_args = {
+       "-v", "2c", "-c", "public", "localhost:11161", "IF-MIB::ifAdminStatus.1"};
 
-//    std::string expected_result_enum =
-//        "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
-//    std::string expected_result_no_enum =
-//        "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)";
+   std::string expected_result_enum =
+       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
+   std::string expected_result_no_enum =
+       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)";
 
-//    for (int i = 0; i < 2; ++i) {
-//       std::vector<std::string> args = base_args;
+   for (int i = 0; i < 2; ++i) {
+      std::vector<std::string> args = base_args;
 
-//       if (i % 2 == 0) {
-//          args.insert(args.begin() + 2, "-O");
-//          args.insert(args.begin() + 3, "e");
-//       }
+      if (i % 2 == 0) {
+         args.insert(args.begin() + 2, "-O");
+         args.insert(args.begin() + 3, "e");
+      }
 
-//       auto results = snmpget(args);
-//       EXPECT_EQ(results.size(), 1);
+      auto results = snmpget(args);
+      EXPECT_EQ(results.size(), 1);
 
-//       if (i % 2 == 0) {
-//          EXPECT_EQ(results[0].to_string(), expected_result_enum);
-//       } else {
-//          EXPECT_EQ(results[0].to_string(), expected_result_no_enum);
-//       }
-//    }
-// }
+      if (i % 2 == 0) {
+         EXPECT_EQ(results[0].to_string(), expected_result_enum);
+      } else {
+         EXPECT_EQ(results[0].to_string(), expected_result_no_enum);
+      }
+   }
+}

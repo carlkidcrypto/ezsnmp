@@ -746,7 +746,84 @@ TEST_F(SessionBaseTest, TestBulkGet) {
    auto results = session.bulk_get(mibs);
    ASSERT_EQ(results.size(), 30);
 
-   // Verify first set of results
+// Verify first set of results
+#ifdef __APPLE__
+   EXPECT_EQ(results[0].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[1].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[2].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[3].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[4].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[5].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
+             "Processing and Dispatching.");
+   EXPECT_EQ(results[6].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+             "Architecture MIB.");
+   EXPECT_EQ(results[7].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+             "Architecture MIB.");
+   EXPECT_EQ(results[8].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
+             "Architecture MIB.");
+   EXPECT_EQ(results[9].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
+             "managing SNMP Notification, plus filtering.");
+   EXPECT_EQ(results[10].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
+             "managing SNMP Notification, plus filtering.");
+   EXPECT_EQ(results[11].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
+             "managing SNMP Notification, plus filtering.");
+   EXPECT_EQ(results[12].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
+             "logging SNMP Notifications.");
+   EXPECT_EQ(results[13].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
+             "logging SNMP Notifications.");
+   EXPECT_EQ(results[14].to_string(),
+             "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
+             "logging SNMP Notifications.");
+   EXPECT_EQ(results[15].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[16].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[17].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[18].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[19].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[20].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[21].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[22].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[23].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[24].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[25].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[26].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[27].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[28].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00");
+   EXPECT_EQ(results[29].to_string(),
+             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00");
+#else
    EXPECT_EQ(results[0].to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
              "Architecture MIB.");
@@ -837,6 +914,7 @@ TEST_F(SessionBaseTest, TestBulkGet) {
    EXPECT_EQ(results[29].to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 10, type: STRING, value: The MIB module for "
              "logging SNMP Notifications.");
+#endif
 
    // Verify the constructed arguments
    auto args = session._get_args();

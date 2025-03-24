@@ -70,6 +70,6 @@ test_snmpget = executable(
 
 # Register tests
 test('datatypes_test', test_datatypes)
-test('test_helpers', test_helpers)
+test('helpers_test', test_helpers)
 test('sessionbase_test', test_sessionbase)
-test('test_snmpget', test_snmpget)
+test('snmpget_test', test_snmpget)
