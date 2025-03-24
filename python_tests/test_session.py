@@ -251,7 +251,7 @@ def test_session_get_next(sess):
 def test_session_set(sess, reset_values):
 
     res = sess.get("sysLocation.0")
-    assert res[0].value != "my newer location"
+    assert res[0].value == "my original location"
 
     success = sess.set(["sysLocation.0", "s", "my newer location"])
     assert success
@@ -443,7 +443,7 @@ def test_session_update():
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_enums_numerically(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -508,7 +508,7 @@ def test_session_print_enums_numerically(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "e",
             "localhost:11161",
@@ -534,7 +534,7 @@ def test_session_print_enums_numerically(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_full_oids(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -599,7 +599,7 @@ def test_session_print_full_oids(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "f",
             "localhost:11161",
@@ -628,7 +628,7 @@ def test_session_print_full_oids(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_oids_numerically(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -693,7 +693,7 @@ def test_session_print_oids_numerically(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "n",
             "localhost:11161",
@@ -719,7 +719,7 @@ def test_session_print_oids_numerically(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_all_set(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -788,7 +788,7 @@ def test_session_print_options_all_set(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "e",
             "-O",
@@ -818,7 +818,7 @@ def test_session_print_options_all_set(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_true_true_false(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -883,7 +883,7 @@ def test_session_print_options_two_set_true_true_false(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "e",
             "-O",
@@ -914,7 +914,7 @@ def test_session_print_options_two_set_true_true_false(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_false_true_true(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -979,7 +979,7 @@ def test_session_print_options_two_set_false_true_true(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "f",
             "-O",
@@ -1007,7 +1007,7 @@ def test_session_print_options_two_set_false_true_true(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_true_false_true(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -1072,7 +1072,7 @@ def test_session_print_options_two_set_true_false_true(version):
             "-t",
             "1",
             "-v",
-            f"{version}",
+            "2c" if version == 2 else f"{version}",
             "-O",
             "e",
             "-O",

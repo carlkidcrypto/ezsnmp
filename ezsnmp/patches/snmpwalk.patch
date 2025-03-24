@@ -1,46 +1,37 @@
---- net-snmp-master/apps/snmpwalk.c 2024-09-06 10:48:16
-+++ ../src/snmpwalk.cpp             2024-11-26 07:47:37
+--- ./net-snmp/apps/snmpwalk.c	2025-03-24 00:08:48
++++ ../src/snmpwalk.cpp	2025-03-24 05:00:21
 @@ -1,3 +1,4 @@
 +/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
   * snmpwalk.c - send snmp GETNEXT requests to a network entity, walking a
   * subtree.
-@@ -76,30 +77,33 @@
+@@ -76,30 +77,15 @@
  
  char           *end_name = NULL;
  
 -void
 -usage(void)
 -{
-+#include <stdexcept>
-+
-+#include "helpers.h"
-+#include "snmpwalk.h"
-+
-+void snmpwalk_usage(void) {
-     fprintf(stderr, "USAGE: snmpwalk ");
-     snmp_parse_args_usage(stderr);
-     fprintf(stderr, " [OID]\n\n");
-     snmp_parse_args_descriptions(stderr);
+-    fprintf(stderr, "USAGE: snmpwalk ");
+-    snmp_parse_args_usage(stderr);
+-    fprintf(stderr, " [OID]\n\n");
+-    snmp_parse_args_descriptions(stderr);
 -    fprintf(stderr,
 -            "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-+   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-     fprintf(stderr, "\t\t\t  p:  print the number of variables found\n");
-     fprintf(stderr, "\t\t\t  i:  include given OID in the search range\n");
+-    fprintf(stderr, "\t\t\t  p:  print the number of variables found\n");
+-    fprintf(stderr, "\t\t\t  i:  include given OID in the search range\n");
 -    fprintf(stderr, "\t\t\t  I:  don't include the given OID, even if no results are returned\n");
-     fprintf(stderr,
+-    fprintf(stderr,
 -            "\t\t\t  c:  do not check returned OIDs are increasing\n");
 -    fprintf(stderr,
 -            "\t\t\t  t:  Display wall-clock time to complete the walk\n");
 -    fprintf(stderr,
 -            "\t\t\t  T:  Display wall-clock time to complete each request\n");
-+           "\t\t\t  I:  don't include the given OID, even if no results "
-+           "are returned\n");
-+   fprintf(stderr, "\t\t\t  c:  do not check returned OIDs are increasing\n");
-+   fprintf(stderr, "\t\t\t  t:  Display wall-clock time to complete the walk\n");
-+   fprintf(stderr, "\t\t\t  T:  Display wall-clock time to complete each request\n");
-     fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
- }
+-    fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
+-}
++#include "exceptionsbase.h"
++#include "helpers.h"
++#include "snmpwalk.h"
  
 -void
 -snmp_get_and_print(netsnmp_session * ss, oid * theoid, size_t theoid_len)
@@ -53,12 +44,12 @@
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             status;
-@@ -111,17 +115,18 @@
+@@ -111,17 +97,18 @@
      if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
              numprinted++;
 -            print_variable(vars->name, vars->name_length, vars);
-+         auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
++         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
 +         str_values.push_back(str_value);
          }
      }
@@ -76,7 +67,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -161,18 +166,23 @@
+@@ -161,18 +148,23 @@
                  break;
                  
              default:
@@ -85,7 +76,7 @@
 -                exit(1);
 +                  std::string err_msg =
 +                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-+                  throw std::runtime_error(err_msg);
++                  throw ParseErrorBase(err_msg);
              }
          }
          break;
@@ -100,13 +91,13 @@
 +   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +
 +   int argc;
-+   std::unique_ptr<char *[]> argv = create_argv(args, argc);
++   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
 +
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -187,47 +197,41 @@
+@@ -187,47 +179,41 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -152,22 +143,22 @@
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
-+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR");
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 +
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
 -        exitval = 0;
 -        goto out;
-+         throw std::runtime_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 +
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
 -        goto out;
-+         throw std::runtime_error("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 +
      default:
          break;
      }
-@@ -241,8 +245,7 @@
+@@ -241,8 +227,7 @@
           */
          rootlen = MAX_OID_LEN;
          if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
@@ -177,7 +168,7 @@
          }
      } else {
          /*
-@@ -260,8 +263,7 @@
+@@ -260,8 +245,7 @@
      if ( end_name ) {
          end_len = MAX_OID_LEN;
          if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
@@ -187,7 +178,7 @@
          }
      } else {
          memmove(end_oid, root, rootlen*sizeof(oid));
-@@ -277,8 +279,7 @@
+@@ -277,8 +261,7 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -197,7 +188,7 @@
      }
  
      /*
-@@ -290,16 +291,19 @@
+@@ -290,16 +273,19 @@
      running = 1;
  
      check =
@@ -223,7 +214,7 @@
      while (running) {
          /*
           * create PDU for GETNEXT request and add object name to request 
-@@ -310,20 +314,21 @@
+@@ -310,20 +296,21 @@
          /*
           * do the request 
           */
@@ -251,7 +242,7 @@
                          /*
                           * not part of this subtree 
                           */
-@@ -331,80 +336,77 @@
+@@ -331,80 +318,78 @@
                          continue;
                      }
                      numprinted++;
@@ -266,7 +257,8 @@
 -                        (vars->type != SNMP_NOSUCHOBJECT) &&
 +               }
 +
-+               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
++               auto const &str_value =
++                   print_variable_to_string(vars->name, vars->name_length, vars);
 +               return_vector.push_back(str_value);
 +
 +               if ((vars->type != SNMP_ENDOFMIBVIEW) && (vars->type != SNMP_NOSUCHOBJECT) &&
@@ -289,12 +281,12 @@
 -                            exitval = 1;
 +                  if (check &&
 +                      snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
-+
 +                     std::string err_msg = "Error: OID not increasing: ";
 +                     err_msg = err_msg + print_objid_to_string(name, name_length) + " >= ";
-+                     err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
++                     err_msg =
++                         err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
 +
-+                     throw std::runtime_error(err_msg);
++                     throw GenericErrorBase(err_msg);
                          }
 -                        memmove((char *) name, (char *) vars->name,
 -                                vars->name_length * sizeof(oid));
@@ -320,7 +312,7 @@
 -                    fprintf(stderr, "Error in packet.\nReason: %s\n",
 -                            snmp_errstring(response->errstat));
 +               std::string err_msg =
-+                   "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
++                   "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) +
 +                   "\n";
 +
                      if (response->errindex != 0) {
@@ -340,7 +332,7 @@
                      }
 -                    exitval = 2;
 +                  err_msg = err_msg + "\n";
-+                  throw std::runtime_error(err_msg);
++                  throw PacketErrorBase(err_msg);
                  }
              }
 +         }
@@ -350,7 +342,7 @@
 -            running = 0;
 -            exitval = 1;
 +         std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-+         throw std::runtime_error(err_msg);
++         throw TimeoutErrorBase(err_msg);
          } else {                /* status == STAT_ERROR */
 -            snmp_sess_perror("snmpwalk", ss);
 -            running = 0;
@@ -370,7 +362,7 @@
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -413,24 +415,24 @@
+@@ -413,24 +398,25 @@
           * for get measure. 
           */
          if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
@@ -400,6 +392,7 @@
  
 -out:
      netsnmp_cleanup_session(&session);
++   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;
 +   return parse_results(return_vector);

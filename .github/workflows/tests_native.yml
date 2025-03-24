@@ -24,8 +24,8 @@ jobs:
             ezsnmp/*.py
             ezsnmp/*.cpp
             ezsnmp/*.h
-            tests/*.py
-            tests/*.conf
+            python_tests/*.py
+            python_tests/*.conf
             setup.py
             setup.cfg
 
@@ -64,7 +64,7 @@ jobs:
 
       - name: Install pip dependencies
         run: |
-          if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
+          if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
 
       - name: Build And Install EzSnmp
         run: |
@@ -84,7 +84,7 @@ jobs:
             mibdir=""
             SNMPD=$(which.exe snmpd)
           fi
-          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+          $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Lint with flake8
         uses: py-actions/flake8@v2

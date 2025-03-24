@@ -36,3 +36,6 @@ wheelhouse/**
 *.o
 .DS_Store
 **venv**
+/cpp_tests/coverage_html
+cpp_tests/coverage.info
+**/master.zip/**

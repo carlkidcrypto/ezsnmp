@@ -5,7 +5,7 @@
  *
  */
 /*********************************************************************
-   Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
@@ -107,7 +107,7 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
    if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
       for (vars = response->variables; vars; vars = vars->next_variable) {
          snmpbulkwalk_numprinted++;
-         auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
          str_values.push_back(str_value);
       }
    }
@@ -177,7 +177,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
    int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
@@ -297,7 +297,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                   continue;
                }
                snmpbulkwalk_numprinted++;
-               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+               auto const &str_value =
+                   print_variable_to_string(vars->name, vars->name_length, vars);
                return_vector.push_back(str_value);
                if ((vars->type != SNMP_ENDOFMIBVIEW) && (vars->type != SNMP_NOSUCHOBJECT) &&
                    (vars->type != SNMP_NOSUCHINSTANCE)) {
@@ -336,7 +337,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                // printf("End of MIB\n");
             } else {
                std::string err_msg =
-                   "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) +
+                   "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) +
                    "\n";
                if (response->errindex != 0) {
                   err_msg = err_msg + "Failed object: ";
@@ -382,6 +383,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
    }
 
    netsnmp_cleanup_session(&session);
+   clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }

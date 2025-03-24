@@ -161,22 +161,22 @@ void SessionBase::populate_args() {
    // Handle boolean parameters
    if (m_print_enums_numerically) {
       auto const& enum_parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
-      std::string option = enum_parts[0];
-      std::string value = enum_parts[1];
+      auto const& option = enum_parts[0];
+      auto const& value = enum_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
    if (m_print_full_oids) {
       auto const& full_parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
-      std::string option = full_parts[0]; 
-      std::string value = full_parts[1];
+      auto const& option = full_parts[0];
+      auto const& value = full_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
    if (m_print_oids_numerically) {
       auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
-      std::string option = num_parts[0];
-      std::string value = num_parts[1]; 
+      auto const& option = num_parts[0];
+      auto const& value = num_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
@@ -201,7 +201,7 @@ void SessionBase::populate_args() {
       // Check for `udp6:[2001:db8::]` or `udp6:[2001:db8::]:162`
       if (IsUdp6InStr != std::string::npos && openBracketPos != std::string::npos &&
           closeBracketPos != std::string::npos) {
-         size_t lastColonPos = temp_hostname.find_last_of(':', closeBracketPos + 1);
+         size_t lastColonPos = temp_hostname.find(':', closeBracketPos + 1);
 
          // Do a check if something like `udp6:[2001:db8::]:162` was provided
          if (lastColonPos != std::string::npos) {

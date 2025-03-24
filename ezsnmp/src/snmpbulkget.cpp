@@ -4,7 +4,7 @@
  *
  */
 /*********************************************************************
-   Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
@@ -132,7 +132,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
    int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
    netsnmp_session session, *ss;
@@ -211,7 +211,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
           * check resulting variables
           */
          for (vars = response->variables; vars; vars = vars->next_variable) {
-            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
             return_vector.push_back(str_value);
          }
       } else {
@@ -222,7 +222,8 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
             // printf("End of MIB.\n");
          } else {
             std::string err_msg =
-                "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+                "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) +
+                "\n";
             if (response->errindex != 0) {
                err_msg = err_msg + "Failed object: ";
                for (count = 1, vars = response->variables; vars && (count != response->errindex);
@@ -251,6 +252,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    snmp_close(ss);
 
    netsnmp_cleanup_session(&session);
+   clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }
