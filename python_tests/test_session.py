@@ -534,7 +534,7 @@ def test_session_print_enums_numerically(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_full_oids(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -628,7 +628,7 @@ def test_session_print_full_oids(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_oids_numerically(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -719,7 +719,7 @@ def test_session_print_oids_numerically(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_all_set(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -818,7 +818,7 @@ def test_session_print_options_all_set(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_true_true_false(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -914,7 +914,7 @@ def test_session_print_options_two_set_true_true_false(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_false_true_true(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
@@ -1007,7 +1007,7 @@ def test_session_print_options_two_set_false_true_true(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_print_options_two_set_true_false_true(version):
 
-    if version == "3":
+    if version == "3" or version == 3:
         session = Session(
             version=version,
             hostname="localhost",
