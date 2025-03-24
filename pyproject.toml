@@ -12,6 +12,7 @@ before-all = """apt-get --assume-yes install wget unzip;
                 ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
                 make;
                 make install;"""
+compile-args = ["-std=c++17"]
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
