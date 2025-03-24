@@ -81,23 +81,6 @@ char *end_name = NULL;
 #include "helpers.h"
 #include "snmpwalk.h"
 
-void snmpwalk_usage(void) {
-   fprintf(stderr, "USAGE: snmpwalk ");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " [OID]\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr, "\t\t\t  p:  print the number of variables found\n");
-   fprintf(stderr, "\t\t\t  i:  include given OID in the search range\n");
-   fprintf(stderr,
-           "\t\t\t  I:  don't include the given OID, even if no results "
-           "are returned\n");
-   fprintf(stderr, "\t\t\t  c:  do not check returned OIDs are increasing\n");
-   fprintf(stderr, "\t\t\t  t:  Display wall-clock time to complete the walk\n");
-   fprintf(stderr, "\t\t\t  T:  Display wall-clock time to complete each request\n");
-   fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
-}
-
 std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
                                                      oid *theoid,
                                                      size_t theoid_len) {

@@ -89,15 +89,6 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-void snmpgetnext_usage(void) {
-   fprintf(stderr, "USAGE: snmpgetnext ");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " OID [OID]...\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
-}
-
 std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);

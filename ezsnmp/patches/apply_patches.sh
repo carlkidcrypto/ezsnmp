@@ -10,7 +10,7 @@ for patch in "$PATCH_DIR"/*.patch; do
     patched_files=$(patch -p1 --dry-run < "$patch" | grep "patching file" | awk '{print $3}' | tr -d "'")
     patch -p1 < "$patch"
     for file in $patched_files; do
-        new_file_name="$(basename "$file" .c)"
+        new_file_name="$(basename "$file" .c).cpp"
         echo "Moving and renaming patched file $file to $PATCH_DIR/$new_file_name..."
         rm -f "$PATCH_DIR/$new_file_name"
         cp ./"$file" "$PATCH_DIR/$new_file_name"
