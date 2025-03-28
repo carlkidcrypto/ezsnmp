@@ -83,7 +83,7 @@ class Session(SessionBase):
         # This is the case, since at the end of the day we are building a command line string
         # to pass to the NetSNMP command line tool.
         try:
-            
+
             temp_version = ""
             if version == 2:
                 temp_version = "2c"
