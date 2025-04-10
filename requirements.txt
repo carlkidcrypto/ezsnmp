@@ -14,7 +14,7 @@ pyparsing==3.2.3
 termcolor==3.0.1
 tomli==2.2.1
 setuptools==78.1.0
-urllib3==2.3.0
+urllib3==2.4.0
 build==1.2.2
 cibuildwheel==2.23.2
 pip==25.0.1
