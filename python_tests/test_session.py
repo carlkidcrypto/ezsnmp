@@ -42,9 +42,7 @@ def test_session_hostname_and_port_number_split(version):
 def test_session_invalid_port(version):
 
     with pytest.raises(TimeoutError):
-        session = Session(
-            port_number="1234", version=version, timeout="0.2", retries="1"
-        )
+        session = Session(port_number="1234", version=version, timeout="0.2", retries="1")
         session.get("sysContact.0")
 
 
@@ -608,10 +606,7 @@ def test_session_print_full_oids(version):
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert (
-        res[0].oid
-        == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
-    )
+    assert res[0].oid == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
     assert res[0].value == "up(1)"
     assert res[0].type == "INTEGER"
     assert res[0].index == "1"
@@ -894,10 +889,7 @@ def test_session_print_options_two_set_true_true_false(version):
     # Verify session can do snmpget
     res = session.get(["ifAdminStatus.1"])
     assert len(res) == 1
-    assert (
-        res[0].oid
-        == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
-    )
+    assert res[0].oid == ".iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus"
     assert res[0].value == "1"
     assert res[0].type == "INTEGER"
     assert res[0].index == "1"

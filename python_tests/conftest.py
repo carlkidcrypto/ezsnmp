@@ -50,9 +50,7 @@ def snmp_set_via_cli(oid, value, type):
     )
     process.communicate()
     if process.returncode != 0:
-        raise SNMPSetCLIError(
-            "failed to set {0} to {1} (type {2})".format(oid, value, type)
-        )
+        raise SNMPSetCLIError("failed to set {0} to {1} (type {2})".format(oid, value, type))
 
 
 @pytest.fixture(
