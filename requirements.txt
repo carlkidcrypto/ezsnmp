@@ -7,8 +7,6 @@ packaging==24.2
 pathspec==0.12.1
 platformdirs==4.3.7
 pluggy==1.5.0
-pycodestyle==2.13.0
-pyflakes==3.3.2
 pyparsing==3.2.3
 termcolor==3.0.1
 tomli==2.2.1
