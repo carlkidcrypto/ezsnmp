@@ -175,9 +175,8 @@ def worker(request_type: str):
                 if usm_unknown_security_name_counter >= MAX_RETRIES:
                     are_we_done = True
 
-            elif (
-                "Error generating a key (Ku) from the supplied authentication pass phrase"
-                in str(e)
+            elif "Error generating a key (Ku) from the supplied authentication pass phrase" in str(
+                e
             ):
                 err_gen_ku_key_counter += 1
 
