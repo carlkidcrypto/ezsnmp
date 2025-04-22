@@ -5,7 +5,7 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/fix_py_pi ]
 
 jobs:
   check-source-changes:
@@ -123,6 +123,7 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.6
         with:
+          packages_dir: dist/
           skip_existing: true
           print_hash: true
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}

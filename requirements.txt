@@ -3,13 +3,11 @@ attrs==25.3.0
 black==25.1.0
 click== 8.1.8
 colorama==0.4.6
-flake8==7.2.0
 packaging==24.2
 pathspec==0.12.1
 platformdirs==4.3.7
 pluggy==1.5.0
 pycodestyle==2.13.0
-pyflakes==3.3.2
 pyparsing==3.2.3
 termcolor==3.0.1
 tomli==2.2.1

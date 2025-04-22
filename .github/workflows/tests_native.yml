@@ -86,13 +86,6 @@ jobs:
           fi
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
 
-      - name: Lint with flake8
-        uses: py-actions/flake8@v2
-        continue-on-error: true
-        with:
-          max-line-length: "88"
-          path: "ezsnmp tests"
-
       - name: Run Tests
         run: |
           if [ "$RUNNER_OS" == "Linux" ]
