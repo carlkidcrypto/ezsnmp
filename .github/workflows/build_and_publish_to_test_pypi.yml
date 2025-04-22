@@ -22,7 +22,7 @@ jobs:
         with:
           files: |
             setup.py
-            pyproject.toml
+            setup.cfg
 
   build_wheels:
     name: Build wheels on ${{ matrix.os }}

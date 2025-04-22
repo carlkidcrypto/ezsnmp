@@ -14,7 +14,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         num_processes = int(sys.argv[1])
     else:
-        raise ValueError("Please specify the number of processes/threads as the first argument")
+        raise ValueError(
+            "Please specify the number of processes/threads as the first argument"
+        )
 
     # Check if the user wants to use threads or processes
     type_of_execution = sys.argv[2]

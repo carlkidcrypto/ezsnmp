@@ -119,7 +119,9 @@ else:
         if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
             # Check if net-snmp is installed via Brew
             try:
-                brew = check_output("brew list net-snmp 2>/dev/null", shell=True).decode()
+                brew = check_output(
+                    "brew list net-snmp 2>/dev/null", shell=True
+                ).decode()
                 lines = brew.splitlines()
                 # extract brew version here...
                 pattern = r"/opt/homebrew/Cellar/net-snmp/(\d+\.\d+\.\d+)/"
@@ -128,7 +130,9 @@ else:
                     version = match.group(1)
                     homebrew_netsnmp_version = version
 
-                temp_include_dir = list(filter(lambda l: "include/net-snmp" in l, lines))[0]
+                temp_include_dir = list(
+                    filter(lambda l: "include/net-snmp" in l, lines)
+                )[0]
                 temp_incdirs = []
                 temp_libdirs = []
                 temp_incdirs.append(
@@ -136,8 +140,12 @@ else:
                 )
 
                 if platform == "darwin":
-                    lib_dir = list(filter(lambda l: "lib/libnetsnmp.dylib" in l, lines))[0]
-                    temp_libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3])
+                    lib_dir = list(
+                        filter(lambda l: "lib/libnetsnmp.dylib" in l, lines)
+                    )[0]
+                    temp_libdirs.append(
+                        lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3]
+                    )
 
                 # The homebrew version also depends on the Openssl keg
                 brew = check_output("brew info net-snmp", shell=True).decode()

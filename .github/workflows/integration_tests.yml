@@ -27,7 +27,7 @@ jobs:
             python_tests/*.py
             python_tests/*.conf
             setup.py
-            pyproject.toml
+            setup.cfg
 
   build-and-integration-test:
     runs-on: ${{ matrix.os }}

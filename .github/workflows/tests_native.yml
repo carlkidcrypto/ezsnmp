@@ -27,7 +27,7 @@ jobs:
             python_tests/*.py
             python_tests/*.conf
             setup.py
-            pyproject.toml
+            setup.cfg
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -85,6 +85,13 @@ jobs:
             SNMPD=$(which.exe snmpd)
           fi
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
+
+      - name: Lint with flake8
+        uses: py-actions/flake8@v2
+        continue-on-error: true
+        with:
+          max-line-length: "88"
+          path: "ezsnmp tests"
 
       - name: Run Tests
         run: |

@@ -257,10 +257,14 @@ def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
     if platform.system() != "Darwin":
         if netsnmp_args[1] == "1":
             with pytest.raises(PacketError):
-                netsnmp_args = netsnmp_args + ["NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"]
+                netsnmp_args = netsnmp_args + [
+                    "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+                ]
                 snmpbulkwalk(netsnmp_args)
         else:
-            netsnmp_args = netsnmp_args + ["NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"]
+            netsnmp_args = netsnmp_args + [
+                "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+            ]
             res = snmpbulkwalk(netsnmp_args)
 
             assert len(res) == 2
