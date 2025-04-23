@@ -4,7 +4,7 @@
  *
  */
 /***********************************************************************
-   Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
@@ -109,7 +109,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args) {
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
    int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
    netsnmp_session session, *ss;
@@ -245,21 +245,26 @@ std::vector<Result> snmpset(std::vector<std::string> const &args) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          if (!quiet) {
             for (vars = response->variables; vars; vars = vars->next_variable) {
-               auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+               auto const &str_value =
+                   print_variable_to_string(vars->name, vars->name_length, vars);
                return_vector.push_back(str_value);
             }
          }
       } else {
-         fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+         std::string err_msg =
+             "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+
          if (response->errindex != 0) {
-            fprintf(stderr, "Failed object: ");
-            for (count = 1, vars = response->variables; vars && (count != response->errindex);
-                 vars = vars->next_variable, count++);
+            err_msg = err_msg + "Failed object: ";
+            for (count = 1, vars = response->variables; vars && count != response->errindex;
+                 vars = vars->next_variable, count++)
+               /*EMPTY*/;
             if (vars) {
-               fprint_objid(stderr, vars->name, vars->name_length);
+               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
             }
-            fprintf(stderr, "\n");
+            err_msg = err_msg + "\n";
          }
+         throw PacketErrorBase(err_msg);
       }
    } else if (status == STAT_TIMEOUT) {
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
@@ -277,6 +282,7 @@ close_session:
 
 out:
    netsnmp_cleanup_session(&session);
+   clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }

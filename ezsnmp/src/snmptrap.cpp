@@ -4,7 +4,7 @@
  *
  */
 /******************************************************************
-   Copyright 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
@@ -117,7 +117,7 @@ int snmptrap(std::vector<std::string> const &args) {
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
    int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    netsnmp_session session, *ss = NULL;
    netsnmp_pdu *pdu, *response;
@@ -376,6 +376,7 @@ close_session:
 
 out:
    netsnmp_cleanup_session(&session);
+   clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return exitval;
 }

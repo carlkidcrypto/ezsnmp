@@ -90,14 +90,18 @@ void snmp_perror_exception(char const *prog_string) {
 
 // This is a helper to create the argv that the netsnmp functions like snmpwalk(), snmpget(), etc
 // expect
-std::unique_ptr<char *[]> create_argv(std::vector<std::string> const &args, int &argc) {
+std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &args, int &argc) {
    argc = args.size() + 1;
-   std::unique_ptr<char *[]> argv(new char *[argc + 1]);
+   std::unique_ptr<char *[], Deleter> argv(new char *[argc + 1]);
 
    argv[0] = const_cast<char *>("netsnmp");
 
    for (int i = 0; i < static_cast<int>(args.size()); ++i) {
       argv[i + 1] = strdup(args[i].c_str());
+
+      if (argv[i + 1] == nullptr) {
+         throw std::runtime_error("Memory allocation failed for argv element");
+      }
    }
    argv[argc] = nullptr;
 
@@ -159,23 +163,18 @@ Result parse_result(std::string const &input) {
    std::getline(ss, temp, ':');
    result.type = temp.substr(temp.find_last_of(' ') + 1);
 
-   // Extract value
+   // Extract value and trim leading/trailing whitespace
    std::getline(ss, temp);
-   result.value = temp.substr(1, temp.size());
+   result.value = temp.substr(1);
+   result.value = result.value.substr(0, result.value.find_last_not_of(" \t\n\r") + 1);
 
    // Check for "No Such Object" in the value
    if (result.value.find("No Such Object") != std::string::npos) {
       result.type = "NOSUCHOBJECT";
    }
-
    // Check for "No Such Instance" in the value
    else if (result.value.find("No Such Instance") != std::string::npos) {
       result.type = "NOSUCHINSTANCE";
-   }
-
-   // Check for "No Such Object" in the value
-   else if (result.value.find("No Such Object") != std::string::npos) {
-      result.type = "NOSUCHOBJECT";
    }
 
    return result;
@@ -264,4 +263,10 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
 
    SNMP_FREE(buf);
    return ss.str();
+}
+
+void clear_net_snmp_library_data() {
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                      0); // Clear -On && Clear -Of
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -Oe
 }

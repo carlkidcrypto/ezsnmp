@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SessionBase C++ Module" href="sessionbase_cpp.html" /><link rel="prev" title="Exceptions C++ Module" href="exceptionsbase_cpp.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Session Python Module - EzSnmp V2.0.0b1 documentation</title>
+        <title>Session Python Module - EzSnmp v2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp V2.0.0b1 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">EzSnmp V2.0.0b1 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,12 +200,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Session Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
@@ -264,33 +266,38 @@
 <h1>Session Python Module<a class="headerlink" href="#session-python-module" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ezsnmp.session.Session">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.session.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">community</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'public'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_passphrase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_engine_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_engine_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_passphrase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boots_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ezsnmp.session.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">community</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'public'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_protocol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_passphrase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_engine_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_engine_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_protocol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_passphrase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boots_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_mibs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mib_directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_enums_numerically</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_full_oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_oids_numerically</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SessionBase</span></code></p>
 <p>Python wrapper class for SessionBase, providing a Pythonic interface
 for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">community</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'public'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_passphrase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_engine_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_engine_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_passphrase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boots_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">community</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'public'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_protocol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_passphrase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_engine_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_engine_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">security_username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_protocol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_passphrase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boots_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_mibs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mib_directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_enums_numerically</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_full_oids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_oids_numerically</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Initialize the SessionBase object with NetSNMP session parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hostname</strong> (<em>str</em>) – The hostname or IP address of the SNMP agent.</p></li>
-<li><p><strong>port_number</strong> (<em>str</em>) – The port number of the SNMP agent.</p></li>
-<li><p><strong>version</strong> (<em>str</em>) – The SNMP version to use (1, 2c, or 3).</p></li>
+<li><p><strong>port_number</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The port number of the SNMP agent.</p></li>
+<li><p><strong>version</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The SNMP version to use (1, 2c, or 3).</p></li>
 <li><p><strong>community</strong> (<em>str</em>) – The community string for SNMPv1/v2c.</p></li>
-<li><p><strong>auth_protocol</strong> (<em>str</em>) – The authentication protocol (e.g., ‘MD5’, ‘SHA’).</p></li>
+<li><p><strong>auth_protocol</strong> (<em>str</em>) – The authentication protocol (e.g., “MD5”, “SHA”).</p></li>
 <li><p><strong>auth_passphrase</strong> (<em>str</em>) – The authentication passphrase.</p></li>
 <li><p><strong>security_engine_id</strong> (<em>str</em>) – The security engine ID.</p></li>
 <li><p><strong>context_engine_id</strong> (<em>str</em>) – The context engine ID.</p></li>
-<li><p><strong>security_level</strong> (<em>str</em>) – The security level (e.g., ‘noAuthNoPriv’, ‘authNoPriv’, ‘authPriv’).</p></li>
+<li><p><strong>security_level</strong> (<em>str</em>) – The security level (e.g., “noAuthNoPriv”, “authNoPriv”, “authPriv”).</p></li>
 <li><p><strong>context</strong> (<em>str</em>) – The context.</p></li>
 <li><p><strong>security_username</strong> (<em>str</em>) – The security username.</p></li>
-<li><p><strong>privacy_protocol</strong> (<em>str</em>) – The privacy protocol (e.g., ‘DES’, ‘AES’).</p></li>
+<li><p><strong>privacy_protocol</strong> (<em>str</em>) – The privacy protocol (e.g., “DES”, “AES”).</p></li>
 <li><p><strong>privacy_passphrase</strong> (<em>str</em>) – The privacy passphrase.</p></li>
 <li><p><strong>boots_time</strong> (<em>str</em>) – The boots time.</p></li>
-<li><p><strong>retries</strong> (<em>str</em>) – The number of retries.</p></li>
-<li><p><strong>timeout</strong> (<em>str</em>) – The timeout value in seconds.</p></li>
+<li><p><strong>retries</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The number of retries.</p></li>
+<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – The timeout value in seconds.</p></li>
+<li><p><strong>load_mibs</strong> (<em>str</em>) – Comma-separated string of MIB modules to load.</p></li>
+<li><p><strong>mib_directories</strong> (<em>str</em>) – Comma-separated string of directories to search for MIB files.</p></li>
+<li><p><strong>print_enums_numerically</strong> (<em>bool</em>) – Whether to print enums numerically.</p></li>
+<li><p><strong>print_full_oids</strong> (<em>bool</em>) – Whether to print full OIDs.</p></li>
+<li><p><strong>print_oids_numerically</strong> (<em>bool</em>) – Whether to print OIDs numerically.</p></li>
 </ul>
 </dd>
 </dl>
@@ -299,10 +306,10 @@ for managing NetSNMP sessions.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.args">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#ezsnmp.session.Session.args" title="Link to this definition">¶</a></dt>
-<dd><p>Get the list of arguments used for NetSNMP commands.</p>
+<dd><p>Get the tuple of arguments used for NetSNMP commands.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -343,17 +350,47 @@ for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.bulk_get">
 <span class="sig-name descname"><span class="pre">bulk_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.bulk_get" title="Link to this definition">¶</a></dt>
-<dd><p>Performs an SNMP BULK GET operation on multiple OIDs.</p>
-<p>Retrieves the values of multiple management information objects using BULK GET.</p>
+<dd><p>Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mibs</strong> (<em>std::vector&lt; std::string</em><em>,</em><em>std::allocator&lt; std::string &gt; &gt;</em>) – A vector of OIDs to retrieve.</p>
+<dd class="field-odd"><p><strong>oids</strong> (<em>list</em>) – List of Object Identifiers (OIDs) to retrieve values from</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of Result objects containing SNMP variable bindings with attributes:
+oid (str), index (str), value (str), and type (str)</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[Result]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">bulk_get</span><span class="p">([</span><span class="s2">&quot;1.3.6.1.2.1.1.1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;1.3.6.1.2.1.1.2.0&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OID:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Type:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -361,35 +398,49 @@ for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.bulk_walk">
 <span class="sig-name descname"><span class="pre">bulk_walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.bulk_walk" title="Link to this definition">¶</a></dt>
-<dd><p><em>Overload 1:</em></p>
-<p>Performs an SNMP BULK WALK operation.</p>
-<p>Retrieves a subtree of management information using SNMP BULK WALK.</p>
+<dd><p>Performs a bulk SNMP walk operation to retrieve a collection of values from multiple OIDs.
+The bulk walk operation is designed to return multiple OIDs in a single request,
+making it more efficient than regular walk operations for retrieving large amounts of data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mib</strong> (<em>string</em>) – The OID to start the walk from.</p>
+<dd class="field-odd"><p><strong>oids</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of base OIDs to start the walks from</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of Result objects containing SNMP variable bindings. Each Result object has
+attributes: oid (str), index (str), value (str), and type (str)</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[Result]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
 </dd>
 </dl>
-<div class="line-block">
-<div class="line"><br /></div>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">bulk_walk</span><span class="p">([</span><span class="s2">&quot;1.3.6.1.2.1.1&quot;</span><span class="p">,</span> <span class="s2">&quot;1.3.6.1.2.1.2&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OID:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Type:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<p><em>Overload 2:</em></p>
-<p>Performs an SNMP BULK WALK operation on multiple OIDs.</p>
-<p>Retrieves subtrees of management information using SNMP BULK WALK for multiple OIDs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mibs</strong> (<em>std::vector&lt; std::string</em><em>,</em><em>std::allocator&lt; std::string &gt; &gt;</em>) – A vector of OIDs to start the walks from.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -430,35 +481,47 @@ for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.get" title="Link to this definition">¶</a></dt>
-<dd><p><em>Overload 1:</em></p>
-<p>Performs an SNMP GET operation.</p>
-<p>Retrieves the value of a specific management information object.</p>
+<dd><p>Performs an SNMP GET operation to retrieve values for multiple OIDs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mib</strong> (<em>string</em><em>, </em><em>optional</em>) – The OID of the object to retrieve (default: “”).</p>
+<dd class="field-odd"><p><strong>oids</strong> (<em>list</em>) – List of Object Identifiers (OIDs) to retrieve values from</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of Result objects containing SNMP variable bindings with attributes:
+oid (str), index (str), value (str), and type (str)</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[Result]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
 </dd>
 </dl>
-<div class="line-block">
-<div class="line"><br /></div>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">([</span><span class="s2">&quot;1.3.6.1.2.1.1.1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;1.3.6.1.2.1.1.2.0&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OID:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Type:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<p><em>Overload 2:</em></p>
-<p>Performs an SNMP GET operation on multiple OIDs.</p>
-<p>Retrieves the values of multiple management information objects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mibs</strong> (<em>std::vector&lt; std::string</em><em>,</em><em>std::allocator&lt; std::string &gt; &gt;</em>) – A vector of OIDs to retrieve.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -466,17 +529,47 @@ for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.get_next">
 <span class="sig-name descname"><span class="pre">get_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.get_next" title="Link to this definition">¶</a></dt>
-<dd><p>Performs an SNMP GET NEXT operation on multiple OIDs.</p>
-<p>Retrieves the values of the next lexicographically greater OIDs.</p>
+<dd><p>Performs an SNMP GET-NEXT operation to retrieve values for the next objects after the specified OIDs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mibs</strong> (<em>std::vector&lt; std::string</em><em>,</em><em>std::allocator&lt; std::string &gt; &gt;</em>) – A vector of OIDs to retrieve the next values for.</p>
+<dd class="field-odd"><p><strong>oids</strong> (<em>list</em>) – List of Object Identifiers (OIDs) to get next values from</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of Result objects containing SNMP variable bindings with attributes:
+oid (str), index (str), value (str), and type (str)</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[Result]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_next</span><span class="p">([</span><span class="s2">&quot;1.3.6.1.2.1.1.1.0&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OID:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Type:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -572,17 +665,53 @@ for managing NetSNMP sessions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.set">
 <span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.set" title="Link to this definition">¶</a></dt>
-<dd><p>Performs an SNMP SET operation on multiple OIDs.</p>
-<p>Sets the values of multiple management information objects.</p>
+<dd><p>Performs an SNMP SET operation to set values for multiple OIDs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mibs</strong> (<em>std::vector&lt; std::string</em><em>,</em><em>std::allocator&lt; std::string &gt; &gt;</em>) – A vector of OIDs and their corresponding values to set.</p>
+<dd class="field-odd"><p><strong>oids</strong> (<em>list</em>) – List containing groups of OID, type and value. Each group should be a sequence of
+[oid, type, value] where type is a string indicating the SNMP data type
+(e.g. ‘i’ for INTEGER, ‘s’ for STRING, ‘o’ for OBJECT IDENTIFIER)</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of Result objects containing SNMP variable bindings with attributes:
+oid (str), index (str), value (str), and type (str)</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the results of the SET operation.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[Result]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">set</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="s2">&quot;.1.3.6.1.6.3.12.1.2.1.2.116.101.115.116&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;.1.3.6.1.6.1.1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;.1.3.6.1.6.3.12.1.2.1.3.116.101.115.116&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;1234&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;.1.3.6.1.6.3.12.1.2.1.9.116.101.115.116&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OID:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Type:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -611,18 +740,51 @@ for managing NetSNMP sessions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ezsnmp.session.Session.walk">
-<span class="sig-name descname"><span class="pre">walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.walk" title="Link to this definition">¶</a></dt>
-<dd><p>Performs an SNMP WALK operation.</p>
-<p>Retrieves a subtree of management information using SNMP WALK.</p>
+<span class="sig-name descname"><span class="pre">walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ezsnmp.session.Session.walk" title="Link to this definition">¶</a></dt>
+<dd><p>Walks through the SNMP tree starting from the given OID.
+This method performs an SNMP walk operation, which retrieves a subtree of
+management values from the SNMP agent, starting from the specified OID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mib</strong> (<em>string</em><em>, </em><em>optional</em>) – The OID (Object Identifier) to start the walk from (default: “”).</p>
+<dd class="field-odd"><p><strong>oid</strong> (<em>str</em>) – The starting OID for the SNMP walk. If not specified, the walk
+will start from the root.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>std::vector&lt; Result,std::allocator&lt; Result &gt; &gt;</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of Result objects containing SNMP variable bindings. Each Result object has
+attributes: oid (str), index (str), value (str), and type (str)</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A vector of Result objects containing the retrieved data.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[Result]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError" title="ezsnmp.exceptions.ConnectionError"><strong>ConnectionError</strong></a> – If the exception type is <cite>ConnectionErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError" title="ezsnmp.exceptions.GenericError"><strong>GenericError</strong></a> – If the exception type is <cite>GenericErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError" title="ezsnmp.exceptions.NoSuchInstanceError"><strong>NoSuchInstanceError</strong></a> – If the exception type is <cite>NoSuchInstanceErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError" title="ezsnmp.exceptions.NoSuchNameError"><strong>NoSuchNameError</strong></a> – If the exception type is <cite>NoSuchNameErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError" title="ezsnmp.exceptions.NoSuchObjectError"><strong>NoSuchObjectError</strong></a> – If the exception type is <cite>NoSuchObjectErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError" title="ezsnmp.exceptions.PacketError"><strong>PacketError</strong></a> – If the exception type is <cite>PacketErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError" title="ezsnmp.exceptions.ParseError"><strong>ParseError</strong></a> – If the exception type is <cite>ParseErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError" title="ezsnmp.exceptions.TimeoutError"><strong>TimeoutError</strong></a> – If the exception type is <cite>TimeoutErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError" title="ezsnmp.exceptions.UndeterminedTypeError"><strong>UndeterminedTypeError</strong></a> – If the exception type is <cite>UndeterminedTypeErrorBase</cite>.</p></li>
+<li><p><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError" title="ezsnmp.exceptions.UnknownObjectIDError"><strong>UnknownObjectIDError</strong></a> – If the exception type is <cite>UnknownObjectIDErrorBase</cite>.</p></li>
+<li><p><strong>Exception</strong> – If the exception type does not match any of the above, the original
+exception <cite>e</cite> is raised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s2">&quot;1.3.6.1.2.1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OID:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">oid</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Index:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Value:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Type:&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -725,7 +887,7 @@ for managing NetSNMP sessions.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=82da8037"></script>
+</div><script src="_static/documentation_options.js?v=aa039f9c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

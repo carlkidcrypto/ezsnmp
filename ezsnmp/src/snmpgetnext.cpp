@@ -89,21 +89,12 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-void snmpgetnext_usage(void) {
-   fprintf(stderr, "USAGE: snmpgetnext ");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " OID [OID]...\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
-}
-
 std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
    int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
    netsnmp_session session, *ss;
@@ -138,15 +129,15 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    }
 
    if (arg >= argc) {
-      fprintf(stderr, "Missing object name\n");
-      snmpgetnext_usage();
-      goto out;
+      std::string err_msg = "Missing object name\n";
+      throw GenericErrorBase(err_msg);
    }
    if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
-      fprintf(stderr, "Too many object identifiers specified. ");
-      fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-      snmpgetnext_usage();
-      goto out;
+      std::string err_msg =
+          "Too many object identifiers specified. "
+          "Only " +
+          std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
+      throw GenericErrorBase(err_msg);
    }
 
    /*
@@ -194,19 +185,22 @@ retry:
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
-            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
             return_vector.push_back(str_value);
          }
       } else {
-         fprintf(stderr, "Error in packet.\nReason: %s\n", snmp_errstring(response->errstat));
+         std::string err_msg =
+             "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+
          if (response->errindex != 0) {
-            fprintf(stderr, "Failed object: ");
+            err_msg = err_msg + "Failed object: ";
             for (count = 1, vars = response->variables; vars && count != response->errindex;
-                 vars = vars->next_variable, count++);
+                 vars = vars->next_variable, count++)
+               /*EMPTY*/;
             if (vars) {
-               fprint_objid(stderr, vars->name, vars->name_length);
+               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
             }
-            fprintf(stderr, "\n");
+            err_msg = err_msg + "\n";
          }
 
          /*
@@ -220,6 +214,7 @@ retry:
                goto retry;
             }
          }
+         throw PacketErrorBase(err_msg);
       }
    } else if (status == STAT_TIMEOUT) {
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
@@ -237,6 +232,7 @@ close_session:
 
 out:
    netsnmp_cleanup_session(&session);
+   clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }

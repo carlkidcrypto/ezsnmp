@@ -11,16 +11,12 @@ from ezsnmp.netsnmp import (
 
 from ezsnmp.exceptions import GenericError, PacketError
 
-from time import sleep
-from random import uniform
 import faulthandler
 
 faulthandler.enable()
 
 
 def test_snmp_get_regular(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
     netsnmp_args = netsnmp_args + ["sysDescr.0"]
     res = snmpget(netsnmp_args)
 
@@ -31,8 +27,7 @@ def test_snmp_get_regular(netsnmp_args):
 
 
 def test_snmp_get_fully_qualified(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     netsnmp_args = netsnmp_args + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
     res = snmpget(netsnmp_args)
 
@@ -43,8 +38,7 @@ def test_snmp_get_fully_qualified(netsnmp_args):
 
 
 def test_snmp_get_numeric(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     netsnmp_args = netsnmp_args + [".1.3.6.1.2.1.1.1.0"]
     res = snmpget(netsnmp_args)
 
@@ -55,8 +49,7 @@ def test_snmp_get_numeric(netsnmp_args):
 
 
 def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     netsnmp_args = netsnmp_args + ["1.3.6.1.2.1.1.1.0"]
     res = snmpget(netsnmp_args)
 
@@ -67,16 +60,14 @@ def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
 
 
 def test_snmp_get_unknown(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["sysDescripto.0"]
         snmpget(netsnmp_args)
 
 
 def test_snmp_get_invalid_instance(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if netsnmp_args[1] == "1":
@@ -94,8 +85,7 @@ def test_snmp_get_invalid_instance(netsnmp_args):
 
 
 def test_snmp_get_invalid_object(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["iso"]
@@ -107,8 +97,7 @@ def test_snmp_get_invalid_object(netsnmp_args):
 
 
 def test_snmp_set_string(netsnmp_args, request, reset_values):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     netsnmp_args_1 = netsnmp_args + ["sysLocation.0"]
     res = snmpget(netsnmp_args_1)
     assert res[0].oid == "SNMPv2-MIB::sysLocation"
@@ -128,8 +117,7 @@ def test_snmp_set_string(netsnmp_args, request, reset_values):
 
 
 def test_snmp_set_integer(netsnmp_args, reset_values):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     netsnmp_args_1 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "65"]
     success = snmpset(netsnmp_args_1)
     assert success
@@ -143,8 +131,7 @@ def test_snmp_set_integer(netsnmp_args, reset_values):
 
 
 def test_snmpbulkget(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + [
@@ -196,13 +183,9 @@ def test_snmpwalk(netsnmp_args):
         assert res[4].value == platform.node()
         assert res[5].value == "my original location"
 
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(1.0, 1.5))
-
 
 def test_snmp_walk_res(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     netsnmp_args = netsnmp_args + ["system"]
     res = snmpwalk(netsnmp_args)
 
@@ -230,8 +213,7 @@ def test_snmp_walk_res(netsnmp_args):
 
 
 def test_snmp_bulkwalk_res(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]
@@ -264,16 +246,13 @@ def test_snmp_bulkwalk_res(netsnmp_args):
 
 
 def test_snmp_walk_unknown(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
+
     with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["systemo123"]
         snmpwalk(netsnmp_args)
 
 
 def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
-    # Space out our tests to avoid overwhelming the snmpd server with traffic.
-    sleep(uniform(0.1, 0.25))
 
     if platform.system() != "Darwin":
         if netsnmp_args[1] == "1":

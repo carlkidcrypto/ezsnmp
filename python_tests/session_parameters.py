@@ -3,6 +3,7 @@ SESS_V1_ARGS = {
     "hostname": "localhost",
     "port_number": "11161",
     "community": "public",
+    "timeout": "5",
 }
 
 SESS_V2_ARGS = {
@@ -10,6 +11,7 @@ SESS_V2_ARGS = {
     "hostname": "localhost",
     "port_number": "11161",
     "community": "public",
+    "timeout": "5",
 }
 
 SESS_V3_MD5_DES_ARGS = {
@@ -22,6 +24,7 @@ SESS_V3_MD5_DES_ARGS = {
     "privacy_protocol": "DES",
     "privacy_passphrase": "priv_pass",
     "auth_passphrase": "auth_pass",
+    "timeout": "5",
 }
 
 SESS_V3_MD5_AES_ARGS = {
@@ -34,6 +37,7 @@ SESS_V3_MD5_AES_ARGS = {
     "privacy_protocol": "AES",
     "privacy_passphrase": "priv_pass",
     "auth_passphrase": "auth_pass",
+    "timeout": "5",
 }
 
 SESS_V3_SHA_AES_ARGS = {
@@ -46,6 +50,7 @@ SESS_V3_SHA_AES_ARGS = {
     "privacy_protocol": "AES",
     "privacy_passphrase": "priv_second",
     "auth_passphrase": "auth_second",
+    "timeout": "5",
 }
 
 SESS_V3_SHA_NO_PRIV_ARGS = {
@@ -56,6 +61,7 @@ SESS_V3_SHA_NO_PRIV_ARGS = {
     "security_level": "authNoPriv",
     "security_username": "secondary_sha_no_priv",
     "auth_passphrase": "auth_second",
+    "timeout": "5",
 }
 
 SESS_V3_MD5_NO_PRIV_ARGS = {
@@ -66,4 +72,5 @@ SESS_V3_MD5_NO_PRIV_ARGS = {
     "security_level": "authNoPriv",
     "security_username": "initial_md5_no_priv",
     "auth_passphrase": "auth_pass",
+    "timeout": "5",
 }

@@ -4,7 +4,7 @@
  *
  */
 /***********************************************************************
-   Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
@@ -91,34 +91,25 @@ void snmpget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-void snmpget_usage(void) {
-   fprintf(stderr, "USAGE: snmpget ");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " OID [OID]...\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr, "\t\t\t  f:  do not fix errors and retry the request\n");
-}
-
 std::vector<Result> snmpget(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
-   int argc;
-   std::unique_ptr<char *[]> argv = create_argv(args, argc);
+   int argc = 0;
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
-   netsnmp_pdu *pdu;
-   netsnmp_pdu *response;
-   netsnmp_variable_list *vars;
-   int arg;
-   int count;
+   netsnmp_session session, *ss = NULL;
+   netsnmp_pdu *pdu = NULL;
+   netsnmp_pdu *response = NULL;
+   netsnmp_variable_list *vars = NULL;
+   int arg = 0;
+   int count = 0;
    int current_name = 0;
-   char *names[SNMP_MAX_CMDLINE_OIDS];
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   int status;
+   char *names[SNMP_MAX_CMDLINE_OIDS] = {0};
+   oid name[MAX_OID_LEN] = {0};
+   size_t name_length = 0;
+   int status = -1;
    int failures = 0;
 
    SOCK_STARTUP;
@@ -200,12 +191,12 @@ retry:
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
-            auto str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
             return_vector.push_back(str_value);
          }
       } else {
          std::string err_msg =
-             "Error in packet\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
+             "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
 
          if (response->errindex != 0) {
             err_msg = err_msg + "Failed object: ";
@@ -245,6 +236,7 @@ retry:
    }
 
    netsnmp_cleanup_session(&session);
+   clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
 } /* end main() */
