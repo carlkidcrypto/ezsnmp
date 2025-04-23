@@ -79,15 +79,21 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         """
 
-        # Note that underlying SesionBase object depends on all parameters to be strings.
+        # Note that underlying SesssionBase object depends on all parameters to be strings.
         # This is the case, since at the end of the day we are building a command line string
         # to pass to the NetSNMP command line tool.
         try:
 
+            temp_version = ""
+            if version == 2:
+                temp_version = "2c"
+            else:
+                temp_version = str(version)
+
             self._session_base = SessionBase(
                 hostname,
                 str(port_number),
-                str(version),
+                temp_version,
                 community,
                 auth_protocol,
                 auth_passphrase,

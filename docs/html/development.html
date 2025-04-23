@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Exceptions Python Module" href="exceptions_python.html" /><link rel="prev" title="Datatypes C++ Module" href="datatypes_cpp.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Development Guide - EzSnmp V2.0.0b2 documentation</title>
+        <title>Development Guide - EzSnmp v2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp V2.0.0b2 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">EzSnmp V2.0.0b2 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -327,14 +327,14 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3-pip<span class="w"> </span>python3-dev<span class="w">  </span>python3-setuptools<span class="w"> </span>gdb<span class="w"> </span>-y<span class="p">;</span>
 sudo<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>snmpd<span class="p">;</span>
 sudo<span class="w"> </span>mv<span class="w"> </span>/etc/snmp/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf.orig<span class="p">;</span>
-sudo<span class="w"> </span>cp<span class="w"> </span>tests/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf<span class="p">;</span>
+sudo<span class="w"> </span>cp<span class="w"> </span>python_tests/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf<span class="p">;</span>
 sudo<span class="w"> </span>download-mibs<span class="p">;</span>
 mkdir<span class="w"> </span>-p<span class="w"> </span>-m<span class="w"> </span><span class="m">0755</span><span class="w"> </span>~/.snmp<span class="p">;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;mibs +ALL&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>~/.snmp/snmp.conf<span class="p">;</span>
 sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>snmpd<span class="p">;</span>
 rm<span class="w"> </span>-drf<span class="w"> </span>build/<span class="w"> </span>dist/<span class="w"> </span>ezsnmp.egg-info<span class="p">;</span>
-python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>tests/requirements.txt<span class="p">;</span>
-python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pytest<span class="w"> </span>tests/<span class="p">;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>python_tests/requirements.txt<span class="p">;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pytest<span class="w"> </span>python_tests/<span class="p">;</span>
 <span class="c1"># Bottom one for debug. Replace the top one with it if needed.</span>
 <span class="c1"># python3 -m pip install . &amp;&amp; gdb -ex run -ex bt -ex quit --args python3 -m pytest .;</span>
 <span class="c1"># Bottom one for valgrind. Replace the top one with it if needed.</span>
@@ -347,12 +347,12 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ezsnmp/ezsnmp.git<span class="p">;</span>
 <span class="nb">cd</span><span class="w"> </span>ezsnmp<span class="p">;</span>
 sudo<span class="w"> </span>mv<span class="w"> </span>/etc/snmp/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf.orig<span class="p">;</span>
-sudo<span class="w"> </span>cp<span class="w"> </span>tests/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf<span class="p">;</span>
+sudo<span class="w"> </span>cp<span class="w"> </span>python_tests/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf<span class="p">;</span>
 sudo<span class="w"> </span>launchctl<span class="w"> </span>unload<span class="w"> </span>/System/Library/LaunchDaemons/org.net-snmp.snmpd.plist<span class="p">;</span>
 sudo<span class="w"> </span>launchctl<span class="w"> </span>load<span class="w"> </span>-w<span class="w"> </span>/System/Library/LaunchDaemons/org.net-snmp.snmpd.plist<span class="p">;</span>
 rm<span class="w"> </span>-drf<span class="w"> </span>build/<span class="w"> </span>dist/<span class="w"> </span>ezsnmp.egg-info<span class="p">;</span>
-python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>tests/requirements.txt<span class="p">;</span>
-python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pytest<span class="w"> </span>tests/<span class="p">;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>python_tests/requirements.txt<span class="p">;</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pytest<span class="w"> </span>python_tests/<span class="p">;</span>
 </pre></div>
 </div>
 </section>
@@ -453,7 +453,7 @@ python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </s
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=b5220a5d"></script>
+</div><script src="_static/documentation_options.js?v=aa039f9c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

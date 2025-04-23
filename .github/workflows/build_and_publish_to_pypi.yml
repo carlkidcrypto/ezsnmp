@@ -105,5 +105,7 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.6
         with:
+          packages_dir: dist/
+          verify-metadata: false
           print_hash: true
           password: ${{ secrets.PYPI_API_TOKEN }}

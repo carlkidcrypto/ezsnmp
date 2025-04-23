@@ -53,7 +53,7 @@ def is_net_snmp_installed_macports():
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
-compile_args = ["-std=c++17", "-Werror", "--no-warnings"]
+compile_args = ["-std=c++17"]
 link_args = []
 system_netsnmp_version = check_output("net-snmp-config --version", shell=True).decode()
 homebrew_version = None

@@ -12,6 +12,8 @@ permissions:
 jobs:
     update-changelog:
         runs-on: ubuntu-latest
+        outputs:
+          run_job: ${{ steps.generate.outputs.changes }}
         steps:
             - name: Checkout repository code
               uses: actions/checkout@v4
@@ -42,9 +44,14 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    create-changelog-pr:
+        runs-on: ubuntu-latest
+        needs: update-changelog
+        if: needs.update-changelog.outputs.changes == 'true'
+
+        steps:
             - name: Create Pull Request
               id: create-pr
-              if: steps.generate.outputs.changes == 'true'
               uses: peter-evans/create-pull-request@v4
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +68,6 @@ jobs:
                   labels: documentation, automated-pr
 
             - name: Enable Auto-merge
-              if: steps.generate.outputs.changes == 'true'
               run: |
                   PR_URL="${{ steps.create-pr.outputs.pull-request-url }}"
                   PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')

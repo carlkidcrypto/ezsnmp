@@ -18,14 +18,14 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v45.0.5
+        uses: tj-actions/changed-files@v46.0.3
         with:
           files: |
             ezsnmp/*.py
             ezsnmp/*.cpp
             ezsnmp/*.h
-            tests/*.py
-            tests/*.conf
+            python_tests/*.py
+            python_tests/*.conf
             setup.py
             setup.cfg
 
@@ -99,7 +99,7 @@ jobs:
             mibdir=""
             SNMPD=$(which.exe snmpd)
           fi
-          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+          $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
       
       - name: Run Integration Tests "Total execution time"
         uses: carlkidcrypto/os-specific-runner@v2.1.1
