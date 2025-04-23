@@ -76,53 +76,38 @@ for arg in argv:
         basedir = arg.split("=")[1]
         in_tree = True
 
-    # Determine if a base directory has been provided with the --basedir option
-    basedir = None
-    in_tree = False
-    # Add compiler flags if debug is set
-    compile_args = ["-std=c++17", "-Wunused-function", "-fpermissive"]
-    link_args = []
-    for arg in argv:
-        if arg.startswith("--debug"):
-            # Note from GCC manual:
-            #       If you use multiple -O options, with or without level numbers,
-            #       the last such option is the one that is effective.
-            compile_args.extend(["-Wall", "-O0", "-g"])
-        elif arg.startswith("--basedir="):
-            basedir = arg.split("=")[1]
-            in_tree = True
 
-    # If a base directory has been provided, we use it
-    if in_tree:
-        base_cmd = "{0}/net-snmp-config {{{0}}}".format(basedir)
-        libs_cmd = base_cmd.format("--build-lib-dirs {0}".format(basedir))
-        incl_cmd = base_cmd.format("--build-includes {0}".format(basedir))
+# If a base directory has been provided, we use it
+if in_tree:
+    base_cmd = "{0}/net-snmp-config {{{0}}}".format(basedir)
+    libs_cmd = base_cmd.format("--build-lib-dirs {0}".format(basedir))
+    incl_cmd = base_cmd.format("--build-includes {0}".format(basedir))
 
-        netsnmp_libs = check_output(base_cmd.format("--libs"), shell=True).decode()
-        libdirs = check_output(libs_cmd, shell=True).decode()
-        incdirs = check_output(incl_cmd, shell=True).decode()
+    netsnmp_libs = check_output(base_cmd.format("--libs"), shell=True).decode()
+    libdirs = check_output(libs_cmd, shell=True).decode()
+    incdirs = check_output(incl_cmd, shell=True).decode()
 
-        libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
-        libdirs = [flag[2:] for flag in s_split(libdirs) if flag[:2] == "-L"]
-        incdirs = [flag[2:] for flag in s_split(incdirs) if flag[:2] == "-I"]
+    libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
+    libdirs = [flag[2:] for flag in s_split(libdirs) if flag[:2] == "-L"]
+    incdirs = [flag[2:] for flag in s_split(incdirs) if flag[:2] == "-I"]
 
 # Otherwise, we use the system-installed or Homebrew SNMP libraries
 else:
     netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
 
-        pass_next = False
-        # macOS-specific
-        has_arg = ("-framework",)
-        for flag in s_split(netsnmp_libs):
-            if pass_next:
-                link_args.append(flag)
-                pass_next = False
-            elif flag in has_arg:  # -framework CoreFoundation
-                link_args.append(flag)
-                pass_next = True
-            elif flag == "-flat_namespace":
-                link_args.append(flag)
-                pass_next = False
+    pass_next = False
+    # macOS-specific
+    has_arg = ("-framework",)
+    for flag in s_split(netsnmp_libs):
+        if pass_next:
+            link_args.append(flag)
+            pass_next = False
+        elif flag in has_arg:  # -framework CoreFoundation
+            link_args.append(flag)
+            pass_next = True
+        elif flag == "-flat_namespace":
+            link_args.append(flag)
+            pass_next = False
 
     libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
     libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
