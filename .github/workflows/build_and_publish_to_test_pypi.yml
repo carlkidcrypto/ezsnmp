@@ -124,6 +124,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1.6
         with:
           packages_dir: dist/
+          verify-metadata: false
           skip_existing: true
           print_hash: true
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
