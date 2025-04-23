@@ -5,7 +5,7 @@ name: TestPyPI Distributions
 concurrency: build_and_publish_to_test_pypi
 on:
   push:
-    branches: [ main ]
+    branches: [ main]
 
 jobs:
   check-source-changes:
@@ -22,7 +22,7 @@ jobs:
         with:
           files: |
             setup.py
-            pyproject.toml
+            setup.cfg
 
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -31,7 +31,7 @@ jobs:
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-15]
+        os: [ubuntu-latest, macos-14, macos-15]
 
     steps:
       - uses: actions/checkout@v4
@@ -123,6 +123,8 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.6
         with:
+          packages_dir: dist/
+          verify-metadata: false
           skip_existing: true
           print_hash: true
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}

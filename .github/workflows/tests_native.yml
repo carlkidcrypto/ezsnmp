@@ -27,7 +27,7 @@ jobs:
             python_tests/*.py
             python_tests/*.conf
             setup.py
-            pyproject.toml
+            setup.cfg
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-15]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
@@ -138,11 +138,11 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-15 - 3.9, pytest-results_macos-15_3.9/test-outputs_macos-15_3.9.txt, pytest-results_macos-15_3.9/test-results_macos-15_3.9.xml
-            macos-15 - 3.10, pytest-results_macos-15_3.10/test-outputs_macos-15_3.10.txt, pytest-results_macos-15_3.10/test-results_macos-15_3.10.xml
-            macos-15 - 3.11, pytest-results_macos-15_3.11/test-outputs_macos-15_3.11.txt, pytest-results_macos-15_3.11/test-results_macos-15_3.11.xml
-            macos-15 - 3.12, pytest-results_macos-15_3.12/test-outputs_macos-15_3.12.txt, pytest-results_macos-15_3.12/test-results_macos-15_3.12.xml
-            macos-15 - 3.13, pytest-results_macos-15_3.13/test-outputs_macos-15_3.13.txt, pytest-results_macos-15_3.13/test-results_macos-15_3.13.xml
+            macos-latest - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
+            macos-latest - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            macos-latest - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
             ubuntu-latest - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
             ubuntu-latest - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
             ubuntu-latest - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml

@@ -1,43 +1,3 @@
-[project]
-name = "ezsnmp"
-version = "2.0.0"
-description = "A blazingly fast and Pythonic SNMP library based on the official Net-SNMP bindings. We use SWIG to generate the wrapper code for us."
-authors = [{ name = "Carlos Santos", email = "dose.lucky.sake@cloak.id" }]
-license = { file = "LICENSE" }
-readme = "README.rst"
-keywords = ["ezsnmp", "net-snmp", "easy snmp", "easysnmp", "snmp", "pysnmp"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: System :: Networking",
-    "Topic :: System :: Networking :: Monitoring"
-]
-requires-python = ">=3.9,<3.14"
-
-[project.urls]
-Homepage = "https://github.com/carlkidcrypto/ezsnmp"
-
-[build-system]
-build-backend = "setuptools.build_meta"
-requires = [
-   "setuptools == 78.1.0",
-    "wheel == 0.46.1",
-]
-
-[tool.setuptools]
-packages = ["ezsnmp"]
-
-[tool.black]
-line-length = 100
-target-version = ["py39", "py310", "py311", "py312", "py313"]
-
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
@@ -88,6 +48,13 @@ before-all = """
           port -N install net-snmp openssl;
           port -N upgrade net-snmp openssl;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+   "setuptools == 78.1.0",
+    "wheel == 0.46.1",
+]
 
 [tool.pytest.ini_options]
 pythonpath = "tests"
