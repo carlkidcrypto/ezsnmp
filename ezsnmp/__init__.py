@@ -1,22 +1,24 @@
-#!/usr/bin/env python3
-
-from .ez import (  # noqa
-    snmp_get,
-    snmp_set,
-    snmp_set_multiple,
-    snmp_get_next,
-    snmp_get_bulk,
-    snmp_walk,
-    snmp_bulkwalk,
+from .datatypes import Result
+from .exceptions import (
+    ConnectionError,
+    GenericError,
+    NoSuchInstanceError,
+    NoSuchNameError,
+    NoSuchObjectError,
+    PacketError,
+    ParseError,
+    TimeoutError,
+    UndeterminedTypeError,
+    UnknownObjectIDError,
+    _handle_error,
 )
-from .exceptions import (  # noqa
-    EzSNMPError,
-    EzSNMPConnectionError,
-    EzSNMPTimeoutError,
-    EzSNMPUnknownObjectIDError,
-    EzSNMPNoSuchObjectError,
-    EzSNMPNoSuchInstanceError,
-    EzSNMPUndeterminedTypeError,
+from .netsnmp import (
+    snmpbulkget,
+    snmpbulkwalk,
+    snmpget,
+    snmpgetnext,
+    snmpset,
+    snmptrap,
+    snmpwalk,
 )
-from .session import Session  # noqa
-from .variables import SNMPVariable  # noqa
+from .session import Session

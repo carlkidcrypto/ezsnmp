@@ -1,5 +1,5 @@
 name: Integration Tests
-
+concurrency: integration_tests
 on:
   push:
     branches: [ main ]
@@ -18,14 +18,14 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v45.0.2
+        uses: tj-actions/changed-files@v46.0.3
         with:
           files: |
             ezsnmp/*.py
-            ezsnmp/*.c
+            ezsnmp/*.cpp
             ezsnmp/*.h
-            tests/*.py
-            tests/*.conf
+            python_tests/*.py
+            python_tests/*.conf
             setup.py
             setup.cfg
 
@@ -38,14 +38,21 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@v2.1.1
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
+                 sudo apt-get install -y snmpd snmp-mibs-downloader;
+                 brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -67,6 +74,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
+          allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Install pip dependencies
@@ -75,8 +83,7 @@ jobs:
 
       - name: Build source
         run: |
-          python setup.py build
-          pip install -e .
+          pip install . --verbose
       
       - name: Start SNMP daemon
         run: |
@@ -92,7 +99,7 @@ jobs:
             mibdir=""
             SNMPD=$(which.exe snmpd)
           fi
-          $SNMPD -C -c tests/snmpd.conf -r -Le $mibdir -m ALL
+          $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
       
       - name: Run Integration Tests "Total execution time"
         uses: carlkidcrypto/os-specific-runner@v2.1.1

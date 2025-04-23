@@ -1,0 +1,59 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'c++', 'python' ] 
+
+    steps:
+    - name: Set up Homebrew
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+    
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Install Linux Dependencies
+      if: matrix.language == 'c++'
+      run: |
+        brew update;
+        brew install net-snmp;
+        brew install openssl@3;
+    
+    - name: Set up Python 3.10
+      if: matrix.language == 'c++'
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Build Python Extension
+      if: matrix.language == 'c++'
+      run: |
+        pip install .
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

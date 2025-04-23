@@ -1,638 +1,757 @@
-#!/usr/bin/env python3
-
-from __future__ import unicode_literals, absolute_import
-
-import os
-import re
-from typing import Union, List, overload, Any, Tuple, Literal, Optional
-from warnings import warn
-
-# Don't attempt to import the C interface if building docs on RTD
-if not os.environ.get("READTHEDOCS", False):  # noqa
-    from . import interface
-
-from .exceptions import (
-    EzSNMPError,
-    EzSNMPNoSuchObjectError,
-    EzSNMPNoSuchInstanceError,
-)
-from .utils import is_hostname_ipv6
-from .variables import SNMPVariable, SNMPVariableList
-
-# Mapping between security level strings and their associated integer values.
-# Here we provide camelCase naming as per the original spec but also more
-# Pythonic variations for those who wish to use them.
-SECURITY_LEVEL_MAPPING = {
-    "noAuthNoPriv": 1,
-    "authNoPriv": 2,
-    "authPriv": 3,
-    "no_auth_or_privacy": 1,
-    "auth_without_privacy": 2,
-    "auth_with_privacy": 3,
-}
+from .sessionbase import SessionBase
+from .exceptions import _handle_error, GenericError
+from typing import Union
 
 
-def build_varlist(
-    oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-) -> Tuple[List[SNMPVariable], bool]:
+class Session(SessionBase):
     """
-    Prepare the variable binding list which will be used by the
-    C interface.
-
-    :param oids: an individual or list of strings or tuples representing
-                 one or more OIDs
-    :return: a tuple containing where the first item is a list of SNMPVariable
-             objects or an individual SNMPVariable and a boolean indicating
-             whether or not the first tuple item is a list or single item
-    """
-
-    if isinstance(oids, list):
-        is_list = True
-    else:
-        is_list = False
-        oids = [oids]
-
-    varlist = SNMPVariableList()
-    for oid in oids:
-        # OIDs specified as a tuple (e.g. ('sysContact', 0))
-        if isinstance(oid, tuple):
-            oid, oid_index = oid
-            varlist.append(SNMPVariable(oid, oid_index))
-        # OID . is specified (which we convert to iso)
-        elif oid == ".":
-            varlist.append(SNMPVariable("iso"))
-        # OIDs specified as a string (e.g. 'sysContact.0')
-        else:
-            varlist.append(SNMPVariable(oid))
-
-    return varlist, is_list
-
-
-def validate_results(varlist: List[SNMPVariable]) -> None:
-    """
-    Validates a list of SNMPVariable objects and raises any appropriate
-    exceptions where necessary.
-
-    :param varlist: a variable list containing SNMPVariable objects to be
-                    processed
-    :return:
-    """
-
-    for variable in varlist:
-        # Create a printable variable string for the error
-        varstr = variable.oid
-        if variable.oid_index:
-            varstr += " with index {0}".format(variable.oid_index)
-
-        if variable.snmp_type == "NOSUCHOBJECT":
-            raise EzSNMPNoSuchObjectError(
-                "no such object {0} could be found".format(varstr)
-            )
-        if variable.snmp_type == "NOSUCHINSTANCE":
-            raise EzSNMPNoSuchInstanceError(
-                "no such instance {0} could be found".format(varstr)
-            )
-
-
-class Session(object):
-    """
-    A Net-SNMP session which may be setup once and then used to query and
-    manipulate SNMP data.
-
-    .. note:: This class transparently uses ``interface`` to create a session
-              instance from the Net-SNMP library. Most variable values are not
-              synchronized between the ``Session`` and ``interface``. If you
-              intend to make changes to the ``Session`` instead of creating a
-              new one, you must manually call the :py:meth:`.update_session` method
-
-    :param hostname: hostname or IP address of SNMP agent
-    :param version: the SNMP version to use; 1, 2 (equivalent to 2c) or 3
-    :param community: SNMP community string (used for both R/W) (v1 & v2)
-    :param timeout: seconds before retry
-    :param retries: retries before failure
-    :param remote_port: allow remote UDP port to be overridden (this will
-                        communicate on port 161 at its default setting)
-    :param local_port: allow overriding of the local SNMP port
-    :param security_level: security level (no_auth_or_privacy,
-                           auth_without_privacy or auth_with_privacy) (v3)
-    :param security_username: security name (v3)
-    :param privacy_protocol: privacy protocol (v3) i.e AES, DES, etc
-    :param privacy_password: privacy passphrase (v3)
-    :param auth_protocol: authentication protocol (MD5 or SHA) (v3)
-    :param auth_password: authentication passphrase (v3)
-    :param context_engine_id: context engine ID, will be probed if not
-                              supplied (v3)
-    :param security_engine_id: security engine ID, will be probed if not
-                               supplied (v3)
-    :param context: context name (v3)
-    :param engine_boots: the number of times the SNMP engine has
-                         re-booted/re-initialized since SNMP engine ID was
-                         last configured (v3)
-    :param engine_time: the number of seconds since the engine_boots counter
-                        was last incremented (v3)
-    :param our_identity: the fingerprint or file name for the local X.509
-                         certificate to use for our identity (run
-                         net-snmp-cert to create and manage certificates)
-                         (v3 TLS / DTLS)
-    :param their_identity: the fingerprint or file name for the local X.509
-                           certificate to use for their identity
-                           (v3 TLS / DTLS)
-    :param their_hostname: their hostname to expect; either their_hostname
-                           or a trusted certificate plus a hostname is needed
-                           to validate the server is the proper server
-                           (v3 TLS / DTLS)
-    :param trust_cert: a trusted certificate to use for validating
-                       certificates; typically this would be a CA
-                       certificate (v3 TLS / DTLS)
-    :param use_long_names: set to True to have <tags> for getnext methods
-                           generated preferring longer Mib name convention
-                           (e.g., system.sysDescr vs just sysDescr)
-    :param use_numeric: set to True to have <tags> returned by the get
-                        methods untranslated (i.e. dotted-decimal). Setting
-                        the use_long_names value for the session is highly
-                        recommended
-    :param use_sprint_value: set to True to have return values for get
-                             and getnext methods formatted with the libraries
-                             sprint_value function. This will result in
-                             certain data types being returned in
-                             non-canonical format Note: values returned with
-                             this option set may not be appropriate for set
-                             operations
-    :param use_enums: set to True to have integer return values converted
-                      to enumeration identifiers if possible, these values
-                      will also be acceptable when supplied to set operations
-    :param best_guess: this setting controls how oids are parsed; setting
-                       to 0 causes a regular lookup.  setting to 1 causes a
-                       regular expression match (defined as -Ib in snmpcmd);
-                       setting to 2 causes a random access lookup (defined
-                       as -IR in snmpcmd).
-    :param retry_no_such: if enabled NOSUCH errors in get pdus will be
-                          repaired, removing the SNMP variable in error, and
-                          resent; undef will be returned for all NOSUCH
-                          SNMP variables, when set to False this feature is
-                          disabled and the entire get request will fail on
-                          any NOSUCH error (applies to v1 only)
-    :param abort_on_nonexistent: raise an exception if no object or no
-                                 instance is found for the given oid and
-                                 oid index
+    Python wrapper class for SessionBase, providing a Pythonic interface
+    for managing NetSNMP sessions.
     """
 
     def __init__(
         self,
         hostname: str = "localhost",
-        version: Literal[1, 2, 3] = 3,
+        port_number: Union[str, int] = "",
+        version: Union[str, int] = "3",
         community: str = "public",
-        timeout: int = 1,
-        retries: int = 3,
-        remote_port: int = 0,
-        local_port: int = 0,
-        security_level: Literal[
-            "no_auth_or_privacy", "auth_without_privacy", "auth_with_privacy"
-        ] = "no_auth_or_privacy",
-        security_username: str = "initial",
-        privacy_protocol: str = "DEFAULT",
-        privacy_password: str = "",
-        auth_protocol: str = "DEFAULT",
-        auth_password: str = "",
-        context_engine_id: str = "",
+        auth_protocol: str = "",
+        auth_passphrase: str = "",
         security_engine_id: str = "",
+        context_engine_id: str = "",
+        security_level: str = "",
         context: str = "",
-        engine_boots: int = 0,
-        engine_time: int = 0,
-        our_identity: str = "",
-        their_identity: str = "",
-        their_hostname: str = "",
-        trust_cert: str = "",
-        use_long_names: bool = False,
-        use_numeric: bool = False,
-        use_sprint_value: bool = False,
-        use_enums: bool = False,
-        best_guess: Literal[0, 1, 2] = 0,
-        retry_no_such: bool = False,
-        abort_on_nonexistent: bool = False,
+        security_username: str = "",
+        privacy_protocol: str = "",
+        privacy_passphrase: str = "",
+        boots_time: str = "",
+        retries: Union[str, int] = "3",
+        timeout: Union[str, int] = "1",
+        load_mibs: str = "",
+        mib_directories: str = "",
+        print_enums_numerically: bool = False,
+        print_full_oids: bool = False,
+        print_oids_numerically: bool = False,
     ):
-        # Validate and extract the remote port
-        connection_string = re.match(
-            r"^((?:tcp6?:|udp6?:)?\[?([^\[\]]+?)\]?)\:(\d+)$", hostname
-        )
-        if connection_string:
-            if remote_port:
-                raise ValueError(
-                    "a remote port was specified yet the hostname appears "
-                    "to have a port defined too"
-                )
+        """Initialize the SessionBase object with NetSNMP session parameters.
+
+        :param hostname: The hostname or IP address of the SNMP agent.
+        :type hostname: str
+        :param port_number: The port number of the SNMP agent.
+        :type port_number: Union[str, int]
+        :param version: The SNMP version to use (1, 2c, or 3).
+        :type version: Union[str, int]
+        :param community: The community string for SNMPv1/v2c.
+        :type community: str
+        :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
+        :type auth_protocol: str
+        :param auth_passphrase: The authentication passphrase.
+        :type auth_passphrase: str
+        :param security_engine_id: The security engine ID.
+        :type security_engine_id: str
+        :param context_engine_id: The context engine ID.
+        :type context_engine_id: str
+        :param security_level: The security level (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
+        :type security_level: str
+        :param context: The context.
+        :type context: str
+        :param security_username: The security username.
+        :type security_username: str
+        :param privacy_protocol: The privacy protocol (e.g., "DES", "AES").
+        :type privacy_protocol: str
+        :param privacy_passphrase: The privacy passphrase.
+        :type privacy_passphrase: str
+        :param boots_time: The boots time.
+        :type boots_time: str
+        :param retries: The number of retries.
+        :type retries: Union[str, int]
+        :param timeout: The timeout value in seconds.
+        :type timeout: Union[str, int]
+        :param load_mibs: Comma-separated string of MIB modules to load.
+        :type load_mibs: str
+        :param mib_directories: Comma-separated string of directories to search for MIB files.
+        :type mib_directories: str
+        :param print_enums_numerically: Whether to print enums numerically.
+        :type print_enums_numerically: bool
+        :param print_full_oids: Whether to print full OIDs.
+        :type print_full_oids: bool
+        :param print_oids_numerically: Whether to print OIDs numerically.
+        :type print_oids_numerically: bool
+        """
+
+        # Note that underlying SesssionBase object depends on all parameters to be strings.
+        # This is the case, since at the end of the day we are building a command line string
+        # to pass to the NetSNMP command line tool.
+        try:
+
+            temp_version = ""
+            if version == 2:
+                temp_version = "2c"
             else:
-                full_address, hostname, _remote_port = connection_string.groups()
-                if ":" in hostname and not is_hostname_ipv6(hostname):
-                    raise ValueError("an invalid IPv6 address was specified")
-                hostname = full_address
-                remote_port = int(_remote_port)
+                temp_version = str(version)
 
-        self.hostname = hostname
-        self.version = version
-        self.community = community
-        self.timeout = timeout
-        self.retries = retries
-        self.local_port = local_port
-        self.remote_port = remote_port
-        self.security_level = security_level
-        self.security_username = security_username
-        self.privacy_protocol = privacy_protocol
-        self.privacy_password = privacy_password
-        self.auth_protocol = auth_protocol
-        self.auth_password = auth_password
-        self.context_engine_id = context_engine_id
-        self.security_engine_id = security_engine_id
-        self.context = context
-        self.engine_boots = engine_boots
-        self.engine_time = engine_time
-        self.our_identity = our_identity
-        self.their_identity = their_identity
-        self.their_hostname = their_hostname
-        self.trust_cert = trust_cert
-        self.use_long_names = use_long_names
-        self.use_numeric = use_numeric
-        self.use_sprint_value = use_sprint_value
-        self.use_enums = use_enums
-        self.best_guess = best_guess
-        self.retry_no_such = retry_no_such
-        self.abort_on_nonexistent = abort_on_nonexistent
+            self._session_base = SessionBase(
+                hostname,
+                str(port_number),
+                temp_version,
+                community,
+                auth_protocol,
+                auth_passphrase,
+                security_engine_id,
+                context_engine_id,
+                security_level,
+                context,
+                security_username,
+                privacy_protocol,
+                privacy_passphrase,
+                boots_time,
+                str(retries),
+                str(timeout),
+                load_mibs,
+                mib_directories,
+                print_enums_numerically,
+                print_full_oids,
+                print_oids_numerically,
+            )
 
-        # The following variables are required for internal use as they are
-        # passed to the C interface
-
-        #: internal field used to cache a created session structure
-        self.sess_ptr = None
-
-        #: read-only, holds the error message assoc. w/ last request
-        self.error_string = ""
-
-        #: read-only, holds the snmp_err or status of last request
-        self.error_number = 0
-
-        #: read-only, holds the snmp_err_index when appropriate
-        self.error_index = 0
-
-        # Check for transports that may be tunneled
-        self.tunneled = re.match("^(tls|dtls|ssh)", self.hostname)
-
-        # Create interface instance
-        self.update_session()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        del self.sess_ptr
+        except Exception as e:
+            _handle_error(e)
 
     @property
-    def connect_hostname(self) -> str:
-        def format_hostname(hostname):
-            return "[{}]".format(hostname) if is_hostname_ipv6(hostname) else hostname
+    def args(self):
+        """Get the tuple of arguments used for NetSNMP commands.
 
-        if self.remote_port:
-            return "{0}:{1}".format(format_hostname(self.hostname), self.remote_port)
-        else:
-            return self.hostname
+        :type: tuple
+        """
+        result = self._session_base._get_args()
+        return result
 
     @property
-    def timeout_microseconds(self) -> int:
-        # Calculate our timeout in microseconds
-        return int(self.timeout * 1000000)
+    def hostname(self):
+        """Get the hostname or IP address of the SNMP agent.
 
-    @overload
-    def get(self, oids: List[Union[str, Tuple[str, str]]]) -> List[SNMPVariable]: ...
-
-    @overload
-    def get(self, oids: Union[str, Tuple[str, str]]) -> SNMPVariable: ...
-
-    def get(
-        self,
-        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-    ) -> Union[List[SNMPVariable], SNMPVariable]:
+        :type: str
         """
-        Perform an SNMP GET operation using the prepared session to
-        retrieve a particular piece of information.
+        result = self._session_base._get_hostname()
+        return result
 
-        :param oids: you may pass in a list of OIDs or single item; each item
-                     may be a string representing the entire OID
-                     (e.g. 'sysDescr.0') or may be a tuple containing the
-                     name as its first item and index as its second
-                     (e.g. ('sysDescr', 0))
-        :return: an SNMPVariable object containing the value that was
-                 retrieved or a list of objects when you send in a list of
-                 OIDs
+    @hostname.setter
+    def hostname(self, value):
+        """Set the hostname or IP address of the SNMP agent.
+
+        :param value: The hostname or IP address to set.
+        :type value: str
+        """
+        self._session_base._set_hostname(value)
+
+    @property
+    def port_number(self):
+        """Get the port number of the SNMP agent.
+
+        :type: str
+        """
+        result = self._session_base._get_port_number()
+        return result
+
+    @port_number.setter
+    def port_number(self, value):
+        """Set the port number of the SNMP agent.
+
+        :param value: The port number to set.
+        :type value: str
+        """
+        self._session_base._set_port_number(value)
+
+    @property
+    def version(self):
+        """Get the SNMP version being used.
+
+        :type: str
+        """
+        result = self._session_base._get_version()
+        return result
+
+    @version.setter
+    def version(self, value):
+        """Set the SNMP version to use.
+
+        :param value: The SNMP version to set (1, 2c, or 3).
+        :type value: str
+        """
+        self._session_base._set_version(value)
+
+    @property
+    def community(self):
+        """Get the community string for SNMPv1/v2c.
+
+        :type: str
+        """
+        result = self._session_base._get_community()
+        return result
+
+    @community.setter
+    def community(self, value):
+        """Set the community string for SNMPv1/v2c.
+
+        :param value: The community string to set.
+        :type value: str
+        """
+        self._session_base._set_community(value)
+
+    @property
+    def auth_protocol(self):
+        """Get the authentication protocol.
+
+        :type: str
+        """
+        result = self._session_base._get_auth_protocol()
+        return result
+
+    @auth_protocol.setter
+    def auth_protocol(self, value):
+        """Set the authentication protocol.
+
+        :param value: The authentication protocol to set (e.g., "MD5", "SHA").
+        :type value: str
+        """
+        self._session_base._set_auth_protocol(value)
+
+    @property
+    def auth_passphrase(self):
+        """Get the authentication passphrase.
+
+        :type: str
+        """
+        result = self._session_base._get_auth_passphrase()
+        return result
+
+    @auth_passphrase.setter
+    def auth_passphrase(self, value):
+        """Set the authentication passphrase.
+
+        :param value: The authentication passphrase to set.
+        :type value: str
+        """
+        self._session_base._set_auth_passphrase(value)
+
+    @property
+    def security_engine_id(self):
+        """Get the security engine ID.
+
+        :type: str
+        """
+        result = self._session_base._get_security_engine_id()
+        return result
+
+    @security_engine_id.setter
+    def security_engine_id(self, value):
+        """Set the security engine ID.
+
+        :param value: The security engine ID to set.
+        :type value: str
+        """
+        self._session_base._set_security_engine_id(value)
+
+    @property
+    def context_engine_id(self):
+        """Get the context engine ID.
+
+        :type: str
+        """
+        result = self._session_base._get_context_engine_id()
+        return result
+
+    @context_engine_id.setter
+    def context_engine_id(self, value):
+        """Set the context engine ID.
+
+        :param value: The context engine ID to set.
+        :type value: str
+        """
+        self._session_base._set_context_engine_id(value)
+
+    @property
+    def security_level(self):
+        """Get the security level.
+
+        :type: str
+        """
+        result = self._session_base._get_security_level()
+        return result
+
+    @security_level.setter
+    def security_level(self, value):
+        """Set the security level.
+
+        :param value: The security level to set (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
+        :type value: str
+        """
+        self._session_base._set_security_level(value)
+
+    @property
+    def context(self):
+        """Get the context.
+
+        :type: str
+        """
+        result = self._session_base._get_context()
+        return result
+
+    @context.setter
+    def context(self, value):
+        """Set the context.
+
+        :param value: The context to set.
+        :type value: str
+        """
+        self._session_base._set_context(value)
+
+    @property
+    def security_username(self):
+        """Get the security username.
+
+        :type: str
+        """
+        result = self._session_base._get_security_username()
+        return result
+
+    @security_username.setter
+    def security_username(self, value):
+        """Set the security username.
+
+        :param value: The security username to set.
+        :type value: str
+        """
+        self._session_base._set_security_username(value)
+
+    @property
+    def privacy_protocol(self):
+        """Get the privacy protocol.
+
+        :type: str
+        """
+        result = self._session_base._get_privacy_protocol()
+        return result
+
+    @privacy_protocol.setter
+    def privacy_protocol(self, value):
+        """Set the privacy protocol.
+
+        :param value: The privacy protocol to set (e.g., "DES", "AES").
+        :type value: str
+        """
+        self._session_base._set_privacy_protocol(value)
+
+    @property
+    def privacy_passphrase(self):
+        """Get the privacy passphrase.
+
+        :type: str
+        """
+        result = self._session_base._get_privacy_passphrase()
+        return result
+
+    @privacy_passphrase.setter
+    def privacy_passphrase(self, value):
+        """Set the privacy passphrase.
+
+        :param value: The privacy passphrase to set.
+        :type value: str
+        """
+        self._session_base._set_privacy_passphrase(value)
+
+    @property
+    def boots_time(self):
+        """Get the boots time.
+
+        :type: str
+        """
+        result = self._session_base._get_boots_time()
+        return result
+
+    @boots_time.setter
+    def boots_time(self, value):
+        """Set the boots time.
+
+        :param value: The boots time to set.
+        :type value: str
+        """
+        self._session_base._set_boots_time(value)
+
+    @property
+    def retries(self):
+        """Get the number of retries.
+
+        :type: int
+        """
+        result = self._session_base._get_retries()
+        return result
+
+    @retries.setter
+    def retries(self, value):
+        """Set the number of retries.
+
+        :param value: The number of retries to set.
+        :type value: int
+        """
+        self._session_base._set_retries(value)
+
+    @property
+    def timeout(self):
+        """Get the timeout value.
+
+        :type: int
+        """
+        result = self._session_base._get_timeout()
+        return result
+
+    @timeout.setter
+    def timeout(self, value):
+        """Set the timeout value.
+
+        :param value: The timeout value to set in seconds.
+        :type value: int
+        """
+        self._session_base._set_timeout(value)
+
+    def walk(self, oid="."):
+        """
+        Walks through the SNMP tree starting from the given OID.
+        This method performs an SNMP walk operation, which retrieves a subtree of
+        management values from the SNMP agent, starting from the specified OID.
+
+        :param oid: The starting OID for the SNMP walk. If not specified, the walk
+                will start from the root.
+        :type oid: str
+
+        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+                exception `e` is raised.
+
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.walk("1.3.6.1.2.1")
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
         """
 
-        # Build our variable bindings for the C interface
-        varlist, is_list = build_varlist(oids)
+        try:
+            result = self._session_base.walk(oid)
+            return result
+        except Exception as e:
+            _handle_error(e)
 
-        # Perform the SNMP GET operation
-        interface.get(self, varlist)
-
-        # Validate the variable list returned
-        if self.abort_on_nonexistent:
-            validate_results(varlist)
-
-        # Return a list or single item depending on what was passed in
-        return list(varlist) if is_list else varlist[0]
-
-    def set(
-        self,
-        oid: Union[str, Tuple[str, str]],
-        value: Any,
-        snmp_type: Optional[str] = None,
-    ) -> bool:
+    def bulk_walk(self, oid="."):
         """
-        Perform an SNMP SET operation using the prepared session.
+        Performs a bulk SNMP walk operation to retrieve a collection of values.
+        The bulk walk operation is designed to return multiple OIDs in a single request,
+        making it more efficient than regular walk operations for retrieving large amounts of data.
 
-        :param oid: the OID that you wish to set which may be a string
-                    representing the entire OID (e.g. 'sysDescr.0') or may
-                    be a tuple containing the name as its first item and
-                    index as its second (e.g. ('sysDescr', 0))
-        :param value: the value to set the OID to
-        :param snmp_type: if a numeric OID is used and the object is not in
-                          the parsed MIB, a type must be explicitly supplied
-        :return: a boolean indicating the success of the operation
-        """
+        :param oid: The base OID to start the walk from, defaults to "."
+        :type oid: str
+        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
 
-        varlist = SNMPVariableList()
-        # OIDs specified as a tuple (e.g. ('sysContact', 0))
-        if isinstance(oid, tuple):
-            oid, oid_index = oid
-            varlist.append(SNMPVariable(oid, oid_index, value, snmp_type))
-        # OIDs specefied as a string (e.g. 'sysContact.0')
-        else:
-            varlist.append(SNMPVariable(oid, value=value, snmp_type=snmp_type))
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+                exception `e` is raised.
 
-        # Perform the set operation and return whether or not it worked
-        success = interface.set(self, varlist)
-        return bool(success)
-
-    def set_multiple(
-        self, oid_values: List[Union[Tuple[str, Any], Tuple[str, Any, str]]]
-    ) -> bool:
-        """
-        Perform an SNMP SET operation on multiple OIDs with multiple
-        values using the prepared session.
-
-        :param oid_values: a list of tuples whereby each tuple contains a
-                           (oid, value) or an (oid, value, snmp_type)
-        :return: a list of SNMPVariable objects containing the values that
-                 were retrieved via SNMP
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.bulk_walk("1.3.6.1.2.1")
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
         """
 
-        varlist = SNMPVariableList()
-        for oid_value in oid_values:
-            if len(oid_value) == 2:
-                oid, value = oid_value
-                snmp_type = None
-            # TODO: Determine the best way to test this
-            else:
-                oid, value, snmp_type = oid_value
+        try:
+            result = self._session_base.bulk_walk(oid)
+            return result
+        except Exception as e:
+            _handle_error(e)
 
-            # OIDs specified as a tuple (e.g. ('sysContact', 0))
-            if isinstance(oid, tuple):
-                oid, oid_index = oid
-                varlist.append(SNMPVariable(oid, oid_index, value, snmp_type))
-            # OIDs specefied as a string (e.g. 'sysContact.0')
-            else:
-                varlist.append(SNMPVariable(oid, value=value, snmp_type=snmp_type))
-
-        # Perform the set operation and return whether or not it worked
-        success = interface.set(self, varlist)
-        return bool(success)
-
-    @overload
-    def get_next(
-        self, oids: List[Union[str, Tuple[str, str]]]
-    ) -> List[SNMPVariable]: ...
-
-    @overload
-    def get_next(self, oids: Union[str, Tuple[str, str]]) -> SNMPVariable: ...
-
-    def get_next(
-        self,
-        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-    ) -> Union[List[SNMPVariable], SNMPVariable]:
+    def bulk_walk(self, oids=[]):
         """
-        Uses an SNMP GETNEXT operation using the prepared session to
-        retrieve the next variable after the chosen item.
+        Performs a bulk SNMP walk operation to retrieve a collection of values from multiple OIDs.
+        The bulk walk operation is designed to return multiple OIDs in a single request,
+        making it more efficient than regular walk operations for retrieving large amounts of data.
 
-        :param oids: you may pass in a list of OIDs or single item; each item
-                     may be a string representing the entire OID
-                     (e.g. 'sysDescr.0') or may be a tuple containing the
-                     name as its first item and index as its second
-                     (e.g. ('sysDescr', 0))
-        :return: an SNMPVariable object containing the value that was
-                 retrieved or a list of objects when you send in a list of
-                 OIDs
+        :param oids: List of base OIDs to start the walks from
+        :type oids: list[str]
+        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
+            attributes: oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.bulk_walk(["1.3.6.1.2.1.1", "1.3.6.1.2.1.2"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
         """
 
-        # Build our variable bindings for the C interface
-        varlist, is_list = build_varlist(oids)
+        try:
+            result = self._session_base.bulk_walk(oids)
+            return result
+        except Exception as e:
+            _handle_error(e)
 
-        # Perform the SNMP GET operation
-        interface.getnext(self, varlist)
-
-        # Validate the variable list returned
-        if self.abort_on_nonexistent:
-            validate_results(varlist)
-
-        # Return a list or single item depending on what was passed in
-        return list(varlist) if is_list else varlist[0]
-
-    def get_bulk(
-        self,
-        oids: Union[List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]],
-        non_repeaters: int = 0,
-        max_repetitions: int = 10,
-    ) -> List[SNMPVariable]:
+    def get(self, oid="."):
         """
-        Performs a bulk SNMP GET operation using the prepared session to
-        retrieve multiple pieces of information in a single packet.
+        Performs an SNMP GET operation to retrieve the value of a single OID.
 
-        :param oids: you may pass in a list of OIDs or single item; each item
-                     may be a string representing the entire OID
-                     (e.g. 'sysDescr.0') or may be a tuple containing the
-                     name as its first item and index as its second
-                     (e.g. ('sysDescr', 0))
-        :param non_repeaters: the number of objects that are only expected to
-                              return a single GETNEXT instance, not multiple
-                              instances
-        :param max_repetitions: the number of objects that should be returned
-                                for all the repeating OIDs
-        :return: a list of SNMPVariable objects containing the values that
-                 were retrieved via SNMP
-        """
+        :param oid: The Object Identifier (OID) to retrieve the value from
+        :type oid: str
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
 
-        if self.version == 1:
-            raise EzSNMPError(
-                "you cannot perform a bulk GET operation for SNMP version 1"
-            )
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
 
-        # Build our variable bindings for the C interface
-        varlist, _ = build_varlist(oids)
-
-        interface.getbulk(self, non_repeaters, max_repetitions, varlist)
-
-        # Validate the variable list returned
-        if self.abort_on_nonexistent:
-            validate_results(varlist)
-
-        # Return a list of variables
-        return varlist
-
-    def walk(
-        self,
-        oids: Union[
-            List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
-        ] = ".1.3.6.1.2.1",
-    ) -> List[SNMPVariable]:
-        """
-        Uses SNMP GETNEXT operation using the prepared session to
-        automatically retrieve multiple pieces of information in an OID.
-
-        :param oids: you may pass in a single item (multiple values currently
-                     experimental) which may be a string representing the
-                     entire OID (e.g. 'sysDescr.0') or may be a tuple
-                     containing the name as its first item and index as its
-                     second (e.g. ('sysDescr', 0))
-        :return: a list of SNMPVariable objects containing the values that
-                 were retrieved via SNMP
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> result = session.get("1.3.6.1.2.1.1.1.0")
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
         """
 
-        # Build our variable bindings for the C interface
-        varlist, _ = build_varlist(oids)
+        try:
+            result = self._session_base.get(oid)
+            return result
+        except Exception as e:
+            _handle_error(e)
 
-        # Perform the SNMP walk using GETNEXT operations
-        interface.walk(self, varlist)
-
-        # Validate the variable list returned
-        if self.abort_on_nonexistent:
-            validate_results(varlist)
-
-        # Return a list of variables
-        return list(varlist)
-
-    def bulkwalk(
-        self,
-        oids: Union[
-            List[Union[str, Tuple[str, str]]], Union[str, Tuple[str, str]]
-        ] = ".1.3.6.1.2.1",
-        non_repeaters: int = 0,
-        max_repetitions: int = 10,
-    ) -> List[SNMPVariable]:
+    def get(self, oids=[]):
         """
-        Uses SNMP GETBULK operation using the prepared session to
-        automatically retrieve multiple pieces of information in an OID
+        Performs an SNMP GET operation to retrieve values for multiple OIDs.
 
-        :param oids: you may pass in a single item (multiple values currently
-                     experimental) which may be a string representing the
-                     entire OID (e.g. 'sysDescr.0') or may be a tuple
-                     containing the name as its first item and index as its
-                     second (e.g. ('sysDescr', 0))
-        :return: a list of SNMPVariable objects containing the values that
-                 were retrieved via SNMP
-        """
+        :param oids: List of Object Identifiers (OIDs) to retrieve values from
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
 
-        if self.version == 1:
-            raise EzSNMPError("BULKWALK is not available for SNMP version 1")
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
 
-        # Build our variable bindings for the C interface
-        varlist, _ = build_varlist(oids)
-
-        # Perform the SNMP walk using GETNEXT operations
-        interface.bulkwalk(self, non_repeaters, max_repetitions, varlist)
-
-        # Validate the variable list returned
-        if self.abort_on_nonexistent:
-            validate_results(varlist)
-
-        # Return a list of variables
-        return varlist
-
-    def update_session(self, **kwargs: Any) -> None:
-        """
-        (Re)creates the underlying Net-SNMP session object.
-
-        While it is recommended to create a new ``Session`` instance instead,
-        this method has been added for your convenience in case you really need it
-        (we've mis-typed the community string before in our interactive sessions and
-        totally understand your pain).
-
-        Keywords passed to the method will be assigned to the instance if they match
-        existing attribute names. A warning will be emitted if something is passed that
-        does not match anything that already exists.
-
-        .. code-block:: python
-            :caption: Example usage
-
-            s = Session(version=2, community='readonly', hostname='localhost')
-            # Whoops, wrong hostname and community string. Let's change that
-            s.update_session(community='readwrite', hostname'remotehost')
-            # Actually I need to use version 1
-            s.version = 1
-            s.update_session()
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
         """
 
-        if kwargs:
-            for keyword, value in kwargs.items():
-                if keyword in self.__dict__:
-                    self.__setattr__(keyword, value)
-                else:
-                    warn('Keyword argument "{}" is not an attribute'.format(keyword))
+        try:
+            result = self._session_base.get(oids)
+            return result
+        except Exception as e:
+            _handle_error(e)
 
-            del self.sess_ptr
-            self.sess_ptr = None
+    def get_next(self, oids=[]):
+        """
+        Performs an SNMP GET-NEXT operation to retrieve values for the next objects after the specified OIDs.
 
-        # Tunneled
-        if self.tunneled:
-            # TODO: Determine the best way to test this
-            self.sess_ptr = interface.session_tunneled(
-                self.version,
-                self.connect_hostname,
-                self.local_port,
-                self.retries,
-                self.timeout_microseconds,
-                self.security_username,
-                SECURITY_LEVEL_MAPPING[self.security_level],
-                self.context_engine_id,
-                self.context,
-                self.our_identity,
-                self.their_identity,
-                self.their_hostname,
-                self.trust_cert,
-            )
+        :param oids: List of Object Identifiers (OIDs) to get next values from
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
 
-        # SNMP v3
-        elif self.version == 3:
-            self.sess_ptr = interface.session_v3(
-                self.version,
-                self.connect_hostname,
-                self.local_port,
-                self.retries,
-                self.timeout_microseconds,
-                self.security_username,
-                SECURITY_LEVEL_MAPPING[self.security_level],
-                self.security_engine_id,
-                self.context_engine_id,
-                self.context,
-                self.auth_protocol,
-                self.auth_password,
-                self.privacy_protocol,
-                self.privacy_password,
-                self.engine_boots,
-                self.engine_time,
-            )
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
 
-        # SNMP v1 & v2
-        else:
-            self.sess_ptr = interface.session(
-                self.version,
-                self.community,
-                self.connect_hostname,
-                self.local_port,
-                self.retries,
-                self.timeout_microseconds,
-            )
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.get_next(["1.3.6.1.2.1.1.1.0"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
+        try:
+            result = self._session_base.get_next(oids)
+            return result
+        except Exception as e:
+            _handle_error(e)
+
+    def bulk_get(self, oids=[]):
+        """
+        Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.
+
+        :param oids: List of Object Identifiers (OIDs) to retrieve values from
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.bulk_get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
+        try:
+            result = self._session_base.bulk_get(oids)
+            return result
+        except Exception as e:
+            _handle_error(e)
+
+    def set(self, oids=[]):
+        """
+        Performs an SNMP SET operation to set values for multiple OIDs.
+
+        :param oids: List containing groups of OID, type and value. Each group should be a sequence of
+            [oid, type, value] where type is a string indicating the SNMP data type
+            (e.g. 'i' for INTEGER, 's' for STRING, 'o' for OBJECT IDENTIFIER)
+        :type oids: list
+        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
+            oid (str), index (str), value (str), and type (str)
+        :rtype: tuple[Result]
+
+        :raises GenericError: If the exception type is `GenericErrorBase`.
+        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
+        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
+        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
+        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
+        :raises PacketError: If the exception type is `PacketErrorBase`.
+        :raises ParseError: If the exception type is `ParseErrorBase`.
+        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
+        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
+        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
+        :raises Exception: If the exception type does not match any of the above, the original
+            exception `e` is raised.
+
+        Example:
+            >>> from ezsnmp import Session
+            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> results = session.set([
+            ...     ".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116", "o", ".1.3.6.1.6.1.1",
+            ...     ".1.3.6.1.6.3.12.1.2.1.3.116.101.115.116", "s", "1234",
+            ...     ".1.3.6.1.6.3.12.1.2.1.9.116.101.115.116", "i", "4"
+            ... ])
+            >>> for item in results:
+            ...     print("OID:", item.oid)
+            ...     print("Index:", item.index)
+            ...     print("Value:", item.value)
+            ...     print("Type:", item.type)
+            ...     print("---")
+        """
+
+        try:
+            result = self._session_base.set(oids)
+            return result
+        except Exception as e:
+            _handle_error(e)
