@@ -45,7 +45,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
@@ -102,7 +102,7 @@ jobs:
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Run Tests
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
                  VALGRIND=(

@@ -41,7 +41,7 @@ jobs:
   
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
