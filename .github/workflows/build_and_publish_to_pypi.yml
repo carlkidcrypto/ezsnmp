@@ -102,8 +102,8 @@ jobs:
           merge-multiple: true
           path: dist/
 
-      - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1.12
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1.6
         with:
           packages_dir: dist/
           verify_metadata: false
