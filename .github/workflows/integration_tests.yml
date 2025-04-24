@@ -46,7 +46,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader;
@@ -102,7 +102,7 @@ jobs:
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
       
       - name: Run Integration Tests "Total execution time"
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
                  cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
@@ -115,7 +115,7 @@ jobs:
                  echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
  
       - name: Run Integration Tests "usm_unknown_security_name_counter"
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
                 cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
@@ -128,7 +128,7 @@ jobs:
                 echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
       - name: Run Integration Tests "connection_error_counter"
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
                   cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
