@@ -19,7 +19,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Build Requirements
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
             sudo apt install -y libsnmp-dev g++ python3-dev doxygen;
@@ -27,14 +27,14 @@ jobs:
             python -m pip install . --user;
 
       - name: Install Pip Requirements
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
             pip install -r requirements.txt;
 
       - name: Run sphinx...
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/;
@@ -47,7 +47,7 @@ jobs:
 
       - name: Archive Sphinx Documentation
         if: github.event_name == 'release'
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/
