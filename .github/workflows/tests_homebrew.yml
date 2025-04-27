@@ -2,7 +2,7 @@ name: Tests With Homebrew Package Manager
 concurrency: tests
 on:
   push:
-    branches: [ main ]
+    branches: [ 355-bug-string-values-returned-enclosed-in ]
 
   pull_request:
     branches: [ main ]
