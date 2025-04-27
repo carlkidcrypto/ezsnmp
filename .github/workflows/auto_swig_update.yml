@@ -1,0 +1,87 @@
+name: Update and Run SWIG
+
+on:
+  schedule:
+    - cron: '0 12 * * 1' # Runs weekly on Monday at 12:00 UTC
+  workflow_dispatch: # Allows manual triggering
+  push:
+    branches:
+      - main
+
+jobs:
+  update-and-run-swig:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out your repository
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    # Step 2: Update apt package list
+    - name: Update apt package list
+      run: sudo apt update
+
+    # Step 3: Install PCRE2 library (dependency for SWIG)
+    - name: Install PCRE2 library
+      run: sudo apt install -y libpcre2-dev
+
+    # Step 4: Check for the latest SWIG version
+    - name: Check for the latest SWIG version
+      id: swig_version_check
+      run: |
+        wget -qO- https://sourceforge.net/projects/swig/files/swig/ | grep -oP 'swig-\K[0-9.]+(?=\.tar\.gz)' | sort -V | tail -1 > latest_swig.txt
+        echo "Latest SWIG version is $(cat latest_swig.txt)"
+
+    # Step 5: Compare current SWIG version
+    - name: Compare SWIG versions
+      id: swig_version_compare
+      run: |
+        CURRENT_VERSION=$(swig -version 2>/dev/null | grep -oP '[0-9]+\.[0-9]+\.[0-9]+' || echo "none")
+        LATEST_VERSION=$(cat latest_swig.txt)
+        if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+          echo "Updating to SWIG version $LATEST_VERSION"
+          echo "::set-output name=version_changed::true"
+        else
+          echo "SWIG is up to date."
+          echo "::set-output name=version_changed::false"
+        fi
+
+    # Step 6: Install the latest SWIG if needed
+    - name: Update SWIG
+      if: steps.swig_version_compare.outputs.version_changed == 'true'
+      run: |
+        wget https://sourceforge.net/projects/swig/files/swig/swig-$(cat latest_swig.txt).tar.gz
+        tar -xvf swig-$(cat latest_swig.txt).tar.gz
+        cd swig-$(cat latest_swig.txt)
+        ./configure
+        make
+        sudo make install
+
+    # Step 7: Run the SWIG commands
+    - name: Run SWIG commands
+      run: |
+        swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmpbase.cpp ezsnmp/interface/netsnmpbase.i
+        swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_sessionbase.cpp ezsnmp/interface/sessionbase.i
+        swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_datatypes.cpp ezsnmp/interface/datatypes.i
+        swig -c++ -python -builtin -threads -doxygen -std=c++17 -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_exceptionsbase.cpp ezsnmp/interface/exceptionsbase.i
+
+    # Step 8: Commit and create a Pull Request if there are changes
+    - name: Commit SWIG version update and output changes
+      if: steps.swig_version_compare.outputs.version_changed == 'true'
+      run: |
+        git config --global user.email "github-actions@example.com"
+        git config --global user.name "GitHub Actions"
+        git add ezsnmp/src/*.cpp
+        git commit -m "Update SWIG to version $(cat latest_swig.txt) and re-generate files"
+        git push origin HEAD:swig-update-$(cat latest_swig.txt)
+
+    - name: Create Pull Request
+      if: steps.swig_version_compare.outputs.version_changed == 'true'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Update SWIG to version $(cat latest_swig.txt)"
+        branch: swig-update-$(cat latest_swig.txt)
+        title: "Update SWIG to version $(cat latest_swig.txt)"
+        body: |
+          This PR updates SWIG to version $(cat latest_swig.txt) and regenerates necessary files.
