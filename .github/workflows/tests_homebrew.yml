@@ -184,12 +184,12 @@ jobs:
         run: |
           python - << "EOF"
           with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
-             data = f.readlines()
+              data = f.readlines()
           last_five_lines = data[-5:]
           with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log', 'w') as f:
-          f.write('```sh\n')
-          f.writelines(last_five_lines)
-          f.write('```\n')
+              f.write('```sh\n')
+              f.writelines(last_five_lines)
+              f.write('```\n')
           EOF
 
       - name: Upload Stripped Valgrind Reports
