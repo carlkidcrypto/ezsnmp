@@ -4783,9 +4783,7 @@ SWIGINTERN PyObject *_wrap_Result_to_string(PyObject *self, PyObject *args) {
       result = ((Result const *)arg1)->to_string();
       SWIG_PYTHON_THREAD_END_ALLOW;
    }
-   {
-      resultobj = PyUnicode_FromString((&result)->c_str());
-   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(result));
    return resultobj;
 fail:
    return NULL;

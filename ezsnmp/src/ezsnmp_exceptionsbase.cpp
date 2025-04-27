@@ -5076,9 +5076,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UnknownObjectIDErrorBase) /* defines
-                                                                    _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
-                                                                  */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UnknownObjectIDErrorBase) /* defines
+                                              _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
+                                            */
 
 SWIGINTERN int _wrap_new_NoSuchNameErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -5561,9 +5562,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchInstanceErrorBase) /* defines
-                                                                   _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
-                                                                 */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_NoSuchInstanceErrorBase) /* defines
+                                             _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
+                                           */
 
 SWIGINTERN int _wrap_new_UndeterminedTypeErrorBase(PyObject *self,
                                                    PyObject *args,
@@ -5726,9 +5728,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UndeterminedTypeErrorBase) /* defines
-                                                                     _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
-                                                                   */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UndeterminedTypeErrorBase) /* defines
+                                               _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
+                                             */
 
 SWIGINTERN int _wrap_new_ParseErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;

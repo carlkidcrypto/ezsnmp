@@ -7915,9 +7915,7 @@ SWIGINTERN PyObject *_wrap_Result_to_string(PyObject *self, PyObject *args) {
       result = ((Result const *)arg1)->to_string();
       SWIG_PYTHON_THREAD_END_ALLOW;
    }
-   {
-      resultobj = PyUnicode_FromString((&result)->c_str());
-   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(result));
    return resultobj;
 fail:
    return NULL;
@@ -8756,9 +8754,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UnknownObjectIDErrorBase) /* defines
-                                                                    _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
-                                                                  */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UnknownObjectIDErrorBase) /* defines
+                                              _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
+                                            */
 
 SWIGINTERN int _wrap_new_NoSuchNameErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -9241,9 +9240,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchInstanceErrorBase) /* defines
-                                                                   _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
-                                                                 */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_NoSuchInstanceErrorBase) /* defines
+                                             _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
+                                           */
 
 SWIGINTERN int _wrap_new_UndeterminedTypeErrorBase(PyObject *self,
                                                    PyObject *args,
@@ -9406,9 +9406,10 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UndeterminedTypeErrorBase) /* defines
-                                                                     _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
-                                                                   */
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_UndeterminedTypeErrorBase) /* defines
+                                               _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
+                                             */
 
 SWIGINTERN int _wrap_new_ParseErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -11572,9 +11573,7 @@ SWIGINTERN PyObject *_wrap__string_list_pop(PyObject *self, PyObject *args) {
          SWIG_fail;
       }
    }
-   {
-      resultobj = PyUnicode_FromString((&result)->c_str());
-   }
+   resultobj = SWIG_From_std_string(static_cast<std::string>(result));
    return resultobj;
 fail:
    return NULL;
