@@ -41,6 +41,38 @@ as we focus on stabilizing core functionality:
 - ``retry_no_such``
 - ``abort_on_nonexistent``
 
+Parameter Value Changes
+-----------------------
+
+In V2.X.X, all parameters have updated acceptable values to align with the requirements of the underlying net-snmp applications. For example:
+
+- ``security_level``: In V1.X.X, this parameter accepted values like ``auth_with_privacy``. In V2.X.X, the possible values are now ``noAuthNoPriv``, ``authNoPriv``, and ``authPriv``, as required by net-snmp tools like ``snmpwalk``.
+
+For more details on the acceptable values for ``security_level`` and other parameters, refer to the 
+official net-snmp documentation: `Net-SNMP Command Line Applications 
+<http://www.net-snmp.org/docs/man/snmpcmd.html>`_.
+
+Parameter Mapping Table
+-----------------------
+
+The following table maps EzSnmp parameter names to their corresponding net-snmp parameter options:
+
++----------------------+-------------------------------+
+| EzSnmp Parameter     | Net-SNMP Parameter Option     |
++======================+===============================+
+| ``security_level``   | ``-l LEVEL``                 |
+| ``auth_protocol``    | ``-a PROTOCOL``              |
+| ``auth_passphrase``  | ``-A PASSPHRASE``            |
+| ``privacy_protocol`` | ``-x PROTOCOL``              |
+| ``privacy_passphrase`` | ``-X PASSPHRASE``          |
+| ``context_name``     | ``-n CONTEXT``               |
+| ``engine_id``        | ``-e ENGINE-ID``             |
+| ``timeout``          | ``-t TIMEOUT``               |
+| ``retries``          | ``-r RETRIES``               |
++----------------------+-------------------------------+
+
+Refer to the net-snmp documentation for more details on these options.
+
 Migration Example
 -----------------
 
