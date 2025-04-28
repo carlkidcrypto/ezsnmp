@@ -45,4 +45,3 @@ def test_string_values_not_enclosed_in_quotes(version):
     assert not (
         value.startswith('"') and value.endswith('"')
     ), "String value is enclosed in quotes"
-
