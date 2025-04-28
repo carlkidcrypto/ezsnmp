@@ -38,6 +38,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        net-snmp-version: ["5.7", "5.8", "5.9"]
   
     steps:
       - name: Set up Homebrew
@@ -51,7 +52,7 @@ jobs:
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
                  brew update;
-                 brew install net-snmp;
+                 brew install net-snmp@${{ matrix.net-snmp-version }};
                  brew install openssl@3;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
@@ -59,7 +60,7 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
           
           macos: brew update;
-                 brew install net-snmp;
+                 brew install net-snmp@${{ matrix.net-snmp-version }};
                  brew install openssl@3;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
@@ -111,27 +112,27 @@ jobs:
                    '--leak-check=full'
                    '--show-leak-kinds=definite,indirect,possible'
                    '--suppressions=./valgrind-python.supp'
-                   '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
+                   '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.out'
                  );
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/${{ matrix.net-snmp-version }}/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.txt;
           
-          macos: pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+          macos: pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.txt;
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
+          name: pytest-results_${{matrix.os}}_${{matrix.python-version}}_${{matrix.net-snmp-version}}
           path: |
-            test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
-            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+            test-results_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.xml
+            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.txt
 
       - name: Upload Valgrind Reports
         uses: actions/upload-artifact@v4
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
-          name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
-          path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
+          name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}_${{matrix.net-snmp-version}}
+          path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.out
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
@@ -153,16 +154,36 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
-            macos-latest - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-            macos-latest - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
-            macos-latest - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
-            macos-latest - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            ubuntu-latest - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
-            ubuntu-latest - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
-            ubuntu-latest - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
-            ubuntu-latest - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
-            ubuntu-latest - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+            macos-latest - 3.9 - 5.7, pytest-results_macos-latest_3.9_5.7/test-outputs_macos-latest_3.9_5.7.txt, pytest-results_macos-latest_3.9_5.7/test-results_macos-latest_3.9_5.7.xml
+            macos-latest - 3.9 - 5.8, pytest-results_macos-latest_3.9_5.8/test-outputs_macos-latest_3.9_5.8.txt, pytest-results_macos-latest_3.9_5.8/test-results_macos-latest_3.9_5.8.xml
+            macos-latest - 3.9 - 5.9, pytest-results_macos-latest_3.9_5.9/test-outputs_macos-latest_3.9_5.9.txt, pytest-results_macos-latest_3.9_5.9/test-results_macos-latest_3.9_5.9.xml
+            macos-latest - 3.10 - 5.7, pytest-results_macos-latest_3.10_5.7/test-outputs_macos-latest_3.10_5.7.txt, pytest-results_macos-latest_3.10_5.7/test-results_macos-latest_3.10_5.7.xml
+            macos-latest - 3.10 - 5.8, pytest-results_macos-latest_3.10_5.8/test-outputs_macos-latest_3.10_5.8.txt, pytest-results_macos-latest_3.10_5.8/test-results_macos-latest_3.10_5.8.xml
+            macos-latest - 3.10 - 5.9, pytest-results_macos-latest_3.10_5.9/test-outputs_macos-latest_3.10_5.9.txt, pytest-results_macos-latest_3.10_5.9/test-results_macos-latest_3.10_5.9.xml
+            macos-latest - 3.11 - 5.7, pytest-results_macos-latest_3.11_5.7/test-outputs_macos-latest_3.11_5.7.txt, pytest-results_macos-latest_3.11_5.7/test-results_macos-latest_3.11_5.7.xml
+            macos-latest - 3.11 - 5.8, pytest-results_macos-latest_3.11_5.8/test-outputs_macos-latest_3.11_5.8.txt, pytest-results_macos-latest_3.11_5.8/test-results_macos-latest_3.11_5.8.xml
+            macos-latest - 3.11 - 5.9, pytest-results_macos-latest_3.11_5.9/test-outputs_macos-latest_3.11_5.9.txt, pytest-results_macos-latest_3.11_5.9/test-results_macos-latest_3.11_5.9.xml
+            macos-latest - 3.12 - 5.7, pytest-results_macos-latest_3.12_5.7/test-outputs_macos-latest_3.12_5.7.txt, pytest-results_macos-latest_3.12_5.7/test-results_macos-latest_3.12_5.7.xml
+            macos-latest - 3.12 - 5.8, pytest-results_macos-latest_3.12_5.8/test-outputs_macos-latest_3.12_5.8.txt, pytest-results_macos-latest_3.12_5.8/test-results_macos-latest_3.12_5.8.xml
+            macos-latest - 3.12 - 5.9, pytest-results_macos-latest_3.12_5.9/test-outputs_macos-latest_3.12_5.9.txt, pytest-results_macos-latest_3.12_5.9/test-results_macos-latest_3.12_5.9.xml
+            macos-latest - 3.13 - 5.7, pytest-results_macos-latest_3.13_5.7/test-outputs_macos-latest_3.13_5.7.txt, pytest-results_macos-latest_3.13_5.7/test-results_macos-latest_3.13_5.7.xml
+            macos-latest - 3.13 - 5.8, pytest-results_macos-latest_3.13_5.8/test-outputs_macos-latest_3.13_5.8.txt, pytest-results_macos-latest_3.13_5.8/test-results_macos-latest_3.13_5.8.xml
+            macos-latest - 3.13 - 5.9, pytest-results_macos-latest_3.13_5.9/test-outputs_macos-latest_3.13_5.9.txt, pytest-results_macos-latest_3.13_5.9/test-results_macos-latest_3.13_5.9.xml
+            ubuntu-latest - 3.9 - 5.7, pytest-results_ubuntu-latest_3.9_5.7/test-outputs_ubuntu-latest_3.9_5.7.txt, pytest-results_ubuntu-latest_3.9_5.7/test-results_ubuntu-latest_3.9_5.7.xml
+            ubuntu-latest - 3.9 - 5.8, pytest-results_ubuntu-latest_3.9_5.8/test-outputs_ubuntu-latest_3.9_5.8.txt, pytest-results_ubuntu-latest_3.9_5.8/test-results_ubuntu-latest_3.9_5.8.xml
+            ubuntu-latest - 3.9 - 5.9, pytest-results_ubuntu-latest_3.9_5.9/test-outputs_ubuntu-latest_3.9_5.9.txt, pytest-results_ubuntu-latest_3.9_5.9/test-results_ubuntu-latest_3.9_5.9.xml
+            ubuntu-latest - 3.10 - 5.7, pytest-results_ubuntu-latest_3.10_5.7/test-outputs_ubuntu-latest_3.10_5.7.txt, pytest-results_ubuntu-latest_3.10_5.7/test-results_ubuntu-latest_3.10_5.7.xml
+            ubuntu-latest - 3.10 - 5.8, pytest-results_ubuntu-latest_3.10_5.8/test-outputs_ubuntu-latest_3.10_5.8.txt, pytest-results_ubuntu-latest_3.10_5.8/test-results_ubuntu-latest_3.10_5.8.xml
+            ubuntu-latest - 3.10 - 5.9, pytest-results_ubuntu-latest_3.10_5.9/test-outputs_ubuntu-latest_3.10_5.9.txt, pytest-results_ubuntu-latest_3.10_5.9/test-results_ubuntu-latest_3.10_5.9.xml
+            ubuntu-latest - 3.11 - 5.7, pytest-results_ubuntu-latest_3.11_5.7/test-outputs_ubuntu-latest_3.11_5.7.txt, pytest-results_ubuntu-latest_3.11_5.7/test-results_ubuntu-latest_3.11_5.7.xml
+            ubuntu-latest - 3.11 - 5.8, pytest-results_ubuntu-latest_3.11_5.8/test-outputs_ubuntu-latest_3.11_5.8.txt, pytest-results_ubuntu-latest_3.11_5.8/test-results_ubuntu-latest_3.11_5.8.xml
+            ubuntu-latest - 3.11 - 5.9, pytest-results_ubuntu-latest_3.11_5.9/test-outputs_ubuntu-latest_3.11_5.9.txt, pytest-results_ubuntu-latest_3.11_5.9/test-results_ubuntu-latest_3.11_5.9.xml
+            ubuntu-latest - 3.12 - 5.7, pytest-results_ubuntu-latest_3.12_5.7/test-outputs_ubuntu-latest_3.12_5.7.txt, pytest-results_ubuntu-latest_3.12_5.7/test-results_ubuntu-latest_3.12_5.7.xml
+            ubuntu-latest - 3.12 - 5.8, pytest-results_ubuntu-latest_3.12_5.8/test-outputs_ubuntu-latest_3.12_5.8.txt, pytest-results_ubuntu-latest_3.12_5.8/test-results_ubuntu-latest_3.12_5.8.xml
+            ubuntu-latest - 3.12 - 5.9, pytest-results_ubuntu-latest_3.12_5.9/test-outputs_ubuntu-latest_3.12_5.9.txt, pytest-results_ubuntu-latest_3.12_5.9/test-results_ubuntu-latest_3.12_5.9.xml
+            ubuntu-latest - 3.13 - 5.7, pytest-results_ubuntu-latest_3.13_5.7/test-outputs_ubuntu-latest_3.13_5.7.txt, pytest-results_ubuntu-latest_3.13_5.7/test-results_ubuntu-latest_3.13_5.7.xml
+            ubuntu-latest - 3.13 - 5.8, pytest-results_ubuntu-latest_3.13_5.8/test-outputs_ubuntu-latest_3.13_5.8.txt, pytest-results_ubuntu-latest_3.13_5.8/test-results_ubuntu-latest_3.13_5.8.xml
+            ubuntu-latest - 3.13 - 5.9, pytest-results_ubuntu-latest_3.13_5.9/test-outputs_ubuntu-latest_3.13_5.9.txt, pytest-results_ubuntu-latest_3.13_5.9/test-results_ubuntu-latest_3.13_5.9.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -172,6 +193,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        net-snmp-version: ["5.7", "5.8", "5.9"]
 
     steps:
       - name: Download Artifacts
@@ -183,10 +205,10 @@ jobs:
       - name: Parse Valgrind Reports
         run: |
           python - << "EOF"
-          with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
+          with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}_${{matrix.net-snmp-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.out") as f:
               data = f.readlines()
           last_five_lines = data[-5:]
-          with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log', 'w') as f:
+          with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.log', 'w') as f:
               f.write('```sh\n')
               f.writelines(last_five_lines)
               f.write('```\n')
@@ -195,9 +217,9 @@ jobs:
       - name: Upload Stripped Valgrind Reports
         uses: actions/upload-artifact@v4
         with:
-          name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}
+          name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}_${{matrix.net-snmp-version}}
           path: |
-            valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log
+            valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.log
 
   comment-valgrind:
     runs-on: ubuntu-latest
@@ -213,16 +235,12 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp4 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
+          for python_version in 3.9 3.10 3.11 3.12 3.13; do
+            for net_snmp_version in 5.7 5.8 5.9; do
+              temp=$(cat valgrind-stripped_ubuntu-latest_${python_version}_${net_snmp_version}/valgrind-stripped_ubuntu-latest_${python_version}_${net_snmp_version}.log);
+              echo VALGRIND_STRIPPED_UBUNTU_LATEST_${python_version//./_}_${net_snmp_version//./_}=$temp >> $GITHUB_OUTPUT;
+            done
+          done
 
       - name: Checkout Sourcecode
         uses: actions/checkout@v4
@@ -233,11 +251,21 @@ jobs:
         with:
           template: .github/comment-valgrind-template.md
           vars: |
-           py3_9:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9 }}"
-           py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
-           py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"
-           py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
-           py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
+            py3_9_5_7:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9_5_7 }}"
+            py3_9_5_8:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9_5_8 }}"
+            py3_9_5_9:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9_5_9 }}"
+            py3_10_5_7: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10_5_7 }}"
+            py3_10_5_8: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10_5_8 }}"
+            py3_10_5_9: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10_5_9 }}"
+            py3_11_5_7: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11_5_7 }}"
+            py3_11_5_8: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11_5_8 }}"
+            py3_11_5_9: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11_5_9 }}"
+            py3_12_5_7: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12_5_7 }}"
+            py3_12_5_8: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12_5_8 }}"
+            py3_12_5_9: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12_5_9 }}"
+            py3_13_5_7: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13_5_7 }}"
+            py3_13_5_8: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13_5_8 }}"
+            py3_13_5_9: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13_5_9 }}"
 
       - name: Create A Comment For PR
         uses: peter-evans/create-or-update-comment@v4
