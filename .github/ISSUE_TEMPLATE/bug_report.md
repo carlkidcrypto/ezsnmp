@@ -13,11 +13,15 @@ ex. 1.0.0 OR abcd1234
 **Operating System and Version**
 
 - OS: [e.g. macOS, Ubuntu, RHEL, CentOS, Fedora, etc.]
-- Version [e.g. 22]
+- Version: [e.g. 22]
+
+**Python 3 Version**
+Run `python3 --version` and specify the output below:
+- Python 3 Version: [e.g. 3.9.5]
 
 **Net-SNMP Library Version**
 
-- 5.x.x
+- Net-SNMP Version: [e.g. 5.x.x]
 
 **Describe the bug**
 A clear and concise description of what the bug is.
