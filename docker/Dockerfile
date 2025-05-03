@@ -19,6 +19,8 @@ WORKDIR /ezsnmp
 RUN wget -O net-snmp.zip https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download && \
     unzip net-snmp.zip && \
     cd net-snmp-5.9.4 && \
-    ./configure --with-defaults --disable-manual --without-perl-modules --disable-embedded-perl && \
+    ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
     make -j$(nproc) && \
-    make install
+    make install && \
+    mkdir -p /usr/share/snmp/mibs && \
+    cp -r mibs/* /usr/share/snmp/mibs/
