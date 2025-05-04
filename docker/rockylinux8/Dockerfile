@@ -1,18 +1,15 @@
 # Use Rocky Linux 8 as the base image
 FROM rockylinux:8
 
-# Update package manager and install dependencies
-RUN dnf update -y && \
-    dnf install -y \
-    wget \
-    unzip \
-    file \
-    make \
-    python3.9 \
-    python39-devel \
-    python3-pip \
-    gcc-c++  && \
-    dnf clean all
+# Update system
+RUN dnf update -y
+
+# Install required tools
+RUN dnf install -y findutils
+
+# Install dependencies
+COPY dnf-requirements.txt /tmp/dnf-requirements.txt
+RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
 
 # Install net-snmp from source
 WORKDIR /ezsnmp
@@ -23,4 +20,5 @@ RUN wget -O net-snmp.zip https://sourceforge.net/projects/net-snmp/files/net-snm
     make -j$(nproc) && \
     make install && \
     mkdir -p /usr/share/snmp/mibs && \
-    cp -r mibs/* /usr/share/snmp/mibs/
+    cp -r mibs/* /usr/share/snmp/mibs/ && \
+    ldconfig

@@ -4,6 +4,6 @@ services:
       context: .
     container_name: snmp_container
     volumes:
-      - ../:/ezsnmp
+      - ../../:/ezsnmp
     working_dir: /ezsnmp
-    entrypoint: ["/ezsnmp/docker/DockerEntry.sh"]
+    entrypoint: ["/ezsnmp/docker/rockylinux8/DockerEntry.sh"]

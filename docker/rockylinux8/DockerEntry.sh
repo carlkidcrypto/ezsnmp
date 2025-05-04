@@ -4,7 +4,7 @@ echo "Installing Python dependencies..."
 python3.9 -m pip install --upgrade pip
 python3.9 -m pip install -r /ezsnmp/requirements.txt
 python3.9 -m pip install -r /ezsnmp/python_tests/requirements.txt
-python3.9 -m pip install ezsnmp==2.0.0
+python3.9 -m pip install /ezsnmp/. --verbose
 
 echo "Ensuring SNMP configuration directory exists..."
 mkdir -p /etc/snmp
