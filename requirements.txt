@@ -14,6 +14,6 @@ tomli==2.2.1
 setuptools==79.0.1
 urllib3==2.4.0
 build==1.2.2
-cibuildwheel==2.23.2
+cibuildwheel==2.23.3
 pip==25.0.1
 wheel==0.46.1
