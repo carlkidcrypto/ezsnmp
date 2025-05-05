@@ -21,5 +21,5 @@ RUN wget -O net-snmp.zip https://sourceforge.net/projects/net-snmp/files/net-snm
     make install && \
     mkdir -p /usr/share/snmp/mibs && \
     cp -r mibs/* /usr/share/snmp/mibs/ && \
-    echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf
+    echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
     ldconfig

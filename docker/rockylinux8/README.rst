@@ -21,6 +21,14 @@ To build the Docker image, navigate to the `docker/rockylinux8` directory and ru
 
 This assumes that you have Docker installed and running on your system. The script will build the Docker image using the `Dockerfile` in the current directory.
 
+If you want to clean up any intermediate or dangling Docker images before building, you can use the `--clean` flag:
+
+.. code-block:: bash
+
+    ./go_docker.sh --clean
+
+The `--clean` flag ensures that your Docker environment is tidy by removing unnecessary images before proceeding with the build.
+
 Running the Container
 ---------------------
 The ./go_docker.sh script will also run the container after building the image. You can customize the script to pass additional arguments to the `docker run` command if needed.

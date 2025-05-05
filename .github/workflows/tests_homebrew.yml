@@ -183,16 +183,13 @@ jobs:
       - name: Parse Valgrind Reports
         run: |
           python - << "EOF"
-          from re import split
           with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
-            data = f.read()
-          blocks = split(r'==[0-9]+==\s\n', data)
-          snmp = list(filter(lambda b: 'snmp' in b, blocks[1:]))
+              data = f.readlines()
+          last_five_lines = data[-5:]
           with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log', 'w') as f:
-            f.write('```sh\n')
-            f.writelines(filter(lambda b: all(filt not in b for filt in ('invalid file descriptor', 'alternative log')), snmp))
-            f.write(blocks[-2])
-            f.write('```\n')
+              f.write('```sh\n')
+              f.writelines(last_five_lines)
+              f.write('```\n')
           EOF
 
       - name: Upload Stripped Valgrind Reports
