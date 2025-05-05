@@ -16,14 +16,20 @@ fi
 docker-compose build
 docker-compose up -d
 
-# Allow time for the container to start
-# and install the dependencies
-for i in {120..1}; do
+# Wait for the container to start by checking its logs
+WAIT_TIME=120
+for i in $(seq $WAIT_TIME -1 1); do
+    if docker logs snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
+        echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"
+        break
+    fi
     echo -ne "Waiting for container to start... $i seconds remaining\r"
     sleep 1
 done
 echo -ne "\n"
 
+# Show the last logs after waiting or early stop
+docker logs snmp_container --details --tail 5
+
 # Join the container
 docker exec -it snmp_container /bin/bash
-# docker logs snmp_container --details
