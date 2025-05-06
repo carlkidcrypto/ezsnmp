@@ -6,4 +6,4 @@ services:
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp
-    entrypoint: ["/ezsnmp/docker/almalinux10beta/DockerEntry.sh"]
+    entrypoint: ["/ezsnmp/docker/almalinux10/DockerEntry.sh"]
