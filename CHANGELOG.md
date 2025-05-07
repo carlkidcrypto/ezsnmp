@@ -255,6 +255,97 @@
 
 ---
 
+<a name="v2.0.0"></a>
+## [v2.0.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0b3...v2.0.0) (2025-04-21)
+
+### Bump
+
+* Bump pytest-cov from 6.0.0 to 6.1.1 ([#333](https://github.com/carlkidcrypto/ezsnmp/issues/333))
+* Bump wheel from 0.45.1 to 0.46.1 ([#334](https://github.com/carlkidcrypto/ezsnmp/issues/334))
+* Bump urllib3 from 2.3.0 to 2.4.0 ([#335](https://github.com/carlkidcrypto/ezsnmp/issues/335))
+* Bump pycodestyle from 2.12.1 to 2.13.0 ([#327](https://github.com/carlkidcrypto/ezsnmp/issues/327))
+* Bump pyflakes from 3.2.0 to 3.3.2 ([#329](https://github.com/carlkidcrypto/ezsnmp/issues/329))
+* Bump flake8 from 7.1.2 to 7.2.0 ([#330](https://github.com/carlkidcrypto/ezsnmp/issues/330))
+* Bump coverage from 7.7.1 to 7.8.0 ([#331](https://github.com/carlkidcrypto/ezsnmp/issues/331))
+* Bump termcolor from 2.5.0 to 3.0.1 ([#332](https://github.com/carlkidcrypto/ezsnmp/issues/332))
+* Bump setuptools from 77.0.3 to 78.1.0 ([#324](https://github.com/carlkidcrypto/ezsnmp/issues/324))
+
+
+<a name="v2.0.0b3"></a>
+## [v2.0.0b3](https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0b2...v2.0.0b3) (2025-03-27)
+
+### 297
+
+* 297 bug   fix failing uts for new  o options ([#318](https://github.com/carlkidcrypto/ezsnmp/issues/318))
+
+### 303
+
+* 303 bug session parameters in v200b2   better compatiblity with v1xx ([#307](https://github.com/carlkidcrypto/ezsnmp/issues/307))
+
+### Bump
+
+* Bump pyparsing from 3.2.1 to 3.2.3 ([#323](https://github.com/carlkidcrypto/ezsnmp/issues/323))
+* Bump cibuildwheel from 2.23.1 to 2.23.2 ([#320](https://github.com/carlkidcrypto/ezsnmp/issues/320))
+* Bump tj-actions/changed-files ([#319](https://github.com/carlkidcrypto/ezsnmp/issues/319))
+* Bump setuptools from 75.8.2 to 77.0.3 ([#316](https://github.com/carlkidcrypto/ezsnmp/issues/316))
+* Bump coverage from 7.6.12 to 7.7.1 ([#317](https://github.com/carlkidcrypto/ezsnmp/issues/317))
+* Bump platformdirs from 4.3.6 to 4.3.7 ([#315](https://github.com/carlkidcrypto/ezsnmp/issues/315))
+* Bump cibuildwheel from 2.23.0 to 2.23.1 ([#311](https://github.com/carlkidcrypto/ezsnmp/issues/311))
+* Bump attrs from 25.1.0 to 25.3.0 ([#310](https://github.com/carlkidcrypto/ezsnmp/issues/310))
+* Bump breathe from 4.35.0 to 4.36.0 ([#300](https://github.com/carlkidcrypto/ezsnmp/issues/300))
+* Bump setuptools from 75.8.0 to 75.8.2 ([#302](https://github.com/carlkidcrypto/ezsnmp/issues/302))
+* Bump cibuildwheel from 2.22.0 to 2.23.0 ([#304](https://github.com/carlkidcrypto/ezsnmp/issues/304))
+* Bump pytest from 8.3.4 to 8.3.5 ([#305](https://github.com/carlkidcrypto/ezsnmp/issues/305))
+* Bump sphinx from 8.2.0 to 8.2.3 ([#306](https://github.com/carlkidcrypto/ezsnmp/issues/306))
+* Bump pip from 25.0 to 25.0.1 ([#293](https://github.com/carlkidcrypto/ezsnmp/issues/293))
+* Bump coverage from 7.6.10 to 7.6.12 ([#294](https://github.com/carlkidcrypto/ezsnmp/issues/294))
+* Bump flake8 from 7.1.1 to 7.1.2 ([#295](https://github.com/carlkidcrypto/ezsnmp/issues/295))
+* Bump sphinx from 8.1.3 to 8.2.0 ([#296](https://github.com/carlkidcrypto/ezsnmp/issues/296))
+
+### Update
+
+* Update session.py
+
+
+<a name="v2.0.0b2"></a>
+## [v2.0.0b2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0b1...v2.0.0b2) (2025-02-19)
+
+### 289
+
+* 289 bug session parameters are missing in v200b1 ([#298](https://github.com/carlkidcrypto/ezsnmp/issues/298))
+
+### 290
+
+* 290 bug   all ezsnmp exceptions should inherit from genericerror ([#291](https://github.com/carlkidcrypto/ezsnmp/issues/291))
+
+### Update
+
+* Update auto_change_log.yml ([#286](https://github.com/carlkidcrypto/ezsnmp/issues/286))
+
+
+<a name="v2.0.0b1"></a>
+## [v2.0.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0b0...v2.0.0b1) (2025-01-30)
+
+### 281
+
+* 281 bug unable to import ezexceptions with ezsnmp v200b0 ([#285](https://github.com/carlkidcrypto/ezsnmp/issues/285))
+
+### Bump
+
+* Bump attrs from 24.3.0 to 25.1.0 ([#282](https://github.com/carlkidcrypto/ezsnmp/issues/282))
+* Bump pip from 24.3.1 to 25.0 ([#283](https://github.com/carlkidcrypto/ezsnmp/issues/283))
+* Bump black from 24.10.0 to 25.1.0 ([#284](https://github.com/carlkidcrypto/ezsnmp/issues/284))
+* Bump setuptools from 75.7.0 to 75.8.0 ([#274](https://github.com/carlkidcrypto/ezsnmp/issues/274))
+
+### Cleanup
+
+* Cleanup ([#279](https://github.com/carlkidcrypto/ezsnmp/issues/279))
+
+### PyPi
+
+* PyPi ([#278](https://github.com/carlkidcrypto/ezsnmp/issues/278))
+
+
 <a name="v2.0.0b0"></a>
 ## [v2.0.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0a5...v2.0.0b0) (2025-01-11)
 
