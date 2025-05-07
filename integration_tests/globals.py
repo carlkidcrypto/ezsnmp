@@ -1,82 +1,81 @@
-""""
+"""
 A module that contains global variables and functions that are used in the integration tests.
 """
 
-from random import randint
+from random import randint, uniform
 from ezsnmp.session import Session
-from ezsnmp.exceptions import EzSNMPConnectionError, EzSNMPError
 from os import getpid
 from threading import get_native_id
+from time import sleep
 
 SESS_V1_ARGS = {
-    "version": 1,
+    "version": "1",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "community": "public",
-    "retry_no_such": True,
 }
 
 SESS_V2_ARGS = {
-    "version": 2,
+    "version": "2c",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "community": "public",
 }
 
 SESS_V3_MD5_DES_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial_md5_des",
     "privacy_protocol": "DES",
-    "privacy_password": "priv_pass",
-    "auth_password": "auth_pass",
+    "privacy_passphrase": "priv_pass",
+    "auth_passphrase": "auth_pass",
 }
 
 SESS_V3_MD5_AES_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "MD5",
     "security_level": "authPriv",
     "security_username": "initial_md5_aes",
     "privacy_protocol": "AES",
-    "privacy_password": "priv_pass",
-    "auth_password": "auth_pass",
+    "privacy_passphrase": "priv_pass",
+    "auth_passphrase": "auth_pass",
 }
 
 SESS_V3_SHA_AES_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "SHA",
     "security_level": "authPriv",
     "security_username": "secondary_sha_aes",
     "privacy_protocol": "AES",
-    "privacy_password": "priv_second",
-    "auth_password": "auth_second",
+    "privacy_passphrase": "priv_second",
+    "auth_passphrase": "auth_second",
 }
 
 SESS_V3_SHA_NO_PRIV_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "SHA",
     "security_level": "authNoPriv",
     "security_username": "secondary_sha_no_priv",
-    "auth_password": "auth_second",
+    "auth_passphrase": "auth_second",
 }
 
 SESS_V3_MD5_NO_PRIV_ARGS = {
-    "version": 3,
+    "version": "3",
     "hostname": "localhost",
-    "remote_port": 11161,
+    "port_number": "11161",
     "auth_protocol": "MD5",
-    "security_level": "auth_without_privacy",
+    "security_level": "authNoPriv",
     "security_username": "initial_md5_no_priv",
-    "auth_password": "auth_pass",
+    "auth_passphrase": "auth_pass",
 }
 
 
@@ -99,6 +98,8 @@ SESS_TYPES_NAMES = [
     "SESS_V3_MD5_NO_PRIV_ARGS",
 ]
 
+MAX_RETRIES = 25
+
 # Print SNMP information
 PRINT_SNMP_INFO = False
 
@@ -108,8 +109,14 @@ def worker(request_type: str):
     are_we_done = False
     connection_error_counter = 0
     usm_unknown_security_name_counter = 0
+    err_gen_ku_key_counter = 0
+    netsnmp_parse_args_error_counter = 0
+
     while are_we_done != True:
         try:
+            # Give our SNMPD server some varing breathing room...
+            sleep(uniform(0.0, 2.5))
+
             sess_type = randint(0, len(SESS_TYPES) - 1)
             sess = Session(**SESS_TYPES[sess_type])
 
@@ -118,9 +125,7 @@ def worker(request_type: str):
             )
 
             if request_type == "get":
-                test = sess.get(
-                    [("sysUpTime", "0"), ("sysContact", "0"), ("sysLocation", "0")]
-                )
+                test = sess.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
 
                 # Access the result to ensure that the data is actually retrieved
                 for item in test:
@@ -139,8 +144,8 @@ def worker(request_type: str):
 
                 del test
 
-            elif request_type == "bulkwalk" and sess.version != 1:
-                test = sess.bulkwalk(".")
+            elif request_type == "bulkwalk" and sess.version != "1":
+                test = sess.bulk_walk(".")
 
                 # Access the result to ensure that the data is actually retrieved
                 for item in test:
@@ -151,31 +156,47 @@ def worker(request_type: str):
 
             del sess
             are_we_done = True
-            print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
-            print(f"\t\tconnection_error_counter: {connection_error_counter}")
-            print(
-                f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}"
-            )
 
-        except EzSNMPConnectionError:
-            # We bombarded the SNMP server with too many requests...
-            # print(
-            #     f"\tEzSNMPConnectionError: Connection to the SNMP server was lost. For a worker with PID: {getpid()} and TID: {get_native_id()}"
-            # )
-            connection_error_counter += 1
+        except Exception as e:
 
-            if connection_error_counter >= 10:
-                are_we_done = True
+            if (
+                "Timeout: No Response from" in str(e)
+                or "Resource temporarily unavailable" in str(e)
+                or "Unknown host" in str(e)
+            ):
+                connection_error_counter += 1
 
-        except EzSNMPError as e:
-            if str(e) == "USM unknown security name (no such user exists)":
-                # print(
-                #     f"\tEzSNMPError: {e}. For a worker with PID: {getpid()} and TID: {get_native_id()}"
-                # )
+                if connection_error_counter >= MAX_RETRIES:
+                    are_we_done = True
+
+            elif "USM unknown security name (no such user exists)" in str(e):
                 usm_unknown_security_name_counter += 1
 
-                if usm_unknown_security_name_counter >= 10:
+                if usm_unknown_security_name_counter >= MAX_RETRIES:
+                    are_we_done = True
+
+            elif (
+                "Error generating a key (Ku) from the supplied authentication pass phrase"
+                in str(e)
+            ):
+                err_gen_ku_key_counter += 1
+
+                if err_gen_ku_key_counter >= MAX_RETRIES:
+                    are_we_done = True
+
+            elif "NETSNMP_PARSE_ARGS_ERROR" in str(e):
+
+                netsnmp_parse_args_error_counter += 1
+
+                if netsnmp_parse_args_error_counter >= MAX_RETRIES:
                     are_we_done = True
 
             else:
+                print(f"sess.args: {sess.args}")
                 raise e
+
+    print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
+    print(f"\t\tconnection_error_counter: {connection_error_counter}")
+    print(f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}")
+    print(f"\t\terr_gen_ku_key_counter: {err_gen_ku_key_counter}")
+    print(f"\t\tnetsnmp_parse_args_error_counter: {netsnmp_parse_args_error_counter}")

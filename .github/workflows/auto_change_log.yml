@@ -1,0 +1,72 @@
+name: "Update Changelog"
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    update-changelog:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup git-chglog
+              uses: carlkidcrypto/os-specific-runner@v2.1.2
+              with:
+                  linux: |
+                      sudo snap install go --classic
+                      go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+
+            - name: Generate CHANGELOG.md
+              id: generate
+              uses: carlkidcrypto/os-specific-runner@v2.1.2
+              with:
+                linux: |
+                  rm -f CHANGELOG.md
+                  echo "PATH=$PATH:/usr/bin" >> $GITHUB_ENV
+                  ~/go/bin/git-chglog --config /home/runner/work/ezsnmp/ezsnmp/.chglog/config.yml -o CHANGELOG.md
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --global user.name "GitHub Actions"
+                  git add CHANGELOG.md
+                  git commit -m "chore: update CHANGELOG.md" --no-verify
+                  git push origin HEAD:main --force
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    create-changelog-pr:
+        runs-on: ubuntu-latest
+        needs: update-changelog
+
+        steps:
+            - name: Create Pull Request
+              id: create-pr
+              uses: peter-evans/create-pull-request@v7
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  commit-message: "chore: update CHANGELOG.md"
+                  title: "📝 Update Changelog"
+                  body: |
+                      This PR updates the CHANGELOG.md to include all releases.
+                      - Generated using git-chglog
+                      - Triggered by: ${{ github.event_name }}
+                      - Auto-merge enabled
+                  branch: update-changelog-${{ github.run_id }}
+                  base: main
+                  delete-branch: true
+                  labels: documentation, automated-pr
+
+            - name: Enable Auto-merge
+              run: |
+                  PR_URL="${{ steps.create-pr.outputs.pull-request-url }}"
+                  PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+                  gh pr merge --auto --merge "$PR_NUMBER"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

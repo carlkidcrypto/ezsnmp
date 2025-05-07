@@ -1,10 +1,11 @@
 .. toctree::
    :maxdepth: 8
 
-   compat
-   exceptions
-   ez
-   helpers
-   session
-   utils
-   variables
+   migration_guide
+   datatypes_cpp
+   development
+   exceptions_python
+   exceptionsbase_cpp
+   session_python
+   sessionbase_cpp
+   swig_interface_files

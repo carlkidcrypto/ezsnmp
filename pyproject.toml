@@ -1,44 +1,67 @@
 [tool.cibuildwheel]
-manylinux-x86_64-image = "manylinux2014"
-skip = "cp27-* cp36-* cp37-* pp27-* pp36-* pp37-*"
+manylinux-x86_64-image = "manylinux_2_28"
+# No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
+skip = "cp27-* cp36-* cp37-* cp38-* pp*"
 
 [[tool.cibuildwheel.overrides]]
-select = "*manylinux_2_24*"
-before-all = """apt-get --assume-yes install wget unzip;
-                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
+select = "*manylinux_2_2*"
+before-all = """apt-get --assume-yes install wget unzip openssl libssl-dev;
+                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download;
                 unzip download;
                 cd net-snmp-5.9.4;
-                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
-                make ;
-                make install ;"""
+                ./configure --with-defaults --disable-mibs  --disable-manual --without-perl-modules --disable-embedded-perl;
+                make -j$(nproc);
+                make install;
+                echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf;
+                ldconfig;"""
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
-before-all = "apk add net-snmp-dev;"
+before-all = "apk add net-snmp-dev openssl openssl-dev;"
 
 [tool.cibuildwheel.linux]
-before-all = """yum -y install wget;
+before-all = """yum -y install wget openssl openssl-devel;
                 wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
                 unzip download;
                 cd net-snmp-5.9.4;
-                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
-                make ;
-                make install ;"""
+                ./configure --with-defaults --disable-mibs  --disable-manual --without-perl-modules --disable-embedded-perl;
+                make -j$(nproc);
+                make install;
+                echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf;
+                ldconfig;"""
+repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-before-all = """brew update;
-    brew install openssl@3;
-    brew install net-snmp;
-    echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
-    export PATH="/usr/local/opt/net-snmp/bin:$PATH";
-    echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
-    export PATH="/usr/local/opt/net-snmp/sbin:$PATH";"""
-archs = ["x86_64"]
+environment = { PATH = "$HOME/opt/local/bin:$HOME/opt/local/sbin:$HOME/opt/local/include:$HOME/opt/local/lib:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0", DYLD_LIBRARY_PATH = "$HOME/opt/local/lib:$DYLD_LIBRARY_PATH" }
+archs="x86_64 arm64"
+before-all = """
+          mkdir -p $HOME/opt/mports;
+          rm -rf $HOME/opt/mports/*;
+          cd $HOME/opt/mports;
+          rm -f MacPorts-2.10.2.tar.gz;
+          curl -L https://github.com/macports/macports-base/releases/download/v2.10.2/MacPorts-2.10.2.tar.gz -o MacPorts-2.10.2.tar.gz;
+          tar -xzvf MacPorts-2.10.2.tar.gz;
+          cd $HOME/opt/mports/MacPorts-2.10.2;
+          ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`;
+          make;
+          make install;
+          make distclean;
+          port -N selfupdate;
+          port -N clean net-snmp openssl gettext;
+          port -N install gettext;
+          port -N install net-snmp openssl;
+          port -N upgrade net-snmp openssl;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-    "setuptools == 72.1.0",
-    "wheel == 0.43.0",
+   "setuptools == 80.3.1",
+    "wheel == 0.46.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = "tests"
+addopts = [
+    "--import-mode=importlib",
 ]
