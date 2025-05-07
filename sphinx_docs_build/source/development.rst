@@ -143,3 +143,16 @@ For python3 code:
 .. code:: bash
 
     python3 -m black .
+
+Generating The CHANGELOG.md
+---------------------------
+To generate the changelog, run the following command:
+
+.. code:: bash
+
+    sudo snap install go --classic
+    go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+    rm -rf CHANGELOG.md
+    ~/go/bin/git-chglog --config .chglog/config.yml -o CHANGELOG.md
+    git add CHANGELOG.md
+    git commit -m "Updated CHANGELOG.md"
