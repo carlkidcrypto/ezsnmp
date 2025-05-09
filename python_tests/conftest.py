@@ -5,6 +5,7 @@ from .session_parameters import (
     SESS_V1_ARGS,
     SESS_V2_ARGS,
     SESS_V3_MD5_DES_ARGS,
+    SESS_V3_MD5_DES_ARGS_IPV6,
     SESS_V3_MD5_AES_ARGS,
     SESS_V3_SHA_AES_ARGS,
     SESS_V3_SHA_NO_PRIV_ARGS,
@@ -101,6 +102,11 @@ def reset_values():
 @pytest.fixture
 def sess_v3_md5_des():
     return SESS_V3_MD5_DES_ARGS
+
+
+@pytest.fixture
+def sess_v3_md5_des_ipv6():
+    return SESS_V3_MD5_DES_ARGS_IPV6
 
 
 @pytest.fixture

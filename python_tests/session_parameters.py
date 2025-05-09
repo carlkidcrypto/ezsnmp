@@ -27,6 +27,19 @@ SESS_V3_MD5_DES_ARGS = {
     "timeout": "5",
 }
 
+SESS_V3_MD5_DES_ARGS_IPV6 = {
+    "version": "3",
+    "hostname": "[::1]",
+    "port_number": "11161",
+    "auth_protocol": "MD5",
+    "security_level": "authPriv",
+    "security_username": "initial_md5_des",
+    "privacy_protocol": "DES",
+    "privacy_passphrase": "priv_pass",
+    "auth_passphrase": "auth_pass",
+    "timeout": "5",
+}
+
 SESS_V3_MD5_AES_ARGS = {
     "version": "3",
     "hostname": "localhost",
