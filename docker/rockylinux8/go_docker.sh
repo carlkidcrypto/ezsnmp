@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 CONTAINER_NAME="snmp_container"
-sudo chown carlkidcrypto /var/run/docker.sock
+sudo chown $USER /var/run/docker.sock
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     docker stop $CONTAINER_NAME
 fi
