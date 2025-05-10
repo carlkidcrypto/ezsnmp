@@ -12,6 +12,8 @@ mkdir -p /etc/snmp
 echo "Copying SNMP configuration..."
 cp /ezsnmp/python_tests/snmpd.conf /etc/snmp/snmpd.conf
 
+download-mibs
+
 echo "Starting SNMP daemon with custom engine ID..."
 CUSTOM_ENGINE_ID="0x8000000001020304"
 cd /usr/sbin

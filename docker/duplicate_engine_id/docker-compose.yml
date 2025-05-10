@@ -10,8 +10,6 @@ services:
     build:
       context: .
     container_name: main_container
-    volumes:
-      - ../../:/ezsnmp
     working_dir: /ezsnmp
     entrypoint: ["/ezsnmp/docker/duplicate_engine_id/DockerEntry.sh"]
     networks:
@@ -22,8 +20,6 @@ services:
     build:
       context: .
     container_name: second_container
-    volumes:
-      - ../../:/ezsnmp
     working_dir: /ezsnmp
     entrypoint: ["/ezsnmp/docker/duplicate_engine_id/DockerEntry.sh"]
     networks:
@@ -34,8 +30,6 @@ services:
     build:
       context: .
     container_name: third_container
-    volumes:
-      - ../../:/ezsnmp
     working_dir: /ezsnmp
     entrypoint: ["/ezsnmp/docker/duplicate_engine_id/DockerEntry.sh"]
     networks:
