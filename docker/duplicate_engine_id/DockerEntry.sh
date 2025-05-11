@@ -1,10 +1,15 @@
 #!/bin/bash -e
 
+source /home/$USERNAME/bin/activate
+
+echo "Checking for sourced environment..."
+python3 -m site --user-site
+
 echo "Installing Python dependencies..."
-python3 -m pip install --upgrade pip
-python3 -m pip install -r /ezsnmp/requirements.txt
-python3 -m pip install -r /ezsnmp/python_tests/requirements.txt
-python3 -m pip install /ezsnmp/. --verbose
+python3 -m pip install --upgrade pip --user
+python3 -m pip install -r /ezsnmp/requirements.txt --user
+python3 -m pip install -r /ezsnmp/python_tests/requirements.txt --user
+python3 -m pip install /ezsnmp/. --verbose --user
 
 echo "Ensuring SNMP configuration directory exists..."
 mkdir -p /etc/snmp

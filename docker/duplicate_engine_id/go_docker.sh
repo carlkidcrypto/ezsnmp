@@ -15,25 +15,48 @@ if [[ "$1" == "--clean" ]]; then
     docker system prune -af
 fi
 
-docker-compose build
+export USERNAME=$(whoami)
+export USER_UID=$(id -u)
+export USER_GID=$(id -g)
+
+docker build --build-arg USERNAME="$USERNAME" \
+             --build-arg USER_UID="$USER_UID" \
+             --build-arg USER_GID="$USER_GID" \
+             .
+
+# docker-compose build
 docker-compose up -d
 
-# Wait for the containers to start by checking their logs
+# Wait for all containers to start by checking their logs
 WAIT_TIME=120
-for CONTAINER_NAME in "${CONTAINERS[@]}"; do
-    for i in $(seq $WAIT_TIME -1 1); do
-        if docker logs $CONTAINER_NAME 2>&1 | grep -q "Starting SNMP daemon..."; then
-            echo -ne "\n$CONTAINER_NAME started successfully in $((WAIT_TIME - i)) seconds.\n"
-            break
-        fi
-        echo -ne "Waiting for $CONTAINER_NAME to start... $i seconds remaining\r"
-        sleep 1
-    done
-    echo -ne "\n"
+declare -A CONTAINER_STATUS
 
-    # Show the last logs after waiting or early stop
-    docker logs $CONTAINER_NAME --details --tail 5
+for CONTAINER_NAME in "${CONTAINERS[@]}"; do
+    CONTAINER_STATUS["$CONTAINER_NAME"]=0
 done
+
+for i in $(seq $WAIT_TIME -1 1); do
+    for CONTAINER_NAME in "${CONTAINERS[@]}"; do
+        if [[ ${CONTAINER_STATUS["$CONTAINER_NAME"]} -eq 0 ]]; then
+            if docker logs "$CONTAINER_NAME" 2>&1 | grep -q "Starting SNMP daemon..."; then
+                echo -ne "\n$CONTAINER_NAME started successfully in $((WAIT_TIME - i)) seconds.\n"
+                CONTAINER_STATUS["$CONTAINER_NAME"]=1
+            fi
+        fi
+    done
+
+    # Check if all containers have started
+    if [[ $(printf "%s\n" "${CONTAINER_STATUS[@]}" | grep -c 0) -eq 0 ]]; then
+        break
+    fi
+
+    echo -ne "Waiting for containers to start... $i seconds remaining\r"
+    sleep 1
+done
+echo -ne "\n"
+
+# Show the last logs after waiting or early stop
+docker logs snmp_container --details --tail 5
 
 # Join the container
 docker exec -it snmp_container /bin/bash

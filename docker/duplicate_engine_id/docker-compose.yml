@@ -12,6 +12,7 @@ services:
     container_name: main_container
     working_dir: /ezsnmp
     entrypoint: ["/ezsnmp/docker/duplicate_engine_id/DockerEntry.sh"]
+    user: "${USER_UID}"
     networks:
       local_network:
         ipv4_address: 192.168.1.2
@@ -22,6 +23,7 @@ services:
     container_name: second_container
     working_dir: /ezsnmp
     entrypoint: ["/ezsnmp/docker/duplicate_engine_id/DockerEntry.sh"]
+    user: "${USER_UID}"
     networks:
       local_network:
         ipv4_address: 192.168.1.3
@@ -32,6 +34,7 @@ services:
     container_name: third_container
     working_dir: /ezsnmp
     entrypoint: ["/ezsnmp/docker/duplicate_engine_id/DockerEntry.sh"]
+    user: "${USER_UID}"
     networks:
       local_network:
         ipv4_address: 192.168.1.4
