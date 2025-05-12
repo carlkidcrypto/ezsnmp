@@ -76,9 +76,11 @@ ENV PATH="/home/${USERNAME}/.venv/bin:$PATH"
 # in the virtual environment
 RUN chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.venv
 
-RUN mkdir -p /opt/venv/
-RUN chown -R ${USERNAME}:${USERNAME} /opt/venv/
-RUN chmod -R 777 /opt/venv/
+# Ensure SNMP configuration directory exists
+RUN mkdir -p /etc/snmp
+
+# Download MIBs
+RUN download-mibs
 
 # Switch to the newly created user
 USER ${USERNAME}
