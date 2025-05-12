@@ -31,5 +31,8 @@ echo -ne "\n"
 # Show the last logs after waiting or early stop
 docker logs snmp_container --details --tail 5
 
+# Run pytest inside the container
+docker exec -it $CONTAINER_NAME pytest python_tests/
+
 # Join the container
-docker exec -it snmp_container /bin/bash
+docker exec -it $CONTAINER_NAME /bin/bash

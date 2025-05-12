@@ -1,7 +1,9 @@
 #!/bin/bash -e
 
-CONTAINERS=("main_container" "second_container" "third_container")
 sudo chown $USER /var/run/docker.sock
+
+CONTAINERS=("main_container" "second_container" "third_container")
+
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
     if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
         docker stop $CONTAINER_NAME
@@ -56,7 +58,7 @@ done
 echo -ne "\n"
 
 # Show the last logs after waiting or early stop
-docker logs snmp_container --details --tail 5
+docker logs main_container --details --tail 5
 
 # Join the container
 docker exec -it main_container /bin/bash
