@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-sudo chown $USER /var/run/docker.sock
+# sudo chown $USER /var/run/docker.sock
 
 CONTAINERS=("main_container" "second_container" "third_container")
 
@@ -31,24 +31,25 @@ docker-compose up -d
 
 # Wait for all containers to start by checking their logs
 WAIT_TIME=120
-declare -A CONTAINER_STATUS
+CONTAINER_STATUS=()
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
-    CONTAINER_STATUS["$CONTAINER_NAME"]=0
+    CONTAINER_STATUS+=("$CONTAINER_NAME:0")
 done
 
 for i in $(seq $WAIT_TIME -1 1); do
-    for CONTAINER_NAME in "${CONTAINERS[@]}"; do
-        if [[ ${CONTAINER_STATUS["$CONTAINER_NAME"]} -eq 0 ]]; then
+    for index in "${!CONTAINER_STATUS[@]}"; do
+        IFS=":" read -r CONTAINER_NAME STATUS <<< "${CONTAINER_STATUS[$index]}"
+        if [[ $STATUS -eq 0 ]]; then
             if docker logs "$CONTAINER_NAME" 2>&1 | grep -q "Starting SNMP daemon with custom engine ID..."; then
                 echo -ne "\n$CONTAINER_NAME started successfully in $((WAIT_TIME - i)) seconds.\n"
-                CONTAINER_STATUS["$CONTAINER_NAME"]=1
+                CONTAINER_STATUS[$index]="$CONTAINER_NAME:1"
             fi
         fi
     done
 
     # Check if all containers have started
-    if [[ $(printf "%s\n" "${CONTAINER_STATUS[@]}" | grep -c 0) -eq 0 ]]; then
+    if [[ $(printf "%s\n" "${CONTAINER_STATUS[@]}" | grep -c ":0") -eq 0 ]]; then
         break
     fi
 
