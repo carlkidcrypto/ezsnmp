@@ -18,7 +18,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v46.0.3
+        uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
             ezsnmp/*.py
@@ -45,7 +45,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
@@ -102,7 +102,7 @@ jobs:
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Run Tests
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
                  VALGRIND=(
@@ -144,7 +144,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.53
+        uses: MishaKav/pytest-coverage-comment@v1.1.54
         with:
           title: Pytest Coverage Report
           hide-badge: true
@@ -183,16 +183,13 @@ jobs:
       - name: Parse Valgrind Reports
         run: |
           python - << "EOF"
-          from re import split
           with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
-            data = f.read()
-          blocks = split(r'==[0-9]+==\s\n', data)
-          snmp = list(filter(lambda b: 'snmp' in b, blocks[1:]))
+              data = f.readlines()
+          last_five_lines = data[-5:]
           with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log', 'w') as f:
-            f.write('```sh\n')
-            f.writelines(filter(lambda b: all(filt not in b for filt in ('invalid file descriptor', 'alternative log')), snmp))
-            f.write(blocks[-2])
-            f.write('```\n')
+              f.write('```sh\n')
+              f.writelines(last_five_lines)
+              f.write('```\n')
           EOF
 
       - name: Upload Stripped Valgrind Reports

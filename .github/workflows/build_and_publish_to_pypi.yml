@@ -28,7 +28,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build wheels using cibuildwheel
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
           
@@ -75,7 +75,7 @@ jobs:
           python-version: "3.11"
     
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@v2.1.1
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y libsnmp-dev libperl-dev;
@@ -102,8 +102,8 @@ jobs:
           merge-multiple: true
           path: dist/
 
-      - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1.6
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1.12
         with:
           packages_dir: dist/
           verify_metadata: false
