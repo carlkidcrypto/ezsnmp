@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# sudo chown $USER /var/run/docker.sock
+sudo chown $USER /var/run/docker.sock
 
 CONTAINERS=("main_container" "second_container" "third_container")
 

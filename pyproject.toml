@@ -17,7 +17,16 @@ before-all = """apt-get --assume-yes install wget unzip openssl libssl-dev;
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
-before-all = "apk add net-snmp-dev openssl openssl-dev;"
+before-all = """apk add wget unzip openssl openssl-dev;
+                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download;
+                unzip download;
+                cd net-snmp-5.9.4;
+                ./configure --with-defaults --disable-mibs  --disable-manual --without-perl-modules --disable-embedded-perl;
+                make -j$(nproc);
+                make install;
+                mkdir -p /etc/ld.so.conf.d/;
+                echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf;
+                ldconfig;"""
 
 [tool.cibuildwheel.linux]
 before-all = """yum -y install wget openssl openssl-devel;

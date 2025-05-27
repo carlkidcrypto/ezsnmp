@@ -1,5 +1,5 @@
-# Use the latest Ubuntu base image
-FROM ubuntu:latest
+# Use the 24.04 Ubuntu base image
+FROM ubuntu:24.04
 
 # Update package lists and install required packages
 RUN apt-get update && apt-get install -y \
@@ -35,7 +35,7 @@ COPY .  /ezsnmp/docker/duplicate_engine_id
 RUN wget -O net-snmp.zip https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download && \
     unzip net-snmp.zip && \
     cd net-snmp-5.9.4 && \
-    ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl --with-openssl=/usr/lib/x86_64-linux-gnu/ && \
+    ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
     make -j$(nproc) && \
     make install && \
     mkdir -p /usr/share/snmp/mibs && \
