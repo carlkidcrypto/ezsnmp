@@ -265,7 +265,9 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
    return ss.str();
 }
 
-#if NETSNMP_VERSION_MAJOR == 5 && NETSNMP_VERSION_MINOR >= 6 && NETSNMP_VERSION_MINOR < 9
+#if defined(PACKAGE_VERSION) &&    \
+    ((PACKAGE_VERSION[0] == '5' && \
+      (PACKAGE_VERSION[2] == '6' || PACKAGE_VERSION[2] == '7' || PACKAGE_VERSION[2] == '8')))
 
 /* Free the memory owned by a session but not the session object itself. */
 void netsnmp_cleanup_session(netsnmp_session *s) {

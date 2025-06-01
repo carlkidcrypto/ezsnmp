@@ -129,7 +129,10 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen);
  * specifically for versions up to and including 5.6. They provide compatibility
  * for features or APIs that may not be available in older Net-SNMP releases.
  */
-#if NETSNMP_VERSION_MAJOR == 5 && NETSNMP_VERSION_MINOR >= 6 && NETSNMP_VERSION_MINOR < 9
+#if defined(PACKAGE_VERSION) &&    \
+    ((PACKAGE_VERSION[0] == '5' && \
+      (PACKAGE_VERSION[2] == '6' || PACKAGE_VERSION[2] == '7' || PACKAGE_VERSION[2] == '8')))
+
 #define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
 void netsnmp_cleanup_session(netsnmp_session *s);
 void netsnmp_get_monotonic_clock(struct timeval *tv);
