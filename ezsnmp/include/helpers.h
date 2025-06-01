@@ -5,6 +5,7 @@
 #include <net-snmp/net-snmp-includes.h>
 
 #include <memory>
+#include <regex>
 #include <string>
 #include <vector>
 
@@ -129,9 +130,18 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen);
  * specifically for versions up to and including 5.6. They provide compatibility
  * for features or APIs that may not be available in older Net-SNMP releases.
  */
-#if defined(PACKAGE_VERSION) &&    \
-    ((PACKAGE_VERSION[0] == '5' && \
-      (PACKAGE_VERSION[2] == '6' || PACKAGE_VERSION[2] == '7' || PACKAGE_VERSION[2] == '8')))
+#if defined(PACKAGE_VERSION)
+inline bool is_supported_package_version(const std::string &version) {
+   std::regex re(R"(^5\.(6|7|8))");
+   return std::regex_search(version, re);
+}
+
+auto reval = is_supported_package_version(PACKAGE_VERSION);
+#define IS_SUPPORTED_PACKAGE_VERSION retval
+
+#endif
+
+#if defined(IS_SUPPORTED_PACKAGE_VERSION) && IS_SUPPORTED_PACKAGE_VERSION
 
 #define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
 void netsnmp_cleanup_session(netsnmp_session *s);
