@@ -1,5 +1,8 @@
+# This workflow runs tests for the EzSnmp package using native package manager
+# on multiple operating systems and Python versions.
+# It checks for changes in the source code and runs tests only if there are changes.
 name: Tests With Native Package Manager
-concurrency: tests
+concurrency: tests-native
 on:
   push:
     branches: [ main ]
@@ -27,7 +30,6 @@ jobs:
             python_tests/*.conf
             setup.py
             setup.cfg
-            .github/workflows/tests_native.yml
 
   build-and-test:
     runs-on: ${{ matrix.os }}
