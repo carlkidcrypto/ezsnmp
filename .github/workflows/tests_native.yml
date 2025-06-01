@@ -27,6 +27,7 @@ jobs:
             python_tests/*.conf
             setup.py
             setup.cfg
+            .github/workflows/tests_native.yml
 
   build-and-test:
     runs-on: ${{ matrix.os }}
