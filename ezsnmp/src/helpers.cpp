@@ -265,33 +265,29 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
    return ss.str();
 }
 
-
-#if NETSNMP_VERSION_MAJOR < 5 || \
-   (NETSNMP_VERSION_MAJOR == 5 && \
-    (NETSNMP_VERSION_MINOR < 6 || \
-     (NETSNMP_VERSION_MINOR == 6 && \
-      NETSNMP_VERSION_PATCH <= 2 ))) 
+#if NETSNMP_VERSION_MAJOR < 5 ||   \
+    (NETSNMP_VERSION_MAJOR == 5 && \
+     (NETSNMP_VERSION_MINOR < 6 || (NETSNMP_VERSION_MINOR == 6 && NETSNMP_VERSION_PATCH <= 2)))
 
 /* Free the memory owned by a session but not the session object itself. */
-void netsnmp_cleanup_session(netsnmp_session *s)
-{
-    free(s->localname);
-    free(s->peername);
-    free(s->community);
-    free(s->contextEngineID);
-    free(s->contextName);
-    free(s->securityEngineID);
-    free(s->securityName);
-    free(s->securityAuthProto);
-    free(s->securityAuthLocalKey);
-    free(s->securityPrivProto);
-    free(s->securityPrivLocalKey);
-    free(s->paramName);
-// #ifndef NETSNMP_NO_TRAP_STATS
-    // free(s->trap_stats);
-// #endif /* NETSNMP_NO_TRAP_STATS */
-    // usm_free_user(s->sessUser);
-    memset(s, 0, sizeof(*s));
+void netsnmp_cleanup_session(netsnmp_session *s) {
+   free(s->localname);
+   free(s->peername);
+   free(s->community);
+   free(s->contextEngineID);
+   free(s->contextName);
+   free(s->securityEngineID);
+   free(s->securityName);
+   free(s->securityAuthProto);
+   free(s->securityAuthLocalKey);
+   free(s->securityPrivProto);
+   free(s->securityPrivLocalKey);
+   free(s->paramName);
+   // #ifndef NETSNMP_NO_TRAP_STATS
+   // free(s->trap_stats);
+   // #endif /* NETSNMP_NO_TRAP_STATS */
+   // usm_free_user(s->sessUser);
+   memset(s, 0, sizeof(*s));
 }
 
 /**
@@ -304,59 +300,58 @@ void netsnmp_cleanup_session(netsnmp_session *s)
  *
  * @param[out] tv Pointer to monotonic clock time.
  */
-void netsnmp_get_monotonic_clock(struct timeval* tv)
-{
+void netsnmp_get_monotonic_clock(struct timeval *tv) {
 #if defined(HAVE_CLOCK_GETTIME) && defined(CLOCK_MONOTONIC)
-    struct timespec ts;
-    int res;
+   struct timespec ts;
+   int res;
 
-    res = clock_gettime(CLOCK_MONOTONIC, &ts);
-    if (res >= 0) {
-        tv->tv_sec = ts.tv_sec;
-        tv->tv_usec = ts.tv_nsec / 1000;
-    } else {
-        gettimeofday(tv, NULL);
-    }
+   res = clock_gettime(CLOCK_MONOTONIC, &ts);
+   if (res >= 0) {
+      tv->tv_sec = ts.tv_sec;
+      tv->tv_usec = ts.tv_nsec / 1000;
+   } else {
+      gettimeofday(tv, NULL);
+   }
 #elif defined(WIN32)
-    /*
-     * Windows: return tick count. Note: the rate at which the tick count
-     * increases is not adjusted by the time synchronization algorithm, so
-     * expect an error of <= 100 ppm for the rate at which this clock
-     * increases.
-     */
-    typedef ULONGLONG (WINAPI * pfGetTickCount64)(void);
-    static int s_initialized;
-    static pfGetTickCount64 s_pfGetTickCount64;
-    uint64_t now64;
+   /*
+    * Windows: return tick count. Note: the rate at which the tick count
+    * increases is not adjusted by the time synchronization algorithm, so
+    * expect an error of <= 100 ppm for the rate at which this clock
+    * increases.
+    */
+   typedef ULONGLONG(WINAPI * pfGetTickCount64)(void);
+   static int s_initialized;
+   static pfGetTickCount64 s_pfGetTickCount64;
+   uint64_t now64;
 
-    if (!s_initialized) {
-        HMODULE hKernel32 = GetModuleHandle("kernel32");
-        s_pfGetTickCount64 =
-            (pfGetTickCount64) GetProcAddress(hKernel32, "GetTickCount64");
-        s_initialized = TRUE;
-    }
+   if (!s_initialized) {
+      HMODULE hKernel32 = GetModuleHandle("kernel32");
+      s_pfGetTickCount64 = (pfGetTickCount64)GetProcAddress(hKernel32, "GetTickCount64");
+      s_initialized = TRUE;
+   }
 
-    if (s_pfGetTickCount64) {
-        /* Windows Vista, Windows 2008 or any later Windows version */
-        now64 = (*s_pfGetTickCount64)();
-    } else {
-        /* Windows XP, Windows 2003 or any earlier Windows version */
-        static uint32_t s_wraps, s_last;
-        uint32_t now;
+   if (s_pfGetTickCount64) {
+      /* Windows Vista, Windows 2008 or any later Windows version */
+      now64 = (*s_pfGetTickCount64)();
+   } else {
+      /* Windows XP, Windows 2003 or any earlier Windows version */
+      static uint32_t s_wraps, s_last;
+      uint32_t now;
 
-        now = GetTickCount();
-        if (now < s_last)
-            s_wraps++;
-        s_last = now;
-        now64 = ((uint64_t)s_wraps << 32) | now;
-    }
-    tv->tv_sec = now64 / 1000;
-    tv->tv_usec = (now64 % 1000) * 1000;
+      now = GetTickCount();
+      if (now < s_last) {
+         s_wraps++;
+      }
+      s_last = now;
+      now64 = ((uint64_t)s_wraps << 32) | now;
+   }
+   tv->tv_sec = now64 / 1000;
+   tv->tv_usec = (now64 % 1000) * 1000;
 #else
-    /* At least FreeBSD 4 doesn't provide monotonic clock support. */
+   /* At least FreeBSD 4 doesn't provide monotonic clock support. */
 #warning Not sure how to query a monotonically increasing clock on your system. \
 Timers will not work correctly if the system clock is adjusted by e.g. ntpd.
-    gettimeofday(tv, NULL);
+   gettimeofday(tv, NULL);
 #endif
 }
 

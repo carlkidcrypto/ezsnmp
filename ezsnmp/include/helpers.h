@@ -121,14 +121,18 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
  * @return A string representation of the OID.
  */
 std::string print_objid_to_string(oid const *objid, size_t objidlen);
-#if NETSNMP_VERSION_MAJOR < 5 || \
-   (NETSNMP_VERSION_MAJOR == 5 && \
-    (NETSNMP_VERSION_MINOR < 6 || \
-     (NETSNMP_VERSION_MINOR == 6 && \
-      NETSNMP_VERSION_PATCH <= 2 ))) 
+
+/**
+ * @brief Compatibility functions for older Net-SNMP versions (< 5.9, up to 5.6).
+ *
+ * These functions are conditionally compiled for Net-SNMP versions less than 5.9,
+ * specifically for versions up to and including 5.6. They provide compatibility
+ * for features or APIs that may not be available in older Net-SNMP releases.
+ */
+#if NETSNMP_VERSION_MAJOR == 5 && NETSNMP_VERSION_MINOR >= 6 && NETSNMP_VERSION_MINOR < 9
 #define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
 void netsnmp_cleanup_session(netsnmp_session *s);
-void netsnmp_get_monotonic_clock(struct timeval* tv);
+void netsnmp_get_monotonic_clock(struct timeval *tv);
 #endif
 
 /**
