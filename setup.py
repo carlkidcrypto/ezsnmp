@@ -188,6 +188,10 @@ else:
 
             except CalledProcessError:
                 print("A brew command failed...")
+        
+        # Check if both net-snmp and openssl are installed via Homebrew
+        if not homebrew_version and not homebrew_netsnmp_version:
+            raise CalledProcessError("net-snmp and openssl not installed via HomeBrew...")
 
     except CalledProcessError:
         homebrew_version = None
