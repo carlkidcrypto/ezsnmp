@@ -265,7 +265,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
    return ss.str();
 }
 
-#if defined(IS_SUPPORTED_PACKAGE_VERSION) && IS_SUPPORTED_PACKAGE_VERSION
+#if IS_SUPPORTED_PACKAGE_VERSION == true
 
 /* Free the memory owned by a session but not the session object itself. */
 void netsnmp_cleanup_session(netsnmp_session *s) {

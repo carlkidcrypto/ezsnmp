@@ -132,16 +132,16 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen);
  */
 #if defined(PACKAGE_VERSION)
 inline bool is_supported_package_version(const std::string &version) {
-   std::regex re(R"(^5\.(6|7|8))");
+   std::regex re(R"(^5\.(6|7|8)(\.|$))");
    return std::regex_search(version, re);
 }
 
-auto reval = is_supported_package_version(PACKAGE_VERSION);
+inline bool retval = is_supported_package_version(PACKAGE_VERSION);
 #define IS_SUPPORTED_PACKAGE_VERSION retval
 
 #endif
 
-#if defined(IS_SUPPORTED_PACKAGE_VERSION) && IS_SUPPORTED_PACKAGE_VERSION
+#if IS_SUPPORTED_PACKAGE_VERSION == true
 
 #define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
 void netsnmp_cleanup_session(netsnmp_session *s);
