@@ -132,7 +132,8 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen);
  */
 #if defined(PACKAGE_VERSION)
 inline bool is_supported_package_version(const std::string &version) {
-   std::regex re(R"(^5\.(6|7|8)(\.|$))");
+   // matches only 5.6, 5.7, 5.8, optionally with a dot
+   std::regex re(R"(^5\.(6|7|8)(\.|$|\..*))");
    return std::regex_search(version, re);
 }
 
