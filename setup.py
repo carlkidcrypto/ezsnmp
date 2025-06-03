@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 from subprocess import check_output, CalledProcessError
-from sys import argv, platform, exit
+from sys import argv, platform
 from shlex import split as s_split
 from setuptools import setup, Extension
 from re import search
-import json
 
 
 # Install Helpers
@@ -66,241 +65,180 @@ basedir = None
 in_tree = False
 compile_args = ["-std=c++17"]
 link_args = []
-
-# Initialize these to empty lists, they will be populated
-# either by in-tree logic or net-snmp-config
-libs = []
-libdirs = []
-incdirs = []
-
-# Flags for debugging output (initialized to None for clarity)
-system_netsnmp_version = None
+system_netsnmp_version = check_output("net-snmp-config --version", shell=True).decode()
 homebrew_version = None
 homebrew_netsnmp_version = None
 homebrew_openssl_version = None
 macports_version = None
 macports_netsnmp_version = None
 macports_openssl_version = None
-
+libs = []
+libdirs = []
+incdirs = []
 
 for arg in argv:
     if arg.startswith("--debug"):
+        # Note from GCC manual:
+        #       If you use multiple -O options, with or without level numbers,
+        #       the last such option is the one that is effective.
         compile_args.extend(["-Wall", "-O0", "-g"])
     elif arg.startswith("--basedir="):
         basedir = arg.split("=")[1]
         in_tree = True
 
 
-# If a base directory has been provided, we use it (for in-tree build)
+# If a base directory has been provided, we use it
 if in_tree:
-    print("Building in-tree with --basedir:", basedir)
-    base_cmd = f"{basedir}/net-snmp-config"
-    try:
-        # Get CFLAGS (include paths)
-        netsnmp_cflags = (
-            check_output(f"{base_cmd} --cflags", shell=True).decode().strip()
-        )
-        for flag in s_split(netsnmp_cflags):
-            if flag.startswith("-I"):
-                incdirs.append(flag[2:])
+    base_cmd = "{0}/net-snmp-config {{{0}}}".format(basedir)
+    libs_cmd = base_cmd.format("--build-lib-dirs {0}".format(basedir))
+    incl_cmd = base_cmd.format("--build-includes {0}".format(basedir))
 
-        # Get LIBS (library names and paths)
-        netsnmp_libs_output = (
-            check_output(f"{base_cmd} --libs", shell=True).decode().strip()
-        )
-        for flag in s_split(netsnmp_libs_output):
-            if flag.startswith("-L"):
-                libdirs.append(flag[2:])
-            elif flag.startswith("-l"):
-                libs.append(flag[2:])
-            # Handle framework flags for macOS (relevant for in-tree if it links frameworks)
-            elif flag == "-framework":
-                # The next flag is the framework name, append it to link_args
-                # This needs careful handling if s_split doesn't keep them together
-                # For simplicity, assuming it's handled by the general link_args append
-                pass
-            else:
-                # Add other link args like -flat_namespace or framework names
-                link_args.append(flag)
+    netsnmp_libs = check_output(base_cmd.format("--libs"), shell=True).decode()
+    libdirs = check_output(libs_cmd, shell=True).decode()
+    incdirs = check_output(incl_cmd, shell=True).decode()
 
-    except CalledProcessError as e:
-        print(f"Error running net-snmp-config for in-tree build at {basedir}: {e}")
-        print(
-            "Please ensure net-snmp-config is available and executable in the specified basedir."
-        )
-        exit(1)
+    libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
+    libdirs = [flag[2:] for flag in s_split(libdirs) if flag[:2] == "-L"]
+    incdirs = [flag[2:] for flag in s_split(incdirs) if flag[:2] == "-I"]
 
-# Otherwise, we use the system-installed or Homebrew/MacPorts SNMP libraries via net-snmp-config primarily
+# Otherwise, we use the system-installed or Homebrew SNMP libraries
 else:
-    print("Building using system/package manager installed Net-SNMP.")
+    netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
+
+    pass_next = False
+    # macOS-specific
+    has_arg = ("-framework",)
+    for flag in s_split(netsnmp_libs):
+        if pass_next:
+            link_args.append(flag)
+            pass_next = False
+        elif flag in has_arg:  # -framework CoreFoundation
+            link_args.append(flag)
+            pass_next = True
+        elif flag == "-flat_namespace":
+            link_args.append(flag)
+            pass_next = False
+
+    libs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-l"]
+    libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag[:2] == "-L"]
+    incdirs = ["ezsnmp/include/"]
+
     try:
-        # First, try to get all flags directly from net-snmp-config
-        netsnmp_cflags = (
-            check_output("net-snmp-config --cflags", shell=True).decode().strip()
-        )
-        netsnmp_libs_output = (
-            check_output("net-snmp-config --libs", shell=True).decode().strip()
-        )
+        # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
+        homebrew_version = check_output("brew --version", shell=True).decode()
+        if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
+            # Check if net-snmp is installed via Brew
+            try:
+                brew = check_output(
+                    "brew list net-snmp 2>/dev/null", shell=True
+                ).decode()
+                lines = brew.splitlines()
+                # extract brew version here...
+                pattern = r"/opt/homebrew/Cellar/net-snmp/(\d+\.\d+\.\d+)/"
+                match = search(pattern, lines[0])
+                if match:
+                    version = match.group(1)
+                    homebrew_netsnmp_version = version
 
-        # Parse cflags for include directories
-        for flag in s_split(netsnmp_cflags):
-            if flag.startswith("-I"):
-                incdirs.append(flag[2:])
-
-        # Parse libs for libraries and library directories
-        pass_next_framework = False
-        for flag in s_split(netsnmp_libs_output):
-            if pass_next_framework:
-                link_args.append(flag)  # Add the framework name (e.g., CoreFoundation)
-                pass_next_framework = False
-            elif flag.startswith("-L"):
-                libdirs.append(flag[2:])
-            elif flag.startswith("-l"):
-                libs.append(flag[2:])
-            elif flag == "-framework":  # Handle framework flags for macOS
-                link_args.append(flag)
-                pass_next_framework = True
-            else:
-                # Add other link args like -flat_namespace
-                link_args.append(flag)
-
-        # Append ezsnmp's own include directory if it's not already there
-        # This is for ezsnmp's internal headers, not Net-SNMP's
-        if "ezsnmp/include/" not in incdirs:
-            incdirs.append("ezsnmp/include/")
-
-        # Populate system_netsnmp_version for debugging output
-        system_netsnmp_version = (
-            check_output("net-snmp-config --version", shell=True).decode().strip()
-        )
-
-    except CalledProcessError as e:
-        print(f"Error running net-snmp-config: {e}")
-        print("Attempting to detect Homebrew/MacPorts as fallback for paths...")
-
-        # Fallback logic if net-snmp-config fails or isn't found
-        # This part of the original script is adapted to augment if net-snmp-config failed.
-
-        # Homebrew detection
-        try:
-            homebrew_version = (
-                check_output("brew --version", shell=True).decode().strip()
-            )
-            if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
-                try:
-                    # Check if net-snmp is installed via Brew
-                    brew_list_output = check_output(
-                        "brew list net-snmp 2>/dev/null", shell=True
-                    ).decode()
-                    if brew_list_output:  # If net-snmp is listed
-                        # Extract net-snmp version and paths from brew info
-                        brew_info_netsnmp = check_output(
-                            "brew info net-snmp", shell=True
-                        ).decode()
-                        match = search(
-                            r"/opt/homebrew/Cellar/net-snmp/(\d+\.\d+\.\d+)/",
-                            brew_info_netsnmp,
-                        )
-                        if match:
-                            homebrew_netsnmp_version = match.group(1)
-                            netsnmp_cellar_path = f"/opt/homebrew/Cellar/net-snmp/{homebrew_netsnmp_version}"
-                            if f"{netsnmp_cellar_path}/include" not in incdirs:
-                                incdirs.append(f"{netsnmp_cellar_path}/include")
-                            if f"{netsnmp_cellar_path}/lib" not in libdirs:
-                                libdirs.append(f"{netsnmp_cellar_path}/lib")
-                            if "netsnmp" not in libs:  # Assuming default lib name
-                                libs.append("netsnmp")
-
-                        # Find OpenSSL dependency and add its paths
-                        # Using brew info --json=v2 for more reliable path extraction
-                        openssl_match = search(r"openssl(@\d+)?", brew_info_netsnmp)
-                        if openssl_match:
-                            homebrew_openssl_keg = openssl_match.group(0)
-                            try:
-                                openssl_info_json = check_output(
-                                    f"brew info --json=v2 {homebrew_openssl_keg}",
-                                    shell=True,
-                                ).decode()
-                                openssl_info = json.loads(openssl_info_json)
-                                if openssl_info and openssl_info.get("formulae"):
-                                    openssl_path = openssl_info["formulae"][0][
-                                        "linked_keg_output"
-                                    ]
-                                    if f"{openssl_path}/lib" not in libdirs:
-                                        libdirs.append(f"{openssl_path}/lib")
-                                    if f"{openssl_path}/include" not in incdirs:
-                                        incdirs.append(f"{openssl_path}/include")
-                                    # Assuming openssl is linked as 'ssl' and 'crypto'
-                                    if "ssl" not in libs:
-                                        libs.append("ssl")
-                                    if "crypto" not in libs:
-                                        libs.append("crypto")
-                            except (CalledProcessError, json.JSONDecodeError) as e:
-                                print(f"Could not get OpenSSL info via brew json: {e}")
-
-                except CalledProcessError as e:
-                    print(f"Brew command failed during net-snmp/openssl detection: {e}")
-            else:
-                homebrew_version = (
-                    None  # Reset if brew --version didn't match expected pattern
+                temp_include_dir = list(
+                    filter(lambda l: "include/net-snmp" in l, lines)
+                )[0]
+                temp_incdirs = []
+                temp_libdirs = []
+                temp_incdirs.append(
+                    temp_include_dir[: temp_include_dir.index("include/net-snmp") + 7]
                 )
-        except CalledProcessError:
-            homebrew_version = None
-            print("Homebrew is not installed or brew command failed.")
 
-        # MacPorts detection
-        macports_version = is_macports_installed()
-        macports_netsnmp_version = is_net_snmp_installed_macports()
-        if macports_version and macports_netsnmp_version:
-            # MacPorts typically installs to /opt/local/
-            if "/opt/local/lib" not in libdirs:
-                libdirs.append("/opt/local/lib")
-            if "/opt/local/include" not in incdirs:
-                incdirs.append("/opt/local/include")
-            if "netsnmp" not in libs:  # Assuming default lib name
-                libs.append("netsnmp")
-            # If openssl is also installed via macports, its paths might be needed too
-            # (Original script commented this out, but it's good to be comprehensive)
-            # You might need to add similar logic for MacPorts OpenSSL if it's a separate dependency.
+                if platform == "darwin":
+                    lib_dir = list(
+                        filter(lambda l: "lib/libnetsnmp.dylib" in l, lines)
+                    )[0]
+                    temp_libdirs.append(
+                        lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3]
+                    )
 
+                # The homebrew version also depends on the Openssl keg
+                brew = check_output("brew info net-snmp", shell=True).decode()
+                homebrew_openssl_version = list(
+                    filter(
+                        lambda o: "openssl" in o,
+                        *map(
+                            str.split,
+                            filter(
+                                lambda l: "openssl" in l,
+                                str(brew.replace("'", "")).split("\n"),
+                            ),
+                        ),
+                    )
+                )[0]
 
-# Final check for empty lists if no method found libraries
-if not libs and not libdirs and not incdirs:
-    print(
-        "\nERROR: No Net-SNMP libraries or include directories found after all attempts."
-    )
-    print(
-        "Please ensure Net-SNMP is installed and discoverable by net-snmp-config, Homebrew, or MacPorts."
-    )
-    print("On macOS, you can usually install it via Homebrew: 'brew install net-snmp'")
-    exit(1)
+                brew = check_output(
+                    "brew info {0}".format(homebrew_openssl_version), shell=True
+                ).decode()
+                temp = brew.split("\n")
+                # As of 06/04/2024 brew info openssl spits out lines. the fifth one is what we care about
+                # This works for now, but we need a better solution
+                # ==> openssl@3: stable 3.3.0 (bottled)
+                # Cryptography and SSL/TLS Toolkit
+                # https://openssl.org/
+                # Installed
+                # /opt/homebrew/Cellar/openssl@3/3.3.0 (6,977 files, 32.4MB) *
+                # Poured from bottle using the formulae.brew.sh API on 2024-06-04 at 21:17:37
+                # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
+                # License: Apache-2.0
+                # ...
+                # print(temp)
+                temp_path = str(temp[4].split("(")[0]).strip()
 
+                temp_libdirs.append(temp_path + "/lib")
+                temp_incdirs.append(temp_path + "/include")
+
+                libdirs = libdirs + temp_libdirs
+                incdirs = incdirs + temp_incdirs
+
+            except CalledProcessError:
+                print("A brew command failed...")
+
+    except CalledProcessError:
+        homebrew_version = None
+        print("Homebrew is not installed...")
+
+        # Add in system includes instead of Homebrew ones
+        netsnmp_incdir = None
+        for dir in libdirs:
+            # MacOS
+            if "net-snmp" in dir:
+                netsnmp_incdir = dir.replace("lib", "include")
+                incdirs = incdirs + [netsnmp_incdir]
+                break
+
+            # Linux
+            elif "x86_64-linux-gnu" in dir:
+                netsnmp_incdir = "/usr/include/net-snmp"
+                incdirs = incdirs + [netsnmp_incdir]
+                break
+
+    macports_version = is_macports_installed()
+    macports_netsnmp_version = is_net_snmp_installed_macports()
+    # macports_openssl_version = is_openssl_installed_macports()
+
+    if macports_version and macports_netsnmp_version:
+        for dir in libdirs:
+            if "/opt/local/lib" in dir:
+                netsnmp_incdir = dir.replace("lib", "include")
+                incdirs = incdirs + [netsnmp_incdir]
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
 print(f"platform: {platform}")
-print(
-    f"system_netsnmp_version: {str(system_netsnmp_version).strip() if system_netsnmp_version else 'Not detected'}"
-)
-print(
-    f"homebrew_version: {str(homebrew_version).strip() if homebrew_version else 'Not detected'}"
-)
-print(
-    f"homebrew_netsnmp_version: {homebrew_netsnmp_version if homebrew_netsnmp_version else 'Not detected'}"
-)
-print(
-    f"homebrew_openssl_version: {homebrew_openssl_version if homebrew_openssl_version else 'Not detected'}"
-)
-print(
-    f"macports_version: {str(macports_version).strip() if macports_version else 'Not detected'}"
-)
-print(
-    f"macports_netsnmp_version: {macports_netsnmp_version if macports_netsnmp_version else 'Not detected'}"
-)
-print(
-    f"macports_openssl_version: {macports_openssl_version if macports_openssl_version else 'Not detected'}"
-)
+print(f"system_netsnmp_version: {str(system_netsnmp_version).strip()}")
+print(f"homebrew_version: {str(homebrew_version).strip()}")
+print(f"homebrew_netsnmp_version: {homebrew_netsnmp_version}")
+print(f"homebrew_openssl_version: {homebrew_openssl_version}")
+print(f"macports_version: {str(macports_version).strip()}")
+print(f"macports_netsnmp_version: {macports_netsnmp_version}")
+print(f"macports_openssl_version: {macports_openssl_version}")
 print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")
