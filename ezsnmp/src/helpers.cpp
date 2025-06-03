@@ -265,7 +265,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
    return ss.str();
 }
 
-#if IS_SUPPORTED_PACKAGE_VERSION == true
+#if IS_SUPPORTED_PACKAGE_VERSION
 
 /* Free the memory owned by a session but not the session object itself. */
 void netsnmp_cleanup_session(netsnmp_session *s) {
@@ -353,7 +353,8 @@ Timers will not work correctly if the system clock is adjusted by e.g. ntpd.
 #endif
 }
 
-#endif /* NETSNMP_VERSION <= 5.6.2 */
+#endif
+
 void clear_net_snmp_library_data() {
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
                       0); // Clear -On && Clear -Of

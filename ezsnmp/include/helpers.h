@@ -142,7 +142,7 @@ inline bool retval = is_supported_package_version(PACKAGE_VERSION);
 
 #endif
 
-#if IS_SUPPORTED_PACKAGE_VERSION == true
+#if IS_SUPPORTED_PACKAGE_VERSION
 
 #define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
 void netsnmp_cleanup_session(netsnmp_session *s);
