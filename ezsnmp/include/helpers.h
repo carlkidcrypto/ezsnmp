@@ -123,26 +123,7 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
  */
 std::string print_objid_to_string(oid const *objid, size_t objidlen);
 
-/**
- * @brief Compatibility functions for older Net-SNMP versions (< 5.9, up to 5.6).
- *
- * These functions are conditionally compiled for Net-SNMP versions less than 5.9,
- * specifically for versions up to and including 5.6. They provide compatibility
- * for features or APIs that may not be available in older Net-SNMP releases.
- */
-#if defined(PACKAGE_VERSION)
-inline bool is_supported_package_version(const std::string &version) {
-   // matches only 5.6, 5.7, 5.8, optionally with a dot
-   std::regex re(R"(^5\.(6|7|8)(\.|$|\..*))");
-   return std::regex_search(version, re);
-}
-
-inline bool retval = is_supported_package_version(PACKAGE_VERSION);
-#define IS_SUPPORTED_PACKAGE_VERSION retval
-
-#endif
-
-#if IS_SUPPORTED_PACKAGE_VERSION
+#if ENABLE_LEGACY_SUPPORT
 
 #define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
 void netsnmp_cleanup_session(netsnmp_session *s);

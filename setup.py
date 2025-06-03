@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from subprocess import check_output, CalledProcessError
-from sys import argv, platform
+from sys import argv, platform, exit
 from shlex import split as s_split
 from setuptools import setup, Extension
 from re import search
@@ -50,6 +50,14 @@ def is_net_snmp_installed_macports():
     except CalledProcessError:
         return ""
 
+def enable_legacy_support(version):
+    """
+    Helper to check if the detected Net-SNMP version is supported (5.6, 5.7, 5.8)
+
+    Returns:
+      bool: True if version matches 5.6, 5.7, or 5.8 (optionally with dot or suffix).
+    """
+    return bool(search(r"^5\.(6|7|8)(\.|$|\..*)", version or ""))
 
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
@@ -70,9 +78,7 @@ homebrew_netsnmp_version = None
 homebrew_openssl_version = None
 macports_version = None
 macports_netsnmp_version = None
-macports_openssl_version = (
-    None  # MacPorts OpenSSL detection was commented out in original, keeping it for now
-)
+macports_openssl_version = None
 
 
 for arg in argv:
@@ -120,7 +126,7 @@ if in_tree:
         print(
             "Please ensure net-snmp-config is available and executable in the specified basedir."
         )
-        exit(1)  # Exit if essential command fails
+        exit(1)
 
 # Otherwise, we use the system-installed or Homebrew/MacPorts SNMP libraries via net-snmp-config primarily
 else:
@@ -265,7 +271,7 @@ if not libs and not libdirs and not incdirs:
         "Please ensure Net-SNMP is installed and discoverable by net-snmp-config, Homebrew, or MacPorts."
     )
     print("On macOS, you can usually install it via Homebrew: 'brew install net-snmp'")
-    exit(1)  # Exit if no libraries found, as compilation will definitely fail.
+    exit(1)
 
 
 print(f"in_tree: {in_tree}")
@@ -283,7 +289,7 @@ print(
 )
 print(
     f"homebrew_openssl_version: {homebrew_openssl_version if homebrew_openssl_version else 'Not detected'}"
-)  # Corrected typo here
+)
 print(
     f"macports_version: {str(macports_version).strip() if macports_version else 'Not detected'}"
 )
@@ -296,6 +302,11 @@ print(
 print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")
+
+ENABLE_LEGACY_SUPPORT = enable_legacy_support(system_netsnmp_version)
+
+# Define a macro for the C++ extensions to indicate if the package version is supported
+define_macros = [("ENABLE_LEGACY_SUPPORT", int(ENABLE_LEGACY_SUPPORT))]
 
 setup(
     ext_modules=[
@@ -310,6 +321,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_exceptionsbase",
@@ -322,6 +334,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_netsnmpbase",
@@ -343,6 +356,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_sessionbase",
@@ -365,6 +379,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
     ],
 )
