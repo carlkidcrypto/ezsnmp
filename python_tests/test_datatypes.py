@@ -40,7 +40,6 @@ def test_string_values_not_enclosed_in_quotes(version):
     value = result[0].value
 
     # Ensure the value is a string and not enclosed in quotes
-    print(f"Value: {value}")
     assert isinstance(value, str), "Returned value is not a string"
     assert not (
         (value.startswith('"') and value.endswith('"'))
