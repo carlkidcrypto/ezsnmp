@@ -112,6 +112,20 @@ On MacOS
     python3 -m pip install . && pytest python_tests/;
 
 
+Note: If you have issues installing the python package without HomeBrew or Ports try to update your Xcode Command Line Tools:
+.. code:: bash
+
+    # List available software updates
+    softwareupdate --list
+
+    # Example output:
+    # Software Update found the following new or updated software:
+    # * Label: Command Line Tools for Xcode-16.4
+    #         Title: Command Line Tools for Xcode, Version: 16.4, Size: 861558KiB, Recommended: YES
+
+    # Install the Command Line Tools for Xcode (use quotes around the label)
+    softwareupdate -i "Command Line Tools for Xcode-16.4"
+
 Running cibuildwheels
 ---------------------
 
