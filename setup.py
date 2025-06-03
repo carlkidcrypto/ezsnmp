@@ -50,6 +50,16 @@ def is_net_snmp_installed_macports():
         return ""
 
 
+def enable_legacy_support(version):
+    """
+    Helper to check if the detected Net-SNMP version is supported (5.6, 5.7, 5.8)
+
+    Returns:
+      bool: True if version matches 5.6, 5.7, or 5.8 (optionally with dot or suffix).
+    """
+    return bool(search(r"^5\.(6|7|8)(\.|$|\..*)", version or ""))
+
+
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
@@ -233,6 +243,11 @@ print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")
 
+ENABLE_LEGACY_SUPPORT = enable_legacy_support(system_netsnmp_version)
+
+# Define a macro for the C++ extensions to indicate if the package version is supported
+define_macros = [("ENABLE_LEGACY_SUPPORT", int(ENABLE_LEGACY_SUPPORT))]
+
 setup(
     ext_modules=[
         Extension(
@@ -246,6 +261,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_exceptionsbase",
@@ -258,6 +274,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_netsnmpbase",
@@ -279,6 +296,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_sessionbase",
@@ -301,6 +319,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
+            define_macros=define_macros,
         ),
     ],
 )
