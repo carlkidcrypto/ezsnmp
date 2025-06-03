@@ -369,9 +369,26 @@ void clear_net_snmp_library_data() {
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_EXTENDED_INDEX, 0); // Clear -OE
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_ESCAPE_QUOTES, 0); // Clear -OEQ
 
+   // Clear SNMPv1/v2c settings
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_COMMUNITY, NULL);
+
+   // Clear version settings
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SNMPVERSION, 0);
+
    // Clear SNMPv3 security settings
    netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SECNAME, NULL);
    netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_CONTEXT, NULL);
    netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_AUTHPASSPHRASE, NULL);
    netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRIVPASSPHRASE, NULL);
+
+   // Clear version settings
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SNMPVERSION, 0);
+
+   // Clear hostname setting
+   // This is important to avoid issues with hostname resolution in SNMP operations
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_HOSTNAME, NULL);
+
+   // Shutdown the Net-SNMP library session
+   // This SHOULD free all resources allocated by the library
+   netsnmp_ds_shutdown();
 }
