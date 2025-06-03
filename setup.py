@@ -50,6 +50,7 @@ def is_net_snmp_installed_macports():
     except CalledProcessError:
         return ""
 
+
 def enable_legacy_support(version):
     """
     Helper to check if the detected Net-SNMP version is supported (5.6, 5.7, 5.8)
@@ -58,6 +59,7 @@ def enable_legacy_support(version):
       bool: True if version matches 5.6, 5.7, or 5.8 (optionally with dot or suffix).
     """
     return bool(search(r"^5\.(6|7|8)(\.|$|\..*)", version or ""))
+
 
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
