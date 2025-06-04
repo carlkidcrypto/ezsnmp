@@ -218,6 +218,11 @@ else:
                 incdirs = incdirs + [netsnmp_incdir]
                 break
 
+            elif "linux" in dir:
+                netsnmp_incdir = "/usr/include/net-snmp"
+                incdirs = incdirs + [netsnmp_incdir]
+                break
+
     macports_version = is_macports_installed()
     macports_netsnmp_version = is_net_snmp_installed_macports()
     # macports_openssl_version = is_openssl_installed_macports()
