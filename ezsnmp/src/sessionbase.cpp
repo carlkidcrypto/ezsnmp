@@ -46,6 +46,7 @@
 //                           e:  print enums numerically
 //                           f:  print full OIDs on output
 //                           n:  print OIDs numerically
+//                           t:  print timeticks unparsed as numeric integers
 static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"version", "-v"},
     {"community", "-c"},
@@ -66,6 +67,7 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_enums_numerically", "-O e"},
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
+    {"print_timeticks_numeric", "-O t"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -88,7 +90,8 @@ SessionBase::SessionBase(std::string const& hostname,
                          std::string const& mib_directories,
                          bool print_enums_numerically,
                          bool print_full_oids,
-                         bool print_oids_numerically)
+                         bool print_oids_numerically,
+                         bool print_timeticks_numeric)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -109,7 +112,8 @@ SessionBase::SessionBase(std::string const& hostname,
       m_mib_directories(mib_directories),
       m_print_enums_numerically(print_enums_numerically),
       m_print_full_oids(print_full_oids),
-      m_print_oids_numerically(print_oids_numerically) {
+      m_print_oids_numerically(print_oids_numerically),
+      m_print_timeticks_numeric(print_timeticks_numeric) {
    populate_args();
 }
 
@@ -177,6 +181,13 @@ void SessionBase::populate_args() {
       auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
       auto const& option = num_parts[0];
       auto const& value = num_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
+   }
+   if (m_print_timeticks_numeric) {
+      auto const& t_parts = split_string(CML_PARAM_LOOKUP["print_timeticks_numeric"], ' ');
+      auto const& option = t_parts[0];
+      auto const& value = t_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
