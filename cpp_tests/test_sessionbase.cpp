@@ -75,10 +75,11 @@ TEST_F(SessionBaseTest, TestPrintOptions) {
        /* mib_directories */ "",
        /* print_enums_numerically */ true,
        /* print_full_oids */ true,
-       /* print_oids_numerically */ true);
+       /* print_oids_numerically */ true,
+       /* print_timeticks_numeric */ true);
    auto args = session._get_args();
    std::vector<std::string> expected = {"-c", "public", "-v", "1", "-O",           "e",
-                                        "-O", "f",      "-O", "n", "localhost:161"};
+                                        "-O", "f",      "-O", "n", "-O", "t", "localhost:161"};
    ASSERT_EQ(args, expected);
 }
 
@@ -951,6 +952,7 @@ struct PrintOptions {
    bool print_enums_numerically;
    bool print_full_oids;
    bool print_oids_numerically;
+   bool print_timeticks_numeric;
    std::vector<std::string> expected_flags;
    std::vector<std::string> expected_get_output;
 
@@ -1001,7 +1003,8 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* mib_directories */ "",
           /* print_enums_numerically */ print_opts.print_enums_numerically,
           /* print_full_oids */ print_opts.print_full_oids,
-          /* print_oids_numerically */ print_opts.print_oids_numerically);
+          /* print_oids_numerically */ print_opts.print_oids_numerically,
+          /* print_timeticks_numeric */ print_opts.print_timeticks_numeric);
 
       auto const& args = session._get_args();
       std::vector<std::string> expected = {"-A", "auth_second",
@@ -1048,7 +1051,8 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* mib_directories */ "",
           /* print_enums_numerically */ print_opts.print_enums_numerically,
           /* print_full_oids */ print_opts.print_full_oids,
-          /* print_oids_numerically */ print_opts.print_oids_numerically);
+          /* print_oids_numerically */ print_opts.print_oids_numerically,
+          /* print_timeticks_numeric */ print_opts.print_timeticks_numeric);
 
       auto const& args = session._get_args();
       std::vector<std::string> expected = {"-c", "public", "-v", version};
@@ -1081,11 +1085,13 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          false,
                          false,
+                         false,
                          {},
                          {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)"}},
 
             PrintOptions{// Case 2: enums true, others false
                          true,
+                         false,
                          false,
                          false,
                          {"e"},
@@ -1096,6 +1102,7 @@ INSTANTIATE_TEST_SUITE_P(
                 false,
                 true,
                 false,
+                false,
                 {"f"},
                 {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
                  "index: 1, type: INTEGER, value: up(1)"}},
@@ -1104,6 +1111,7 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          false,
                          true,
+                         false,
                          {"n"},
                          {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
 
@@ -1111,6 +1119,7 @@ INSTANTIATE_TEST_SUITE_P(
                 // Case 5: enums and full_oids true, oids_numeric false
                 true,
                 true,
+                false,
                 false,
                 {"e", "f"},
                 {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
@@ -1120,6 +1129,7 @@ INSTANTIATE_TEST_SUITE_P(
                          true,
                          false,
                          true,
+                         false,
                          {"e", "n"},
                          {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}},
 
@@ -1127,12 +1137,23 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          true,
                          true,
+                         false,
                          {"f", "n"},
                          {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
 
-            PrintOptions{// Case 8: All true
+            PrintOptions{// Case 8: All true except timeticks numeric
                          true,
                          true,
                          true,
+                         false,
                          {"e", "f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}})));
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}},
+
+            PrintOptions{// Case 9: Only timeticks numeric
+                         false,
+                         false,
+                         false,
+                         true,
+                         {"t"},
+                         {"oid: SNMPv2-MIB::sysUpTime, index: 0, type: Timeticks, value: 123456789"}}
+            )));
