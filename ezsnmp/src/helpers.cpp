@@ -176,6 +176,13 @@ Result parse_result(std::string const &input) {
    else if (result.value.find("No Such Instance") != std::string::npos) {
       result.type = "NOSUCHINSTANCE";
    }
+   // This might get messy, but we will try to handle it on a case by base basis
+   // When -O t is using for print timeticks unparsed as numeric integers let's
+   // force the type to INTEGER
+   else if  (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks")
+   {
+      result.type = "INTEGER";
+   }  
 
    return result;
 }

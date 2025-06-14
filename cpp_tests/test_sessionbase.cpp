@@ -1025,9 +1025,23 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
       ASSERT_EQ(args, expected);
 
       // Verify get output with print options
-      auto results = session.get("ifAdminStatus.1");
-      ASSERT_EQ(results.size(), 1);
-      EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
+      if (print_opts.print_timeticks_numeric)
+      {
+         // Verify get output with print options
+         auto results = session.get("SNMPv2-MIB::sysUpTime.0");
+
+         ASSERT_EQ(results.size(), 1);
+         EXPECT_EQ(results[0].to_string(),
+                   "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: INTEGER, value: 46090");
+      }
+      else
+      {
+         // Verify get output with print options
+         auto results = session.get("ifAdminStatus.1");
+
+         ASSERT_EQ(results.size(), 1);
+         EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
+      }
 
    } else {
       SessionBase session(
@@ -1067,11 +1081,23 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
 
       ASSERT_EQ(args, expected);
 
-      // Verify get output with print options
-      auto results = session.get("ifAdminStatus.1");
+      if (print_opts.print_timeticks_numeric)
+      {
+         // Verify get output with print options
+         auto results = session.get("SNMPv2-MIB::sysUpTime.0");
 
-      ASSERT_EQ(results.size(), 1);
-      EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
+         ASSERT_EQ(results.size(), 1);
+         EXPECT_EQ(results[0].to_string(),
+                   "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090");
+      }
+      else
+      {
+         // Verify get output with print options
+         auto results = session.get("ifAdminStatus.1");
+
+         ASSERT_EQ(results.size(), 1);
+         EXPECT_EQ(results[0].to_string(), print_opts.expected_get_output[0]);
+      }
    }
 }
 
@@ -1155,5 +1181,5 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          true,
                          {"t"},
-                         {"oid: SNMPv2-MIB::sysUpTime, index: 0, type: Timeticks, value: 123456789"}}
+                         {"oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090"}}
             )));
