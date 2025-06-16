@@ -1095,3 +1095,157 @@ def test_session_print_options_two_set_true_false_true(version):
     # 1
 
     del session
+
+
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
+def test_session_print_timeticks_numerically_set(version):
+    if version == "3" or version == 3:
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_timeticks_numerically=True,
+        )
+
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "t",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_timeticks_numerically=True,
+        )
+
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            "2c" if version == 2 else f"{version}",
+            "-O",
+            "t",
+            "localhost:11161",
+        )
+
+    # Test a Timeticks OID to check numeric output
+    res_ticks = session.get(["sysUpTime.0"])
+    assert len(res_ticks) == 1
+    assert res_ticks[0].type == "INTEGER"
+    # Should be a numeric string if -O t is set
+    assert res_ticks[0].value.isdigit()
+
+    del session
+
+
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
+def test_session_print_timeticks_numerically_unset(version):
+    if version == "3" or version == 3:
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_timeticks_numerically=False,
+        )
+
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-c",
+            "public",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "t",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_timeticks_numerically=True,
+        )
+
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            "2c" if version == 2 else f"{version}",
+            "-O",
+            "t",
+            "localhost:11161",
+        )
+
+    # Test a Timeticks OID to check numeric output
+    res_ticks = session.get(["sysUpTime.0"])
+    assert len(res_ticks) == 1
+    assert res_ticks[0].type == "Timeticks"
+    # Should NOT be a numeric string if -O t is not set
+    assert not res_ticks[0].value.isdigit()
+
+    del session

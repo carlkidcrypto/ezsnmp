@@ -191,8 +191,9 @@ TEST_F(ParseResultsTest, TestWhitespaceTrailing) {
 }
 
 TEST_F(ParseResultsTest, TestJustTimeticks) {
-   std::vector<std::string> inputs = {"DISMAN-EXPRESSION-MIB::sysUpTimeInstance = Timeticks: (8910208) 1 day, 0:45:02.08",
-   "DISMAN-EXPRESSION-MIB::sysUpTimeInstance = 8912330"};
+   std::vector<std::string> inputs = {
+       "DISMAN-EXPRESSION-MIB::sysUpTimeInstance = Timeticks: (8910208) 1 day, 0:45:02.08",
+       "DISMAN-EXPRESSION-MIB::sysUpTimeInstance = 8912330"};
 
    auto results = parse_results(inputs);
    ASSERT_EQ(results.size(), 2);

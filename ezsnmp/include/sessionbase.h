@@ -39,7 +39,8 @@ class SessionBase {
    bool m_print_enums_numerically = false; ///< Print enums numerically (-O e).
    bool m_print_full_oids = false;         ///< Print full OIDs on output (-O f).
    bool m_print_oids_numerically = false;  ///< Print OIDs numerically (-O n).
-   bool m_print_timeticks_numeric = false; ///< Print timeticks unparsed as numeric integers (-O t).
+   bool m_print_timeticks_numerically =
+       false; ///< Print timeticks unparsed as numeric integers (-O t).
 
    /**
     * @brief Populates the m_args vector with SNMP command arguments.
@@ -84,7 +85,7 @@ class SessionBase {
     * @param print_enums_numerically Print enums numerically (default: false).
     * @param print_full_oids Print full OIDs on output (default: false).
     * @param print_oids_numerically Print OIDs numerically (default: false).
-    * @param print_timeticks_numeric Print timeticks as numeric integers (default: false).
+    * @param print_timeticks_numerically Print timeticks as numeric integers (default: false).
     */
    SessionBase(std::string const& hostname = "localhost",
                std::string const& port_number = "",
@@ -107,7 +108,7 @@ class SessionBase {
                bool print_enums_numerically = false,
                bool print_full_oids = false,
                bool print_oids_numerically = false,
-               bool print_timeticks_numeric = false);
+               bool print_timeticks_numerically = false);
 
    /**
     * @brief Destructor for SessionBase.

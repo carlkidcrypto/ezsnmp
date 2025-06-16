@@ -76,10 +76,10 @@ TEST_F(SessionBaseTest, TestPrintOptions) {
        /* print_enums_numerically */ true,
        /* print_full_oids */ true,
        /* print_oids_numerically */ true,
-       /* print_timeticks_numeric */ true);
+       /* print_timeticks_numerically */ true);
    auto args = session._get_args();
-   std::vector<std::string> expected = {"-c", "public", "-v", "1", "-O",           "e",
-                                        "-O", "f",      "-O", "n", "-O", "t", "localhost:161"};
+   std::vector<std::string> expected = {"-c", "public", "-v", "1", "-O",           "e", "-O", "f",
+                                        "-O", "n",      "-O", "t", "localhost:161"};
    ASSERT_EQ(args, expected);
 }
 
@@ -952,7 +952,7 @@ struct PrintOptions {
    bool print_enums_numerically;
    bool print_full_oids;
    bool print_oids_numerically;
-   bool print_timeticks_numeric;
+   bool print_timeticks_numerically;
    std::vector<std::string> expected_flags;
    std::vector<std::string> expected_get_output;
 
@@ -1004,7 +1004,7 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* print_enums_numerically */ print_opts.print_enums_numerically,
           /* print_full_oids */ print_opts.print_full_oids,
           /* print_oids_numerically */ print_opts.print_oids_numerically,
-          /* print_timeticks_numeric */ print_opts.print_timeticks_numeric);
+          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically);
 
       auto const& args = session._get_args();
       std::vector<std::string> expected = {"-A", "auth_second",
@@ -1025,17 +1025,15 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
       ASSERT_EQ(args, expected);
 
       // Verify get output with print options
-      if (print_opts.print_timeticks_numeric)
-      {
+      if (print_opts.print_timeticks_numerically) {
          // Verify get output with print options
          auto results = session.get("SNMPv2-MIB::sysUpTime.0");
 
          ASSERT_EQ(results.size(), 1);
-         EXPECT_EQ(results[0].to_string(),
-                   "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: INTEGER, value: 46090");
-      }
-      else
-      {
+         EXPECT_EQ(
+             results[0].to_string(),
+             "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: INTEGER, value: 46090");
+      } else {
          // Verify get output with print options
          auto results = session.get("ifAdminStatus.1");
 
@@ -1066,7 +1064,7 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* print_enums_numerically */ print_opts.print_enums_numerically,
           /* print_full_oids */ print_opts.print_full_oids,
           /* print_oids_numerically */ print_opts.print_oids_numerically,
-          /* print_timeticks_numeric */ print_opts.print_timeticks_numeric);
+          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically);
 
       auto const& args = session._get_args();
       std::vector<std::string> expected = {"-c", "public", "-v", version};
@@ -1081,17 +1079,15 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
 
       ASSERT_EQ(args, expected);
 
-      if (print_opts.print_timeticks_numeric)
-      {
+      if (print_opts.print_timeticks_numerically) {
          // Verify get output with print options
          auto results = session.get("SNMPv2-MIB::sysUpTime.0");
 
          ASSERT_EQ(results.size(), 1);
-         EXPECT_EQ(results[0].to_string(),
-                   "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090");
-      }
-      else
-      {
+         EXPECT_EQ(
+             results[0].to_string(),
+             "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090");
+      } else {
          // Verify get output with print options
          auto results = session.get("ifAdminStatus.1");
 
@@ -1181,5 +1177,5 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          true,
                          {"t"},
-                         {"oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090"}}
-            )));
+                         {"oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, "
+                          "value: 46090"}})));

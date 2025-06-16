@@ -67,7 +67,7 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_enums_numerically", "-O e"},
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
-    {"print_timeticks_numeric", "-O t"},
+    {"print_timeticks_numerically", "-O t"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -91,7 +91,7 @@ SessionBase::SessionBase(std::string const& hostname,
                          bool print_enums_numerically,
                          bool print_full_oids,
                          bool print_oids_numerically,
-                         bool print_timeticks_numeric)
+                         bool print_timeticks_numerically)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -113,7 +113,7 @@ SessionBase::SessionBase(std::string const& hostname,
       m_print_enums_numerically(print_enums_numerically),
       m_print_full_oids(print_full_oids),
       m_print_oids_numerically(print_oids_numerically),
-      m_print_timeticks_numeric(print_timeticks_numeric) {
+      m_print_timeticks_numerically(print_timeticks_numerically) {
    populate_args();
 }
 
@@ -184,8 +184,8 @@ void SessionBase::populate_args() {
       m_args.push_back(option);
       m_args.push_back(value);
    }
-   if (m_print_timeticks_numeric) {
-      auto const& t_parts = split_string(CML_PARAM_LOOKUP["print_timeticks_numeric"], ' ');
+   if (m_print_timeticks_numerically) {
+      auto const& t_parts = split_string(CML_PARAM_LOOKUP["print_timeticks_numerically"], ' ');
       auto const& option = t_parts[0];
       auto const& value = t_parts[1];
       m_args.push_back(option);
