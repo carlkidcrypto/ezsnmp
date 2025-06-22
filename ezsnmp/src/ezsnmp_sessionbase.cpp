@@ -18748,6 +18748,7 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    bool arg19 = (bool)false;
    bool arg20 = (bool)false;
    bool arg21 = (bool)false;
+   bool arg22 = (bool)false;
    int res1 = SWIG_OLDOBJ;
    int res2 = SWIG_OLDOBJ;
    int res3 = SWIG_OLDOBJ;
@@ -18772,6 +18773,8 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    int ecode20 = 0;
    bool val21;
    int ecode21 = 0;
+   bool val22;
+   int ecode22 = 0;
    PyObject *obj1 = 0;
    PyObject *obj2 = 0;
    PyObject *obj3 = 0;
@@ -18793,6 +18796,7 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
    PyObject *obj19 = 0;
    PyObject *obj20 = 0;
    PyObject *obj21 = 0;
+   PyObject *obj22 = 0;
    char *kwnames[] = {(char *)"hostname",
                       (char *)"port_number",
                       (char *)"version",
@@ -18814,13 +18818,14 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
                       (char *)"print_enums_numerically",
                       (char *)"print_full_oids",
                       (char *)"print_oids_numerically",
+                      (char *)"print_timeticks_numerically",
                       NULL};
    SessionBase *result = 0;
 
-   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOOOOOOOOOOOOOOOOOO:new_SessionBase", kwnames,
-                                    &obj1, &obj2, &obj3, &obj4, &obj5, &obj6, &obj7, &obj8, &obj9,
-                                    &obj10, &obj11, &obj12, &obj13, &obj14, &obj15, &obj16, &obj17,
-                                    &obj18, &obj19, &obj20, &obj21)) {
+   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OOOOOOOOOOOOOOOOOOOOOO:new_SessionBase",
+                                    kwnames, &obj1, &obj2, &obj3, &obj4, &obj5, &obj6, &obj7, &obj8,
+                                    &obj9, &obj10, &obj11, &obj12, &obj13, &obj14, &obj15, &obj16,
+                                    &obj17, &obj18, &obj19, &obj20, &obj21, &obj22)) {
       SWIG_fail;
    }
    if (obj1) {
@@ -19369,6 +19374,20 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
       }
       arg21 = static_cast<bool>(val21);
    }
+   if (obj22) {
+      ecode22 = SWIG_AsVal_bool(obj22, &val22);
+      if (!SWIG_IsOK(ecode22)) {
+         SWIG_exception_fail(SWIG_ArgError(ecode22),
+                             "in method '"
+                             "new_SessionBase"
+                             "', argument "
+                             "22"
+                             " of type '"
+                             "bool"
+                             "'");
+      }
+      arg22 = static_cast<bool>(val22);
+   }
    {
       try {
          {
@@ -19381,7 +19400,7 @@ SWIGINTERN int _wrap_new_SessionBase(PyObject *self, PyObject *args, PyObject *k
                 (std::string const &)*arg12, (std::string const &)*arg13,
                 (std::string const &)*arg14, (std::string const &)*arg15,
                 (std::string const &)*arg16, (std::string const &)*arg17,
-                (std::string const &)*arg18, arg19, arg20, arg21);
+                (std::string const &)*arg18, arg19, arg20, arg21, arg22);
             SWIG_PYTHON_THREAD_END_ALLOW;
          }
       } catch (ConnectionErrorBase const &e) {
@@ -28770,6 +28789,9 @@ SWIGINTERN PyGetSetDef SwigPyBuiltin__SessionBase_getset[] = {
              ":param print_full_oids: Print full OIDs on output (default: false).\n"
              ":type print_oids_numerically: boolean, optional\n"
              ":param print_oids_numerically: Print OIDs numerically (default: false).\n"
+             ":type print_timeticks_numerically: boolean, optional\n"
+             ":param print_timeticks_numerically: Print timeticks as numeric integers (default: "
+             "false).\n"
              "",
      &SessionBase___dict___getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
