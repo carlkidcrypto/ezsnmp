@@ -362,7 +362,8 @@ Timers will not work correctly if the system clock is adjusted by e.g. ntpd.
 #endif
 
 void clear_net_snmp_library_data() {
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
-                      0); // Clear -On && Clear -Of
-   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -Oe
+   // From: https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 0); // Clear -O n && Clear -O f
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -O e
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
 }

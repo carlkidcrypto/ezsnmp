@@ -1187,7 +1187,6 @@ def test_session_print_timeticks_numerically_unset(version):
             privacy_protocol="AES",
             privacy_passphrase="priv_second",
             auth_passphrase="auth_second",
-            print_timeticks_numerically=False,
         )
 
         args = session.args
@@ -1213,8 +1212,6 @@ def test_session_print_timeticks_numerically_unset(version):
             "1",
             "-v",
             "3",
-            "-O",
-            "t",
             "localhost:11161",
         )
 
@@ -1222,7 +1219,6 @@ def test_session_print_timeticks_numerically_unset(version):
         session = Session(
             hostname="localhost:11161",
             version=version,
-            print_timeticks_numerically=True,
         )
 
         args = session.args
@@ -1236,8 +1232,6 @@ def test_session_print_timeticks_numerically_unset(version):
             "1",
             "-v",
             "2c" if version == 2 else f"{version}",
-            "-O",
-            "t",
             "localhost:11161",
         )
 
