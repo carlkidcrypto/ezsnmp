@@ -189,3 +189,24 @@ TEST_F(ParseResultsTest, TestWhitespaceTrailing) {
    EXPECT_EQ(results[3].type, "INTEGER");
    EXPECT_EQ(results[3].value, "72");
 }
+
+TEST_F(ParseResultsTest, TestJustTimeticks) {
+   std::vector<std::string> inputs = {
+       "DISMAN-EXPRESSION-MIB::sysUpTimeInstance = Timeticks: (8910208) 1 day, 0:45:02.08",
+       "DISMAN-EXPRESSION-MIB::sysUpTimeInstance = 8912330"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 2);
+
+   // // Test first result
+   EXPECT_EQ(results[0].oid, "DISMAN-EXPRESSION-MIB::sysUpTimeInstance");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "Timeticks");
+   EXPECT_EQ(results[0].value, "(8910208) 1 day, 0:45:02.08");
+
+   // Test second result
+   EXPECT_EQ(results[1].oid, "DISMAN-EXPRESSION-MIB::sysUpTimeInstance");
+   EXPECT_EQ(results[1].index, "");
+   EXPECT_EQ(results[1].type, "INTEGER");
+   EXPECT_EQ(results[1].value, "8912330");
+}

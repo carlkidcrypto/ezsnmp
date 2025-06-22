@@ -32,6 +32,7 @@ class Session(SessionBase):
         print_enums_numerically: bool = False,
         print_full_oids: bool = False,
         print_oids_numerically: bool = False,
+        print_timeticks_numerically: bool = False,
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
@@ -77,6 +78,9 @@ class Session(SessionBase):
         :type print_full_oids: bool
         :param print_oids_numerically: Whether to print OIDs numerically.
         :type print_oids_numerically: bool
+        :param Whether to print timeticks numerically.
+        :type print_timeticks_numerically: bool
+
         """
 
         # Note that underlying SesssionBase object depends on all parameters to be strings.
@@ -112,6 +116,7 @@ class Session(SessionBase):
                 print_enums_numerically,
                 print_full_oids,
                 print_oids_numerically,
+                print_timeticks_numerically,
             )
 
         except Exception as e:
