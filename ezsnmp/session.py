@@ -80,6 +80,7 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
+
         """
 
         # Note that underlying SesssionBase object depends on all parameters to be strings.
