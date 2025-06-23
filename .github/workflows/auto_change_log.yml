@@ -32,7 +32,13 @@ jobs:
                   linux: |
                       rm -f CHANGELOG.md
                       echo "PATH=$PATH:/home/runner/go/bin" >> $GITHUB_ENV
-                      /home/runner/go/bin/git-chglog --config .chglog/config.yml -o CHANGELOG.md
+                      /home/runner/go/bin/git-chglog --config .chglog/config.yml -o CHANGELOG.tmp
+                      TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S %Z")
+                      echo "Last Updated: $TIMESTAMP" > CHANGELOG.md.new
+                      echo "" >> CHANGELOG.md.new
+                      cat CHANGELOG.tmp >> CHANGELOG.md.new
+                      mv CHANGELOG.md.new CHANGELOG.md
+                      rm CHANGELOG.tmp
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -62,7 +68,6 @@ jobs:
                   base: main
                   delete-branch: true
                   labels: documentation, automated-pr
-                  force: true
 
             - name: Enable Auto-merge
               if: steps.create-pr.outputs.pull-request-number != ''
