@@ -16,17 +16,13 @@ jobs:
             - name: Checkout repository code
               uses: actions/checkout@v4
               with:
-                  # fetch-depth: 0 is important for git-chglog to get full history
                   fetch-depth: 0
 
             - name: Setup git-chglog
-              # This step installs the git-chglog tool
               uses: carlkidcrypto/os-specific-runner@v2.1.2
               with:
                   linux: |
-                      # Install Go
                       sudo snap install go --classic
-                      # Install git-chglog using Go
                       go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 
             - name: Generate CHANGELOG.md
@@ -34,16 +30,9 @@ jobs:
               uses: carlkidcrypto/os-specific-runner@v2.1.2
               with:
                   linux: |
-                      # Remove existing CHANGELOG.md to ensure a fresh generation
                       rm -f CHANGELOG.md
-                      # Add Go binaries path to the environment, so git-chglog can be found
                       echo "PATH=$PATH:/home/runner/go/bin" >> $GITHUB_ENV
-                      # Generate the CHANGELOG.md file
-                      # The --config path should be relative to the workspace root or an absolute path
-                      # Ensure this path is correct for your repository's structure
                       /home/runner/go/bin/git-chglog --config .chglog/config.yml -o CHANGELOG.md
-                      # IMPORTANT: Removed git config, git add, git commit, git push
-                      # These actions are now handled by peter-evans/create-pull-request@v7
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,14 +62,15 @@ jobs:
                   base: main
                   delete-branch: true
                   labels: documentation, automated-pr
+                  force: true
 
             - name: Enable Auto-merge
+              if: steps.create-pr.outputs.pull-request-number != ''
+              continue-on-error: true
               run: |
                   PR_URL="${{ steps.create-pr.outputs.pull-request-url }}"
-                  # Extract the PR number from the URL
                   PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
                   echo "Attempting to auto-merge PR #$PR_NUMBER"
-                  # Use 'gh pr merge --auto --merge' to enable auto-merge and merge when possible
                   gh pr merge --auto --merge "$PR_NUMBER"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
