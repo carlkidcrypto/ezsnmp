@@ -2,7 +2,7 @@ name: Tests With Legacy Netsnmp Versions
 concurrency: tests-legacy
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 368-feature-legacy-netsnmp-versions ]
   pull_request:
     branches: [ main ]
 
@@ -31,7 +31,7 @@ jobs:
   build-and-test:
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    if: needs.check-source-changes.outputs.run_job == 'true'
+    #if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
       matrix:
