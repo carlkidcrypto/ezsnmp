@@ -31,7 +31,7 @@ EzSnmp
 Introduction
 ------------
 
-EzSnmp is a fork of `Easy SNMP <http://net-snmp.sourceforge.net/wiki/index.php/Python_Bindings>`__
+EzSnmp is a fork of `Easy SNMP <https://github.com/easysnmp/easysnmp>`__
 
 Why Another Library?
 --------------------
