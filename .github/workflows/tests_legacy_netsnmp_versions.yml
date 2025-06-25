@@ -48,18 +48,26 @@ jobs:
             wget https://sourceforge.net/projects/net-snmp/files/net-snmp/${{ matrix.net-snmp-version }}/net-snmp-${{ matrix.net-snmp-version }}.zip/download -O net-snmp-${{ matrix.net-snmp-version }}.zip;
             unzip net-snmp-${{ matrix.net-snmp-version }}.zip;
             cd net-snmp-${{ matrix.net-snmp-version }};
-            ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
-            make;
-            sudo make install;
+            ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
+            make -j$(nproc) && \
+            make install && \
+            mkdir -p /usr/share/snmp/mibs && \
+            cp -r mibs/* /usr/share/snmp/mibs/ && \
+            echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
+            ldconfig;
             cd ..;
           elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install wget;
             wget https://sourceforge.net/projects/net-snmp/files/net-snmp/${{ matrix.net-snmp-version }}/net-snmp-${{ matrix.net-snmp-version }}.zip/download -O net-snmp-${{ matrix.net-snmp-version }}.zip;
             unzip net-snmp-${{ matrix.net-snmp-version }}.zip;
             cd net-snmp-${{ matrix.net-snmp-version }};
-            ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
-            make;
-            sudo make install;
+            ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
+            make -j$(nproc) && \
+            make install && \
+            mkdir -p /usr/share/snmp/mibs && \
+            cp -r mibs/* /usr/share/snmp/mibs/ && \
+            echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
+            ldconfig;
             cd ..;
           fi
 
