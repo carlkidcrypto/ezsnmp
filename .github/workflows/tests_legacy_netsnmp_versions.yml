@@ -1,0 +1,150 @@
+name: Tests With Legacy Netsnmp Versions
+concurrency: tests-legacy
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-source-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_job: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout Sourcecode
+        uses: actions/checkout@v4
+
+      - name: Check for changes in source code
+        id: changed-files
+        uses: tj-actions/changed-files@v46.0.5
+        with:
+          files: |
+            ezsnmp/*.py
+            ezsnmp/*.cpp
+            ezsnmp/*.h
+            python_tests/*.py
+            python_tests/*.conf
+            setup.py
+            setup.cfg
+
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    needs: check-source-changes
+    if: needs.check-source-changes.outputs.run_job == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        net-snmp-version: ["5.7.3", "5.8"]
+
+    steps:
+      - name: Set up dependencies
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get update;
+            sudo apt-get install -y build-essential wget unzip;
+            wget https://sourceforge.net/projects/net-snmp/files/net-snmp/${{ matrix.net-snmp-version }}/net-snmp-${{ matrix.net-snmp-version }}.zip/download -O net-snmp-${{ matrix.net-snmp-version }}.zip;
+            unzip net-snmp-${{ matrix.net-snmp-version }}.zip;
+            cd net-snmp-${{ matrix.net-snmp-version }};
+            ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
+            make;
+            sudo make install;
+            cd ..;
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install wget;
+            wget https://sourceforge.net/projects/net-snmp/files/net-snmp/${{ matrix.net-snmp-version }}/net-snmp-${{ matrix.net-snmp-version }}.zip/download -O net-snmp-${{ matrix.net-snmp-version }}.zip;
+            unzip net-snmp-${{ matrix.net-snmp-version }}.zip;
+            cd net-snmp-${{ matrix.net-snmp-version }};
+            ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
+            make;
+            sudo make install;
+            cd ..;
+          fi
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          allow-prereleases: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pip dependencies
+        run: |
+          if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
+
+      - name: Build And Install EzSnmp
+        run: |
+          pip install . --verbose
+
+      - name: Start SNMP daemon
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]
+          then
+            mibdir="-M +/var/lib/snmp/mibs"
+            SNMPD=$(which snmpd)
+          elif [ "$RUNNER_OS" == "macOS" ]
+          then
+            mibdir=""
+            SNMPD=$(which snmpd)
+          else
+            mibdir=""
+            SNMPD=$(which.exe snmpd)
+          fi
+          $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
+
+      - name: Run Tests
+        run: |
+          python -m pytest --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.txt
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results_${{matrix.os}}_${{matrix.python-version}}_${{matrix.net-snmp-version}}
+          path: |
+            test-results_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.xml
+            test-outputs_${{ matrix.os }}_${{ matrix.python-version }}_${{ matrix.net-snmp-version }}.txt
+
+  comment-pytest-coverage-report:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pytest-results_*
+          merge-multiple: false
+
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@v1.1.53
+        with:
+          title: Pytest Coverage Report - Legacy Netsnmp Versions
+          hide-badge: true
+          hide-report: true
+          create-new-comment: false
+          hide-comment: false
+          report-only-changed-files: false
+          multiple-files: |
+            macos-latest - 3.9 - 5.7.3, pytest-results_macos-latest_3.9_5.7.3/test-outputs_macos-latest_3.9_5.7.3.txt, pytest-results_macos-latest_3.9_5.7.3/test-results_macos-latest_3.9_5.7.3.xml
+            macos-latest - 3.9 - 5.8, pytest-results_macos-latest_3.9_5.8/test-outputs_macos-latest_3.9_5.8.txt, pytest-results_macos-latest_3.9_5.8/test-results_macos-latest_3.9_5.8.xml
+            macos-latest - 3.10 - 5.7.3, pytest-results_macos-latest_3.10_5.7.3/test-outputs_macos-latest_3.10_5.7.3.txt, pytest-results_macos-latest_3.10_5.7.3/test-results_macos-latest_3.10_5.7.3.xml
+            macos-latest - 3.10 - 5.8, pytest-results_macos-latest_3.10_5.8/test-outputs_macos-latest_3.10_5.8.txt, pytest-results_macos-latest_3.10_5.8/test-results_macos-latest_3.10_5.8.xml
+            macos-latest - 3.11 - 5.7.3, pytest-results_macos-latest_3.11_5.7.3/test-outputs_macos-latest_3.11_5.7.3.txt, pytest-results_macos-latest_3.11_5.7.3/test-results_macos-latest_3.11_5.7.3.xml
+            macos-latest - 3.11 - 5.8, pytest-results_macos-latest_3.11_5.8/test-outputs_macos-latest_3.11_5.8.txt, pytest-results_macos-latest_3.11_5.8/test-results_macos-latest_3.11_5.8.xml
+            macos-latest - 3.12 - 5.7.3, pytest-results_macos-latest_3.12_5.7.3/test-outputs_macos-latest_3.12_5.7.3.txt, pytest-results_macos-latest_3.12_5.7.3/test-results_macos-latest_3.12_5.7.3.xml
+            macos-latest - 3.12 - 5.8, pytest-results_macos-latest_3.12_5.8/test-outputs_macos-latest_3.12_5.8.txt, pytest-results_macos-latest_3.12_5.8/test-results_macos-latest_3.12_5.8.xml
+            macos-latest - 3.13 - 5.7.3, pytest-results_macos-latest_3.13_5.7.3/test-outputs_macos-latest_3.13_5.7.3.txt, pytest-results_macos-latest_3.13_5.7.3/test-results_macos-latest_3.13_5.7.3.xml
+            macos-latest - 3.13 - 5.8, pytest-results_macos-latest_3.13_5.8/test-outputs_macos-latest_3.13_5.8.txt, pytest-results_macos-latest_3.13_5.8/test-results_macos-latest_3.13_5.8.xml
+            ubuntu-latest - 3.9 - 5.7.3, pytest-results_ubuntu-latest_3.9_5.7.3/test-outputs_ubuntu-latest_3.9_5.7.3.txt, pytest-results_ubuntu-latest_3.9_5.7.3/test-results_ubuntu-latest_3.9_5.7.3.xml
+            ubuntu-latest - 3.9 - 5.8, pytest-results_ubuntu-latest_3.9_5.8/test-outputs_ubuntu-latest_3.9_5.8.txt, pytest-results_ubuntu-latest_3.9_5.8/test-results_ubuntu-latest_3.9_5.8.xml
+            ubuntu-latest - 3.10 - 5.7.3, pytest-results_ubuntu-latest_3.10_5.7.3/test-outputs_ubuntu-latest_3.10_5.7.3.txt, pytest-results_ubuntu-latest_3.10_5.7.3/test-results_ubuntu-latest_3.10_5.7.3.xml
+            ubuntu-latest - 3.10 - 5.8, pytest-results_ubuntu-latest_3.10_5.8/test-outputs_ubuntu-latest_3.10_5.8.txt, pytest-results_ubuntu-latest_3.10_5.8/test-results_ubuntu-latest_3.10_5.8.xml
+            ubuntu-latest - 3.11 - 5.7.3, pytest-results_ubuntu-latest_3.11_5.7.3/test-outputs_ubuntu-latest_3.11_5.7.3.txt, pytest-results_ubuntu-latest_3.11_5.7.3/test-results_ubuntu-latest_3.11_5.7.3.xml
+            ubuntu-latest - 3.11 - 5.8, pytest-results_ubuntu-latest_3.11_5.8/test-outputs_ubuntu-latest_3.11_5.8.txt, pytest-results_ubuntu-latest_3.11_5.8/test-results_ubuntu-latest_3.11_5.8.xml
+            ubuntu-latest - 3.12 - 5.7.3, pytest-results_ubuntu-latest_3.12_5.7.3/test-outputs_ubuntu-latest_3.12_5.7.3.txt, pytest-results_ubuntu-latest_3.12_5.7.3/test-results_ubuntu-latest_3.12_5.7.3.xml
+            ubuntu-latest - 3.12 - 5.8, pytest-results_ubuntu-latest_3.12_5.8/test-outputs_ubuntu-latest_3.12_5.8.txt, pytest-results_ubuntu-latest_3.12_5.8/test-results_ubuntu-latest_3.12_5.8.xml
+            ubuntu-latest - 3.13 - 5.7.3, pytest-results_ubuntu-latest_3.13_5.7.3/test-outputs_ubuntu-latest_3.13_5.7.3.txt, pytest-results_ubuntu-latest_3.13_5.7.3/test-results_ubuntu-latest_3.13_5.7.3.xml
+            ubuntu-latest - 3.13 - 5.8, pytest-results_ubuntu-latest_3.13_5.8/test-outputs_ubuntu-latest_3.13_5.8.txt, pytest-results_ubuntu-latest_3.13_5.8/test-results_ubuntu-latest_3.13_5.8.xml
