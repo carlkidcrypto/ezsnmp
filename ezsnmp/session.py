@@ -78,7 +78,7 @@ class Session(SessionBase):
         :type print_full_oids: bool
         :param print_oids_numerically: Whether to print OIDs numerically.
         :type print_oids_numerically: bool
-        :param Whether to print timeticks numerically.
+        :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
 
         """
