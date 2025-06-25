@@ -50,7 +50,7 @@ jobs:
             cd net-snmp-${{ matrix.net-snmp-version }};
             ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
             make -j$(nproc) && \
-            make install && \
+            sudo make install && \
             mkdir -p /usr/share/snmp/mibs && \
             cp -r mibs/* /usr/share/snmp/mibs/ && \
             echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
@@ -63,7 +63,7 @@ jobs:
             cd net-snmp-${{ matrix.net-snmp-version }};
             ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
             make -j$(nproc) && \
-            make install && \
+            sudo make install && \
             mkdir -p /usr/share/snmp/mibs && \
             cp -r mibs/* /usr/share/snmp/mibs/ && \
             echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
