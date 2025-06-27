@@ -9,29 +9,17 @@
 // This makes the return type of make_converted_value always consistent.
 using ConvertedValue = std::variant<int, uint32_t, uint64_t, double, std::string>;
 
-// Factory function to get the proper ConvertedValue type based on SNMP type string
-// It takes an SNMP type string and a value string, then tries to convert the value
-// into the appropriate C++ type, storing it in a ConvertedValue (std::variant).
-ConvertedValue make_converted_value(std::string const& type, std::string const& value) {
-   if (type == "INTEGER" || type == "INTEGER32") {
-      return std::stoi(value);
-   } else if (type == "UINTEGER" || type == "UNSIGNED32" || type == "GAUGE" || type == "COUNTER") {
-      return static_cast<uint32_t>(std::stoul(value));
-   } else if (type == "COUNTER64") {
-      return static_cast<uint64_t>(std::stoull(value));
-   } else if (type == "TIMETICKS") {
-      return std::stod(value);
-   } else if (type == "OCTETSTR" || type == "STRING" || type == "OBJID" || type == "OBJIDENTITY" ||
-              type == "NETADDR" || type == "IPADDR" || type == "OPAQUE" || type == "BITSTRING" ||
-              type == "NSAPADDRESS" || type == "TRAPTYPE" || type == "NOTIFTYPE" ||
-              type == "OBJGROUP" || type == "NOTIFGROUP" || type == "MODID" || type == "AGENTCAP" ||
-              type == "MODCOMP" || type == "NULL" || type == "OTHER") {
-      return value;
-   }
-
-   // Fallback for unknown types or specific cases not handled above
-   return value;
-}
+/**
+ * @brief Factory function to obtain the appropriate ConvertedValue type based on an SNMP type string.
+ *
+ * This function takes an SNMP type string and a value string, then attempts to convert the value
+ * into the corresponding C++ type. The converted value is stored in a ConvertedValue, which is a std::variant.
+ * 
+ * @param snmpType The SNMP type as a string (e.g., "INTEGER", "OCTETSTR"). https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h
+ * @param value The value as a string to be converted.
+ * @return ConvertedValue The value converted to the appropriate C++ type, wrapped in a std::variant.
+ */
+ConvertedValue make_converted_value(std::string const& type, std::string const& value);
 
 /**
  * @brief Structure to represent an SNMP result.

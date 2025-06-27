@@ -126,3 +126,77 @@ TEST(ResultTest, VectorOfResultsTest) {
    results[0].value = "new_value";
    EXPECT_EQ(results[0].to_string(), "oid: oid1, index: 1, type: STRING, value: new_value");
 }
+TEST(ConvertedValueTest, IntegerType) {
+   auto cv = make_converted_value("INTEGER", "42");
+   ASSERT_TRUE(std::holds_alternative<int>(cv));
+   EXPECT_EQ(std::get<int>(cv), 42);
+
+   cv = make_converted_value("INTEGER32", "-123");
+   ASSERT_TRUE(std::holds_alternative<int>(cv));
+   EXPECT_EQ(std::get<int>(cv), -123);
+}
+
+TEST(ConvertedValueTest, UnsignedIntegerType) {
+   auto cv = make_converted_value("UINTEGER", "123");
+   ASSERT_TRUE(std::holds_alternative<uint32_t>(cv));
+   EXPECT_EQ(std::get<uint32_t>(cv), 123u);
+
+   cv = make_converted_value("UNSIGNED32", "456");
+   ASSERT_TRUE(std::holds_alternative<uint32_t>(cv));
+   EXPECT_EQ(std::get<uint32_t>(cv), 456u);
+
+   cv = make_converted_value("GAUGE", "789");
+   ASSERT_TRUE(std::holds_alternative<uint32_t>(cv));
+   EXPECT_EQ(std::get<uint32_t>(cv), 789u);
+
+   cv = make_converted_value("COUNTER", "321");
+   ASSERT_TRUE(std::holds_alternative<uint32_t>(cv));
+   EXPECT_EQ(std::get<uint32_t>(cv), 321u);
+}
+
+TEST(ConvertedValueTest, Counter64Type) {
+   auto cv = make_converted_value("COUNTER64", "1234567890123");
+   ASSERT_TRUE(std::holds_alternative<uint64_t>(cv));
+   EXPECT_EQ(std::get<uint64_t>(cv), 1234567890123ull);
+}
+
+TEST(ConvertedValueTest, TimeTicksType) {
+   auto cv = make_converted_value("TIMETICKS", "(107129) 0:17:51.29");
+   ASSERT_TRUE(std::holds_alternative<uint32_t>(cv));
+   EXPECT_EQ(std::get<uint32_t>(cv), 107129u);
+}
+
+TEST(ConvertedValueTest, StringLikeTypes) {
+   std::vector<std::string> types = {
+      "OCTETSTR", "STRING", "OBJID", "OBJIDENTITY", "NETADDR", "IPADDR", "OPAQUE",
+      "BITSTRING", "NSAPADDRESS", "TRAPTYPE", "NOTIFTYPE", "OBJGROUP", "NOTIFGROUP",
+      "MODID", "AGENTCAP", "MODCOMP", "NULL", "OTHER"
+   };
+   for (const auto& type : types) {
+      auto cv = make_converted_value(type, "test_value");
+      ASSERT_TRUE(std::holds_alternative<std::string>(cv));
+      EXPECT_EQ(std::get<std::string>(cv), "test_value");
+   }
+}
+
+TEST(ConvertedValueTest, UnknownTypeFallback) {
+   auto cv = make_converted_value("UNKNOWN_TYPE", "fallback_value");
+   ASSERT_TRUE(std::holds_alternative<std::string>(cv));
+   EXPECT_EQ(std::get<std::string>(cv), "fallback_value");
+}
+
+TEST(ConvertedValueTest, InvalidIntegerThrows) {
+   EXPECT_THROW(make_converted_value("INTEGER", "notanint"), std::invalid_argument);
+}
+
+TEST(ConvertedValueTest, InvalidUnsignedThrows) {
+   EXPECT_THROW(make_converted_value("UNSIGNED32", "notanuint"), std::invalid_argument);
+}
+
+TEST(ConvertedValueTest, InvalidCounter64Throws) {
+   EXPECT_THROW(make_converted_value("COUNTER64", "notauint64"), std::invalid_argument);
+}
+
+TEST(ConvertedValueTest, InvalidTimeTicksThrows) {
+   EXPECT_THROW(make_converted_value("TIMETICKS", "notadouble"), std::invalid_argument);
+}
