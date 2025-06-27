@@ -1,23 +1,27 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
+#include <cstdint> // For uint64_t, uint32_t
 #include <string>
 #include <variant> // For std::variant
-#include <cstdint> // For uint64_t, uint32_t
 
 // A single type to hold any of the converted values.
 // This makes the return type of make_converted_value always consistent.
 using ConvertedValue = std::variant<int, uint32_t, uint64_t, double, std::string>;
 
 /**
- * @brief Factory function to obtain the appropriate ConvertedValue type based on an SNMP type string.
+ * @brief Factory function to obtain the appropriate ConvertedValue type based on an SNMP type
+ * string.
  *
  * This function takes an SNMP type string and a value string, then attempts to convert the value
- * into the corresponding C++ type. The converted value is stored in a ConvertedValue, which is a std::variant.
- * 
- * @param snmpType The SNMP type as a string (e.g., "INTEGER", "OCTETSTR"). https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h
+ * into the corresponding C++ type. The converted value is stored in a ConvertedValue, which is a
+ * std::variant.
+ *
+ * @param snmpType The SNMP type as a string (e.g., "INTEGER", "OCTETSTR").
+ * https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h
  * @param value The value as a string to be converted.
- * @return ConvertedValue The value converted to the appropriate C++ type, wrapped in a std::variant.
+ * @return ConvertedValue The value converted to the appropriate C++ type, wrapped in a
+ * std::variant.
  */
 ConvertedValue make_converted_value(std::string const& type, std::string const& value);
 

@@ -168,11 +168,10 @@ TEST(ConvertedValueTest, TimeTicksType) {
 
 TEST(ConvertedValueTest, StringLikeTypes) {
    std::vector<std::string> types = {
-      "OCTETSTR", "STRING", "OBJID", "OBJIDENTITY", "NETADDR", "IPADDR", "OPAQUE",
-      "BITSTRING", "NSAPADDRESS", "TRAPTYPE", "NOTIFTYPE", "OBJGROUP", "NOTIFGROUP",
-      "MODID", "AGENTCAP", "MODCOMP", "NULL", "OTHER"
-   };
-   for (const auto& type : types) {
+       "OCTETSTR",   "STRING",    "OBJID",       "OBJIDENTITY", "NETADDR",   "IPADDR",
+       "OPAQUE",     "BITSTRING", "NSAPADDRESS", "TRAPTYPE",    "NOTIFTYPE", "OBJGROUP",
+       "NOTIFGROUP", "MODID",     "AGENTCAP",    "MODCOMP",     "NULL",      "OTHER"};
+   for (auto const& type : types) {
       auto cv = make_converted_value(type, "test_value");
       ASSERT_TRUE(std::holds_alternative<std::string>(cv));
       EXPECT_EQ(std::get<std::string>(cv), "test_value");
