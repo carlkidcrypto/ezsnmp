@@ -1,9 +1,9 @@
 #ifndef DATATYPES_H
 #define DATATYPES_H
 
-#include <cstdint> // For uint64_t, uint32_t
+#include <cstdint>
 #include <string>
-#include <variant> // For std::variant
+#include <variant>
 
 // A single type to hold any of the converted values.
 // This makes the return type of make_converted_value always consistent.
@@ -37,7 +37,7 @@ struct Result {
    std::string type = "";  ///< Data type of the retrieved value.
    std::string value = ""; ///< Actual value of the retrieved data.
    ConvertedValue converted_value = make_converted_value(type, value);
-
+   
    /**
     * @brief Converts the Result object to a string representation.
     *
