@@ -8,4 +8,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<BaseResult> snmpgetnext(std::vector<std::string> const &args);
+std::vector<ResultBase> snmpgetnext(std::vector<std::string> const &args);

@@ -8,4 +8,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<BaseResult> snmpbulkget(const std::vector<std::string> &args);
+std::vector<ResultBase> snmpbulkget(const std::vector<std::string> &args);

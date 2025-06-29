@@ -35,8 +35,8 @@ void snmpset_optProc(int argc, char *const *argv, int opt);
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmpset command.
- * @return A vector of BaseResult objects containing the results of the SET operation.
+ * @return A vector of ResultBase objects containing the results of the SET operation.
  */
-std::vector<BaseResult> snmpset(std::vector<std::string> const &args);
+std::vector<ResultBase> snmpset(std::vector<std::string> const &args);
 
 #endif // SNMPSET_H

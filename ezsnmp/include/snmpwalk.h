@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "datatypes.h"
+#include "datatypesbase.h"
 
 /**
  * @brief Prints the usage information for the snmpwalk command.
@@ -52,8 +52,8 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt);
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmpwalk command.
- * @return A vector of BaseResult objects containing the retrieved data.
+ * @return A vector of ResultBase objects containing the retrieved data.
  */
-std::vector<BaseResult> snmpwalk(std::vector<std::string> const &args);
+std::vector<ResultBase> snmpwalk(std::vector<std::string> const &args);
 
 #endif // SNMPWALK_H

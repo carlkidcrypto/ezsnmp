@@ -79,6 +79,10 @@ def test_converted_value(version):
         ]
     )
 
+    print(type(result))
+    print(type(result[0]))
+    print(type(result[0]))
+    print(type(result[0]))
     print(result[0].converted_value)
     print(result[0].value)
     assert isinstance(result[0].converted_value, int)

@@ -1,6 +1,6 @@
-#include "datatypes.h"
+#include "datatypesbase.h"
 
-BaseResult::ConvertedValue BaseResult::make_converted_value(std::string const& type,
+ResultBase::ConvertedValue ResultBase::_make_converted_value(std::string const& type,
                                                             std::string const& value) {
    if (type == "INTEGER" || type == "INTEGER32") {
       return std::stoi(value);
@@ -29,21 +29,42 @@ BaseResult::ConvertedValue BaseResult::make_converted_value(std::string const& t
    return value;
 }
 
-std::string BaseResult::to_string() const {
+std::string ResultBase::_to_string() const {
    return "oid: " + this->oid + ", index: " + this->index + ", type: " + this->type +
           ", value: " + this->value;
 }
 
-int BaseResult::get_converted_value_int() const { return std::get<int>(converted_value); }
-
-uint32_t BaseResult::get_converted_value_uint32() const {
-   return std::get<uint32_t>(converted_value);
+std::optional<int> ResultBase::_get_converted_value_int() const {
+   if (std::holds_alternative<int>(converted_value)) {
+      return std::get<int>(converted_value);
+   }
+   return std::nullopt;
 }
 
-uint64_t BaseResult::get_converted_value_uint64() const {
-   return std::get<uint64_t>(converted_value);
+std::optional<uint32_t> ResultBase::_get_converted_value_uint32() const {
+   if (std::holds_alternative<uint32_t>(converted_value)) {
+      return std::get<uint32_t>(converted_value);
+   }
+   return std::nullopt;
 }
 
-double BaseResult::get_converted_value_double() const { return std::get<double>(converted_value); }
+std::optional<uint64_t> ResultBase::_get_converted_value_uint64() const {
+   if (std::holds_alternative<uint64_t>(converted_value)) {
+      return std::get<uint64_t>(converted_value);
+   }
+   return std::nullopt;
+}
 
-std::string const& BaseResult::get_string() const { return std::get<std::string>(converted_value); }
+std::optional<double> ResultBase::_get_converted_value_double() const {
+   if (std::holds_alternative<double>(converted_value)) {
+      return std::get<double>(converted_value);
+   }
+   return std::nullopt;
+}
+
+std::optional<std::string> ResultBase::_get_string() const {
+   if (std::holds_alternative<std::string>(converted_value)) {
+      return std::get<std::string>(converted_value);
+   }
+   return std::nullopt;
+}

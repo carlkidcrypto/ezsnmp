@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <variant>
+#include <optional>
 
 /**
  * @brief Structure to represent an SNMP result.
@@ -11,26 +12,26 @@
  * This structure holds the information retrieved from an SNMP operation,
  * including the OID, index, type, and value of the retrieved data.
  */
-struct BaseResult {
+struct ResultBase {
    // A single type to hold any of the converted values.
-   // This makes the return type of make_converted_value always consistent.
+   // This makes the return type of _make_converted_value always consistent.
    using ConvertedValue = std::variant<int, uint32_t, uint64_t, double, std::string>;
 
-   std::string oid = "";   ///< Object Identifier (OID) of the retrieved data.
-   std::string index = ""; ///< Index of the retrieved data (if applicable).
-   std::string type = "";  ///< Data type of the retrieved value.
-   std::string value = ""; ///< Actual value of the retrieved data.
-   ConvertedValue converted_value = make_converted_value(type, value);
+   std::string oid = "";                ///< Object Identifier (OID) of the retrieved data.
+   std::string index = "";              ///< Index of the retrieved data (if applicable).
+   std::string type = "";               ///< Data type of the retrieved value.
+   std::string value = "";              ///< Actual value of the retrieved data.
+   ConvertedValue converted_value = _make_converted_value(type, value); ///< Converted value of the type,value data.
 
    /**
-    * @brief Converts the BaseResult object to a string representation.
+    * @brief Converts the ResultBase object to a string representation.
     *
     * This method generates a human-readable string representation of the
-    * BaseResult object, including all its members.
+    * ResultBase object, including all its members.
     *
-    * @return A string representation of the BaseResult object.
+    * @return A string representation of the ResultBase object.
     */
-   std::string to_string() const;
+   std::string _to_string() const;
 
    /**
     * @brief Factory function to obtain the appropriate ConvertedValue type based on an SNMP type
@@ -46,18 +47,18 @@ struct BaseResult {
     * @return ConvertedValue The value converted to the appropriate C++ type, wrapped in a
     * std::variant.
     */
-   ConvertedValue make_converted_value(std::string const& type, std::string const& value);
+   ConvertedValue _make_converted_value(std::string const& type, std::string const& value);
 
    // Getters for each type in ConvertedValue
-   int get_converted_value_int() const;
+   std::optional<int> _get_converted_value_int() const;
 
-   uint32_t get_converted_value_uint32() const;
+   std::optional<uint32_t> _get_converted_value_uint32() const;
 
-   uint64_t get_converted_value_uint64() const;
+   std::optional<uint64_t> _get_converted_value_uint64() const;
 
-   double get_converted_value_double() const;
+   std::optional<double> _get_converted_value_double() const;
 
-   std::string const& get_string() const;
+   std::optional<std::string> _get_string() const;
 };
 
 #endif // DATATYPES_H

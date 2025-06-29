@@ -35,8 +35,8 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt);
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmpgetnext command.
- * @return A vector of BaseResult objects containing the retrieved data.
+ * @return A vector of ResultBase objects containing the retrieved data.
  */
-std::vector<BaseResult> snmpgetnext(std::vector<std::string> const &args);
+std::vector<ResultBase> snmpgetnext(std::vector<std::string> const &args);
 
 #endif // SNMPGETNEXT_H

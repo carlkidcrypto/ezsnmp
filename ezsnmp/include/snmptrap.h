@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "datatypes.h"
+#include "datatypesbase.h"
 
 /**
  * @brief Prints the usage information for the snmptrap command.

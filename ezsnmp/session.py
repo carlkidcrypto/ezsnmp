@@ -1,3 +1,4 @@
+from .datatypes import Result
 from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
 from typing import Union
@@ -459,7 +460,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.walk(oid)
+            result_base_tuple = self._session_base.walk(oid)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -502,7 +505,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.bulk_walk(oid)
+            result_base_tuple = self._session_base.bulk_walk(oid)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -545,7 +550,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.bulk_walk(oids)
+            result_base_tuple = self._session_base.bulk_walk(oids)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -586,7 +593,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.get(oid)
+            result_base_tuple = self._session_base.get(oid)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -627,7 +636,11 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.get(oids)
+            result_base_tuple = self._session_base.get(oids)
+            for r in result_base_tuple:
+                print(r.type, r.value, r.oid, r.index, r.converted_value)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -668,7 +681,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.get_next(oids)
+            result_base_tuple = self._session_base.get_next(oids)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -709,7 +724,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.bulk_get(oids)
+            result_base_tuple = self._session_base.bulk_get(oids)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)
@@ -756,7 +773,9 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.set(oids)
+            result_base_tuple = self._session_base.set(oids)
+            # Convert each ResultBase to Result
+            result = tuple(Result(r) for r in result_base_tuple)
             return result
         except Exception as e:
             _handle_error(e)

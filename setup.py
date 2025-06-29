@@ -251,10 +251,10 @@ define_macros = [("ENABLE_LEGACY_SUPPORT", int(ENABLE_LEGACY_SUPPORT))]
 setup(
     ext_modules=[
         Extension(
-            name="ezsnmp/_datatypes",
+            name="ezsnmp/_datatypesbase",
             sources=[
-                "ezsnmp/src/ezsnmp_datatypes.cpp",
-                "ezsnmp/src/datatypes.cpp",
+                "ezsnmp/src/ezsnmp_datatypesbase.cpp",
+                "ezsnmp/src/datatypesbase.cpp",
             ],
             library_dirs=libdirs,
             include_dirs=incdirs,
@@ -281,7 +281,7 @@ setup(
             sources=[
                 "ezsnmp/src/ezsnmp_netsnmpbase.cpp",
                 "ezsnmp/src/exceptionsbase.cpp",
-                "ezsnmp/src/datatypes.cpp",
+                "ezsnmp/src/datatypesbase.cpp",
                 "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",
                 "ezsnmp/src/snmpgetnext.cpp",
@@ -303,7 +303,7 @@ setup(
             sources=[
                 "ezsnmp/src/ezsnmp_sessionbase.cpp",
                 "ezsnmp/src/exceptionsbase.cpp",
-                "ezsnmp/src/datatypes.cpp",
+                "ezsnmp/src/datatypesbase.cpp",
                 "ezsnmp/src/sessionbase.cpp",
                 "ezsnmp/src/helpers.cpp",
                 "ezsnmp/src/snmpbulkget.cpp",

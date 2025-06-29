@@ -2,14 +2,14 @@
 %feature("autodoc", "0");
 
 %include <stl.i>
-%include "datatypes.i"
+%include "datatypesbase.i"
 %include "exceptionsbase.i"
 
 %feature("python:annotations", "c");
 
 // Tell SWIG how to handle our special return type(s) from C++
 %template(_string_list) std::vector<std::string>;
-%template(_result_list) std::vector<BaseResult>;
+%template(_result_list) std::vector<ResultBase>;
 
 %include "snmpbulkget.i"
 %include "snmpbulkwalk.i"

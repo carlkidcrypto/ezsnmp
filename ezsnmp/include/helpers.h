@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "datatypes.h"
+#include "datatypesbase.h"
 
 /**
  * @brief Converts SNMP variable bindings to a string representation.
@@ -81,23 +81,23 @@ std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &a
  * @brief Parses a single SNMP result string.
  *
  * This function parses a string containing an SNMP result and extracts the relevant
- * information into a BaseResult object.
+ * information into a ResultBase object.
  *
  * @param input The input string containing the SNMP result.
- * @return A BaseResult object containing the parsed information.
+ * @return A ResultBase object containing the parsed information.
  */
-BaseResult parse_result(std::string const &input);
+ResultBase parse_result(std::string const &input);
 
 /**
  * @brief Parses multiple SNMP result strings.
  *
  * This function parses a vector of strings, each containing an SNMP result,
- * and extracts the relevant information into a vector of BaseResult objects.
+ * and extracts the relevant information into a vector of ResultBase objects.
  *
  * @param inputs A vector of strings containing SNMP results.
- * @return A vector of BaseResult objects containing the parsed information.
+ * @return A vector of ResultBase objects containing the parsed information.
  */
-std::vector<BaseResult> parse_results(std::vector<std::string> const &inputs);
+std::vector<ResultBase> parse_results(std::vector<std::string> const &inputs);
 
 /**
  * @brief Removes SNMP v3 user information from the cache.
