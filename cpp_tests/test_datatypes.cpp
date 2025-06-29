@@ -3,7 +3,7 @@
 #include "datatypes.h"
 
 TEST(ResultTest, BasicResultTest) {
-   Result r1;
+   BaseResult r1;
    r1.oid = "SNMPv2-MIB::sysDescr";
    r1.index = "0";
    r1.type = "STRING";
@@ -14,7 +14,7 @@ TEST(ResultTest, BasicResultTest) {
 }
 
 TEST(ResultTest, EmptyFieldsTest) {
-   Result r2;
+   BaseResult r2;
    r2.oid = "";
    r2.index = "";
    r2.type = "";
@@ -24,7 +24,7 @@ TEST(ResultTest, EmptyFieldsTest) {
 }
 
 TEST(ResultTest, SpecialCharactersTest) {
-   Result r3;
+   BaseResult r3;
    r3.oid = "test::oid";
    r3.index = "123";
    r3.type = "INTEGER";
@@ -34,7 +34,7 @@ TEST(ResultTest, SpecialCharactersTest) {
 }
 
 TEST(ResultTest, NegativeIntegerTest) {
-   Result r4;
+   BaseResult r4;
    r4.oid = "test::oid";
    r4.index = "123";
    r4.type = "INTEGER";
@@ -44,7 +44,7 @@ TEST(ResultTest, NegativeIntegerTest) {
 }
 
 TEST(ResultTest, EmptyValueTest) {
-   Result r5;
+   BaseResult r5;
    r5.oid = "test::oid";
    r5.index = "123";
    r5.type = "INTEGER";
@@ -54,13 +54,13 @@ TEST(ResultTest, EmptyValueTest) {
 }
 
 TEST(ResultTest, AssignmentOperatorTest) {
-   Result r1;
+   BaseResult r1;
    r1.oid = "test::oid";
    r1.index = "123";
    r1.type = "INTEGER";
    r1.value = "456";
 
-   Result r2;
+   BaseResult r2;
    r2 = r1;
    EXPECT_EQ(r1.to_string(), r2.to_string());
 
@@ -84,13 +84,13 @@ TEST(ResultTest, AssignmentOperatorTest) {
 }
 
 TEST(ResultTest, MoveOperatorTest) {
-   Result r1;
+   BaseResult r1;
    r1.oid = "test::oid";
    r1.index = "123";
    r1.type = "INTEGER";
    r1.value = "456";
 
-   Result r2;
+   BaseResult r2;
    r2 = std::move(r1);
 
    EXPECT_EQ(r2.oid, "test::oid");
@@ -101,15 +101,15 @@ TEST(ResultTest, MoveOperatorTest) {
    EXPECT_TRUE(r1.oid.empty());
 }
 TEST(ResultTest, VectorOfResultsTest) {
-   std::vector<Result> results;
+   std::vector<BaseResult> results;
 
-   Result r1;
+   BaseResult r1;
    r1.oid = "oid1";
    r1.index = "1";
    r1.type = "STRING";
    r1.value = "value1";
 
-   Result r2;
+   BaseResult r2;
    r2.oid = "oid2";
    r2.index = "2";
    r2.type = "INTEGER";

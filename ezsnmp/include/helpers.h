@@ -81,23 +81,23 @@ std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &a
  * @brief Parses a single SNMP result string.
  *
  * This function parses a string containing an SNMP result and extracts the relevant
- * information into a Result object.
+ * information into a BaseResult object.
  *
  * @param input The input string containing the SNMP result.
- * @return A Result object containing the parsed information.
+ * @return A BaseResult object containing the parsed information.
  */
-Result parse_result(std::string const &input);
+BaseResult parse_result(std::string const &input);
 
 /**
  * @brief Parses multiple SNMP result strings.
  *
  * This function parses a vector of strings, each containing an SNMP result,
- * and extracts the relevant information into a vector of Result objects.
+ * and extracts the relevant information into a vector of BaseResult objects.
  *
  * @param inputs A vector of strings containing SNMP results.
- * @return A vector of Result objects containing the parsed information.
+ * @return A vector of BaseResult objects containing the parsed information.
  */
-std::vector<Result> parse_results(std::vector<std::string> const &inputs);
+std::vector<BaseResult> parse_results(std::vector<std::string> const &inputs);
 
 /**
  * @brief Removes SNMP v3 user information from the cache.

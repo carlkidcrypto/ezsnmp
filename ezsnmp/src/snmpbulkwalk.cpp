@@ -172,7 +172,7 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
+std::vector<BaseResult> snmpbulkwalk(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 

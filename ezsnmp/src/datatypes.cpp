@@ -1,6 +1,7 @@
 #include "datatypes.h"
 
-ConvertedValue make_converted_value(std::string const& type, std::string const& value) {
+BaseResult::ConvertedValue BaseResult::make_converted_value(std::string const& type,
+                                                            std::string const& value) {
    if (type == "INTEGER" || type == "INTEGER32") {
       return std::stoi(value);
    } else if (type == "UINTEGER" || type == "UNSIGNED32" || type == "GAUGE" || type == "COUNTER") {
@@ -28,7 +29,21 @@ ConvertedValue make_converted_value(std::string const& type, std::string const& 
    return value;
 }
 
-std::string Result::to_string() const {
+std::string BaseResult::to_string() const {
    return "oid: " + this->oid + ", index: " + this->index + ", type: " + this->type +
           ", value: " + this->value;
 }
+
+int BaseResult::get_converted_value_int() const { return std::get<int>(converted_value); }
+
+uint32_t BaseResult::get_converted_value_uint32() const {
+   return std::get<uint32_t>(converted_value);
+}
+
+uint64_t BaseResult::get_converted_value_uint64() const {
+   return std::get<uint64_t>(converted_value);
+}
+
+double BaseResult::get_converted_value_double() const { return std::get<double>(converted_value); }
+
+std::string const& BaseResult::get_string() const { return std::get<std::string>(converted_value); }

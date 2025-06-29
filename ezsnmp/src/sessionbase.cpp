@@ -291,7 +291,7 @@ void SessionBase::check_and_clear_v3_user() {
    }
 }
 
-std::vector<Result> SessionBase::walk(std::string const& mib) {
+std::vector<BaseResult> SessionBase::walk(std::string const& mib) {
    populate_args();
 
    if (!mib.empty()) {
@@ -301,7 +301,7 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
    return snmpwalk(m_args);
 }
 
-std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
+std::vector<BaseResult> SessionBase::bulk_walk(std::string const& mib) {
    populate_args();
 
    if (!mib.empty()) {
@@ -311,7 +311,7 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
    return snmpbulkwalk(m_args);
 }
 
-std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
+std::vector<BaseResult> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -321,7 +321,7 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
    return snmpbulkwalk(m_args);
 }
 
-std::vector<Result> SessionBase::get(std::string const& mib) {
+std::vector<BaseResult> SessionBase::get(std::string const& mib) {
    populate_args();
 
    if (!mib.empty()) {
@@ -331,7 +331,7 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
    return snmpget(m_args);
 }
 
-std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
+std::vector<BaseResult> SessionBase::get(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -341,7 +341,7 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
    return snmpget(m_args);
 }
 
-std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
+std::vector<BaseResult> SessionBase::get_next(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -351,7 +351,7 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
    return snmpgetnext(m_args);
 }
 
-std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
+std::vector<BaseResult> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -361,7 +361,7 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
    return snmpbulkget(m_args);
 }
 
-std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
+std::vector<BaseResult> SessionBase::set(std::vector<std::string> const& mibs) {
    populate_args();
 
    for (auto const& entry : mibs) {

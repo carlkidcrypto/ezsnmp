@@ -121,9 +121,9 @@ class SessionBase {
     * Retrieves a subtree of management information using SNMP WALK.
     *
     * @param mib The OID (Object Identifier) to start the walk from (default: "").
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> walk(std::string const& mib = "");
+   std::vector<BaseResult> walk(std::string const& mib = "");
 
    /**
     * @brief Performs an SNMP BULK WALK operation.
@@ -131,9 +131,9 @@ class SessionBase {
     * Retrieves a subtree of management information using SNMP BULK WALK.
     *
     * @param mib The OID to start the walk from.
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> bulk_walk(std::string const& mib);
+   std::vector<BaseResult> bulk_walk(std::string const& mib);
 
    /**
     * @brief Performs an SNMP BULK WALK operation on multiple OIDs.
@@ -141,9 +141,9 @@ class SessionBase {
     * Retrieves subtrees of management information using SNMP BULK WALK for multiple OIDs.
     *
     * @param mibs A vector of OIDs to start the walks from.
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> bulk_walk(std::vector<std::string> const& mibs);
+   std::vector<BaseResult> bulk_walk(std::vector<std::string> const& mibs);
 
    /**
     * @brief Performs an SNMP GET operation.
@@ -151,9 +151,9 @@ class SessionBase {
     * Retrieves the value of a specific management information object.
     *
     * @param mib The OID of the object to retrieve (default: "").
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> get(std::string const& mib = "");
+   std::vector<BaseResult> get(std::string const& mib = "");
 
    /**
     * @brief Performs an SNMP GET operation on multiple OIDs.
@@ -161,9 +161,9 @@ class SessionBase {
     * Retrieves the values of multiple management information objects.
     *
     * @param mibs A vector of OIDs to retrieve.
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> get(std::vector<std::string> const& mibs);
+   std::vector<BaseResult> get(std::vector<std::string> const& mibs);
 
    /**
     * @brief Performs an SNMP GET NEXT operation on multiple OIDs.
@@ -171,9 +171,9 @@ class SessionBase {
     * Retrieves the values of the next lexicographically greater OIDs.
     *
     * @param mibs A vector of OIDs to retrieve the next values for.
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> get_next(std::vector<std::string> const& mibs);
+   std::vector<BaseResult> get_next(std::vector<std::string> const& mibs);
 
    /**
     * @brief Performs an SNMP BULK GET operation on multiple OIDs.
@@ -181,9 +181,9 @@ class SessionBase {
     * Retrieves the values of multiple management information objects using BULK GET.
     *
     * @param mibs A vector of OIDs to retrieve.
-    * @return A vector of Result objects containing the retrieved data.
+    * @return A vector of BaseResult objects containing the retrieved data.
     */
-   std::vector<Result> bulk_get(std::vector<std::string> const& mibs);
+   std::vector<BaseResult> bulk_get(std::vector<std::string> const& mibs);
 
    /**
     * @brief Performs an SNMP SET operation on multiple OIDs.
@@ -191,9 +191,9 @@ class SessionBase {
     * Sets the values of multiple management information objects.
     *
     * @param mibs A vector of OIDs and their corresponding values to set.
-    * @return A vector of Result objects containing the results of the SET operation.
+    * @return A vector of BaseResult objects containing the results of the SET operation.
     */
-   std::vector<Result> set(std::vector<std::string> const& mibs);
+   std::vector<BaseResult> set(std::vector<std::string> const& mibs);
 
    // Const getters
 

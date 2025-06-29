@@ -127,9 +127,9 @@ std::regex const OID_INDEX_RE(R"((
 //  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
-// This is a helper to turn OID results into a Result type
-Result parse_result(std::string const &input) {
-   Result result;
+// This is a helper to turn OID results into a BaseResult type
+BaseResult parse_result(std::string const &input) {
+   BaseResult result;
    std::stringstream ss(input);
    std::string temp;
 
@@ -186,9 +186,9 @@ Result parse_result(std::string const &input) {
    return result;
 }
 
-// This is a helper to create a vector of Result types
-std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
-   std::vector<Result> results;
+// This is a helper to create a vector of BaseResult types
+std::vector<BaseResult> parse_results(std::vector<std::string> const &inputs) {
+   std::vector<BaseResult> results;
    for (auto const &input : inputs) {
       results.push_back(parse_result(input));
    }
