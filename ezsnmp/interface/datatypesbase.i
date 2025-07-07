@@ -2,6 +2,7 @@
 %feature("autodoc", "0");
 
 %include <std_string.i>
+%include <typemaps.i>
 
 %{
 #include <optional>
@@ -108,11 +109,11 @@ public:
 %enddef
 // End: https://github.com/nobleo/Fields2Cover/blob/144ed1c6ba5dd0ddac0a72d6f4e11db0598cb040/swig/python/optional.i
 
-%template(optional_int) std::optional<int>;
-%template(optional_uint32_t) std::optional<uint32_t>;
-%template(optional_uint64_t) std::optional<uint64_t>;
-%template(optional_double) std::optional<double>;
-%template(optional_std_string) std::optional<std::string>;
+DEFINE_OPTIONAL_SIMPLE(optional_int, int);
+DEFINE_OPTIONAL_SIMPLE(optional_uint32_t, uint32_t);
+DEFINE_OPTIONAL_SIMPLE(optional_uint64_t, uint64_t);
+DEFINE_OPTIONAL_SIMPLE(optional_double, double);
+DEFINE_OPTIONAL_SIMPLE(optional_std_string, std::string);
 
 // Include the header file
 %include "../include/datatypesbase.h"

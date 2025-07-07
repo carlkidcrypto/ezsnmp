@@ -21,7 +21,7 @@ struct ResultBase {
    std::string index = "";              ///< Index of the retrieved data (if applicable).
    std::string type = "";               ///< Data type of the retrieved value.
    std::string value = "";              ///< Actual value of the retrieved data.
-   ConvertedValue converted_value = _make_converted_value(type, value); ///< Converted value of the type,value data.
+   ConvertedValue converted_value = "";  ///< Converted value of the type,value data.
 
    /**
     * @brief Converts the ResultBase object to a string representation.
@@ -59,6 +59,17 @@ struct ResultBase {
    std::optional<double> _get_converted_value_double() const;
 
    std::optional<std::string> _get_string() const;
+
+   /**
+    * @brief Updates the converted_value member by converting the current type and value.
+    *
+    * This method recalculates and assigns the converted_value field using the current
+    * values of the type and value members. It utilizes the private helper function
+    * _make_converted_value to perform the conversion.
+    *
+    * Typically called after type or value has changed to ensure converted_value is up-to-date.
+    */
+   void update_converted_value();
 };
 
 #endif // DATATYPES_H

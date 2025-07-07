@@ -1,6 +1,7 @@
 import pytest
 
 from ezsnmp.session import Session
+from ezsnmp.datatypes import Result
 import faulthandler
 from ezsnmp import Session
 
@@ -79,10 +80,5 @@ def test_converted_value(version):
         ]
     )
 
-    print(type(result))
-    print(type(result[0]))
-    print(type(result[0]))
-    print(type(result[0]))
-    print(result[0].converted_value)
-    print(result[0].value)
+    assert isinstance(result[0], Result), f"Expected type Result, got {type(result[0])}"
     assert isinstance(result[0].converted_value, int)

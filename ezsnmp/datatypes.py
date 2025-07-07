@@ -1,9 +1,9 @@
 from .datatypesbase import ResultBase
 
 
-class Result(ResultBase):
+class Result():
     """
-    Result class for SNMP operations, inheriting from ResultBase.
+    Result class for SNMP operations.
 
     This class is used to represent the result of an SNMP operation, including
     the OID, value, and any error status.
@@ -15,17 +15,16 @@ class Result(ResultBase):
         self._type = result_base.type
         self._value = result_base.value
 
+        print(self._oid, self._index, self._type, self._value)
+
+        result_base.update_converted_value()
         temp1 = result_base._get_converted_value_int()
         temp2 = result_base._get_converted_value_uint32()
         temp3 = result_base._get_converted_value_uint64()
         temp4 = result_base._get_converted_value_double()
 
-        def try_get(opt):
-            print("All attributes of opt:", dir(opt))
-            return opt.contents() if hasattr(opt, "has_contents") and opt.has_contents() else None
-
-        print(try_get(temp1), try_get(temp2), try_get(temp3), try_get(temp4))
-
+        print(temp1, temp2, temp3, temp4)
+    
         self._converted_value = None
 
     @property

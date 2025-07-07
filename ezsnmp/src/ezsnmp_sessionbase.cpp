@@ -8984,7 +8984,21 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_int(PyObject *self, P
     result = ((ResultBase const *)arg1)->_get_converted_value_int();
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj((new std::optional< int >(result)), SWIGTYPE_p_std__optionalT_int_t, SWIG_POINTER_OWN |  0 );
+  
+  if ( (&result)->has_value() )
+  {
+    std::optional< int >& tmp_ov = result;
+    {
+      int result = tmp_ov.value();
+      resultobj = SWIG_From_int(static_cast< int >(result));
+    }
+  }
+  else
+  {
+    resultobj = Py_None;
+    Py_INCREF(Py_None);
+  }
+  
   return resultobj;
 fail:
   return NULL;
@@ -9009,7 +9023,21 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_uint32(PyObject *self
     result = ((ResultBase const *)arg1)->_get_converted_value_uint32();
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj((new std::optional< uint32_t >(result)), SWIGTYPE_p_std__optionalT_uint32_t_t, SWIG_POINTER_OWN |  0 );
+  
+  if ( (&result)->has_value() )
+  {
+    std::optional< uint32_t >& tmp_ov = result;
+    {
+      uint32_t result = tmp_ov.value();
+      resultobj = SWIG_NewPointerObj((new uint32_t(result)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+    }
+  }
+  else
+  {
+    resultobj = Py_None;
+    Py_INCREF(Py_None);
+  }
+  
   return resultobj;
 fail:
   return NULL;
@@ -9034,7 +9062,21 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_uint64(PyObject *self
     result = ((ResultBase const *)arg1)->_get_converted_value_uint64();
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj((new std::optional< uint64_t >(result)), SWIGTYPE_p_std__optionalT_uint64_t_t, SWIG_POINTER_OWN |  0 );
+  
+  if ( (&result)->has_value() )
+  {
+    std::optional< uint64_t >& tmp_ov = result;
+    {
+      uint64_t result = tmp_ov.value();
+      resultobj = SWIG_NewPointerObj((new uint64_t(result)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+    }
+  }
+  else
+  {
+    resultobj = Py_None;
+    Py_INCREF(Py_None);
+  }
+  
   return resultobj;
 fail:
   return NULL;
@@ -9059,7 +9101,21 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_double(PyObject *self
     result = ((ResultBase const *)arg1)->_get_converted_value_double();
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj((new std::optional< double >(result)), SWIGTYPE_p_std__optionalT_double_t, SWIG_POINTER_OWN |  0 );
+  
+  if ( (&result)->has_value() )
+  {
+    std::optional< double >& tmp_ov = result;
+    {
+      double result = tmp_ov.value();
+      resultobj = SWIG_From_double(static_cast< double >(result));
+    }
+  }
+  else
+  {
+    resultobj = Py_None;
+    Py_INCREF(Py_None);
+  }
+  
   return resultobj;
 fail:
   return NULL;
@@ -9084,7 +9140,45 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_string(PyObject *self, PyObject *args
     result = ((ResultBase const *)arg1)->_get_string();
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj((new std::optional< std::string >(result)), SWIGTYPE_p_std__optionalT_std__string_t, SWIG_POINTER_OWN |  0 );
+  
+  if ( (&result)->has_value() )
+  {
+    std::optional< std::string >& tmp_ov = result;
+    {
+      std::string result = tmp_ov.value();
+      resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+    }
+  }
+  else
+  {
+    resultobj = Py_None;
+    Py_INCREF(Py_None);
+  }
+  
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ResultBase_update_converted_value(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  ResultBase *arg1 = (ResultBase *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "ResultBase_update_converted_value", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_ResultBase, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ResultBase_update_converted_value" "', argument " "1"" of type '" "ResultBase *""'"); 
+  }
+  arg1 = reinterpret_cast< ResultBase * >(argp1);
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    (arg1)->update_converted_value();
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -23481,6 +23575,15 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__ResultBase_methods[] = {
   { "_get_converted_value_uint64", _wrap_ResultBase__get_converted_value_uint64, METH_NOARGS, "_get_converted_value_uint64(self) -> optional_uint64_t" },
   { "_get_converted_value_double", _wrap_ResultBase__get_converted_value_double, METH_NOARGS, "_get_converted_value_double(self) -> optional_double" },
   { "_get_string", _wrap_ResultBase__get_string, METH_NOARGS, "_get_string(self) -> optional_std_string" },
+  { "update_converted_value", _wrap_ResultBase_update_converted_value, METH_NOARGS, "\n"
+		"Updates the converted_value member by converting the current type and value.\n"
+		"\n"
+		"This method recalculates and assigns the converted_value field using the current\n"
+		"values of the type and value members. It utilizes the private helper function\n"
+		"_make_converted_value to perform the conversion.\n"
+		"\n"
+		"Typically called after type or value has changed to ensure converted_value is up-to-date.\n"
+		"" },
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
