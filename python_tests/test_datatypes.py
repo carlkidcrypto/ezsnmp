@@ -46,3 +46,37 @@ def test_string_values_not_enclosed_in_quotes(version):
         (value.startswith('"') and value.endswith('"'))
         or (value.startswith("'") and value.endswith("'"))
     ), "String value is enclosed in quotes"
+
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
+def test_converted_value(version):
+    """
+    Test to ensure string values are conerted to converted_value which attempts to
+    convert the string to a more appropriate type.
+    This is particularly useful for numeric strings.
+    """
+    if version == "3" or version == 3:
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+        )
+    else:
+        session = Session(
+            hostname="localhost",
+            port_number="11161",
+            version="2c",
+        )
+
+    result = session.get(
+        [
+            "SNMPv2-MIB::sysUpTime.0",
+        ]
+    )
+
+    assert isinstance(result[0].converted_value, int)
