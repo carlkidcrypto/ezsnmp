@@ -2,9 +2,9 @@
 #define DATATYPES_H
 
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <variant>
-#include <optional>
 
 /**
  * @brief Structure to represent an SNMP result.
@@ -21,7 +21,7 @@ struct ResultBase {
    std::string index = "";              ///< Index of the retrieved data (if applicable).
    std::string type = "";               ///< Data type of the retrieved value.
    std::string value = "";              ///< Actual value of the retrieved data.
-   ConvertedValue converted_value = "";  ///< Converted value of the type,value data.
+   ConvertedValue converted_value = ""; ///< Converted value of the type,value data.
 
    /**
     * @brief Converts the ResultBase object to a string representation.
@@ -57,8 +57,6 @@ struct ResultBase {
    std::optional<uint64_t> _get_converted_value_uint64() const;
 
    std::optional<double> _get_converted_value_double() const;
-
-   std::optional<std::string> _get_string() const;
 
    /**
     * @brief Updates the converted_value member by converting the current type and value.

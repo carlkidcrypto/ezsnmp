@@ -1,6 +1,14 @@
 %module datatypesbase
 %feature("autodoc", "0");
 
+// Directly define the missing conversion macros for the C++ compiler.
+// This ensures that any function returning a plain uint32_t or uint64_t
+// can be correctly converted to a Python integer object.
+%header %{
+#define SWIG_From_uint32_t(val) PyLong_FromUnsignedLong(val)
+#define SWIG_From_uint64_t(val) PyLong_FromUnsignedLongLong(val)
+%}
+
 %include <std_string.i>
 %include <typemaps.i>
 
@@ -8,6 +16,7 @@
 #include <optional>
 #include "datatypesbase.h"
 %}
+
 
 // Start: https://github.com/nobleo/Fields2Cover/blob/144ed1c6ba5dd0ddac0a72d6f4e11db0598cb040/swig/optional.i#L8-L22
 // Provide simplified declarations of various template classes we use for SWIG.
@@ -73,11 +82,9 @@ public:
 %typemap(out) std::optional< T > %{
   if ( $1.has_value() )
   {
-    std::optional< T >& tmp_ov = $1;
-    {
-      T result = tmp_ov.value();
-      $typemap(out, T)
-    }
+    T temp = $1.value();
+    $result = SWIG_From(T)(temp);
+    
   }
   else
   {
@@ -85,6 +92,7 @@ public:
     Py_INCREF(Py_None);
   }
   %}
+  
 
 // And this one is for members of this type.
 //
@@ -92,11 +100,9 @@ public:
 %typemap(out) std::optional< T >& %{
   if ( $1->has_value() )
   {
-    std::optional< T >* tmp_ptr = $1;
-    {
-      T result = tmp_ptr->value();
-      $typemap(out, T)
-    }
+    T temp = $1->value();
+    $result = SWIG_From(T)(temp);
+
   }
   else
   {

@@ -183,6 +183,8 @@ ResultBase parse_result(std::string const &input) {
       result.type = "INTEGER";
    }
 
+   result.update_converted_value();
+
    return result;
 }
 

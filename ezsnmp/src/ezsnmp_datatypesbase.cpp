@@ -4151,6 +4151,10 @@ namespace swig {
 #include <stddef.h>
 
 
+#define SWIG_From_uint32_t(val) PyLong_FromUnsignedLong(val)
+#define SWIG_From_uint64_t(val) PyLong_FromUnsignedLongLong(val)
+
+
 #include <string>
 
 
@@ -6180,11 +6184,9 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_int(PyObject *self, P
   
   if ( (&result)->has_value() )
   {
-    std::optional< int >& tmp_ov = result;
-    {
-      int result = tmp_ov.value();
-      resultobj = SWIG_From_int(static_cast< int >(result));
-    }
+    int temp = (&result)->value();
+    resultobj = SWIG_From_int  (temp);
+    
   }
   else
   {
@@ -6219,11 +6221,9 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_uint32(PyObject *self
   
   if ( (&result)->has_value() )
   {
-    std::optional< uint32_t >& tmp_ov = result;
-    {
-      uint32_t result = tmp_ov.value();
-      resultobj = SWIG_NewPointerObj((new uint32_t(result)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
-    }
+    uint32_t temp = (&result)->value();
+    resultobj = SWIG_From_uint32_t  (temp);
+    
   }
   else
   {
@@ -6258,11 +6258,9 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_uint64(PyObject *self
   
   if ( (&result)->has_value() )
   {
-    std::optional< uint64_t >& tmp_ov = result;
-    {
-      uint64_t result = tmp_ov.value();
-      resultobj = SWIG_NewPointerObj((new uint64_t(result)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
-    }
+    uint64_t temp = (&result)->value();
+    resultobj = SWIG_From_uint64_t  (temp);
+    
   }
   else
   {
@@ -6297,50 +6295,9 @@ SWIGINTERN PyObject *_wrap_ResultBase__get_converted_value_double(PyObject *self
   
   if ( (&result)->has_value() )
   {
-    std::optional< double >& tmp_ov = result;
-    {
-      double result = tmp_ov.value();
-      resultobj = SWIG_From_double(static_cast< double >(result));
-    }
-  }
-  else
-  {
-    resultobj = Py_None;
-    Py_INCREF(Py_None);
-  }
-  
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ResultBase__get_string(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  ResultBase *arg1 = (ResultBase *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  std::optional< std::string > result;
-  
-  if (!SWIG_Python_UnpackTuple(args, "ResultBase__get_string", 0, 0, 0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_ResultBase, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ResultBase__get_string" "', argument " "1"" of type '" "ResultBase const *""'"); 
-  }
-  arg1 = reinterpret_cast< ResultBase * >(argp1);
-  {
-    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-    result = ((ResultBase const *)arg1)->_get_string();
-    SWIG_PYTHON_THREAD_END_ALLOW;
-  }
-  
-  if ( (&result)->has_value() )
-  {
-    std::optional< std::string >& tmp_ov = result;
-    {
-      std::string result = tmp_ov.value();
-      resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-    }
+    double temp = (&result)->value();
+    resultobj = SWIG_From_double  (temp);
+    
   }
   else
   {
@@ -8276,7 +8233,6 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__ResultBase_methods[] = {
   { "_get_converted_value_uint32", _wrap_ResultBase__get_converted_value_uint32, METH_NOARGS, "_get_converted_value_uint32(self) -> optional_uint32_t" },
   { "_get_converted_value_uint64", _wrap_ResultBase__get_converted_value_uint64, METH_NOARGS, "_get_converted_value_uint64(self) -> optional_uint64_t" },
   { "_get_converted_value_double", _wrap_ResultBase__get_converted_value_double, METH_NOARGS, "_get_converted_value_double(self) -> optional_double" },
-  { "_get_string", _wrap_ResultBase__get_string, METH_NOARGS, "_get_string(self) -> optional_std_string" },
   { "update_converted_value", _wrap_ResultBase_update_converted_value, METH_NOARGS, "\n"
 		"Updates the converted_value member by converting the current type and value.\n"
 		"\n"

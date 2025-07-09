@@ -17,7 +17,6 @@ class Result():
 
         print(self._oid, self._index, self._type, self._value)
 
-        result_base.update_converted_value()
         temp1 = result_base._get_converted_value_int()
         temp2 = result_base._get_converted_value_uint32()
         temp3 = result_base._get_converted_value_uint64()
