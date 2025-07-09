@@ -14,9 +14,61 @@
 
 %{
 #include <optional>
+#include <variant>
+#include <type_traits>
 #include "datatypesbase.h"
+
+// Define the variant type alias so the C++ compiler and typemaps can use it.
+using ConvertedValue = std::variant<int, uint32_t, uint64_t, double, std::string>;
 %}
 
+// ---- START: ROBUST VARIANT SUPPORT ----
+// Provide a simplified declaration for std::variant
+template<typename... Ts> class std::variant {};
+
+// This is the core logic for converting a C++ variant to a Python object.
+%define VARIANT_OUT_LOGIC(INPUT)
+  // Use std::visit with a generic lambda. Inside the lambda, use `if constexpr`
+  // to check the type and call the correct, fully-formed SWIG conversion function.
+  // This avoids issues with macro expansion of SWIG_From(T).
+  $result = std::visit([](auto&& arg) -> PyObject* {
+    using T = std::decay_t<decltype(arg)>;
+    if constexpr (std::is_same_v<T, int>) {
+        return SWIG_From_int(arg);
+    } else if constexpr (std::is_same_v<T, uint32_t>) {
+        return SWIG_From_uint32_t(arg);
+    } else if constexpr (std::is_same_v<T, uint64_t>) {
+        return SWIG_From_uint64_t(arg);
+    } else if constexpr (std::is_same_v<T, double>) {
+        return SWIG_From_double(arg);
+    } else if constexpr (std::is_same_v<T, std::string>) {
+        return SWIG_From_std_string(arg);
+    }
+    // This path should be unreachable for the given variant types
+    Py_RETURN_NONE;
+  }, INPUT);
+%enddef
+
+// Typemap for returning a variant by VALUE or by CONST REFERENCE.
+// Note: Using the full type name is more robust than a 'using' alias.
+%typemap(out) std::variant<int, uint32_t, uint64_t, double, std::string>,
+              const std::variant<int, uint32_t, uint64_t, double, std::string>& {
+  VARIANT_OUT_LOGIC($1)
+}
+
+// Typemap for returning a variant by POINTER.
+%typemap(out) std::variant<int, uint32_t, uint64_t, double, std::string>* {
+  if (!$1) {
+    $result = Py_None;
+    Py_INCREF(Py_None);
+  }
+  // Note the dereference of the pointer: *$1
+  VARIANT_OUT_LOGIC(*$1)
+}
+
+// Tell SWIG to generate the wrapper for our specific variant instantiation.
+%template(ConvertedValue) std::variant<int, uint32_t, uint64_t, double, std::string>;
+// ---- END: ROBUST VARIANT SUPPORT ----
 
 // Start: https://github.com/nobleo/Fields2Cover/blob/144ed1c6ba5dd0ddac0a72d6f4e11db0598cb040/swig/optional.i#L8-L22
 // Provide simplified declarations of various template classes we use for SWIG.
