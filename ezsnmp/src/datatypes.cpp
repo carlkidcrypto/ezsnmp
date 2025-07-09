@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <string>
 
-ResultBase::ConvertedValue ResultBase::_make_converted_value(std::string const& type,
+Result::ConvertedValue Result::_make_converted_value(std::string const& type,
                                                              std::string const& value) {
    // Convert type to lower case for case-insensitive comparison
    std::string type_lower = type;
@@ -38,39 +38,11 @@ ResultBase::ConvertedValue ResultBase::_make_converted_value(std::string const& 
    return "Unknown Conversion";
 }
 
-std::string ResultBase::_to_string() const {
+std::string Result::_to_string() const {
    return "oid: " + this->oid + ", index: " + this->index + ", type: " + this->type +
           ", value: " + this->value;
 }
 
-std::optional<int> ResultBase::_get_converted_value_int() const {
-   if (std::holds_alternative<int>(converted_value)) {
-      return std::get<int>(converted_value);
-   }
-   return std::nullopt;
-}
-
-std::optional<uint32_t> ResultBase::_get_converted_value_uint32() const {
-   if (std::holds_alternative<uint32_t>(converted_value)) {
-      return std::get<uint32_t>(converted_value);
-   }
-   return std::nullopt;
-}
-
-std::optional<uint64_t> ResultBase::_get_converted_value_uint64() const {
-   if (std::holds_alternative<uint64_t>(converted_value)) {
-      return std::get<uint64_t>(converted_value);
-   }
-   return std::nullopt;
-}
-
-std::optional<double> ResultBase::_get_converted_value_double() const {
-   if (std::holds_alternative<double>(converted_value)) {
-      return std::get<double>(converted_value);
-   }
-   return std::nullopt;
-}
-
-void ResultBase::update_converted_value() {
+void Result::update_converted_value() {
    this->converted_value = _make_converted_value(this->type, this->value);
 }
