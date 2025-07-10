@@ -11,8 +11,7 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
 
    if (type_lower == "integer" || type_lower == "integer32") {
       return std::stoi(value);
-   } else if (type_lower == "uinteger" || type_lower == "unsigned32" || type_lower == "gauge" ||
-              type_lower == "counter") {
+   } else if (type_lower == "gauge32" || type_lower == "counter32") {
       return static_cast<uint32_t>(std::stoul(value));
    } else if (type_lower == "counter64") {
       return static_cast<uint64_t>(std::stoull(value));

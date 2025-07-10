@@ -207,6 +207,6 @@ TEST_F(ParseResultsTest, TestJustTimeticks) {
    // Test second result
    EXPECT_EQ(results[1].oid, "DISMAN-EXPRESSION-MIB::sysUpTimeInstance");
    EXPECT_EQ(results[1].index, "");
-   EXPECT_EQ(results[1].type, "INTEGER");
+   EXPECT_EQ(results[1].type, "Timeticks");
    EXPECT_EQ(results[1].value, "8912330");
 }
