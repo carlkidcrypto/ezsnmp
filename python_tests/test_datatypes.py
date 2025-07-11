@@ -47,12 +47,13 @@ def test_string_values_not_enclosed_in_quotes(version):
         or (value.startswith("'") and value.endswith("'"))
     ), "String value is enclosed in quotes"
 
+
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_converted_value_integer(version):
     """
     Test to ensure string values are converted to converted_value which attempts to
     convert the string to a more appropriate type.
-    
+
     In this case, we expect INTEGER types to be converted to int.
     """
     if version == "3" or version == 3:
@@ -82,12 +83,13 @@ def test_converted_value_integer(version):
 
     assert isinstance(result[0].converted_value, int)
 
+
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_converted_value_hex_string(version):
     """
     Test to ensure string values are converted to converted_value which attempts to
     convert the string to a more appropriate type.
-    
+
     In this case, we expect Hex-STRING types to be converted to a bytearray.
     """
     if version == "3" or version == 3:
@@ -115,7 +117,9 @@ def test_converted_value_hex_string(version):
         ]
     )
 
-    print(f"Converted Value: {result[0].converted_value} - {type(result[0].converted_value)} -  {result[0].converted_value.hex()}")
+    print(
+        f"Converted Value: {result[0].converted_value} - {type(result[0].converted_value)} -  {result[0].converted_value.hex()}"
+    )
     print(f"Type: {result[0].type}")
     print(f"Oid: {result[0].oid}")
     print(f"Value: {result[0].value}")
