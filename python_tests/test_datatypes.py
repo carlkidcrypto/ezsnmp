@@ -115,4 +115,8 @@ def test_converted_value_hex_string(version):
         ]
     )
 
-    assert isinstance(result[0].converted_value, bytearray)
+    print(f"Converted Value: {result[0].converted_value} - {type(result[0].converted_value)} -  {result[0].converted_value.hex()}")
+    print(f"Type: {result[0].type}")
+    print(f"Oid: {result[0].oid}")
+    print(f"Value: {result[0].value}")
+    assert isinstance(result[0].converted_value, bytes)
