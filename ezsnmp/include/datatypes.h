@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <variant>
+#include <vector>
 
 /**
  * @brief Structure to represent an SNMP result.
@@ -15,7 +16,8 @@
 struct Result {
    // A single type to hold any of the converted values.
    // This makes the return type of _make_converted_value always consistent.
-   using ConvertedValue = std::variant<int, uint32_t, uint64_t, double, std::string>;
+   using ConvertedValue =
+       std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>;
 
    std::string oid = "";                ///< Object Identifier (OID) of the retrieved data.
    std::string index = "";              ///< Index of the retrieved data (if applicable).

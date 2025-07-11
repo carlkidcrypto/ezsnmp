@@ -129,72 +129,74 @@ TEST(ResultTest, VectorOfResultsTest) {
 
 // Test fixture for accessing private members of Result
 class ResultConvertedValueTest : public ::testing::Test {
-protected:
-    Result result_obj;
+  protected:
+   Result result_obj;
 };
 
 // Test for INTEGER type conversion
 TEST_F(ResultConvertedValueTest, HandlesInteger) {
-    auto converted = result_obj._make_converted_value("INTEGER", "4");
-    EXPECT_EQ(std::get<int>(converted), 4);
+   auto converted = result_obj._make_converted_value("INTEGER", "4");
+   EXPECT_EQ(std::get<int>(converted), 4);
 }
 
 // Test for Counter32 type conversion
 TEST_F(ResultConvertedValueTest, HandlesCounter32) {
-    auto converted = result_obj._make_converted_value("Counter32", "1738754");
-    EXPECT_EQ(std::get<uint32_t>(converted), 1738754);
+   auto converted = result_obj._make_converted_value("Counter32", "1738754");
+   EXPECT_EQ(std::get<uint32_t>(converted), 1738754);
 }
 
 // Test for Counter64 type conversion
 TEST_F(ResultConvertedValueTest, HandlesCounter64) {
-    auto converted = result_obj._make_converted_value("Counter64", "22711");
-    EXPECT_EQ(std::get<uint64_t>(converted), 22711);
+   auto converted = result_obj._make_converted_value("Counter64", "22711");
+   EXPECT_EQ(std::get<uint64_t>(converted), 22711);
 }
 
 // Test for Timeticks type conversion
 TEST_F(ResultConvertedValueTest, HandlesTimeticks) {
-    auto converted = result_obj._make_converted_value("Timeticks", "(3410517) 9:28:25.17");
-    EXPECT_EQ(std::get<uint32_t>(converted), 3410517);
+   auto converted = result_obj._make_converted_value("Timeticks", "(3410517) 9:28:25.17");
+   EXPECT_EQ(std::get<uint32_t>(converted), 3410517);
 }
 
 // Test for Timeticks type conversion with value as integer
 TEST_F(ResultConvertedValueTest, HandlesTimeticksAsInteger) {
-    auto converted = result_obj._make_converted_value("Timeticks", "3410517");
-    EXPECT_EQ(std::get<uint32_t>(converted), 3410517);
+   auto converted = result_obj._make_converted_value("Timeticks", "3410517");
+   EXPECT_EQ(std::get<uint32_t>(converted), 3410517);
 }
 
 // Test for Gauge32 type conversion
 TEST_F(ResultConvertedValueTest, HandlesGauge32) {
-    auto converted = result_obj._make_converted_value("Gauge32", "10000000");
-    EXPECT_EQ(std::get<uint32_t>(converted), 10000000);
+   auto converted = result_obj._make_converted_value("Gauge32", "10000000");
+   EXPECT_EQ(std::get<uint32_t>(converted), 10000000);
+}
+
+// Test for Hex-STRING type conversion
+TEST_F(ResultConvertedValueTest, HandlesHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "00 15 5D 6E 34 05");
+   std::vector<unsigned char> expected = {0x00, 0x15, 0x5D, 0x6E, 0x34, 0x05};
+   EXPECT_EQ(std::get<std::vector<unsigned char>>(converted), expected);
 }
 
 // Test for STRING type, which should not be converted
 TEST_F(ResultConvertedValueTest, HandlesString) {
-    auto converted = result_obj._make_converted_value("STRING", "Some long string value");
-    EXPECT_EQ(std::get<std::string>(converted), "No Conversion Available");
+   auto converted = result_obj._make_converted_value("STRING", "Some long string value");
+   EXPECT_EQ(std::get<std::string>(converted), "No Conversion Available");
 }
 
 // Test for OID type, which should not be converted
 TEST_F(ResultConvertedValueTest, HandlesOid) {
-    auto converted = result_obj._make_converted_value("OID", "SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance");
-    EXPECT_EQ(std::get<std::string>(converted), "No Conversion Available");
+   auto converted =
+       result_obj._make_converted_value("OID", "SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance");
+   EXPECT_EQ(std::get<std::string>(converted), "Unknown Type Conversion");
 }
 
 // Test for IpAddress type, which should not be converted
 TEST_F(ResultConvertedValueTest, HandlesIpAddress) {
-    auto converted = result_obj._make_converted_value("IpAddress", "172.25.10.171");
-    EXPECT_EQ(std::get<std::string>(converted), "No Conversion Available");
-}
-
-// Test for an unknown type
-TEST_F(ResultConvertedValueTest, HandlesUnknownType) {
-    auto converted = result_obj._make_converted_value("Hex-STRING", "00 15 5D 6E 34 05");
-    EXPECT_EQ(std::get<std::string>(converted), "Unknown Conversion");
+   auto converted = result_obj._make_converted_value("IpAddress", "172.25.10.171");
+   EXPECT_EQ(std::get<std::string>(converted), "Unknown Type Conversion");
 }
 
 // Test for a value that is not a valid integer
 TEST_F(ResultConvertedValueTest, HandlesInvalidInteger) {
-    auto converted = result_obj._make_converted_value("INTEGER", "not-a-number");
-    EXPECT_EQ(std::get<std::string>(converted), "Conversion Error");
+   auto converted = result_obj._make_converted_value("INTEGER", "not-a-number");
+   EXPECT_EQ(std::get<std::string>(converted), "INTEGER Conversion Error: stoi");
 }
