@@ -23,12 +23,13 @@
 #include <type_traits>
 #include "datatypes.h"
 
-// Forward-declare the SWIG helper function for std::string conversion.
-// This resolves the compilation order issue.
+// Forward-declare the SWIG helper function for std::string conversion
+// to resolve potential compilation order issues.
 SWIGINTERN PyObject* SWIG_From_std_string(const std::string& s);
 
 // A visitor struct to convert a variant type to a PyObject*.
-// This is a C++11 compatible alternative to a generic lambda.
+// This is a C++11/14 compatible alternative to a generic lambda and provides
+// a clean way to organize the conversion logic.
 struct variant_to_pyobject_visitor {
     using result_type = PyObject*;
 
@@ -58,20 +59,45 @@ struct variant_to_pyobject_visitor {
 template<typename... Ts> class std::variant {};
 
 // This is the core logic for converting a C++ variant to a Python object.
+// It uses a series of `if-else if` checks with `std::get_if` as a robust
+// alternative to `std::visit`, which is unavailable on older macOS targets.
 %define VARIANT_OUT_LOGIC(INPUT)
-  // Use std::visit with the dedicated visitor struct for broad compiler compatibility.
-  $result = std::visit(variant_to_pyobject_visitor{}, INPUT);
+  // Create an instance of our visitor to handle the type-specific conversions.
+  variant_to_pyobject_visitor visitor;
+
+  // Check the type held by the variant and call the appropriate visitor function.
+  // std::get_if returns a pointer to the value if the variant holds that type,
+  // otherwise it returns nullptr.
+  if (auto* val = std::get_if<int>(&(INPUT))) {
+    $result = visitor(*val);
+  } else if (auto* val = std::get_if<uint32_t>(&(INPUT))) {
+    $result = visitor(*val);
+  } else if (auto* val = std::get_if<uint64_t>(&(INPUT))) {
+    $result = visitor(*val);
+  } else if (auto* val = std::get_if<double>(&(INPUT))) {
+    $result = visitor(*val);
+  } else if (auto* val = std::get_if<std::string>(&(INPUT))) {
+    $result = visitor(*val);
+  } else if (auto* val = std::get_if<std::vector<unsigned char>>(&(INPUT))) {
+    $result = visitor(*val);
+  } else {
+    // This case should not be reached if the variant is valid.
+    // Set a Python exception to indicate a problem.
+    SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+  }
 %enddef
 
 // Define the full variant type for convenience and clarity.
+// This is the specific variant type you are using.
+typedef std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>> ConvertedValue;
+
 // Typemap for returning a variant by VALUE or by CONST REFERENCE.
-%typemap(out) std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>,
-              const std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>& {
+%typemap(out) ConvertedValue, const ConvertedValue& {
   VARIANT_OUT_LOGIC($1)
 }
 
 // Typemap for returning a variant by POINTER.
-%typemap(out) std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>* {
+%typemap(out) ConvertedValue* {
   if (!$1) {
     $result = Py_None;
     Py_INCREF(Py_None);
@@ -80,9 +106,6 @@ template<typename... Ts> class std::variant {};
     VARIANT_OUT_LOGIC(*$1)
   }
 }
-
-// Tell SWIG to generate the wrapper for our specific variant instantiation.
-%template(ConvertedValue) std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>;
 
 // ---- END: ROBUST VARIANT SUPPORT ----
 
