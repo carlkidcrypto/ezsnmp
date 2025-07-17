@@ -10,3 +10,4 @@ python3-pip
 net-snmp
 net-snmp-utils
 net-snmp-devel
+g++
