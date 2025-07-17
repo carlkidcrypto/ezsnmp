@@ -88,16 +88,14 @@ template<typename... Ts> class std::variant {};
 %enddef
 
 // Define the full variant type for convenience and clarity.
-// This is the specific variant type you are using.
-typedef std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>> ConvertedValue;
-
 // Typemap for returning a variant by VALUE or by CONST REFERENCE.
-%typemap(out) ConvertedValue, const ConvertedValue& {
+%typemap(out) std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>,
+              const std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>& {
   VARIANT_OUT_LOGIC($1)
 }
 
 // Typemap for returning a variant by POINTER.
-%typemap(out) ConvertedValue* {
+%typemap(out) std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>* {
   if (!$1) {
     $result = Py_None;
     Py_INCREF(Py_None);
@@ -106,6 +104,9 @@ typedef std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<u
     VARIANT_OUT_LOGIC(*$1)
   }
 }
+
+// Tell SWIG to generate the wrapper for our specific variant instantiation.
+%template(ConvertedValue) std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>;
 
 // ---- END: ROBUST VARIANT SUPPORT ----
 

@@ -3988,14 +3988,15 @@ SwigPyBuiltin_iternextfunc_closure(SwigPyWrapperFunction wrapper, PyObject *a) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_Result swig_types[0]
-#define SWIGTYPE_p_SwigPyObject swig_types[1]
-#define SWIGTYPE_p_char swig_types[2]
-#define SWIGTYPE_p_std__invalid_argument swig_types[3]
-#define SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t swig_types[4]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[5]
-static swig_type_info *swig_types[7];
-static swig_module_info swig_module = {swig_types, 6, 0, 0, 0, 0};
+#define SWIGTYPE_p_ConvertedValue swig_types[0]
+#define SWIGTYPE_p_Result swig_types[1]
+#define SWIGTYPE_p_SwigPyObject swig_types[2]
+#define SWIGTYPE_p_char swig_types[3]
+#define SWIGTYPE_p_std__invalid_argument swig_types[4]
+#define SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t swig_types[5]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[6]
+static swig_type_info *swig_types[8];
+static swig_module_info swig_module = {swig_types, 7, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5758,6 +5759,82 @@ SWIGPY_ITERNEXTFUNC_CLOSURE(_wrap_SwigPyIterator___next__) /* defines _wrap_Swig
 
 SWIGPY_BINARYFUNC_CLOSURE(_wrap_SwigPyIterator___sub__) /* defines _wrap_SwigPyIterator___sub___binaryfunc_closure */
 
+SWIGINTERN int _wrap_new_ConvertedValue(PyObject *self, PyObject *args, PyObject *kwargs) {
+  PyObject *resultobj = 0;
+  std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *result = 0 ;
+  
+  if (!SWIG_Python_CheckNoKeywords(kwargs, "new_ConvertedValue")) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "new_ConvertedValue", 0, 0, 0)) SWIG_fail;
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    result = (std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *)new std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > >();
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
+  {
+    if (!result) {
+      resultobj = Py_None;
+      Py_INCREF(Py_None);
+    } else {
+      // Note the dereference of the pointer: *result
+      /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+      // Create an instance of our visitor to handle the type-specific conversions.
+      variant_to_pyobject_visitor visitor;
+      
+      // Check the type held by the variant and call the appropriate visitor function.
+      // std::get_if returns a pointer to the value if the variant holds that type,
+      // otherwise it returns nullptr.
+      if (auto* val = std::get_if<int>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<uint32_t>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<uint64_t>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<double>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<std::string>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<std::vector<unsigned char>>(&(*result))) {
+        resultobj = visitor(*val);
+      } else {
+        // This case should not be reached if the variant is valid.
+        // Set a Python exception to indicate a problem.
+        SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+      }
+      /*@SWIG@*/
+    }
+  }
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_ConvertedValue(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *arg1 = (std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (!SWIG_Python_UnpackTuple(args, "delete_ConvertedValue", 0, 0, 0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ConvertedValue" "', argument " "1"" of type '" "std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > * >(argp1);
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    delete arg1;
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_ConvertedValue) /* defines _wrap_delete_ConvertedValue_destructor_closure */
+
 SWIGINTERN PyObject *_wrap_Result_oid_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Result *arg1 = (Result *) 0 ;
@@ -6039,7 +6116,7 @@ SWIGINTERN PyObject *_wrap_Result_converted_value_set(PyObject *self, PyObject *
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Result_converted_value_set" "', argument " "1"" of type '" "Result *""'"); 
   }
   arg1 = reinterpret_cast< Result * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[0], &argp2,SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t, 0 |  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[0], &argp2,SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Result_converted_value_set" "', argument " "2"" of type '" "Result::ConvertedValue *""'"); 
   }
@@ -6074,7 +6151,39 @@ SWIGINTERN PyObject *_wrap_Result_converted_value_get(PyObject *self, PyObject *
     result = (Result::ConvertedValue *)& ((arg1)->converted_value);
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t, 0 |  0 );
+  {
+    if (!result) {
+      resultobj = Py_None;
+      Py_INCREF(Py_None);
+    } else {
+      // Note the dereference of the pointer: *result
+      /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+      // Create an instance of our visitor to handle the type-specific conversions.
+      variant_to_pyobject_visitor visitor;
+      
+      // Check the type held by the variant and call the appropriate visitor function.
+      // std::get_if returns a pointer to the value if the variant holds that type,
+      // otherwise it returns nullptr.
+      if (auto* val = std::get_if<int>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<uint32_t>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<uint64_t>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<double>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<std::string>(&(*result))) {
+        resultobj = visitor(*val);
+      } else if (auto* val = std::get_if<std::vector<unsigned char>>(&(*result))) {
+        resultobj = visitor(*val);
+      } else {
+        // This case should not be reached if the variant is valid.
+        // Set a Python exception to indicate a problem.
+        SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+      }
+      /*@SWIG@*/
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -6116,7 +6225,7 @@ SWIGINTERN PyObject *_wrap_Result__make_converted_value(PyObject *self, PyObject
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   PyObject *swig_obj[3] ;
-  SwigValueWrapper< std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char,std::allocator< unsigned char > > > > result;
+  Result::ConvertedValue result;
   
   if (!SWIG_Python_UnpackTuple(args, "Result__make_converted_value", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_Result, 0 |  0 );
@@ -6151,7 +6260,33 @@ SWIGINTERN PyObject *_wrap_Result__make_converted_value(PyObject *self, PyObject
     result = (arg1)->_make_converted_value((std::string const &)*arg2,(std::string const &)*arg3);
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
-  resultobj = SWIG_NewPointerObj((new Result::ConvertedValue(result)), SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t, SWIG_POINTER_OWN |  0 );
+  {
+    /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+    // Create an instance of our visitor to handle the type-specific conversions.
+    variant_to_pyobject_visitor visitor;
+    
+    // Check the type held by the variant and call the appropriate visitor function.
+    // std::get_if returns a pointer to the value if the variant holds that type,
+    // otherwise it returns nullptr.
+    if (auto* val = std::get_if<int>(&(result))) {
+      resultobj = visitor(*val);
+    } else if (auto* val = std::get_if<uint32_t>(&(result))) {
+      resultobj = visitor(*val);
+    } else if (auto* val = std::get_if<uint64_t>(&(result))) {
+      resultobj = visitor(*val);
+    } else if (auto* val = std::get_if<double>(&(result))) {
+      resultobj = visitor(*val);
+    } else if (auto* val = std::get_if<std::string>(&(result))) {
+      resultobj = visitor(*val);
+    } else if (auto* val = std::get_if<std::vector<unsigned char>>(&(result))) {
+      resultobj = visitor(*val);
+    } else {
+      // This case should not be reached if the variant is valid.
+      // Set a Python exception to indicate a problem.
+      SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+    }
+    /*@SWIG@*/
+  }
   if (SWIG_IsNewObj(res2)) delete arg2;
   if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj;
@@ -6608,6 +6743,356 @@ static PyTypeObject *SwigPyBuiltin__swig__SwigPyIterator_type_create(PyTypeObjec
 #endif
 SWIGINTERN SwigPyClientData SwigPyBuiltin__swig__SwigPyIterator_clientdata = {0, 0, 0, 0, 0, 0, 0};
 
+static SwigPyGetSet ConvertedValue___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_getset[] = {
+    { (char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"variant", &ConvertedValue___dict___getset },
+    { NULL, NULL, NULL, NULL, NULL } /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_richcompare(PyObject *self, PyObject *other, int op) {
+  PyObject *result = NULL;
+  if (!result && !PyErr_Occurred()) {
+    if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+      result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+    } else {
+      result = Py_NotImplemented;
+      SWIG_Py_INCREF(result);
+    }
+  }
+  return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_methods[] = {
+  { NULL, NULL, 0, NULL } /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type = {
+  {
+#if PY_VERSION_HEX >= 0x03000000
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                      /* ob_size */
+#endif
+    "datatypes.ConvertedValue",             /* tp_name */
+    sizeof(SwigPyObject),                   /* tp_basicsize */
+    0,                                      /* tp_itemsize */
+    _wrap_delete_ConvertedValue_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+    (printfunc) 0,                          /* tp_print */
+#else
+    (Py_ssize_t) 0,                         /* tp_vectorcall_offset */
+#endif
+    (getattrfunc) 0,                        /* tp_getattr */
+    (setattrfunc) 0,                        /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+    0,                                      /* tp_compare */
+#else
+    (cmpfunc) 0,                            /* tp_compare */
+#endif
+    (reprfunc) 0,                           /* tp_repr */
+    &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type.as_number, /* tp_as_number */
+    &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type.as_sequence, /* tp_as_sequence */
+    &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type.as_mapping, /* tp_as_mapping */
+    SwigPyObject_hash,                      /* tp_hash */
+    (ternaryfunc) 0,                        /* tp_call */
+    (reprfunc) 0,                           /* tp_str */
+    (getattrofunc) 0,                       /* tp_getattro */
+    (setattrofunc) 0,                       /* tp_setattro */
+    &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type.as_buffer, /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+    "std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > >", /* tp_doc */
+    (traverseproc) 0,                       /* tp_traverse */
+    (inquiry) 0,                            /* tp_clear */
+    SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_richcompare, /* tp_richcompare */
+    0,                                      /* tp_weaklistoffset */
+    (getiterfunc) 0,                        /* tp_iter */
+    (iternextfunc) 0,                       /* tp_iternext */
+    SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_methods, /* tp_methods */
+    0,                                      /* tp_members */
+    SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_getset, /* tp_getset */
+    0,                                      /* tp_base */
+    0,                                      /* tp_dict */
+    (descrgetfunc) 0,                       /* tp_descr_get */
+    (descrsetfunc) 0,                       /* tp_descr_set */
+    offsetof(SwigPyObject, dict),           /* tp_dictoffset */
+    _wrap_new_ConvertedValue,               /* tp_init */
+    (allocfunc) 0,                          /* tp_alloc */
+    (newfunc) 0,                            /* tp_new */
+    (freefunc) 0,                           /* tp_free */
+    (inquiry) 0,                            /* tp_is_gc */
+    (PyObject *) 0,                         /* tp_bases */
+    (PyObject *) 0,                         /* tp_mro */
+    (PyObject *) 0,                         /* tp_cache */
+    (PyObject *) 0,                         /* tp_subclasses */
+    (PyObject *) 0,                         /* tp_weaklist */
+    (destructor) 0,                         /* tp_del */
+    (int) 0,                                /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+    (destructor) 0,                         /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+    (vectorcallfunc) 0,                     /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+    0,                                      /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+    (unsigned char) 0,                      /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+    (uint16_t) 0,                           /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+    (Py_ssize_t) 0,                         /* tp_allocs */
+    (Py_ssize_t) 0,                         /* tp_frees */
+    (Py_ssize_t) 0,                         /* tp_maxalloc */
+    0,                                      /* tp_prev */
+    0,                                      /* tp_next */
+#endif
+  },
+#if PY_VERSION_HEX >= 0x03050000
+  {
+    (unaryfunc) 0,                          /* am_await */
+    (unaryfunc) 0,                          /* am_aiter */
+    (unaryfunc) 0,                          /* am_anext */
+# if PY_VERSION_HEX >= 0x030a0000
+    (sendfunc) 0,                           /* am_send */
+# endif
+  },
+#endif
+  {
+    (binaryfunc) 0,                         /* nb_add */
+    (binaryfunc) 0,                         /* nb_subtract */
+    (binaryfunc) 0,                         /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                         /* nb_divide */
+#endif
+    (binaryfunc) 0,                         /* nb_remainder */
+    (binaryfunc) 0,                         /* nb_divmod */
+    (ternaryfunc) 0,                        /* nb_power */
+    (unaryfunc) 0,                          /* nb_negative */
+    (unaryfunc) 0,                          /* nb_positive */
+    (unaryfunc) 0,                          /* nb_absolute */
+    (inquiry) 0,                            /* nb_nonzero */
+    (unaryfunc) 0,                          /* nb_invert */
+    (binaryfunc) 0,                         /* nb_lshift */
+    (binaryfunc) 0,                         /* nb_rshift */
+    (binaryfunc) 0,                         /* nb_and */
+    (binaryfunc) 0,                         /* nb_xor */
+    (binaryfunc) 0,                         /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+    (coercion) 0,                           /* nb_coerce */
+#endif
+    (unaryfunc) 0,                          /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                             /* nb_reserved */
+#else
+    (unaryfunc) 0,                          /* nb_long */
+#endif
+    (unaryfunc) 0,                          /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+    (unaryfunc) 0,                          /* nb_oct */
+    (unaryfunc) 0,                          /* nb_hex */
+#endif
+    (binaryfunc) 0,                         /* nb_inplace_add */
+    (binaryfunc) 0,                         /* nb_inplace_subtract */
+    (binaryfunc) 0,                         /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                         /* nb_inplace_divide */
+#endif
+    (binaryfunc) 0,                         /* nb_inplace_remainder */
+    (ternaryfunc) 0,                        /* nb_inplace_power */
+    (binaryfunc) 0,                         /* nb_inplace_lshift */
+    (binaryfunc) 0,                         /* nb_inplace_rshift */
+    (binaryfunc) 0,                         /* nb_inplace_and */
+    (binaryfunc) 0,                         /* nb_inplace_xor */
+    (binaryfunc) 0,                         /* nb_inplace_or */
+    (binaryfunc) 0,                         /* nb_floor_divide */
+    (binaryfunc) 0,                         /* nb_true_divide */
+    (binaryfunc) 0,                         /* nb_inplace_floor_divide */
+    (binaryfunc) 0,                         /* nb_inplace_true_divide */
+    (unaryfunc) 0,                          /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+    (binaryfunc) 0,                         /* nb_matrix_multiply */
+    (binaryfunc) 0,                         /* nb_inplace_matrix_multiply */
+#endif
+  },
+  {
+    (lenfunc) 0,                            /* mp_length */
+    (binaryfunc) 0,                         /* mp_subscript */
+    (objobjargproc) 0,                      /* mp_ass_subscript */
+  },
+  {
+    (lenfunc) 0,                            /* sq_length */
+    (binaryfunc) 0,                         /* sq_concat */
+    (ssizeargfunc) 0,                       /* sq_repeat */
+    (ssizeargfunc) 0,                       /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                             /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                  /* sq_slice */
+#endif
+    (ssizeobjargproc) 0,                    /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void *) 0,                             /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,               /* sq_ass_slice */
+#endif
+    (objobjproc) 0,                         /* sq_contains */
+    (binaryfunc) 0,                         /* sq_inplace_concat */
+    (ssizeargfunc) 0,                       /* sq_inplace_repeat */
+  },
+  {
+#if PY_VERSION_HEX < 0x03000000
+    (readbufferproc) 0,                     /* bf_getreadbuffer */
+    (writebufferproc) 0,                    /* bf_getwritebuffer */
+    (segcountproc) 0,                       /* bf_getsegcount */
+    (charbufferproc) 0,                     /* bf_getcharbuffer */
+#endif
+    (getbufferproc) 0,                      /* bf_getbuffer */
+    (releasebufferproc) 0,                  /* bf_releasebuffer */
+  },
+    (PyObject *) 0,                         /* ht_name */
+    (PyObject *) 0,                         /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *) 0,                         /* ht_qualname */
+    0,                                      /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *) 0,                         /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *) 0,                             /* _ht_tpname */
+  {
+    (PyObject *) 0,                         /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+    (uint32_t) 0,                           /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+    (PyObject *) 0,                         /* init */
+#endif
+  }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type_create(PyTypeObject *type, PyTypeObject **bases, PyObject *dict) {
+  PyObject *tuple_bases;
+  PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type;
+  pytype->tp_dict = dict;
+  SwigPyBuiltin_SetMetaType(pytype, type);
+  pytype->tp_new = PyType_GenericNew;
+  tuple_bases = SwigPyBuiltin_InitBases(bases);
+  pytype->tp_base = bases[0];
+  SWIG_Py_INCREF(pytype->tp_base);
+  pytype->tp_bases = tuple_bases;
+  if (PyType_Ready(pytype) < 0) {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'ConvertedValue'.");
+    return NULL;
+  }
+  return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type_create(PyTypeObject *type, PyTypeObject **bases, PyObject *dict) {
+  PyMemberDef members[] = {
+    { (char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL },
+    { NULL, 0, 0, 0, NULL }
+  };
+  PyType_Slot slots[] = {
+    { Py_tp_init,                       (void *)_wrap_new_ConvertedValue },
+    { Py_tp_dealloc,                    (void *)_wrap_delete_ConvertedValue_destructor_closure },
+    { Py_tp_alloc,                      (void *)(allocfunc) 0 },
+    { Py_tp_free,                       (void *)(freefunc) 0 },
+    { Py_tp_is_gc,                      (void *)(inquiry) 0 },
+    { Py_tp_del,                        (void *)(destructor) 0 },
+    { Py_tp_doc,                        (void *)"std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > >" },
+    { Py_tp_repr,                       (void *)(reprfunc) 0 },
+    { Py_tp_str,                        (void *)(reprfunc) 0 },
+    { Py_tp_traverse,                   (void *)(traverseproc) 0 },
+    { Py_tp_clear,                      (void *)(inquiry) 0 },
+    { Py_tp_richcompare,                (void *)SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_richcompare },
+    { Py_tp_methods,                    (void *)SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_methods },
+    { Py_tp_getset,                     (void *)SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_getset },
+    { Py_tp_hash,                       (void *)SwigPyObject_hash },
+    { Py_tp_call,                       (void *)(ternaryfunc) 0 },
+    { Py_tp_getattro,                   (void *)(getattrofunc) 0 },
+    { Py_tp_setattro,                   (void *)(setattrofunc) 0 },
+    { Py_tp_descr_get,                  (void *)(descrgetfunc) 0 },
+    { Py_tp_descr_set,                  (void *)(descrsetfunc) 0 },
+    { Py_mp_length,                     (void *)(lenfunc) 0 },
+    { Py_mp_subscript,                  (void *)(binaryfunc) 0 },
+    { Py_mp_ass_subscript,              (void *)(objobjargproc) 0 },
+    { Py_tp_iter,                       (void *)(getiterfunc) 0 },
+    { Py_tp_iternext,                   (void *)(iternextfunc) 0 },
+    { Py_nb_add,                        (void *)(binaryfunc) 0 },
+    { Py_nb_subtract,                   (void *)(binaryfunc) 0 },
+    { Py_nb_multiply,                   (void *)(binaryfunc) 0 },
+    { Py_nb_remainder,                  (void *)(binaryfunc) 0 },
+    { Py_nb_divmod,                     (void *)(binaryfunc) 0 },
+    { Py_nb_power,                      (void *)(ternaryfunc) 0 },
+    { Py_nb_negative,                   (void *)(unaryfunc) 0 },
+    { Py_nb_positive,                   (void *)(unaryfunc) 0 },
+    { Py_nb_absolute,                   (void *)(unaryfunc) 0 },
+    { Py_nb_bool,                       (void *)(inquiry) 0 },
+    { Py_nb_invert,                     (void *)(unaryfunc) 0 },
+    { Py_nb_lshift,                     (void *)(binaryfunc) 0 },
+    { Py_nb_rshift,                     (void *)(binaryfunc) 0 },
+    { Py_nb_and,                        (void *)(binaryfunc) 0 },
+    { Py_nb_xor,                        (void *)(binaryfunc) 0 },
+    { Py_nb_or,                         (void *)(binaryfunc) 0 },
+    { Py_nb_int,                        (void *)(unaryfunc) 0 },
+    { Py_nb_float,                      (void *)(unaryfunc) 0 },
+    { Py_nb_inplace_add,                (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_subtract,           (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_multiply,           (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_remainder,          (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_power,              (void *)(ternaryfunc) 0 },
+    { Py_nb_inplace_lshift,             (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_rshift,             (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_and,                (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_xor,                (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_or,                 (void *)(binaryfunc) 0 },
+    { Py_nb_floor_divide,               (void *)(binaryfunc) 0 },
+    { Py_nb_true_divide,                (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_floor_divide,       (void *)(binaryfunc) 0 },
+    { Py_nb_inplace_true_divide,        (void *)(binaryfunc) 0 },
+    { Py_nb_index,                      (void *)(unaryfunc) 0 },
+    { Py_sq_length,                     (void *)(lenfunc) 0 },
+    { Py_sq_concat,                     (void *)(binaryfunc) 0 },
+    { Py_sq_repeat,                     (void *)(ssizeargfunc) 0 },
+    { Py_sq_item,                       (void *)(ssizeargfunc) 0 },
+    { Py_sq_ass_item,                   (void *)(ssizeobjargproc) 0 },
+    { Py_sq_contains,                   (void *)(objobjproc) 0 },
+    { Py_sq_inplace_concat,             (void *)(binaryfunc) 0 },
+    { Py_sq_inplace_repeat,             (void *)(ssizeargfunc) 0 },
+    { Py_tp_members, members },
+    { 0, NULL }
+  };
+  PyType_Spec spec = {
+    "datatypes.ConvertedValue",
+    sizeof(SwigPyObject),
+    0,
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,
+    slots
+  };
+  PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+  PyTypeObject *pytype = (PyTypeObject*)PyType_FromSpecWithBases(&spec, tuple_bases);
+  PyDict_Merge(pytype->tp_dict, dict, 1);
+  SwigPyBuiltin_SetMetaType(pytype, type);
+  PyType_Modified(pytype);
+  Py_DECREF(dict);
+  return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
 static SwigPyGetSet Result_type_getset = { _wrap_Result_type_get, _wrap_Result_type_set };
 static SwigPyGetSet Result___dict___getset = { SwigPyObject_get___dict__, 0 };
 static SwigPyGetSet Result_value_getset = { _wrap_Result_value_get, _wrap_Result_value_set };
@@ -6660,7 +7145,7 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
 		"    https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h#L154-L170\n"
 		":type value: string\n"
 		":param value: The value as a string to be converted.\n"
-		":rtype: Result::ConvertedValue\n"
+		":rtype: :py:class:`ConvertedValue`\n"
 		":return: ConvertedValue The value converted to the appropriate C++ type, wrapped in a\n"
 		"    std::variant.\n"
 		"" },
@@ -7015,35 +7500,39 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__Result_clientdata = {0, 0, 0, 0, 0, 0
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_ConvertedValue = {"_p_ConvertedValue", "ConvertedValue *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Result = {"_p_Result", "Result *", 0, 0, (void*)&SwigPyBuiltin__Result_clientdata, 0};
 static swig_type_info _swigt__p_SwigPyObject = {"_p_SwigPyObject", "SwigPyObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t = {"_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t", "ConvertedValue *|Result::ConvertedValue *|std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char,std::allocator< unsigned char > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t = {"_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t", "Result::ConvertedValue *|std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char,std::allocator< unsigned char > > > *|std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *", 0, 0, (void*)&SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_clientdata, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)&SwigPyBuiltin__swig__SwigPyIterator_clientdata, 0};
 
 static swig_type_info *swig_type_initial[] = {
+  &_swigt__p_ConvertedValue,
   &_swigt__p_Result,
   &_swigt__p_SwigPyObject,
   &_swigt__p_char,
   &_swigt__p_std__invalid_argument,
-  &_swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t,
+  &_swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
   &_swigt__p_swig__SwigPyIterator,
 };
 
+static swig_cast_info _swigc__p_ConvertedValue[] = {  {&_swigt__p_ConvertedValue, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Result[] = {  {&_swigt__p_Result, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SwigPyObject[] = {  {&_swigt__p_SwigPyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t[] = {  {&_swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t[] = {  {&_swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__SwigPyIterator, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+  _swigc__p_ConvertedValue,
   _swigc__p_Result,
   _swigc__p_SwigPyObject,
   _swigc__p_char,
   _swigc__p_std__invalid_argument,
-  _swigc__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_std__allocatorT_unsigned_char_t_t_t,
+  _swigc__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
   _swigc__p_swig__SwigPyIterator,
 };
 
@@ -7532,6 +8021,26 @@ SWIG_init(void) {
   SWIG_Py_INCREF((PyObject *)builtin_pytype);
   PyModule_AddObject(m, "SwigPyIterator", (PyObject *)builtin_pytype);
   SwigPyBuiltin_AddPublicSymbol(public_interface, "SwigPyIterator");
+  d = md;
+  
+  /* type 'std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > >' */
+  d = PyDict_New();
+  builtin_base_count = 0;
+  builtin_bases[builtin_base_count] = NULL;
+  PyDict_SetItemString(d, "this", this_descr);
+  PyDict_SetItemString(d, "thisown", thisown_descr);
+  builtin_pytype = SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type_create(metatype, builtin_bases, d);
+  if(!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_clientdata.pytype = builtin_pytype;
+  SWIG_Py_INCREF((PyObject *)builtin_pytype);
+  PyModule_AddObject(m, "ConvertedValue", (PyObject *)builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "ConvertedValue");
   d = md;
   
   /* type '::Result' */
