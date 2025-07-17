@@ -3999,13 +3999,25 @@ SWIGINTERN PyObject *SwigPyBuiltin_iternextfunc_closure(SwigPyWrapperFunction wr
       }                                      \
    } while (0)
 
+#define SWIG_exception(code, msg) \
+   do {                           \
+      SWIG_Error(code, msg);      \
+      SWIG_fail;                  \
+      ;                           \
+   } while (0)
+
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_Result swig_types[0]
-#define SWIGTYPE_p_SwigPyObject swig_types[1]
-#define SWIGTYPE_p_char swig_types[2]
-static swig_type_info *swig_types[4];
-static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
+#define SWIGTYPE_p_ConvertedValue swig_types[0]
+#define SWIGTYPE_p_Result swig_types[1]
+#define SWIGTYPE_p_SwigPyObject swig_types[2]
+#define SWIGTYPE_p_char swig_types[3]
+#define SWIGTYPE_p_std__invalid_argument swig_types[4]
+#define SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t \
+   swig_types[5]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[6]
+static swig_type_info *swig_types[8];
+static swig_module_info swig_module = {swig_types, 7, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4159,9 +4171,510 @@ struct SwigVar_PyObject : SwigPtr_PyObject {
 
 #include <stddef.h>
 
+#define SWIG_From_uint32_t(val) PyLong_FromUnsignedLong(val)
+#define SWIG_From_uint64_t(val) PyLong_FromUnsignedLongLong(val)
+#define SWIG_From_double(val) PyFloat_FromDouble(val)
+#define SWIG_From_int(val) PyLong_FromLong(val)
+
+#include <iostream>
 #include <string>
 
+#if PY_VERSION_HEX >= 0x03020000
+#define SWIGPY_SLICEOBJECT PyObject
+#else
+#define SWIGPY_SLICEOBJECT PySliceObject
+#endif
+
+#include <stdexcept>
+#include <typeinfo>
+
+#if defined(__GNUC__)
+#if __GNUC__ == 2 && __GNUC_MINOR <= 96
+#define SWIG_STD_NOMODERN_STL
+#endif
+#endif
+
+namespace swig {
+struct stop_iteration {};
+
+struct SwigPyIterator {
+  private:
+   SwigPtr_PyObject _seq;
+
+  protected:
+   SwigPyIterator(PyObject *seq) : _seq(seq) {}
+
+  public:
+   virtual ~SwigPyIterator() {}
+
+   // Access iterator method, required by Python
+   virtual PyObject *value() const = 0;
+
+   // Forward iterator method, required by Python
+   virtual SwigPyIterator *incr(size_t n = 1) = 0;
+
+   // Backward iterator method, very common in C++, but not required in Python
+   virtual SwigPyIterator *decr(size_t /*n*/ = 1) { throw stop_iteration(); }
+
+   // Random access iterator methods, but not required in Python
+   virtual ptrdiff_t distance(SwigPyIterator const & /*x*/) const {
+      throw std::invalid_argument("operation not supported");
+   }
+
+   virtual bool equal(SwigPyIterator const & /*x*/) const {
+      throw std::invalid_argument("operation not supported");
+   }
+
+   // C++ common/needed methods
+   virtual SwigPyIterator *copy() const = 0;
+
+   PyObject *next() {
+      SWIG_PYTHON_THREAD_BEGIN_BLOCK; // disable threads
+      PyObject *obj = value();
+      incr();
+      SWIG_PYTHON_THREAD_END_BLOCK; // re-enable threads
+      return obj;
+   }
+
+   /* Make an alias for Python 3.x */
+   PyObject *__next__() { return next(); }
+
+   PyObject *previous() {
+      SWIG_PYTHON_THREAD_BEGIN_BLOCK; // disable threads
+      decr();
+      PyObject *obj = value();
+      SWIG_PYTHON_THREAD_END_BLOCK; // re-enable threads
+      return obj;
+   }
+
+   SwigPyIterator *advance(ptrdiff_t n) { return (n > 0) ? incr(n) : decr(-n); }
+
+   bool operator==(SwigPyIterator const &x) const { return equal(x); }
+
+   bool operator!=(SwigPyIterator const &x) const { return !operator==(x); }
+
+   SwigPyIterator &operator+=(ptrdiff_t n) { return *advance(n); }
+
+   SwigPyIterator &operator-=(ptrdiff_t n) { return *advance(-n); }
+
+   SwigPyIterator *operator+(ptrdiff_t n) const { return copy()->advance(n); }
+
+   SwigPyIterator *operator-(ptrdiff_t n) const { return copy()->advance(-n); }
+
+   ptrdiff_t operator-(SwigPyIterator const &x) const { return x.distance(*this); }
+
+   static swig_type_info *descriptor() {
+      static swig_type_info *desc = SWIG_TypeQuery("swig::SwigPyIterator *");
+      return desc;
+   }
+};
+
+#if defined(SWIGPYTHON_BUILTIN)
+inline PyObject *make_output_iterator_builtin(PyObject *pyself) {
+   SWIG_Py_INCREF(pyself);
+   return pyself;
+}
+#endif
+} // namespace swig
+
+SWIGINTERN int SWIG_AsVal_double(PyObject *obj, double *val) {
+   int res = SWIG_TypeError;
+   if (PyFloat_Check(obj)) {
+      if (val) {
+         *val = PyFloat_AsDouble(obj);
+      }
+      return SWIG_OK;
+#if PY_VERSION_HEX < 0x03000000
+   } else if (PyInt_Check(obj)) {
+      if (val) {
+         *val = (double)PyInt_AsLong(obj);
+      }
+      return SWIG_OK;
+#endif
+   } else if (PyLong_Check(obj)) {
+      double v = PyLong_AsDouble(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_OK;
+      } else {
+         PyErr_Clear();
+      }
+   }
+#ifdef SWIG_PYTHON_CAST_MODE
+   {
+      int dispatch = 0;
+      double d = PyFloat_AsDouble(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = d;
+         }
+         return SWIG_AddCast(SWIG_OK);
+      } else {
+         PyErr_Clear();
+      }
+      if (!dispatch) {
+         long v = PyLong_AsLong(obj);
+         if (!PyErr_Occurred()) {
+            if (val) {
+               *val = v;
+            }
+            return SWIG_AddCast(SWIG_AddCast(SWIG_OK));
+         } else {
+            PyErr_Clear();
+         }
+      }
+   }
+#endif
+   return res;
+}
+
+#include <float.h>
+#include <math.h>
+
+SWIGINTERNINLINE int SWIG_CanCastAsInteger(double *d, double min, double max) {
+   double x = *d;
+   if ((min <= x && x <= max)) {
+      double fx, cx, rd;
+      errno = 0;
+      fx = floor(x);
+      cx = ceil(x);
+      rd = ((x - fx) < 0.5) ? fx : cx; /* simple rint */
+      if ((errno == EDOM) || (errno == ERANGE)) {
+         errno = 0;
+      } else {
+         double summ, reps, diff;
+         if (rd < x) {
+            diff = x - rd;
+         } else if (rd > x) {
+            diff = rd - x;
+         } else {
+            return 1;
+         }
+         summ = rd + x;
+         reps = diff / summ;
+         if (reps < 8 * DBL_EPSILON) {
+            *d = rd;
+            return 1;
+         }
+      }
+   }
+   return 0;
+}
+
+SWIGINTERN int SWIG_AsVal_unsigned_SS_long(PyObject *obj, unsigned long *val) {
+#if PY_VERSION_HEX < 0x03000000
+   if (PyInt_Check(obj)) {
+      long v = PyInt_AsLong(obj);
+      if (v >= 0) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_OK;
+      } else {
+         return SWIG_OverflowError;
+      }
+   } else
+#endif
+       if (PyLong_Check(obj)) {
+      unsigned long v = PyLong_AsUnsignedLong(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_OK;
+      } else {
+         PyErr_Clear();
+         return SWIG_OverflowError;
+      }
+   }
+#ifdef SWIG_PYTHON_CAST_MODE
+   {
+      int dispatch = 0;
+      unsigned long v = PyLong_AsUnsignedLong(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_AddCast(SWIG_OK);
+      } else {
+         PyErr_Clear();
+      }
+      if (!dispatch) {
+         double d;
+         int res = SWIG_AddCast(SWIG_AsVal_double(obj, &d));
+         // Largest double not larger than ULONG_MAX (not portably calculated easily)
+         // Note that double(ULONG_MAX) is stored in a double rounded up by one (for 64-bit unsigned
+         // long) 0xfffffffffffff800ULL ==
+         // (uint64_t)std::nextafter(double(__uint128_t(ULONG_MAX)+1), double(0))
+         double const ulong_max = sizeof(unsigned long) == 8 ? 0xfffffffffffff800ULL : ULONG_MAX;
+         if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, ulong_max)) {
+            if (val) {
+               *val = (unsigned long)(d);
+            }
+            return res;
+         }
+      }
+   }
+#endif
+   return SWIG_TypeError;
+}
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+#if !defined(LLONG_MAX) && defined(__GNUC__) && defined(__LONG_LONG_MAX__)
+#define LLONG_MAX __LONG_LONG_MAX__
+#define LLONG_MIN (-LLONG_MAX - 1LL)
+#define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+#endif
+#endif
+
+#if defined(LLONG_MAX) && !defined(SWIG_LONG_LONG_AVAILABLE)
+#define SWIG_LONG_LONG_AVAILABLE
+#endif
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERN int SWIG_AsVal_unsigned_SS_long_SS_long(PyObject *obj, unsigned long long *val) {
+   int res = SWIG_TypeError;
+   if (PyLong_Check(obj)) {
+      unsigned long long v = PyLong_AsUnsignedLongLong(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_OK;
+      } else {
+         PyErr_Clear();
+         res = SWIG_OverflowError;
+      }
+   } else {
+      unsigned long v;
+      res = SWIG_AsVal_unsigned_SS_long(obj, &v);
+      if (SWIG_IsOK(res)) {
+         if (val) {
+            *val = v;
+         }
+         return res;
+      }
+   }
+#ifdef SWIG_PYTHON_CAST_MODE
+   {
+      double const mant_max = 1LL << DBL_MANT_DIG;
+      double d;
+      res = SWIG_AsVal_double(obj, &d);
+      if (SWIG_IsOK(res) && !SWIG_CanCastAsInteger(&d, 0, mant_max)) {
+         return SWIG_OverflowError;
+      }
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, mant_max)) {
+         if (val) {
+            *val = (unsigned long long)(d);
+         }
+         return SWIG_AddCast(res);
+      }
+      res = SWIG_TypeError;
+   }
+#endif
+   return res;
+}
+#endif
+
+SWIGINTERNINLINE int SWIG_AsVal_size_t(PyObject *obj, size_t *val) {
+   int res = SWIG_TypeError;
+#ifdef SWIG_LONG_LONG_AVAILABLE
+   if (sizeof(size_t) <= sizeof(unsigned long)) {
+#endif
+      unsigned long v;
+      res = SWIG_AsVal_unsigned_SS_long(obj, val ? &v : 0);
+      if (SWIG_IsOK(res) && val) {
+         *val = static_cast<size_t>(v);
+      }
+#ifdef SWIG_LONG_LONG_AVAILABLE
+   } else if (sizeof(size_t) <= sizeof(unsigned long long)) {
+      unsigned long long v;
+      res = SWIG_AsVal_unsigned_SS_long_SS_long(obj, val ? &v : 0);
+      if (SWIG_IsOK(res) && val) {
+         *val = static_cast<size_t>(v);
+      }
+   }
+#endif
+   return res;
+}
+
+#define SWIG_From_long PyInt_FromLong
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERNINLINE PyObject *SWIG_From_long_SS_long(long long value) {
+   return ((value < LONG_MIN) || (value > LONG_MAX)) ? PyLong_FromLongLong(value)
+                                                     : PyInt_FromLong(static_cast<long>(value));
+}
+#endif
+
+SWIGINTERNINLINE PyObject *SWIG_From_ptrdiff_t(ptrdiff_t value) {
+#ifdef SWIG_LONG_LONG_AVAILABLE
+   if (sizeof(ptrdiff_t) <= sizeof(long)) {
+#endif
+      return SWIG_From_long(static_cast<long>(value));
+#ifdef SWIG_LONG_LONG_AVAILABLE
+   } else {
+      /* assume sizeof(ptrdiff_t) <= sizeof(long long) */
+      return SWIG_From_long_SS_long(static_cast<long long>(value));
+   }
+#endif
+}
+
+SWIGINTERNINLINE PyObject *SWIG_From_bool(bool value) { return PyBool_FromLong(value ? 1 : 0); }
+
+SWIGINTERN int SWIG_AsVal_long(PyObject *obj, long *val) {
+#if PY_VERSION_HEX < 0x03000000
+   if (PyInt_Check(obj)) {
+      if (val) {
+         *val = PyInt_AsLong(obj);
+      }
+      return SWIG_OK;
+   } else
+#endif
+       if (PyLong_Check(obj)) {
+      long v = PyLong_AsLong(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_OK;
+      } else {
+         PyErr_Clear();
+         return SWIG_OverflowError;
+      }
+   }
+#ifdef SWIG_PYTHON_CAST_MODE
+   {
+      int dispatch = 0;
+      long v = PyInt_AsLong(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_AddCast(SWIG_OK);
+      } else {
+         PyErr_Clear();
+      }
+      if (!dispatch) {
+         double d;
+         int res = SWIG_AddCast(SWIG_AsVal_double(obj, &d));
+         // Largest double not larger than LONG_MAX (not portably calculated easily)
+         // Note that double(LONG_MAX) is stored in a double rounded up by one (for 64-bit long)
+         // 0x7ffffffffffffc00LL == (int64_t)std::nextafter(double(__uint128_t(LONG_MAX)+1),
+         // double(0))
+         double const long_max = sizeof(long) == 8 ? 0x7ffffffffffffc00LL : LONG_MAX;
+         // No equivalent needed for 64-bit double(LONG_MIN) is exactly LONG_MIN
+         if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, long_max)) {
+            if (val) {
+               *val = (long)(d);
+            }
+            return res;
+         }
+      }
+   }
+#endif
+   return SWIG_TypeError;
+}
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERN int SWIG_AsVal_long_SS_long(PyObject *obj, long long *val) {
+   int res = SWIG_TypeError;
+   if (PyLong_Check(obj)) {
+      long long v = PyLong_AsLongLong(obj);
+      if (!PyErr_Occurred()) {
+         if (val) {
+            *val = v;
+         }
+         return SWIG_OK;
+      } else {
+         PyErr_Clear();
+         res = SWIG_OverflowError;
+      }
+   } else {
+      long v;
+      res = SWIG_AsVal_long(obj, &v);
+      if (SWIG_IsOK(res)) {
+         if (val) {
+            *val = v;
+         }
+         return res;
+      }
+   }
+#ifdef SWIG_PYTHON_CAST_MODE
+   {
+      double const mant_max = 1LL << DBL_MANT_DIG;
+      double const mant_min = -mant_max;
+      double d;
+      res = SWIG_AsVal_double(obj, &d);
+      if (SWIG_IsOK(res) && !SWIG_CanCastAsInteger(&d, mant_min, mant_max)) {
+         return SWIG_OverflowError;
+      }
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, mant_min, mant_max)) {
+         if (val) {
+            *val = (long long)(d);
+         }
+         return SWIG_AddCast(res);
+      }
+      res = SWIG_TypeError;
+   }
+#endif
+   return res;
+}
+#endif
+
+SWIGINTERNINLINE int SWIG_AsVal_ptrdiff_t(PyObject *obj, ptrdiff_t *val) {
+   int res = SWIG_TypeError;
+#ifdef SWIG_LONG_LONG_AVAILABLE
+   if (sizeof(ptrdiff_t) <= sizeof(long)) {
+#endif
+      long v;
+      res = SWIG_AsVal_long(obj, val ? &v : 0);
+      if (SWIG_IsOK(res) && val) {
+         *val = static_cast<ptrdiff_t>(v);
+      }
+#ifdef SWIG_LONG_LONG_AVAILABLE
+   } else if (sizeof(ptrdiff_t) <= sizeof(long long)) {
+      long long v;
+      res = SWIG_AsVal_long_SS_long(obj, val ? &v : 0);
+      if (SWIG_IsOK(res) && val) {
+         *val = static_cast<ptrdiff_t>(v);
+      }
+   }
+#endif
+   return res;
+}
+
+#include <algorithm>
+#include <optional>
+#include <string>
+#include <type_traits>
+#include <variant>
+#include <vector>
+
 #include "datatypes.h"
+
+// Forward-declare the SWIG helper function for std::string conversion
+// to resolve potential compilation order issues.
+SWIGINTERN PyObject *SWIG_From_std_string(std::string const &s);
+
+// A visitor struct to convert a variant type to a PyObject*.
+// This is a C++11/14 compatible alternative to a generic lambda and provides
+// a clean way to organize the conversion logic.
+struct variant_to_pyobject_visitor {
+   using result_type = PyObject *;
+
+   result_type operator()(int arg) const { return SWIG_From_int(arg); }
+   result_type operator()(uint32_t arg) const { return SWIG_From_uint32_t(arg); }
+   result_type operator()(uint64_t arg) const { return SWIG_From_uint64_t(arg); }
+   result_type operator()(double arg) const { return SWIG_From_double(arg); }
+   result_type operator()(std::string const &arg) const { return SWIG_From_std_string(arg); }
+   result_type operator()(std::vector<unsigned char> const &arg) const {
+      return PyBytes_FromStringAndSize(reinterpret_cast<char const *>(arg.data()), arg.size());
+   }
+};
 
 SWIGINTERN swig_type_info *SWIG_pchar_descriptor(void) {
    static swig_type_info *info = 0;
@@ -4344,6 +4857,1324 @@ SWIGINTERNINLINE PyObject *SWIG_From_std_string(std::string const &s) {
 #ifdef __cplusplus
 extern "C" {
 #endif
+SWIGINTERN PyObject *_wrap_delete_SwigPyIterator(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_SwigPyIterator", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "delete_SwigPyIterator"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      delete arg1;
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_value(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   PyObject *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_value", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_value"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (PyObject *)((swig::SwigPyIterator const *)arg1)->value();
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = result;
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_0(PyObject *self,
+                                                       Py_ssize_t nobjs,
+                                                       PyObject **swig_obj) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   size_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   size_t val2;
+   int ecode2 = 0;
+   swig::SwigPyIterator *result = 0;
+
+   if ((nobjs < 2) || (nobjs > 2)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_incr"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator_incr"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "size_t"
+                          "'");
+   }
+   arg2 = static_cast<size_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)(arg1)->incr(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_1(PyObject *self,
+                                                       Py_ssize_t nobjs,
+                                                       PyObject **SWIGUNUSEDPARM(swig_obj)) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   swig::SwigPyIterator *result = 0;
+
+   if ((nobjs < 1) || (nobjs > 1)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_incr"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)(arg1)->incr();
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_incr(PyObject *self, PyObject *args) {
+   Py_ssize_t argc;
+   PyObject *argv[3] = {0};
+
+   (void)self;
+   if (!(argc = SWIG_Python_UnpackTuple(args, "SwigPyIterator_incr", 0, 2, argv + 1))) {
+      SWIG_fail;
+   }
+   argv[0] = self;
+   if (argc == 1) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_swig__SwigPyIterator, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         return _wrap_SwigPyIterator_incr__SWIG_1(self, argc, argv);
+      }
+   }
+   if (argc == 2) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_swig__SwigPyIterator, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         {
+            int res = SWIG_AsVal_size_t(argv[1], NULL);
+            _v = SWIG_CheckState(res);
+         }
+         if (_v) {
+            return _wrap_SwigPyIterator_incr__SWIG_0(self, argc, argv);
+         }
+      }
+   }
+
+fail:
+   SWIG_Python_RaiseOrModifyTypeError(
+       "Wrong number or type of arguments for overloaded function 'SwigPyIterator_incr'.\n"
+       "  Possible C/C++ prototypes are:\n"
+       "    swig::SwigPyIterator::incr(size_t)\n"
+       "    swig::SwigPyIterator::incr()\n");
+   return 0;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_0(PyObject *self,
+                                                       Py_ssize_t nobjs,
+                                                       PyObject **swig_obj) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   size_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   size_t val2;
+   int ecode2 = 0;
+   swig::SwigPyIterator *result = 0;
+
+   if ((nobjs < 2) || (nobjs > 2)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_decr"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator_decr"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "size_t"
+                          "'");
+   }
+   arg2 = static_cast<size_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)(arg1)->decr(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_1(PyObject *self,
+                                                       Py_ssize_t nobjs,
+                                                       PyObject **SWIGUNUSEDPARM(swig_obj)) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   swig::SwigPyIterator *result = 0;
+
+   if ((nobjs < 1) || (nobjs > 1)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_decr"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)(arg1)->decr();
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_decr(PyObject *self, PyObject *args) {
+   Py_ssize_t argc;
+   PyObject *argv[3] = {0};
+
+   (void)self;
+   if (!(argc = SWIG_Python_UnpackTuple(args, "SwigPyIterator_decr", 0, 2, argv + 1))) {
+      SWIG_fail;
+   }
+   argv[0] = self;
+   if (argc == 1) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_swig__SwigPyIterator, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         return _wrap_SwigPyIterator_decr__SWIG_1(self, argc, argv);
+      }
+   }
+   if (argc == 2) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_swig__SwigPyIterator, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         {
+            int res = SWIG_AsVal_size_t(argv[1], NULL);
+            _v = SWIG_CheckState(res);
+         }
+         if (_v) {
+            return _wrap_SwigPyIterator_decr__SWIG_0(self, argc, argv);
+         }
+      }
+   }
+
+fail:
+   SWIG_Python_RaiseOrModifyTypeError(
+       "Wrong number or type of arguments for overloaded function 'SwigPyIterator_decr'.\n"
+       "  Possible C/C++ prototypes are:\n"
+       "    swig::SwigPyIterator::decr(size_t)\n"
+       "    swig::SwigPyIterator::decr()\n");
+   return 0;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_distance(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   swig::SwigPyIterator *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   void *argp2 = 0;
+   int res2 = 0;
+   PyObject *swig_obj[2];
+   ptrdiff_t result;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_distance"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   res2 = SWIG_ConvertPtr(swig_obj[0], &argp2, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2),
+                          "in method '"
+                          "SwigPyIterator_distance"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError,
+                          "invalid null reference "
+                          "in method '"
+                          "SwigPyIterator_distance"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   arg2 = reinterpret_cast<swig::SwigPyIterator *>(argp2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result =
+             ((swig::SwigPyIterator const *)arg1)->distance((swig::SwigPyIterator const &)*arg2);
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (std::invalid_argument &_e) {
+      SWIG_Python_Raise(
+          SWIG_NewPointerObj(
+              (new std::invalid_argument(static_cast<std::invalid_argument const &>(_e))),
+              SWIGTYPE_p_std__invalid_argument, SWIG_POINTER_OWN),
+          "std::invalid_argument", SWIGTYPE_p_std__invalid_argument);
+      SWIG_fail;
+   }
+   resultobj = SWIG_From_ptrdiff_t(static_cast<ptrdiff_t>(result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_equal(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   swig::SwigPyIterator *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   void *argp2 = 0;
+   int res2 = 0;
+   PyObject *swig_obj[2];
+   bool result;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_equal"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   res2 = SWIG_ConvertPtr(swig_obj[0], &argp2, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2),
+                          "in method '"
+                          "SwigPyIterator_equal"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError,
+                          "invalid null reference "
+                          "in method '"
+                          "SwigPyIterator_equal"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   arg2 = reinterpret_cast<swig::SwigPyIterator *>(argp2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result =
+             (bool)((swig::SwigPyIterator const *)arg1)->equal((swig::SwigPyIterator const &)*arg2);
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (std::invalid_argument &_e) {
+      SWIG_Python_Raise(
+          SWIG_NewPointerObj(
+              (new std::invalid_argument(static_cast<std::invalid_argument const &>(_e))),
+              SWIGTYPE_p_std__invalid_argument, SWIG_POINTER_OWN),
+          "std::invalid_argument", SWIGTYPE_p_std__invalid_argument);
+      SWIG_fail;
+   }
+   resultobj = SWIG_From_bool(static_cast<bool>(result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_copy(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   swig::SwigPyIterator *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_copy", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_copy"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->copy();
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
+                                  SWIG_POINTER_OWN | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_next(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   PyObject *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_next", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_next"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (PyObject *)(arg1)->next();
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = result;
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___next__(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   PyObject *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator___next__", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___next__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (PyObject *)(arg1)->__next__();
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = result;
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_previous(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   PyObject *result = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "SwigPyIterator_previous", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_previous"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (PyObject *)(arg1)->previous();
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = result;
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator_advance(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   ptrdiff_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   ptrdiff_t val2;
+   int ecode2 = 0;
+   PyObject *swig_obj[2];
+   swig::SwigPyIterator *result = 0;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator_advance"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[0], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator_advance"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "ptrdiff_t"
+                          "'");
+   }
+   arg2 = static_cast<ptrdiff_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)(arg1)->advance(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___eq__(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   swig::SwigPyIterator *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   void *argp2 = 0;
+   int res2 = 0;
+   PyObject *swig_obj[2];
+   bool result;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___eq__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   res2 = SWIG_ConvertPtr(swig_obj[0], &argp2, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2),
+                          "in method '"
+                          "SwigPyIterator___eq__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError,
+                          "invalid null reference "
+                          "in method '"
+                          "SwigPyIterator___eq__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   arg2 = reinterpret_cast<swig::SwigPyIterator *>(argp2);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (bool)((swig::SwigPyIterator const *)arg1)
+                   ->operator==((swig::SwigPyIterator const &)*arg2);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_From_bool(static_cast<bool>(result));
+   return resultobj;
+fail:
+   if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+      return NULL;
+   }
+   PyErr_Clear();
+   SWIG_Py_INCREF(Py_NotImplemented);
+   return Py_NotImplemented;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___ne__(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   swig::SwigPyIterator *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   void *argp2 = 0;
+   int res2 = 0;
+   PyObject *swig_obj[2];
+   bool result;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___ne__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   res2 = SWIG_ConvertPtr(swig_obj[0], &argp2, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2),
+                          "in method '"
+                          "SwigPyIterator___ne__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError,
+                          "invalid null reference "
+                          "in method '"
+                          "SwigPyIterator___ne__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   arg2 = reinterpret_cast<swig::SwigPyIterator *>(argp2);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (bool)((swig::SwigPyIterator const *)arg1)
+                   ->operator!=((swig::SwigPyIterator const &)*arg2);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_From_bool(static_cast<bool>(result));
+   return resultobj;
+fail:
+   if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+      return NULL;
+   }
+   PyErr_Clear();
+   SWIG_Py_INCREF(Py_NotImplemented);
+   return Py_NotImplemented;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___iadd__(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   ptrdiff_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   ptrdiff_t val2;
+   int ecode2 = 0;
+   PyObject *swig_obj[2];
+   swig::SwigPyIterator *result = 0;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___iadd__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[0], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator___iadd__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "ptrdiff_t"
+                          "'");
+   }
+   arg2 = static_cast<ptrdiff_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)&(arg1)->operator+=(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
+                                  SWIG_POINTER_OWN | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___isub__(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   ptrdiff_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   ptrdiff_t val2;
+   int ecode2 = 0;
+   PyObject *swig_obj[2];
+   swig::SwigPyIterator *result = 0;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___isub__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[0], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator___isub__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "ptrdiff_t"
+                          "'");
+   }
+   arg2 = static_cast<ptrdiff_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)&(arg1)->operator-=(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
+                                  SWIG_POINTER_OWN | 0);
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___add__(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   ptrdiff_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   ptrdiff_t val2;
+   int ecode2 = 0;
+   PyObject *swig_obj[2];
+   swig::SwigPyIterator *result = 0;
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___add__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[0], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator___add__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "ptrdiff_t"
+                          "'");
+   }
+   arg2 = static_cast<ptrdiff_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)
+                      ->operator+(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
+                                  SWIG_POINTER_OWN | 0);
+   return resultobj;
+fail:
+   if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+      return NULL;
+   }
+   PyErr_Clear();
+   SWIG_Py_INCREF(Py_NotImplemented);
+   return Py_NotImplemented;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_0(PyObject *self,
+                                                          Py_ssize_t nobjs,
+                                                          PyObject **swig_obj) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   ptrdiff_t arg2;
+   void *argp1 = 0;
+   int res1 = 0;
+   ptrdiff_t val2;
+   int ecode2 = 0;
+   swig::SwigPyIterator *result = 0;
+
+   if ((nobjs < 2) || (nobjs > 2)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___sub__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
+   if (!SWIG_IsOK(ecode2)) {
+      SWIG_exception_fail(SWIG_ArgError(ecode2),
+                          "in method '"
+                          "SwigPyIterator___sub__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "ptrdiff_t"
+                          "'");
+   }
+   arg2 = static_cast<ptrdiff_t>(val2);
+   try {
+      {
+         SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+         result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)
+                      ->operator-(SWIG_STD_MOVE(arg2));
+         SWIG_PYTHON_THREAD_END_ALLOW;
+      }
+   } catch (swig::stop_iteration &_e) {
+      {
+         (void)_e;
+         SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void());
+         SWIG_fail;
+      }
+   }
+   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator,
+                                  SWIG_POINTER_OWN | 0);
+   return resultobj;
+fail:
+   if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+      return NULL;
+   }
+   PyErr_Clear();
+   SWIG_Py_INCREF(Py_NotImplemented);
+   return Py_NotImplemented;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_1(PyObject *self,
+                                                          Py_ssize_t nobjs,
+                                                          PyObject **swig_obj) {
+   PyObject *resultobj = 0;
+   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *)0;
+   swig::SwigPyIterator *arg2 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   void *argp2 = 0;
+   int res2 = 0;
+   ptrdiff_t result;
+
+   if ((nobjs < 2) || (nobjs > 2)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "SwigPyIterator___sub__"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "swig::SwigPyIterator const *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<swig::SwigPyIterator *>(argp1);
+   res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_swig__SwigPyIterator, 0 | 0);
+   if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2),
+                          "in method '"
+                          "SwigPyIterator___sub__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError,
+                          "invalid null reference "
+                          "in method '"
+                          "SwigPyIterator___sub__"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "swig::SwigPyIterator const &"
+                          "'");
+   }
+   arg2 = reinterpret_cast<swig::SwigPyIterator *>(argp2);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = ((swig::SwigPyIterator const *)arg1)->operator-((swig::SwigPyIterator const &)*arg2);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_From_ptrdiff_t(static_cast<ptrdiff_t>(result));
+   return resultobj;
+fail:
+   if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+      return NULL;
+   }
+   PyErr_Clear();
+   SWIG_Py_INCREF(Py_NotImplemented);
+   return Py_NotImplemented;
+}
+
+SWIGINTERN PyObject *_wrap_SwigPyIterator___sub__(PyObject *self, PyObject *args) {
+   Py_ssize_t argc;
+   PyObject *argv[3] = {0};
+
+   (void)self;
+   if (!(argc = SWIG_Python_UnpackTuple(args, "SwigPyIterator___sub__", 0, 2, argv + 1))) {
+      SWIG_fail;
+   }
+   argv[0] = self;
+   if (argc == 2) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_swig__SwigPyIterator, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         int res =
+             SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_NO_NULL | 0);
+         _v = SWIG_CheckState(res);
+         if (_v) {
+            return _wrap_SwigPyIterator___sub____SWIG_1(self, argc, argv);
+         }
+      }
+   }
+   if (argc == 2) {
+      int _v = 0;
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_swig__SwigPyIterator, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+         {
+            int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+            _v = SWIG_CheckState(res);
+         }
+         if (_v) {
+            return _wrap_SwigPyIterator___sub____SWIG_0(self, argc, argv);
+         }
+      }
+   }
+
+fail:
+   SWIG_Py_INCREF(Py_NotImplemented);
+   return Py_NotImplemented;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_SwigPyIterator) /* defines _wrap_delete_SwigPyIterator_destructor_closure */
+
+SWIGPY_ITERNEXTFUNC_CLOSURE(
+    _wrap_SwigPyIterator___next__) /* defines _wrap_SwigPyIterator___next___iternextfunc_closure */
+
+SWIGPY_BINARYFUNC_CLOSURE(
+    _wrap_SwigPyIterator___sub__) /* defines _wrap_SwigPyIterator___sub___binaryfunc_closure */
+
+SWIGINTERN int _wrap_new_ConvertedValue(PyObject *self, PyObject *args, PyObject *kwargs) {
+   PyObject *resultobj = 0;
+   std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>> *result =
+       0;
+
+   if (!SWIG_Python_CheckNoKeywords(kwargs, "new_ConvertedValue")) {
+      SWIG_fail;
+   }
+   if (!SWIG_Python_UnpackTuple(args, "new_ConvertedValue", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result =
+          (std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>>
+               *)new std::variant<int, uint32_t, uint64_t, double, std::string,
+                                  std::vector<unsigned char>>();
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   {
+      if (!result) {
+         resultobj = Py_None;
+         Py_INCREF(Py_None);
+      } else {
+         // Note the dereference of the pointer: *result
+         /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+         // Create an instance of our visitor to handle the type-specific conversions.
+         variant_to_pyobject_visitor visitor;
+
+         // Check the type held by the variant and call the appropriate visitor function.
+         // std::get_if returns a pointer to the value if the variant holds that type,
+         // otherwise it returns nullptr.
+         if (auto *val = std::get_if<int>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<uint32_t>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<uint64_t>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<double>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<std::string>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<std::vector<unsigned char>>(&(*result))) {
+            resultobj = visitor(*val);
+         } else {
+            // This case should not be reached if the variant is valid.
+            // Set a Python exception to indicate a problem.
+            SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+         }
+         /*@SWIG@*/
+      }
+   }
+   return resultobj == Py_None ? -1 : 0;
+fail:
+   return -1;
+}
+
+SWIGINTERN PyObject *_wrap_delete_ConvertedValue(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>> *arg1 =
+       (std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>> *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "delete_ConvertedValue", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(
+       self, &argp1,
+       SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
+       SWIG_POINTER_DISOWN | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(
+          SWIG_ArgError(res1),
+          "in method '"
+          "delete_ConvertedValue"
+          "', argument "
+          "1"
+          " of type '"
+          "std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *"
+          "'");
+   }
+   arg1 = reinterpret_cast<
+       std::variant<int, uint32_t, uint64_t, double, std::string, std::vector<unsigned char>> *>(
+       argp1);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      delete arg1;
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGPY_DESTRUCTOR_CLOSURE(
+    _wrap_delete_ConvertedValue) /* defines _wrap_delete_ConvertedValue_destructor_closure */
+
 SWIGINTERN PyObject *_wrap_Result_oid_set(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    Result *arg1 = (Result *)0;
@@ -4756,21 +6587,140 @@ fail:
    return NULL;
 }
 
-SWIGINTERN PyObject *_wrap_Result_to_string(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Result_converted_value_set(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Result *arg1 = (Result *)0;
+   Result::ConvertedValue *arg2 = (Result::ConvertedValue *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   void *argp2 = 0;
+   int res2 = 0;
+   PyObject *swig_obj[2];
+
+   if (!args) {
+      SWIG_fail;
+   }
+   swig_obj[0] = args;
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Result_converted_value_set"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Result *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Result *>(argp1);
+   res2 = SWIG_ConvertPtr(
+       swig_obj[0], &argp2,
+       SWIGTYPE_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
+       0 | 0);
+   if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2),
+                          "in method '"
+                          "Result_converted_value_set"
+                          "', argument "
+                          "2"
+                          " of type '"
+                          "Result::ConvertedValue *"
+                          "'");
+   }
+   arg2 = reinterpret_cast<Result::ConvertedValue *>(argp2);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      if (arg1) {
+         (arg1)->converted_value = *arg2;
+      }
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_Py_Void();
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Result_converted_value_get(PyObject *self, PyObject *args) {
    PyObject *resultobj = 0;
    Result *arg1 = (Result *)0;
    void *argp1 = 0;
    int res1 = 0;
-   std::string result;
+   Result::ConvertedValue *result = 0;
 
-   if (!SWIG_Python_UnpackTuple(args, "Result_to_string", 0, 0, 0)) {
+   if (!SWIG_Python_UnpackTuple(args, "Result_converted_value_get", 0, 0, 0)) {
       SWIG_fail;
    }
    res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
    if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1),
                           "in method '"
-                          "Result_to_string"
+                          "Result_converted_value_get"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Result *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Result *>(argp1);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (Result::ConvertedValue *)&((arg1)->converted_value);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   {
+      if (!result) {
+         resultobj = Py_None;
+         Py_INCREF(Py_None);
+      } else {
+         // Note the dereference of the pointer: *result
+         /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+         // Create an instance of our visitor to handle the type-specific conversions.
+         variant_to_pyobject_visitor visitor;
+
+         // Check the type held by the variant and call the appropriate visitor function.
+         // std::get_if returns a pointer to the value if the variant holds that type,
+         // otherwise it returns nullptr.
+         if (auto *val = std::get_if<int>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<uint32_t>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<uint64_t>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<double>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<std::string>(&(*result))) {
+            resultobj = visitor(*val);
+         } else if (auto *val = std::get_if<std::vector<unsigned char>>(&(*result))) {
+            resultobj = visitor(*val);
+         } else {
+            // This case should not be reached if the variant is valid.
+            // Set a Python exception to indicate a problem.
+            SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+         }
+         /*@SWIG@*/
+      }
+   }
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Result__to_string(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Result *arg1 = (Result *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+   std::string result;
+
+   if (!SWIG_Python_UnpackTuple(args, "Result__to_string", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Result__to_string"
                           "', argument "
                           "1"
                           " of type '"
@@ -4780,10 +6730,171 @@ SWIGINTERN PyObject *_wrap_Result_to_string(PyObject *self, PyObject *args) {
    arg1 = reinterpret_cast<Result *>(argp1);
    {
       SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-      result = ((Result const *)arg1)->to_string();
+      result = ((Result const *)arg1)->_to_string();
       SWIG_PYTHON_THREAD_END_ALLOW;
    }
    resultobj = SWIG_From_std_string(static_cast<std::string>(result));
+   return resultobj;
+fail:
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Result__make_converted_value(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Result *arg1 = (Result *)0;
+   std::string *arg2 = 0;
+   std::string *arg3 = 0;
+   void *argp1 = 0;
+   int res1 = 0;
+   int res2 = SWIG_OLDOBJ;
+   int res3 = SWIG_OLDOBJ;
+   PyObject *swig_obj[3];
+   Result::ConvertedValue result;
+
+   if (!SWIG_Python_UnpackTuple(args, "Result__make_converted_value", 2, 2, swig_obj)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Result__make_converted_value"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Result *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Result *>(argp1);
+   {
+      std::string *ptr = (std::string *)0;
+      res2 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+      if (!SWIG_IsOK(res2)) {
+         SWIG_exception_fail(SWIG_ArgError(res2),
+                             "in method '"
+                             "Result__make_converted_value"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "Result__make_converted_value"
+                             "', argument "
+                             "2"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg2 = ptr;
+   }
+   {
+      std::string *ptr = (std::string *)0;
+      res3 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+      if (!SWIG_IsOK(res3)) {
+         SWIG_exception_fail(SWIG_ArgError(res3),
+                             "in method '"
+                             "Result__make_converted_value"
+                             "', argument "
+                             "3"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      if (!ptr) {
+         SWIG_exception_fail(SWIG_NullReferenceError,
+                             "invalid null reference "
+                             "in method '"
+                             "Result__make_converted_value"
+                             "', argument "
+                             "3"
+                             " of type '"
+                             "std::string const &"
+                             "'");
+      }
+      arg3 = ptr;
+   }
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result =
+          (arg1)->_make_converted_value((std::string const &)*arg2, (std::string const &)*arg3);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   {
+      /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+      // Create an instance of our visitor to handle the type-specific conversions.
+      variant_to_pyobject_visitor visitor;
+
+      // Check the type held by the variant and call the appropriate visitor function.
+      // std::get_if returns a pointer to the value if the variant holds that type,
+      // otherwise it returns nullptr.
+      if (auto *val = std::get_if<int>(&(result))) {
+         resultobj = visitor(*val);
+      } else if (auto *val = std::get_if<uint32_t>(&(result))) {
+         resultobj = visitor(*val);
+      } else if (auto *val = std::get_if<uint64_t>(&(result))) {
+         resultobj = visitor(*val);
+      } else if (auto *val = std::get_if<double>(&(result))) {
+         resultobj = visitor(*val);
+      } else if (auto *val = std::get_if<std::string>(&(result))) {
+         resultobj = visitor(*val);
+      } else if (auto *val = std::get_if<std::vector<unsigned char>>(&(result))) {
+         resultobj = visitor(*val);
+      } else {
+         // This case should not be reached if the variant is valid.
+         // Set a Python exception to indicate a problem.
+         SWIG_exception_fail(SWIG_TypeError, "Variant holds an unexpected or unhandled type.");
+      }
+      /*@SWIG@*/
+   }
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   if (SWIG_IsNewObj(res3)) {
+      delete arg3;
+   }
+   return resultobj;
+fail:
+   if (SWIG_IsNewObj(res2)) {
+      delete arg2;
+   }
+   if (SWIG_IsNewObj(res3)) {
+      delete arg3;
+   }
+   return NULL;
+}
+
+SWIGINTERN PyObject *_wrap_Result_update_converted_value(PyObject *self, PyObject *args) {
+   PyObject *resultobj = 0;
+   Result *arg1 = (Result *)0;
+   void *argp1 = 0;
+   int res1 = 0;
+
+   if (!SWIG_Python_UnpackTuple(args, "Result_update_converted_value", 0, 0, 0)) {
+      SWIG_fail;
+   }
+   res1 = SWIG_ConvertPtr(self, &argp1, SWIGTYPE_p_Result, 0 | 0);
+   if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1),
+                          "in method '"
+                          "Result_update_converted_value"
+                          "', argument "
+                          "1"
+                          " of type '"
+                          "Result *"
+                          "'");
+   }
+   arg1 = reinterpret_cast<Result *>(argp1);
+   {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      (arg1)->update_converted_value();
+      SWIG_PYTHON_THREAD_END_ALLOW;
+   }
+   resultobj = SWIG_Py_Void();
    return resultobj;
 fail:
    return NULL;
@@ -4847,11 +6958,759 @@ SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_Result) /* defines _wrap_delete_Result_de
 
 static PyMethodDef SwigMethods[] = {{NULL, NULL, 0, NULL}};
 
+static SwigPyGetSet SwigPyIterator___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef SwigPyBuiltin__swig__SwigPyIterator_getset[] = {
+    {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"~SwigPyIterator",
+     &SwigPyIterator___dict___getset},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *SwigPyBuiltin__swig__SwigPyIterator_richcompare(PyObject *self,
+                                                                     PyObject *other,
+                                                                     int op) {
+   PyObject *result = NULL;
+   switch (op) {
+      case Py_EQ:
+         result = _wrap_SwigPyIterator___eq__(self, other);
+         break;
+      case Py_NE:
+         result = _wrap_SwigPyIterator___ne__(self, other);
+         break;
+      default:
+         break;
+   }
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__swig__SwigPyIterator_methods[] = {
+    {"value", _wrap_SwigPyIterator_value, METH_NOARGS, "value(self) -> PyObject *"},
+    {"incr", _wrap_SwigPyIterator_incr, METH_VARARGS, "incr(self, n=1) -> SwigPyIterator"},
+    {"decr", _wrap_SwigPyIterator_decr, METH_VARARGS, "decr(self, n=1) -> SwigPyIterator"},
+    {"distance", _wrap_SwigPyIterator_distance, METH_O, "distance(self, x) -> ptrdiff_t"},
+    {"equal", _wrap_SwigPyIterator_equal, METH_O, "equal(self, x) -> bool"},
+    {"copy", _wrap_SwigPyIterator_copy, METH_NOARGS, "copy(self) -> SwigPyIterator"},
+    {"next", _wrap_SwigPyIterator_next, METH_NOARGS, "next(self) -> PyObject *"},
+    {"__next__", _wrap_SwigPyIterator___next__, METH_NOARGS, "__next__(self) -> PyObject *"},
+    {"previous", _wrap_SwigPyIterator_previous, METH_NOARGS, "previous(self) -> PyObject *"},
+    {"advance", _wrap_SwigPyIterator_advance, METH_O, "advance(self, n) -> SwigPyIterator"},
+    {"__eq__", _wrap_SwigPyIterator___eq__, METH_O, "__eq__(self, x) -> bool"},
+    {"__ne__", _wrap_SwigPyIterator___ne__, METH_O, "__ne__(self, x) -> bool"},
+    {"__iadd__", _wrap_SwigPyIterator___iadd__, METH_O, "__iadd__(self, n) -> SwigPyIterator"},
+    {"__isub__", _wrap_SwigPyIterator___isub__, METH_O, "__isub__(self, n) -> SwigPyIterator"},
+    {"__add__", _wrap_SwigPyIterator___add__, METH_O, "__add__(self, n) -> SwigPyIterator"},
+    {"__sub__", _wrap_SwigPyIterator___sub__, METH_VARARGS,
+     "\n"
+     "__sub__(self, n) -> SwigPyIterator\n"
+     "__sub__(self, x) -> ptrdiff_t\n"
+     ""},
+    {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__swig__SwigPyIterator_type = {
+    {
+#if PY_VERSION_HEX >= 0x03000000
+        PyVarObject_HEAD_INIT(NULL, 0)
+#else
+        PyObject_HEAD_INIT(NULL) 0, /* ob_size */
+#endif
+            "datatypes.SwigPyIterator",                 /* tp_name */
+        sizeof(SwigPyObject),                           /* tp_basicsize */
+        0,                                              /* tp_itemsize */
+        _wrap_delete_SwigPyIterator_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+        (printfunc)0, /* tp_print */
+#else
+        (Py_ssize_t)0, /* tp_vectorcall_offset */
+#endif
+        (getattrfunc)0, /* tp_getattr */
+        (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+        0, /* tp_compare */
+#else
+        (cmpfunc)0, /* tp_compare */
+#endif
+        (reprfunc)0,                                           /* tp_repr */
+        &SwigPyBuiltin__swig__SwigPyIterator_type.as_number,   /* tp_as_number */
+        &SwigPyBuiltin__swig__SwigPyIterator_type.as_sequence, /* tp_as_sequence */
+        &SwigPyBuiltin__swig__SwigPyIterator_type.as_mapping,  /* tp_as_mapping */
+        SwigPyObject_hash,                                     /* tp_hash */
+        (ternaryfunc)0,                                        /* tp_call */
+        (reprfunc)0,                                           /* tp_str */
+        (getattrofunc)0,                                       /* tp_getattro */
+        (setattrofunc)0,                                       /* tp_setattro */
+        &SwigPyBuiltin__swig__SwigPyIterator_type.as_buffer,   /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+        "swig::SwigPyIterator",                             /* tp_doc */
+        (traverseproc)0,                                    /* tp_traverse */
+        (inquiry)0,                                         /* tp_clear */
+        SwigPyBuiltin__swig__SwigPyIterator_richcompare,    /* tp_richcompare */
+        0,                                                  /* tp_weaklistoffset */
+        &swig::make_output_iterator_builtin,                /* tp_iter */
+        _wrap_SwigPyIterator___next___iternextfunc_closure, /* tp_iternext */
+        SwigPyBuiltin__swig__SwigPyIterator_methods,        /* tp_methods */
+        0,                                                  /* tp_members */
+        SwigPyBuiltin__swig__SwigPyIterator_getset,         /* tp_getset */
+        0,                                                  /* tp_base */
+        0,                                                  /* tp_dict */
+        (descrgetfunc)0,                                    /* tp_descr_get */
+        (descrsetfunc)0,                                    /* tp_descr_set */
+        offsetof(SwigPyObject, dict),                       /* tp_dictoffset */
+        SwigPyBuiltin_BadInit,                              /* tp_init */
+        (allocfunc)0,                                       /* tp_alloc */
+        (newfunc)0,                                         /* tp_new */
+        (freefunc)0,                                        /* tp_free */
+        (inquiry)0,                                         /* tp_is_gc */
+        (PyObject *)0,                                      /* tp_bases */
+        (PyObject *)0,                                      /* tp_mro */
+        (PyObject *)0,                                      /* tp_cache */
+        (PyObject *)0,                                      /* tp_subclasses */
+        (PyObject *)0,                                      /* tp_weaklist */
+        (destructor)0,                                      /* tp_del */
+        (int)0,                                             /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+        (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+        (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+        0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+        (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+        (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+        (Py_ssize_t)0, /* tp_allocs */
+        (Py_ssize_t)0, /* tp_frees */
+        (Py_ssize_t)0, /* tp_maxalloc */
+        0,             /* tp_prev */
+        0,             /* tp_next */
+#endif
+    },
+#if PY_VERSION_HEX >= 0x03050000
+    {
+        (unaryfunc)0, /* am_await */
+        (unaryfunc)0, /* am_aiter */
+        (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+        (sendfunc)0, /* am_send */
+#endif
+    },
+#endif
+    {
+        _wrap_SwigPyIterator___add__,                    /* nb_add */
+        _wrap_SwigPyIterator___sub___binaryfunc_closure, /* nb_subtract */
+        (binaryfunc)0,                                   /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_divide */
+#endif
+        (binaryfunc)0,  /* nb_remainder */
+        (binaryfunc)0,  /* nb_divmod */
+        (ternaryfunc)0, /* nb_power */
+        (unaryfunc)0,   /* nb_negative */
+        (unaryfunc)0,   /* nb_positive */
+        (unaryfunc)0,   /* nb_absolute */
+        (inquiry)0,     /* nb_nonzero */
+        (unaryfunc)0,   /* nb_invert */
+        (binaryfunc)0,  /* nb_lshift */
+        (binaryfunc)0,  /* nb_rshift */
+        (binaryfunc)0,  /* nb_and */
+        (binaryfunc)0,  /* nb_xor */
+        (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+        (coercion)0, /* nb_coerce */
+#endif
+        (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* nb_reserved */
+#else
+        (unaryfunc)0, /* nb_long */
+#endif
+        (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+        (unaryfunc)0, /* nb_oct */
+        (unaryfunc)0, /* nb_hex */
+#endif
+        _wrap_SwigPyIterator___iadd__, /* nb_inplace_add */
+        _wrap_SwigPyIterator___isub__, /* nb_inplace_subtract */
+        (binaryfunc)0,                 /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+        (binaryfunc)0, /* nb_inplace_divide */
+#endif
+        (binaryfunc)0,  /* nb_inplace_remainder */
+        (ternaryfunc)0, /* nb_inplace_power */
+        (binaryfunc)0,  /* nb_inplace_lshift */
+        (binaryfunc)0,  /* nb_inplace_rshift */
+        (binaryfunc)0,  /* nb_inplace_and */
+        (binaryfunc)0,  /* nb_inplace_xor */
+        (binaryfunc)0,  /* nb_inplace_or */
+        (binaryfunc)0,  /* nb_floor_divide */
+        (binaryfunc)0,  /* nb_true_divide */
+        (binaryfunc)0,  /* nb_inplace_floor_divide */
+        (binaryfunc)0,  /* nb_inplace_true_divide */
+        (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+        (binaryfunc)0, /* nb_matrix_multiply */
+        (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+    },
+    {
+        (lenfunc)0,       /* mp_length */
+        (binaryfunc)0,    /* mp_subscript */
+        (objobjargproc)0, /* mp_ass_subscript */
+    },
+    {
+        (lenfunc)0,      /* sq_length */
+        (binaryfunc)0,   /* sq_concat */
+        (ssizeargfunc)0, /* sq_repeat */
+        (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_slice */
+#else
+        (ssizessizeargfunc)0, /* sq_slice */
+#endif
+        (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+        (void *)0, /* was_sq_ass_slice */
+#else
+        (ssizessizeobjargproc)0, /* sq_ass_slice */
+#endif
+        (objobjproc)0,   /* sq_contains */
+        (binaryfunc)0,   /* sq_inplace_concat */
+        (ssizeargfunc)0, /* sq_inplace_repeat */
+    },
+    {
+#if PY_VERSION_HEX < 0x03000000
+        (readbufferproc)0,  /* bf_getreadbuffer */
+        (writebufferproc)0, /* bf_getwritebuffer */
+        (segcountproc)0,    /* bf_getsegcount */
+        (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+        (getbufferproc)0,     /* bf_getbuffer */
+        (releasebufferproc)0, /* bf_releasebuffer */
+    },
+    (PyObject *)0, /* ht_name */
+    (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject *)0, /* ht_qualname */
+    0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+    (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+    (char *)0, /* _ht_tpname */
+    {
+        (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+        (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+        (PyObject *)0, /* init */
+#endif
+    }
+#endif
+};
+
+static PyTypeObject *SwigPyBuiltin__swig__SwigPyIterator_type_create(PyTypeObject *type,
+                                                                     PyTypeObject **bases,
+                                                                     PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype = (PyTypeObject *)&SwigPyBuiltin__swig__SwigPyIterator_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'SwigPyIterator'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *SwigPyBuiltin__swig__SwigPyIterator_type_create(PyTypeObject *type,
+                                                                     PyTypeObject **bases,
+                                                                     PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)SwigPyBuiltin_BadInit},
+       {Py_tp_dealloc, (void *)_wrap_delete_SwigPyIterator_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"swig::SwigPyIterator"},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare, (void *)SwigPyBuiltin__swig__SwigPyIterator_richcompare},
+       {Py_tp_methods, (void *)SwigPyBuiltin__swig__SwigPyIterator_methods},
+       {Py_tp_getset, (void *)SwigPyBuiltin__swig__SwigPyIterator_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)&swig::make_output_iterator_builtin},
+       {Py_tp_iternext, (void *)_wrap_SwigPyIterator___next___iternextfunc_closure},
+       {Py_nb_add, (void *)_wrap_SwigPyIterator___add__},
+       {Py_nb_subtract, (void *)_wrap_SwigPyIterator___sub___binaryfunc_closure},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)_wrap_SwigPyIterator___iadd__},
+       {Py_nb_inplace_subtract, (void *)_wrap_SwigPyIterator___isub__},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"datatypes.SwigPyIterator", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData SwigPyBuiltin__swig__SwigPyIterator_clientdata = {0, 0, 0, 0, 0, 0, 0};
+
+static SwigPyGetSet ConvertedValue___dict___getset = {SwigPyObject_get___dict__, 0};
+SWIGINTERN PyGetSetDef
+    SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_getset
+        [] = {
+            {(char *)"__dict__", SwigPyBuiltin_FunpackGetterClosure, 0, (char *)"variant",
+             &ConvertedValue___dict___getset},
+            {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_richcompare(
+    PyObject *self, PyObject *other, int op) {
+   PyObject *result = NULL;
+   if (!result && !PyErr_Occurred()) {
+      if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+         result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+      } else {
+         result = Py_NotImplemented;
+         SWIG_Py_INCREF(result);
+      }
+   }
+   return result;
+}
+
+SWIGINTERN PyMethodDef
+    SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_methods
+        [] = {
+            {NULL, NULL, 0, NULL} /* Sentinel */
+};
+
+#ifndef SWIG_HEAPTYPES
+static PyHeapTypeObject SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type =
+    {{
+#if PY_VERSION_HEX >= 0x03000000
+         PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                      /* ob_size */
+#endif
+             "datatypes.ConvertedValue",                 /* tp_name */
+         sizeof(SwigPyObject),                           /* tp_basicsize */
+         0,                                              /* tp_itemsize */
+         _wrap_delete_ConvertedValue_destructor_closure, /* tp_dealloc */
+#if PY_VERSION_HEX < 0x030800b4
+         (printfunc)0, /* tp_print */
+#else
+    (Py_ssize_t) 0,                         /* tp_vectorcall_offset */
+#endif
+         (getattrfunc)0, /* tp_getattr */
+         (setattrfunc)0, /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+         0, /* tp_compare */
+#else
+    (cmpfunc) 0,                            /* tp_compare */
+#endif
+         (reprfunc)0, /* tp_repr */
+         &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type
+              .as_number, /* tp_as_number */
+         &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type
+              .as_sequence, /* tp_as_sequence */
+         &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type
+              .as_mapping,  /* tp_as_mapping */
+         SwigPyObject_hash, /* tp_hash */
+         (ternaryfunc)0,    /* tp_call */
+         (reprfunc)0,       /* tp_str */
+         (getattrofunc)0,   /* tp_getattro */
+         (setattrofunc)0,   /* tp_setattro */
+         &SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type
+              .as_buffer, /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+         Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+         "std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > >", /* tp_doc */
+         (traverseproc)0, /* tp_traverse */
+         (inquiry)0,      /* tp_clear */
+         SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_richcompare, /* tp_richcompare */
+         0,               /* tp_weaklistoffset */
+         (getiterfunc)0,  /* tp_iter */
+         (iternextfunc)0, /* tp_iternext */
+         SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_methods, /* tp_methods */
+         0, /* tp_members */
+         SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_getset, /* tp_getset */
+         0,                            /* tp_base */
+         0,                            /* tp_dict */
+         (descrgetfunc)0,              /* tp_descr_get */
+         (descrsetfunc)0,              /* tp_descr_set */
+         offsetof(SwigPyObject, dict), /* tp_dictoffset */
+         _wrap_new_ConvertedValue,     /* tp_init */
+         (allocfunc)0,                 /* tp_alloc */
+         (newfunc)0,                   /* tp_new */
+         (freefunc)0,                  /* tp_free */
+         (inquiry)0,                   /* tp_is_gc */
+         (PyObject *)0,                /* tp_bases */
+         (PyObject *)0,                /* tp_mro */
+         (PyObject *)0,                /* tp_cache */
+         (PyObject *)0,                /* tp_subclasses */
+         (PyObject *)0,                /* tp_weaklist */
+         (destructor)0,                /* tp_del */
+         (int)0,                       /* tp_version_tag */
+#if PY_VERSION_HEX >= 0x03040000
+         (destructor)0, /* tp_finalize */
+#endif
+#if PY_VERSION_HEX >= 0x03080000
+         (vectorcallfunc)0, /* tp_vectorcall */
+#endif
+#if (PY_VERSION_HEX >= 0x03080000) && (PY_VERSION_HEX < 0x03090000)
+         0, /* tp_print */
+#endif
+#if PY_VERSION_HEX >= 0x030c0000
+         (unsigned char)0, /* tp_watched */
+#endif
+#if PY_VERSION_HEX >= 0x030d00a4
+         (uint16_t)0, /* tp_versions_used */
+#endif
+#ifdef COUNT_ALLOCS
+         (Py_ssize_t)0, /* tp_allocs */
+         (Py_ssize_t)0, /* tp_frees */
+         (Py_ssize_t)0, /* tp_maxalloc */
+         0,             /* tp_prev */
+         0,             /* tp_next */
+#endif
+     },
+#if PY_VERSION_HEX >= 0x03050000
+     {
+         (unaryfunc)0, /* am_await */
+         (unaryfunc)0, /* am_aiter */
+         (unaryfunc)0, /* am_anext */
+#if PY_VERSION_HEX >= 0x030a0000
+         (sendfunc)0, /* am_send */
+#endif
+     },
+#endif
+     {
+         (binaryfunc)0, /* nb_add */
+         (binaryfunc)0, /* nb_subtract */
+         (binaryfunc)0, /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+         (binaryfunc)0, /* nb_divide */
+#endif
+         (binaryfunc)0,  /* nb_remainder */
+         (binaryfunc)0,  /* nb_divmod */
+         (ternaryfunc)0, /* nb_power */
+         (unaryfunc)0,   /* nb_negative */
+         (unaryfunc)0,   /* nb_positive */
+         (unaryfunc)0,   /* nb_absolute */
+         (inquiry)0,     /* nb_nonzero */
+         (unaryfunc)0,   /* nb_invert */
+         (binaryfunc)0,  /* nb_lshift */
+         (binaryfunc)0,  /* nb_rshift */
+         (binaryfunc)0,  /* nb_and */
+         (binaryfunc)0,  /* nb_xor */
+         (binaryfunc)0,  /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+         (coercion)0, /* nb_coerce */
+#endif
+         (unaryfunc)0, /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+         (void *)0, /* nb_reserved */
+#else
+    (unaryfunc) 0,                          /* nb_long */
+#endif
+         (unaryfunc)0, /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+         (unaryfunc)0, /* nb_oct */
+         (unaryfunc)0, /* nb_hex */
+#endif
+         (binaryfunc)0, /* nb_inplace_add */
+         (binaryfunc)0, /* nb_inplace_subtract */
+         (binaryfunc)0, /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+         (binaryfunc)0, /* nb_inplace_divide */
+#endif
+         (binaryfunc)0,  /* nb_inplace_remainder */
+         (ternaryfunc)0, /* nb_inplace_power */
+         (binaryfunc)0,  /* nb_inplace_lshift */
+         (binaryfunc)0,  /* nb_inplace_rshift */
+         (binaryfunc)0,  /* nb_inplace_and */
+         (binaryfunc)0,  /* nb_inplace_xor */
+         (binaryfunc)0,  /* nb_inplace_or */
+         (binaryfunc)0,  /* nb_floor_divide */
+         (binaryfunc)0,  /* nb_true_divide */
+         (binaryfunc)0,  /* nb_inplace_floor_divide */
+         (binaryfunc)0,  /* nb_inplace_true_divide */
+         (unaryfunc)0,   /* nb_index */
+#if PY_VERSION_HEX >= 0x03050000
+         (binaryfunc)0, /* nb_matrix_multiply */
+         (binaryfunc)0, /* nb_inplace_matrix_multiply */
+#endif
+     },
+     {
+         (lenfunc)0,       /* mp_length */
+         (binaryfunc)0,    /* mp_subscript */
+         (objobjargproc)0, /* mp_ass_subscript */
+     },
+     {
+         (lenfunc)0,      /* sq_length */
+         (binaryfunc)0,   /* sq_concat */
+         (ssizeargfunc)0, /* sq_repeat */
+         (ssizeargfunc)0, /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+         (void *)0, /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                  /* sq_slice */
+#endif
+         (ssizeobjargproc)0, /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+         (void *)0, /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,               /* sq_ass_slice */
+#endif
+         (objobjproc)0,   /* sq_contains */
+         (binaryfunc)0,   /* sq_inplace_concat */
+         (ssizeargfunc)0, /* sq_inplace_repeat */
+     },
+     {
+#if PY_VERSION_HEX < 0x03000000
+         (readbufferproc)0,  /* bf_getreadbuffer */
+         (writebufferproc)0, /* bf_getwritebuffer */
+         (segcountproc)0,    /* bf_getsegcount */
+         (charbufferproc)0,  /* bf_getcharbuffer */
+#endif
+         (getbufferproc)0,     /* bf_getbuffer */
+         (releasebufferproc)0, /* bf_releasebuffer */
+     },
+     (PyObject *)0, /* ht_name */
+     (PyObject *)0, /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+     (PyObject *)0, /* ht_qualname */
+     0,             /* ht_cached_keys */
+#endif
+#if PY_VERSION_HEX >= 0x03090000
+     (PyObject *)0, /* ht_module */
+#endif
+#if PY_VERSION_HEX >= 0x030b0000
+     (char *)0, /* _ht_tpname */
+     {
+         (PyObject *)0, /* getitem */
+#if PY_VERSION_HEX >= 0x030c0000
+         (uint32_t)0, /* getitem_version */
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+         (PyObject *)0, /* init */
+#endif
+     }
+#endif
+};
+
+static PyTypeObject *
+SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type_create(
+    PyTypeObject *type, PyTypeObject **bases, PyObject *dict) {
+   PyObject *tuple_bases;
+   PyTypeObject *pytype =
+       (PyTypeObject
+            *)&SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type;
+   pytype->tp_dict = dict;
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   pytype->tp_new = PyType_GenericNew;
+   tuple_bases = SwigPyBuiltin_InitBases(bases);
+   pytype->tp_base = bases[0];
+   SWIG_Py_INCREF(pytype->tp_base);
+   pytype->tp_bases = tuple_bases;
+   if (PyType_Ready(pytype) < 0) {
+      PyErr_SetString(PyExc_TypeError, "Could not create type 'ConvertedValue'.");
+      return NULL;
+   }
+   return pytype;
+}
+
+#else
+static PyTypeObject *
+SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type_create(
+    PyTypeObject *type, PyTypeObject **bases, PyObject *dict) {
+   PyMemberDef members[] = {
+       {(char *)"__dictoffset__", Py_T_PYSSIZET, offsetof(SwigPyObject, dict), Py_READONLY, NULL},
+       {NULL, 0, 0, 0, NULL}};
+   PyType_Slot slots[] = {
+       {Py_tp_init, (void *)_wrap_new_ConvertedValue},
+       {Py_tp_dealloc, (void *)_wrap_delete_ConvertedValue_destructor_closure},
+       {Py_tp_alloc, (void *)(allocfunc)0},
+       {Py_tp_free, (void *)(freefunc)0},
+       {Py_tp_is_gc, (void *)(inquiry)0},
+       {Py_tp_del, (void *)(destructor)0},
+       {Py_tp_doc, (void *)"std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< "
+                           "unsigned char > >"},
+       {Py_tp_repr, (void *)(reprfunc)0},
+       {Py_tp_str, (void *)(reprfunc)0},
+       {Py_tp_traverse, (void *)(traverseproc)0},
+       {Py_tp_clear, (void *)(inquiry)0},
+       {Py_tp_richcompare,
+        (void *)
+            SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_richcompare},
+       {Py_tp_methods,
+        (void *)
+            SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_methods},
+       {Py_tp_getset,
+        (void *)
+            SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_getset},
+       {Py_tp_hash, (void *)SwigPyObject_hash},
+       {Py_tp_call, (void *)(ternaryfunc)0},
+       {Py_tp_getattro, (void *)(getattrofunc)0},
+       {Py_tp_setattro, (void *)(setattrofunc)0},
+       {Py_tp_descr_get, (void *)(descrgetfunc)0},
+       {Py_tp_descr_set, (void *)(descrsetfunc)0},
+       {Py_mp_length, (void *)(lenfunc)0},
+       {Py_mp_subscript, (void *)(binaryfunc)0},
+       {Py_mp_ass_subscript, (void *)(objobjargproc)0},
+       {Py_tp_iter, (void *)(getiterfunc)0},
+       {Py_tp_iternext, (void *)(iternextfunc)0},
+       {Py_nb_add, (void *)(binaryfunc)0},
+       {Py_nb_subtract, (void *)(binaryfunc)0},
+       {Py_nb_multiply, (void *)(binaryfunc)0},
+       {Py_nb_remainder, (void *)(binaryfunc)0},
+       {Py_nb_divmod, (void *)(binaryfunc)0},
+       {Py_nb_power, (void *)(ternaryfunc)0},
+       {Py_nb_negative, (void *)(unaryfunc)0},
+       {Py_nb_positive, (void *)(unaryfunc)0},
+       {Py_nb_absolute, (void *)(unaryfunc)0},
+       {Py_nb_bool, (void *)(inquiry)0},
+       {Py_nb_invert, (void *)(unaryfunc)0},
+       {Py_nb_lshift, (void *)(binaryfunc)0},
+       {Py_nb_rshift, (void *)(binaryfunc)0},
+       {Py_nb_and, (void *)(binaryfunc)0},
+       {Py_nb_xor, (void *)(binaryfunc)0},
+       {Py_nb_or, (void *)(binaryfunc)0},
+       {Py_nb_int, (void *)(unaryfunc)0},
+       {Py_nb_float, (void *)(unaryfunc)0},
+       {Py_nb_inplace_add, (void *)(binaryfunc)0},
+       {Py_nb_inplace_subtract, (void *)(binaryfunc)0},
+       {Py_nb_inplace_multiply, (void *)(binaryfunc)0},
+       {Py_nb_inplace_remainder, (void *)(binaryfunc)0},
+       {Py_nb_inplace_power, (void *)(ternaryfunc)0},
+       {Py_nb_inplace_lshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_rshift, (void *)(binaryfunc)0},
+       {Py_nb_inplace_and, (void *)(binaryfunc)0},
+       {Py_nb_inplace_xor, (void *)(binaryfunc)0},
+       {Py_nb_inplace_or, (void *)(binaryfunc)0},
+       {Py_nb_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_floor_divide, (void *)(binaryfunc)0},
+       {Py_nb_inplace_true_divide, (void *)(binaryfunc)0},
+       {Py_nb_index, (void *)(unaryfunc)0},
+       {Py_sq_length, (void *)(lenfunc)0},
+       {Py_sq_concat, (void *)(binaryfunc)0},
+       {Py_sq_repeat, (void *)(ssizeargfunc)0},
+       {Py_sq_item, (void *)(ssizeargfunc)0},
+       {Py_sq_ass_item, (void *)(ssizeobjargproc)0},
+       {Py_sq_contains, (void *)(objobjproc)0},
+       {Py_sq_inplace_concat, (void *)(binaryfunc)0},
+       {Py_sq_inplace_repeat, (void *)(ssizeargfunc)0},
+       {Py_tp_members, members},
+       {0, NULL}};
+   PyType_Spec spec = {"datatypes.ConvertedValue", sizeof(SwigPyObject), 0,
+                       Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, slots};
+   PyObject *tuple_bases = SwigPyBuiltin_InitBases(bases);
+   PyTypeObject *pytype = (PyTypeObject *)PyType_FromSpecWithBases(&spec, tuple_bases);
+   PyDict_Merge(pytype->tp_dict, dict, 1);
+   SwigPyBuiltin_SetMetaType(pytype, type);
+   PyType_Modified(pytype);
+   Py_DECREF(dict);
+   return pytype;
+}
+#endif
+SWIGINTERN SwigPyClientData
+    SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_clientdata =
+        {0, 0, 0, 0, 0, 0, 0};
+
 static SwigPyGetSet Result_type_getset = {_wrap_Result_type_get, _wrap_Result_type_set};
 static SwigPyGetSet Result___dict___getset = {SwigPyObject_get___dict__, 0};
 static SwigPyGetSet Result_value_getset = {_wrap_Result_value_get, _wrap_Result_value_set};
 static SwigPyGetSet Result_oid_getset = {_wrap_Result_oid_get, _wrap_Result_oid_set};
 static SwigPyGetSet Result_index_getset = {_wrap_Result_index_get, _wrap_Result_index_set};
+static SwigPyGetSet Result_converted_value_getset = {_wrap_Result_converted_value_get,
+                                                     _wrap_Result_converted_value_set};
 SWIGINTERN PyGetSetDef SwigPyBuiltin__Result_getset[] = {
     {(char *)"type", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
      (char *)"Data type of the retrieved value.", &Result_type_getset},
@@ -4863,6 +7722,9 @@ SWIGINTERN PyGetSetDef SwigPyBuiltin__Result_getset[] = {
      (char *)"Object Identifier (OID) of the retrieved data.", &Result_oid_getset},
     {(char *)"index", SwigPyBuiltin_FunpackGetterClosure, SwigPyBuiltin_FunpackSetterClosure,
      (char *)"Index of the retrieved data (if applicable).", &Result_index_getset},
+    {(char *)"converted_value", SwigPyBuiltin_FunpackGetterClosure,
+     SwigPyBuiltin_FunpackSetterClosure, (char *)"Converted value of the type,value data.",
+     &Result_converted_value_getset},
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
 };
 
@@ -4880,7 +7742,7 @@ SWIGINTERN PyObject *SwigPyBuiltin__Result_richcompare(PyObject *self, PyObject 
 }
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
-    {"to_string", _wrap_Result_to_string, METH_NOARGS,
+    {"_to_string", _wrap_Result__to_string, METH_NOARGS,
      "\n"
      "Converts the Result object to a string representation.\n"
      "\n"
@@ -4889,6 +7751,37 @@ SWIGINTERN PyMethodDef SwigPyBuiltin__Result_methods[] = {
      "\n"
      ":rtype: string\n"
      ":return: A string representation of the Result object.\n"
+     ""},
+    {"_make_converted_value", _wrap_Result__make_converted_value, METH_VARARGS,
+     "\n"
+     "Factory function to obtain the appropriate ConvertedValue type based on an SNMP type\n"
+     "string.\n"
+     "\n"
+     "This function takes an SNMP type string and a value string, then attempts to convert the "
+     "value\n"
+     "into the corresponding C++ type. The converted value is stored in a ConvertedValue, which is "
+     "a\n"
+     "std::variant.\n"
+     "\n"
+     ":param snmpType: The SNMP type as a string (e.g., \"INTEGER\", \"OCTETSTR\").\n"
+     "    "
+     "https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/"
+     "net-snmp/library/parse.h#L154-L170\n"
+     ":type value: string\n"
+     ":param value: The value as a string to be converted.\n"
+     ":rtype: :py:class:`ConvertedValue`\n"
+     ":return: ConvertedValue The value converted to the appropriate C++ type, wrapped in a\n"
+     "    std::variant.\n"
+     ""},
+    {"update_converted_value", _wrap_Result_update_converted_value, METH_NOARGS,
+     "\n"
+     "Updates the converted_value member by converting the current type and value.\n"
+     "\n"
+     "This method recalculates and assigns the converted_value field using the current\n"
+     "values of the type and value members. It utilizes the private helper function\n"
+     "_make_converted_value to perform the conversion.\n"
+     "\n"
+     "Typically called after type or value has changed to ensure converted_value is up-to-date.\n"
      ""},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
@@ -5228,26 +8121,68 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__Result_clientdata = {0, 0, 0, 0, 0, 0
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_ConvertedValue = {
+    "_p_ConvertedValue", "ConvertedValue *", 0, 0, (void *)0, 0};
 static swig_type_info _swigt__p_Result = {
     "_p_Result", "Result *", 0, 0, (void *)&SwigPyBuiltin__Result_clientdata, 0};
 static swig_type_info _swigt__p_SwigPyObject = {
     "_p_SwigPyObject", "SwigPyObject *", 0, 0, (void *)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void *)0, 0};
+static swig_type_info _swigt__p_std__invalid_argument = {
+    "_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void *)0, 0};
+static swig_type_info
+    _swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t =
+        {"_p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t",
+         "Result::ConvertedValue *|std::variant< "
+         "int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char,std::allocator< "
+         "unsigned char > > > *|std::variant< "
+         "int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > > *",
+         0,
+         0,
+         (void
+              *)&SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_clientdata,
+         0};
+static swig_type_info _swigt__p_swig__SwigPyIterator = {
+    "_p_swig__SwigPyIterator",
+    "swig::SwigPyIterator *",
+    0,
+    0,
+    (void *)&SwigPyBuiltin__swig__SwigPyIterator_clientdata,
+    0};
 
 static swig_type_info *swig_type_initial[] = {
+    &_swigt__p_ConvertedValue,
     &_swigt__p_Result,
     &_swigt__p_SwigPyObject,
     &_swigt__p_char,
+    &_swigt__p_std__invalid_argument,
+    &_swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
+    &_swigt__p_swig__SwigPyIterator,
 };
 
+static swig_cast_info _swigc__p_ConvertedValue[] = {{&_swigt__p_ConvertedValue, 0, 0, 0},
+                                                    {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Result[] = {{&_swigt__p_Result, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SwigPyObject[] = {{&_swigt__p_SwigPyObject, 0, 0, 0}, {0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {{&_swigt__p_char, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__invalid_argument[] = {
+    {&_swigt__p_std__invalid_argument, 0, 0, 0}, {0, 0, 0, 0}};
+static swig_cast_info
+    _swigc__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t[] =
+        {{&_swigt__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
+          0, 0, 0},
+         {0, 0, 0, 0}};
+static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {
+    {&_swigt__p_swig__SwigPyIterator, 0, 0, 0}, {0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+    _swigc__p_ConvertedValue,
     _swigc__p_Result,
     _swigc__p_SwigPyObject,
     _swigc__p_char,
+    _swigc__p_std__invalid_argument,
+    _swigc__p_std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t,
+    _swigc__p_swig__SwigPyIterator,
 };
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
@@ -5712,6 +8647,50 @@ void
 #endif
 
    SWIG_InstallConstants(d, swig_const_table);
+
+   /* type 'swig::SwigPyIterator' */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype = SwigPyBuiltin__swig__SwigPyIterator_type_create(metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__swig__SwigPyIterator_clientdata.pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "SwigPyIterator", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "SwigPyIterator");
+   d = md;
+
+   /* type 'std::variant< int,uint32_t,uint64_t,double,std::string,std::vector< unsigned char > >'
+    */
+   d = PyDict_New();
+   builtin_base_count = 0;
+   builtin_bases[builtin_base_count] = NULL;
+   PyDict_SetItemString(d, "this", this_descr);
+   PyDict_SetItemString(d, "thisown", thisown_descr);
+   builtin_pytype =
+       SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_type_create(
+           metatype, builtin_bases, d);
+   if (!builtin_pytype) {
+#if PY_VERSION_HEX >= 0x03000000
+      return NULL;
+#else
+      return;
+#endif
+   }
+   SwigPyBuiltin__std__variantT_int_uint32_t_uint64_t_double_std__string_std__vectorT_unsigned_char_t_t_clientdata
+       .pytype = builtin_pytype;
+   SWIG_Py_INCREF((PyObject *)builtin_pytype);
+   PyModule_AddObject(m, "ConvertedValue", (PyObject *)builtin_pytype);
+   SwigPyBuiltin_AddPublicSymbol(public_interface, "ConvertedValue");
+   d = md;
 
    /* type '::Result' */
    d = PyDict_New();

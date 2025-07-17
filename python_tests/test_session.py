@@ -1167,7 +1167,7 @@ def test_session_print_timeticks_numerically_set(version):
     # Test a Timeticks OID to check numeric output
     res_ticks = session.get(["sysUpTime.0"])
     assert len(res_ticks) == 1
-    assert res_ticks[0].type == "INTEGER"
+    assert res_ticks[0].type == "Timeticks"
     # Should be a numeric string if -O t is set
     assert res_ticks[0].value.isdigit()
 

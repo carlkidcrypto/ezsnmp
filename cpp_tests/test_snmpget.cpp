@@ -15,7 +15,7 @@ TEST_F(SnmpGetTest, TestBasicGet) {
 
    auto results = snmpget(args);
    ASSERT_EQ(results.size(), 1);
-   EXPECT_EQ(results[0].to_string(),
+   EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
 }
 
@@ -30,9 +30,9 @@ TEST_F(SnmpGetTest, TestMultipleOids) {
 
    auto results = snmpget(args);
    ASSERT_EQ(results.size(), 2);
-   EXPECT_EQ(results[0].to_string(),
+   EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
-   EXPECT_EQ(results[1].to_string(),
+   EXPECT_EQ(results[1]._to_string(),
              "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)");
 }
 
@@ -56,7 +56,7 @@ TEST_F(SnmpGetTest, TestV3Get) {
 
    auto results = snmpget(args);
    ASSERT_EQ(results.size(), 1);
-   EXPECT_EQ(results[0].to_string(),
+   EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
 }
 
@@ -154,7 +154,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
    for (int i = 0; i < 5; ++i) {
       auto results = snmpget(args);
       EXPECT_EQ(results.size(), 1);
-      EXPECT_EQ(results[0].to_string(), expected_result);
+      EXPECT_EQ(results[0]._to_string(), expected_result);
    }
 }
 
@@ -179,9 +179,9 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
       EXPECT_EQ(results.size(), 1);
 
       if (i % 2 == 0) {
-         EXPECT_EQ(results[0].to_string(), expected_result_enum);
+         EXPECT_EQ(results[0]._to_string(), expected_result_enum);
       } else {
-         EXPECT_EQ(results[0].to_string(), expected_result_no_enum);
+         EXPECT_EQ(results[0]._to_string(), expected_result_no_enum);
       }
    }
 }

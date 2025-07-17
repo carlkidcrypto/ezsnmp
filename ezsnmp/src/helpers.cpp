@@ -180,8 +180,10 @@ Result parse_result(std::string const &input) {
    // When -O t is using for print timeticks unparsed as numeric integers let's
    // force the type to INTEGER
    else if (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks") {
-      result.type = "INTEGER";
+      result.type = "Timeticks";
    }
+
+   result.update_converted_value();
 
    return result;
 }
