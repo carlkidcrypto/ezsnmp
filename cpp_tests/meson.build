@@ -31,6 +31,7 @@ test_helpers = executable(
         'test_helpers.cpp',
         '../ezsnmp/src/helpers.cpp',
         '../ezsnmp/src/exceptionsbase.cpp',
+        '../ezsnmp/src/datatypes.cpp',
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
