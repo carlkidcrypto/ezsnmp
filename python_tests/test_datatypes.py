@@ -40,7 +40,6 @@ def test_string_values_not_enclosed_in_quotes(version):
     value = result[0].value
 
     # Ensure the value is a string and not enclosed in quotes
-    print(f"Value: {value}")
     assert isinstance(value, str), "Returned value is not a string"
     assert not (
         (value.startswith('"') and value.endswith('"'))
@@ -117,10 +116,4 @@ def test_converted_value_hex_string(version):
         ]
     )
 
-    print(
-        f"Converted Value: {result[0].converted_value} - {type(result[0].converted_value)} -  {result[0].converted_value.hex()}"
-    )
-    print(f"Type: {result[0].type}")
-    print(f"Oid: {result[0].oid}")
-    print(f"Value: {result[0].value}")
     assert isinstance(result[0].converted_value, bytes)

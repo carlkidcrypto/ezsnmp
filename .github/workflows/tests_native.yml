@@ -112,20 +112,20 @@ jobs:
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.54
         with:
-          title: Pytest Coverage Report
+          title: Pytest Coverage Report - Native
           hide-badge: true
           hide-report: true
           create-new-comment: false
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
-            macos-latest - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-            macos-latest - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
-            macos-latest - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
-            macos-latest - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            ubuntu-latest - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
-            ubuntu-latest - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
-            ubuntu-latest - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
-            ubuntu-latest - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
-            ubuntu-latest - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+            macos-latest - Native - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
+            macos-latest - Native - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - Native - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - Native - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            macos-latest - Native - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
+            ubuntu-latest - Native - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            ubuntu-latest - Native - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
+            ubuntu-latest - Native - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
+            ubuntu-latest - Native - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
+            ubuntu-latest - Native - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
