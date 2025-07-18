@@ -9,7 +9,7 @@ RUN dnf install -y findutils
 
 # Install dependencies
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
-RUN xargs dnf install -y < /tmp/dnf-requirements.txt && update-crypto-policies --set LEGACY && dnf clean all
+RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
