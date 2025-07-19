@@ -7,4 +7,12 @@ openssl-devel
 python3.9
 python39-devel
 python3-pip
+net-snmp
+net-snmp-utils
+net-snmp-devel
 gcc-c++
+gdb
+dnf-utils
+meson
+ninja-build
+gtest-devel
