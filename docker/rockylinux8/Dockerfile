@@ -26,16 +26,16 @@ RUN LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
     mkdir -p /usr/lib64/pkgconfig && \
-    echo "prefix=/usr" > /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "exec_prefix=\${prefix}" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "libdir=\${exec_prefix}/lib64" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "includedir=\${prefix}/include" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "Name: netsnmp" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "Description: A collection of libraries for SNMP applications." >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/net-snmp.pc && \
-    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/net-snmp.pc
+    echo "prefix=/usr" > /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "exec_prefix=\${prefix}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "libdir=\${exec_prefix}/lib64" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "includedir=\${prefix}/include" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Name: netsnmp" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Description: A collection of libraries for SNMP applications." >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/netsnmp.pc
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
