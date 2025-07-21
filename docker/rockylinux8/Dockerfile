@@ -1,27 +1,41 @@
 # Use Rocky Linux 8 as the base image
 FROM rockylinux:8
 
-# Update system
-RUN dnf update -y
-
-# Install required tools
-RUN dnf install -y findutils
+# Update system and install essential tools
+RUN dnf update -y && \
+    dnf install -y findutils dnf-plugins-core
 
 # Install the EPEL repository package
 RUN dnf install -y epel-release
 
-# Install the dnf-plugins-core package to get the 'config-manager' tool
-RUN dnf install -y dnf-plugins-core
-
 # Enable the 'powertools' repository (all lowercase)
 RUN dnf config-manager --set-enabled powertools
 
-# Install dependencies
+# Install dependencies from the requirements file
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
 
-# Now, USE the command to install debug symbols for the package you are debugging.
-RUN debuginfo-install -y python3 net-snmp-libs
+# Install debug symbols for relevant packages
+RUN dnf debuginfo-install -y python3 net-snmp-libs
+
+# --- AUTOMATED FIX FOR NET-SNMP ---
+# Manually create the pkg-config file for net-snmp by dynamically
+# getting the correct flags and version from the system. This ensures
+# that Meson can find the dependency even if PKG_CONFIG_PATH is not set.
+RUN LIBS=$(net-snmp-config --libs) && \
+    CFLAGS=$(net-snmp-config --cflags) && \
+    VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
+    mkdir -p /usr/lib64/pkgconfig && \
+    echo "prefix=/usr" > /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "exec_prefix=\${prefix}" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "libdir=\${exec_prefix}/lib64" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "includedir=\${prefix}/include" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "Name: netsnmp" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "Description: A collection of libraries for SNMP applications." >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/net-snmp.pc && \
+    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/net-snmp.pc
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
