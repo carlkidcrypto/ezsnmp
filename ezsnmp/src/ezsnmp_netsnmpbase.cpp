@@ -4695,7 +4695,19 @@ struct variant_to_pyobject_visitor {
    result_type operator()(uint32_t arg) const { return SWIG_From_uint32_t(arg); }
    result_type operator()(uint64_t arg) const { return SWIG_From_uint64_t(arg); }
    result_type operator()(double arg) const { return SWIG_From_double(arg); }
-   result_type operator()(std::string const &arg) const { return SWIG_From_std_string(arg); }
+   result_type operator()(std::string const &arg) const {
+      // FIX: Check for and remove wrapping quotes from malformed SNMP strings.
+      // https://github.com/carlkidcrypto/ezsnmp/issues/355
+      if (arg.length() >= 2 && arg.front() == '"' && arg.back() == '"') {
+         // Create a new C++ string containing just the inner content.
+         std::string cleaned_str = arg.substr(1, arg.length() - 2);
+         // Convert the *cleaned* string to a Python object.
+         return SWIG_From_std_string(cleaned_str);
+      }
+
+      // If no wrapping quotes are found, convert the original string as usual.
+      return SWIG_From_std_string(arg);
+   }
    result_type operator()(std::vector<unsigned char> const &arg) const {
       return PyBytes_FromStringAndSize(reinterpret_cast<char const *>(arg.data()), arg.size());
    }
@@ -7562,7 +7574,7 @@ SWIGINTERN int _wrap_new_ConvertedValue(PyObject *self, PyObject *args, PyObject
          Py_INCREF(Py_None);
       } else {
          // Note the dereference of the pointer: *result
-         /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+         /*@SWIG:ezsnmp/interface/datatypes.i,74,VARIANT_OUT_LOGIC@*/
          // Create an instance of our visitor to handle the type-specific conversions.
          variant_to_pyobject_visitor visitor;
 
@@ -8169,7 +8181,7 @@ SWIGINTERN PyObject *_wrap_Result_converted_value_get(PyObject *self, PyObject *
          Py_INCREF(Py_None);
       } else {
          // Note the dereference of the pointer: *result
-         /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+         /*@SWIG:ezsnmp/interface/datatypes.i,74,VARIANT_OUT_LOGIC@*/
          // Create an instance of our visitor to handle the type-specific conversions.
          variant_to_pyobject_visitor visitor;
 
@@ -8320,7 +8332,7 @@ SWIGINTERN PyObject *_wrap_Result__make_converted_value(PyObject *self, PyObject
       SWIG_PYTHON_THREAD_END_ALLOW;
    }
    {
-      /*@SWIG:ezsnmp/interface/datatypes.i,64,VARIANT_OUT_LOGIC@*/
+      /*@SWIG:ezsnmp/interface/datatypes.i,74,VARIANT_OUT_LOGIC@*/
       // Create an instance of our visitor to handle the type-specific conversions.
       variant_to_pyobject_visitor visitor;
 
@@ -9228,10 +9240,9 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(
-    _wrap_delete_UnknownObjectIDErrorBase) /* defines
-                                              _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
-                                            */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UnknownObjectIDErrorBase) /* defines
+                                                                    _wrap_delete_UnknownObjectIDErrorBase_destructor_closure
+                                                                  */
 
 SWIGINTERN int _wrap_new_NoSuchNameErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
@@ -9714,10 +9725,9 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(
-    _wrap_delete_NoSuchInstanceErrorBase) /* defines
-                                             _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
-                                           */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_NoSuchInstanceErrorBase) /* defines
+                                                                   _wrap_delete_NoSuchInstanceErrorBase_destructor_closure
+                                                                 */
 
 SWIGINTERN int _wrap_new_UndeterminedTypeErrorBase(PyObject *self,
                                                    PyObject *args,
@@ -9880,10 +9890,9 @@ fail:
    return NULL;
 }
 
-SWIGPY_DESTRUCTOR_CLOSURE(
-    _wrap_delete_UndeterminedTypeErrorBase) /* defines
-                                               _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
-                                             */
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_UndeterminedTypeErrorBase) /* defines
+                                                                     _wrap_delete_UndeterminedTypeErrorBase_destructor_closure
+                                                                   */
 
 SWIGINTERN int _wrap_new_ParseErrorBase(PyObject *self, PyObject *args, PyObject *kwargs) {
    PyObject *resultobj = 0;
