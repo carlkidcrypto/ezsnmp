@@ -1,8 +1,9 @@
 #include "datatypes.h"
 
 #include <algorithm>
-#include <cctype> // For ::isdigit
-#include <regex>  // For regex parsing of numeric values
+#include <cctype>   // For ::isspace, ::isxdigit
+#include <iostream> // For debug prints
+#include <regex>    // For regex parsing of numeric values
 #include <sstream>
 #include <string>
 
@@ -31,7 +32,7 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
       std::string numeric_str = extract_numeric_value(value);
       if (numeric_str.empty() && !value.empty()) { // If no numeric part extracted but value isn't
                                                    // empty, try direct conversion
-         numeric_str = value;
+         numeric_str = value;     // Fallback to direct value if no specific pattern matched
       } else if (value.empty()) { // Handle empty value explicitly for numeric types
          return type + " Conversion Error: Empty value for numeric type";
       }
@@ -84,40 +85,67 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
       std::stringstream ss(value);
       std::string byte_str;
 
-      // Read each space-separated hex value
+      // Handle empty value specifically for Hex-STRING as an empty vector
+      if (value.empty() || std::all_of(value.begin(), value.end(), ::isspace)) {
+         return byte_vector; // Return empty vector for empty/whitespace-only input
+      }
+
       while (ss >> byte_str) {
          // Remove any non-hex characters (like ':', although not in your example)
-         byte_str.erase(std::remove_if(byte_str.begin(), byte_str.end(),
-                                       [](char c) { return !std::isxdigit(c); }),
-                        byte_str.end());
-         if (byte_str.empty()) {
-            continue; // Skip empty parts
+         // Ensure only hex characters remain for conversion
+         std::string cleaned_byte_str;
+         std::copy_if(byte_str.begin(), byte_str.end(), std::back_inserter(cleaned_byte_str),
+                      [](char c) { return std::isxdigit(static_cast<unsigned char>(c)); });
+
+         if (cleaned_byte_str.empty()) {
+            // If a part becomes empty after cleaning (e.g., "0xG" -> "G" -> "" if not hex),
+            // or if it was just "0x", we should treat it as an error for that part
+            // if it was the *only* part or if it implies malformation.
+            // For "0xG", "G" would be cleaned to empty, then it would skip.
+            // Re-evaluate if any non-hex part should always cause an error.
+            // For robustness, let's treat any non-empty but non-hex-convertible part as an error.
+            // For now, if clean fails, it means the original byte_str had non-hex.
+            if (!byte_str.empty() && cleaned_byte_str.empty()) {
+               return type + " Conversion Error: Malformed hex part '" + byte_str + "'";
+            }
+            continue; // Skip parts that were just whitespace or genuinely empty
          }
 
          unsigned int byte_value;
          std::stringstream converter;
-         converter << std::hex << byte_str;
-         if (converter >> byte_value) { // Check if conversion was successful
+         converter << std::hex << cleaned_byte_str; // Use cleaned string here
+         if (converter >> byte_value) {             // Check if conversion was successful
             byte_vector.push_back(static_cast<unsigned char>(byte_value));
          } else {
-            // Handle malformed hex string parts
-            return type + " Conversion Error: Malformed hex part '" + byte_str + "'";
+            // This 'else' branch should ideally not be hit if cleaned_byte_str contains only hex,
+            // but as a fallback for unexpected errors in stringstream.
+            return type + " Conversion Error: Unexpected conversion failure for '" +
+                   cleaned_byte_str + "'";
          }
+      }
+      return byte_vector; // If loop finishes without error, return the collected bytes.
+                          // This will be empty if no valid hex parts were found (e.g., input was "
+                          // ").
+
+   } else if (type_lower == "octetstr") {
+      // Convert string to vector of unsigned chars (byte-by-byte)
+      std::vector<unsigned char> byte_vector;
+      byte_vector.reserve(value.length()); // Optimize allocation
+      for (char c : value) {
+         byte_vector.push_back(static_cast<unsigned char>(c));
       }
       return byte_vector;
 
-   } else if (type_lower == "octetstr" || type_lower == "string" || type_lower == "oid" ||
-              type_lower == "objid" || // Treat OID as string representation
+   } else if (type_lower == "string" || // STRING typically represents printable text
+              type_lower == "oid" || type_lower == "objid" || // OID as string representation
               type_lower == "objidentity" || type_lower == "ipaddress" ||
-              type_lower == "network address" || // Handle IpAddress as string
+              type_lower == "network address" || // IP addresses as string
               type_lower == "opaque" || type_lower == "bitstring" || type_lower == "nsapaddress" ||
               type_lower == "traptype" || type_lower == "notiftype" || type_lower == "objgroup" ||
               type_lower == "notifgroup" || type_lower == "modid" || type_lower == "agentcap" ||
               type_lower == "modcomp" || type_lower == "null" || type_lower == "other") {
       // For these types, the 'value' string itself is the most appropriate representation
       // for 'converted_value' if no further specific C++ type conversion is needed.
-      // We can return the value directly, or a fixed string like "No Conversion Available".
-      // Returning the value makes it more useful.
       return value; // Return the original string value
    }
 

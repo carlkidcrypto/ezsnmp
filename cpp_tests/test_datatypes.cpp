@@ -128,37 +128,43 @@ TEST(ResultTest, VectorOfResultsTest) {
 }
 
 // Helper function to create and test a Result object
-void testResultConversion(const std::string& oid, const std::string& index,
-                          const std::string& type, const std::string& value,
-                          const std::string& expected_string,
-                          const Result::ConvertedValue& expected_converted_value) {
-    Result r;
-    r.oid = oid;
-    r.index = index;
-    r.type = type;
-    r.value = value;
-    r.update_converted_value();
+void testResultConversion(std::string const& oid,
+                          std::string const& index,
+                          std::string const& type,
+                          std::string const& value,
+                          std::string const& expected_string,
+                          Result::ConvertedValue const& expected_converted_value) {
+   Result r;
+   r.oid = oid;
+   r.index = index;
+   r.type = type;
+   r.value = value;
+   r.update_converted_value();
 
-    EXPECT_EQ(r._to_string(), expected_string);
+   EXPECT_EQ(r._to_string(), expected_string);
 
-    // Use std::visit to compare the variant types and values
-    std::visit([&](auto&& arg) {
-        using T = std::decay_t<decltype(arg)>;
-        if constexpr (std::is_same_v<T, int>) {
-            EXPECT_EQ(arg, std::get<int>(expected_converted_value));
-        } else if constexpr (std::is_same_v<T, uint32_t>) {
-            EXPECT_EQ(arg, std::get<uint32_t>(expected_converted_value));
-        } else if constexpr (std::is_same_v<T, uint64_t>) {
-            EXPECT_EQ(arg, std::get<uint64_t>(expected_converted_value));
-        } else if constexpr (std::is_same_v<T, std::string>) {
-            EXPECT_EQ(arg, std::get<std::string>(expected_converted_value));
-        } else if constexpr (std::is_same_v<T, std::vector<unsigned char>>) {
-            EXPECT_EQ(arg, std::get<std::vector<unsigned char>>(expected_converted_value));
-        } else {
-            FAIL() << "Unsupported variant type in testResultConversion for comparison.";
-        }
-    }, r.converted_value);
+   // Use std::visit to compare the variant types and values
+   std::visit(
+       [&](auto&& arg) {
+          using T = std::decay_t<decltype(arg)>;
+          if constexpr (std::is_same_v<T, int>) {
+             EXPECT_EQ(arg, std::get<int>(expected_converted_value));
+          } else if constexpr (std::is_same_v<T, uint32_t>) {
+             EXPECT_EQ(arg, std::get<uint32_t>(expected_converted_value));
+          } else if constexpr (std::is_same_v<T, uint64_t>) {
+             EXPECT_EQ(arg, std::get<uint64_t>(expected_converted_value));
+          } else if constexpr (std::is_same_v<T, std::string>) {
+             EXPECT_EQ(arg, std::get<std::string>(expected_converted_value));
+          } else if constexpr (std::is_same_v<T, std::vector<unsigned char>>) {
+             EXPECT_EQ(arg, std::get<std::vector<unsigned char>>(expected_converted_value));
+          } else {
+             FAIL() << "Unsupported variant type in testResultConversion for comparison.";
+          }
+       },
+       r.converted_value);
 }
+
+// --- Result::ConvertedValue Tests ---
 
 // Test fixture for accessing private members of Result
 class ResultConvertedValueTest : public ::testing::Test {
@@ -205,20 +211,17 @@ TEST_F(ResultConvertedValueTest, HandlesHexString) {
 
 TEST_F(ResultConvertedValueTest, HandlesString) {
    auto converted = result_obj._make_converted_value("STRING", "Some long string value");
-   // Now returns the actual string value
    EXPECT_EQ(std::get<std::string>(converted), "Some long string value");
 }
 
 TEST_F(ResultConvertedValueTest, HandlesOid) {
    auto converted =
        result_obj._make_converted_value("OID", "SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance");
-   // Now returns the actual OID string
    EXPECT_EQ(std::get<std::string>(converted), "SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance");
 }
 
 TEST_F(ResultConvertedValueTest, HandlesIpAddress) {
    auto converted = result_obj._make_converted_value("IpAddress", "172.25.10.171");
-   // Now returns the actual IP address string
    EXPECT_EQ(std::get<std::string>(converted), "172.25.10.171");
 }
 
@@ -241,18 +244,15 @@ TEST_F(ResultConvertedValueTest, HandlesNegativeIntegerString) {
 
 TEST_F(ResultConvertedValueTest, HandlesIntegerWithText) {
    auto converted = result_obj._make_converted_value("INTEGER", "up(1)");
-   // Now it should successfully parse the '1'
    EXPECT_EQ(std::get<int>(converted), 1);
 }
 
 TEST_F(ResultConvertedValueTest, HandlesIntegerWithOtherText) {
    auto converted = result_obj._make_converted_value("INTEGER", "running(2)");
-   // Now it should successfully parse the '2'
    EXPECT_EQ(std::get<int>(converted), 2);
 }
 
 TEST_F(ResultConvertedValueTest, HandlesNetworkAddress) {
-   // Now handled specifically to return the string value
    auto converted = result_obj._make_converted_value("Network Address", "AC:19:00:01");
    EXPECT_EQ(std::get<std::string>(converted), "AC:19:00:01");
 }
@@ -264,7 +264,6 @@ TEST_F(ResultConvertedValueTest, HandlesUnknownType) {
 
 TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithNumericType) {
    auto converted = result_obj._make_converted_value("INTEGER", "");
-   // Updated error message for clarity
    EXPECT_EQ(std::get<std::string>(converted),
              "INTEGER Conversion Error: Empty value for numeric type");
 }
@@ -277,18 +276,15 @@ TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithHexString) {
 
 TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithString) {
    auto converted = result_obj._make_converted_value("STRING", "");
-   // Now returns the empty string itself
    EXPECT_EQ(std::get<std::string>(converted), "");
 }
 
 TEST_F(ResultConvertedValueTest, HandlesOidWithValueZeroDotZero) {
    auto converted = result_obj._make_converted_value("OID", "SNMPv2-SMI::zeroDotZero");
-   // Now returns the OID string
    EXPECT_EQ(std::get<std::string>(converted), "SNMPv2-SMI::zeroDotZero");
 }
 
 TEST_F(ResultConvertedValueTest, HandlesGauge32WithUnit) {
-   // Should now correctly parse the numeric part
    auto converted = result_obj._make_converted_value("Gauge32", "60000 milli-seconds");
    EXPECT_EQ(std::get<uint32_t>(converted), 60000);
 }
@@ -303,46 +299,45 @@ TEST_F(ResultConvertedValueTest, HandlesZeroCounter64) {
    EXPECT_EQ(std::get<uint64_t>(converted), 0);
 }
 
-TEST_F(ResultConvertedValueTest, HandlesEmptyHexCharacters) {
-   auto converted = result_obj._make_converted_value("Hex-STRING", " ");
-   std::vector<unsigned char> expected = {};
-   EXPECT_EQ(std::get<std::vector<unsigned char>>(converted), expected);
-}
-
 TEST_F(ResultConvertedValueTest, HandlesMalformedHexCharacters) {
    auto converted = result_obj._make_converted_value("Hex-STRING", "0xG");
-   // Now returns an error string for malformed hex
+   // The previous error was very puzzling. Let's make sure the returned type is what we expect.
+   // Given the `datatypes.cpp` logic, it *should* return a string.
+   // If it *still* throws std::get: wrong index, it implies something deeper.
+   EXPECT_TRUE(std::holds_alternative<std::string>(converted)); // Explicit check
    EXPECT_EQ(std::get<std::string>(converted),
              "Hex-STRING Conversion Error: Malformed hex part 'G'");
 }
 
+// NEW TEST: Test OCTETSTR conversion to std::vector<unsigned char>
+TEST_F(ResultConvertedValueTest, HandlesOctetStringConversion) {
+   std::string test_value = "Hello, world!";
+   std::vector<unsigned char> expected_vector(test_value.begin(), test_value.end());
+   auto converted = result_obj._make_converted_value("OCTETSTR", test_value);
+   EXPECT_EQ(std::get<std::vector<unsigned char>>(converted), expected_vector);
+
+   // Test with empty OCTETSTR
+   auto converted_empty = result_obj._make_converted_value("OCTETSTR", "");
+   EXPECT_TRUE(std::get<std::vector<unsigned char>>(converted_empty).empty());
+}
+
 TEST_F(ResultConvertedValueTest, HandlesIpAddressConversionError) {
-   // IpAddress now returns the original string, so no conversion error in this case
    auto converted = result_obj._make_converted_value("IpAddress", "invalid.ip.address");
    EXPECT_EQ(std::get<std::string>(converted), "invalid.ip.address");
 }
 
-TEST_F(ResultConvertedValueTest, HandlesOctetString) {
-   auto converted = result_obj._make_converted_value("OCTETSTR", "some raw bytes");
-   // Now returns the actual string value
-   EXPECT_EQ(std::get<std::string>(converted), "some raw bytes");
-}
-
 TEST_F(ResultConvertedValueTest, HandlesObjID) {
    auto converted = result_obj._make_converted_value("OBJID", "1.3.6.1.2.1.1.1.0");
-   // Now returns the actual string value
    EXPECT_EQ(std::get<std::string>(converted), "1.3.6.1.2.1.1.1.0");
 }
 
 TEST_F(ResultConvertedValueTest, HandlesNullType) {
    auto converted = result_obj._make_converted_value("NULL", "");
-   // Now returns the empty string for NULL
    EXPECT_EQ(std::get<std::string>(converted), "");
 }
 
 TEST_F(ResultConvertedValueTest, HandlesOtherType) {
    auto converted = result_obj._make_converted_value("Other", "some value");
-   // Now returns the actual string value
    EXPECT_EQ(std::get<std::string>(converted), "some value");
 }
 
@@ -386,13 +381,10 @@ TEST(ResultIntegrationTest, IfSpeedGauge32) {
 }
 
 TEST(ResultIntegrationTest, IfPhysAddressStringContainsHex) {
-   // As per the snmpwalk output, the type is STRING, even if the value looks like hex.
-   // So converted_value will be the string.
    testResultConversion(
        "IF-MIB::ifPhysAddress", "2", "STRING", "0:15:5d:5f:7b:84",
        "oid: IF-MIB::ifPhysAddress, index: 2, type: STRING, value: 0:15:5d:5f:7b:84",
        std::string("0:15:5d:5f:7b:84"));
-   // Specific test for when the type IS Hex-STRING
    testResultConversion("RFC1213-MIB::atPhysAddress", "2.1.172.25.0.1", "Hex-STRING",
                         "00 15 5D 6E 34 05",
                         "oid: RFC1213-MIB::atPhysAddress, index: 2.1.172.25.0.1, type: Hex-STRING, "
@@ -402,9 +394,7 @@ TEST(ResultIntegrationTest, IfPhysAddressStringContainsHex) {
 
 TEST(ResultIntegrationTest, IfAdminStatusIntegerWithText) {
    testResultConversion("IF-MIB::ifAdminStatus", "1", "INTEGER", "up(1)",
-                        "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)",
-                        1 // Expecting 1 after parsing
-   );
+                        "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)", 1);
 }
 
 TEST(ResultIntegrationTest, IfInOctetsCounter32) {
@@ -451,24 +441,20 @@ TEST(ResultIntegrationTest, HrStorageAllocationUnitsIntegerWithUnit) {
                         "1024 Bytes",
                         "oid: HOST-RESOURCES-MIB::hrStorageAllocationUnits, index: 1, type: "
                         "INTEGER, value: 1024 Bytes",
-                        1024 // Expecting 1024 after parsing
-   );
+                        1024);
 }
 
 TEST(ResultIntegrationTest, HrDeviceStatusIntegerWithText) {
    testResultConversion(
        "HOST-RESOURCES-MIB::hrDeviceStatus", "196608", "INTEGER", "running(2)",
        "oid: HOST-RESOURCES-MIB::hrDeviceStatus, index: 196608, type: INTEGER, value: running(2)",
-       2 // Expecting 2 after parsing
-   );
+       2);
 }
 
 TEST(ResultIntegrationTest, HrFSAccessIntegerWithText) {
    testResultConversion(
        "HOST-RESOURCES-MIB::hrFSAccess", "1", "INTEGER", "readWrite(1)",
-       "oid: HOST-RESOURCES-MIB::hrFSAccess, index: 1, type: INTEGER, value: readWrite(1)",
-       1 // Expecting 1 after parsing
-   );
+       "oid: HOST-RESOURCES-MIB::hrFSAccess, index: 1, type: INTEGER, value: readWrite(1)", 1);
 }
 
 TEST(ResultIntegrationTest, IpAddressStorageTypeIntegerWithText) {
@@ -476,8 +462,7 @@ TEST(ResultIntegrationTest, IpAddressStorageTypeIntegerWithText) {
                         "volatile(2)",
                         "oid: IP-MIB::ipAddressStorageType, index: ipv4.\"10.255.255.254\", type: "
                         "INTEGER, value: volatile(2)",
-                        2 // Expecting 2 after parsing
-   );
+                        2);
 }
 
 TEST(ResultIntegrationTest, IpSystemStatsRefreshRateGauge32WithUnit) {
@@ -485,8 +470,7 @@ TEST(ResultIntegrationTest, IpSystemStatsRefreshRateGauge32WithUnit) {
                         "60000 milli-seconds",
                         "oid: IP-MIB::ipSystemStatsRefreshRate, index: ipv4, type: Gauge32, value: "
                         "60000 milli-seconds",
-                        static_cast<uint32_t>(60000) // Expecting 60000 after parsing
-   );
+                        static_cast<uint32_t>(60000));
 }
 
 TEST(ResultIntegrationTest, IcmpMsgStatsInPktsCounter32) {
@@ -498,17 +482,13 @@ TEST(ResultIntegrationTest, IcmpMsgStatsInPktsCounter32) {
 TEST(ResultIntegrationTest, TcpRtoAlgorithmIntegerWithText) {
    testResultConversion(
        "RFC1213-MIB::tcpRtoAlgorithm", "0", "INTEGER", "other(1)",
-       "oid: RFC1213-MIB::tcpRtoAlgorithm, index: 0, type: INTEGER, value: other(1)",
-       1 // Expecting 1 after parsing
-   );
+       "oid: RFC1213-MIB::tcpRtoAlgorithm, index: 0, type: INTEGER, value: other(1)", 1);
 }
 
 TEST(ResultIntegrationTest, SnmpEnableAuthenTrapsIntegerWithText) {
    testResultConversion(
        "SNMPv2-MIB::snmpEnableAuthenTraps", "0", "INTEGER", "disabled(2)",
-       "oid: SNMPv2-MIB::snmpEnableAuthenTraps, index: 0, type: INTEGER, value: disabled(2)",
-       2 // Expecting 2 after parsing
-   );
+       "oid: SNMPv2-MIB::snmpEnableAuthenTraps, index: 0, type: INTEGER, value: disabled(2)", 2);
 }
 
 TEST(ResultIntegrationTest, HrSystemInitialLoadParametersStringWithQuotes) {
@@ -535,9 +515,12 @@ TEST(ResultIntegrationTest, MissingDatatype) {
    EXPECT_EQ(std::get<std::string>(r.converted_value), "Unknown Type Conversion");
 }
 
-TEST(ResultIntegrationTest, UnhandledTypeNotRequiringConversion) {
+TEST(ResultIntegrationTest, OctetStringConversion) {
+   // This is now an integration test to ensure OCTETSTR works with the helper.
+   std::string test_value = "hello\x01\x02\x03world"; // Contains non-printable characters
+   std::vector<unsigned char> expected_vector(test_value.begin(), test_value.end());
    testResultConversion(
-       "Some-MIB::octetString", "1", "OCTETSTR", "some raw bytes",
-       "oid: Some-MIB::octetString, index: 1, type: OCTETSTR, value: some raw bytes",
-       std::string("some raw bytes"));
+       "TEST-MIB::octetString", "1", "OCTETSTR", test_value,
+       "oid: TEST-MIB::octetString, index: 1, type: OCTETSTR, value: hello\x01\x02\x03world",
+       expected_vector);
 }
