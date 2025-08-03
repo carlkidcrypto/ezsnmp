@@ -77,21 +77,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: test-distributions
     steps:
-        - name: Download Artifacts
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-            pattern: pytest-results_*
-            merge-multiple: false
+          pattern: pytest-results_*
+          merge-multiple: false
 
-        - name: Pytest coverage comment
+      - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.54
         with:
-            title: Pytest Coverage Report - Docker
-            hide-badge: true
-            hide-report: true
-            create-new-comment: false
-            hide-comment: false
-            report-only-changed-files: false
-            multiple-files: |
+          title: Pytest Coverage Report - Docker
+          hide-badge: true
+          hide-report: true
+          create-new-comment: false
+          hide-comment: false
+          report-only-changed-files: false
+          multiple-files: |
             almalinux10, pytest-results_almalinux10/test-outputs_almalinux10.txt, pytest-results_almalinux10/test-results_almalinux10.xml
             rockylinux8, pytest-results_rockylinux8/test-outputs_rockylinux8.txt, pytest-results_rockylinux8/test-results_rockylinux8.xml
