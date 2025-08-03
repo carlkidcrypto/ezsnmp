@@ -50,9 +50,6 @@ jobs:
               run: |
                   docker-compose -f ./docker/rockylinux8/docker-compose.yml build
                   docker-compose -f ./docker/rockylinux8/docker-compose.yml up -d
-              run: |
-                  docker-compose -f ./docker/rockylinux8/docker-compose.yml build
-                  docker-compose -f ./docker/rockylinux8/docker-compose.yml up -d
 
             - name: Wait for services to be ready
               run: sleep 10
