@@ -4,7 +4,7 @@ concurrency: tests-docker
 
 on:
   push:
-    branches: [ feature/get_auto_uts_in_docker_containers ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
