@@ -55,7 +55,43 @@ jobs:
 
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container bash -c "pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
+         docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container bash -c "pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
+
+      - name: Copy test results from Docker container (${{ matrix.distribution }})
+        run: |
+         docker cp snmp_container:/app/test-results_${{ matrix.distribution }}.xml .
+         docker cp snmp_container:/app/test-outputs_${{ matrix.distribution }}.txt .
+
+      - name: Upload Test Results (${{ matrix.distribution }})
+        uses: actions/upload-artifact@v4
+        with:
+         name: pytest-results_${{ matrix.distribution }}
+         path: |
+          test-results_${{ matrix.distribution }}.xml
+          test-outputs_${{ matrix.distribution }}.txt
 
       - name: Bring down Docker containers (${{ matrix.distribution }})
         run: docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml down
+
+  comment-pytest-coverage-report:
+    runs-on: ubuntu-latest
+    needs: test-distributions
+    steps:
+        - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+            pattern: pytest-results_*
+            merge-multiple: false
+
+        - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@v1.1.54
+        with:
+            title: Pytest Coverage Report - Docker
+            hide-badge: true
+            hide-report: true
+            create-new-comment: false
+            hide-comment: false
+            report-only-changed-files: false
+            multiple-files: |
+            almalinux10, pytest-results_almalinux10/test-outputs_almalinux10.txt, pytest-results_almalinux10/test-results_almalinux10.xml
+            rockylinux8, pytest-results_rockylinux8/test-outputs_rockylinux8.txt, pytest-results_rockylinux8/test-results_rockylinux8.xml
