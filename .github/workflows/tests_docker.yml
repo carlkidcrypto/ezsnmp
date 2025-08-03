@@ -1,0 +1,53 @@
+name: Run Dockerized Unit Tests
+
+concurrency: tests-docker
+on:
+    push:
+        branches: [ feature/get_auto_uts_in_docker_containers ]
+    pull_request:
+        branches: [ main ]
+
+jobs:
+    test-almalinux10:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Build and spin up AlmaLinux 10 containers
+              run: |
+                  docker-compose -f ./docker/almalinux10/docker-compose.yml build
+                  docker-compose -f ./docker/almalinux10/docker-compose.yml up -d
+
+            - name: Wait for services to be ready
+              run: sleep 10
+
+            - name: Run unit tests inside the Python container (AlmaLinux 10)
+              run: |
+                  docker-compose -f ./docker/almalinux10/docker-compose.yml exec python bash -c "python -m pytest python_tests"
+
+            - name: Bring down Docker containers (AlmaLinux 10)
+              if: always()
+              run: docker-compose -f ./docker/almalinux10/docker-compose.yml down
+
+    test-rockylinux8:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Build and spin up RockyLinux 8 containers
+              run: |
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml build
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml up -d
+
+            - name: Wait for services to be ready
+              run: sleep 10
+
+            - name: Run unit tests inside the Python container (RockyLinux 8)
+              run: |
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml exec python bash -c "python -m pytest python_tests"
+
+            - name: Bring down Docker containers (RockyLinux 8)
+              if: always()
+              run: docker-compose -f ./docker/rockylinux8/docker-compose.yml down
