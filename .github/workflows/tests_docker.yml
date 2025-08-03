@@ -19,6 +19,9 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y docker-compose
 
+            - name: Ensure DockerEntry.sh is executable (AlmaLinux 10)
+              run: chmod +x ./docker/almalinux10/DockerEntry.sh
+
             - name: Build and spin up AlmaLinux 10 containers
               run: |
                   docker-compose -f ./docker/almalinux10/docker-compose.yml build
@@ -40,10 +43,13 @@ jobs:
         steps:
             - name: Set up Docker Compose
               run: |
-                  sudo apt-get update
-                  sudo apt-get install -y docker-compose
+            - name: Ensure DockerEntry.sh is executable (RockyLinux 8)
+              run: chmod +x ./docker/rockylinux8/DockerEntry.sh
 
             - name: Build and spin up RockyLinux 8 containers
+              run: |
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml build
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml up -d
               run: |
                   docker-compose -f ./docker/rockylinux8/docker-compose.yml build
                   docker-compose -f ./docker/rockylinux8/docker-compose.yml up -d
