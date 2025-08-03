@@ -21,8 +21,15 @@ jobs:
 
       - name: Set up Docker Compose
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+          # The ubuntu-latest runner often has docker-compose pre-installed.
+          # We only install it here if it's not found.
+          if ! command -v docker-compose &> /dev/null; then
+              echo "docker-compose not found, installing..."
+              sudo apt-get update
+              sudo apt-get install -y docker-compose
+          else
+              echo "docker-compose is already installed."
+          fi
 
       - name: Ensure DockerEntry.sh is executable (${{ matrix.distribution }})
         run: chmod +x ./docker/${{ matrix.distribution }}/DockerEntry.sh
@@ -48,8 +55,7 @@ jobs:
 
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container pytest python_tests
+          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container bash -c "pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
 
       - name: Bring down Docker containers (${{ matrix.distribution }})
-        if: always()
         run: docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml down
