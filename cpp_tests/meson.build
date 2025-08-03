@@ -9,7 +9,19 @@ gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
 
 # MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
-netsnmp_dep = dependency('netsnmp')
+# Find the netsnmp dependency and make it required for the build to proceed.
+netsnmp_dep = dependency('netsnmp', required: true)
+
+# Conditionally define ENABLE_LEGACY_SUPPORT based on the net-snmp version.
+# This adds the preprocessor definition '-DENABLE_LEGACY_SUPPORT=1' to the
+# compiler arguments if the found version of net-snmp is less than 5.9.
+if netsnmp_dep.version().version_compare('< 5.9')
+  add_project_arguments('-DENABLE_LEGACY_SUPPORT=1', language: 'cpp')
+  message('Net-SNMP version is older than 5.9, enabling legacy support.')
+else
+  message('Net-SNMP version is 5.9 or newer, legacy support not needed.')
+endif
+
 
 # Include parent directory for ezsnmp headers
 include_dirs = include_directories('..', '../ezsnmp/include')
