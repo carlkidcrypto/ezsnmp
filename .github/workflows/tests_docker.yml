@@ -59,8 +59,8 @@ jobs:
 
       - name: Copy test results from Docker container (${{ matrix.distribution }})
         run: |
-         docker cp snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml .
-         docker cp snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt .
+         docker cp snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml . || touch test-results_${{ matrix.distribution }}.xml
+         docker cp snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt . || touch test-outputs_${{ matrix.distribution }}.txt
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
