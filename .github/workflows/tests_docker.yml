@@ -1,0 +1,118 @@
+name: Run Dockerized Unit Tests
+
+concurrency: tests-docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      any_changed: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for changes in source code
+        id: changed-files
+        uses: tj-actions/changed-files@v46.0.5
+        with:
+          files: |
+            ezsnmp/*.py
+            ezsnmp/*.cpp
+            ezsnmp/*.h
+            python_tests/*.py
+            python_tests/*.conf
+            setup.py
+            setup.cfg
+
+  test-distributions:
+    needs: check-changes
+    if: needs.check-changes.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distribution: [almalinux10, rockylinux8]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: |
+          if ! command -v docker-compose &> /dev/null; then
+              echo "docker-compose not found, installing..."
+              sudo apt-get update
+              sudo apt-get install -y docker-compose
+          else
+              echo "docker-compose is already installed."
+          fi
+
+      - name: Ensure DockerEntry.sh is executable (${{ matrix.distribution }})
+        run: chmod +x ./docker/${{ matrix.distribution }}/DockerEntry.sh
+
+      - name: Build and spin up Docker containers (${{ matrix.distribution }})
+        run: |
+          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml build
+          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml up -d
+
+      - name: Wait for services to be ready (${{ matrix.distribution }})
+        run: |
+          WAIT_TIME=120
+          for i in $(seq $WAIT_TIME -1 1); do
+              if docker logs snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
+                  echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"
+                  break
+              fi
+              echo -ne "Waiting for container to start... $i seconds remaining\r"
+              sleep 1
+          done
+          echo -ne "\n"
+
+      - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
+        run: |
+         docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container bash -c "pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
+
+      - name: Copy test results from Docker container (${{ matrix.distribution }})
+        run: |
+         docker cp snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml . || touch test-results_${{ matrix.distribution }}.xml
+         docker cp snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt . || touch test-outputs_${{ matrix.distribution }}.txt
+
+      - name: Upload Test Results (${{ matrix.distribution }})
+        uses: actions/upload-artifact@v4
+        with:
+         name: pytest-results_${{ matrix.distribution }}
+         path: |
+          test-results_${{ matrix.distribution }}.xml
+          test-outputs_${{ matrix.distribution }}.txt
+
+      - name: Bring down Docker containers (${{ matrix.distribution }})
+        run: docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml down
+
+  comment-pytest-coverage-report:
+    runs-on: ubuntu-latest
+    needs: test-distributions
+    if: needs.test-distributions.result == 'success'
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pytest-results_*
+          merge-multiple: false
+
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@v1.1.54
+        with:
+          title: Pytest Coverage Report - Docker
+          hide-badge: true
+          hide-report: true
+          create-new-comment: false
+          hide-comment: false
+          report-only-changed-files: false
+          multiple-files: |
+            almalinux10, pytest-results_almalinux10/test-outputs_almalinux10.txt, pytest-results_almalinux10/test-results_almalinux10.xml
+            rockylinux8, pytest-results_rockylinux8/test-outputs_rockylinux8.txt, pytest-results_rockylinux8/test-results_rockylinux8.xml
