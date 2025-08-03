@@ -48,7 +48,7 @@ jobs:
 
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec snmp_container /bin/bash -c "pytest python_tests"
+          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container pytest python_tests
 
       - name: Bring down Docker containers (${{ matrix.distribution }})
         if: always()
