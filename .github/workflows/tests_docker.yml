@@ -14,6 +14,11 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
+            - name: Set up Docker Compose
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y docker-compose
+
             - name: Build and spin up AlmaLinux 10 containers
               run: |
                   docker-compose -f ./docker/almalinux10/docker-compose.yml build
@@ -31,10 +36,15 @@ jobs:
               run: docker-compose -f ./docker/almalinux10/docker-compose.yml down
 
     test-rockylinux8:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+            - name: Set up Docker Compose
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y docker-compose
+
+            - name: Build and spin up RockyLinux 8 containers
+              run: |
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml build
+                  docker-compose -f ./docker/rockylinux8/docker-compose.yml up -d
 
             - name: Build and spin up RockyLinux 8 containers
               run: |
