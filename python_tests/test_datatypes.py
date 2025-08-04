@@ -36,6 +36,7 @@ def snmp_session(request):
 def test_string_values_not_enclosed_in_quotes(snmp_session):
     """
     Test to ensure string values returned by get/walk operations are not enclosed in quotes.
+    This also tests a basic STRING type.
     """
     result = snmp_session.get(
         [
@@ -44,6 +45,9 @@ def test_string_values_not_enclosed_in_quotes(snmp_session):
     )
     assert len(result) > 0, "No results returned from SNMP get operation"
     value = result[0].value
+
+    # Ensure the type is correctly identified as STRING
+    assert result[0].type == "STRING", "SNMP data type is not STRING"
 
     # Ensure the value is a string and not enclosed in quotes
     assert isinstance(value, str), "Returned value is not a string"
@@ -64,16 +68,19 @@ def test_converted_value_integer(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for INTEGER OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as INTEGER
+    assert result[0].type == "INTEGER", "SNMP data type is not INTEGER"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == 4, "Converted value is incorrect"
 
 
 def test_converted_value_integer_with_text(snmp_session):
     """
-    Test that an INTEGER value with descriptive text is correctly parsed
-    and converted to a numeric type.
+    Test that an INTEGER value with descriptive text (e.g., 'up(1)') is correctly
+    parsed and converted to a numeric type.
     """
     result = snmp_session.get(
         [
@@ -81,8 +88,11 @@ def test_converted_value_integer_with_text(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for INTEGER with text OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as INTEGER
+    assert result[0].type == "INTEGER", "SNMP data type is not INTEGER"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == 1, "Converted value is incorrect"
 
@@ -98,8 +108,11 @@ def test_converted_value_negative_integer(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for negative INTEGER OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as INTEGER
+    assert result[0].type == "INTEGER", "SNMP data type is not INTEGER"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == -1, "Converted value is incorrect"
 
@@ -107,7 +120,7 @@ def test_converted_value_negative_integer(snmp_session):
 def test_converted_value_counter32(snmp_session):
     """
     Test for a Counter32 type.
-    We expect a standard Python int, capable of holding 32-bit unsigned values.
+    We expect a standard Python int.
     """
     result = snmp_session.get(
         [
@@ -115,8 +128,11 @@ def test_converted_value_counter32(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for Counter32 OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as Counter32
+    assert result[0].type == "Counter32", "SNMP data type is not Counter32"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == 1738754, "Converted value is incorrect"
 
@@ -132,8 +148,11 @@ def test_converted_value_counter64(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for Counter64 OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as Counter64
+    assert result[0].type == "Counter64", "SNMP data type is not Counter64"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == 22711, "Converted value is incorrect"
 
@@ -149,10 +168,32 @@ def test_converted_value_gauge32(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for Gauge32 OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as Gauge32
+    assert result[0].type == "Gauge32", "SNMP data type is not Gauge32"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == 10000000, "Converted value is incorrect"
+
+
+def test_converted_value_gauge32_with_units(snmp_session):
+    """
+    Test that a Gauge32 value with text and units is correctly parsed.
+    """
+    result = snmp_session.get(
+        [
+            "IP-MIB::ipSystemStatsRefreshRate.ipv4",  # OID with value like '60000 milli-seconds'
+        ]
+    )
+    assert len(result) > 0, "No results returned for Gauge32 with units OID"
+
+    # Ensure the type is correctly identified as Gauge32
+    assert result[0].type == "Gauge32", "SNMP data type is not Gauge32"
+
+    converted_value = result[0].converted_value
+    assert isinstance(converted_value, int), "Converted value is not an integer"
+    assert converted_value == 60000, "Converted value is incorrect"
 
 
 def test_converted_value_timeticks(snmp_session):
@@ -166,8 +207,11 @@ def test_converted_value_timeticks(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for Timeticks OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as Timeticks
+    assert result[0].type == "Timeticks", "SNMP data type is not Timeticks"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, int), "Converted value is not an integer"
     assert converted_value == 3410517, "Converted value is incorrect"
 
@@ -182,28 +226,33 @@ def test_converted_value_hex_string(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for Hex-STRING OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as Hex-STRING
+    assert result[0].type == "Hex-STRING", "SNMP data type is not Hex-STRING"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, bytes), "Converted value is not of type bytes"
     # The expected value is a byte representation of the hex string from your snmpwalk output
-    # '80 00 00 00 04 63 61 72 6c 6b 69 64 63 72 79 70 74 6f 2d 77'
     expected_bytes = bytes.fromhex("80000000046361726c6b696463727970746f2d77")
     assert converted_value == expected_bytes, "Converted value is incorrect"
 
 
-def test_converted_value_octetstr(snmp_session):
+def test_converted_value_octetstr_from_hex(snmp_session):
     """
-    Test that an OCTETSTR is converted to a bytearray.
-    A good example is the physical address of an interface.
+    Test that an OID explicitly defined as OCTETSTR (but presented as hex)
+    is converted to a bytearray.
     """
     result = snmp_session.get(
         [
-            "RFC1213-MIB::atPhysAddress.2.1.172.25.0.1",  # OID that returns a physical address as hex string
+            "RFC1213-MIB::atPhysAddress.2.1.172.25.0.1",  # OID that returns a physical address
         ]
     )
     assert len(result) > 0, "No results returned for OCTETSTR OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as Hex-STRING
+    assert result[0].type == "Hex-STRING", "SNMP data type is not Hex-STRING"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, bytes), "Converted value is not of type bytes"
     expected_bytes = bytes.fromhex("00155D6E3405")
     assert converted_value == expected_bytes, "Converted value is incorrect"
@@ -219,8 +268,11 @@ def test_converted_value_oid(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for OID type OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as OID
+    assert result[0].type == "OID", "SNMP data type is not OID"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, str), "Converted value is not a string"
     assert converted_value == "NET-SNMP-TC::linux", "Converted value is incorrect"
 
@@ -235,10 +287,33 @@ def test_converted_value_ipaddress(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for IpAddress OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as IpAddress
+    assert result[0].type == "IpAddress", "SNMP data type is not IpAddress"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, str), "Converted value is not a string"
     assert converted_value == "172.25.10.171", "Converted value is incorrect"
+
+
+def test_converted_value_network_address(snmp_session):
+    """
+    Test for the Network Address type.
+    """
+    result = snmp_session.get(
+        [
+            "RFC1213-MIB::atNetAddress.2.1.172.25.0.1",
+        ]
+    )
+    assert len(result) > 0, "No results returned for Network Address OID"
+
+    # Ensure the type is correctly identified as Network Address
+    assert result[0].type == "Network Address", "SNMP data type is not Network Address"
+
+    converted_value = result[0].converted_value
+    assert isinstance(converted_value, str), "Converted value is not a string"
+    # Assuming the library will normalize the output, e.g., 'AC:19:00:01'
+    assert converted_value == "AC:19:00:01", "Converted value is incorrect"
 
 
 def test_converted_value_empty_string(snmp_session):
@@ -251,7 +326,10 @@ def test_converted_value_empty_string(snmp_session):
         ]
     )
     assert len(result) > 0, "No results returned for empty string OID"
-    converted_value = result[0].converted_value
 
+    # Ensure the type is correctly identified as STRING
+    assert result[0].type == "STRING", "SNMP data type is not STRING"
+
+    converted_value = result[0].converted_value
     assert isinstance(converted_value, str), "Converted value is not a string"
     assert converted_value == "", "Converted value is not an empty string"

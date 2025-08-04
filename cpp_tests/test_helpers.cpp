@@ -127,6 +127,7 @@ TEST_F(ParseResultsTest, TestMixedResults) {
    EXPECT_EQ(results[3].type, "NOSUCHOBJECT");
    EXPECT_EQ(results[3].value, "No Such Object available on this agent at this OID");
 }
+
 TEST_F(ParseResultsTest, TestLongValues) {
    std::vector<std::string> inputs = {
        "SNMPv2-MIB::sysDescr.0 = STRING: " + std::string(1024, 'A'),    // Long string value
@@ -157,7 +158,7 @@ TEST_F(ParseResultsTest, TestLongValues) {
 }
 
 TEST_F(ParseResultsTest, TestWhitespaceTrailing) {
-   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = STRING: Test Description    ",
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = STRING: Test Description     ",
                                       "SNMPv2-MIB::sysContact.0 = STRING: contact@test.com       ",
                                       "SNMPv2-MIB::sysLocation.0 = STRING: Some Location    ",
                                       "SNMPv2-MIB::sysServices.0 = INTEGER: 72      "};
@@ -198,7 +199,7 @@ TEST_F(ParseResultsTest, TestJustTimeticks) {
    auto results = parse_results(inputs);
    ASSERT_EQ(results.size(), 2);
 
-   // // Test first result
+   // Test first result
    EXPECT_EQ(results[0].oid, "DISMAN-EXPRESSION-MIB::sysUpTimeInstance");
    EXPECT_EQ(results[0].index, "");
    EXPECT_EQ(results[0].type, "Timeticks");
@@ -209,4 +210,104 @@ TEST_F(ParseResultsTest, TestJustTimeticks) {
    EXPECT_EQ(results[1].index, "");
    EXPECT_EQ(results[1].type, "Timeticks");
    EXPECT_EQ(results[1].value, "8912330");
+}
+
+TEST_F(ParseResultsTest, TestAllSnmpwalkTypes) {
+   std::vector<std::string> inputs = {
+       "SNMPv2-MIB::sysDescr.0 = STRING: Linux carlkidcrypto-w 5.15.167.4-microsoft-standard-WSL2 "
+       "#1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64",
+       "SNMPv2-MIB::sysObjectID.0 = OID: NET-SNMP-TC::linux",
+       "IF-MIB::ifNumber.0 = INTEGER: 4",
+       "IF-MIB::ifType.1 = INTEGER: softwareLoopback(24)",
+       "IF-MIB::ifSpeed.1 = Gauge32: 10000000",
+       "IF-MIB::ifOutOctets.1 = Counter32: 1738754",
+       "IP-MIB::ipSystemStatsHCInReceives.ipv4 = Counter64: 22711",
+       "HOST-RESOURCES-MIB::hrSystemDate.0 = STRING: 2025-7-9,7:36:11.0,-7:0",
+       "RFC1213-MIB::atPhysAddress.2.1.172.25.0.1 = Hex-STRING: 00 15 5D 6E 34 05",
+       "RFC1213-MIB::ipAdEntAddr.172.25.10.171 = IpAddress: 172.25.10.171",
+       "RFC1213-MIB::atNetAddress.2.1.172.25.0.1 = Network Address: AC:19:00:01",
+       "IF-MIB::ifPhysAddress.1 = STRING:",
+       "RFC1213-MIB::tcpMaxConn.0 = INTEGER: -1"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 13);
+
+   // Test STRING with a long value
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value,
+             "Linux carlkidcrypto-w 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 "
+             "UTC 2024 x86_64");
+
+   // Test OID
+   EXPECT_EQ(results[1].oid, "SNMPv2-MIB::sysObjectID");
+   EXPECT_EQ(results[1].index, "0");
+   EXPECT_EQ(results[1].type, "OID");
+   EXPECT_EQ(results[1].value, "NET-SNMP-TC::linux");
+
+   // Test simple INTEGER
+   EXPECT_EQ(results[2].oid, "IF-MIB::ifNumber");
+   EXPECT_EQ(results[2].index, "0");
+   EXPECT_EQ(results[2].type, "INTEGER");
+   EXPECT_EQ(results[2].value, "4");
+
+   // Test INTEGER with text
+   EXPECT_EQ(results[3].oid, "IF-MIB::ifType");
+   EXPECT_EQ(results[3].index, "1");
+   EXPECT_EQ(results[3].type, "INTEGER");
+   EXPECT_EQ(results[3].value, "softwareLoopback(24)");
+
+   // Test Gauge32
+   EXPECT_EQ(results[4].oid, "IF-MIB::ifSpeed");
+   EXPECT_EQ(results[4].index, "1");
+   EXPECT_EQ(results[4].type, "Gauge32");
+   EXPECT_EQ(results[4].value, "10000000");
+
+   // Test Counter32
+   EXPECT_EQ(results[5].oid, "IF-MIB::ifOutOctets");
+   EXPECT_EQ(results[5].index, "1");
+   EXPECT_EQ(results[5].type, "Counter32");
+   EXPECT_EQ(results[5].value, "1738754");
+
+   // Test Counter64
+   EXPECT_EQ(results[6].oid, "IP-MIB::ipSystemStatsHCInReceives");
+   EXPECT_EQ(results[6].index, "ipv4");
+   EXPECT_EQ(results[6].type, "Counter64");
+   EXPECT_EQ(results[6].value, "22711");
+
+   // Test STRING with complex value
+   EXPECT_EQ(results[7].oid, "HOST-RESOURCES-MIB::hrSystemDate");
+   EXPECT_EQ(results[7].index, "0");
+   EXPECT_EQ(results[7].type, "STRING");
+   EXPECT_EQ(results[7].value, "2025-7-9,7:36:11.0,-7:0");
+
+   // Test Hex-STRING
+   EXPECT_EQ(results[8].oid, "RFC1213-MIB::atPhysAddress");
+   EXPECT_EQ(results[8].index, "2.1.172.25.0.1");
+   EXPECT_EQ(results[8].type, "Hex-STRING");
+   EXPECT_EQ(results[8].value, "00 15 5D 6E 34 05");
+
+   // Test IpAddress
+   EXPECT_EQ(results[9].oid, "RFC1213-MIB::ipAdEntAddr");
+   EXPECT_EQ(results[9].index, "172.25.10.171");
+   EXPECT_EQ(results[9].type, "IpAddress");
+   EXPECT_EQ(results[9].value, "172.25.10.171");
+
+   // Test Network Address
+   EXPECT_EQ(results[10].oid, "RFC1213-MIB::atNetAddress");
+   EXPECT_EQ(results[10].index, "2.1.172.25.0.1");
+   EXPECT_EQ(results[10].type, "Network Address");
+   EXPECT_EQ(results[10].value, "AC:19:00:01");
+
+   // Test empty STRING value
+   EXPECT_EQ(results[11].oid, "IF-MIB::ifPhysAddress");
+   EXPECT_EQ(results[11].index, "1");
+   EXPECT_EQ(results[11].type, "STRING");
+   EXPECT_EQ(results[11].value, "");
+
+   // Test negative INTEGER
+   EXPECT_EQ(results[12].oid, "RFC1213-MIB::tcpMaxConn");
+   EXPECT_EQ(results[12].index, "0");
+   EXPECT_EQ(results[12].type, "INTEGER");
+   EXPECT_EQ(results[12].value, "-1");
 }
