@@ -46,6 +46,16 @@ struct variant_to_pyobject_visitor {
         return SWIG_From_double(arg);
     }
     result_type operator()(const std::string& arg) const {
+        // FIX: Check for and remove wrapping quotes from malformed SNMP strings.
+        // https://github.com/carlkidcrypto/ezsnmp/issues/355
+        if (arg.length() >= 2 && arg.front() == '"' && arg.back() == '"') {
+            // Create a new C++ string containing just the inner content.
+            std::string cleaned_str = arg.substr(1, arg.length() - 2);
+            // Convert the *cleaned* string to a Python object.
+            return SWIG_From_std_string(cleaned_str);
+        }
+        
+        // If no wrapping quotes are found, convert the original string as usual.
         return SWIG_From_std_string(arg);
     }
     result_type operator()(const std::vector<unsigned char>& arg) const {
