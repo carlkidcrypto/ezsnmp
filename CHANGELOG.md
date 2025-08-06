@@ -1,7 +1,46 @@
-Last Updated: 2025-06-23 04:46:38 UTC
+Last Updated: 2025-07-18 04:16:52 UTC
 
 # Changelog
 
+
+<a name="v2.1.0a1"></a>
+## [v2.1.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a0...v2.1.0a1) (2025-07-16)
+
+
+### Changes
+
+#### 401
+
+- 401 feature   add convertvalue to datatypes ([#403](https://github.com/carlkidcrypto/ezsnmp/issues/403))
+
+
+#### Bump
+
+- Bump setuptools from 80.3.1 to 80.9.0 ([#382](https://github.com/carlkidcrypto/ezsnmp/issues/382))
+
+
+#### Update
+
+- Update README.rst ([#400](https://github.com/carlkidcrypto/ezsnmp/issues/400))
+
+- Update auto_change_log.yml ([#397](https://github.com/carlkidcrypto/ezsnmp/issues/397))
+
+- Update auto_change_log.yml ([#396](https://github.com/carlkidcrypto/ezsnmp/issues/396))
+
+- Update auto_change_log.yml ([#395](https://github.com/carlkidcrypto/ezsnmp/issues/395))
+
+- Update auto_change_log.yml ([#394](https://github.com/carlkidcrypto/ezsnmp/issues/394))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.1.0a0"></a>
 ## [v2.1.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.1...v2.1.0a0) (2025-06-22)

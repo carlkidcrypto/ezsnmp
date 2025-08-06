@@ -1,25 +1,48 @@
 # Use Rocky Linux 8 as the base image
 FROM rockylinux:8
 
-# Update system
-RUN dnf update -y
+# Update system and install essential tools
+RUN dnf update -y && \
+    dnf install -y findutils dnf-plugins-core
 
-# Install required tools
-RUN dnf install -y findutils
+# Install the EPEL repository package
+RUN dnf install -y epel-release
 
-# Install dependencies
+# Enable the 'powertools' repository (all lowercase)
+RUN dnf config-manager --set-enabled powertools
+
+# Install dependencies from the requirements file
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
 
-# Install net-snmp from source
-WORKDIR /ezsnmp
-RUN wget -O net-snmp.zip https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download && \
-    unzip net-snmp.zip && \
-    cd net-snmp-5.9.4 && \
-    ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
-    make -j$(nproc) && \
-    make install && \
-    mkdir -p /usr/share/snmp/mibs && \
-    cp -r mibs/* /usr/share/snmp/mibs/ && \
-    echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
-    ldconfig
+# Install debug symbols for relevant packages
+RUN dnf debuginfo-install -y python3 net-snmp-libs
+
+# --- AUTOMATED FIX FOR NET-SNMP ---
+# Manually create the pkg-config file for net-snmp by dynamically
+# getting the correct flags and version from the system. This ensures
+# that Meson can find the dependency even if PKG_CONFIG_PATH is not set.
+RUN LIBS=$(net-snmp-config --libs) && \
+    CFLAGS=$(net-snmp-config --cflags) && \
+    VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
+    mkdir -p /usr/lib64/pkgconfig && \
+    echo "prefix=/usr" > /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "exec_prefix=\${prefix}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "libdir=\${exec_prefix}/lib64" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "includedir=\${prefix}/include" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Name: netsnmp" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Description: A collection of libraries for SNMP applications." >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/netsnmp.pc
+
+# Define the path for the virtual environment
+ENV VENV_PATH=/opt/venv
+
+# Create the virtual environment
+RUN python3.9 -m venv $VENV_PATH
+
+# Activate the virtual environment by adding its bin directory to the PATH.
+# All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.
+ENV PATH="$VENV_PATH/bin:$PATH"
