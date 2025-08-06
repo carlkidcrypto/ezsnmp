@@ -127,82 +127,81 @@ std::regex const OID_INDEX_RE(R"((
 //  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
-// A new regex specifically for OIDs with multi-component indexes.
-std::regex const OID_INDEX_RE3(R"(^([\w:-]+)\.(.+)$)");
+// Matches OIDs that are known to have a multi-component numeric index (e.g., those from
+// the RFC1213-MIB), preventing it from incorrectly matching the complex OID.
+std::regex const OID_INDEX_RE3(R"(^(RFC1213-MIB::[\w-]+)\.([\d\.]+)$)");
 
 // This is a helper to turn OID results into a Result type
 Result parse_result(std::string const &input) {
-    Result result;
-    std::stringstream ss(input);
-    std::string temp;
+   Result result;
+   std::stringstream ss(input);
+   std::string temp;
 
-    // Extract OID
-    std::getline(ss, result.oid, '=');
-    result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
+   // Extract OID
+   std::getline(ss, result.oid, '=');
+   result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
 
-    // Extract OID index using regexes (matching Python logic)
-    std::smatch first_match;
-    std::smatch second_match;
-    std::smatch third_match;
+   // Extract OID index using regexes (matching Python logic)
+   std::smatch first_match;
+   std::smatch second_match;
+   std::smatch third_match;
 
-    // Check for the new OID_INDEX_RE3 first to handle multi-component indexes.
-    if (std::regex_match(result.oid, third_match, OID_INDEX_RE3)) {
-        std::string temp_oid = third_match[1].str();
-        std::string temp_index = third_match[2].str();
-        result.oid = std::move(temp_oid);
-        result.index = std::move(temp_index);
-    } else if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
-        std::string temp_oid = second_match[1].str();
-        std::string temp_index = second_match[2].str();
-        result.oid = std::move(temp_oid);
-        result.index = std::move(temp_index);
-    } else if (std::regex_match(result.oid, first_match, OID_INDEX_RE)) {
-        std::string temp_oid = first_match[1].str();
-        std::string temp_index = first_match[2].str();
-        result.oid = std::move(temp_oid);
-        result.index = std::move(temp_index);
-    } else if (result.oid == ".") {
-        result.index = "";
-    } else {
-        // Default case if no matches are found
-        result.index = "";
-    }
+   if (std::regex_match(result.oid, third_match, OID_INDEX_RE3)) {
+      std::string temp_oid = third_match[1].str();
+      std::string temp_index = third_match[2].str();
+      result.oid = std::move(temp_oid);
+      result.index = std::move(temp_index);
+   } else if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
+      std::string temp_oid = second_match[1].str();
+      std::string temp_index = second_match[2].str();
+      result.oid = std::move(temp_oid);
+      result.index = std::move(temp_index);
+   } else if (std::regex_match(result.oid, first_match, OID_INDEX_RE)) {
+      std::string temp_oid = first_match[1].str();
+      std::string temp_index = first_match[2].str();
+      result.oid = std::move(temp_oid);
+      result.index = std::move(temp_index);
+   } else if (result.oid == ".") {
+      result.index = "";
+   } else {
+      // Default case if no matches are found
+      result.index = "";
+   }
 
-    // Extract type
-    std::getline(ss, temp, ':');
+   // Extract type
+   std::getline(ss, temp, ':');
+   size_t first_char_pos = temp.find_first_not_of(" \t");
+   if (first_char_pos != std::string::npos) {
+      result.type = temp.substr(first_char_pos);
+   } else {
+      result.type = "";
+   }
 
-    // Correctly extract the full type name, trimming leading whitespace.
-    // The "\t" character within the string literal explicitly tells the function to treat tabs as whitespace to be ignored
-    size_t first_char_pos = temp.find_first_not_of(" \t");
-    if (first_char_pos != std::string::npos) {
-        result.type = temp.substr(first_char_pos);
-    } else {
-        result.type = "";
-    }
+   // Extract value and trim leading/trailing whitespace
+   std::getline(ss, temp);
+   if (!temp.empty() && temp[0] == ' ') {
+      temp.erase(0, 1);
+   }
+   result.value = temp.substr(0, temp.find_last_not_of(" \t\n\r") + 1);
 
-    // Extract value and trim leading/trailing whitespace
-    std::getline(ss, temp);
-    result.value = temp.substr(1);
-    result.value = result.value.substr(0, result.value.find_last_not_of(" \t\n\r") + 1);
-
-    // Check for "No Such Object" in the value
-    if (result.value.find("No Such Object") != std::string::npos) {
+   // Check for "No Such Object" in the value
+   if (result.value.find("No Such Object") != std::string::npos) {
       result.type = "NOSUCHOBJECT";
-    }
-    // Check for "No Such Instance" in the value
-    else if (result.value.find("No Such Instance") != std::string::npos) {
+   }
+   // Check for "No Such Instance" in the value
+   else if (result.value.find("No Such Instance") != std::string::npos) {
       result.type = "NOSUCHINSTANCE";
-    }
-    // This might get messy, but we will try to handle it on a case by base basis
-    // When -O t is using for print timeticks unparsed as numeric integers let's
-    // force the type to INTEGER
-    else if (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks") {
+   }
+   // This might get messy, but we will try to handle it on a case by base basis
+   // When -O t is using for print timeticks unparsed as numeric integers let's
+   // force the type to INTEGER
+   else if (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks") {
       result.type = "Timeticks";
-    }
+   }
 
-    result.update_converted_value();
+   result.update_converted_value();
 
-    return result;
+   return result;
 }
 
 // This is a helper to create a vector of Result types
