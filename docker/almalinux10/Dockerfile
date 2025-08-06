@@ -11,15 +11,12 @@ RUN dnf install -y findutils
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
 
-# Install net-snmp from source
-WORKDIR /ezsnmp
-RUN wget -O net-snmp.zip https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download && \
-    unzip net-snmp.zip && \
-    cd net-snmp-5.9.4 && \
-    ./configure --with-defaults --with-mibs=all --disable-manual --without-perl-modules --disable-embedded-perl && \
-    make -j$(nproc) && \
-    make install && \
-    mkdir -p /usr/share/snmp/mibs && \
-    cp -r mibs/* /usr/share/snmp/mibs/ && \
-    echo "/usr/local/lib" >> /etc/ld.so.conf.d/net-snmp.conf && \
-    ldconfig
+# Define the path for the virtual environment
+ENV VENV_PATH=/opt/venv
+
+# Create the virtual environment
+RUN python3 -m venv $VENV_PATH
+
+# Activate the virtual environment by adding its bin directory to the PATH.
+# All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.
+ENV PATH="$VENV_PATH/bin:$PATH"
