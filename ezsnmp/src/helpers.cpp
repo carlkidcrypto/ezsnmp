@@ -111,14 +111,14 @@ std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &a
 // This regular expression is used to extract the index from an OID
 // We attempt to extract the index from an OID (e.g. sysDescr.0
 // or .iso.org.dod.internet.mgmt.mib-2.system.sysContact.0)
-const std::regex OID_INDEX_RE(R"((
-        \.?\d+(?:\.\d+)* // numeric OID
-        |                            // or
-        (?:\w+(?:[-:]*\w+)+)         // regular OID
-        |                            // or
-        (?:\.?iso(?:\.\w+[-:]*\w+)+) // fully qualified OID
+std::regex const OID_INDEX_RE(R"((
+        \.?\d+(?:\.\d+)* # numeric OID
+        |                        # or
+        (?:\w+(?:[-:]*\w+)+)     # regular OID
+        |                        # or
+        \.?iso(?:\.\w+[-:]*\w+)+ # fully qualified OID
     )
-    \.?(.*)                          // OID index
+    \.?(.*)                      # OID index
 )");
 
 // This regular expression takes an OID string and splits it into
@@ -127,59 +127,82 @@ const std::regex OID_INDEX_RE(R"((
 //  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 
+// A new regex specifically for OIDs with multi-component indexes.
+std::regex const OID_INDEX_RE3(R"(^([\w:-]+)\.(.+)$)");
+
 // This is a helper to turn OID results into a Result type
 Result parse_result(std::string const &input) {
-   Result result;
+    Result result;
+    std::stringstream ss(input);
+    std::string temp;
 
-   // Use a single, more robust regex to split OID and the instance identifier
-   std::smatch match;
-   std::regex full_oid_re(R"((.+?)\s*=\s*(.*?):\s*(.*))");
-   std::regex no_such_re(R"((.+?)\s*=\s*(No Such Object|No Such Instance)(.*))");
+    // Extract OID
+    std::getline(ss, result.oid, '=');
+    result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
 
-   std::string oid_part;
-   std::string type_part;
-   std::string value_part;
+    // Extract OID index using regexes (matching Python logic)
+    std::smatch first_match;
+    std::smatch second_match;
+    std::smatch third_match;
 
-   if (std::regex_match(input, match, full_oid_re)) {
-      oid_part = match[1].str();
-      type_part = match[2].str();
-      value_part = match[3].str();
-   } else if (std::regex_match(input, match, no_such_re)) {
-      oid_part = match[1].str();
-      if (match[2].str().find("No Such Object") != std::string::npos) {
-         type_part = "NOSUCHOBJECT";
-      } else {
-         type_part = "NOSUCHINSTANCE";
-      }
-      value_part = match[2].str() + match[3].str();
-   } else {
-      // Fallback for unexpected formats
-      return Result();
-   }
+    // Check for the new OID_INDEX_RE3 first to handle multi-component indexes.
+    if (std::regex_match(result.oid, third_match, OID_INDEX_RE3)) {
+        std::string temp_oid = third_match[1].str();
+        std::string temp_index = third_match[2].str();
+        result.oid = std::move(temp_oid);
+        result.index = std::move(temp_index);
+    } else if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
+        std::string temp_oid = second_match[1].str();
+        std::string temp_index = second_match[2].str();
+        result.oid = std::move(temp_oid);
+        result.index = std::move(temp_index);
+    } else if (std::regex_match(result.oid, first_match, OID_INDEX_RE)) {
+        std::string temp_oid = first_match[1].str();
+        std::string temp_index = first_match[2].str();
+        result.oid = std::move(temp_oid);
+        result.index = std::move(temp_index);
+    } else if (result.oid == ".") {
+        result.index = "";
+    } else {
+        // Default case if no matches are found
+        result.index = "";
+    }
 
-   // Now, split the oid_part into the base OID and the index
-   std::smatch oid_match;
-   std::regex oid_split_re(R"(^(.+?)(?:\.(.+))?$)");
-   if (std::regex_match(oid_part, oid_match, oid_split_re)) {
-      result.oid = oid_match[1].str();
-      if (oid_match.size() > 2 && oid_match[2].matched) {
-         result.index = oid_match[2].str();
-      }
-   } else {
-      result.oid = oid_part;
-   }
+    // Extract type
+    std::getline(ss, temp, ':');
 
-   result.type = type_part;
-   result.value = value_part;
+    // Correctly extract the full type name, trimming leading whitespace.
+    // The "\t" character within the string literal explicitly tells the function to treat tabs as whitespace to be ignored
+    size_t first_char_pos = temp.find_first_not_of(" \t");
+    if (first_char_pos != std::string::npos) {
+        result.type = temp.substr(first_char_pos);
+    } else {
+        result.type = "";
+    }
 
-   // Final check for Timeticks logic
-   if (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks") {
+    // Extract value and trim leading/trailing whitespace
+    std::getline(ss, temp);
+    result.value = temp.substr(1);
+    result.value = result.value.substr(0, result.value.find_last_not_of(" \t\n\r") + 1);
+
+    // Check for "No Such Object" in the value
+    if (result.value.find("No Such Object") != std::string::npos) {
+      result.type = "NOSUCHOBJECT";
+    }
+    // Check for "No Such Instance" in the value
+    else if (result.value.find("No Such Instance") != std::string::npos) {
+      result.type = "NOSUCHINSTANCE";
+    }
+    // This might get messy, but we will try to handle it on a case by base basis
+    // When -O t is using for print timeticks unparsed as numeric integers let's
+    // force the type to INTEGER
+    else if (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks") {
       result.type = "Timeticks";
-   }
+    }
 
-   result.update_converted_value();
+    result.update_converted_value();
 
-   return result;
+    return result;
 }
 
 // This is a helper to create a vector of Result types
