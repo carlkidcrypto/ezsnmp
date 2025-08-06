@@ -7,6 +7,8 @@ Overview
 This directory contains the Dockerfile and related resources for building a Docker image based on **Alma Linux 10**.
 The image is designed to contain all the necessary components for testing and development purposes.
 
+Note: DES is disabled in Alma Linux 10, so the image does not include DES support. As such
+unit tests using DES will not pass.
 
 Usage
 =====
