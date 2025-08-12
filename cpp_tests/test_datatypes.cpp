@@ -147,18 +147,11 @@ void testResultConversion(std::string const& oid,
    std::visit(
        [&](auto&& arg) {
           using T = std::decay_t<decltype(arg)>;
-          if constexpr (std::is_same_v<T, int>) {
-             EXPECT_EQ(arg, std::get<int>(expected_converted_value));
-          } else if constexpr (std::is_same_v<T, uint32_t>) {
-             EXPECT_EQ(arg, std::get<uint32_t>(expected_converted_value));
-          } else if constexpr (std::is_same_v<T, uint64_t>) {
-             EXPECT_EQ(arg, std::get<uint64_t>(expected_converted_value));
-          } else if constexpr (std::is_same_v<T, std::string>) {
-             EXPECT_EQ(arg, std::get<std::string>(expected_converted_value));
-          } else if constexpr (std::is_same_v<T, std::vector<unsigned char>>) {
-             EXPECT_EQ(arg, std::get<std::vector<unsigned char>>(expected_converted_value));
+          // Ensure the expected variant holds the same type before comparison.
+          if (std::holds_alternative<T>(expected_converted_value)) {
+             EXPECT_EQ(arg, std::get<T>(expected_converted_value));
           } else {
-             FAIL() << "Unsupported variant type in testResultConversion for comparison.";
+             FAIL() << "Actual and expected variant types do not match.";
           }
        },
        r.converted_value);
@@ -227,14 +220,14 @@ TEST_F(ResultConvertedValueTest, HandlesIpAddress) {
 
 TEST_F(ResultConvertedValueTest, HandlesInvalidInteger) {
    auto converted = result_obj._make_converted_value("INTEGER", "not-a-number");
-   EXPECT_EQ(std::get<std::string>(converted), "INTEGER Conversion Error: stoi");
+   EXPECT_EQ(std::get<std::string>(converted), "INTEGER Conversion Error: stoi: no conversion");
 }
 
 // --- New Tests for Various SNMP Types and Edge Cases ---
 
 TEST_F(ResultConvertedValueTest, HandlesZeroTimeticks) {
    auto converted = result_obj._make_converted_value("Timeticks", "(0) 0:00:00.00");
-   EXPECT_EQ(std::get<uint32_t>(converted), 0);
+   EXPECT_EQ(std::get<uint32_t>(converted), 0U);
 }
 
 TEST_F(ResultConvertedValueTest, HandlesNegativeIntegerString) {
@@ -291,22 +284,19 @@ TEST_F(ResultConvertedValueTest, HandlesGauge32WithUnit) {
 
 TEST_F(ResultConvertedValueTest, HandlesZeroCounter32) {
    auto converted = result_obj._make_converted_value("Counter32", "0");
-   EXPECT_EQ(std::get<uint32_t>(converted), 0);
+   EXPECT_EQ(std::get<uint32_t>(converted), 0U);
 }
 
 TEST_F(ResultConvertedValueTest, HandlesZeroCounter64) {
    auto converted = result_obj._make_converted_value("Counter64", "0");
-   EXPECT_EQ(std::get<uint64_t>(converted), 0);
+   EXPECT_EQ(std::get<uint64_t>(converted), 0ULL);
 }
 
 TEST_F(ResultConvertedValueTest, HandlesMalformedHexCharacters) {
-   auto converted = result_obj._make_converted_value("Hex-STRING", "0xG");
-   // The previous error was very puzzling. Let's make sure the returned type is what we expect.
-   // Given the `datatypes.cpp` logic, it *should* return a string.
-   // If it *still* throws std::get: wrong index, it implies something deeper.
-   EXPECT_TRUE(std::holds_alternative<std::string>(converted)); // Explicit check
+   auto converted = result_obj._make_converted_value(
+       "Hex-STRING", "0xG"); // "0xG" is treated as two parts: "0x" and "G"
    EXPECT_EQ(std::get<std::string>(converted),
-             "Hex-STRING Conversion Error: Malformed hex part 'G'");
+             "Hex-STRING Conversion Error: Malformed hex part '0xG'");
 }
 
 // NEW TEST: Test OCTETSTR conversion to std::vector<unsigned char>

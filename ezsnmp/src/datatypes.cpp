@@ -91,41 +91,21 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
       }
 
       while (ss >> byte_str) {
-         // Remove any non-hex characters (like ':', although not in your example)
-         // Ensure only hex characters remain for conversion
-         std::string cleaned_byte_str;
-         std::copy_if(byte_str.begin(), byte_str.end(), std::back_inserter(cleaned_byte_str),
-                      [](char c) { return std::isxdigit(static_cast<unsigned char>(c)); });
-
-         if (cleaned_byte_str.empty()) {
-            // If a part becomes empty after cleaning (e.g., "0xG" -> "G" -> "" if not hex),
-            // or if it was just "0x", we should treat it as an error for that part
-            // if it was the *only* part or if it implies malformation.
-            // For "0xG", "G" would be cleaned to empty, then it would skip.
-            // Re-evaluate if any non-hex part should always cause an error.
-            // For robustness, let's treat any non-empty but non-hex-convertible part as an error.
-            // For now, if clean fails, it means the original byte_str had non-hex.
-            if (!byte_str.empty() && cleaned_byte_str.empty()) {
-               return type + " Conversion Error: Malformed hex part '" + byte_str + "'";
-            }
-            continue; // Skip parts that were just whitespace or genuinely empty
+         if (byte_str.length() > 2 ||
+             byte_str.find_first_not_of("0123456789abcdefABCDEF") != std::string::npos) {
+            return type + " Conversion Error: Malformed hex part '" + byte_str + "'";
          }
 
          unsigned int byte_value;
          std::stringstream converter;
-         converter << std::hex << cleaned_byte_str; // Use cleaned string here
-         if (converter >> byte_value) {             // Check if conversion was successful
-            byte_vector.push_back(static_cast<unsigned char>(byte_value));
-         } else {
-            // This 'else' branch should ideally not be hit if cleaned_byte_str contains only hex,
-            // but as a fallback for unexpected errors in stringstream.
-            return type + " Conversion Error: Unexpected conversion failure for '" +
-                   cleaned_byte_str + "'";
+         converter << std::hex << byte_str;
+         if (!(converter >> byte_value)) {
+            // This should not be reached given the validation above, but is a safeguard.
+            return type + " Conversion Error: Unexpected conversion failure for '" + byte_str + "'";
          }
+         byte_vector.push_back(static_cast<unsigned char>(byte_value));
       }
-      return byte_vector; // If loop finishes without error, return the collected bytes.
-                          // This will be empty if no valid hex parts were found (e.g., input was "
-                          // ").
+      return byte_vector;
 
    } else if (type_lower == "octetstr") {
       // Convert string to vector of unsigned chars (byte-by-byte)
