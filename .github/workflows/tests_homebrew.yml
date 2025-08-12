@@ -17,7 +17,7 @@ jobs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout Sourcecode
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check for changes in source code
         id: changed-files
@@ -72,7 +72,7 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -146,8 +146,8 @@ jobs:
           pattern: pytest-results_*
           merge-multiple: false
 
-      - name: Pytest coverage comment (Homebrew)
-        uses: MishaKav/pytest-coverage-comment@v1.1.54
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@v1.1.56
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id: homebrew
@@ -229,7 +229,7 @@ jobs:
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Render Valgrind Comment Template
         id: template
