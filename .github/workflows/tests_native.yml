@@ -16,7 +16,7 @@ jobs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout Sourcecode
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check for changes in source code
         id: changed-files
@@ -55,7 +55,7 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
