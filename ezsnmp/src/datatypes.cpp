@@ -13,73 +13,43 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
    std::string type_lower = type;
    std::transform(type_lower.begin(), type_lower.end(), type_lower.begin(), ::tolower);
 
-   // Helper to extract numeric part from strings like "up(1)" or "60000 milli-seconds"
-   auto extract_numeric_value = [](std::string const& val_str) {
-      std::string numeric_part = "";
+   // Helper to extract numeric part from strings like "up(1)" or "60000 milli-seconds" or "42"
+   auto extract_numeric_value = [](std::string const& val_str) -> std::string {
       std::smatch match;
       // Try to match numbers inside parentheses, or just a number at the beginning
       if (std::regex_search(val_str, match, std::regex("\\((\\d+)\\)"))) {
-         numeric_part = match[1].str();
+         return match[1].str();
       } else if (std::regex_search(val_str, match,
                                    std::regex("^\\s*(-?\\d+)"))) { // Match optional leading space,
                                                                    // optional minus, then digits
-         numeric_part = match[1].str();
+         return match[1].str();
       }
-      return numeric_part;
+      return val_str; // Fallback to direct value if no specific pattern matched
+   };
+
+   // Helper lambda for numeric conversions to reduce code duplication
+   auto convert_numeric = [&](auto stox_func) -> Result::ConvertedValue {
+      std::string numeric_str = extract_numeric_value(value);
+      if (numeric_str.empty()) {
+         if (value.empty()) {
+            return type + " Conversion Error: Empty value for numeric type";
+         }
+         // Fallback to direct value if no specific pattern matched and it's not empty
+         numeric_str = value;
+      }
+      try {
+         return stox_func(numeric_str);
+      } catch (const std::exception& e) {
+         return type + " Conversion Error: " + e.what();
+      }
    };
 
    if (type_lower == "integer" || type_lower == "integer32") {
-      std::string numeric_str = extract_numeric_value(value);
-      if (numeric_str.empty() && !value.empty()) { // If no numeric part extracted but value isn't
-                                                   // empty, try direct conversion
-         numeric_str = value;     // Fallback to direct value if no specific pattern matched
-      } else if (value.empty()) { // Handle empty value explicitly for numeric types
-         return type + " Conversion Error: Empty value for numeric type";
-      }
-      try {
-         return std::stoi(numeric_str);
-      } catch (std::exception const& e) {
-         return type + " Conversion Error: " + e.what();
-      }
-
-   } else if (type_lower == "gauge32" || type_lower == "counter32") {
-      std::string numeric_str = extract_numeric_value(value);
-      if (numeric_str.empty() && !value.empty()) {
-         numeric_str = value;
-      } else if (value.empty()) {
-         return type + " Conversion Error: Empty value for numeric type";
-      }
-      try {
-         return static_cast<uint32_t>(std::stoul(numeric_str));
-      } catch (std::exception const& e) {
-         return type + " Conversion Error: " + e.what();
-      }
-
+      return convert_numeric([](const std::string& s) { return std::stoi(s); });
+   } else if (type_lower == "gauge32" || type_lower == "counter32" || type_lower == "timeticks") {
+      return convert_numeric([](const std::string& s) { return static_cast<uint32_t>(std::stoul(s)); });
    } else if (type_lower == "counter64") {
-      std::string numeric_str = extract_numeric_value(value);
-      if (numeric_str.empty() && !value.empty()) {
-         numeric_str = value;
-      } else if (value.empty()) {
-         return type + " Conversion Error: Empty value for numeric type";
-      }
-      try {
-         return static_cast<uint64_t>(std::stoull(numeric_str));
-      } catch (std::exception const& e) {
-         return type + " Conversion Error: " + e.what();
-      }
-
-   } else if (type_lower == "timeticks") {
-      std::string numeric_str = extract_numeric_value(value);
-      if (numeric_str.empty() && !value.empty()) {
-         numeric_str = value;
-      } else if (value.empty()) {
-         return type + " Conversion Error: Empty value for numeric type";
-      }
-      try {
-         return static_cast<uint32_t>(std::stoul(numeric_str));
-      } catch (std::exception const& e) {
-         return type + " Conversion Error: " + e.what();
-      }
+      return convert_numeric([](const std::string& s) { return static_cast<uint64_t>(std::stoull(s)); });
    } else if (type_lower == "hex-string") {
       std::vector<unsigned char> byte_vector;
       std::stringstream ss(value);
