@@ -147,7 +147,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.54
+        uses: MishaKav/pytest-coverage-comment@v1.1.56
         with:
           title: Pytest Coverage Report - Homebrew
           hide-badge: true
