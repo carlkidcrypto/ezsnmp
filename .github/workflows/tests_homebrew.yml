@@ -150,7 +150,7 @@ jobs:
         uses: MishaKav/pytest-coverage-comment@v1.1.56
         with:
           title: Pytest Coverage Report - Homebrew
-          unique-id: homebrew
+          unique-id-for-comment: homebrew
           hide-badge: true
           hide-report: true
           create-new-comment: false

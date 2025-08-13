@@ -1,0 +1,84 @@
+# This workflow builds and runs the C++ tests using Meson and Ninja
+# on multiple operating systems.
+# It checks for changes in the C++ source code and runs tests only if there are changes.
+name: C++ Tests
+concurrency: cpp-tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-source-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_job: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout Sourcecode
+        uses: actions/checkout@v5
+
+      - name: Check for changes in C++ source or test files
+        id: changed-files
+        uses: tj-actions/changed-files@v46.0.5
+        with:
+          files: |
+            ezsnmp/*.cpp
+            ezsnmp/*.h
+            cpp_tests/**
+            **/meson.build
+            **/meson_options.txt
+
+  build-and-test:
+    name: Build and Run C++ Tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: check-source-changes
+    if: needs.check-source-changes.outputs.run_job == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Set up dependencies
+        uses: carlkidcrypto/os-specific-runner@v2.1.2
+        with:
+          linux: sudo apt-get update;
+                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build;
+                 sudo systemctl stop snmpd;
+                 sudo download-mibs;
+                 mkdir -p -m 0755 ~/.snmp;
+                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+          macos: brew install meson ninja net-snmp;
+                 mkdir -p -m 0755 ~/.snmp;
+                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Start SNMP daemon
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]
+          then
+            mibdir="-M +/var/lib/snmp/mibs"
+            SNMPD=$(which snmpd)
+          elif [ "$RUNNER_OS" == "macOS" ]
+          then
+            # On macOS with brew, mibs are usually found automatically
+            mibdir=""
+            SNMPD=$(which snmpd)
+          fi
+          # Assumes a snmpd.conf exists in the cpp_tests directory
+          $SNMPD -C -c cpp_tests/snmpd.conf -r -Le $mibdir -m ALL
+
+      - name: Configure, Build, and Run C++ Tests
+        run: |
+          meson setup build
+          ninja -C build
+          meson test -C build --print-errorlogs --junit=test-cpp-test-results_${{ matrix.os }}.xml
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpp-test-results_${{matrix.os}}
+          path: test-results_${{ matrix.os }}.xml
