@@ -235,12 +235,8 @@ def test_converted_value_octetstr_from_hex(snmp_session):
     Test that an OID explicitly defined as OCTETSTR (but presented as hex)
     is converted to a bytearray.
     """
-    # MODIFIED: Walk the table to find any existing physical address
-    result = snmp_session.walk(
-        [
-            "RFC1213-MIB::atPhysAddress",
-        ]
-    )
+
+    result = snmp_session.walk("RFC1213-MIB::atPhysAddress")
     if not result:
         pytest.skip("No results returned for OCTETSTR OID (atPhysAddress)")
 
@@ -274,12 +270,8 @@ def test_converted_value_ipaddress(snmp_session):
     """
     Test that an IpAddress type is preserved as a string.
     """
-    # MODIFIED: Walk the table to find any existing IP address
-    result = snmp_session.walk(
-        [
-            "RFC1213-MIB::ipAdEntAddr",
-        ]
-    )
+
+    result = snmp_session.walk("RFC1213-MIB::ipAdEntAddr")
     assert len(result) > 0, "No results returned for IpAddress OID walk"
 
     # Ensure the type is correctly identified as IpAddress
@@ -293,12 +285,8 @@ def test_converted_value_network_address(snmp_session):
     """
     Test for the Network Address type.
     """
-    # MODIFIED: Walk the table to find any existing network address
-    result = snmp_session.walk(
-        [
-            "RFC1213-MIB::atNetAddress",
-        ]
-    )
+
+    result = snmp_session.walk("RFC1213-MIB::atNetAddress")
     if not result:
         pytest.skip("No results returned for Network Address OID (atNetAddress)")
 

@@ -44,12 +44,12 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build;
+                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build libgtest-dev;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          macos: brew install meson ninja net-snmp;
+          macos: brew install meson ninja net-snmp googletest;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
