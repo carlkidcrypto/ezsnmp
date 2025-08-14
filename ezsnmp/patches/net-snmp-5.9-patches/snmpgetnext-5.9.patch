@@ -1,5 +1,5 @@
---- ./net-snmp/apps/snmpgetnext.c	2025-03-24 04:20:35
-+++ ../src/snmpgetnext.cpp	2025-03-24 04:20:35
+--- ./net-snmp-5.9/apps/snmpgetnext.c	2025-08-13 21:15:19.968541800 -0700
++++ ../src/snmpgetnext.cpp	2025-07-09 07:11:48.427520000 -0700
 @@ -40,8 +40,8 @@
  #ifdef HAVE_NETINET_IN_H
  #include <netinet/in.h>
@@ -53,13 +53,14 @@
 -    fprintf(stderr,
 -            "\t\t\t  f:  do not fix errors and retry the request\n");
 -}
-+std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
- 
+-
 -int
 -main(int argc, char *argv[])
 -{
++std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
++   /* completely disable logging otherwise it will default to stderr */
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
@@ -136,7 +137,7 @@
          goto out;
      }
  
-@@ -172,16 +167,16 @@
+@@ -172,15 +167,15 @@
      for (count = 0; count < current_name; count++) {
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
@@ -151,13 +152,12 @@
 +   }
 +   if (failures) {
          goto close_session;
+-
+-    exitval = 0;
 +   }
  
--    exitval = 0;
--
      /*
       * do the request 
-      */
 @@ -189,52 +184,55 @@
      status = snmp_synch_response(ss, pdu, &response);
      if (status == STAT_SUCCESS) {
@@ -190,9 +190,9 @@
 +               /*EMPTY*/;
 +            if (vars) {
 +               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
-             }
++            }
 +            err_msg = err_msg + "\n";
-+         }
+             }
  
              /*
               * retry if the errored variable was successfully removed 

@@ -1,7 +1,59 @@
-diff -aurw ./net-snmp/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
-diff -aurw ./net-snmp/apps/snmpget.c ../src/snmpget.cpp > snmpget.patch
-diff -aurw ./net-snmp/apps/snmpset.c ../src/snmpset.cpp > snmpset.patch
-diff -aurw ./net-snmp/apps/snmptrap.c ../src/snmptrap.cpp > snmptrap.patch
-diff -aurw ./net-snmp/apps/snmpbulkwalk.c ../src/snmpbulkwalk.cpp > snmpbulkwalk.patch
-diff -aurw ./net-snmp/apps/snmpbulkget.c ../src/snmpbulkget.cpp > snmpbulkget.patch
-diff -aurw ./net-snmp/apps/snmpgetnext.c ../src/snmpgetnext.cpp > snmpgetnext.patch
+#!/bin/bash
+
+# --- Script to create patch files for Net-SNMP applications ---
+# Usage:
+#   ./make_patches.sh <version>
+# Example:
+#   ./make_patches.sh 5.9
+# ---------------------------------------------------------------
+
+# 1. Validate that a version number was provided
+if [[ -z "$1" ]]; then
+    echo "Error: No version specified." >&2
+    echo "Usage: $0 <net-snmp-version>" >&2
+    echo "Example: $0 5.9" >&2
+    exit 1
+fi
+
+VERSION="$1"
+# Assumes the original source code is in a folder like 'net-snmp-5.9'
+SOURCE_DIR="./net-snmp-${VERSION}"
+TARGET_DIR="../src" # The directory with your modified C++ files
+
+# 2. Check if the source directory actually exists
+if [[ ! -d "$SOURCE_DIR" ]]; then
+    echo "Error: Source directory not found: ${SOURCE_DIR}" >&2
+    echo "Please ensure the Net-SNMP source code for version ${VERSION} is in that folder." >&2
+    exit 1
+fi
+
+# 3. List of tools to create patches for
+tools=(
+    "snmpwalk"
+    "snmpget"
+    "snmpset"
+    "snmptrap"
+    "snmpbulkwalk"
+    "snmpbulkget"
+    "snmpgetnext"
+)
+
+# 4. Loop through the tools and generate a versioned patch file for each
+echo "Generating patches for Net-SNMP version ${VERSION}..."
+
+for tool in "${tools[@]}"; do
+    source_file="${SOURCE_DIR}/apps/${tool}.c"
+    target_file="${TARGET_DIR}/${tool}.cpp"
+    patch_file="${tool}-${VERSION}.patch"
+
+    # Check that both the original and your modified file exist before diffing
+    if [[ -f "$source_file" && -f "$target_file" ]]; then
+        echo "  -> Creating ${patch_file}"
+        mkdir -p "net-snmp-${VERSION}-patches"
+        diff -aurw "${source_file}" "${target_file}" > "net-snmp-${VERSION}-patches/${patch_file}"
+    else
+        echo "  -- Skipping ${tool}: One or both files not found." >&2
+    fi
+done
+
+echo "Done."

@@ -1,21 +1,60 @@
---- ./net-snmp/apps/snmpset.c	2025-07-20 19:26:52
-+++ ../src/snmpset.cpp	2025-03-24 04:20:35
+--- ./net-snmp-5.7/apps/snmpset.c	2025-08-13 21:26:00.425301500 -0700
++++ ../src/snmpset.cpp	2025-07-09 07:11:48.429367000 -0700
 @@ -1,3 +1,4 @@
 +/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
   * snmpset.c - send snmp SET requests to a network entity.
   *
-@@ -40,8 +41,8 @@
- #ifdef HAVE_NETINET_IN_H
+@@ -25,73 +26,67 @@
+ ******************************************************************/
+ #include <net-snmp/net-snmp-config.h>
+ 
+-#if HAVE_STDLIB_H
++#ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+ #endif
+-#if HAVE_UNISTD_H
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+-#if HAVE_STRING_H
++#ifdef HAVE_STRING_H
+ #include <string.h>
+ #else
+ #include <strings.h>
+ #endif
+ #include <sys/types.h>
+-#if HAVE_NETINET_IN_H
++#ifdef HAVE_NETINET_IN_H
  #include <netinet/in.h>
  #endif
 -#include <stdio.h>
  #include <ctype.h>
+-#if TIME_WITH_SYS_TIME
 +#include <stdio.h>
- #ifdef TIME_WITH_SYS_TIME
++#ifdef TIME_WITH_SYS_TIME
  # include <sys/time.h>
  # include <time.h>
-@@ -64,34 +65,28 @@
+ #else
+-# if HAVE_SYS_TIME_H
++#ifdef HAVE_SYS_TIME_H
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+ # endif
+ #endif
+-#if HAVE_SYS_SELECT_H
++#ifdef HAVE_SYS_SELECT_H
+ #include <sys/select.h>
+ #endif
+-#if HAVE_NETDB_H
++#ifdef HAVE_NETDB_H
+ #include <netdb.h>
+ #endif
+-#if HAVE_ARPA_INET_H
++#ifdef HAVE_ARPA_INET_H
+ #include <arpa/inet.h>
+ #endif
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -89,18 +128,15 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,39 +127,37 @@
+@@ -127,44 +127,46 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
--    int             exitval = 1;
--    char           *posix_env;
+-    int             exitval = 0;
++
++   SOCK_STARTUP;
  
-     SOCK_STARTUP;
- 
--    posix_env = strdup("POSIXLY_CORRECT=1");
--    putenv(posix_env);
-+   putenv(strdup("POSIXLY_CORRECT=1"));
+     putenv(strdup("POSIXLY_CORRECT=1"));
  
      /*
       * get the common command line arguments 
@@ -108,17 +144,16 @@
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
--        goto out;
+-        exit(1);
 +         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 +
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
--        exitval = 0;
--        goto out;
+-        exit(0);
 +         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 +
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
--        goto out;
+-        exit(1);
 +         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 +
      default:
@@ -128,41 +163,53 @@
      if (arg >= argc) {
          fprintf(stderr, "Missing object name\n");
 -        usage();
+-        exit(1);
 +      snmpset_usage();
-         goto out;
++      goto out;
      }
      if ((argc - arg) > 3*SNMP_MAX_CMDLINE_OIDS) {
          fprintf(stderr, "Too many assignments specified. ");
          fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
 -        usage();
+-        exit(1);
 +      snmpset_usage();
-         goto out;
++      goto out;
      }
  
-@@ -167,9 +165,8 @@
+     /*
       * get object names, types, and values 
       */
      for (; arg < argc; arg++) {
 -        DEBUGMSGTL(("snmp_parse_args", "handling (#%d): %s %s %s\n",
--                    arg, argv[arg], arg+1 < argc ? argv[arg+1] : "",
--                    arg+2 < argc ? argv[arg+2] : ""));
+-                    arg,argv[arg], arg+1 < argc ? argv[arg+1] : NULL,
+-                    arg+2 < argc ? argv[arg+2] : NULL));
 +      DEBUGMSGTL(("snmp_parse_args", "handling (#%d): %s %s %s\n", arg, argv[arg],
 +                  arg + 1 < argc ? argv[arg + 1] : "", arg + 2 < argc ? argv[arg + 2] : ""));
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -194,17 +191,16 @@
+@@ -179,6 +181,7 @@
+             case 'x':
+             case 'd':
+             case 'b':
++            case 'n': /* undocumented */
+ #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
+             case 'I':
+             case 'U':
+@@ -188,24 +191,21 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
 -                fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1],
 -                        *argv[arg]);
+-                exit(1);
 +               fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-                 goto out;
++               goto out;
              }
          } else {
              fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
-             goto out;
+-            exit(1);
++         goto out;
          }
 -        if (arg < argc)
 +      if (arg < argc) {
@@ -170,18 +217,29 @@
 -        else {
 +      } else {
              fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
-             goto out;
+-            exit(1);
++         goto out;
          }
-@@ -218,7 +214,7 @@
+     }
+ 
+-    SOCK_STARTUP;
+-
+     /*
+      * open an SNMP session 
+      */
+@@ -214,9 +214,8 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
 -        snmp_sess_perror("snmpset", &session);
+-        SOCK_CLEANUP;
+-        exit(1);
 +      snmp_sess_perror_exception("snmpset", &session);
-         goto out;
++      goto out;
      }
  
-@@ -229,21 +225,18 @@
+     /*
+@@ -226,20 +225,16 @@
      for (count = 0; count < current_name; count++) {
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
@@ -198,17 +256,15 @@
          }
      }
  
--    if (failures)
-+   if (failures) {
-         goto close_session;
-+   }
+     if (failures) {
+-        snmp_close(ss);
+-        SOCK_CLEANUP;
+-        exit(1);
++      goto close_session;
+     }
  
--    exitval = 0;
--
      /*
-      * do the request 
-      */
-@@ -251,42 +244,45 @@
+@@ -249,36 +244,45 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {
@@ -219,8 +275,8 @@
 +               auto const &str_value =
 +                   print_variable_to_string(vars->name, vars->name_length, vars);
 +               return_vector.push_back(str_value);
++            }
              }
-+         }
          } else {
 -            fprintf(stderr, "Error in packet.\nReason: %s\n",
 -                    snmp_errstring(response->errstat));
@@ -241,12 +297,12 @@
 +               /*EMPTY*/;
 +            if (vars) {
 +               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
++            }
++            err_msg = err_msg + "\n";
              }
 -            exitval = 2;
-+            err_msg = err_msg + "\n";
-         }
 +         throw PacketErrorBase(err_msg);
-+      }
+         }
      } else if (status == STAT_TIMEOUT) {
 -        fprintf(stderr, "Timeout: No Response from %s\n",
 -                session.peername);
@@ -263,13 +319,12 @@
 +   if (response) {
          snmp_free_pdu(response);
 +   }
- 
- close_session:
++
++close_session:
      snmp_close(ss);
- 
- out:
--    free(posix_env);
-     netsnmp_cleanup_session(&session);
++
++out:
++   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;
