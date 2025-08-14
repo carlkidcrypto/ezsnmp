@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['1_200_20a1_20v1_201_200_20a1_20a_202024_2010_2009_0',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.0.0...v1.1.0.a1&quot; &gt;v1.1.0.a1&lt;/a&gt; (2024-10-09)',['../md_CHANGELOG.html#autotoc_md80',1,'']]],
+  ['1_200_20a1_20v2_200_200a1_20v2_200_200a1_20a_202024_2010_2011_1',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.1.0.a1...v2.0.0a1&quot; &gt;v2.0.0a1&lt;/a&gt; (2024-10-11)',['../md_CHANGELOG.html#autotoc_md72',1,'']]],
+  ['1_200_20v1_201_200_20a_202024_2010_2011_2',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0a1...v1.1.0&quot; &gt;v1.1.0&lt;/a&gt; (2024-10-11)',['../md_CHANGELOG.html#autotoc_md70',1,'']]],
+  ['1_200_20v2_200_200a2_20v2_200_200a2_20a_202024_2011_2016_3',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.1.0...v2.0.0a2&quot; &gt;v2.0.0a2&lt;/a&gt; (2024-11-16)',['../md_CHANGELOG.html#autotoc_md63',1,'']]],
+  ['1_200a0_20v2_201_200a1_20v2_201_200a1_20a_202025_2007_2016_4',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a0...v2.1.0a1&quot; &gt;v2.1.0a1&lt;/a&gt; (2025-07-16)',['../md_CHANGELOG.html#autotoc_md1',1,'']]],
+  ['1_20v2_200_201_20a_202025_2005_2006_5',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0...v2.0.1&quot; &gt;v2.0.1&lt;/a&gt; (2025-05-06)',['../md_CHANGELOG.html#autotoc_md13',1,'']]],
+  ['1_20v2_201_200a0_20v2_201_200a0_20a_202025_2006_2022_6',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.1...v2.1.0a0&quot; &gt;v2.1.0a0&lt;/a&gt; (2025-06-22)',['../md_CHANGELOG.html#autotoc_md7',1,'']]],
+  ['10_2009_7',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.0.0...v1.1.0.a1&quot; &gt;v1.1.0.a1&lt;/a&gt; (2024-10-09)',['../md_CHANGELOG.html#autotoc_md80',1,'']]],
+  ['10_2011_8',['10 11',['../md_CHANGELOG.html#autotoc_md72',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.1.0.a1...v2.0.0a1&quot; &gt;v2.0.0a1&lt;/a&gt; (2024-10-11)'],['../md_CHANGELOG.html#autotoc_md70',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0a1...v1.1.0&quot; &gt;v1.1.0&lt;/a&gt; (2024-10-11)']]],
+  ['11_9',['11',['../md_CHANGELOG.html#autotoc_md72',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.1.0.a1...v2.0.0a1&quot; &gt;v2.0.0a1&lt;/a&gt; (2024-10-11)'],['../md_CHANGELOG.html#autotoc_md70',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0a1...v1.1.0&quot; &gt;v1.1.0&lt;/a&gt; (2024-10-11)'],['../md_CHANGELOG.html#autotoc_md45',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0a5...v2.0.0b0&quot; &gt;v2.0.0b0&lt;/a&gt; (2025-01-11)']]],
+  ['11_2016_10',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.1.0...v2.0.0a2&quot; &gt;v2.0.0a2&lt;/a&gt; (2024-11-16)',['../md_CHANGELOG.html#autotoc_md63',1,'']]],
+  ['12_2020_11',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0a2...v2.0.0a3&quot; &gt;v2.0.0a3&lt;/a&gt; (2024-12-20)',['../md_CHANGELOG.html#autotoc_md57',1,'']]],
+  ['14_12',['&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.0.0c1...v1.0.0c2&quot; &gt;v1.0.0c2&lt;/a&gt; (2024-06-14)',['../md_CHANGELOG.html#autotoc_md107',1,'']]],
+  ['16_13',['16',['../md_CHANGELOG.html#autotoc_md89',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.0.0c4...v1.0.0&quot; &gt;v1.0.0&lt;/a&gt; (2024-09-16)'],['../md_CHANGELOG.html#autotoc_md63',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v1.1.0...v2.0.0a2&quot; &gt;v2.0.0a2&lt;/a&gt; (2024-11-16)'],['../md_CHANGELOG.html#autotoc_md1',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a0...v2.1.0a1&quot; &gt;v2.1.0a1&lt;/a&gt; (2025-07-16)']]],
+  ['166_14',['166',['../md_CHANGELOG.html#autotoc_md91',1,'']]],
+  ['167_15',['167',['../md_CHANGELOG.html#autotoc_md92',1,'']]],
+  ['180_16',['180',['../md_CHANGELOG.html#autotoc_md65',1,'']]],
+  ['181_17',['181',['../md_CHANGELOG.html#autotoc_md74',1,'']]],
+  ['182_18',['182',['../md_CHANGELOG.html#autotoc_md75',1,'']]],
+  ['183_19',['183',['../md_CHANGELOG.html#autotoc_md82',1,'']]],
+  ['186_20',['186',['../md_CHANGELOG.html#autotoc_md83',1,'']]],
+  ['19_21',['19',['../md_CHANGELOG.html#autotoc_md123',1,'19'],['../md_CHANGELOG.html#autotoc_md33',1,'&lt;a href=&quot;https://github.com/carlkidcrypto/ezsnmp/compare/v2.0.0b1...v2.0.0b2&quot; &gt;v2.0.0b2&lt;/a&gt; (2025-02-19)']]]
+];
