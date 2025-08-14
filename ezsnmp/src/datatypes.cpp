@@ -39,17 +39,19 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
       }
       try {
          return stox_func(numeric_str);
-      } catch (const std::exception& e) {
+      } catch (std::exception const& e) {
          return type + " Conversion Error: " + e.what();
       }
    };
 
    if (type_lower == "integer" || type_lower == "integer32") {
-      return convert_numeric([](const std::string& s) { return std::stoi(s); });
+      return convert_numeric([](std::string const& s) { return std::stoi(s); });
    } else if (type_lower == "gauge32" || type_lower == "counter32" || type_lower == "timeticks") {
-      return convert_numeric([](const std::string& s) { return static_cast<uint32_t>(std::stoul(s)); });
+      return convert_numeric(
+          [](std::string const& s) { return static_cast<uint32_t>(std::stoul(s)); });
    } else if (type_lower == "counter64") {
-      return convert_numeric([](const std::string& s) { return static_cast<uint64_t>(std::stoull(s)); });
+      return convert_numeric(
+          [](std::string const& s) { return static_cast<uint64_t>(std::stoull(s)); });
    } else if (type_lower == "hex-string") {
       std::vector<unsigned char> byte_vector;
       std::stringstream ss(value);

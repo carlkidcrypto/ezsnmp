@@ -82,6 +82,7 @@ jobs:
             meson test -C build --print-errorlogs --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
           macos: |
             cd cpp_tests
+            export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
             meson setup build
             ninja -C build
             meson test -C build --print-errorlogs --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
