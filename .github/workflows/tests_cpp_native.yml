@@ -49,7 +49,7 @@ jobs:
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          macos: brew install meson ninja net-snmp googletest;
+          macos: brew install meson ninja net-snmp googletest openssl;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
@@ -92,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cpp-test-results_${{matrix.os}}
-          path: cpp_tests/cpp-test-results_${{ matrix.os }}.xml
+          path: cpp_tests/build/cpp-test-results_${{ matrix.os }}.xml
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
