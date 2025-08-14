@@ -104,10 +104,11 @@ jobs:
           pattern: pytest-results_*
           merge-multiple: false
 
-      - name: Pytest coverage comment
+      - name: Pytest coverage comment (Dockerized Tests)
         uses: MishaKav/pytest-coverage-comment@v1.1.56
         with:
-          title: Pytest Coverage Report - Docker
+          title: Pytest Coverage Report - Dockerized Tests
+          unique-id-for-comment: dockerized-tests
           hide-badge: true
           hide-report: true
           create-new-comment: false

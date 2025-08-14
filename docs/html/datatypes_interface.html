@@ -5,31 +5,31 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="exceptionsbase.i" href="exceptionsbase_interface.html" /><link rel="prev" title="Swig Interface File(s)" href="swig_interface_files.html" />
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>datatypes.i - EzSnmp v2.1.0a0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+        <title>datatypes.i - EzSnmp v2.1.0a1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
   
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
   
       }
     }
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp v2.1.0a0 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.1.0a1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,8 +189,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  
-  <span class="sidebar-brand-text">EzSnmp v2.1.0a0 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.1.0a1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -202,6 +201,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
@@ -267,11 +270,124 @@
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">module</span><span class="w"> </span><span class="n">datatypes</span>
 <span class="o">%</span><span class="n">feature</span><span class="p">(</span><span class="s">&quot;autodoc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">);</span>
 
+<span class="c1">// Directly define the missing conversion macros for the C++ compiler.</span>
+<span class="c1">// This ensures that any function returning a plain uint32_t or uint64_t</span>
+<span class="c1">// can be correctly converted to a Python integer object.</span>
+<span class="o">%</span><span class="n">header</span><span class="w"> </span><span class="o">%</span><span class="p">{</span>
+<span class="cp">#define SWIG_From_uint32_t(val) PyLong_FromUnsignedLong(val)</span>
+<span class="cp">#define SWIG_From_uint64_t(val) PyLong_FromUnsignedLongLong(val)</span>
+<span class="cp">#define SWIG_From_double(val) PyFloat_FromDouble(val)</span>
+<span class="cp">#define SWIG_From_int(val) PyLong_FromLong(val)</span>
+<span class="o">%</span><span class="p">}</span>
+
 <span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">std_string</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">std_vector</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">typemaps</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
 
 <span class="o">%</span><span class="p">{</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;optional&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;variant&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;type_traits&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;datatypes.h&quot;</span>
+
+<span class="c1">// Forward-declare the SWIG helper function for std::string conversion</span>
+<span class="c1">// to resolve potential compilation order issues.</span>
+<span class="n">SWIGINTERN</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">SWIG_From_std_string</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
+
+<span class="c1">// A visitor struct to convert a variant type to a PyObject*.</span>
+<span class="c1">// This is a C++11/14 compatible alternative to a generic lambda and provides</span>
+<span class="c1">// a clean way to organize the conversion logic.</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">variant_to_pyobject_visitor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">result_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">result_type</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">int</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SWIG_From_int</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">result_type</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SWIG_From_uint32_t</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">result_type</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SWIG_From_uint64_t</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">result_type</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">double</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SWIG_From_double</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">result_type</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// FIX: Check for and remove wrapping quotes from malformed SNMP strings.</span>
+<span class="w">        </span><span class="c1">// https://github.com/carlkidcrypto/ezsnmp/issues/355</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="n">length</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">front</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;&quot;&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">back</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;&quot;&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Create a new C++ string containing just the inner content.</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">cleaned_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">length</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// Convert the *cleaned* string to a Python object.</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">SWIG_From_std_string</span><span class="p">(</span><span class="n">cleaned_str</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="c1">// If no wrapping quotes are found, convert the original string as usual.</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SWIG_From_std_string</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">result_type</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">PyBytes_FromStringAndSize</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">.</span><span class="n">data</span><span class="p">()),</span><span class="w"> </span><span class="n">arg</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
 <span class="o">%</span><span class="p">}</span>
+
+<span class="c1">// ---- START: ROBUST VARIANT SUPPORT ----</span>
+<span class="c1">// Provide a simplified declaration for std::variant for SWIG&#39;s parser.</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Ts</span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">variant</span><span class="w"> </span><span class="p">{};</span>
+
+<span class="c1">// This is the core logic for converting a C++ variant to a Python object.</span>
+<span class="c1">// It uses a series of `if-else if` checks with `std::get_if` as a robust</span>
+<span class="c1">// alternative to `std::visit`, which is unavailable on older macOS targets.</span>
+<span class="o">%</span><span class="n">define</span><span class="w"> </span><span class="n">VARIANT_OUT_LOGIC</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)</span>
+<span class="w">  </span><span class="c1">// Create an instance of our visitor to handle the type-specific conversions.</span>
+<span class="w">  </span><span class="n">variant_to_pyobject_visitor</span><span class="w"> </span><span class="n">visitor</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Check the type held by the variant and call the appropriate visitor function.</span>
+<span class="w">  </span><span class="c1">// std::get_if returns a pointer to the value if the variant holds that type,</span>
+<span class="w">  </span><span class="c1">// otherwise it returns nullptr.</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get_if</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">visitor</span><span class="p">(</span><span class="o">*</span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get_if</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">visitor</span><span class="p">(</span><span class="o">*</span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get_if</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">visitor</span><span class="p">(</span><span class="o">*</span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get_if</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">visitor</span><span class="p">(</span><span class="o">*</span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get_if</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">visitor</span><span class="p">(</span><span class="o">*</span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get_if</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">INPUT</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">visitor</span><span class="p">(</span><span class="o">*</span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// This case should not be reached if the variant is valid.</span>
+<span class="w">    </span><span class="c1">// Set a Python exception to indicate a problem.</span>
+<span class="w">    </span><span class="n">SWIG_exception_fail</span><span class="p">(</span><span class="n">SWIG_TypeError</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Variant holds an unexpected or unhandled type.&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="o">%</span><span class="n">enddef</span>
+
+<span class="c1">// Define the full variant type for convenience and clarity.</span>
+<span class="c1">// Typemap for returning a variant by VALUE or by CONST REFERENCE.</span>
+<span class="o">%</span><span class="n">typemap</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">VARIANT_OUT_LOGIC</span><span class="p">(</span><span class="n">$1</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Typemap for returning a variant by POINTER.</span>
+<span class="o">%</span><span class="n">typemap</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;&gt;*</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">$1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">$result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Py_None</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Py_INCREF</span><span class="p">(</span><span class="n">Py_None</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Note the dereference of the pointer: *$1</span>
+<span class="w">    </span><span class="n">VARIANT_OUT_LOGIC</span><span class="p">(</span><span class="o">*</span><span class="n">$1</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Tell SWIG to generate the wrapper for our specific variant instantiation.</span>
+<span class="o">%</span><span class="k">template</span><span class="p">(</span><span class="n">ConvertedValue</span><span class="p">)</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+<span class="c1">// ---- END: ROBUST VARIANT SUPPORT ----</span>
 
 <span class="c1">// Include the header file</span>
 <span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="s">&quot;../include/datatypes.h&quot;</span>
@@ -328,9 +444,9 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=efee2e0d"></script>
+</div><script src="_static/documentation_options.js?v=4b96aa14"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>
