@@ -25,6 +25,9 @@ VERSION="$1"
 SOURCE_DIR="./net-snmp-${VERSION}"
 FINAL_DEST_DIR="../src/net-snmp-${VERSION}-final-patched"
 
+# This ensures 'mv' knows the correct full path regardless of the current directory.
+FINAL_DEST_DIR=$(realpath "${FINAL_DEST_DIR}")
+
 if [[ "$VERSION" == "5.9" ]]; then
     PATCH_DIR="../net-snmp-${VERSION}-patches" # Adjusted for cd
 else
@@ -69,19 +72,20 @@ for tool in "${tools[@]}"; do
     original_c_file="apps/${tool}.c"
 
     if [[ ! -f "$patch_file" ]] || [[ ! -f "$original_c_file" ]]; then
-        echo "  -- Skipping ${tool}: Required file(s) not found."
+        echo "   -- Skipping ${tool}: Required file(s) not found."
         continue
     fi
     
     dos2unix "${patch_file}" &> /dev/null
     dos2unix "${original_c_file}" &> /dev/null
 
-    echo "  -> Patching ${tool}.c..."
-    # --- THIS IS THE MODIFIED LINE ---
+    echo "   -> Patching ${tool}.c..."
+
     # The -p2 flag strips the first two components (e.g., './net-snmp-5.6/')
     patch -p2 < "${patch_file}"
 
-    echo "  -> Moving and renaming to ${FINAL_DEST_DIR}/${tool}.cpp"
+    echo "   -> Moving and renaming to ${FINAL_DEST_DIR}/${tool}.cpp"
+    # 'mv' now uses the correct, absolute path for the destination
     mv "${original_c_file}" "${FINAL_DEST_DIR}/${tool}.cpp"
 done
 
@@ -90,7 +94,6 @@ for tool in "${tools[@]}"; do
     git restore "apps/${tool}.c"
 done
 
-# Go back to the original directory
 cd ..
 
 echo "Done. Patched files have been moved to ${FINAL_DEST_DIR}."
