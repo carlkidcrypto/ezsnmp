@@ -26,53 +26,52 @@ SOFTWARE.
 ******************************************************************/
 #include <net-snmp/net-snmp-config.h>
 
-#ifdef HAVE_STDLIB_H
+#if HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_STRING_H
+#if HAVE_STRING_H
 #include <string.h>
 #else
 #include <strings.h>
 #endif
 #include <sys/types.h>
-#ifdef HAVE_NETINET_IN_H
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
-#include <ctype.h>
 #include <stdio.h>
-#ifdef TIME_WITH_SYS_TIME
+#include <ctype.h>
+#if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
 #else
-#ifdef HAVE_SYS_TIME_H
+# if HAVE_SYS_TIME_H
 #  include <sys/time.h>
 # else
 #  include <time.h>
 # endif
 #endif
-#ifdef HAVE_SYS_SELECT_H
+#if HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #endif
-#ifdef HAVE_NETDB_H
+#if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#ifdef HAVE_ARPA_INET_H
+#if HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
 
-#include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/utilities.h>
+
+#include <net-snmp/net-snmp-includes.h>
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-#include "exceptionsbase.h"
-#include "helpers.h"
-#include "snmpget.h"
-
-void snmpget_optProc(int argc, char *const *argv, int opt) {
+static void
+optProc(int argc, char *const *argv, int opt)
+{
     switch (opt) {
     case 'C':
         while (*optarg) {
@@ -235,7 +234,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
         snmp_free_pdu(response);
    }
 
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
     SOCK_CLEANUP;
    return parse_results(return_vector);

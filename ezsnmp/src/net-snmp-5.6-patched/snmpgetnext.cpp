@@ -25,40 +25,40 @@ SOFTWARE.
 ******************************************************************/
 #include <net-snmp/net-snmp-config.h>
 
-#ifdef HAVE_STDLIB_H
+#if HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_STRING_H
+#if HAVE_STRING_H
 #include <string.h>
 #else
 #include <strings.h>
 #endif
 #include <sys/types.h>
-#ifdef HAVE_NETINET_IN_H
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
-#include <ctype.h>
 #include <stdio.h>
-#ifdef TIME_WITH_SYS_TIME
+#include <ctype.h>
+#if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
 #else
-#ifdef HAVE_SYS_TIME_H
+# if HAVE_SYS_TIME_H
 #  include <sys/time.h>
 # else
 #  include <time.h>
 # endif
 #endif
-#ifdef HAVE_SYS_SELECT_H
+#if HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #endif
-#ifdef HAVE_NETDB_H
+#if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#ifdef HAVE_ARPA_INET_H
+#if HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
 
@@ -108,44 +108,42 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
     size_t          name_length;
     int             status;
     int             failures = 0;
-
-   SOCK_STARTUP;
+    int             exitval = 0;
 
     /*
      * get the common command line arguments 
      */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
+    switch (arg = snmp_parse_args(argc, argv, &session, "C:", &optProc)) {
     case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-
+        exit(1);
     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-
+        exit(0);
     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-
+        usage();
+        exit(1);
     default:
         break;
     }
 
     if (arg >= argc) {
-      std::string err_msg = "Missing object name\n";
-      throw GenericErrorBase(err_msg);
+        fprintf(stderr, "Missing object name\n");
+        usage();
+        exit(1);
     }
     if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
-      std::string err_msg =
-          "Too many object identifiers specified. "
-          "Only " +
-          std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
-      throw GenericErrorBase(err_msg);
+        fprintf(stderr, "Too many object identifiers specified. ");
+        fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
+        usage();
+        exit(1);
     }
 
     /*
      * get the object names 
      */
-   for (; arg < argc; arg++) {
+    for (; arg < argc; arg++)
         names[current_name++] = argv[arg];
-   }
+
+    SOCK_STARTUP;
 
     /*
      * open an SNMP session 
@@ -155,8 +153,9 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-      snmp_sess_perror_exception("snmpgetnext", &session);
-      goto out;
+        snmp_sess_perror("snmpgetnext", &session);
+        SOCK_CLEANUP;
+        exit(1);
     }
 
     /*
@@ -167,14 +166,15 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
     for (count = 0; count < current_name; count++) {
         name_length = MAX_OID_LEN;
         if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror_exception(names[count]);
+            snmp_perror(names[count]);
             failures++;
-      } else {
+        } else
             snmp_add_null_var(pdu, name, name_length);
     }
-   }
     if (failures) {
-      goto close_session;
+        snmp_close(ss);
+        SOCK_CLEANUP;
+        exit(1);
     }
 
     /*
@@ -227,11 +227,8 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
         snmp_free_pdu(response);
    }
 
-close_session:
     snmp_close(ss);
 
-out:
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
     SOCK_CLEANUP;
    return parse_results(return_vector);

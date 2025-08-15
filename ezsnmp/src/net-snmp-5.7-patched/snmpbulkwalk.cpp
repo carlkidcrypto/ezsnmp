@@ -27,40 +27,40 @@ SOFTWARE.
 **********************************************************************/
 #include <net-snmp/net-snmp-config.h>
 
-#ifdef HAVE_STDLIB_H
+#if HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_STRING_H
+#if HAVE_STRING_H
 #include <string.h>
 #else
 #include <strings.h>
 #endif
 #include <sys/types.h>
-#ifdef HAVE_NETINET_IN_H
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
-#ifdef TIME_WITH_SYS_TIME
+#if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
 #else
-#ifdef HAVE_SYS_TIME_H
+# if HAVE_SYS_TIME_H
 #  include <sys/time.h>
 # else
 #  include <time.h>
 # endif
 #endif
-#ifdef HAVE_SYS_SELECT_H
+#if HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #endif
-#include <ctype.h>
 #include <stdio.h>
-#ifdef HAVE_NETDB_H
+#include <ctype.h>
+#if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#ifdef HAVE_ARPA_INET_H
+#if HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
 
@@ -192,29 +192,29 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
     int             running;
     int             status = STAT_ERROR;
     int             check;
-
-   SOCK_STARTUP;
+    int             exitval = 0;
 
     netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
+			       NETSNMP_DS_APPLICATION_ID, 
+			       NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics",
+			       NETSNMP_DS_APPLICATION_ID, 
 			       NETSNMP_DS_WALK_PRINT_STATISTICS);
     netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+			       NETSNMP_DS_APPLICATION_ID,
+			       NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
     /*
      * get the common command line arguments 
      */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
+    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
     case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-
+        exit(1);
     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-
+        exit(0);
     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-
+        usage();
+        exit(1);
     default:
         break;
     }
@@ -228,16 +228,18 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
          */
         rootlen = MAX_OID_LEN;
         if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror_exception(argv[arg]);
-         return parse_results(return_vector);
+            snmp_perror(argv[arg]);
+            exit(1);
         }
     } else {
         /*
          * use default value 
          */
-      memmove(root, snmpbulkwalk_objid_mib, sizeof(snmpbulkwalk_objid_mib));
-      rootlen = OID_LENGTH(snmpbulkwalk_objid_mib);
+        memmove(root, objid_mib, sizeof(objid_mib));
+        rootlen = sizeof(objid_mib) / sizeof(oid);
     }
+
+    SOCK_STARTUP;
 
     /*
      * open an SNMP session 
@@ -247,8 +249,9 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-      snmp_sess_perror_exception("snmpbulkwalk", &session);
-      return parse_results(return_vector);
+        snmp_sess_perror("snmpbulkwalk", &session);
+        SOCK_CLEANUP;
+        exit(1);
     }
 
     /*
@@ -382,7 +385,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
       printf("Variables found: %d\n", snmpbulkwalk_numprinted);
     }
 
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
     SOCK_CLEANUP;
    return parse_results(return_vector);
