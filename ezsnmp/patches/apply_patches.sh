@@ -1,32 +1,107 @@
 #!/bin/bash
 
-# Apply the patches
-echo "Applying patches..."
-PATCH_DIR="$(pwd)"
-NEW_FILES=()
+# --- Script to apply custom patches and move them to a final directory ---
+#
+# Usage:
+#   1. Start with a fresh, clean 'net-snmp-X.X' source directory.
+#   2. Place this script next to the source and the 'net-snmp-X.X-patches' directory.
+#   3. Run it with the version number.
+#
+# Example:
+#   ./apply_patches.sh 5.9
+# --------------------------------------------------------------------
 
-for patch in "$PATCH_DIR"/*.patch; do
-    echo "Applying $patch..."
-    patched_files=$(patch -p1 --dry-run < "$patch" | grep "patching file" | awk '{print $3}' | tr -d "'")
-    patch -p1 < "$patch"
-    for file in $patched_files; do
-        new_file_name="$(basename "$file" .c).cpp"
-        echo "Moving and renaming patched file $file to $PATCH_DIR/$new_file_name..."
-        rm -f "$PATCH_DIR/$new_file_name"
-        cp ./"$file" "$PATCH_DIR/$new_file_name"
-        NEW_FILES+=("$new_file_name")
-    done
+# 1. Validate that a version number was provided
+if [[ -z "$1" ]]; then
+    echo "Error: No version specified." >&2
+    echo "Usage: $0 <net-snmp-version>" >&2
+    echo "Example: $0 5.9" >&2
+    exit 1
+fi
+
+VERSION="$1"
+# --- Define all paths at the top for clarity ---
+SOURCE_DIR="./net-snmp-${VERSION}"
+PATCH_DIR="./net-snmp-${VERSION}-patches"
+FINAL_DEST_DIR="../src/net-snmp-${VERSION}-patched"
+
+# 2. Check that the required directories exist
+if [[ ! -d "$SOURCE_DIR" ]]; then
+    echo "Error: Source directory not found: ${SOURCE_DIR}" >&2
+    echo "Please run this script in the same directory as the source code." >&2
+    exit 1
+fi
+if [[ ! -d "$PATCH_DIR" ]]; then
+    echo "Error: Patch directory not found: ${PATCH_DIR}" >&2
+    echo "Please ensure patches for version ${VERSION} are available." >&2
+    exit 1
+fi
+
+# 3. Create the final destination directory if it doesn't exist
+echo "Ensuring destination directory exists: ${FINAL_DEST_DIR}"
+mkdir -p "${FINAL_DEST_DIR}"
+
+# 4. Check for dos2unix command
+if ! command -v dos2unix &> /dev/null; then
+    echo "Error: 'dos2unix' command not found, but is required to fix line endings." >&2
+    echo "Please install it (e.g., 'sudo apt-get install dos2unix') and try again." >&2
+    exit 1
+fi
+
+# 5. Use the same list of tools as make_patches.sh for consistency
+tools=(
+    "snmpwalk"
+    "snmpget"
+    "snmpset"
+    "snmptrap"
+    "snmpbulkwalk"
+    "snmpbulkget"
+    "snmpgetnext"
+)
+
+# 6. Loop through the tools, normalize, patch, and move
+echo "Applying patches and moving files for version ${VERSION}..."
+
+for tool in "${tools[@]}"; do
+    patch_file="${PATCH_DIR}/${tool}-${VERSION}.patch"
+    original_c_file="${SOURCE_DIR}/apps/${tool}.c"
+
+    # Skip if either the patch or the source file is missing
+    if [[ ! -f "$patch_file" ]] || [[ ! -f "$original_c_file" ]]; then
+        echo "  -- Skipping ${tool}: Required file(s) not found."
+        continue
+    fi
+    
+    # Normalize line endings for only the two files we are about to use
+    dos2unix "${patch_file}" > /dev/null 2>&1
+    dos2unix "${original_c_file}" > /dev/null 2>&1
+
+    # Apply the patch to the original file
+    echo "  -> Patching ${tool}.c..."
+    patch "${original_c_file}" < "${patch_file}"
+
+    # Move the patched .c file to its final destination with the new .cpp name
+    echo "  -> Moving and renaming to ${FINAL_DEST_DIR}/${tool}.cpp"
+    mv "${original_c_file}" "${FINAL_DEST_DIR}/${tool}.cpp"
+
 done
 
-# Move the new files to the src directory
-SRC_DIR="$PATCH_DIR/../src"
+echo "Restoring original source files in ${SOURCE_DIR}..."
+cd "${SOURCE_DIR}"
 
-echo "Moving new files to $SRC_DIR..."
-mkdir -p "$SRC_DIR"
-
-for new_file in "${NEW_FILES[@]}"; do
-    echo "Moving $new_file to $SRC_DIR..."
-    mv "$PATCH_DIR/$new_file" "$SRC_DIR/"
+for tool in "${tools[@]}"; do
+    original_file_path="apps/${tool}.c"
+    
+    # Git sees the file as deleted because it was moved.
+    # We restore it from the index (the last commit).
+    # We only need to try restoring it if its patch file existed.
+    patch_file="../${PATCH_DIR}/${tool}-${VERSION}.patch"
+    if [[ -f "${patch_file}" ]]; then
+        echo "  -> Restoring ${original_file_path}"
+        git restore "${original_file_path}"
+    fi
 done
 
-rm -drf ./src
+cd ../
+
+echo "Done. Patched files have been moved to ${FINAL_DEST_DIR}."
