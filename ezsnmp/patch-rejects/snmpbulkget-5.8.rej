@@ -1,0 +1,43 @@
+--- apps/snmpbulkget.c	2025-08-14 21:46:00.870091500 -0700
++++ snmpbulkget.cpp	2025-08-14 21:04:27.420070400 -0700
+@@ -26,38 +27,38 @@
+ **********************************************************************/
+ #include <net-snmp/net-snmp-config.h>
+ 
+ #include <stdlib.h>
+ #endif
+ #include <unistd.h>
+ #endif
+ #include <string.h>
+ #else
+ #include <strings.h>
+ #endif
+ #include <net-snmp/utilities.h>
+ #include <sys/types.h>
+ #include <netinet/in.h>
+ #endif
+ # include <sys/time.h>
+ # include <time.h>
+ #else
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+ # endif
+ #endif
+ #include <sys/select.h>
+ #endif
+-#include <stdio.h>
+ #include <ctype.h>
++#include <stdio.h>
+ #include <netdb.h>
+ #endif
+ #include <arpa/inet.h>
+ #endif
+ 
+ #include <net-snmp/net-snmp-includes.h>
+ 
+-oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
++oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
+ int             max_repetitions = 10;
+ int             non_repeaters = 0;
+ struct nameStruct {

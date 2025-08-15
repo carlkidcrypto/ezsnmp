@@ -1,0 +1,35 @@
+--- apps/snmpgetnext.c	2025-08-14 21:46:01.047764700 -0700
++++ snmpgetnext.cpp	2025-08-14 21:04:27.439251000 -0700
+@@ -25,31 +25,31 @@
+ ******************************************************************/
+ #include <net-snmp/net-snmp-config.h>
+ 
+ #include <stdlib.h>
+ #endif
+ #include <unistd.h>
+ #endif
+ #include <string.h>
+ #else
+ #include <strings.h>
+ #endif
+ #include <sys/types.h>
+ #include <netinet/in.h>
+ #endif
+-#include <stdio.h>
+ #include <ctype.h>
++#include <stdio.h>
+ # include <sys/time.h>
+ # include <time.h>
+ #else
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+ # endif
+ #endif
+ #include <sys/select.h>
+ #endif
+ #include <netdb.h>
+ #endif
+ #include <arpa/inet.h>
+ #endif
+ 

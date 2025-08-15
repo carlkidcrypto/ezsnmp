@@ -1,0 +1,102 @@
+--- apps/snmpbulkget.c	2025-08-14 21:46:32.912718000 -0700
++++ snmpbulkget.cpp	2025-08-14 21:04:27.420070400 -0700
+@@ -26,38 +27,38 @@
+ **********************************************************************/
+ #include <net-snmp/net-snmp-config.h>
+ 
+ #include <stdlib.h>
+ #endif
+ #include <unistd.h>
+ #endif
+ #include <string.h>
+ #else
+ #include <strings.h>
+ #endif
+ #include <net-snmp/utilities.h>
+ #include <sys/types.h>
+ #include <netinet/in.h>
+ #endif
+ # include <sys/time.h>
+ # include <time.h>
+ #else
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+ # endif
+ #endif
+ #include <sys/select.h>
+ #endif
+-#include <stdio.h>
+ #include <ctype.h>
++#include <stdio.h>
+ #include <netdb.h>
+ #endif
+ #include <arpa/inet.h>
+ #endif
+ 
+ #include <net-snmp/net-snmp-includes.h>
+ 
+-oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
++oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
+ int             max_repetitions = 10;
+ int             non_repeaters = 0;
+ struct nameStruct {
+@@ -142,15 +146,21 @@
+     int             arg;
+     int             count;
+     int             status;
++
+ 
+     /*
+      * get the common command line arguments 
+      */
+-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
++   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
+     case NETSNMP_PARSE_ARGS_ERROR:
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++
+     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++
+     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+-        usage();
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++
+     default:
+         break;
+     }
+@@ -162,20 +169,20 @@
+     names = argc - arg;
+     if (names < non_repeaters) {
+         fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
++      return parse_results(return_vector);
+     }
+ 
+     namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
+     while (arg < argc) {
+         namep->name_len = MAX_OID_LEN;
+-        if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) ==
+-            NULL) {
+-            snmp_perror(argv[arg]);
++      if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
++         snmp_perror_exception(argv[arg]);
++         return parse_results(return_vector);
+         }
+         arg++;
+         namep++;
+     }
+ 
+-
+     /*
+      * open an SNMP session 
+      */
+@@ -187,7 +191,8 @@
+         /*
+          * diagnose snmp_open errors with the input netsnmp_session pointer 
+          */
+-        snmp_sess_perror("snmpbulkget", &session);
++      snmp_sess_perror_exception("snmpbulkget", &session);
++      return parse_results(return_vector);
+     }
+ 
+     /*

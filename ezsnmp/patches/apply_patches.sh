@@ -24,9 +24,11 @@ VERSION="$1"
 # --- Define paths at the top for clarity ---
 SOURCE_DIR="./net-snmp-${VERSION}"
 FINAL_DEST_DIR="../src/net-snmp-${VERSION}-final-patched"
+REJECTS_DIR="../patch-rejects"
 
-# This ensures 'mv' knows the correct full path regardless of the current directory.
+# Convert paths to absolute paths before changing directories.
 FINAL_DEST_DIR=$(realpath "${FINAL_DEST_DIR}")
+REJECTS_DIR=$(realpath "${REJECTS_DIR}")
 
 if [[ "$VERSION" == "5.9" ]]; then
     PATCH_DIR="../net-snmp-${VERSION}-patches" # Adjusted for cd
@@ -40,9 +42,12 @@ if [[ ! -d "$SOURCE_DIR" ]]; then
     exit 1
 fi
 
-# 3. Create the final destination directory if it doesn't exist
+# 3. Create the destination directories if they don't exist
 echo "Ensuring destination directory exists: ${FINAL_DEST_DIR}"
 mkdir -p "${FINAL_DEST_DIR}"
+
+echo "Ensuring rejects directory exists: ${REJECTS_DIR}"
+mkdir -p "${REJECTS_DIR}"
 
 # 4. Check for dos2unix command
 if ! command -v dos2unix &> /dev/null; then
@@ -58,6 +63,10 @@ tools=(
 
 # Change into the source directory to apply patches correctly
 cd "${SOURCE_DIR}"
+
+# --- NEW: Clean up stale reject files inside the source directory ---
+echo "Cleaning up stale rejects inside $(pwd)..."
+find . -type f -name "*.rej" -delete
 
 if [[ ! -d "$PATCH_DIR" ]]; then
     echo "Error: Patch directory not found at ${PATCH_DIR}" >&2
@@ -84,6 +93,24 @@ for tool in "${tools[@]}"; do
     # The -p2 flag strips the first two components (e.g., './net-snmp-5.6/')
     patch -p2 < "${patch_file}"
 
+    # Check for and move any reject files, handling potential name collisions
+    reject_file="${original_c_file}.rej"
+    if [[ -f "$reject_file" ]]; then
+        base_reject_name="${tool}-${VERSION}"
+        final_reject_path="${REJECTS_DIR}/${base_reject_name}.rej"
+        
+        # If a reject file with the same name exists, append a counter
+        counter=1
+        while [[ -f "$final_reject_path" ]]; do
+            final_reject_path="${REJECTS_DIR}/${base_reject_name}-${counter}.rej"
+            ((counter++))
+        done
+
+        # Use ##*/ to get just the filename for the log message
+        echo "   !! Patch failed. Moving reject file to ${REJECTS_DIR}/${final_reject_path##*/}"
+        mv "$reject_file" "$final_reject_path"
+    fi
+
     echo "   -> Moving and renaming to ${FINAL_DEST_DIR}/${tool}.cpp"
     # 'mv' now uses the correct, absolute path for the destination
     mv "${original_c_file}" "${FINAL_DEST_DIR}/${tool}.cpp"
@@ -94,6 +121,7 @@ for tool in "${tools[@]}"; do
     git restore "apps/${tool}.c"
 done
 
+# Go back to the original directory
 cd ..
 
 echo "Done. Patched files have been moved to ${FINAL_DEST_DIR}."
