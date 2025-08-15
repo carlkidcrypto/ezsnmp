@@ -49,7 +49,15 @@ jobs:
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          macos: brew install meson ninja net-snmp googletest openssl;
+          macos: 
+                 brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
+                 brew install meson ninja googletest;
+                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/bin:$PATH";
+                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
