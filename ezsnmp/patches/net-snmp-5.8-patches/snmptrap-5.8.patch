@@ -1,5 +1,5 @@
---- ./net-snmp-5.8/apps/snmptrap.c	2025-08-13 21:25:15.844010600 -0700
-+++ ../src/snmptrap.cpp	2025-05-07 06:33:51.379965500 -0700
+--- ./net-snmp-5.8/apps/snmptrap.c	2025-08-14 21:46:00.427938300 -0700
++++ ../src/snmptrap.cpp	2025-08-14 21:04:27.450517700 -0700
 @@ -1,3 +1,4 @@
 +/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
