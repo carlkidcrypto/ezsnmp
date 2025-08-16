@@ -1,0 +1,35 @@
+--- apps/snmpbulkwalk.c	2025-08-14 22:07:00.749559200 -0700
++++ snmpbulkwalk.cpp	2025-08-14 21:04:27.424090400 -0700
+@@ -27,31 +28,31 @@
+ **********************************************************************/
+ #include <net-snmp/net-snmp-config.h>
+ 
+ #include <stdlib.h>
+ #endif
+ #include <unistd.h>
+ #endif
+ #include <string.h>
+ #else
+ #include <strings.h>
+ #endif
+ #include <sys/types.h>
+ #include <netinet/in.h>
+ #endif
+ # include <sys/time.h>
+ # include <time.h>
+ #else
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+ # endif
+ #endif
+ #include <sys/select.h>
+ #endif
+-#include <stdio.h>
+ #include <ctype.h>
++#include <stdio.h>
+ #include <netdb.h>
+ #endif
+ #include <arpa/inet.h>
+ #endif
+ 

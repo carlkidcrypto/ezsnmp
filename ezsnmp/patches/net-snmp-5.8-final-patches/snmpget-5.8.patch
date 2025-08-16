@@ -20,6 +20,7 @@
  #include <sys/types.h>
  #include <netinet/in.h>
  #endif
+-#include <stdio.h>
  #include <ctype.h>
 +#include <stdio.h>
  # include <sys/time.h>
@@ -36,7 +37,9 @@
  #endif
  #include <arpa/inet.h>
  #endif
-
+ 
+-#include <net-snmp/utilities.h>
+-
  #include <net-snmp/net-snmp-includes.h>
 +#include <net-snmp/utilities.h>
  

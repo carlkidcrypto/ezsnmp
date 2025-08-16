@@ -30,6 +30,7 @@
  #endif
  #include <sys/select.h>
  #endif
+-#include <stdio.h>
  #include <ctype.h>
 +#include <stdio.h>
  #include <netdb.h>
