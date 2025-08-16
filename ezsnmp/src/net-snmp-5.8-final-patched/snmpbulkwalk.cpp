@@ -1,4 +1,3 @@
-/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpbulkwalk.c - send SNMPv2 Bulk requests to a network entity, walking a
  * subtree.
@@ -70,32 +69,32 @@ SOFTWARE.
 #define NETSNMP_DS_WALK_PRINT_STATISTICS		2
 #define NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC	3
 
-oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
-int snmpbulkwalk_numprinted = 0;
-int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
+oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
+int             numprinted = 0;
+int             reps = 10, non_reps = 0;
 
-#include "exceptionsbase.h"
-#include "helpers.h"
-#include "snmpbulkwalk.h"
-
-void snmpbulkwalk_usage(void) {
+void
+usage(void)
+{
     fprintf(stderr, "USAGE: snmpbulkwalk ");
     snmp_parse_args_usage(stderr);
     fprintf(stderr, " [OID]\n\n");
     snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-   fprintf(stderr, "\t\t\t  c:       do not check returned OIDs are increasing\n");
-   fprintf(stderr, "\t\t\t  i:       include given OIDs in the search range\n");
+    fprintf(stderr,
+            "  -C APPOPTS\t\tSet various application specific behaviours:\n");
+    fprintf(stderr,
+            "\t\t\t  c:       do not check returned OIDs are increasing\n");
+    fprintf(stderr,
+            "\t\t\t  i:       include given OIDs in the search range\n");
     fprintf(stderr, "\t\t\t  n<NUM>:  set non-repeaters to <NUM>\n");
-   fprintf(stderr, "\t\t\t  p:       print the number of variables found\n");
+    fprintf(stderr,
+            "\t\t\t  p:       print the number of variables found\n");
     fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
-                                                         oid *theoid,
-                                                         size_t theoid_len) {
-   std::vector<std::string> str_values;
-
+static void
+snmp_get_and_print(netsnmp_session * ss, oid * theoid, size_t theoid_len)
+{
     netsnmp_pdu    *pdu, *response;
     netsnmp_variable_list *vars;
     int             status;
@@ -106,19 +105,19 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
     status = snmp_synch_response(ss, pdu, &response);
     if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
         for (vars = response->variables; vars; vars = vars->next_variable) {
-         snmpbulkwalk_numprinted++;
-         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-         str_values.push_back(str_value);
+            numprinted++;
+            print_variable(vars->name, vars->name_length, vars);
         }
     }
     if (response) {
         snmp_free_pdu(response);
     }
-
-   return str_values;
 }
 
-void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
+static
+    void
+optProc(int argc, char *const *argv, int opt)
+{
     char           *endptr = NULL;
 
     switch (opt) {
@@ -138,16 +137,16 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
             case 'n':
             case 'r':
                 if (*(optarg - 1) == 'r') {
-                     snmpbulkwalk_reps = strtol(optarg, &endptr, 0);
+                    reps = strtol(optarg, &endptr, 0);
                 } else {
-                     snmpbulkwalk_non_reps = strtol(optarg, &endptr, 0);
+                    non_reps = strtol(optarg, &endptr, 0);
                 }
 
                 if (endptr == optarg) {
                     /*
                      * No number given -- error.  
                      */
-                     snmpbulkwalk_usage();
+                    usage();
                     exit(1);
                 } else {
                     optarg = endptr;
@@ -163,23 +162,18 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
                 break;
 
             default:
-                  std::string err_msg =
-                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
+                fprintf(stderr, "Unknown flag passed to -C: %c\n",
+                        optarg[-1]);
+                exit(1);
             }
         }
         break;
     }
 }
 
-std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
-   /* completely disable logging otherwise it will default to stderr */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-
-   int argc;
-   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
-
-   std::vector<std::string> return_vector;
+int
+main(int argc, char *argv[])
+{
     netsnmp_session session, *ss;
     netsnmp_pdu    *pdu, *response;
     netsnmp_variable_list *vars;
@@ -192,29 +186,32 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
     int             running;
     int             status = STAT_ERROR;
     int             check;
+    int             exitval = 1;
 
     SOCK_STARTUP;
 
     netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
+			       NETSNMP_DS_APPLICATION_ID, 
+			       NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics",
+			       NETSNMP_DS_APPLICATION_ID, 
 			       NETSNMP_DS_WALK_PRINT_STATISTICS);
     netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+			       NETSNMP_DS_APPLICATION_ID,
+			       NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
     /*
      * get the common command line arguments 
      */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
+    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
     case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-
+        goto out;
     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-
+        exitval = 0;
+        goto out;
     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-
+        usage();
+        goto out;
     default:
         break;
     }
@@ -228,15 +225,15 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
          */
         rootlen = MAX_OID_LEN;
         if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror_exception(argv[arg]);
-         return parse_results(return_vector);
+            snmp_perror(argv[arg]);
+            goto out;
         }
     } else {
         /*
          * use default value 
          */
-      memmove(root, snmpbulkwalk_objid_mib, sizeof(snmpbulkwalk_objid_mib));
-      rootlen = OID_LENGTH(snmpbulkwalk_objid_mib);
+        memmove(root, objid_mib, sizeof(objid_mib));
+        rootlen = sizeof(objid_mib) / sizeof(oid);
     }
 
     /*
@@ -247,8 +244,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-      snmp_sess_perror_exception("snmpbulkwalk", &session);
-      return parse_results(return_vector);
+        snmp_sess_perror("snmpbulkwalk", &session);
+        goto out;
     }
 
     /*
@@ -259,23 +256,22 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
 
     running = 1;
 
-   check =
-       !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
-      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+    check = !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
+				    NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
+			       NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
+        snmp_get_and_print(ss, root, rootlen);
+    }
 
-      for (auto const &item : retval) {
-         return_vector.push_back(item);
-      }
-   }
+    exitval = 0;
 
     while (running) {
         /*
          * create PDU for GETBULK request and add object name to request 
          */
         pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
-      pdu->non_repeaters = snmpbulkwalk_non_reps;
-      pdu->max_repetitions = snmpbulkwalk_reps; /* fill the packet */
+        pdu->non_repeaters = non_reps;
+        pdu->max_repetitions = reps;    /* fill the packet */
         snmp_add_null_var(pdu, name, name_length);
 
         /*
@@ -287,38 +283,45 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                 /*
                  * check resulting variables 
                  */
-            for (vars = response->variables; vars; vars = vars->next_variable) {
-               if ((vars->name_length < rootlen) ||
-                   (memcmp(root, vars->name, rootlen * sizeof(oid)) != 0)) {
+                for (vars = response->variables; vars;
+                     vars = vars->next_variable) {
+                    if ((vars->name_length < rootlen)
+                        || (memcmp(root, vars->name, rootlen * sizeof(oid))
+                            != 0)) {
                         /*
                          * not part of this subtree 
                          */
                         running = 0;
                         continue;
                     }
-               snmpbulkwalk_numprinted++;
-               auto const &str_value =
-                   print_variable_to_string(vars->name, vars->name_length, vars);
-               return_vector.push_back(str_value);
-               if ((vars->type != SNMP_ENDOFMIBVIEW) && (vars->type != SNMP_NOSUCHOBJECT) &&
+                    numprinted++;
+                    print_variable(vars->name, vars->name_length, vars);
+                    if ((vars->type != SNMP_ENDOFMIBVIEW) &&
+                        (vars->type != SNMP_NOSUCHOBJECT) &&
                         (vars->type != SNMP_NOSUCHINSTANCE)) {
                         /*
                          * not an exception value 
                          */
-                  if (check &&
-                      snmp_oid_compare(name, name_length, vars->name, vars->name_length) >= 0) {
-                     std::string err_msg = "Error: OID not increasing: ";
-                     err_msg = err_msg + print_objid_to_string(name, name_length) + " >= ";
-                     err_msg =
-                         err_msg + print_objid_to_string(vars->name, vars->name_length) + "\n";
-
-                     throw GenericErrorBase(err_msg);
+                        if (check
+                            && snmp_oid_compare(name, name_length,
+                                                vars->name,
+                                                vars->name_length) >= 0) {
+                            fflush(stdout);
+                            fprintf(stderr, "Error: OID not increasing: ");
+                            fprint_objid(stderr, name, name_length);
+                            fprintf(stderr, " >= ");
+                            fprint_objid(stderr, vars->name,
+                                         vars->name_length);
+                            fprintf(stderr, "\n");
+                            running = 0;
+                            exitval = 1;
                         }
                         /*
                          * Check if last variable, and if so, save for next request.  
                          */
                         if (vars->next_variable == NULL) {
-                     memmove(name, vars->name, vars->name_length * sizeof(oid));
+                            memmove(name, vars->name,
+                                    vars->name_length * sizeof(oid));
                             name_length = vars->name_length;
                         }
                     } else {
@@ -334,55 +337,54 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
                  */
                 running = 0;
                 if (response->errstat == SNMP_ERR_NOSUCHNAME) {
-               // printf("End of MIB\n");
+                    printf("End of MIB\n");
                 } else {
-               std::string err_msg =
-                   "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) +
-                   "\n";
+                    fprintf(stderr, "Error in packet.\nReason: %s\n",
+                            snmp_errstring(response->errstat));
                     if (response->errindex != 0) {
-                  err_msg = err_msg + "Failed object: ";
-                  for (count = 1, vars = response->variables; vars && count != response->errindex;
+                        fprintf(stderr, "Failed object: ");
+                        for (count = 1, vars = response->variables;
+                             vars && count != response->errindex;
                              vars = vars->next_variable, count++)
                             /*EMPTY*/;
-                  if (vars) {
-                     err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
-                  }
-                  err_msg = err_msg + "\n";
-                  throw PacketErrorBase(err_msg);
+                        if (vars)
+                            fprint_objid(stderr, vars->name,
+                                         vars->name_length);
+                        fprintf(stderr, "\n");
                     }
+                    exitval = 2;
                 }
             }
         } else if (status == STAT_TIMEOUT) {
-         std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-         throw TimeoutErrorBase(err_msg);
-
+            fprintf(stderr, "Timeout: No Response from %s\n",
+                    session.peername);
+            running = 0;
+            exitval = 1;
         } else {                /* status == STAT_ERROR */
-         snmp_sess_perror_exception("snmpbulkwalk", ss);
+            snmp_sess_perror("snmpbulkwalk", ss);
+            running = 0;
+            exitval = 1;
         }
-      if (response) {
+        if (response)
             snmp_free_pdu(response);
     }
-   }
 
-   if (snmpbulkwalk_numprinted == 0 && status == STAT_SUCCESS) {
+    if (numprinted == 0 && status == STAT_SUCCESS) {
         /*
          * no printed successful results, which may mean we were
          * pointed at an only existing instance.  Attempt a GET, just
          * for get measure. 
          */
-      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
-
-      for (auto const &item : retval) {
-         return_vector.push_back(item);
-      }
+        snmp_get_and_print(ss, root, rootlen);
     }
     snmp_close(ss);
 
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
-      printf("Variables found: %d\n", snmpbulkwalk_numprinted);
+    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, 
+			       NETSNMP_DS_WALK_PRINT_STATISTICS)) {
+        printf("Variables found: %d\n", numprinted);
     }
 
-   clear_net_snmp_library_data();
+out:
     SOCK_CLEANUP;
-   return parse_results(return_vector);
+    return exitval;
 }
