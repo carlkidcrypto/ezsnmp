@@ -113,35 +113,42 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
     /*
      * get the common command line arguments 
      */
-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", &optProc)) {
-    case NETSNMP_PARSE_ARGS_ERROR:
-        exit(1);
-    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-        exit(0);
-    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-        usage();
-        exit(1);
-    default:
-        break;
-    }
+
+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
+     case NETSNMP_PARSE_ARGS_ERROR:
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+
+     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
+     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+
+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
+     default:
+         break;
+     }
 
     if (arg >= argc) {
-        fprintf(stderr, "Missing object name\n");
-        usage();
-        exit(1);
+        std::string err_msg = "Missing object name\n";
+        throw GenericErrorBase(err_msg);
     }
     if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
-        fprintf(stderr, "Too many object identifiers specified. ");
-        fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-        usage();
-        exit(1);
+        std::string err_msg =
+          "Too many object identifiers specified. "
+          "Only " +
+          std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
+      throw GenericErrorBase(err_msg);
     }
 
     /*
      * get the object names 
      */
-    for (; arg < argc; arg++)
-        names[current_name++] = argv[arg];
+
+     for (; arg < argc; arg++) {
+         names[current_name++] = argv[arg];
+
+   }
 
     SOCK_STARTUP;
 
@@ -153,9 +160,9 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-        snmp_sess_perror("snmpgetnext", &session);
+
         SOCK_CLEANUP;
-        exit(1);
+        snmp_sess_perror_exception("snmpgetnext", &session);
     }
 
     /*
@@ -163,21 +170,21 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
      */
     pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
 
-    for (count = 0; count < current_name; count++) {
-        name_length = MAX_OID_LEN;
-        if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-            snmp_perror(names[count]);
-            failures++;
-        } else
-            snmp_add_null_var(pdu, name, name_length);
-    }
-    if (failures) {
-        snmp_close(ss);
-        SOCK_CLEANUP;
-        exit(1);
-    }
+     for (count = 0; count < current_name; count++) {
+         name_length = MAX_OID_LEN;
+         if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 
-    /*
+         snmp_perror_exception(names[count]);
+             failures++;
+
+      } else {
+             snmp_add_null_var(pdu, name, name_length);
+     }
+   }
+     if (failures) {
+     }
+ 
+     /*
      * do the request 
      */
   retry:
