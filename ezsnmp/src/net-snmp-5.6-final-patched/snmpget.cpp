@@ -63,14 +63,17 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <net-snmp/utilities.h>
 
 #include <net-snmp/net-snmp-includes.h>
+#include <net-snmp/utilities.h>
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-static void
-optProc(int argc, char *const *argv, int opt)
+#include "exceptionsbase.h"
+#include "helpers.h"
+#include "snmpget.h"
+
+void snmpget_optProc(int argc, char *const *argv, int opt) {
 {
     switch (opt) {
     case 'C':
@@ -81,78 +84,73 @@ optProc(int argc, char *const *argv, int opt)
 					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                 break;
             default:
-                fprintf(stderr, "Unknown flag passed to -C: %c\n",
-                        optarg[-1]);
-                exit(1);
+                std::string err_msg =
+                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  throw ParseErrorBase(err_msg);
             }
         }
         break;
     }
 }
 
-void
-usage(void)
-{
-    fprintf(stderr, "USAGE: snmpget ");
-    snmp_parse_args_usage(stderr);
-    fprintf(stderr, " OID [OID]...\n\n");
-    snmp_parse_args_descriptions(stderr);
-    fprintf(stderr,
-            "  -C APPOPTS\t\tSet various application specific behaviours:\n");
-    fprintf(stderr,
-            "\t\t\t  f:  do not fix errors and retry the request\n");
-}
 
-int
-main(int argc, char *argv[])
-{
-    netsnmp_session session, *ss;
-    netsnmp_pdu    *pdu;
-    netsnmp_pdu    *response;
-    netsnmp_variable_list *vars;
-    int             arg;
-    int             count;
+std::vector<Result> snmpget(std::vector<std::string> const &args) {
+   /* completely disable logging otherwise it will default to stderr */
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+
+   int argc = 0;
+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
+   std::vector<std::string> return_vector;
+
+   netsnmp_session session, *ss = NULL;
+   netsnmp_pdu *pdu = NULL;
+   netsnmp_pdu *response = NULL;
+   netsnmp_variable_list *vars = NULL;
+   int arg = 0;
+   int count = 0;
     int             current_name = 0;
-    char           *names[SNMP_MAX_CMDLINE_OIDS];
-    oid             name[MAX_OID_LEN];
-    size_t          name_length;
-    int             status;
+   char *names[SNMP_MAX_CMDLINE_OIDS] = {0};
+   oid name[MAX_OID_LEN] = {0};
+   size_t name_length = 0;
+   int status = -1;
     int             failures = 0;
-    int             exitval = 0;
 
 
     /*
      * get the common command line arguments 
      */
-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
+    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
     case NETSNMP_PARSE_ARGS_ERROR:
-        exit(1);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+
     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-        exit(0);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-        usage();
-        exit(1);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
     default:
         break;
     }
 
     if (arg >= argc) {
-        fprintf(stderr, "Missing object name\n");
-        usage();
-        exit(1);
+        std::string err_msg = "Missing object name\n";
+        throw GenericErrorBase(err_msg);
     }
     if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
-        fprintf(stderr, "Too many object identifiers specified. ");
-        fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-        usage();
-        exit(1);
+        std::string err_msg =
+          "Too many object identifiers specified. "
+          "Only " +
+          std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
+      throw GenericErrorBase(err_msg);
     }
 
     /*
      * get the object names 
      */
-    for (; arg < argc; arg++)
+    for (; arg < argc; arg++) {
         names[current_name++] = argv[arg];
+    }
 
     SOCK_STARTUP;
 
@@ -165,9 +163,9 @@ main(int argc, char *argv[])
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-        snmp_sess_perror("snmpget", &session);
+
         SOCK_CLEANUP;
-        exit(1);
+        snmp_sess_perror_exception("snmpget", &session);
     }
 
 
@@ -178,15 +176,15 @@ main(int argc, char *argv[])
     for (count = 0; count < current_name; count++) {
         name_length = MAX_OID_LEN;
         if (!snmp_parse_oid(names[count], name, &name_length)) {
-            snmp_perror(names[count]);
+            snmp_perror_exception(names[count]);
             failures++;
         } else
             snmp_add_null_var(pdu, name, name_length);
     }
     if (failures) {
-        snmp_close(ss);
+        snmp_free_pdu(pdu);
         SOCK_CLEANUP;
-        exit(1);
+        return parse_results(return_vector);
     }
 
 
@@ -230,24 +228,25 @@ main(int argc, char *argv[])
                     goto retry;
 		}
             }
-        }                       /* endif -- SNMP_ERR_NOERROR */
+        throw PacketErrorBase(err_msg);
+         } /* endif -- SNMP_ERR_NOERROR */
 
     } else if (status == STAT_TIMEOUT) {
-        fprintf(stderr, "Timeout: No Response from %s.\n",
-                session.peername);
-        exitval = 1;
+        std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
+        throw TimeoutErrorBase(err_msg);
 
     } else {                    /* status == STAT_ERROR */
-        snmp_sess_perror("snmpget", ss);
-        exitval = 1;
+        snmp_sess_perror_exception("snmpget", ss);
 
     }                           /* endif -- STAT_SUCCESS */
 
 
-    if (response)
-        snmp_free_pdu(response);
-    snmp_close(ss);
-    SOCK_CLEANUP;
-    return exitval;
 
-}                               /* end main() */
+   if (response) {
+         snmp_free_pdu(response);
+
+   }
+ 
+   clear_net_snmp_library_data();
+   return parse_results(return_vector);
+ }                               /* end main() */

@@ -63,18 +63,21 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <net-snmp/utilities.h>
 
 #include <net-snmp/net-snmp-includes.h>
+#include <net-snmp/utilities.h>
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-static void
-optProc(int argc, char *const *argv, int opt)
-{
-    switch (opt) {
-    case 'C':
-        while (*optarg) {
+
+#include "exceptionsbase.h"
+#include "helpers.h"
+#include "snmpget.h"
+
+void snmpget_optProc(int argc, char *const *argv, int opt) {
+     switch (opt) {
+     case 'C':
+         while (*optarg) {
             switch (*optarg++) {
             case 'f':
                 netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID, 
