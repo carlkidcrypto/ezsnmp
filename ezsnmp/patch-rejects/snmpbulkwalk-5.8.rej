@@ -1,5 +1,5 @@
---- apps/snmpbulkwalk.c	2025-08-14 22:07:00.749559200 -0700
-+++ snmpbulkwalk.cpp	2025-08-14 21:04:27.424090400 -0700
+--- apps/snmpbulkwalk.c
++++ apps/snmpbulkwalk.cpp
 @@ -27,31 +28,31 @@
  **********************************************************************/
  #include <net-snmp/net-snmp-config.h>

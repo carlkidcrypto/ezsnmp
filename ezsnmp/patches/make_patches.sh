@@ -50,7 +50,12 @@ for tool in "${tools[@]}"; do
     if [[ -f "$source_file" && -f "$target_file" ]]; then
         echo "  -> Creating ${patch_file}"
         mkdir -p "net-snmp-${VERSION}-patches"
-        diff -aurw "${source_file}" "${target_file}" > "net-snmp-${VERSION}-patches/${patch_file}"
+        # Use --label to create headers compatible with the apply_patches.sh script (-p2)
+        diff -aurw \
+            --label "a/net-snmp-${VERSION}/apps/${tool}.c" \
+            --label "b/net-snmp-${VERSION}/apps/${tool}.cpp" \
+            "${source_file}" \
+            "${target_file}" > "net-snmp-${VERSION}-patches/${patch_file}"
     else
         echo "  -- Skipping ${tool}: One or both files not found." >&2
     fi

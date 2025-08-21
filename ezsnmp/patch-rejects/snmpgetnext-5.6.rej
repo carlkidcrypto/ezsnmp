@@ -1,5 +1,5 @@
---- apps/snmpgetnext.c	2025-08-14 22:06:55.720611800 -0700
-+++ snmpgetnext.cpp	2025-08-14 21:04:27.439251000 -0700
+--- apps/snmpgetnext.c
++++ apps/snmpgetnext.cpp
 @@ -25,31 +25,31 @@
  ******************************************************************/
  #include <net-snmp/net-snmp-config.h>
