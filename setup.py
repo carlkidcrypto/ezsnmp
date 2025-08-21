@@ -50,16 +50,6 @@ def is_net_snmp_installed_macports():
         return ""
 
 
-def enable_legacy_support(version):
-    """
-    Helper to check if the detected Net-SNMP version is supported (5.6, 5.7, 5.8)
-
-    Returns:
-      bool: True if version matches 5.6, 5.7, or 5.8 (optionally with dot or suffix).
-    """
-    return bool(search(r"^5\.(6|7|8)(\.|$|\..*)", version or ""))
-
-
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
 in_tree = False
@@ -228,6 +218,19 @@ else:
                 netsnmp_incdir = dir.replace("lib", "include")
                 incdirs = incdirs + [netsnmp_incdir]
 
+# Determine which source files to use based on the Net-SNMP version
+version_str = system_netsnmp_version.strip()
+snmp_source_path = "ezsnmp/src"  # Default path for non-patched versions
+
+if version_str.startswith("5.6"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.6-final-patched"
+elif version_str.startswith("5.7"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.7-final-patched"
+elif version_str.startswith("5.8"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.8-final-patched"
+elif version_str.startswith("5.9"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.9-final-patched"
+
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
 print(f"link_args: {link_args}")
@@ -242,11 +245,35 @@ print(f"macports_openssl_version: {macports_openssl_version}")
 print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")
+print(f"Using SNMP sources from: {snmp_source_path}")
 
-ENABLE_LEGACY_SUPPORT = enable_legacy_support(system_netsnmp_version)
 
-# Define a macro for the C++ extensions to indicate if the package version is supported
-define_macros = [("ENABLE_LEGACY_SUPPORT", int(ENABLE_LEGACY_SUPPORT))]
+# Define the source files for the extensions that depend on the Net-SNMP version
+netsnmp_versioned_sources = [
+    f"{snmp_source_path}/snmpbulkget.cpp",
+    f"{snmp_source_path}/snmpgetnext.cpp",
+    f"{snmp_source_path}/snmpbulkwalk.cpp",
+    f"{snmp_source_path}/snmpget.cpp",
+    f"{snmp_source_path}/snmpwalk.cpp",
+    f"{snmp_source_path}/snmpset.cpp",
+    f"{snmp_source_path}/snmptrap.cpp",
+]
+
+netsnmpbase_sources = [
+    "ezsnmp/src/ezsnmp_netsnmpbase.cpp",
+    "ezsnmp/src/exceptionsbase.cpp",
+    "ezsnmp/src/datatypes.cpp",
+    "ezsnmp/src/helpers.cpp",
+] + netsnmp_versioned_sources
+
+sessionbase_sources = [
+    "ezsnmp/src/ezsnmp_sessionbase.cpp",
+    "ezsnmp/src/exceptionsbase.cpp",
+    "ezsnmp/src/datatypes.cpp",
+    "ezsnmp/src/sessionbase.cpp",
+    "ezsnmp/src/helpers.cpp",
+] + netsnmp_versioned_sources
+
 
 setup(
     ext_modules=[
@@ -261,7 +288,7 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
+            
         ),
         Extension(
             name="ezsnmp/_exceptionsbase",
@@ -274,52 +301,27 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
+            
         ),
         Extension(
             name="ezsnmp/_netsnmpbase",
-            sources=[
-                "ezsnmp/src/ezsnmp_netsnmpbase.cpp",
-                "ezsnmp/src/exceptionsbase.cpp",
-                "ezsnmp/src/datatypes.cpp",
-                "ezsnmp/src/helpers.cpp",
-                "ezsnmp/src/snmpbulkget.cpp",
-                "ezsnmp/src/snmpgetnext.cpp",
-                "ezsnmp/src/snmpbulkwalk.cpp",
-                "ezsnmp/src/snmpget.cpp",
-                "ezsnmp/src/snmpwalk.cpp",
-                "ezsnmp/src/snmpset.cpp",
-                "ezsnmp/src/snmptrap.cpp",
-            ],
+            sources=netsnmpbase_sources,
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
+            
         ),
         Extension(
             name="ezsnmp/_sessionbase",
-            sources=[
-                "ezsnmp/src/ezsnmp_sessionbase.cpp",
-                "ezsnmp/src/exceptionsbase.cpp",
-                "ezsnmp/src/datatypes.cpp",
-                "ezsnmp/src/sessionbase.cpp",
-                "ezsnmp/src/helpers.cpp",
-                "ezsnmp/src/snmpbulkget.cpp",
-                "ezsnmp/src/snmpbulkwalk.cpp",
-                "ezsnmp/src/snmpget.cpp",
-                "ezsnmp/src/snmpgetnext.cpp",
-                "ezsnmp/src/snmpwalk.cpp",
-                "ezsnmp/src/snmpset.cpp",
-                "ezsnmp/src/snmptrap.cpp",
-            ],
+            sources=sessionbase_sources,
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
+            
         ),
     ],
 )
