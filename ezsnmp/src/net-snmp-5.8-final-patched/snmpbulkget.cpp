@@ -66,7 +66,7 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
-oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
+oid objid_mib[] = { 1, 3, 6, 1, 2, 1 };
 int             max_repetitions = 10;
 int             non_repeaters = 0;
 struct nameStruct {

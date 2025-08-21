@@ -66,7 +66,7 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
-oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
+oid objid_mib[] = { 1, 3, 6, 1, 2, 1 };
 int             max_repetitions = 10;
 int             non_repeaters = 0;
 struct nameStruct {
@@ -147,14 +147,16 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
     /*
      * get the common command line arguments 
      */
-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
+    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
     case NETSNMP_PARSE_ARGS_ERROR:
-        exit(1);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+
     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-        exit(0);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-        usage();
-        exit(1);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
     default:
         break;
     }
@@ -162,17 +164,16 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
     names = argc - arg;
     if (names < non_repeaters) {
         fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
-        exit(1);
+        return parse_results(return_vector);
     }
 
     namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
     while (arg < argc) {
         namep->name_len = MAX_OID_LEN;
-        if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) ==
-            NULL) {
-            snmp_perror(argv[arg]);
-            exit(1);
-        }
+        if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
+          snmp_perror_exception(argv[arg]);
+          return parse_results(return_vector);
+         }
         arg++;
         namep++;
     }
@@ -187,9 +188,10 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-        snmp_sess_perror("snmpbulkget", &session);
+
         SOCK_CLEANUP;
-        exit(1);
+        snmp_sess_perror_exception("snmpbulkget", &session);
+        return parse_results(return_vector);
     }
 
     /*

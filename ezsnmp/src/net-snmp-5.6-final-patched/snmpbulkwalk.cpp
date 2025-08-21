@@ -207,14 +207,16 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
     /*
      * get the common command line arguments 
      */
-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
+    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
     case NETSNMP_PARSE_ARGS_ERROR:
-        exit(1);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+
     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-        exit(0);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-        usage();
-        exit(1);
+        throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
     default:
         break;
     }
@@ -228,15 +230,15 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
          */
         rootlen = MAX_OID_LEN;
         if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-            snmp_perror(argv[arg]);
-            exit(1);
+          snmp_perror_exception(argv[arg]);
+          return parse_results(return_vector);
         }
     } else {
         /*
          * use default value 
          */
-        memmove(root, objid_mib, sizeof(objid_mib));
-        rootlen = sizeof(objid_mib) / sizeof(oid);
+        memmove(root, snmpbulkwalk_objid_mib, sizeof(snmpbulkwalk_objid_mib));
+        rootlen = sizeof(snmpbulkwalk_objid_mib) / sizeof(oid);
     }
 
     SOCK_STARTUP;
@@ -249,9 +251,10 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
         /*
          * diagnose snmp_open errors with the input netsnmp_session pointer 
          */
-        snmp_sess_perror("snmpbulkwalk", &session);
+
         SOCK_CLEANUP;
-        exit(1);
+        snmp_sess_perror_exception("snmpbulkwalk", &session);
+        return parse_results(return_vector);
     }
 
     /*
