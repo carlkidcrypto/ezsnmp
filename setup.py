@@ -288,7 +288,6 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            
         ),
         Extension(
             name="ezsnmp/_exceptionsbase",
@@ -301,7 +300,6 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            
         ),
         Extension(
             name="ezsnmp/_netsnmpbase",
@@ -311,7 +309,6 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            
         ),
         Extension(
             name="ezsnmp/_sessionbase",
@@ -321,7 +318,6 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            
         ),
     ],
 )
