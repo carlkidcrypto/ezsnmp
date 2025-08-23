@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-export COMPOSE_BAKE=true
-
 CONTAINER_NAME="snmp_container"
 sudo chown carlkidcrypto /var/run/docker.sock
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then

@@ -18,7 +18,6 @@ RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
 # Install debug symbols for relevant packages
 RUN dnf debuginfo-install -y python3 net-snmp-libs
 
-# --- AUTOMATED FIX FOR NET-SNMP ---
 # Manually create the pkg-config file for net-snmp by dynamically
 # getting the correct flags and version from the system. This ensures
 # that Meson can find the dependency even if PKG_CONFIG_PATH is not set.
