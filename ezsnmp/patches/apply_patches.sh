@@ -29,12 +29,8 @@ REJECTS_DIR="../patch-rejects"
 # Convert paths to absolute paths before changing directories.
 FINAL_DEST_DIR=$(realpath "${FINAL_DEST_DIR}")
 REJECTS_DIR=$(realpath "${REJECTS_DIR}")
+PATCH_DIR="../net-snmp-${VERSION}-patches"
 
-if [[ "$VERSION" == "5.9" ]]; then
-    PATCH_DIR="../net-snmp-${VERSION}-patches" # Adjusted for cd
-else
-    PATCH_DIR="../net-snmp-${VERSION}-final-patches" # Adjusted for cd
-fi
 
 # 2. Check that the required directories exist
 if [[ ! -d "$SOURCE_DIR" ]]; then

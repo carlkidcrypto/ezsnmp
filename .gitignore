@@ -39,3 +39,4 @@ wheelhouse/**
 /cpp_tests/coverage_html
 cpp_tests/coverage.info
 **/master.zip/**
+**/patches/net-snmp-5.*/**
