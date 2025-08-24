@@ -11,9 +11,11 @@ RUN dnf install -y epel-release
 # Enable the 'powertools' repository (all lowercase)
 RUN dnf config-manager --set-enabled powertools
 
-# Install dependencies from the requirements file
+# Install dependencies from the requirements file AND the newer GCC toolset
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
-RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
+RUN dnf install -y gcc-toolset-12 && \
+    xargs dnf install -y < /tmp/dnf-requirements.txt && \
+    dnf clean all
 
 # Install debug symbols for relevant packages
 RUN dnf debuginfo-install -y python3 net-snmp-libs
