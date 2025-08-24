@@ -1,13 +1,15 @@
-@-1, 463 + 0,
-    0 @ @
 #include "sessionbase.h"
 
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstring>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -18,59 +20,58 @@
 #include "snmpset.h"
 #include "snmpwalk.h"
 
-    // Take all the SessionBase class inputs and map them to:
-    // OPTIONS:
-    //   -v 1|2c|3             specifies SNMP version to use
-    // SNMP Version 1 or 2c specific
-    //   -c COMMUNITY          set the community string
-    // SNMP Version 3 specific
-    //   -a PROTOCOL           set authentication protocol
-    //   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512)
-    //   -A PASSPHRASE         set authentication protocol pass phrase
-    //   -e ENGINE-ID          set security engine ID (e.g. 800000020109840301)
-    //   -E ENGINE-ID          set context engine ID (e.g. 800000020109840301)
-    //   -l LEVEL              set security level (noAuthNoPriv|authNoPriv|authPriv)
-    //   -n CONTEXT            set context name (e.g. bridge1)
-    //   -u USER-NAME          set security name (e.g. bert)
-    //   -x PROTOCOL           set privacy protocol (DES|AES)
-    //   -X PASSPHRASE         set privacy protocol pass phrase
-    //   -Z BOOTS,TIME         set destination engine boots/time
-    // General communication options
-    //   -r RETRIES            set the number of retries
-    //   -t TIMEOUT            set the request timeout (in seconds)
-    //
-    // General options
-    //   -m MIB[:...]          load given list of MIBs (ALL loads everything)
-    //   -M DIR[:...]          look in given list of directories for MIBs
-    //     (default:
-    //     $HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf)
-    //   -O OUTOPTS            Toggle various defaults controlling output display:
-    //                           e:  print enums numerically
-    //                           f:  print full OIDs on output
-    //                           n:  print OIDs numerically
-    //                           t:  print timeticks unparsed as numeric integers
-    static std::map<std::string, std::string>
-        CML_PARAM_LOOKUP = {
-            {"version", "-v"},
-            {"community", "-c"},
-            {"auth_protocol", "-a"},
-            {"auth_passphrase", "-A"},
-            {"security_engine_id", "-e"},
-            {"context_engine_id", "-E"},
-            {"security_level", "-l"},
-            {"context", "-n"},
-            {"security_username", "-u"},
-            {"privacy_protocol", "-x"},
-            {"privacy_passphrase", "-X"},
-            {"boots_time", "-Z"},
-            {"retries", "-r"},
-            {"timeout", "-t"},
-            {"load_mibs", "-m"},
-            {"mib_directories", "-M"},
-            {"print_enums_numerically", "-O e"},
-            {"print_full_oids", "-O f"},
-            {"print_oids_numerically", "-O n"},
-            {"print_timeticks_numerically", "-O t"},
+// Take all the SessionBase class inputs and map them to:
+// OPTIONS:
+//   -v 1|2c|3             specifies SNMP version to use
+// SNMP Version 1 or 2c specific
+//   -c COMMUNITY          set the community string
+// SNMP Version 3 specific
+//   -a PROTOCOL           set authentication protocol
+//   (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512)
+//   -A PASSPHRASE         set authentication protocol pass phrase
+//   -e ENGINE-ID          set security engine ID (e.g. 800000020109840301)
+//   -E ENGINE-ID          set context engine ID (e.g. 800000020109840301)
+//   -l LEVEL              set security level (noAuthNoPriv|authNoPriv|authPriv)
+//   -n CONTEXT            set context name (e.g. bridge1)
+//   -u USER-NAME          set security name (e.g. bert)
+//   -x PROTOCOL           set privacy protocol (DES|AES)
+//   -X PASSPHRASE         set privacy protocol pass phrase
+//   -Z BOOTS,TIME         set destination engine boots/time
+// General communication options
+//   -r RETRIES            set the number of retries
+//   -t TIMEOUT            set the request timeout (in seconds)
+//
+// General options
+//   -m MIB[:...]          load given list of MIBs (ALL loads everything)
+//   -M DIR[:...]          look in given list of directories for MIBs
+//     (default:
+//     $HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf)
+//   -O OUTOPTS            Toggle various defaults controlling output display:
+//                           e:  print enums numerically
+//                           f:  print full OIDs on output
+//                           n:  print OIDs numerically
+//                           t:  print timeticks unparsed as numeric integers
+static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
+    {"version", "-v"},
+    {"community", "-c"},
+    {"auth_protocol", "-a"},
+    {"auth_passphrase", "-A"},
+    {"security_engine_id", "-e"},
+    {"context_engine_id", "-E"},
+    {"security_level", "-l"},
+    {"context", "-n"},
+    {"security_username", "-u"},
+    {"privacy_protocol", "-x"},
+    {"privacy_passphrase", "-X"},
+    {"boots_time", "-Z"},
+    {"retries", "-r"},
+    {"timeout", "-t"},
+    {"load_mibs", "-m"},
+    {"mib_directories", "-M"},
+    {"print_enums_numerically", "-O e"},
+    {"print_full_oids", "-O f"},
+    {"print_oids_numerically", "-O n"},
+    {"print_timeticks_numerically", "-O t"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
