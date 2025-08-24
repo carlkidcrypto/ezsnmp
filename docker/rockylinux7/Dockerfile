@@ -1,28 +1,26 @@
-# Use Rocky Linux 8 as the base image
-FROM rockylinux:8
+# Use Rocky Linux 7 as the base image
+FROM rockylinux:7
 
 # Update system and install essential tools
-RUN dnf update -y && \
-    dnf install -y findutils dnf-plugins-core
+RUN yum update -y && \
+    yum install -y yum-utils findutils
 
-# Install the EPEL repository package
-RUN dnf install -y epel-release
+# Install the EPEL repository package [cite: 1]
+RUN yum install -y epel-release
 
-# Enable the 'powertools' repository (all lowercase)
-RUN dnf config-manager --set-enabled powertools
+# Install the IUS repository to get access to Python 3.9
+RUN yum install -y https://repo.ius.io/ius-release-el7.rpm
 
-# Install dependencies from the requirements file AND the newer GCC toolset
-COPY dnf-requirements.txt /tmp/dnf-requirements.txt
-RUN dnf install -y gcc-toolset-10 && \
-    xargs dnf install -y < /tmp/dnf-requirements.txt && \
-    dnf clean all
+# Install dependencies from the requirements file [cite: 1]
+COPY yum-requirements.txt /tmp/yum-requirements.txt
+RUN yum install -y $(cat /tmp/yum-requirements.txt) && yum clean all
 
-# Install debug symbols for relevant packages
-RUN dnf debuginfo-install -y python3 net-snmp-libs
+# Install debug symbols for relevant packages [cite: 1]
+RUN yum-config-manager --enable base-debuginfo ius && \
+    debuginfo-install -y python39 net-snmp-libs
 
 # Manually create the pkg-config file for net-snmp by dynamically
-# getting the correct flags and version from the system. This ensures
-# that Meson can find the dependency even if PKG_CONFIG_PATH is not set.
+# getting the correct flags and version from the system. [cite: 2, 3, 4]
 RUN LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
@@ -38,12 +36,11 @@ RUN LIBS=$(net-snmp-config --libs) && \
     echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
     echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/netsnmp.pc
 
-# Define the path for the virtual environment
+# Define the path for the virtual environment [cite: 5]
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment
+# Create the virtual environment using python3.9 [cite: 5]
 RUN python3.9 -m venv $VENV_PATH
 
-# Activate the virtual environment by adding its bin directory to the PATH.
-# All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.
+# Activate the virtual environment by adding its bin directory to the PATH. [cite: 5]
 ENV PATH="$VENV_PATH/bin:$PATH"

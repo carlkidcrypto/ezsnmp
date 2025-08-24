@@ -1,0 +1,9 @@
+services:
+  rocky_linux7_snmp_container:
+    build:
+      context: .
+    container_name: rocky_linux7_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/ezsnmp/docker/rockylinux7/DockerEntry.sh"]
