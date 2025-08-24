@@ -5,12 +5,8 @@ from sys import argv, platform
 from shlex import split as s_split
 from setuptools import setup, Extension
 from re import search
-
-# Import build_ext to subclass it
 from setuptools.command.build_ext import build_ext
 
-# Import os to get the number of CPU cores
-import os
 
 
 # Install Helpers
@@ -104,17 +100,7 @@ class SwigBuildExt(build_ext):
                 print("Please ensure that SWIG is installed and in your system's PATH.")
                 exit(1)
 
-        # Get the number of available CPU cores and set the parallel build option.
-        # This will significantly speed up the C++ compilation step.
-        try:
-            self.parallel = os.cpu_count() - 1
-            print(f"--- Enabled parallel compilation with {self.parallel} jobs ---")
-        except NotImplementedError:
-            print(
-                "--- Could not determine CPU count, parallel compilation disabled ---"
-            )
-            self.parallel = 1
-
+        print("--- SWIG processing complete ---")
         # After SWIG has run, proceed with the original build process
         super().run()
 
