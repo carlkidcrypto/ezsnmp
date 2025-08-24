@@ -1,5 +1,5 @@
-# Use Rocky Linux 7 as the base image
-FROM rockylinux:7
+# Use CentOS 7 as the base image
+FROM centos:7
 
 # Update system and install essential tools
 RUN yum update -y && \

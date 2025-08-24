@@ -7,7 +7,7 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
 fi
 docker rm -f $CONTAINER_NAME
 
-# Check for optional parameter to clean old Docker stuff [cite: 10]
+# Check for optional parameter to clean old Docker stuff
 if [[ "$1" == "--clean" ]]; then
     echo "Cleaning old Docker stuff..."
     docker system prune -af
