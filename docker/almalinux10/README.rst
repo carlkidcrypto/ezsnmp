@@ -38,7 +38,7 @@ To run the container interactively, you can use the following command:
 
 .. code-block:: bash
 
-    docker run -it --rm alma_linux10_snmp_container /bin/bash
+    docker run -it --rm almalinux10_snmp_container /bin/bash
 
 Extending the Image
 -------------------

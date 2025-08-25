@@ -1,8 +1,8 @@
 services:
-  alma_linux10_snmp_container:
+  almalinux10_snmp_container:
     build:
       context: .
-    container_name: alma_linux10_snmp_container
+    container_name: almalinux10_snmp_container
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp

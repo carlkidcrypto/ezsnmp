@@ -36,7 +36,7 @@ To run the container interactively, you can use the following command:
 
 .. code-block:: bash
 
-    docker run -it --rm rocky_linux8_snmp_container /bin/bash
+    docker run -it --rm rockylinux8_snmp_container /bin/bash
 
 Extending the Image
 -------------------

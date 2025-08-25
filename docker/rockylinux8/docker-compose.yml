@@ -1,8 +1,8 @@
 services:
-  rocky_linux8_snmp_container:
+  rockylinux8_snmp_container:
     build:
       context: .
-    container_name: rocky_linux8_snmp_container
+    container_name: rockylinux8_snmp_container
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp
