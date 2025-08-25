@@ -2,6 +2,8 @@
 manylinux-x86_64-image = "manylinux_2_28"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
 skip = "cp27-* cp36-* cp37-* cp38-* pp*"
+# Add this environment setting to make the build process verbose
+environment = { CIBW_BUILD_VERBOSITY = "1" }
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_2*"
