@@ -1,21 +1,25 @@
 # Use CentOS 7 as the base image
 FROM centos:7
 
+# Fix for CentOS 7 EOL: Point repositories to the vault archive
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
 # Update system and install essential tools
 RUN yum update -y && \
     yum install -y yum-utils findutils
 
-# Install the EPEL repository package [cite: 1]
+# Install the EPEL repository package 
 RUN yum install -y epel-release
 
 # Install the IUS repository to get access to Python 3.9
 RUN yum install -y https://repo.ius.io/ius-release-el7.rpm
 
-# Install dependencies from the requirements file [cite: 1]
+# Install dependencies from the requirements file 
 COPY yum-requirements.txt /tmp/yum-requirements.txt
 RUN yum install -y $(cat /tmp/yum-requirements.txt) && yum clean all
 
-# Install debug symbols for relevant packages [cite: 1]
+# Install debug symbols for relevant packages 
 RUN yum-config-manager --enable base-debuginfo ius && \
     debuginfo-install -y python39 net-snmp-libs
 

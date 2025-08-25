@@ -32,7 +32,7 @@ The ./go_docker.sh script will also run the container after building the image[c
 
 .. code-block:: bash
 
-    docker run -it --rm rocky_linux7_snmp_container /bin/bash
+    docker run -it --rm cent_os7_snmp_container /bin/bash
 
 Extending the Image
 -------------------
