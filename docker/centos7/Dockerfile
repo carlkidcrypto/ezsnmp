@@ -5,19 +5,8 @@ FROM centos:7
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-# Update system and install essential tools
-RUN yum update -y && \
-    yum install -y yum-utils findutils
-
 # Install the EPEL repository package
 RUN yum install -y epel-release
-
-# Update system and install essential tools
-RUN yum update -y && \
-    yum install -y yum-utils findutils
-
-# Install the EPEL repository package
-RUN yum install -y epel-release devtoolset-8
 
 # Update system and install essential tools and build dependencies for Python
 RUN yum update -y && \

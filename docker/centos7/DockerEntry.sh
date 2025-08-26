@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# Activate the newer GCC 8 compiler toolset using its full path
-echo "Enabling GCC 8 toolset..."
-source /opt/rh/devtoolset-8/enable
+# # Explicitly set the C and C++ compilers for the build process
+# export CC=/opt/rh/gcc-toolset-8/root/usr/bin/gcc
+# export CXX=/opt/rh/gcc-toolset-8/root/usr/bin/g++
 
 # Now the pip install commands will use g++ version 8
 echo "Installing Python dependencies..."
