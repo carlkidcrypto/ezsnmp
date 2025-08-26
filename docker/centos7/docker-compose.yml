@@ -1,8 +1,8 @@
 services:
-  cent_os7_snmp_container:
+  centos7_snmp_container:
     build:
       context: .
-    container_name: cent_os7_snmp_container
+    container_name: centos7_snmp_container
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp

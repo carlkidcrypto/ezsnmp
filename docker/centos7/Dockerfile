@@ -12,16 +12,32 @@ RUN yum update -y && \
 # Install the EPEL repository package
 RUN yum install -y epel-release
 
-# Install the Remi repository to get access to Python 3.9
-RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+# Update system and install essential tools
+RUN yum update -y && \
+    yum install -y yum-utils findutils
 
-# Install dependencies from the requirements file
-COPY yum-requirements.txt /tmp/yum-requirements.txt
-RUN yum install -y $(cat /tmp/yum-requirements.txt) && yum clean all
+# Install the EPEL repository package
+RUN yum install -y epel-release devtoolset-8
+
+# Update system and install essential tools and build dependencies for Python
+RUN yum update -y && \
+    yum install -y yum-utils findutils gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
+    unzip file  openssl net-snmp net-snmp-utils net-snmp-devel gcc-c++ gdb meson ninja-build gtest-devel \
+    && yum clean all
+
+# --- Build Python 3.9 from source ---
+ENV PYTHON_VERSION=3.9.18
+RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-optimizations && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
 # Install debug symbols for relevant packages
 RUN yum-config-manager --enable base-debuginfo && \
-    debuginfo-install -y python39 net-snmp-libs
+    debuginfo-install -y net-snmp-libs
 
 # Manually create the pkg-config file for net-snmp by dynamically
 # getting the correct flags and version from the system.
@@ -43,7 +59,7 @@ RUN LIBS=$(net-snmp-config --libs) && \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using python3.9
+# Create the virtual environment using the newly compiled python3.9
 RUN python3.9 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.

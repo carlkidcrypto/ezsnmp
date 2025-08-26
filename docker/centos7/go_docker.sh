@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-CONTAINER_NAME="cent_os7_snmp_container"
+CONTAINER_NAME="centos7_snmp_container"
 sudo chown carlkidcrypto /var/run/docker.sock
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     docker stop $CONTAINER_NAME
@@ -14,12 +14,12 @@ if [[ "$1" == "--clean" ]]; then
 fi
 
 docker-compose build
-docker-compose up -d
+docker-compose up -d --remove-orphans
 
 # Wait for the container to start by checking its logs
 WAIT_TIME=120
 for i in $(seq $WAIT_TIME -1 1); do
-    if docker logs cent_os7_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
+    if docker logs centos7_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
         echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"
         break
     fi
@@ -29,7 +29,7 @@ done
 echo -ne "\n"
 
 # Show the last logs after waiting or early stop
-docker logs cent_os7_snmp_container --details --tail 5
+docker logs centos7_snmp_container --details --tail 5
 
 # Join the container
-docker exec -it cent_os7_snmp_container /bin/bash
+docker exec -it centos7_snmp_container /bin/bash
