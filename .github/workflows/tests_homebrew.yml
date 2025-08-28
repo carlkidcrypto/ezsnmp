@@ -117,9 +117,9 @@ jobs:
                    '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
                  );
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
           
-          macos: pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+          macos: pytest python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4

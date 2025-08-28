@@ -8,7 +8,6 @@ from re import search
 from setuptools.command.build_ext import build_ext
 
 
-
 # Install Helpers
 def is_macports_installed():
     """
