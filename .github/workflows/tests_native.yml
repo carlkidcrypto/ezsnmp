@@ -23,10 +23,9 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
-            ezsnmp/*.py
-            ezsnmp/*.cpp
-            ezsnmp/*.h
-            python_tests/*.py
+            **/*.py
+            **/*.cpp
+            **/*.h
             python_tests/*.conf
             setup.py
             setup.cfg

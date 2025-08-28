@@ -23,11 +23,13 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            **/*.py
+            **/*.cpp
+            **/*.h
             cpp_tests/**
-            **/meson.build
-            **/meson_options.txt
+            python_tests/*.conf
+            setup.py
+            setup.cfg
 
   build-and-test:
     name: Build and Run C++ Tests on ${{ matrix.os }}
