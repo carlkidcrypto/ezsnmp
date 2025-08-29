@@ -459,7 +459,7 @@
 +close_session:
      snmp_close(ss);
 -    snmp_shutdown("snmpapp");
-+   snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
++
 +
 +out:
 +                                               

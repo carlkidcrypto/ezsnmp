@@ -16,13 +16,13 @@ netsnmp_dep = dependency('netsnmp', required: true)
 netsnmp_version = netsnmp_dep.version()
 snmp_source_dir = '' 
 
-if netsnmp_version.endswith('5.9')
+if netsnmp_version.startswith('5.9')
   snmp_source_dir = '../ezsnmp/src/net-snmp-5.9-final-patched'
-elif netsnmp_version.endswith('5.8')
+elif netsnmp_version.startswith('5.8')
   snmp_source_dir = '../ezsnmp/src/net-snmp-5.8-final-patched'
-elif netsnmp_version.endswith('5.7')
+elif netsnmp_version.startswith('5.7')
   snmp_source_dir = '../ezsnmp/src/net-snmp-5.7-final-patched'
-elif netsnmp_version.endswith('5.6')
+elif netsnmp_version.startswith('5.6')
   snmp_source_dir = '../ezsnmp/src/net-snmp-5.6-final-patched'
 else
   # Fallback for any other version (e.g., newer or unhandled older versions)

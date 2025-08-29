@@ -372,7 +372,6 @@ int snmptrap(std::vector<std::string> const &args) {
 
 close_session:
    snmp_close(ss);
-   snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
 
 out:
 
