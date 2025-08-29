@@ -297,13 +297,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
        * do the request
        */
       if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
-         gettimeofday(&tva, NULL);
+         gettimeofday(&tv_a, NULL);
       }
       status = snmp_synch_response(ss, pdu, &response);
       if (status == STAT_SUCCESS) {
          if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
-            gettimeofday(&tvb, NULL);
+            gettimeofday(&tv_b, NULL);
          }
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
