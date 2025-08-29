@@ -85,7 +85,7 @@ jobs:
 
       - name: Build And Install EzSnmp
         run: |
-          pip install -e . --verbose
+          pip install . --verbose
       
       - name: Start SNMP daemon
         run: |

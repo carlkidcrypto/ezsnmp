@@ -82,7 +82,7 @@ jobs:
 
       - name: Build source
         run: |
-          pip install -e . --verbose
+          pip install . --verbose
       
       - name: Start SNMP daemon
         run: |
