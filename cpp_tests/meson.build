@@ -39,7 +39,7 @@ test_datatypes = executable(
     'test_datatypes',
     [
         'test_datatypes.cpp',
-        '../ezsnmp/src/datatypes.cpp',
+        join_paths(snmp_source_dir, 'datatypes.cpp'),
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
@@ -49,9 +49,9 @@ test_helpers = executable(
     'test_helpers',
     [
         'test_helpers.cpp',
-        '../ezsnmp/src/helpers.cpp',
-        '../ezsnmp/src/exceptionsbase.cpp',
-        '../ezsnmp/src/datatypes.cpp',
+        join_paths(snmp_source_dir, 'helpers.cpp'),
+        join_paths(snmp_source_dir, 'exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, 'datatypes.cpp'),
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
@@ -61,16 +61,16 @@ test_sessionbase = executable(
     'test_sessionbase',
     [
         'test_sessionbase.cpp',
-        '../ezsnmp/src/sessionbase.cpp',
-        '../ezsnmp/src/exceptionsbase.cpp',
-        '../ezsnmp/src/helpers.cpp',
-        '../ezsnmp/src/snmpbulkget.cpp',
-        '../ezsnmp/src/snmpbulkwalk.cpp',
-        '../ezsnmp/src/snmpget.cpp',
-        '../ezsnmp/src/snmpgetnext.cpp',
-        '../ezsnmp/src/snmpset.cpp',
-        '../ezsnmp/src/snmpwalk.cpp',
-        '../ezsnmp/src/datatypes.cpp',
+        join_paths(snmp_source_dir, 'sessionbase.cpp'),
+        join_paths(snmp_source_dir, 'exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, 'helpers.cpp'),
+        join_paths(snmp_source_dir, 'snmpbulkget.cpp'),
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, 'snmpget.cpp'),
+        join_paths(snmp_source_dir, 'snmpgetnext.cpp'),
+        join_paths(snmp_source_dir, 'snmpset.cpp'),
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, 'datatypes.cpp'),
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
@@ -80,10 +80,10 @@ test_snmpget = executable(
     'test_snmpget',
     [
         'test_snmpget.cpp',
-        '../ezsnmp/src/snmpget.cpp',
-        '../ezsnmp/src/helpers.cpp',
-        '../ezsnmp/src/datatypes.cpp',
-        '../ezsnmp/src/exceptionsbase.cpp',
+        join_paths(snmp_source_dir, 'snmpget.cpp'),
+        join_paths(snmp_source_dir, 'helpers.cpp'),
+        join_paths(snmp_source_dir, 'datatypes.cpp'),
+        join_paths(snmp_source_dir, 'exceptionsbase.cpp'),
     ],
     include_directories: include_dirs,
     dependencies: [gtest_dep, thread_dep, netsnmp_dep]
