@@ -12,16 +12,24 @@ thread_dep = dependency('threads')
 # Find the netsnmp dependency and make it required for the build to proceed.
 netsnmp_dep = dependency('netsnmp', required: true)
 
-# Conditionally define ENABLE_LEGACY_SUPPORT based on the net-snmp version.
-# This adds the preprocessor definition '-DENABLE_LEGACY_SUPPORT=1' to the
-# compiler arguments if the found version of net-snmp is less than 5.9.
-if netsnmp_dep.version().version_compare('< 5.9')
-  add_project_arguments('-DENABLE_LEGACY_SUPPORT=1', language: 'cpp')
-  message('Net-SNMP version is older than 5.9, enabling legacy support.')
+# Conditionally select source directory based on the net-snmp version.
+netsnmp_version = netsnmp_dep.version()
+snmp_source_dir = '' 
+
+if netsnmp_version.endswith('5.9')
+  snmp_source_dir = '../ezsnmp/src/net-snmp-5.9-final-patched'
+elif netsnmp_version.endswith('5.8')
+  snmp_source_dir = '../ezsnmp/src/net-snmp-5.8-final-patched'
+elif netsnmp_version.endswith('5.7')
+  snmp_source_dir = '../ezsnmp/src/net-snmp-5.7-final-patched'
+elif netsnmp_version.endswith('5.6')
+  snmp_source_dir = '../ezsnmp/src/net-snmp-5.6-final-patched'
 else
-  message('Net-SNMP version is 5.9 or newer, legacy support not needed.')
+  # Fallback for any other version (e.g., newer or unhandled older versions)
+  snmp_source_dir = '../ezsnmp/src'
 endif
 
+message('Using Net-SNMP sources from: @0@'.format(snmp_source_dir))
 
 # Include parent directory for ezsnmp headers
 include_dirs = include_directories('..', '../ezsnmp/include')
