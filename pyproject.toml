@@ -49,7 +49,7 @@ requires = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = "tests"
+pythonpath = "python_tests"
 addopts = [
     "--import-mode=importlib",
 ]
