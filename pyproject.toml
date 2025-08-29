@@ -5,7 +5,7 @@ skip = "cp27-* cp36-* cp37-* cp38-* pp*"
 environment = { CIBW_BUILD_VERBOSITY = "1" }
 test-requires = "pytest"
 before-test = "mkdir -p /etc/snmp && cp {project}/python_tests/snmpd.conf /etc/snmp/snmpd.conf && snmpd -f -C -c /etc/snmp/snmpd.conf & sleep 2"
-test-command = "{ mkdir -p test_logs && pytest {project}/python_tests > test_logs/test_results-{build_id}.log 2>&1; } || true"
+test-command = "{ mkdir -p {project}/test_logs && pytest {project}/python_tests > {project}/test_logs/test_results-{build_id}.log 2>&1; } || true"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_2*"
