@@ -262,6 +262,8 @@ elif version_str.startswith("5.8"):
     snmp_source_path = "ezsnmp/src/net-snmp-5.8-final-patched"
 elif version_str.startswith("5.9"):
     snmp_source_path = "ezsnmp/src/net-snmp-5.9-final-patched"
+else:
+    raise RuntimeError(f"Unsupported net-snmp version: {version_str}")
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
