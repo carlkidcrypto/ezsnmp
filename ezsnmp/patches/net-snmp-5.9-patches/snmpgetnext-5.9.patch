@@ -1,5 +1,5 @@
---- ./net-snmp-5.9/apps/snmpgetnext.c	2025-08-13 21:15:19.968541800 -0700
-+++ ../src/snmpgetnext.cpp	2025-07-09 07:11:48.427520000 -0700
+--- a/net-snmp-5.9/apps/snmpgetnext.c
++++ b/net-snmp-5.9/apps/snmpgetnext.cpp
 @@ -40,8 +40,8 @@
  #ifdef HAVE_NETINET_IN_H
  #include <netinet/in.h>

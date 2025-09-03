@@ -1,5 +1,5 @@
---- ./net-snmp-5.9/apps/snmpset.c	2025-08-13 21:17:41.276918300 -0700
-+++ ../src/snmpset.cpp	2025-07-09 07:11:48.429367000 -0700
+--- a/net-snmp-5.9/apps/snmpset.c
++++ b/net-snmp-5.9/apps/snmpset.cpp
 @@ -1,3 +1,4 @@
 +/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
