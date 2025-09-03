@@ -23,11 +23,13 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            **/*.py
+            **/*.cpp
+            **/*.h
             cpp_tests/**
-            **/meson.build
-            **/meson_options.txt
+            python_tests/*.conf
+            setup.py
+            setup.cfg
 
   build-and-test:
     name: Build and Run C++ Tests on ${{ matrix.os }}
@@ -49,7 +51,15 @@ jobs:
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          macos: brew install meson ninja net-snmp googletest openssl;
+          macos: 
+                 brew update;
+                 brew install net-snmp;
+                 brew install openssl@3;
+                 brew install meson ninja googletest;
+                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/bin:$PATH";
+                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
+                 export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 

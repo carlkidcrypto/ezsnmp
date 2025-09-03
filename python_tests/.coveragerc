@@ -1,5 +1,5 @@
 [run]
-omit = */tests/*
+omit = */python_tests/*
 
 [report]
-omit = */tests/*
+omit = */python_tests/*

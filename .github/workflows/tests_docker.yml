@@ -22,10 +22,9 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
-            ezsnmp/*.py
-            ezsnmp/*.cpp
-            ezsnmp/*.h
-            python_tests/*.py
+            **/*.py
+            **/*.cpp
+            **/*.h
             python_tests/*.conf
             setup.py
             setup.cfg
@@ -64,7 +63,7 @@ jobs:
         run: |
           WAIT_TIME=120
           for i in $(seq $WAIT_TIME -1 1); do
-              if docker logs snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
+              if docker logs ${{ matrix.distribution }}_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
                   echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"
                   break
               fi
@@ -75,12 +74,12 @@ jobs:
 
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
-         docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T snmp_container bash -c "pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
+         docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c "pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
 
       - name: Copy test results from Docker container (${{ matrix.distribution }})
         run: |
-         docker cp snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml . || touch test-results_${{ matrix.distribution }}.xml
-         docker cp snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt . || touch test-outputs_${{ matrix.distribution }}.txt
+         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml . || touch test-results_${{ matrix.distribution }}.xml
+         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt . || touch test-outputs_${{ matrix.distribution }}.txt
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
