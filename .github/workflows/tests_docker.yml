@@ -104,7 +104,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@v1.1.56
+        uses: MishaKav/pytest-coverage-comment@v1.1.57
         with:
           title: Pytest Coverage Report - Dockerized Tests
           unique-id-for-comment: dockerized-tests

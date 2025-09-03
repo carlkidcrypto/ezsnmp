@@ -109,7 +109,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.56
+        uses: MishaKav/pytest-coverage-comment@v1.1.57
         with:
           title: Pytest Coverage Report - Native
           unique-id-for-comment: native-tests
