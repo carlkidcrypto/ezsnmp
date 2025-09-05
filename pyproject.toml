@@ -3,12 +3,7 @@ manylinux-x86_64-image = "manylinux_2_28"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
 skip = "cp27-* cp36-* cp37-* cp38-* pp*"
 environment = { CIBW_BUILD_VERBOSITY = "1" }
-#test-requires = "pytest"
-#before-test = "mkdir -p /etc/snmp && cp {project}/#python_tests/snmpd.conf /etc/snmp/snmpd.conf && #snmpd -f -C -c /etc/snmp/snmpd.conf & sleep 2"
-#test-command = """
-#pytest {project}/python_tests > test_results.log #2>&1 || true
-#mv test_results.log "{output_dir}/#test_results-{build_id}.log"
-#"""
+test-skip = "*"
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_2*"
