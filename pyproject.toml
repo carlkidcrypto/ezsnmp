@@ -23,10 +23,10 @@ before-all = """
           mkdir -p $HOME/opt/mports;
           rm -rf $HOME/opt/mports/*;
           cd $HOME/opt/mports;
-          rm -f MacPorts-2.10.2.tar.gz;
-          curl -L https://github.com/macports/macports-base/releases/download/v2.10.2/MacPorts-2.10.2.tar.gz -o MacPorts-2.10.2.tar.gz;
-          tar -xzvf MacPorts-2.10.2.tar.gz;
-          cd $HOME/opt/mports/MacPorts-2.10.2;
+          rm -f MacPorts-2.11.5.tar.gz;
+          curl -L https://github.com/macports/macports-base/releases/download/v2.11.5/MacPorts-2.11.5.tar.gz -o MacPorts-2.11.5.tar.gz;
+          tar -xzvf MacPorts-2.11.5.tar.gz;
+          cd $HOME/opt/mports/MacPorts-2.11.5;
           ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`;
           make;
           make install;
