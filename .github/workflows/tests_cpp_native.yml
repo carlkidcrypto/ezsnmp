@@ -51,8 +51,7 @@ jobs:
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          macos: 
-                 brew update;
+          macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
                  brew install meson ninja googletest;
