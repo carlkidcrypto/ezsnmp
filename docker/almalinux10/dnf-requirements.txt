@@ -11,3 +11,8 @@ net-snmp
 net-snmp-utils
 net-snmp-devel
 g++
+gdb
+dnf-utils
+meson
+ninja-build
+gtest-devel
