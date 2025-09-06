@@ -75,7 +75,14 @@ jobs:
 
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
-         docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c "rm -drf build ezsnmp.egg-info && pytest -s python_tests/ --junitxml=test-results_${{ matrix.distribution }}.xml | tee ./test-outputs_${{ matrix.distribution }}.txt"
+          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c '
+            set -o pipefail
+            rm -drf build ezsnmp.egg-info
+            pytest -sv python_tests/ \
+              --cov=ezsnmp/ \
+              --cov-report=term-missing \
+              --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          '
 
       - name: Copy test results from Docker container (${{ matrix.distribution }})
         run: |
