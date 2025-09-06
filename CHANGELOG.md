@@ -1,7 +1,81 @@
-Last Updated: 2025-07-18 04:16:52 UTC
+Last Updated: 2025-09-05 14:23:42 UTC
 
 # Changelog
 
+
+<a name="v2.1.0a2"></a>
+## [v2.1.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a1...v2.1.0a2) (2025-09-04)
+
+
+### Changes
+
+#### 401
+
+- 401 feature   add convertvalue to datatypes ([#414](https://github.com/carlkidcrypto/ezsnmp/issues/414))
+
+
+#### 406
+
+- 406 malloc consolidate invalid chunk size in net snmp less than 59 ([#426](https://github.com/carlkidcrypto/ezsnmp/issues/426))
+
+
+#### AlmaLinux10
+
+- AlmaLinux10 Docker ([#435](https://github.com/carlkidcrypto/ezsnmp/issues/435))
+
+
+#### Bump
+
+- Bump coverage from 7.10.3 to 7.10.6 ([#427](https://github.com/carlkidcrypto/ezsnmp/issues/427))
+
+- Bump pytest-sugar from 1.0.0 to 1.1.1 ([#424](https://github.com/carlkidcrypto/ezsnmp/issues/424))
+
+- Bump pypa/gh-action-pypi-publish[@release](https://github.com/release)/v1.12 from 1.12 to 1.13 ([#431](https://github.com/carlkidcrypto/ezsnmp/issues/431))
+
+- Bump pytest from 8.4.1 to 8.4.2 ([#432](https://github.com/carlkidcrypto/ezsnmp/issues/432))
+
+- Bump MishaKav/pytest-coverage-comment from 1.1.56 to 1.1.57 ([#429](https://github.com/carlkidcrypto/ezsnmp/issues/429))
+
+- Bump actions/download-artifact from 4 to 5 ([#419](https://github.com/carlkidcrypto/ezsnmp/issues/419))
+
+- Bump coverage from 7.9.2 to 7.10.3 ([#417](https://github.com/carlkidcrypto/ezsnmp/issues/417))
+
+- Bump actions/checkout from 4 to 5 ([#418](https://github.com/carlkidcrypto/ezsnmp/issues/418))
+
+- Bump MishaKav/pytest-coverage-comment from 1.1.54 to 1.1.56 ([#416](https://github.com/carlkidcrypto/ezsnmp/issues/416))
+
+- Bump furo from 2024.8.6 to 2025.7.19 ([#407](https://github.com/carlkidcrypto/ezsnmp/issues/407))
+
+- Bump coverage from 7.9.1 to 7.9.2 ([#402](https://github.com/carlkidcrypto/ezsnmp/issues/402))
+
+- Bump pip from 25.1.1 to 25.2 ([#408](https://github.com/carlkidcrypto/ezsnmp/issues/408))
+
+- Bump build from 1.2.2 to 1.3.0 ([#410](https://github.com/carlkidcrypto/ezsnmp/issues/410))
+
+- Bump actions/download-artifact from 4 to 5 ([#413](https://github.com/carlkidcrypto/ezsnmp/issues/413))
+
+
+#### Update
+
+- Update pyproject.toml ([#434](https://github.com/carlkidcrypto/ezsnmp/issues/434))
+
+- Update meson.build ([#433](https://github.com/carlkidcrypto/ezsnmp/issues/433))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#405](https://github.com/carlkidcrypto/ezsnmp/issues/405) from carlkidcrypto/update-changelog-16362031442
+
+
+
+
+
+---
 
 <a name="v2.1.0a1"></a>
 ## [v2.1.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a0...v2.1.0a1) (2025-07-16)
