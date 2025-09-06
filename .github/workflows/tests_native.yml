@@ -91,7 +91,7 @@ jobs:
       - name: Run Tests
         run: |
           set -o pipefail
-          pytest -s python_tests/ \
+          pytest python_tests/ \
             --cov=ezsnmp/ \
             --cov-report=term-missing \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
