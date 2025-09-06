@@ -22,6 +22,7 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
+            .github/workflows/tests_docker.yml
             **/*.py
             **/*.cpp
             **/*.h
@@ -102,6 +103,12 @@ jobs:
         with:
           pattern: pytest-results_*
           merge-multiple: false
+      
+      - name: Extract Artifacts
+        run: |
+          for dir in pytest-results_*; do
+            unzip "$dir/*.zip" -d "$dir/"
+          done
 
       - name: Pytest coverage comment (Dockerized Tests)
         uses: MishaKav/pytest-coverage-comment@v1.1.57
