@@ -77,7 +77,6 @@ jobs:
         run: |
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c '
             set -o pipefail
-            rm -drf build ezsnmp.egg-info
             pytest -sv python_tests/ \
               --cov=ezsnmp/ \
               --cov-report=term-missing \

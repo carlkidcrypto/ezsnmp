@@ -70,7 +70,7 @@ jobs:
       - name: Build And Install EzSnmp
         run: |
           rm -drf build ezsnmp.egg-info &&
-          pip install . --verbose
+          python -m pip install . --user --verbose;
 
       - name: Start SNMP daemon
         run: |
@@ -91,7 +91,6 @@ jobs:
       - name: Run Tests
         run: |
           set -o pipefail
-          rm -drf build ezsnmp.egg-info
           pytest -s python_tests/ \
             --cov=ezsnmp/ \
             --cov-report=term-missing \
