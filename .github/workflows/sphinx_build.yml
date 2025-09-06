@@ -24,6 +24,7 @@ jobs:
           linux: |
             sudo apt install -y libsnmp-dev g++ python3-dev doxygen;
             cd /home/runner/work/ezsnmp/ezsnmp/ &&
+            rm -drf build ezsnmp.egg-info &&
             python -m pip install . --user;
 
       - name: Install Pip Requirements

@@ -5,7 +5,7 @@ name: Tests With Native Package Manager
 concurrency: tests-native
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 384-bug---macos-native-tests ]
   pull_request:
     branches: [ main ]
 
@@ -68,6 +68,7 @@ jobs:
 
       - name: Build And Install EzSnmp
         run: |
+          rm -drf build ezsnmp.egg-info &&
           pip install . --verbose
 
       - name: Start SNMP daemon
