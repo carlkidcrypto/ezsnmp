@@ -1,5 +1,5 @@
---- ./net-snmp-5.7/apps/snmpgetnext.c	2025-08-13 21:26:00.313412600 -0700
-+++ ../src/snmpgetnext.cpp	2025-07-09 07:11:48.427520000 -0700
+--- a/net-snmp-5.7/apps/snmpgetnext.c
++++ b/net-snmp-5.7/apps/snmpgetnext.cpp
 @@ -25,40 +25,40 @@
  ******************************************************************/
  #include <net-snmp/net-snmp-config.h>
@@ -275,7 +275,7 @@
      snmp_close(ss);
 +
 +out:
-+   netsnmp_cleanup_session(&session);
++                                            
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

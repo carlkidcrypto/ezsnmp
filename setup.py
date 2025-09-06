@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from subprocess import check_output, CalledProcessError
+from subprocess import check_output, CalledProcessError, run
 from sys import argv, platform
 from shlex import split as s_split
 from setuptools import setup, Extension
 from re import search
+from setuptools.command.build_ext import build_ext
 
 
 # Install Helpers
@@ -16,9 +17,7 @@ def is_macports_installed():
       str: The MacPorts version if installed, "" otherwise.
     """
     try:
-        # Check if the `port` command is available and get the version
         version_output = check_output("port version", shell=True).decode()
-        # Extract version using regex. It'll match something like: Version: `2.10.5`.
         match = search(r"Version:\s+(\d+\.\d+\.\d+)", version_output)
         if match:
             return match.group(1)
@@ -35,11 +34,8 @@ def is_net_snmp_installed_macports():
     Returns:
       str: The net-snmp version if installed, "" otherwise.
     """
-
     try:
-        # Use `port installed` to check for the package
         macports_output = check_output("port installed net-snmp", shell=True).decode()
-        # Use regex to match and extract the version
         pattern = r"net-snmp @(\d+\.\d+\.\d+[_+a-zA-Z0-9]*) \(active\)"
         match = search(pattern, macports_output)
         if match:
@@ -50,14 +46,65 @@ def is_net_snmp_installed_macports():
         return ""
 
 
-def enable_legacy_support(version):
-    """
-    Helper to check if the detected Net-SNMP version is supported (5.6, 5.7, 5.8)
+# Define SWIG targets and the custom build command
+# ---------------------------------------------------------------------------
 
-    Returns:
-      bool: True if version matches 5.6, 5.7, or 5.8 (optionally with dot or suffix).
+# Define which .i files should be converted to which .cpp files
+# Paths are updated to reflect the 'ezsnmp/interface/' directory.
+swig_targets = [
+    ("ezsnmp/interface/datatypes.i", "ezsnmp/src/ezsnmp_datatypes.cpp"),
+    ("ezsnmp/interface/exceptionsbase.i", "ezsnmp/src/ezsnmp_exceptionsbase.cpp"),
+    ("ezsnmp/interface/netsnmpbase.i", "ezsnmp/src/ezsnmp_netsnmpbase.cpp"),
+    ("ezsnmp/interface/sessionbase.i", "ezsnmp/src/ezsnmp_sessionbase.cpp"),
+]
+
+
+class SwigBuildExt(build_ext):
     """
-    return bool(search(r"^5\.(6|7|8)(\.|$|\..*)", version or ""))
+    Custom build_ext command to run SWIG before building the C++ extensions.
+    """
+
+    def run(self):
+        print("--- Running SWIG to generate wrapper code ---")
+
+        # Base SWIG command, updated with arguments from development.rst
+        swig_command = [
+            "swig",
+            "-c++",  # Force C++ code generation
+            "-python",  # Generate Python bindings
+            "-builtin",  # Use native Python data types
+            "-threads",  # Add thread support
+            "-doxygen",  # Convert Doxygen comments to pydoc
+            "-std=c++17",  # Specify C++17 standard
+            "-outdir",  # Specify output directory for the .py module
+            "ezsnmp/.",
+        ]
+
+        # Add all include directories to the SWIG command
+        # We grab them from the first extension, as they are the same for all.
+        for inc_dir in self.extensions[0].include_dirs:
+            swig_command.append(f"-I{inc_dir}")
+
+        # Also add the interface directory to the include path for SWIG
+        swig_command.append("-Iezsnmp/interface")
+
+        # Run SWIG for each target
+        for interface_file, wrapper_file in swig_targets:
+            command = swig_command + ["-o", wrapper_file, interface_file]
+            print(f"Executing: {' '.join(command)}")
+            try:
+                run(command, check=True)
+            except (CalledProcessError, FileNotFoundError):
+                print(f"Error: SWIG execution failed for {interface_file}.")
+                print("Please ensure that SWIG is installed and in your system's PATH.")
+                exit(1)
+
+        print("--- SWIG processing complete ---")
+        # After SWIG has run, proceed with the original build process
+        super().run()
+
+
+# ---------------------------------------------------------------------------
 
 
 # Determine if a base directory has been provided with the --basedir option
@@ -78,9 +125,6 @@ incdirs = []
 
 for arg in argv:
     if arg.startswith("--debug"):
-        # Note from GCC manual:
-        #       If you use multiple -O options, with or without level numbers,
-        #       the last such option is the one that is effective.
         compile_args.extend(["-Wall", "-O0", "-g"])
     elif arg.startswith("--basedir="):
         basedir = arg.split("=")[1]
@@ -106,13 +150,12 @@ else:
     netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
 
     pass_next = False
-    # macOS-specific
     has_arg = ("-framework",)
     for flag in s_split(netsnmp_libs):
         if pass_next:
             link_args.append(flag)
             pass_next = False
-        elif flag in has_arg:  # -framework CoreFoundation
+        elif flag in has_arg:
             link_args.append(flag)
             pass_next = True
         elif flag == "-flat_namespace":
@@ -124,16 +167,13 @@ else:
     incdirs = ["ezsnmp/include/"]
 
     try:
-        # Check if brew is installed via: `brew --version` it should return something like: `Homebrew 4.4.5`
         homebrew_version = check_output("brew --version", shell=True).decode()
         if search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version):
-            # Check if net-snmp is installed via Brew
             try:
                 brew = check_output(
                     "brew list net-snmp 2>/dev/null", shell=True
                 ).decode()
                 lines = brew.splitlines()
-                # extract brew version here...
                 pattern = r"/opt/homebrew/Cellar/net-snmp/(\d+\.\d+\.\d+)/"
                 match = search(pattern, lines[0])
                 if match:
@@ -157,7 +197,6 @@ else:
                         lib_dir[: lib_dir.index("lib/libnetsnmp.dylib") + 3]
                     )
 
-                # The homebrew version also depends on the Openssl keg
                 brew = check_output("brew info net-snmp", shell=True).decode()
                 homebrew_openssl_version = list(
                     filter(
@@ -176,18 +215,6 @@ else:
                     "brew info {0}".format(homebrew_openssl_version), shell=True
                 ).decode()
                 temp = brew.split("\n")
-                # As of 06/04/2024 brew info openssl spits out lines. the fifth one is what we care about
-                # This works for now, but we need a better solution
-                # ==> openssl@3: stable 3.3.0 (bottled)
-                # Cryptography and SSL/TLS Toolkit
-                # https://openssl.org/
-                # Installed
-                # /opt/homebrew/Cellar/openssl@3/3.3.0 (6,977 files, 32.4MB) *
-                # Poured from bottle using the formulae.brew.sh API on 2024-06-04 at 21:17:37
-                # From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/o/openssl@3.rb
-                # License: Apache-2.0
-                # ...
-                # print(temp)
                 temp_path = str(temp[4].split("(")[0]).strip()
 
                 temp_libdirs.append(temp_path + "/lib")
@@ -203,16 +230,12 @@ else:
         homebrew_version = None
         print("Homebrew is not installed...")
 
-        # Add in system includes instead of Homebrew ones
         netsnmp_incdir = None
         for dir in libdirs:
-            # MacOS
             if "net-snmp" in dir:
                 netsnmp_incdir = dir.replace("lib", "include")
                 incdirs = incdirs + [netsnmp_incdir]
                 break
-
-            # Linux
             elif "x86_64-linux-gnu" in dir:
                 netsnmp_incdir = "/usr/include/net-snmp"
                 incdirs = incdirs + [netsnmp_incdir]
@@ -220,13 +243,27 @@ else:
 
     macports_version = is_macports_installed()
     macports_netsnmp_version = is_net_snmp_installed_macports()
-    # macports_openssl_version = is_openssl_installed_macports()
 
     if macports_version and macports_netsnmp_version:
         for dir in libdirs:
             if "/opt/local/lib" in dir:
                 netsnmp_incdir = dir.replace("lib", "include")
                 incdirs = incdirs + [netsnmp_incdir]
+
+# Determine which source files to use based on the Net-SNMP version
+version_str = system_netsnmp_version.strip()
+snmp_source_path = "ezsnmp/src"
+
+if version_str.startswith("5.6"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.6-final-patched"
+elif version_str.startswith("5.7"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.7-final-patched"
+elif version_str.startswith("5.8"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.8-final-patched"
+elif version_str.startswith("5.9"):
+    snmp_source_path = "ezsnmp/src/net-snmp-5.9-final-patched"
+else:
+    raise RuntimeError(f"Unsupported net-snmp version: {version_str}")
 
 print(f"in_tree: {in_tree}")
 print(f"compile_args: {compile_args}")
@@ -242,18 +279,42 @@ print(f"macports_openssl_version: {macports_openssl_version}")
 print(f"libs: {libs}")
 print(f"libdirs: {libdirs}")
 print(f"incdirs: {incdirs}")
+print(f"Using SNMP sources from: {snmp_source_path}")
 
-ENABLE_LEGACY_SUPPORT = enable_legacy_support(system_netsnmp_version)
 
-# Define a macro for the C++ extensions to indicate if the package version is supported
-define_macros = [("ENABLE_LEGACY_SUPPORT", int(ENABLE_LEGACY_SUPPORT))]
+# Define the source files for the extensions that depend on the Net-SNMP version
+netsnmp_versioned_sources = [
+    f"{snmp_source_path}/snmpbulkget.cpp",
+    f"{snmp_source_path}/snmpgetnext.cpp",
+    f"{snmp_source_path}/snmpbulkwalk.cpp",
+    f"{snmp_source_path}/snmpget.cpp",
+    f"{snmp_source_path}/snmpwalk.cpp",
+    f"{snmp_source_path}/snmpset.cpp",
+    f"{snmp_source_path}/snmptrap.cpp",
+]
+
+netsnmpbase_sources = [
+    "ezsnmp/src/ezsnmp_netsnmpbase.cpp",  # Generated by SWIG
+    "ezsnmp/src/exceptionsbase.cpp",
+    "ezsnmp/src/datatypes.cpp",
+    "ezsnmp/src/helpers.cpp",
+] + netsnmp_versioned_sources
+
+sessionbase_sources = [
+    "ezsnmp/src/ezsnmp_sessionbase.cpp",  # Generated by SWIG
+    "ezsnmp/src/exceptionsbase.cpp",
+    "ezsnmp/src/datatypes.cpp",
+    "ezsnmp/src/sessionbase.cpp",
+    "ezsnmp/src/helpers.cpp",
+] + netsnmp_versioned_sources
+
 
 setup(
     ext_modules=[
         Extension(
             name="ezsnmp/_datatypes",
             sources=[
-                "ezsnmp/src/ezsnmp_datatypes.cpp",
+                "ezsnmp/src/ezsnmp_datatypes.cpp",  # Generated by SWIG
                 "ezsnmp/src/datatypes.cpp",
             ],
             library_dirs=libdirs,
@@ -261,12 +322,11 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_exceptionsbase",
             sources=[
-                "ezsnmp/src/ezsnmp_exceptionsbase.cpp",
+                "ezsnmp/src/ezsnmp_exceptionsbase.cpp",  # Generated by SWIG
                 "ezsnmp/src/exceptionsbase.cpp",
             ],
             library_dirs=libdirs,
@@ -274,52 +334,28 @@ setup(
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_netsnmpbase",
-            sources=[
-                "ezsnmp/src/ezsnmp_netsnmpbase.cpp",
-                "ezsnmp/src/exceptionsbase.cpp",
-                "ezsnmp/src/datatypes.cpp",
-                "ezsnmp/src/helpers.cpp",
-                "ezsnmp/src/snmpbulkget.cpp",
-                "ezsnmp/src/snmpgetnext.cpp",
-                "ezsnmp/src/snmpbulkwalk.cpp",
-                "ezsnmp/src/snmpget.cpp",
-                "ezsnmp/src/snmpwalk.cpp",
-                "ezsnmp/src/snmpset.cpp",
-                "ezsnmp/src/snmptrap.cpp",
-            ],
+            sources=netsnmpbase_sources,
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
         ),
         Extension(
             name="ezsnmp/_sessionbase",
-            sources=[
-                "ezsnmp/src/ezsnmp_sessionbase.cpp",
-                "ezsnmp/src/exceptionsbase.cpp",
-                "ezsnmp/src/datatypes.cpp",
-                "ezsnmp/src/sessionbase.cpp",
-                "ezsnmp/src/helpers.cpp",
-                "ezsnmp/src/snmpbulkget.cpp",
-                "ezsnmp/src/snmpbulkwalk.cpp",
-                "ezsnmp/src/snmpget.cpp",
-                "ezsnmp/src/snmpgetnext.cpp",
-                "ezsnmp/src/snmpwalk.cpp",
-                "ezsnmp/src/snmpset.cpp",
-                "ezsnmp/src/snmptrap.cpp",
-            ],
+            sources=sessionbase_sources,
             library_dirs=libdirs,
             include_dirs=incdirs,
             libraries=libs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=define_macros,
         ),
     ],
+    # Tell setuptools to use your custom command
+    cmdclass={
+        "build_ext": SwigBuildExt,
+    },
 )

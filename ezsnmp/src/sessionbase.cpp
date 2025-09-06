@@ -2,10 +2,14 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstring>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 #include "exceptionsbase.h"
 #include "helpers.h"

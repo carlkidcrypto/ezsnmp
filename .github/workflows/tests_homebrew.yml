@@ -24,10 +24,9 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
-            ezsnmp/*.py
-            ezsnmp/*.cpp
-            ezsnmp/*.h
-            python_tests/*.py
+            **/*.py
+            **/*.cpp
+            **/*.h
             python_tests/*.conf
             setup.py
             setup.cfg
@@ -75,7 +74,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
@@ -147,7 +146,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.56
+        uses: MishaKav/pytest-coverage-comment@v1.1.57
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew

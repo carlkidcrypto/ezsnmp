@@ -18,7 +18,7 @@ fi
 VERSION="$1"
 # Assumes the original source code is in a folder like 'net-snmp-5.9'
 SOURCE_DIR="./net-snmp-${VERSION}"
-TARGET_DIR="../src" # The directory with your modified C++ files
+TARGET_DIR="./master_src" # The directory with your modified C++ files
 
 # 2. Check if the source directory actually exists
 if [[ ! -d "$SOURCE_DIR" ]]; then
@@ -45,12 +45,20 @@ for tool in "${tools[@]}"; do
     source_file="${SOURCE_DIR}/apps/${tool}.c"
     target_file="${TARGET_DIR}/${tool}.cpp"
     patch_file="${tool}-${VERSION}.patch"
+    echo "source_file: ${source_file} ..."
+    echo "target_file: ${target_file} ..."
+    echo "patch_file: ${patch_file} ..."
 
     # Check that both the original and your modified file exist before diffing
     if [[ -f "$source_file" && -f "$target_file" ]]; then
         echo "  -> Creating ${patch_file}"
         mkdir -p "net-snmp-${VERSION}-patches"
-        diff -aurw "${source_file}" "${target_file}" > "net-snmp-${VERSION}-patches/${patch_file}"
+        # Use --label to create headers compatible with the apply_patches.sh script (-p2)
+        diff -aurw \
+            --label "a/net-snmp-${VERSION}/apps/${tool}.c" \
+            --label "b/net-snmp-${VERSION}/apps/${tool}.cpp" \
+            "${source_file}" \
+            "${target_file}" > "net-snmp-${VERSION}-patches/${patch_file}"
     else
         echo "  -- Skipping ${tool}: One or both files not found." >&2
     fi
