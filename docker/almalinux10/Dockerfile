@@ -1,6 +1,9 @@
 # Use AlmaLinux 10-kitten as the base image
 FROM almalinux:10-kitten
 
+# Install the EPEL repository package
+RUN dnf install -y epel-release
+
 # Update system
 RUN dnf update -y
 
