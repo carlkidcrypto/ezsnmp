@@ -201,10 +201,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
@@ -281,20 +277,39 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4NK6Result9to_stringEv"><code class="docutils literal notranslate"><span class="pre">to_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result14ConvertedValueE"><code class="docutils literal notranslate"><span class="pre">ConvertedValue</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4NK6Result10_to_stringEv"><code class="docutils literal notranslate"><span class="pre">_to_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">_make_converted_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result22update_converted_valueEv"><code class="docutils literal notranslate"><span class="pre">update_converted_value()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result3oidE"><code class="docutils literal notranslate"><span class="pre">oid</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result5indexE"><code class="docutils literal notranslate"><span class="pre">index</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result4typeE"><code class="docutils literal notranslate"><span class="pre">type</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result5valueE"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result15converted_valueE"><code class="docutils literal notranslate"><span class="pre">converted_value</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#result-converted-value-types-and-results">Result.converted_value Types and Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#result-converted-value-types-and-results">Result.converted_value Types and Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#integer-integer32">Integer / Integer32</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#gauge32-counter32-timeticks">Gauge32 / Counter32 / TimeTicks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#counter64">Counter64</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#hex-string">Hex-STRING</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#octetstr">OctetStr</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#conversion-error">Conversion Error</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datatypes_cpp.html#unknown-type">Unknown Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="development.html#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development.html#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>

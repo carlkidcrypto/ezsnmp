@@ -201,10 +201,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
@@ -269,7 +265,11 @@
 <h1>Development Guide<a class="headerlink" href="#development-guide" title="Link to this heading">¶</a></h1>
 <section id="how-to-generate-the-sphinx-documentation">
 <h2>How to Generate the Sphinx Documentation<a class="headerlink" href="#how-to-generate-the-sphinx-documentation" title="Link to this heading">¶</a></h2>
-<p>You may generate the documentation as follows:</p>
+<p>First run doxygen to generate the XML files needed by Breathe.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rm<span class="w"> </span>-drf<span class="w"> </span>doxygen_docs_build/<span class="w"> </span>html/<span class="w"> </span>latex/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>doxygen_docs_build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>doxygen<span class="w"> </span>.doxygen
+</pre></div>
+</div>
+<p>Next you may generate the documentation as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install Sphinx</span>
 <span class="c1"># See this website for install instructions https://www.sphinx-doc.org/en/master/usage/installation.html</span>
 
