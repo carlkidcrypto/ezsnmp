@@ -110,11 +110,8 @@ jobs:
           pattern: pytest-results_*
           merge-multiple: false
 
-      - name: Extract Artifacts
-        run: |
-          for dir in pytest-results_*; do
-            unzip "$dir/*.zip" -d "$dir/"
-          done
+      - name: List files
+        run: ls -R pytest-results_*
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.57
