@@ -44,3 +44,9 @@ requires = [
    "setuptools == 80.9.0",
     "wheel == 0.46.1",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "python_tests"
+addopts = [
+    "--import-mode=importlib",
+]
