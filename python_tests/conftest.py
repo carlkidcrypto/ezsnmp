@@ -1,7 +1,7 @@
 import pytest
 from subprocess import Popen, DEVNULL
 import ezsnmp
-from .session_parameters import (
+from session_parameters import (
     SESS_V1_ARGS,
     SESS_V2_ARGS,
     SESS_V3_MD5_DES_ARGS,
@@ -11,7 +11,7 @@ from .session_parameters import (
     SESS_V3_MD5_NO_PRIV_ARGS,
 )
 
-from .netsnmp_parameters import (
+from netsnmp_parameters import (
     NETSNMP_SESS_V1_ARGS,
     NETSNMP_SESS_V2_ARGS,
     NETSNMP_SESS_V3_MD5_DES_ARGS,
