@@ -100,7 +100,7 @@ jobs:
         run: |
           pip list | grep ezsnmp
           set -o pipefail
-          pytest python_tests/ \
+          pytest --import-mode=append python_tests/ \
             --cov=ezsnmp/ \
             --cov-report=term-missing \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
