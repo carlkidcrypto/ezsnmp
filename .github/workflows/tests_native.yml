@@ -91,20 +91,12 @@ jobs:
           fi
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
       
-      - name: Build and Install package using Tox
-        run: tox -e py --notest
-
-      - name: Remove local source code to prevent path shadowing
-        run: rm -rf ezsnmp/ .chglog .github cml_test/ cpp_tests/ docker/ docs/ images/ integration_tests/ sphinx_docs_build/
-
-      - name: Run tests directly within the tox environment
+      - name: Run Tests
         run: |
-          source .tox/py/bin/activate
-          set -o pipefail
-          pytest python_tests/ \
-            --cov=ezsnmp/ \
-            --cov-report=term-missing \
-            --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          tox -e py --
+          --cov=ezsnmp/ \
+          --cov-report=term-missing \
+          --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
