@@ -75,11 +75,6 @@ jobs:
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
 
-      - name: Build And Install EzSnmp
-        run: |
-          rm -drf build ezsnmp.egg-info &&
-          python -m pip install . --user --verbose;
-
       - name: Start SNMP daemon
         run: |
           if [ "$RUNNER_OS" == "Linux" ]
@@ -100,7 +95,7 @@ jobs:
         run: |
           pip list | grep ezsnmp
           set -o pipefail
-          pytest python_tests/ \
+            tox -e py --
             --cov=ezsnmp/ \
             --cov-report=term-missing \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt

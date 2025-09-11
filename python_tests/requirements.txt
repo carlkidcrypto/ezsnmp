@@ -2,3 +2,4 @@ coverage==7.10.6
 pytest==8.4.2
 pytest-cov==6.2.1
 pytest-sugar==1.1.1
+tox==4.30.2
