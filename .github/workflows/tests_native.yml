@@ -30,6 +30,8 @@ jobs:
             python_tests/*.conf
             setup.py
             setup.cfg
+            tox.ini
+            python_tests/requirements.txt
 
   build-and-test:
     runs-on: ${{ matrix.os }}
