@@ -98,7 +98,8 @@ jobs:
         run: rm -rf ezsnmp/ .chglog .github cml_test/ cpp_tests/ docker/ docs/ images/ integration_tests/ sphinx_docs_build/
 
       - name: Run tests against installed package
-        run: tox -e py --skip-pkg-install -- --cov=ezsnmp/ \
+        run: source .tox/py/bin/activate
+          pytest python_tests/ --cov=ezsnmp/ \
           --cov-report=term-missing \
           --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
