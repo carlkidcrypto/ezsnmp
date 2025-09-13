@@ -82,11 +82,6 @@ jobs:
       - name: Install pip dependencies
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
-
-      - name: Build And Install EzSnmp
-        run: |
-          rm -drf build ezsnmp.egg-info &&
-          pip install . --verbose
       
       - name: Start SNMP daemon
         run: |
@@ -117,9 +112,12 @@ jobs:
                    '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
                  );
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
-          
-          macos: pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml  python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+
+          macos: |
+            rm -drf build/ ezsnmp.egg-info/ .tox/
+            tox | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+            mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
