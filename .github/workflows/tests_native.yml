@@ -96,6 +96,8 @@ jobs:
       - name: Run Tests
         run: |
           tox
+          mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
+          mv test-outputs.txt test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
