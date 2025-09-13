@@ -95,10 +95,7 @@ jobs:
       
       - name: Run Tests
         run: |
-          tox -e py --
-          --cov=ezsnmp/ \
-          --cov-report=term-missing \
-          --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          tox
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
