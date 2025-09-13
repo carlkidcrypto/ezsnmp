@@ -82,6 +82,14 @@ jobs:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install pip dependencies
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
