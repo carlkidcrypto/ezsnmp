@@ -22,6 +22,7 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
+            files: |
             .github/workflows/tests_docker.yml
             **/*.py
             **/*.cpp
@@ -29,6 +30,8 @@ jobs:
             python_tests/*.conf
             setup.py
             setup.cfg
+            tox.ini
+            python_tests/requirements.txt
 
   test-distributions:
     needs: check-changes

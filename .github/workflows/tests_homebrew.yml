@@ -24,12 +24,15 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
+            .github/workflows/tests_homebrew.yml
             **/*.py
             **/*.cpp
             **/*.h
             python_tests/*.conf
             setup.py
             setup.cfg
+            tox.ini
+            python_tests/requirements.txt
 
   build-and-test:
     runs-on: ${{ matrix.os }}
