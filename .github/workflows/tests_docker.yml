@@ -4,7 +4,7 @@ concurrency: tests-docker
 
 on:
   push:
-    branches: [ main, 384-bug---macos-native-tests ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 

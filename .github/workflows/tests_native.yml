@@ -5,7 +5,7 @@ name: Tests With Native Package Manager
 concurrency: tests-native
 on:
   push:
-    branches: [ main, 384-bug---macos-native-tests ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
