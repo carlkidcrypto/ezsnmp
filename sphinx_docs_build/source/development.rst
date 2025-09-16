@@ -92,7 +92,7 @@ them with the following on Linux:
     mkdir -p -m 0755 ~/.snmp;
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
-    rm -drf build/ ezsnmp.egg-info/ .tox/;
+    rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/;
     python3 -m pip install -r python_tests/requirements.txt;
     tox
     # Bottom one for debug. Replace the top one with it if needed.
@@ -113,7 +113,7 @@ On MacOS
     sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    rm -drf build/ ezsnmp.egg-info/ .tox/;
+    rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/;
     python3 -m pip install -r python_tests/requirements.txt;
     tox
 
