@@ -1,4 +1,4 @@
-project('ezsnmp_tests',  'cpp', default_options: ['cpp_std=c++17'])
+project('ezsnmp_tests', 'cpp', version: '2.0.0', default_options: ['cpp_std=c++17'])
 
 # This no worky on mac
 # add_project_arguments('-fprofile-arcs', '-ftest-coverage', language: 'cpp')
@@ -7,6 +7,7 @@ project('ezsnmp_tests',  'cpp', default_options: ['cpp_std=c++17'])
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
+openssl_dep = dependency('openssl', required: true)
 
 # MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
 # Find the netsnmp dependency and make it required for the build to proceed.
@@ -42,7 +43,7 @@ test_datatypes = executable(
         join_paths(snmp_source_dir, '../datatypes.cpp'),
     ],
     include_directories: include_dirs,
-    dependencies: [gtest_dep, thread_dep, netsnmp_dep]
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
 test_helpers = executable(
@@ -54,7 +55,7 @@ test_helpers = executable(
         join_paths(snmp_source_dir, '../datatypes.cpp'),
     ],
     include_directories: include_dirs,
-    dependencies: [gtest_dep, thread_dep, netsnmp_dep]
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
 test_sessionbase = executable(
@@ -73,7 +74,7 @@ test_sessionbase = executable(
         join_paths(snmp_source_dir, '../datatypes.cpp'),
     ],
     include_directories: include_dirs,
-    dependencies: [gtest_dep, thread_dep, netsnmp_dep]
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
 test_snmpget = executable(
@@ -86,7 +87,7 @@ test_snmpget = executable(
         join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
     ],
     include_directories: include_dirs,
-    dependencies: [gtest_dep, thread_dep, netsnmp_dep]
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
 # Register tests

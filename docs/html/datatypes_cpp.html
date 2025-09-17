@@ -201,10 +201,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Datatypes C++ Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#numeric-types">Numeric Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#byte-vector-types">Byte Vector Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#string-types">String Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
@@ -273,10 +269,18 @@
 <dd><p>Structure to represent an SNMP result. </p>
 <p>This structure holds the information retrieved from an SNMP operation, including the OID, index, type, and value of the retrieved data. </p>
 <div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N6Result14ConvertedValueE">
+<span id="_CPPv3N6Result14ConvertedValueE"></span><span id="_CPPv2N6Result14ConvertedValueE"></span><span class="target" id="structResult_1a1143913f91a69341fa44f9bedff22a6b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConvertedValue</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">variant</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N6Result14ConvertedValueE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK6Result9to_stringEv">
-<span id="_CPPv3NK6Result9to_stringEv"></span><span id="_CPPv2NK6Result9to_stringEv"></span><span id="Result::to_stringC"></span><span class="target" id="structResult_1a9dd1f539d60cf9aab2d2a9fb0ed5fdac"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">to_string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK6Result9to_stringEv" title="Link to this definition">¶</a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4NK6Result10_to_stringEv">
+<span id="_CPPv3NK6Result10_to_stringEv"></span><span id="_CPPv2NK6Result10_to_stringEv"></span><span id="Result::_to_stringC"></span><span class="target" id="structResult_1adb9e47059c7f6e08f46193583e1f8a64"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_to_string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK6Result10_to_stringEv" title="Link to this definition">¶</a><br /></dt>
 <dd><p>Converts the <a class="reference internal" href="#structResult"><span class="std std-ref">Result</span></a> object to a string representation. </p>
 <p>This method generates a human-readable string representation of the <a class="reference internal" href="#structResult"><span class="std std-ref">Result</span></a> object, including all its members.</p>
 <dl class="field-list simple">
@@ -284,6 +288,32 @@
 <dd class="field-odd"><p>A string representation of the <a class="reference internal" href="#structResult"><span class="std std-ref">Result</span></a> object. </p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"></span><span id="Result::_make_converted_value__ssCR.ssCR"></span><span class="target" id="structResult_1a089e3b82fcb6e49bbb98aba86e3e927e"></span><a class="reference internal" href="#_CPPv4N6Result14ConvertedValueE" title="Result::ConvertedValue"><span class="n"><span class="pre">ConvertedValue</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_make_converted_value</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">type</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Factory function to obtain the appropriate ConvertedValue type based on an SNMP type string. </p>
+<p>This function takes an SNMP type string and a value string, then attempts to convert the value into the corresponding C++ type. The converted value is stored in a ConvertedValue, which is a std::variant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snmpType</strong> – The SNMP type as a string (e.g., “INTEGER”, “OCTETSTR”). <a class="reference external" href="https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h#L154-L170">https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h#L154-L170</a></p></li>
+<li><p><strong>value</strong> – The value as a string to be converted. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ConvertedValue The value converted to the appropriate C++ type, wrapped in a std::variant. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N6Result22update_converted_valueEv">
+<span id="_CPPv3N6Result22update_converted_valueEv"></span><span id="_CPPv2N6Result22update_converted_valueEv"></span><span id="Result::update_converted_value"></span><span class="target" id="structResult_1a325c0c7a66a17c0f200b6b5710032719"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update_converted_value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Result22update_converted_valueEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Updates the converted_value member by converting the current type and value. </p>
+<p>This method recalculates and assigns the converted_value field using the current values of the type and value members. It utilizes the private helper function _make_converted_value to perform the conversion.</p>
+<p>Typically called after type or value has changed to ensure converted_value is up-to-date. </p>
 </dd></dl>
 
 </div>
@@ -313,36 +343,51 @@
 <dd><p>Actual value of the retrieved data. </p>
 </dd></dl>
 
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N6Result15converted_valueE">
+<span id="_CPPv3N6Result15converted_valueE"></span><span id="_CPPv2N6Result15converted_valueE"></span><span id="Result::converted_value__ConvertedValue"></span><span class="target" id="structResult_1abf2126074726b8903a8657edef4435f1"></span><a class="reference internal" href="#_CPPv4N6Result14ConvertedValueE" title="Result::ConvertedValue"><span class="n"><span class="pre">ConvertedValue</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">converted_value</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N6Result15converted_valueE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Converted value of the type,value data. </p>
+</dd></dl>
+
 </div>
 </dd></dl>
 
 <section id="result-converted-value-types-and-results">
 <h2>Result.converted_value Types and Results<a class="headerlink" href="#result-converted-value-types-and-results" title="Link to this heading">¶</a></h2>
 <p>This section outlines the possible C++ data types that result from the <code class="docutils literal notranslate"><span class="pre">converted_value</span></code> member of the <code class="docutils literal notranslate"><span class="pre">Result</span></code> struct. The conversion is based on the SNMP <code class="docutils literal notranslate"><span class="pre">type</span></code> string. The underlying C++ type is a <code class="docutils literal notranslate"><span class="pre">std::variant</span></code> that can hold one of the following types or an error string.</p>
-</section>
-</section>
 <section id="numeric-types">
-<h1>Numeric Types<a class="headerlink" href="#numeric-types" title="Link to this heading">¶</a></h1>
+<h3>Numeric Types<a class="headerlink" href="#numeric-types" title="Link to this heading">¶</a></h3>
 <p>These SNMP types are converted into their corresponding C++ numeric equivalents. The conversion logic is designed to extract numerical data from common SNMP output formats, such as <code class="docutils literal notranslate"><span class="pre">&quot;60000</span> <span class="pre">milli-seconds&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;up(1)&quot;</span></code>.</p>
+<section id="integer-integer32">
+<h4>Integer / Integer32<a class="headerlink" href="#integer-integer32" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>SNMP Types</strong>: <code class="docutils literal notranslate"><span class="pre">integer</span></code>, <code class="docutils literal notranslate"><span class="pre">integer32</span></code></p></li>
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">int32_t</span></code> (signed 32-bit integer)</p></li>
 <li><p><strong>Example Input</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;42&quot;</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">42</span></code></p></li>
 </ul>
+</section>
+<section id="gauge32-counter32-timeticks">
+<h4>Gauge32 / Counter32 / TimeTicks<a class="headerlink" href="#gauge32-counter32-timeticks" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>SNMP Types</strong>: <code class="docutils literal notranslate"><span class="pre">gauge32</span></code>, <code class="docutils literal notranslate"><span class="pre">counter32</span></code>, <code class="docutils literal notranslate"><span class="pre">timeticks</span></code></p></li>
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">uint32_t</span></code> (unsigned 32-bit integer)</p></li>
 <li><p><strong>Example Input</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;363647793&quot;</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">363647793</span></code></p></li>
 </ul>
+</section>
+<section id="counter64">
+<h4>Counter64<a class="headerlink" href="#counter64" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>SNMP Types</strong>: <code class="docutils literal notranslate"><span class="pre">counter64</span></code></p></li>
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">uint64_t</span></code> (unsigned 64-bit integer)</p></li>
 <li><p><strong>Example Input</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;18446744073709551615&quot;</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">18446744073709551615</span></code></p></li>
 </ul>
 </section>
+</section>
 <section id="byte-vector-types">
-<h1>Byte Vector Types<a class="headerlink" href="#byte-vector-types" title="Link to this heading">¶</a></h1>
+<h3>Byte Vector Types<a class="headerlink" href="#byte-vector-types" title="Link to this heading">¶</a></h3>
 <p>These types represent raw byte data and are converted into a vector of unsigned characters.</p>
+<section id="hex-string">
+<h4>Hex-STRING<a class="headerlink" href="#hex-string" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>SNMP Type</strong>: <code class="docutils literal notranslate"><span class="pre">hex-string</span></code></p></li>
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">char&gt;</span></code></p></li>
@@ -350,6 +395,9 @@
 <li><p><strong>Example Input</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;80</span> <span class="pre">00</span> <span class="pre">1F</span> <span class="pre">88</span> <span class="pre">04</span> <span class="pre">01</span> <span class="pre">01&quot;</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">{0x80,</span> <span class="pre">0x00,</span> <span class="pre">0x1F,</span> <span class="pre">0x88,</span> <span class="pre">0x04,</span> <span class="pre">0x01,</span> <span class="pre">0x01}</span></code></p></li>
 <li><p><strong>Special Case</strong>: An empty or whitespace-only input string results in an empty vector.</p></li>
 </ul>
+</section>
+<section id="octetstr">
+<h4>OctetStr<a class="headerlink" href="#octetstr" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>SNMP Type</strong>: <code class="docutils literal notranslate"><span class="pre">octetstr</span></code></p></li>
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">char&gt;</span></code></p></li>
@@ -357,8 +405,9 @@
 <li><p><strong>Example Input</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;Hello&quot;</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">{'H',</span> <span class="pre">'e',</span> <span class="pre">'l',</span> <span class="pre">'l',</span> <span class="pre">'o'}</span></code> or <code class="docutils literal notranslate"><span class="pre">{0x48,</span> <span class="pre">0x65,</span> <span class="pre">0x6c,</span> <span class="pre">0x6c,</span> <span class="pre">0x6f}</span></code></p></li>
 </ul>
 </section>
+</section>
 <section id="string-types">
-<h1>String Types<a class="headerlink" href="#string-types" title="Link to this heading">¶</a></h1>
+<h3>String Types<a class="headerlink" href="#string-types" title="Link to this heading">¶</a></h3>
 <p>For many SNMP types, the most useful representation is the original string itself. These types are passed through without conversion.</p>
 <ul class="simple">
 <li><dl class="simple">
@@ -383,19 +432,27 @@
 </ul>
 </section>
 <section id="error-and-fallback-conditions">
-<h1>Error and Fallback Conditions<a class="headerlink" href="#error-and-fallback-conditions" title="Link to this heading">¶</a></h1>
+<h3>Error and Fallback Conditions<a class="headerlink" href="#error-and-fallback-conditions" title="Link to this heading">¶</a></h3>
 <p>If a conversion fails or the type is unknown, the <code class="docutils literal notranslate"><span class="pre">converted_value</span></code> will hold a <code class="docutils literal notranslate"><span class="pre">std::string</span></code> describing the issue.</p>
+<section id="conversion-error">
+<h4>Conversion Error<a class="headerlink" href="#conversion-error" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">std::string</span></code></p></li>
 <li><p><strong>Description</strong>: Occurs when a numeric or hex conversion fails due to malformed input. The string will contain a descriptive error message.</p></li>
 <li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;Integer</span> <span class="pre">Conversion</span> <span class="pre">Error:</span> <span class="pre">std::invalid_argument&quot;</span></code></p></li>
 <li><p><strong>Example</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;Hex-STRING</span> <span class="pre">Conversion</span> <span class="pre">Error:</span> <span class="pre">Malformed</span> <span class="pre">hex</span> <span class="pre">part</span> <span class="pre">'G0'&quot;</span></code></p></li>
 </ul>
+</section>
+<section id="unknown-type">
+<h4>Unknown Type<a class="headerlink" href="#unknown-type" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p><strong>C++ Type</strong>: <code class="docutils literal notranslate"><span class="pre">std::string</span></code></p></li>
 <li><p><strong>Description</strong>: If the SNMP type string does not match any of the known types listed above, a generic fallback message is returned.</p></li>
 <li><p><strong>Value</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;Unknown</span> <span class="pre">Type</span> <span class="pre">Conversion&quot;</span></code></p></li>
 </ul>
+</section>
+</section>
+</section>
 </section>
 
         </article>
@@ -455,20 +512,39 @@
             <ul>
 <li><a class="reference internal" href="#">Datatypes C++ Module</a><ul>
 <li><a class="reference internal" href="#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4NK6Result9to_stringEv"><code class="docutils literal notranslate"><span class="pre">to_string()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N6Result14ConvertedValueE"><code class="docutils literal notranslate"><span class="pre">ConvertedValue</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK6Result10_to_stringEv"><code class="docutils literal notranslate"><span class="pre">_to_string()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">_make_converted_value()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N6Result22update_converted_valueEv"><code class="docutils literal notranslate"><span class="pre">update_converted_value()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N6Result3oidE"><code class="docutils literal notranslate"><span class="pre">oid</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N6Result5indexE"><code class="docutils literal notranslate"><span class="pre">index</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N6Result4typeE"><code class="docutils literal notranslate"><span class="pre">type</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N6Result5valueE"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N6Result15converted_valueE"><code class="docutils literal notranslate"><span class="pre">converted_value</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#result-converted-value-types-and-results">Result.converted_value Types and Results</a></li>
+<li><a class="reference internal" href="#result-converted-value-types-and-results">Result.converted_value Types and Results</a><ul>
+<li><a class="reference internal" href="#numeric-types">Numeric Types</a><ul>
+<li><a class="reference internal" href="#integer-integer32">Integer / Integer32</a></li>
+<li><a class="reference internal" href="#gauge32-counter32-timeticks">Gauge32 / Counter32 / TimeTicks</a></li>
+<li><a class="reference internal" href="#counter64">Counter64</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#numeric-types">Numeric Types</a></li>
-<li><a class="reference internal" href="#byte-vector-types">Byte Vector Types</a></li>
+<li><a class="reference internal" href="#byte-vector-types">Byte Vector Types</a><ul>
+<li><a class="reference internal" href="#hex-string">Hex-STRING</a></li>
+<li><a class="reference internal" href="#octetstr">OctetStr</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#string-types">String Types</a></li>
-<li><a class="reference internal" href="#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
+<li><a class="reference internal" href="#error-and-fallback-conditions">Error and Fallback Conditions</a><ul>
+<li><a class="reference internal" href="#conversion-error">Conversion Error</a></li>
+<li><a class="reference internal" href="#unknown-type">Unknown Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
           </div>
