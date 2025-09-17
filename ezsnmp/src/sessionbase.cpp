@@ -51,6 +51,8 @@
 //                           f:  print full OIDs on output
 //                           n:  print OIDs numerically
 //                           t:  print timeticks unparsed as numeric integers
+//   -C APPOPTS            Set various application specific behaviours:
+//                           r<NUM>:  set max-repeaters to <NUM>
 static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"version", "-v"},
     {"community", "-c"},
@@ -72,6 +74,7 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
     {"print_timeticks_numerically", "-O t"},
+    {"set_max_repeaters_to_num", "-C r"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -95,7 +98,8 @@ SessionBase::SessionBase(std::string const& hostname,
                          bool print_enums_numerically,
                          bool print_full_oids,
                          bool print_oids_numerically,
-                         bool print_timeticks_numerically)
+                         bool print_timeticks_numerically,
+                         std::string const& set_max_repeaters_to_num)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -117,7 +121,8 @@ SessionBase::SessionBase(std::string const& hostname,
       m_print_enums_numerically(print_enums_numerically),
       m_print_full_oids(print_full_oids),
       m_print_oids_numerically(print_oids_numerically),
-      m_print_timeticks_numerically(print_timeticks_numerically) {
+      m_print_timeticks_numerically(print_timeticks_numerically),
+      m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
    populate_args();
 }
 
@@ -145,7 +150,8 @@ void SessionBase::populate_args() {
        {"retries", m_retries},
        {"timeout", m_timeout},
        {"load_mibs", m_load_mibs},
-       {"mib_directories", m_mib_directories}};
+       {"mib_directories", m_mib_directories},
+       {"set_max_repeaters_to_num", m_set_max_repeaters_to_num}};
 
    // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {

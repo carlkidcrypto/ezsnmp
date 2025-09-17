@@ -41,6 +41,7 @@ class SessionBase {
    bool m_print_oids_numerically = false;  ///< Print OIDs numerically (-O n).
    bool m_print_timeticks_numerically =
        false; ///< Print timeticks unparsed as numeric integers (-O t).
+    std::string m_set_max_repeaters_to_num = ""; ///< Set max-repeaters to <NUM> (-C r<NUM>).
 
    /**
     * @brief Populates the m_args vector with SNMP command arguments.
@@ -86,6 +87,7 @@ class SessionBase {
     * @param print_full_oids Print full OIDs on output (default: false).
     * @param print_oids_numerically Print OIDs numerically (default: false).
     * @param print_timeticks_numerically Print timeticks as numeric integers (default: false).
+    * @param set_max_repeaters_to_num Set max-repeaters to <NUM> (default: "").
     */
    SessionBase(std::string const& hostname = "localhost",
                std::string const& port_number = "",
@@ -108,7 +110,8 @@ class SessionBase {
                bool print_enums_numerically = false,
                bool print_full_oids = false,
                bool print_oids_numerically = false,
-               bool print_timeticks_numerically = false);
+               bool print_timeticks_numerically = false,
+               std::string const& m_set_max_repeaters_to_num);
 
    /**
     * @brief Destructor for SessionBase.
