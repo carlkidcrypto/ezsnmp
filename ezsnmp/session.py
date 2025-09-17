@@ -33,7 +33,7 @@ class Session(SessionBase):
         print_full_oids: bool = False,
         print_oids_numerically: bool = False,
         print_timeticks_numerically: bool = False,
-        set_max_repeaters_to_num: Union[str, int] = "",
+        set_max_repeaters_to_num: Union[str, int] = "10",
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
@@ -81,7 +81,7 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
-        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num.
+        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num. Default is 10.
         :type set_max_repeaters_to_num: Union[str, int]
 
         """
@@ -120,7 +120,7 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
-                str(set_max_repeaters_to_num)
+                str(set_max_repeaters_to_num),
             )
 
         except Exception as e:
