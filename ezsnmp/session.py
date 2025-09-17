@@ -33,6 +33,7 @@ class Session(SessionBase):
         print_full_oids: bool = False,
         print_oids_numerically: bool = False,
         print_timeticks_numerically: bool = False,
+        set_max_repeaters_to_num: Union[str, int] = "",
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
@@ -80,6 +81,8 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
+        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num.
+        :type set_max_repeaters_to_num: Union[str, int]
 
         """
 
@@ -117,6 +120,7 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
+                str(set_max_repeaters_to_num)
             )
 
         except Exception as e:
@@ -418,6 +422,125 @@ class Session(SessionBase):
         :type value: int
         """
         self._session_base._set_timeout(value)
+
+    @property
+    def load_mibs(self):
+        """Get the list of MIBs to load.
+
+        :type: str
+        """
+        return self._session_base._get_load_mibs()
+
+    @load_mibs.setter
+    def load_mibs(self, value):
+        """Set the list of MIBs to load.
+
+        :param value: The new list of MIBs to load.
+        :type value: str
+        """
+        self._session_base._set_load_mibs(value)
+
+    @property
+    def mib_directories(self):
+        """Get the directories to search for MIBs.
+
+        :type: str
+        """
+        return self._session_base._get_mib_directories()
+
+    @mib_directories.setter
+    def mib_directories(self, value):
+        """Set the directories to search for MIBs.
+
+        :param value: The new directories to search for MIBs.
+        :type value: str
+        """
+        self._session_base._set_mib_directories(value)
+
+    @property
+    def print_enums_numerically(self):
+        """Get whether to print enums numerically.
+
+        :type: bool
+        """
+        return self._session_base._get_print_enums_numerically()
+
+    @print_enums_numerically.setter
+    def print_enums_numerically(self, value):
+        """Set whether to print enums numerically.
+
+        :param value: The new value for printing enums numerically.
+        :type value: bool
+        """
+        self._session_base._set_print_enums_numerically(value)
+
+    @property
+    def print_full_oids(self):
+        """Get whether to print full OIDs.
+
+        :type: bool
+        """
+        return self._session_base._get_print_full_oids()
+
+    @print_full_oids.setter
+    def print_full_oids(self, value):
+        """Set whether to print full OIDs.
+
+        :param value: The new value for printing full OIDs.
+        :type value: bool
+        """
+        self._session_base._set_print_full_oids(value)
+
+    @property
+    def print_oids_numerically(self):
+        """Get whether to print OIDs numerically.
+
+        :type: bool
+        """
+        return self._session_base._get_print_oids_numerically()
+
+    @print_oids_numerically.setter
+    def print_oids_numerically(self, value):
+        """Set whether to print OIDs numerically.
+
+        :param value: The new value for printing OIDs numerically.
+        :type value: bool
+        """
+        self._session_base._set_print_oids_numerically(value)
+
+    @property
+    def print_timeticks_numerically(self):
+        """Get whether to print timeticks numerically.
+
+        :type: bool
+        """
+        return self._session_base._get_print_timeticks_numerically()
+
+    @print_timeticks_numerically.setter
+    def print_timeticks_numerically(self, value):
+        """Set whether to print timeticks numerically.
+
+        :param value: The new value for printing timeticks numerically.
+        :type value: bool
+        """
+        self._session_base._set_print_timeticks_numerically(value)
+
+    @property
+    def set_max_repeaters_to_num(self):
+        """Get max-repeaters value.
+
+        :type: str
+        """
+        return self._session_base._get_set_max_repeaters_to_num()
+
+    @set_max_repeaters_to_num.setter
+    def set_max_repeaters_to_num(self, value):
+        """Set max-repeaters value.
+
+        :param value: The new value for max-repeaters.
+        :type value: str
+        """
+        self._session_base._set_max_repeaters_to_num(value)
 
     def walk(self, oid="."):
         """

@@ -471,3 +471,38 @@ void SessionBase::_set_timeout(std::string const& timeout) {
    m_timeout = timeout;
    populate_args();
 }
+
+void SessionBase::_set_load_mibs(std::string const& load_mibs) {
+   m_load_mibs = load_mibs;
+   populate_args();
+}
+
+void SessionBase::_set_mib_directories(std::string const& mib_directories) {
+   m_mib_directories = mib_directories;
+   populate_args();
+}
+
+void SessionBase::_set_print_enums_numerically(bool print_enums_numerically) {
+   m_print_enums_numerically = print_enums_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_full_oids(bool print_full_oids) {
+   m_print_full_oids = print_full_oids;
+   populate_args();
+}
+
+void SessionBase::_set_print_oids_numerically(bool print_oids_numerically) {
+   m_print_oids_numerically = print_oids_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_timeticks_numerically(bool print_timeticks_numerically) {
+   m_print_timeticks_numerically = print_timeticks_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_max_repeaters_to_num(std::string const& set_max_repeaters_to_num) {
+   m_set_max_repeaters_to_num = set_max_repeaters_to_num;
+   populate_args();
+}

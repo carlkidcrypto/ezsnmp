@@ -432,6 +432,55 @@ class SessionBase {
     * @param timeout The new timeout value to set.
     */
    void _set_timeout(std::string const& timeout);
+
+    /**
+     * @brief Sets the list of MIBs to load.
+     *
+     * @param load_mibs The new list of MIBs to load.
+     */
+    void _set_load_mibs(std::string const& load_mibs);
+
+    /**
+     * @brief Sets the directories to search for MIBs.
+     *
+     * @param mib_directories The new directories to search for MIBs.
+     */
+    void _set_mib_directories(std::string const& mib_directories);
+
+    /**
+     * @brief Sets whether to print enums numerically.
+     *
+     * @param print_enums_numerically The new value for printing enums numerically.
+     */
+    void _set_print_enums_numerically(bool print_enums_numerically);
+
+    /**
+     * @brief Sets whether to print full OIDs on output.
+     *
+     * @param print_full_oids The new value for printing full OIDs.
+     */
+    void _set_print_full_oids(bool print_full_oids);
+
+    /**
+     * @brief Sets whether to print OIDs numerically.
+     *
+     * @param print_oids_numerically The new value for printing OIDs numerically.
+     */
+    void _set_print_oids_numerically(bool print_oids_numerically);
+
+    /**
+     * @brief Sets whether to print timeticks as numeric integers.
+     *
+     * @param print_timeticks_numerically The new value for printing timeticks numerically.
+     */
+    void _set_print_timeticks_numerically(bool print_timeticks_numerically);
+
+    /**
+     * @brief Sets max-repeaters to <NUM>.
+     *
+     * @param set_max_repeaters_to_num The new value for max-repeaters.
+     */
+    void _set_max_repeaters_to_num(std::string const& set_max_repeaters_to_num);
 };
 
 #endif // SESSIONBASE_H
