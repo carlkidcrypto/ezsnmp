@@ -51,6 +51,8 @@
 //                           f:  print full OIDs on output
 //                           n:  print OIDs numerically
 //                           t:  print timeticks unparsed as numeric integers
+//   -C APPOPTS            Set various application specific behaviours:
+//                           r<NUM>:  set max-repeaters to <NUM>. Only applies to GETBULK PDUs.
 static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"version", "-v"},
     {"community", "-c"},
@@ -72,6 +74,7 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
     {"print_timeticks_numerically", "-O t"},
+    {"set_max_repeaters_to_num", "-Cr"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -95,7 +98,8 @@ SessionBase::SessionBase(std::string const& hostname,
                          bool print_enums_numerically,
                          bool print_full_oids,
                          bool print_oids_numerically,
-                         bool print_timeticks_numerically)
+                         bool print_timeticks_numerically,
+                         std::string const& set_max_repeaters_to_num)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -117,7 +121,8 @@ SessionBase::SessionBase(std::string const& hostname,
       m_print_enums_numerically(print_enums_numerically),
       m_print_full_oids(print_full_oids),
       m_print_oids_numerically(print_oids_numerically),
-      m_print_timeticks_numerically(print_timeticks_numerically) {
+      m_print_timeticks_numerically(print_timeticks_numerically),
+      m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
    populate_args();
 }
 
@@ -145,13 +150,19 @@ void SessionBase::populate_args() {
        {"retries", m_retries},
        {"timeout", m_timeout},
        {"load_mibs", m_load_mibs},
-       {"mib_directories", m_mib_directories}};
+       {"mib_directories", m_mib_directories},
+       {"set_max_repeaters_to_num", m_set_max_repeaters_to_num}};
 
    // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
-         m_args.push_back(CML_PARAM_LOOKUP[key]);
-         m_args.push_back(val);
+         // This one is different, it does not have a space between flag and value
+         if (key == "set_max_repeaters_to_num") {
+            m_args.push_back(CML_PARAM_LOOKUP[key] + val);
+         } else {
+            m_args.push_back(CML_PARAM_LOOKUP[key]);
+            m_args.push_back(val);
+         }
       }
    }
 
@@ -463,5 +474,40 @@ void SessionBase::_set_retries(std::string const& retries) {
 }
 void SessionBase::_set_timeout(std::string const& timeout) {
    m_timeout = timeout;
+   populate_args();
+}
+
+void SessionBase::_set_load_mibs(std::string const& load_mibs) {
+   m_load_mibs = load_mibs;
+   populate_args();
+}
+
+void SessionBase::_set_mib_directories(std::string const& mib_directories) {
+   m_mib_directories = mib_directories;
+   populate_args();
+}
+
+void SessionBase::_set_print_enums_numerically(bool print_enums_numerically) {
+   m_print_enums_numerically = print_enums_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_full_oids(bool print_full_oids) {
+   m_print_full_oids = print_full_oids;
+   populate_args();
+}
+
+void SessionBase::_set_print_oids_numerically(bool print_oids_numerically) {
+   m_print_oids_numerically = print_oids_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_timeticks_numerically(bool print_timeticks_numerically) {
+   m_print_timeticks_numerically = print_timeticks_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_max_repeaters_to_num(std::string const& set_max_repeaters_to_num) {
+   m_set_max_repeaters_to_num = set_max_repeaters_to_num;
    populate_args();
 }
