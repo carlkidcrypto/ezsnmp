@@ -111,7 +111,7 @@ class SessionBase {
                bool print_full_oids = false,
                bool print_oids_numerically = false,
                bool print_timeticks_numerically = false,
-               std::string const& m_set_max_repeaters_to_num);
+               std::string const& set_max_repeaters_to_num);
 
    /**
     * @brief Destructor for SessionBase.
