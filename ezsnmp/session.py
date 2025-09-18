@@ -81,8 +81,8 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
-        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num. Default is 10.
-        :type set_max_repeaters_to_num: Union[str, int]
+        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num. Default is 10. Only applies to GETBULK PDUs.
+        :type set_max_repeaters_to_num: Union[str, int].
 
         """
 
@@ -120,8 +120,10 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
-                str(set_max_repeaters_to_num),
+                "", # Set to emtpy string here. We will set it in the bulk methods.
             )
+
+            self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
 
         except Exception as e:
             _handle_error(e)
@@ -625,6 +627,7 @@ class Session(SessionBase):
         """
 
         try:
+            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_walk(oid)
             return result
         except Exception as e:
@@ -668,6 +671,7 @@ class Session(SessionBase):
         """
 
         try:
+            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_walk(oids)
             return result
         except Exception as e:
@@ -832,6 +836,7 @@ class Session(SessionBase):
         """
 
         try:
+            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_get(oids)
             return result
         except Exception as e:

@@ -87,7 +87,7 @@ class SessionBase {
     * @param print_full_oids Print full OIDs on output (default: false).
     * @param print_oids_numerically Print OIDs numerically (default: false).
     * @param print_timeticks_numerically Print timeticks as numeric integers (default: false).
-    * @param set_max_repeaters_to_num Set max-repeaters to <NUM> (default: "").
+    * @param set_max_repeaters_to_num Set max-repeaters to <NUM> (default: ""). Only applies to GETBULK PDUs.
     */
    SessionBase(std::string const& hostname = "localhost",
                std::string const& port_number = "",
