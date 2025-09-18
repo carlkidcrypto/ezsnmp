@@ -59,7 +59,9 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* print_enums_numerically */ print_opts.print_enums_numerically,
           /* print_full_oids */ print_opts.print_full_oids,
           /* print_oids_numerically */ print_opts.print_oids_numerically,
-          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically);
+          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically,
+          /* max_repetitions */ "" // Assume empty for these tests
+      );
 
       auto const& args = session._get_args();
       std::vector<std::string> expected = {"-A", "auth_second",
@@ -119,7 +121,9 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
           /* print_enums_numerically */ print_opts.print_enums_numerically,
           /* print_full_oids */ print_opts.print_full_oids,
           /* print_oids_numerically */ print_opts.print_oids_numerically,
-          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically);
+          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically,
+          /* max_repetitions */ "" // Assume empty for these tests
+      );
 
       auto const& args = session._get_args();
       std::vector<std::string> expected = {"-c", "public", "-v", version};
@@ -150,6 +154,30 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
          EXPECT_EQ(results[0]._to_string(), print_opts.expected_get_output[0]);
       }
    }
+}
+
+TEST(SessionBaseArgs, TestMaxRepetitionsOption) {
+   // Verify that providing a value for max_repetitions adds the -Cr flag
+   SessionBase session("localhost", "", "2c", "public", "", "", "", "", "", "", "", "", "", "", "",
+                       "", "", "", false, false, false, false,
+                       "25" // max_repetitions
+   );
+
+   auto const& args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public", "-Cr25", "-v", "2c", "localhost"};
+   ASSERT_EQ(args, expected);
+}
+
+TEST(SessionBaseArgs, TestEmptyMaxRepetitionsOption) {
+   // Verify that an empty value for max_repetitions does NOT add the -Cr flag
+   SessionBase session("localhost", "", "2c", "public", "", "", "", "", "", "", "", "", "", "", "",
+                       "", "", "", false, false, false, false,
+                       "" // max_repetitions
+   );
+
+   auto const& args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public", "-v", "2c", "localhost"};
+   ASSERT_EQ(args, expected);
 }
 
 INSTANTIATE_TEST_SUITE_P(

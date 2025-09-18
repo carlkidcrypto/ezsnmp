@@ -52,7 +52,7 @@
 //                           n:  print OIDs numerically
 //                           t:  print timeticks unparsed as numeric integers
 //   -C APPOPTS            Set various application specific behaviours:
-//                           r<NUM>:  set max-repeaters to <NUM>
+//                           r<NUM>:  set max-repeaters to <NUM>. Only applies to GETBULK PDUs.
 static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"version", "-v"},
     {"community", "-c"},
@@ -74,7 +74,7 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
     {"print_timeticks_numerically", "-O t"},
-    {"set_max_repeaters_to_num", "-C r"},
+    {"set_max_repeaters_to_num", "-Cr"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -156,8 +156,13 @@ void SessionBase::populate_args() {
    // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
-         m_args.push_back(CML_PARAM_LOOKUP[key]);
-         m_args.push_back(val);
+         // This one is different, it does not have a space between flag and value
+         if (key == "set_max_repeaters_to_num") {
+            m_args.push_back(CML_PARAM_LOOKUP[key] + val);
+         } else {
+            m_args.push_back(CML_PARAM_LOOKUP[key]);
+            m_args.push_back(val);
+         }
       }
    }
 

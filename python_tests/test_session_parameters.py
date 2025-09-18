@@ -852,8 +852,7 @@ def test_session_set_max_repeaters_to_num_set(version):
             "1",
             "-v",
             "3",
-            "-C",
-            "1",
+            "-Cr1",
             "localhost:11161",
         )
 
@@ -874,14 +873,13 @@ def test_session_set_max_repeaters_to_num_set(version):
             "1",
             "-v",
             "2c" if version == 2 else f"{version}",
-            "-C",
-            "1",
+            "-Cr1",
             "localhost:11161",
         )
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
-def test_session_set_max_repeaters_to_num_set(version):
+def test_session_set_max_repeaters_to_num_unset(version):
     if version == "3" or version == 3:
         session = Session(
             version=version,
@@ -893,7 +891,6 @@ def test_session_set_max_repeaters_to_num_set(version):
             privacy_protocol="AES",
             privacy_passphrase="priv_second",
             auth_passphrase="auth_second",
-            set_max_repeaters_to_num=1,
         )
 
         args = session.args
@@ -919,8 +916,6 @@ def test_session_set_max_repeaters_to_num_set(version):
             "1",
             "-v",
             "3",
-            "-C",
-            "1",
             "localhost:11161",
         )
 
@@ -941,7 +936,5 @@ def test_session_set_max_repeaters_to_num_set(version):
             "1",
             "-v",
             "2c" if version == 2 else f"{version}",
-            "-C",
-            "1",
             "localhost:11161",
         )
