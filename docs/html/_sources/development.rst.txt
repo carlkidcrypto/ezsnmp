@@ -4,7 +4,13 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-You may generate the documentation as follows:
+First run doxygen to generate the XML files needed by Breathe.
+
+.. code-block:: bash
+
+    rm -drf doxygen_docs_build/ html/ latex/ && mkdir doxygen_docs_build && doxygen .doxygen
+
+Next you may generate the documentation as follows:
 
 .. code:: bash
 

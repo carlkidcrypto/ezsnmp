@@ -201,10 +201,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
@@ -320,6 +316,17 @@ that EzSnmp installs correctly:</p>
 with as many as possible linux distros. Occasionally it isn’t perfect. If you have issues try
 something like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>--no-binary<span class="w"> </span>:all:<span class="w"> </span>ezsnmp
+</pre></div>
+</div>
+<p>If you have import issues like whats below, try reinstalling the package forcing a build from source.
+First remove any lingering folders like <cite>build/</cite> or <cite>ezsnmp.egg-info/</cite>.
+Then run the same command that is shown above <cite>pip install –force-reinstall –no-binary :all: ezsnmp</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ne">ImportError</span> <span class="k">while</span> <span class="n">loading</span> <span class="n">conftest</span> <span class="s1">&#39;/home/$USER/Documents/repos/ezsnmp/python_tests/conftest.py&#39;</span><span class="o">.</span>
+<span class="n">python_tests</span><span class="o">/</span><span class="n">conftest</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ezsnmp</span>
+<span class="o">../../../</span><span class="n">python3</span><span class="mf">.12</span><span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">ezsnmp</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.datatypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
+<span class="n">E</span>   <span class="ne">ModuleNotFoundError</span><span class="p">:</span> <span class="n">No</span> <span class="n">module</span> <span class="n">named</span> <span class="s1">&#39;ezsnmp.datatypes&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -494,10 +501,6 @@ This allows you to catch and manage exceptions specific to EzSnmp more effective
 <li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#result-converted-value-types-and-results">Result.converted_value Types and Results</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#numeric-types">Numeric Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#byte-vector-types">Byte Vector Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#string-types">String Types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html#error-and-fallback-conditions">Error and Fallback Conditions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="development.html#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development.html#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>

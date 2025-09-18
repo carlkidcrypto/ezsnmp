@@ -23,12 +23,15 @@ jobs:
         uses: tj-actions/changed-files@v46.0.5
         with:
           files: |
+            .github/workflows/tests_native.yml
             **/*.py
             **/*.cpp
             **/*.h
             python_tests/*.conf
             setup.py
             setup.cfg
+            tox.ini
+            python_tests/requirements.txt
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -61,14 +64,18 @@ jobs:
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install pip dependencies
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
-
-      - name: Build And Install EzSnmp
-        run: |
-          pip install . --verbose
 
       - name: Start SNMP daemon
         run: |
@@ -85,10 +92,12 @@ jobs:
             SNMPD=$(which.exe snmpd)
           fi
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
-
+      
       - name: Run Tests
         run: |
-          pytest -s python_tests/ --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          rm -drf build/ ezsnmp.egg-info/ .tox/
+          tox | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -107,6 +116,9 @@ jobs:
         with:
           pattern: pytest-results_*
           merge-multiple: false
+
+      - name: List files
+        run: ls -R pytest-results_*
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1.1.57
