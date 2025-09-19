@@ -1,6 +1,6 @@
 atomicwrites==1.4.1
 attrs==25.3.0
-black==25.1.0
+black==25.9.0
 click== 8.1.8
 colorama==0.4.6
 packaging==25.0
