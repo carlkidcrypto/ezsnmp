@@ -673,6 +673,7 @@ class Session(SessionBase):
         try:
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_walk(oids)
+            self.set_max_repeaters_to_num = ""
             return result
         except Exception as e:
             _handle_error(e)
@@ -838,6 +839,7 @@ class Session(SessionBase):
         try:
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_get(oids)
+            self.set_max_repeaters_to_num = ""
             return result
         except Exception as e:
             _handle_error(e)

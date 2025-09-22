@@ -831,51 +831,50 @@ def test_session_set_max_repeaters_to_num_set(version):
 
         args = session.args
 
-        assert args == (
-            "-A",
-            "auth_second",
-            "-a",
-            "SHA",
-            "-c",
-            "public",
-            "-X",
-            "priv_second",
-            "-x",
-            "AES",
-            "-r",
-            "3",
-            "-l",
-            "authPriv",
-            "-u",
-            "secondary_sha_aes",
-            "-t",
-            "1",
-            "-v",
-            "3",
-            "-Cr1",
-            "localhost:11161",
+        # -Cr1 should only be present when using bulk operators (get_bulk, walk_bulk)
+        # For normal get, it should not be present
+        assert "-Cr1" not in args
+
+        res = session.bulk_get(
+            ["sysUpTime", "sysORLastChange", "sysORID", "sysORDescr", "sysORUpTime"]
         )
+        bulk_args = session.args
+        assert "-Cr1" in bulk_args
 
     else:
         session = Session(
             hostname="localhost:11161",
             version=version,
+            set_max_repeaters_to_num=1,
         )
 
         args = session.args
 
-        assert args == (
-            "-c",
-            "public",
-            "-r",
-            "3",
-            "-t",
-            "1",
-            "-v",
-            "2c" if version == 2 else f"{version}",
-            "-Cr1",
-            "localhost:11161",
-        )
+        assert "-Cr1" not in args
+
+        if session.version == "1" or session.version == 1:
+            with pytest.raises(PacketError):
+                session.bulk_get(
+                    [
+                        "sysUpTime",
+                        "sysORLastChange",
+                        "sysORID",
+                        "sysORDescr",
+                        "sysORUpTime",
+                    ],
+                )
+        else:
+            session.bulk_get(
+                    [
+                        "sysUpTime",
+                        "sysORLastChange",
+                        "sysORID",
+                        "sysORDescr",
+                        "sysORUpTime",
+                    ],
+                )
+            bulk_args = session.args
+            assert "-Cr1" in bulk_args
 
 
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
