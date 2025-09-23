@@ -120,7 +120,7 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
-                "", # Set to emtpy string here. We will set it in the bulk methods.
+                "",  # Set to emtpy string here. We will set it in the bulk methods.
             )
 
             self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
