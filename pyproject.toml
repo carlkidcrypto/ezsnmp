@@ -30,6 +30,13 @@ before-all = """
           ./configure --prefix=$HOME/opt/local --with-install-user=`id -un` --with-install-group=`id -gn`;
           make;
           make install;
+          make distclean;
+          port -N selfupdate;
+          port -N clean net-snmp openssl gettext;
+          port -N install gettext;
+          port -N install net-snmp openssl;
+          port -N upgrade net-snmp openssl;"""
+repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [build-system]
 build-backend = "setuptools.build_meta"
