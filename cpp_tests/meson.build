@@ -77,6 +77,25 @@ test_sessionbase = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_sessionbase_parameters = executable(
+    'test_sessionbase_parameters',
+    [
+        'test_sessionbase_parameters.cpp',
+        join_paths(snmp_source_dir, '../sessionbase.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, 'snmpbulkget.cpp'),
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, 'snmpget.cpp'),
+        join_paths(snmp_source_dir, 'snmpgetnext.cpp'),
+        join_paths(snmp_source_dir, 'snmpset.cpp'),
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpget = executable(
     'test_snmpget',
     [
@@ -94,4 +113,5 @@ test_snmpget = executable(
 test('datatypes_test', test_datatypes)
 test('helpers_test', test_helpers)
 test('sessionbase_test', test_sessionbase)
+test('sessionbase_parameters_test', test_sessionbase_parameters)
 test('snmpget_test', test_snmpget)

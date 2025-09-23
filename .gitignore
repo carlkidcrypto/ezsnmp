@@ -57,6 +57,6 @@ ezsnmp/src/ezsnmp_netsnmpbase.cpp
 ezsnmp/src/ezsnmp_sessionbase.cpp
 
 # Tox files
-ezsnmp-2.1.0**/
+ezsnmp-2.*.*/
 .tox/**
 test-results.xml
