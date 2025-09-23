@@ -55,18 +55,6 @@ jobs:
             echo "docker-compose is already installed."
           fi
 
-      - name: Cache Docker images (${{ matrix.distribution }})
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.docker-cache
-          key: docker-${{ matrix.distribution }}-${{ hashFiles('docker/${{ matrix.distribution }}/Dockerfile') }}
-
-      - name: Load cached Docker image (${{ matrix.distribution }})
-        run: |
-          if [ -f /tmp/.docker-cache/image.tar ]; then
-          docker load -i /tmp/.docker-cache/image.tar
-          fi
-
       - name: Ensure DockerEntry.sh is executable (${{ matrix.distribution }})
         run: chmod +x ./docker/${{ matrix.distribution }}/DockerEntry.sh
 
@@ -74,8 +62,6 @@ jobs:
         run: |
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml build
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml up -d
-          mkdir -p /tmp/.docker-cache
-          docker save ${{ matrix.distribution }}_snmp_container -o /tmp/.docker-cache/image.tar
 
       - name: Wait for services to be ready (${{ matrix.distribution }})
         run: |
