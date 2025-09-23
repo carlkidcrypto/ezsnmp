@@ -60,8 +60,6 @@ jobs:
         with:
           path: /tmp/.docker-cache
           key: docker-${{ matrix.distribution }}-${{ hashFiles('docker/${{ matrix.distribution }}/Dockerfile') }}
-        restore-keys: |
-          docker-${{ matrix.distribution }}-
 
       - name: Load cached Docker image (${{ matrix.distribution }})
         run: |
