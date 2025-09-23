@@ -54,6 +54,17 @@ jobs:
           else
             echo "docker-compose is already installed."
           fi
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.distribution }}-${{ hashFiles(format('docker/{0}/Dockerfile', matrix.distribution)) }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.distribution }}-
 
       - name: Ensure DockerEntry.sh is executable (${{ matrix.distribution }})
         run: chmod +x ./docker/${{ matrix.distribution }}/DockerEntry.sh
@@ -80,10 +91,10 @@ jobs:
         run: |
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c '
             pwd;
-            tox > test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt 2>&1;
+            tox > test-outputs_${{ matrix.distribution }}.txt 2>&1;
             ls -lah;
             cat test-results.xml;
-            mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml;
+            mv test-results.xml test-results_${{ matrix.distribution }}.xml;
           '
 
       - name: Copy test results from Docker container (${{ matrix.distribution }})
