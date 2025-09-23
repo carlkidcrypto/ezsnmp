@@ -101,7 +101,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cpp-test-results_${{matrix.os}}
-          path: cpp_tests/build/cpp-test-results_${{ matrix.os }}.xml
+          path: cpp_tests/**/*.xml
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest

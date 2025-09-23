@@ -90,10 +90,7 @@ jobs:
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c '
-            pwd;
             tox > test-outputs_${{ matrix.distribution }}.txt 2>&1;
-            ls -lah;
-            cat test-results.xml;
             mv test-results.xml test-results_${{ matrix.distribution }}.xml;
           '
 
