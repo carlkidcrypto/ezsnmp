@@ -73,9 +73,9 @@ jobs:
       - name: Build and spin up Docker containers (${{ matrix.distribution }})
         run: |
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml build
+          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml up -d
           mkdir -p /tmp/.docker-cache
           docker save ${{ matrix.distribution }}_snmp_container -o /tmp/.docker-cache/image.tar
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml up -d
 
       - name: Wait for services to be ready (${{ matrix.distribution }})
         run: |
