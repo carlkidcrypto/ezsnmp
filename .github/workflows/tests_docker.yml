@@ -48,12 +48,23 @@ jobs:
       - name: Set up Docker Compose
         run: |
           if ! command -v docker-compose &> /dev/null; then
-              echo "docker-compose not found, installing..."
-              sudo apt-get update
-              sudo apt-get install -y docker-compose
+            echo "docker-compose not found, installing..."
+            sudo apt-get update
+            sudo apt-get install -y docker-compose
           else
-              echo "docker-compose is already installed."
+            echo "docker-compose is already installed."
           fi
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.distribution }}-${{ hashFiles(format('docker/{0}/Dockerfile', matrix.distribution)) }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.distribution }}-
 
       - name: Ensure DockerEntry.sh is executable (${{ matrix.distribution }})
         run: chmod +x ./docker/${{ matrix.distribution }}/DockerEntry.sh
@@ -79,14 +90,14 @@ jobs:
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
           docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c '
-            tox | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
-            mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
+            tox > test-outputs_${{ matrix.distribution }}.txt 2>&1;
+            mv test-results.xml test-results_${{ matrix.distribution }}.xml;
           '
 
       - name: Copy test results from Docker container (${{ matrix.distribution }})
         run: |
-         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml . || touch test-results_${{ matrix.distribution }}.xml
-         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt . || touch test-outputs_${{ matrix.distribution }}.txt
+         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml .
+         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt .
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
@@ -111,7 +122,7 @@ jobs:
           merge-multiple: false
       
       - name: List files
-        run: ls -R pytest-results_*
+        run: ls -Rlah pytest-results_*
 
       - name: Pytest coverage comment (Dockerized Tests)
         uses: MishaKav/pytest-coverage-comment@v1.1.57

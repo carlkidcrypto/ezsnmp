@@ -101,7 +101,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cpp-test-results_${{matrix.os}}
-          path: cpp_tests/build/cpp-test-results_${{ matrix.os }}.xml
+          path: cpp_tests/**/*.xml
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
@@ -125,5 +125,5 @@ jobs:
           create-new-comment: false
           hide-comment: false
           multiple-files: |
-            macOS, test-results/cpp-test-results_macos-latest.xml
-            Ubuntu, test-results/cpp-test-results_ubuntu-latest.xml
+            macOS, **/*macos*.xml
+            Ubuntu, **/*ubuntu*.xml
