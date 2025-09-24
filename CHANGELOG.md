@@ -1,7 +1,45 @@
-Last Updated: 2025-09-05 14:23:42 UTC
+Last Updated: 2025-09-24 02:44:22 UTC
 
 # Changelog
 
+
+<a name="v2.1.0a3"></a>
+## [v2.1.0a3](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a2...v2.1.0a3) (2025-09-23)
+
+
+### Changes
+
+#### 384
+
+- 384 bug   macos native tests ([#441](https://github.com/carlkidcrypto/ezsnmp/issues/441))
+
+
+#### 422
+
+- 422 feature per bulk walk configurable max repetitions ([#443](https://github.com/carlkidcrypto/ezsnmp/issues/443))
+
+
+#### Bump
+
+- Bump platformdirs from 4.3.8 to 4.4.0 ([#425](https://github.com/carlkidcrypto/ezsnmp/issues/425))
+
+- Bump actions/setup-python from 5 to 6 ([#430](https://github.com/carlkidcrypto/ezsnmp/issues/430))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#436](https://github.com/carlkidcrypto/ezsnmp/issues/436) from carlkidcrypto/update-changelog-17495929398
+
+
+
+
+
+---
 
 <a name="v2.1.0a2"></a>
 ## [v2.1.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a1...v2.1.0a2) (2025-09-04)
