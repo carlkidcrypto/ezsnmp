@@ -70,6 +70,8 @@ SOFTWARE.
 #include "helpers.h"
 #include "snmpgetnext.h"
 
+#define SNMPGETNEXT_APPNAME "ezsnmp_snmpgetnext"
+
 void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
       case 'C':
@@ -92,6 +94,7 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
 std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   init_snmp(SNMPGETNEXT_APPNAME);
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -234,5 +237,6 @@ out:
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
+   snmp_shutdown(SNMPGETNEXT_APPNAME);
    return parse_results(return_vector);
 }

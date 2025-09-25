@@ -76,6 +76,8 @@ int inform = 0;
 #include "helpers.h"
 #include "snmptrap.h"
 
+#define SNMPTRAP_APPNAME "ezsnmp_snmptrap"
+
 void snmptrap_usage(void) {
    fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
    snmp_parse_args_usage(stderr);
@@ -115,6 +117,7 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
 int snmptrap(std::vector<std::string> const &args) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   init_snmp(SNMPTRAP_APPNAME);
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -378,5 +381,6 @@ out:
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
+   snmp_shutdown(SNMPTRAP_APPNAME);
    return exitval;
 }
