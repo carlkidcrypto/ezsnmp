@@ -106,7 +106,7 @@ def worker_get():
     for i in range(100):
         session = Session(**SESS_V2_ARGS)
         try:
-            item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
+            item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])[0]
             print(f"\t{item.oid} - {item.value}")
         except Exception as e:
             print(f"Error on iteration {i} for: {e}")
