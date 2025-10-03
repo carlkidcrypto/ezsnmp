@@ -37,6 +37,7 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt);
  *             the snmpbulkget command.
  * @return A vector of Result objects containing the retrieved data.
  */
-std::vector<Result> snmpbulkget(std::vector<std::string> const &args);
+std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
+                                std::string const &init_app_name);
 
 #endif // SNMPBULKGET_H

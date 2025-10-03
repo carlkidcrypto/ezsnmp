@@ -79,8 +79,6 @@ int names;
 #include "helpers.h"
 #include "snmpbulkget.h"
 
-#define SNMPBULKGET_APPNAME "ezsnmp_snmpbulkget"
-
 void snmpbulkget_usage(void) {
    fprintf(stderr, "USAGE: snmpbulkget ");
    snmp_parse_args_usage(stderr);
@@ -129,10 +127,11 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
+std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
+                                std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(SNMPBULKGET_APPNAME);
+   init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -257,6 +256,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
-   snmp_shutdown(SNMPBULKGET_APPNAME);
+   snmp_shutdown(init_app_name.c_str());
    return parse_results(return_vector);
 }

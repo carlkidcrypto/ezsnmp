@@ -78,8 +78,6 @@ int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 #include "helpers.h"
 #include "snmpbulkwalk.h"
 
-#define SNMPBULKWALK_APPNAME "ezsnmp_snmpbulkwalk"
-
 void snmpbulkwalk_usage(void) {
    fprintf(stderr, "USAGE: snmpbulkwalk ");
    snmp_parse_args_usage(stderr);
@@ -174,10 +172,11 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
+std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
+                                 std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(SNMPBULKWALK_APPNAME);
+   init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -388,6 +387,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args) {
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
-   snmp_shutdown(SNMPBULKWALK_APPNAME);
+   snmp_shutdown(init_app_name.c_str());
    return parse_results(return_vector);
 }

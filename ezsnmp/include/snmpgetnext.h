@@ -37,6 +37,7 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt);
  *             the snmpgetnext command.
  * @return A vector of Result objects containing the retrieved data.
  */
-std::vector<Result> snmpgetnext(std::vector<std::string> const &args);
+std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
+                                std::string const &init_app_name);
 
 #endif // SNMPGETNEXT_H

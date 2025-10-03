@@ -6,7 +6,6 @@ from time import time, sleep
 from random import randint, uniform
 from ezsnmp.session import Session
 
-# --- SNMP session configs (copy from your globals) ---
 SESS_V1_ARGS = {
     "version": "1",
     "hostname": "localhost",
@@ -91,6 +90,7 @@ SESS_TYPES_NAMES = [
 MAX_RETRIES = 25
 PRINT_SNMP_INFO = False
 
+
 def count_open_fds():
     """Count open file descriptors for the current process (Linux only)."""
     fd_dir = f"/proc/{os.getpid()}/fd"
@@ -99,6 +99,7 @@ def count_open_fds():
     except Exception:
         return -1  # Not available
 
+
 def worker_get():
     print(f"Subprocess PID: {os.getpid()}")
     print(f"Subprocess PID: Open FDs before: {count_open_fds()}")
@@ -106,11 +107,13 @@ def worker_get():
     for i in range(100):
         session = Session(**SESS_V2_ARGS)
         try:
-            item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])[0]
-            print(f"\t{item.oid} - {item.value}")
+            item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
+            print(f"\t{item[0].oid} - {item[0].value}")
+            print(f"\t{item[1].oid} - {item[1].value}")
+            print(f"\t{item[2].oid} - {item[2].value}")
         except Exception as e:
             print(f"Error on iteration {i} for: {e}")
-    
+
     print(f"Subprocess PID Open FDs after: {count_open_fds()}")
 
 

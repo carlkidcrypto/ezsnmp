@@ -37,6 +37,6 @@ void snmpset_optProc(int argc, char *const *argv, int opt);
  *             the snmpset command.
  * @return A vector of Result objects containing the results of the SET operation.
  */
-std::vector<Result> snmpset(std::vector<std::string> const &args);
+std::vector<Result> snmpset(std::vector<std::string> const &args, std::string const &init_app_name);
 
 #endif // SNMPSET_H

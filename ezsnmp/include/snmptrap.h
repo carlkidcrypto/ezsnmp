@@ -53,6 +53,6 @@ int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *
  *             the snmptrap command.
  * @return An integer indicating the result of the TRAP operation.
  */
-int snmptrap(std::vector<std::string> const &args);
+int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name);
 
 #endif // SNMPTRAP_H
