@@ -43,6 +43,13 @@ class SessionBase {
        false; ///< Print timeticks unparsed as numeric integers (-O t).
    std::string m_set_max_repeaters_to_num = ""; ///< Set max-repeaters to <NUM> (-C r<NUM>).
 
+   std::string m_walk_init_name;
+   std::string m_bulkwalk_init_name;
+   std::string m_get_init_name;
+   std::string m_getnext_init_name;
+   std::string m_bulkget_init_name;
+   std::string m_set_init_name;
+
    /**
     * @brief Populates the m_args vector with SNMP command arguments.
     *
@@ -118,6 +125,14 @@ class SessionBase {
     * @brief Destructor for SessionBase.
     */
    ~SessionBase();
+
+   /**
+    * @brief Closes the SNMP session and releases resources via the snmp snmp_shutdown function.
+    * It use the initialization name to identify the session to close.
+    * A unique initialization name is generated for each net-snmp function to avoid conflicts.
+    * i.e bulkwalk, bulkget, get, getnext, set, walk...
+    */
+   void _close();
 
    /**
     * @brief Performs an SNMP WALK operation.

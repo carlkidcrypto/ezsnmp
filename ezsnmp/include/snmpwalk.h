@@ -52,6 +52,7 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt);
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmpwalk command.
+ * @param init_app_name A string representing the initial application name.
  * @return A vector of Result objects containing the retrieved data.
  */
 std::vector<Result> snmpwalk(std::vector<std::string> const &args,

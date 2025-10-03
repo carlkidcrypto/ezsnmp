@@ -387,6 +387,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
-   snmp_shutdown(init_app_name.c_str());
+
    return parse_results(return_vector);
 }
