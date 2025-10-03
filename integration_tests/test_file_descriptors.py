@@ -5,6 +5,8 @@ import multiprocessing
 from time import time, sleep
 from random import randint, uniform
 from ezsnmp.session import Session
+import sys
+import datetime
 
 SESS_V1_ARGS = {
     "version": "1",
@@ -87,9 +89,8 @@ SESS_TYPES_NAMES = [
     "SESS_V3_SHA_NO_PRIV_ARGS",
     "SESS_V3_MD5_NO_PRIV_ARGS",
 ]
-MAX_RETRIES = 25
-PRINT_SNMP_INFO = False
 
+TOTAL_CALLS = 100
 
 def count_open_fds():
     """Count open file descriptors for the current process (Linux only)."""
@@ -97,69 +98,95 @@ def count_open_fds():
     try:
         return len(os.listdir(fd_dir))
     except Exception:
-        return -1  # Not available
+        return -1
 
 
-def work_get_no_close():
-    print(f"Subprocess PID: {os.getpid()}")
-    print(f"Subprocess PID: Open FDs before: {count_open_fds()}")
+def work_get_no_close(sess_args, sess_name):
+    with open(log_file_path, "a+") as log_file:
+        def log_print(*args, **kwargs):
+            print(*args, **kwargs)
+            print(*args, **kwargs, file=log_file)
+            log_file.flush()
 
-    for i in range(100):
-        session = Session(**SESS_V2_ARGS)
-        try:
-            item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
-            print(f"\t{item[0].oid} - {item[0].value}")
-            print(f"\t{item[1].oid} - {item[1].value}")
-            print(f"\t{item[2].oid} - {item[2].value}")
-        except Exception as e:
-            print(f"Error on iteration {i} for: {e}")
+        log_print(f"Subprocess PID: {os.getpid()} [{sess_name}]")
+        log_print(f"Subprocess PID: Open FDs before: {count_open_fds()} [{sess_name}]")
 
-    print(f"Subprocess PID Open FDs after: {count_open_fds()}")
+        for i in range(TOTAL_CALLS):
+            session = Session(**sess_args)
+            try:
+                item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
+                print(f"\t{item[0].oid} - {item[0].value}")
+                print(f"\t{item[1].oid} - {item[1].value}")
+                print(f"\t{item[2].oid} - {item[2].value}")
+            except Exception as e:
+                log_print(f"Error on iteration {i} for: {e}")
 
-def work_get_close():
-    print(f"Subprocess PID: {os.getpid()}")
-    print(f"Subprocess PID: Open FDs before: {count_open_fds()}")
+        log_print(f"Subprocess PID Open FDs after: {count_open_fds()} [{sess_name}]")
 
-    for i in range(100):
-        session = Session(**SESS_V2_ARGS)
-        try:
-            item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
-            print(f"\t{item[0].oid} - {item[0].value}")
-            print(f"\t{item[1].oid} - {item[1].value}")
-            print(f"\t{item[2].oid} - {item[2].value}")
-        except Exception as e:
-            print(f"Error on iteration {i} for: {e}")
-        
-        session.close()
 
-    print(f"Subprocess PID Open FDs after: {count_open_fds()}")
+def work_get_close(sess_args, sess_name):
+    with open(log_file_path, "a+") as log_file:
+        def log_print(*args, **kwargs):
+            print(*args, **kwargs)
+            print(*args, **kwargs, file=log_file)
+            log_file.flush()
+
+        log_print(f"Subprocess PID: {os.getpid()} [{sess_name}]")
+        log_print(f"Subprocess PID: Open FDs before: {count_open_fds()} [{sess_name}]")
+
+        for i in range(TOTAL_CALLS):
+            session = Session(**sess_args)
+            try:
+                item = session.get(["sysUpTime.0", "sysContact.0", "sysLocation.0"])
+                print(f"\t{item[0].oid} - {item[0].value}")
+                print(f"\t{item[1].oid} - {item[1].value}")
+                print(f"\t{item[2].oid} - {item[2].value}")
+            except Exception as e:
+                log_print(f"Error on iteration {i} for: {e}")
+
+            session.close()
+
+        log_print(f"Subprocess PID Open FDs after: {count_open_fds()} [{sess_name}]")
+
 
 if __name__ == "__main__":
-    print(f"Parent PID: {os.getpid()}")
-    print(f"Parent PID: Open FDs before: {count_open_fds()}")
+    # Open a log file for writing all output
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file_path = f"snmp_fd_test_output_{timestamp}.log"
 
-    # Test with work_get_no_close
-    print("\nRunning work_get_no_close:")
-    start_time = time()
-    test_proc = multiprocessing.Process(target=work_get_no_close)
-    test_proc.start()
-    test_proc.join()
-    execution_time = time() - start_time
+    with open(log_file_path, "a+") as log_file:
+        def log_print(*args, **kwargs):
+            print(*args, **kwargs)
+            print(*args, **kwargs, file=log_file)
+            log_file.flush()
 
-    print(f"Parent PID Open FDs after work_get_no_close: {count_open_fds()}")
-    print(f"work_get_no_close: Total execution time: {execution_time} seconds")
-    avg_time_per_call = execution_time / 100
-    print(f"Average time per SNMP get call (no close): {avg_time_per_call:.6f} seconds")
+        log_print(f"Parent PID: {os.getpid()}")
+        parent_fds_before = count_open_fds()
+        log_print(f"Parent PID: Open FDs before: {parent_fds_before}")
 
-    # Test with work_get_close
-    print("\nRunning work_get_close:")
-    start_time = time()
-    test_proc = multiprocessing.Process(target=work_get_close)
-    test_proc.start()
-    test_proc.join()
-    execution_time = time() - start_time
+        for sess_args, sess_name in zip(SESS_TYPES, SESS_TYPES_NAMES):
+            # Test with work_get_no_close
+            log_print(f"\nRunning work_get_no_close: {sess_name}")
+            start_time = time()
+            test_proc = multiprocessing.Process(target=work_get_no_close, args=(sess_args, sess_name))
+            test_proc.start()
+            test_proc.join()
+            execution_time = time() - start_time
 
-    print(f"Parent PID Open FDs after work_get_close: {count_open_fds()}")
-    print(f"work_get_close: Total execution time: {execution_time} seconds")
-    avg_time_per_call = execution_time / 100
-    print(f"Average time per SNMP get call (with close): {avg_time_per_call:.6f} seconds")
+            log_print(f"Parent PID Open FDs after work_get_no_close [{sess_name}]: {count_open_fds()}")
+            log_print(f"work_get_no_close [{sess_name}]: Total execution time: {execution_time} seconds")
+            avg_time_per_call = execution_time / TOTAL_CALLS
+            log_print(f"Average time per SNMP get call (no close) [{sess_name}]: {avg_time_per_call:.6f} seconds")
+
+            # Test with work_get_close
+            log_print(f"\nRunning work_get_close: {sess_name}")
+            start_time = time()
+            test_proc = multiprocessing.Process(target=work_get_close, args=(sess_args, sess_name))
+            test_proc.start()
+            test_proc.join()
+            execution_time = time() - start_time
+
+            log_print(f"Parent PID Open FDs after work_get_close [{sess_name}]: {count_open_fds()}")
+            log_print(f"work_get_close [{sess_name}]: Total execution time: {execution_time} seconds")
+            avg_time_per_call = execution_time / TOTAL_CALLS
+            log_print(f"Average time per SNMP get call (with close) [{sess_name}]: {avg_time_per_call:.6f} seconds")
