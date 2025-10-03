@@ -130,27 +130,27 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
-          cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-          ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-          echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+            ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+            echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
-          cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-          ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-          echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+            ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+            echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
       - name: Run Integration Tests "test_file_descriptors"
         uses: carlkidcrypto/os-specific-runner@v2.1.2
         with:
           linux: |
-          cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-          python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
-          echo "artifactPath4=/home/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
+            python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
+            echo "artifactPath4=/home/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
-          cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-          python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
-          echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
+            python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
+            echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v4
