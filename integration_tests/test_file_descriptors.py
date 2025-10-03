@@ -92,6 +92,7 @@ SESS_TYPES_NAMES = [
 
 TOTAL_CALLS = 100
 
+
 def count_open_fds():
     """Count open file descriptors for the current process (Linux only)."""
     fd_dir = f"/proc/{os.getpid()}/fd"
@@ -103,6 +104,7 @@ def count_open_fds():
 
 def work_get_no_close(sess_args, sess_name):
     with open(log_file_path, "a+") as log_file:
+
         def log_print(*args, **kwargs):
             print(*args, **kwargs)
             print(*args, **kwargs, file=log_file)
@@ -126,6 +128,7 @@ def work_get_no_close(sess_args, sess_name):
 
 def work_get_close(sess_args, sess_name):
     with open(log_file_path, "a+") as log_file:
+
         def log_print(*args, **kwargs):
             print(*args, **kwargs)
             print(*args, **kwargs, file=log_file)
@@ -155,6 +158,7 @@ if __name__ == "__main__":
     log_file_path = f"snmp_fd_test_output_{timestamp}.log"
 
     with open(log_file_path, "a+") as log_file:
+
         def log_print(*args, **kwargs):
             print(*args, **kwargs)
             print(*args, **kwargs, file=log_file)
@@ -168,25 +172,41 @@ if __name__ == "__main__":
             # Test with work_get_no_close
             log_print(f"\nRunning work_get_no_close: {sess_name}")
             start_time = time()
-            test_proc = multiprocessing.Process(target=work_get_no_close, args=(sess_args, sess_name))
+            test_proc = multiprocessing.Process(
+                target=work_get_no_close, args=(sess_args, sess_name)
+            )
             test_proc.start()
             test_proc.join()
             execution_time = time() - start_time
 
-            log_print(f"Parent PID Open FDs after work_get_no_close [{sess_name}]: {count_open_fds()}")
-            log_print(f"work_get_no_close [{sess_name}]: Total execution time: {execution_time} seconds")
+            log_print(
+                f"Parent PID Open FDs after work_get_no_close [{sess_name}]: {count_open_fds()}"
+            )
+            log_print(
+                f"work_get_no_close [{sess_name}]: Total execution time: {execution_time} seconds"
+            )
             avg_time_per_call = execution_time / TOTAL_CALLS
-            log_print(f"Average time per SNMP get call (no close) [{sess_name}]: {avg_time_per_call:.6f} seconds")
+            log_print(
+                f"Average time per SNMP get call (no close) [{sess_name}]: {avg_time_per_call:.6f} seconds"
+            )
 
             # Test with work_get_close
             log_print(f"\nRunning work_get_close: {sess_name}")
             start_time = time()
-            test_proc = multiprocessing.Process(target=work_get_close, args=(sess_args, sess_name))
+            test_proc = multiprocessing.Process(
+                target=work_get_close, args=(sess_args, sess_name)
+            )
             test_proc.start()
             test_proc.join()
             execution_time = time() - start_time
 
-            log_print(f"Parent PID Open FDs after work_get_close [{sess_name}]: {count_open_fds()}")
-            log_print(f"work_get_close [{sess_name}]: Total execution time: {execution_time} seconds")
+            log_print(
+                f"Parent PID Open FDs after work_get_close [{sess_name}]: {count_open_fds()}"
+            )
+            log_print(
+                f"work_get_close [{sess_name}]: Total execution time: {execution_time} seconds"
+            )
             avg_time_per_call = execution_time / TOTAL_CALLS
-            log_print(f"Average time per SNMP get call (with close) [{sess_name}]: {avg_time_per_call:.6f} seconds")
+            log_print(
+                f"Average time per SNMP get call (with close) [{sess_name}]: {avg_time_per_call:.6f} seconds"
+            )

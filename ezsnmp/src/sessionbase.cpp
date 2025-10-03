@@ -139,10 +139,9 @@ SessionBase::SessionBase(std::string const& hostname,
    m_set_init_name = "ezsnmp_set_" + std::to_string(rand_num);
 }
 
-SessionBase::~SessionBase() { }
+SessionBase::~SessionBase() {}
 
 void SessionBase::_close() {
-
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
    snmp_shutdown(m_walk_init_name.c_str());
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
