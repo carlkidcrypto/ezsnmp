@@ -157,9 +157,11 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
+std::vector<Result> snmpwalk(std::vector<std::string> const &args,
+                             std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);

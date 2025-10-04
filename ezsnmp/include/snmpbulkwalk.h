@@ -50,8 +50,10 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt);
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmpbulkwalk command.
+ * @param init_app_name A string representing the initial application name.
  * @return A vector of Result objects containing the retrieved data.
  */
-std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args);
+std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
+                                 std::string const &init_app_name);
 
 #endif // SNMPBULKWALK_H

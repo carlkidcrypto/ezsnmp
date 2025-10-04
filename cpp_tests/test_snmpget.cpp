@@ -13,7 +13,7 @@ TEST_F(SnmpGetTest, TestBasicGet) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
 
-   auto results = snmpget(args);
+   auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
@@ -28,7 +28,7 @@ TEST_F(SnmpGetTest, TestMultipleOids) {
                                     "SNMPv2-MIB::sysLocation.0",
                                     "ifAdminStatus.1"};
 
-   auto results = snmpget(args);
+   auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 2);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
@@ -54,7 +54,7 @@ TEST_F(SnmpGetTest, TestV3Get) {
                                     "localhost:11161",
                                     "SNMPv2-MIB::sysLocation.0"};
 
-   auto results = snmpget(args);
+   auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
@@ -66,7 +66,7 @@ TEST_F(SnmpGetTest, TestMissingOid) {
    EXPECT_THROW(
        {
           try {
-             auto results = snmpget(args);
+             auto results = snmpget(args, "testing");
           } catch (GenericErrorBase const& e) {
              EXPECT_STREQ("Missing object name\n", e.what());
              throw;
@@ -86,7 +86,7 @@ TEST_F(SnmpGetTest, TestTooManyOids) {
    EXPECT_THROW(
        {
           try {
-             auto results = snmpget(args);
+             auto results = snmpget(args, "testing");
           } catch (GenericErrorBase const& e) {
              EXPECT_STREQ(
                  "Too many object identifiers specified. Only 128 allowed in one request.\n",
@@ -104,7 +104,7 @@ TEST_F(SnmpGetTest, TestInvalidOid) {
    EXPECT_THROW(
        {
           try {
-             auto results = snmpget(args);
+             auto results = snmpget(args, "testing");
           } catch (GenericErrorBase const& e) {
              EXPECT_STREQ(e.what(), "INVALID-MIB::nonexistent.0: Unknown Object Identifier");
              throw;
@@ -120,7 +120,7 @@ TEST_F(SnmpGetTest, TestUknownHost) {
    EXPECT_THROW(
        {
           try {
-             auto results = snmpget(args);
+             auto results = snmpget(args, "testing");
           } catch (ConnectionErrorBase const& e) {
              EXPECT_STREQ(e.what(), "snmpget: Unknown host (nonexistenthost:11161)");
              throw;
@@ -136,7 +136,7 @@ TEST_F(SnmpGetTest, TestInvalidVersion) {
    EXPECT_THROW(
        {
           try {
-             auto results = snmpget(args);
+             auto results = snmpget(args, "testing");
           } catch (ParseErrorBase const& e) {
              EXPECT_STREQ(e.what(), "NETSNMP_PARSE_ARGS_ERROR_USAGE");
              throw;
@@ -152,7 +152,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
    std::string expected_result = "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
 
    for (int i = 0; i < 5; ++i) {
-      auto results = snmpget(args);
+      auto results = snmpget(args, "testing");
       EXPECT_EQ(results.size(), 1);
       EXPECT_EQ(results[0]._to_string(), expected_result);
    }
@@ -175,7 +175,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
          args.insert(args.begin() + 3, "e");
       }
 
-      auto results = snmpget(args);
+      auto results = snmpget(args, "testing");
       EXPECT_EQ(results.size(), 1);
 
       if (i % 2 == 0) {

@@ -123,13 +123,6 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
  */
 std::string print_objid_to_string(oid const *objid, size_t objidlen);
 
-#if ENABLE_LEGACY_SUPPORT
-
-#define NETSNMP_APPLICATION_CONFIG_TYPE "snmpapp"
-void netsnmp_cleanup_session(netsnmp_session *s);
-void netsnmp_get_monotonic_clock(struct timeval *tv);
-#endif
-
 /**
  * @brief Cleans up the Net-SNMP library's global data to ensure proper resource management.
  *

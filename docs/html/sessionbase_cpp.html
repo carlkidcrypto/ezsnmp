@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Swig Interface File(s)" href="swig_interface_files.html" /><link rel="prev" title="Session Python Module" href="session_python.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
-        <title>SessionBase C++ Module - EzSnmp v2.1.0a3 documentation</title>
+        <title>SessionBase C++ Module - EzSnmp v2.1.0b0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp v2.1.0a3 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.1.0b0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,7 +189,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">EzSnmp v2.1.0a3 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.1.0b0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -468,6 +468,12 @@ cannot be set through <code class="docutils literal notranslate"><span class="pr
 <dt class="sig sig-object cpp" id="_CPPv4N11SessionBaseD0Ev">
 <span id="_CPPv3N11SessionBaseD0Ev"></span><span id="_CPPv2N11SessionBaseD0Ev"></span><span id="SessionBase::~SessionBase"></span><span class="target" id="classSessionBase_1a739266f0bc45f678b6769d50f01b4fcf"></span><span class="sig-name descname"><span class="n"><span class="pre">~SessionBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBaseD0Ev" title="Link to this definition">¶</a><br /></dt>
 <dd><p>Destructor for <a class="reference internal" href="#classSessionBase"><span class="std std-ref">SessionBase</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase6_closeEv">
+<span id="_CPPv3N11SessionBase6_closeEv"></span><span id="_CPPv2N11SessionBase6_closeEv"></span><span id="SessionBase::_close"></span><span class="target" id="classSessionBase_1a4938e7c775cb8282dcb126f64aaad8d6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_close</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11SessionBase6_closeEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Closes the SNMP session and releases resources via the snmp snmp_shutdown function. It use the initialization name to identify the session to close. A unique initialization name is generated for each net-snmp function to avoid conflicts. i.e bulkwalk, bulkget, get, getnext, set, walk… </p>
 </dd></dl>
 
 <dl class="cpp function">
@@ -1194,6 +1200,36 @@ cannot be set through <code class="docutils literal notranslate"><span class="pr
 <dd><p>Set max-repeaters to &lt;NUM&gt; (-C r&lt;NUM&gt;). </p>
 </dd></dl>
 
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase16m_walk_init_nameE">
+<span id="_CPPv3N11SessionBase16m_walk_init_nameE"></span><span id="_CPPv2N11SessionBase16m_walk_init_nameE"></span><span id="SessionBase::m_walk_init_name__ss"></span><span class="target" id="classSessionBase_1ab037d04eb7a2e01463e86885a9f4534e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_walk_init_name</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase16m_walk_init_nameE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase20m_bulkwalk_init_nameE">
+<span id="_CPPv3N11SessionBase20m_bulkwalk_init_nameE"></span><span id="_CPPv2N11SessionBase20m_bulkwalk_init_nameE"></span><span id="SessionBase::m_bulkwalk_init_name__ss"></span><span class="target" id="classSessionBase_1a7fbe2764c1306718d549c31aa36cb2f8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_bulkwalk_init_name</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase20m_bulkwalk_init_nameE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase15m_get_init_nameE">
+<span id="_CPPv3N11SessionBase15m_get_init_nameE"></span><span id="_CPPv2N11SessionBase15m_get_init_nameE"></span><span id="SessionBase::m_get_init_name__ss"></span><span class="target" id="classSessionBase_1a4f6901d40a3ed32213130af7de06ddd9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_get_init_name</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase15m_get_init_nameE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase19m_getnext_init_nameE">
+<span id="_CPPv3N11SessionBase19m_getnext_init_nameE"></span><span id="_CPPv2N11SessionBase19m_getnext_init_nameE"></span><span id="SessionBase::m_getnext_init_name__ss"></span><span class="target" id="classSessionBase_1ac43d6da9b32ff2418078c00b6b667fda"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_getnext_init_name</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase19m_getnext_init_nameE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase19m_bulkget_init_nameE">
+<span id="_CPPv3N11SessionBase19m_bulkget_init_nameE"></span><span id="_CPPv2N11SessionBase19m_bulkget_init_nameE"></span><span id="SessionBase::m_bulkget_init_name__ss"></span><span class="target" id="classSessionBase_1a23e17c4fa13e790fa81014c21030c4c9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_bulkget_init_name</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase19m_bulkget_init_nameE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11SessionBase15m_set_init_nameE">
+<span id="_CPPv3N11SessionBase15m_set_init_nameE"></span><span id="_CPPv2N11SessionBase15m_set_init_nameE"></span><span id="SessionBase::m_set_init_name__ss"></span><span class="target" id="classSessionBase_1a2aeb023b1e3e37629fa7b200c78c34bd"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_set_init_name</span></span></span><a class="headerlink" href="#_CPPv4N11SessionBase15m_set_init_nameE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
 </div>
 </dd></dl>
 
@@ -1249,7 +1285,7 @@ cannot be set through <code class="docutils literal notranslate"><span class="pr
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d816a467"></script>
+</div><script src="_static/documentation_options.js?v=42be5ec1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
