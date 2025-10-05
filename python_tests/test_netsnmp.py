@@ -62,8 +62,8 @@ def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
 def test_snmp_get_unknown(netsnmp_args):
 
     with pytest.raises(GenericError):
-    netsnmp_args = netsnmp_args + ["sysDescripto.0"]
-    snmpget(netsnmp_args, "testing_value")
+        netsnmp_args = netsnmp_args + ["sysDescripto.0"]
+        snmpget(netsnmp_args, "testing_value")
 
 
 def test_snmp_get_invalid_instance(netsnmp_args):
@@ -79,8 +79,8 @@ def test_snmp_get_invalid_instance(netsnmp_args):
                 # produces no output, but on Ubuntu it does...
                 snmpget(netsnmp_args, "testing_value")
     else:
-    netsnmp_args = netsnmp_args + ["sysContact.1"]
-    res = snmpget(netsnmp_args, "testing_value")
+        netsnmp_args = netsnmp_args + ["sysContact.1"]
+        res = snmpget(netsnmp_args, "testing_value")
         assert res[0].type == "NOSUCHINSTANCE"
 
 
@@ -91,8 +91,8 @@ def test_snmp_get_invalid_object(netsnmp_args):
             netsnmp_args = netsnmp_args + ["iso"]
             snmpget(netsnmp_args, "testing_value")
     else:
-    netsnmp_args = netsnmp_args + ["iso"]
-    res = snmpget(netsnmp_args, "testing_value")
+        netsnmp_args = netsnmp_args + ["iso"]
+        res = snmpget(netsnmp_args, "testing_value")
         assert res[0].type == "NOSUCHOBJECT"
 
 
@@ -150,7 +150,7 @@ def test_snmpbulkget(netsnmp_args):
             "sysORDescr",
             "sysORUpTime",
         ]
-    res = snmpbulkget(netsnmp_args, "testing_value")
+        res = snmpbulkget(netsnmp_args, "testing_value")
 
         assert len(res) == 50
 
@@ -174,8 +174,8 @@ def test_snmpwalk(netsnmp_args):
             res = snmpbulkwalk(netsnmp_args, "testing_value")
 
     else:
-    netsnmp_args = netsnmp_args + ["system"]
-    res = snmpbulkwalk(netsnmp_args, "testing_value")
+        netsnmp_args = netsnmp_args + ["system"]
+        res = snmpbulkwalk(netsnmp_args, "testing_value")
         assert len(res) >= 7
 
         assert platform.version() in res[0].value
@@ -219,8 +219,8 @@ def test_snmp_bulkwalk_res(netsnmp_args):
             netsnmp_args = netsnmp_args + ["system"]
             snmpbulkwalk(netsnmp_args, "testing_value")
     else:
-    netsnmp_args = netsnmp_args + ["system"]
-    res = snmpbulkwalk(netsnmp_args, "testing_value")
+        netsnmp_args = netsnmp_args + ["system"]
+        res = snmpbulkwalk(netsnmp_args, "testing_value")
 
         assert len(res) >= 7
 
