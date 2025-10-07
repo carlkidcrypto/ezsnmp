@@ -13,6 +13,8 @@ on:
 jobs:
   check-source-changes:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
