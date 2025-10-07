@@ -12,8 +12,6 @@ on:
 jobs:
   check-source-changes:
     runs-on: ubuntu-latest
-    env:
-      PYTHONPATH: ${{ github.workspace }}
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
@@ -37,6 +35,8 @@ jobs:
 
   build-and-test:
     runs-on: ${{ matrix.os }}
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     needs: check-source-changes
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
