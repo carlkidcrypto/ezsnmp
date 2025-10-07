@@ -10,7 +10,7 @@ from .netsnmpbase import (
 from .exceptions import _handle_error
 
 
-def snmpget(netsnmp_args=[]):
+def snmpget(netsnmp_args=[], init_app_name="ezsnmp_snmpget"):
     """
     Perform an SNMP GET operation using the provided arguments.
 
@@ -19,6 +19,8 @@ def snmpget(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP GET operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -46,13 +48,13 @@ def snmpget(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmpget(netsnmp_args)
+        result = netsnmp_snmpget(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
 
 
-def snmpgetnext(netsnmp_args=[]):
+def snmpgetnext(netsnmp_args=[], init_app_name="ezsnmp_snmpgetnext"):
     """
     Perform an SNMP GETNEXT operation using the provided arguments.
 
@@ -61,6 +63,8 @@ def snmpgetnext(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP GETNEXT operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -88,13 +92,13 @@ def snmpgetnext(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmpgetnext(netsnmp_args)
+        result = netsnmp_snmpgetnext(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
 
 
-def snmpwalk(netsnmp_args=[]):
+def snmpwalk(netsnmp_args=[], init_app_name="ezsnmp_snmpwalk"):
     """
     Perform an SNMP WALK operation using the provided arguments.
 
@@ -103,6 +107,8 @@ def snmpwalk(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP WALK operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -130,13 +136,13 @@ def snmpwalk(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmpwalk(netsnmp_args)
+        result = netsnmp_snmpwalk(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
 
 
-def snmpbulkget(netsnmp_args=[]):
+def snmpbulkget(netsnmp_args=[], init_app_name="ezsnmp_snmpbulkget"):
     """
     Perform an SNMP BULKGET operation using the provided arguments.
 
@@ -145,6 +151,8 @@ def snmpbulkget(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP BULKGET operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -172,13 +180,13 @@ def snmpbulkget(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmpbulkget(netsnmp_args)
+        result = netsnmp_snmpbulkget(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
 
 
-def snmpbulkwalk(netsnmp_args=[]):
+def snmpbulkwalk(netsnmp_args=[], init_app_name="ezsnmp_snmpbulkwalk"):
     """
     Perform an SNMP BULKWALK operation using the provided arguments.
 
@@ -187,6 +195,8 @@ def snmpbulkwalk(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP BULKWALK operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -214,13 +224,13 @@ def snmpbulkwalk(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmpbulkwalk(netsnmp_args)
+        result = netsnmp_snmpbulkwalk(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
 
 
-def snmpset(netsnmp_args=[]):
+def snmpset(netsnmp_args=[], init_app_name="ezsnmp_snmpset"):
     """
     Perform an SNMP SET operation using the provided arguments.
 
@@ -229,6 +239,8 @@ def snmpset(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP SET operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -256,13 +268,13 @@ def snmpset(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmpset(netsnmp_args)
+        result = netsnmp_snmpset(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
 
 
-def snmptrap(netsnmp_args=[]):
+def snmptrap(netsnmp_args=[], init_app_name="ezsnmp_snmptrap"):
     """
     Perform an SNMP TRAP operation using the provided arguments.
 
@@ -271,6 +283,8 @@ def snmptrap(netsnmp_args=[]):
 
     :param netsnmp_args: The arguments required for the SNMP TRAP operation
     :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
     :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
     :rtype: tuple[Result]
@@ -298,10 +312,7 @@ def snmptrap(netsnmp_args=[]):
         >>> print("Type:", result.type)
     """
     try:
-        result = netsnmp_snmptrap(netsnmp_args)
+        result = netsnmp_snmptrap(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
-
-
-# UPDATE THIS ONE NEXT WITH EXAMPLES LIKE YOU DID IN SESSION

@@ -247,7 +247,6 @@ def test_session_get_next(sess):
 
     del sess
 
-
 def test_session_set(sess, reset_values):
 
     res = sess.get("sysLocation.0")
@@ -340,7 +339,6 @@ def test_session_get_invalid_object(sess):
     else:
         res = sess.get("iso")
         assert res[0].type == "NOSUCHOBJECT"
-
 
 def test_session_walk(sess):
 
