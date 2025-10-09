@@ -141,14 +141,15 @@ class Session(SessionBase):
 
     def __del__(self):
         """
-        Finalizer: Called when the Session instance is about to be destroyed.
-        Serves as a last-ditch effort to close the session if not done explicitly.
+        Finalizer: A last-ditch effort to call .close() when the object
+        is garbage collected, preventing resource leaks.
         """
-        if not self._closed:
+
+        if hasattr(self, '_closed') and not self._closed: 
             try:
-                self.close()
+                self.close() 
             except Exception:
-                # Ignore exceptions during finalization to prevent issues with GC
+                # Must not raise exceptions in __del__
                 pass
 
     @property
