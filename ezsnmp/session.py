@@ -124,9 +124,32 @@ class Session(SessionBase):
             )
 
             self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
+            # Track the closed state for __del__ and multiple closes
+            self._closed = False
 
         except Exception as e:
             _handle_error(e)
+
+    def __enter__(self):
+        """Enter the context manager, returning the session object."""
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit the context manager, automatically closing the session."""
+        self.close()
+        return None
+
+    def __del__(self):
+        """
+        Finalizer: Called when the Session instance is about to be destroyed.
+        Serves as a last-ditch effort to close the session if not done explicitly.
+        """
+        if not self._closed:
+            try:
+                self.close()
+            except Exception:
+                # Ignore exceptions during finalization to prevent issues with GC
+                pass
 
     @property
     def args(self):
@@ -546,10 +569,12 @@ class Session(SessionBase):
 
     def close(self):
         """Close the SNMP session and release resources."""
-        try:
-            self._session_base._close()
-        except Exception as e:
-            _handle_error(e)
+        if not self._closed:
+            try:
+                self._session_base._close()
+                self._closed = True
+            except Exception as e:
+                _handle_error(e)
 
     def walk(self, oid="."):
         """
