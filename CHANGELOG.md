@@ -1,7 +1,46 @@
-Last Updated: 2025-09-24 02:44:22 UTC
+Last Updated: 2025-10-08 14:02:09 UTC
 
 # Changelog
 
+
+<a name="2.1.0b0"></a>
+## [2.1.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a3...2.1.0b0) (2025-10-06)
+
+
+### Changes
+
+#### 442
+
+- 442 question session close ([#456](https://github.com/carlkidcrypto/ezsnmp/issues/456))
+
+
+#### Bump
+
+- Bump psf/black from 25.1.0 to 25.9.0 ([#444](https://github.com/carlkidcrypto/ezsnmp/issues/444))
+
+- Bump black from 25.1.0 to 25.9.0 ([#445](https://github.com/carlkidcrypto/ezsnmp/issues/445))
+
+- Bump coverage from 7.10.6 to 7.10.7 ([#446](https://github.com/carlkidcrypto/ezsnmp/issues/446))
+
+- Bump pyparsing from 3.2.3 to 3.2.5 ([#447](https://github.com/carlkidcrypto/ezsnmp/issues/447))
+
+- Bump pytest-cov from 6.2.1 to 7.0.0 ([#438](https://github.com/carlkidcrypto/ezsnmp/issues/438))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#450](https://github.com/carlkidcrypto/ezsnmp/issues/450) from carlkidcrypto/update-changelog-17964730341
+
+
+
+
+
+---
 
 <a name="v2.1.0a3"></a>
 ## [v2.1.0a3](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a2...v2.1.0a3) (2025-09-23)

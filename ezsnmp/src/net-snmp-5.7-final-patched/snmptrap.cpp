@@ -112,9 +112,10 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-int snmptrap(std::vector<std::string> const &args) {
+int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -372,7 +373,6 @@ int snmptrap(std::vector<std::string> const &args) {
 
 close_session:
    snmp_close(ss);
-   snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
 
 out:
 
