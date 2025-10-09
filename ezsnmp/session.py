@@ -544,6 +544,13 @@ class Session(SessionBase):
         """
         self._session_base._set_max_repeaters_to_num(value)
 
+    def close(self):
+        """Close the SNMP session and release resources."""
+        try:
+            self._session_base._close()
+        except Exception as e:
+            _handle_error(e)
+
     def walk(self, oid="."):
         """
         Walks through the SNMP tree starting from the given OID.

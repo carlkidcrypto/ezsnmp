@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html" /><link rel="prev" title="Welcome to EzSnmp’s documentation!" href="index.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
-        <title>&lt;no title&gt; - EzSnmp v2.1.0a3 documentation</title>
+        <title>&lt;no title&gt; - EzSnmp v2.1.0b0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp v2.1.0a3 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.1.0b0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,7 +189,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">EzSnmp v2.1.0a3 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.1.0b0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -418,6 +418,7 @@
 <li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.boots_time"><code class="docutils literal notranslate"><span class="pre">Session.boots_time</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.bulk_get"><code class="docutils literal notranslate"><span class="pre">Session.bulk_get()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.bulk_walk"><code class="docutils literal notranslate"><span class="pre">Session.bulk_walk()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.community"><code class="docutils literal notranslate"><span class="pre">Session.community</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.context"><code class="docutils literal notranslate"><span class="pre">Session.context</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.context_engine_id"><code class="docutils literal notranslate"><span class="pre">Session.context_engine_id</span></code></a></li>
@@ -454,6 +455,7 @@
 <li class="toctree-l3"><a class="reference internal" href="sessionbase_cpp.html#_CPPv411SessionBase"><code class="docutils literal notranslate"><span class="pre">SessionBase</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase11SessionBaseERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringERKNSt6stringEbbbbRKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">SessionBase()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBaseD0Ev"><code class="docutils literal notranslate"><span class="pre">~SessionBase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase6_closeEv"><code class="docutils literal notranslate"><span class="pre">_close()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase4walkERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">walk()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase9bulk_walkERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">bulk_walk()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase9bulk_walkERKNSt6vectorINSt6stringEEE"><code class="docutils literal notranslate"><span class="pre">bulk_walk()</span></code></a></li>
@@ -528,6 +530,12 @@
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase24m_print_oids_numericallyE"><code class="docutils literal notranslate"><span class="pre">m_print_oids_numerically</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase29m_print_timeticks_numericallyE"><code class="docutils literal notranslate"><span class="pre">m_print_timeticks_numerically</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase26m_set_max_repeaters_to_numE"><code class="docutils literal notranslate"><span class="pre">m_set_max_repeaters_to_num</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase16m_walk_init_nameE"><code class="docutils literal notranslate"><span class="pre">m_walk_init_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase20m_bulkwalk_init_nameE"><code class="docutils literal notranslate"><span class="pre">m_bulkwalk_init_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase15m_get_init_nameE"><code class="docutils literal notranslate"><span class="pre">m_get_init_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase19m_getnext_init_nameE"><code class="docutils literal notranslate"><span class="pre">m_getnext_init_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase19m_bulkget_init_nameE"><code class="docutils literal notranslate"><span class="pre">m_bulkget_init_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sessionbase_cpp.html#_CPPv4N11SessionBase15m_set_init_nameE"><code class="docutils literal notranslate"><span class="pre">m_set_init_name</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -600,7 +608,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d816a467"></script>
+</div><script src="_static/documentation_options.js?v=42be5ec1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
