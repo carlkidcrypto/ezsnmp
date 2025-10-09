@@ -4,11 +4,13 @@ on:
   pull_request:
     branches: [ main ]
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   sphinx_docs_build:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5

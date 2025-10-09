@@ -124,9 +124,37 @@ SessionBase::SessionBase(std::string const& hostname,
       m_print_timeticks_numerically(print_timeticks_numerically),
       m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
    populate_args();
+
+   int rand_num = 1 + (std::rand() % 100000);
+   m_walk_init_name = "ezsnmp_walk_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_bulkwalk_init_name = "ezsnmp_bulkwalk_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_get_init_name = "ezsnmp_get_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_getnext_init_name = "ezsnmp_getnext_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_bulkget_init_name = "ezsnmp_bulkget_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_set_init_name = "ezsnmp_set_" + std::to_string(rand_num);
 }
 
 SessionBase::~SessionBase() {}
+
+void SessionBase::_close() {
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_walk_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_bulkwalk_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_get_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_getnext_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_bulkget_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_set_init_name.c_str());
+}
 
 void SessionBase::populate_args() {
    m_args.clear();
@@ -313,7 +341,7 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
       m_args.push_back(mib);
    }
 
-   return snmpwalk(m_args);
+   return snmpwalk(m_args, m_walk_init_name);
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
@@ -323,7 +351,7 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
       m_args.push_back(mib);
    }
 
-   return snmpbulkwalk(m_args);
+   return snmpbulkwalk(m_args, m_bulkwalk_init_name);
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
@@ -333,7 +361,7 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
       m_args.push_back(entry);
    }
 
-   return snmpbulkwalk(m_args);
+   return snmpbulkwalk(m_args, m_bulkwalk_init_name);
 }
 
 std::vector<Result> SessionBase::get(std::string const& mib) {
@@ -343,7 +371,7 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
       m_args.push_back(mib);
    }
 
-   return snmpget(m_args);
+   return snmpget(m_args, m_get_init_name);
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
@@ -353,7 +381,7 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
       m_args.push_back(entry);
    }
 
-   return snmpget(m_args);
+   return snmpget(m_args, m_get_init_name);
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
@@ -363,7 +391,7 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
       m_args.push_back(entry);
    }
 
-   return snmpgetnext(m_args);
+   return snmpgetnext(m_args, m_getnext_init_name);
 }
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
@@ -373,7 +401,7 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
       m_args.push_back(entry);
    }
 
-   return snmpbulkget(m_args);
+   return snmpbulkget(m_args, m_bulkget_init_name);
 }
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
@@ -383,7 +411,7 @@ std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
       m_args.push_back(entry);
    }
 
-   return snmpset(m_args);
+   return snmpset(m_args, m_set_init_name);
 }
 
 std::vector<std::string> const& SessionBase::_get_args() const { return m_args; }

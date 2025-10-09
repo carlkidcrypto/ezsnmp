@@ -35,6 +35,8 @@ jobs:
 
   build-and-test:
     runs-on: ${{ matrix.os }}
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     needs: check-source-changes
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
