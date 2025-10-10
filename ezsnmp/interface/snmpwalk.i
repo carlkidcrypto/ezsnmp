@@ -8,4 +8,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-std::vector<Result> snmpwalk(const std::vector<std::string> &args);
+std::vector<Result> snmpwalk(const std::vector<std::string> &args, std::string const& init_app_name);
