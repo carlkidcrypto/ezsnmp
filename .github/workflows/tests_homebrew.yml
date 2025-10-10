@@ -262,7 +262,7 @@ jobs:
           body: ${{ steps.template.outputs.result }}
 
       - name: Create A Comment For Push
-        uses: peter-evans/commit-comment@v3
+        uses: peter-evans/commit-comment@v4
         if: github.event_name == 'push'
         with:
           body: ${{ steps.template.outputs.result }}
