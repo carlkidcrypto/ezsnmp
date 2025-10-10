@@ -21,7 +21,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v46.0.5
+        uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
             .github/workflows/tests_homebrew.yml
@@ -36,6 +36,8 @@ jobs:
 
   build-and-test:
     runs-on: ${{ matrix.os }}
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     needs: check-source-changes
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
@@ -260,7 +262,7 @@ jobs:
           body: ${{ steps.template.outputs.result }}
 
       - name: Create A Comment For Push
-        uses: peter-evans/commit-comment@v3
+        uses: peter-evans/commit-comment@v4
         if: github.event_name == 'push'
         with:
           body: ${{ steps.template.outputs.result }}

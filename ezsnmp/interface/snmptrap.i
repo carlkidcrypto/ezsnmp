@@ -8,4 +8,4 @@
 %}
 
 // Now list ANSI C/C++ declarations
-int snmptrap(const std::vector<std::string> &args);
+int snmptrap(const std::vector<std::string> &args, std::string const& init_app_name);
