@@ -24,13 +24,17 @@ RUN echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/docker-builder
 USER $USERNAME
 
 # Clone, build, and install 'yay'
-RUN git clone https://aur.archlinux.org/yay.git && \
+# Set MAKEFLAGS for parallel compilation to speed up the build.
+RUN export MAKEFLAGS="-j$(nproc)" && \
+    git clone https://aur.archlinux.org/yay.git && \
     cd yay && \
     makepkg -si --noconfirm
 
 # Install AUR packages from requirements file using yay
 COPY aur-requirements.txt /tmp/aur-requirements.txt
-RUN xargs yay -S --noconfirm < /tmp/aur-requirements.txt
+# Set MAKEFLAGS for parallel compilation again to speed up the build of AUR dependencies.
+RUN export MAKEFLAGS="-j$(nproc)" && \
+    xargs yay -S --noconfirm < /tmp/aur-requirements.txt
 
 # --- Switch back to root for final setup ---
 USER root
