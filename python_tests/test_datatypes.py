@@ -227,15 +227,13 @@ def test_converted_value_timeticks(snmp_session):
     """
     result = snmp_session.get(
         [
-            "DISMAN-EXPRESSION-MIB::sysUpTimeInstance",  # OID with Timeticks value
+            "1.3.6.1.2.1.1.3.0",  # OID with Timeticks value: SNMPv2-MIB::sysUpTime.0
         ]
     )
     assert len(result) > 0, "No results returned for Timeticks OID"
 
     if result[0].type == "NOSUCHINSTANCE":
-        pytest.skip(
-            "No such instance for Timeticks with OID: 'DISMAN-EXPRESSION-MIB::sysUpTimeInstance'"
-        )
+        pytest.skip("No such instance for Timeticks with OID: '1.3.6.1.2.1.1.3.0'")
 
     # Ensure the type is correctly identified as Timeticks
     assert result[0].type == "Timeticks", "SNMP data type is not Timeticks"
