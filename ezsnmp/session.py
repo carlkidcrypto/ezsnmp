@@ -571,9 +571,9 @@ class Session(SessionBase):
     def close(self):
         """Close the SNMP session and release resources."""
         if not self._closed:
+            self._closed = True
             try:
                 self._session_base._close()
-                self._closed = True
             except Exception as e:
                 _handle_error(e)
 
