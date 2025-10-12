@@ -123,10 +123,34 @@ class Session(SessionBase):
                 "",  # Set to emtpy string here. We will set it in the bulk methods.
             )
 
+            # Track the closed state for __del__ and multiple closes
+            self._closed = False
             self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
 
         except Exception as e:
             _handle_error(e)
+
+    def __enter__(self):
+        """Enter the context manager, returning the session object."""
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit the context manager, automatically closing the session."""
+        self.close()
+        return None
+
+    def __del__(self):
+        """
+        Finalizer: A last-ditch effort to call .close() when the object
+        is garbage collected, preventing resource leaks.
+        """
+
+        if hasattr(self, "_closed") and not self._closed:
+            try:
+                self.close()
+            except Exception:
+                # Must not raise exceptions in __del__
+                pass
 
     @property
     def args(self):
@@ -546,10 +570,12 @@ class Session(SessionBase):
 
     def close(self):
         """Close the SNMP session and release resources."""
-        try:
-            self._session_base._close()
-        except Exception as e:
-            _handle_error(e)
+        if not self._closed:
+            self._closed = True
+            try:
+                self._session_base._close()
+            except Exception as e:
+                _handle_error(e)
 
     def walk(self, oid="."):
         """

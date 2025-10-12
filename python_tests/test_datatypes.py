@@ -308,7 +308,10 @@ def test_converted_value_oid(snmp_session):
 
     converted_value = result[0].converted_value
     assert isinstance(converted_value, str), "Converted value is not a string"
-    assert converted_value == "NET-SNMP-TC::linux", "Converted value is incorrect"
+    assert converted_value in [
+        "NET-SNMP-TC::linux",  # Ubuntu
+        "NET-SNMP-MIB::netSnmpAgentOIDs.10",  # Almalinux, RockyLinux, ArchLinux
+    ], "Converted value is incorrect"
 
 
 def test_converted_value_ipaddress(snmp_session):

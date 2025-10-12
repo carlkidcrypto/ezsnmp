@@ -22,7 +22,6 @@ jobs:
         uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
-            files: |
             .github/workflows/tests_docker.yml
             **/*.py
             **/*.cpp
@@ -39,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distribution: [almalinux10, rockylinux8]
+        distribution: [almalinux10, rockylinux8, archlinux]
 
     steps:
       - name: Checkout repository
@@ -89,23 +88,59 @@ jobs:
 
       - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
         run: |
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml exec -T ${{ matrix.distribution }}_snmp_container bash -c '
-            tox > test-outputs_${{ matrix.distribution }}.txt 2>&1;
-            mv test-results.xml test-results_${{ matrix.distribution }}.xml;
-          '
+          DISTRIBUTION=${{ matrix.distribution }}
+          CONTAINER_NAME="${DISTRIBUTION}_snmp_container"
+          COMPOSE_FILE="./docker/${DISTRIBUTION}/docker-compose.yml"
+          
+          if [ "$DISTRIBUTION" == "rockylinux8" ]; then
+            # --- Python 3.9 (py39) ---
+            echo "Running tox for py39 on rockylinux8..."
+            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
+              tox -e py39 > test-outputs_rockylinux8_py39.txt 2>&1;
+              mv test-results.xml test-results_rockylinux8_py39.xml;
+            '
+            # Copy artifacts for py39
+            docker cp $CONTAINER_NAME:/ezsnmp/test-results_rockylinux8_py39.xml .
+            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_rockylinux8_py39.txt .
 
-      - name: Copy test results from Docker container (${{ matrix.distribution }})
-        run: |
-         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-results_${{ matrix.distribution }}.xml .
-         docker cp ${{ matrix.distribution }}_snmp_container:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt .
+            # --- Python 3.11 (py311) ---
+            echo "Running tox for py311 on rockylinux8..."
+            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
+              tox -e py311 > test-outputs_rockylinux8_py311.txt 2>&1;
+              mv test-results.xml test-results_rockylinux8_py311.xml;
+            '
+            # Copy artifacts for py311
+            docker cp $CONTAINER_NAME:/ezsnmp/test-results_rockylinux8_py311.xml .
+            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_rockylinux8_py311.txt .
+            
+            # --- Python 3.12 (py312) ---
+            echo "Running tox for py312 on rockylinux8..."
+            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
+              tox -e py312 > test-outputs_rockylinux8_py312.txt 2>&1;
+              mv test-results.xml test-results_rockylinux8_py312.xml;
+            '
+            # Copy artifacts for py312
+            docker cp $CONTAINER_NAME:/ezsnmp/test-results_rockylinux8_py312.xml .
+            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_rockylinux8_py312.txt .
+            
+          else
+            echo "Running default tox environment for $DISTRIBUTION..."
+            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
+              tox > test-outputs_${{ matrix.distribution }}.txt 2>&1;
+              mv test-results.xml test-results_${{ matrix.distribution }}.xml;
+            '
+            # Copy artifacts for the default run (almalinux10)
+            docker cp $CONTAINER_NAME:/ezsnmp/test-results_${{ matrix.distribution }}.xml .
+            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt .
+          fi
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
         with:
-         name: pytest-results_${{ matrix.distribution }}
-         path: |
-          test-results_${{ matrix.distribution }}.xml
-          test-outputs_${{ matrix.distribution }}.txt
+          name: pytest-results_${{ matrix.distribution }}
+          path: |
+            test-results_${{ matrix.distribution }}*.xml
+            test-outputs_${{ matrix.distribution }}*.txt
 
       - name: Bring down Docker containers (${{ matrix.distribution }})
         run: docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml down
@@ -113,16 +148,16 @@ jobs:
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
     needs: test-distributions
-    if: needs.test-distributions.result == 'success'
+    if: always() 
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v5
         with:
           pattern: pytest-results_*
-          merge-multiple: false
+          merge-multiple: true 
       
       - name: List files
-        run: ls -Rlah pytest-results_*
+        run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
         uses: MishaKav/pytest-coverage-comment@v1.1.57
@@ -135,5 +170,8 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            almalinux10, pytest-results_almalinux10/test-outputs_almalinux10.txt, pytest-results_almalinux10/test-results_almalinux10.xml
-            rockylinux8, pytest-results_rockylinux8/test-outputs_rockylinux8.txt, pytest-results_rockylinux8/test-results_rockylinux8.xml
+            almalinux10, test-outputs_almalinux10.txt, test-results_almalinux10.xml
+            archlinux, test-outputs_archlinux.txt, test-results_archlinux.xml
+            rockylinux8_py39, test-outputs_rockylinux8_py39.txt, test-results_rockylinux8_py39.xml
+            rockylinux8_py311, test-outputs_rockylinux8_py311.txt, test-results_rockylinux8_py311.xml
+            rockylinux8_py312, test-outputs_rockylinux8_py312.txt, test-results_rockylinux8_py312.xml
