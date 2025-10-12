@@ -123,9 +123,9 @@ class Session(SessionBase):
                 "",  # Set to emtpy string here. We will set it in the bulk methods.
             )
 
-            self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
             # Track the closed state for __del__ and multiple closes
             self._closed = False
+            self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
 
         except Exception as e:
             _handle_error(e)
@@ -571,9 +571,9 @@ class Session(SessionBase):
     def close(self):
         """Close the SNMP session and release resources."""
         if not self._closed:
+            self._closed = True
             try:
                 self._session_base._close()
-                self._closed = True
             except Exception as e:
                 _handle_error(e)
 
