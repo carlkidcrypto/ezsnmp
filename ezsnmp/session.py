@@ -145,9 +145,9 @@ class Session(SessionBase):
         is garbage collected, preventing resource leaks.
         """
 
-        if hasattr(self, '_closed') and not self._closed: 
+        if hasattr(self, "_closed") and not self._closed:
             try:
-                self.close() 
+                self.close()
             except Exception:
                 # Must not raise exceptions in __del__
                 pass

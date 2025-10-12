@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distribution: [almalinux10, rockylinux8]
+        distribution: [almalinux10, rockylinux8, archlinux]
 
     steps:
       - name: Checkout repository
@@ -170,7 +170,7 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            almalinux10, pytest-results_almalinux10/test-outputs_almalinux10_py3.txt, pytest-results_almalinux10/test-results_almalinux10_py3.xml
-            rockylinux8_py39, pytest-results_rockylinux8/test-outputs_rockylinux8_py39.txt, pytest-results_rockylinux8/test-results_rockylinux8_py39.xml
-            rockylinux8_py311, pytest-results_rockylinux8/test-outputs_rockylinux8_py311.txt, pytest-results_rockylinux8/test-results_rockylinux8_py311.xml
-            rockylinux8_py312, pytest-results_rockylinux8/test-outputs_rockylinux8_py312.txt, pytest-results_rockylinux8/test-results_rockylinux8_py312.xml
+            almalinux10, test-outputs_almalinux10_py3.txt, test-results_almalinux10_py3.xml
+            rockylinux8_py39, test-outputs_rockylinux8_py39.txt, test-results_rockylinux8_py39.xml
+            rockylinux8_py311, test-outputs_rockylinux8_py311.txt, test-results_rockylinux8_py311.xml
+            rockylinux8_py312, test-outputs_rockylinux8_py312.txt, test-results_rockylinux8_py312.xml
