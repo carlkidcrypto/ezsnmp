@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>   // For ::isspace, ::isxdigit
+#include <iomanip>  // For std::setfill, std::setw
 #include <iostream> // For debug prints
 #include <regex>    // For regex parsing of numeric values
 #include <sstream>
@@ -105,9 +106,42 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
    return "Unknown Type Conversion";
 }
 
+std::string Result::_converted_value_to_string() const {
+   // Helper to convert the variant to a string
+   std::string result;
+
+   if (auto* val = std::get_if<int>(&converted_value)) {
+      result = std::to_string(*val);
+   } else if (auto* val = std::get_if<uint32_t>(&converted_value)) {
+      result = std::to_string(*val);
+   } else if (auto* val = std::get_if<uint64_t>(&converted_value)) {
+      result = std::to_string(*val);
+   } else if (auto* val = std::get_if<double>(&converted_value)) {
+      result = std::to_string(*val);
+   } else if (auto* val = std::get_if<std::string>(&converted_value)) {
+      result = *val;
+   } else if (auto* val = std::get_if<std::vector<unsigned char>>(&converted_value)) {
+      // Convert bytes to hex string representation
+      std::ostringstream oss;
+      oss << "bytes[" << val->size() << "]: ";
+      for (size_t i = 0; i < std::min(val->size(), size_t(32)); ++i) {
+         oss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>((*val)[i]);
+         if (i < std::min(val->size(), size_t(32)) - 1) oss << " ";
+      }
+      if (val->size() > 32) {
+         oss << "...";
+      }
+      result = oss.str();
+   } else {
+      result = "<variant holds unexpected type>";
+   }
+
+   return result;
+}
+
 std::string Result::_to_string() const {
    return "oid: " + this->oid + ", index: " + this->index + ", type: " + this->type +
-          ", value: " + this->value;
+          ", value: " + this->value + ", converted_value: " + _converted_value_to_string();
 }
 
 void Result::update_converted_value() {

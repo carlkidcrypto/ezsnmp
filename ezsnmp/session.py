@@ -577,6 +577,65 @@ class Session(SessionBase):
             except Exception as e:
                 _handle_error(e)
 
+    def __repr__(self):
+        """Return a detailed string representation of the Session object.
+
+        :return: A string representation suitable for debugging.
+        :rtype: str
+        """
+        return (
+            f"Session(hostname={self.hostname!r}, port_number={self.port_number!r}, "
+            f"version={self.version!r}, community={'***' if self.community else ''!r}, "
+            f"security_username={self.security_username!r}, "
+            f"retries={self.retries!r}, timeout={self.timeout!r})"
+        )
+
+    def __str__(self):
+        """Return a user-friendly string representation of the Session object.
+
+        :return: A readable string representation for end users.
+        :rtype: str
+        """
+        return (
+            f"SNMP Session: {self.hostname}:{self.port_number or 'default'} "
+            f"(version={self.version})"
+        )
+
+    def to_dict(self):
+        """Convert the Session object to a dictionary for logging or JSON serialization.
+
+        Note: Sensitive fields like community, auth_passphrase, and privacy_passphrase
+        are masked for security.
+
+        :return: A dictionary containing all session parameters.
+        :rtype: dict
+        """
+        return {
+            "hostname": self.hostname,
+            "port_number": self.port_number,
+            "version": self.version,
+            "community": "***" if self.community else "",
+            "auth_protocol": self.auth_protocol,
+            "auth_passphrase": "***" if self.auth_passphrase else "",
+            "security_engine_id": self.security_engine_id,
+            "context_engine_id": self.context_engine_id,
+            "security_level": self.security_level,
+            "context": self.context,
+            "security_username": self.security_username,
+            "privacy_protocol": self.privacy_protocol,
+            "privacy_passphrase": "***" if self.privacy_passphrase else "",
+            "boots_time": self.boots_time,
+            "retries": self.retries,
+            "timeout": self.timeout,
+            "load_mibs": self.load_mibs,
+            "mib_directories": self.mib_directories,
+            "print_enums_numerically": self.print_enums_numerically,
+            "print_full_oids": self.print_full_oids,
+            "print_oids_numerically": self.print_oids_numerically,
+            "print_timeticks_numerically": self.print_timeticks_numerically,
+            "set_max_repeaters_to_num": self.set_max_repeaters_to_num,
+        }
+
     def walk(self, oid="."):
         """
         Walks through the SNMP tree starting from the given OID.
