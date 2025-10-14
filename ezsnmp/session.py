@@ -581,7 +581,7 @@ class Session(SessionBase):
         """Return detailed string representation for debugging."""
         return (
             f"Session(hostname={self.hostname!r}, port_number={self.port_number!r}, "
-            f"version={self.version!r}, community={'***' if self.community else ''!r}, "
+            f"version={self.version!r}, community={('***' if self.community else '')!r}, "
             f"security_username={self.security_username!r}, "
             f"retries={self.retries!r}, timeout={self.timeout!r})"
         )

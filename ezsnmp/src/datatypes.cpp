@@ -107,36 +107,36 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
 }
 
 std::string Result::_converted_value_to_string() const {
-   // Helper to convert the variant to a string
-   std::string result;
+   // Use std::visit for type-safe, idiomatic variant handling (as suggested by Gemini review)
+   return std::visit([](auto&& arg) -> std::string {
+      using T = std::decay_t<decltype(arg)>;
 
-   if (auto* val = std::get_if<int>(&converted_value)) {
-      result = std::to_string(*val);
-   } else if (auto* val = std::get_if<uint32_t>(&converted_value)) {
-      result = std::to_string(*val);
-   } else if (auto* val = std::get_if<uint64_t>(&converted_value)) {
-      result = std::to_string(*val);
-   } else if (auto* val = std::get_if<double>(&converted_value)) {
-      result = std::to_string(*val);
-   } else if (auto* val = std::get_if<std::string>(&converted_value)) {
-      result = *val;
-   } else if (auto* val = std::get_if<std::vector<unsigned char>>(&converted_value)) {
-      // Convert bytes to hex string representation
-      std::ostringstream oss;
-      oss << "bytes[" << val->size() << "]: ";
-      for (size_t i = 0; i < std::min(val->size(), size_t(32)); ++i) {
-         oss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>((*val)[i]);
-         if (i < std::min(val->size(), size_t(32)) - 1) oss << " ";
+      if constexpr (std::is_same_v<T, int>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, uint32_t>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, uint64_t>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, double>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, std::string>) {
+         return arg;
+      } else if constexpr (std::is_same_v<T, std::vector<unsigned char>>) {
+         // Convert bytes to hex string representation
+         std::ostringstream oss;
+         oss << "bytes[" << arg.size() << "]: ";
+         for (size_t i = 0; i < std::min(arg.size(), size_t(32)); ++i) {
+            oss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(arg[i]);
+            if (i < std::min(arg.size(), size_t(32)) - 1) oss << " ";
+         }
+         if (arg.size() > 32) {
+            oss << "...";
+         }
+         return oss.str();
+      } else {
+         return "<variant holds unexpected type>";
       }
-      if (val->size() > 32) {
-         oss << "...";
-      }
-      result = oss.str();
-   } else {
-      result = "<variant holds unexpected type>";
-   }
-
-   return result;
+   }, converted_value);
 }
 
 std::string Result::_to_string() const {
