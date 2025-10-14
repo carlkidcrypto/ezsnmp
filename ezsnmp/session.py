@@ -578,11 +578,7 @@ class Session(SessionBase):
                 _handle_error(e)
 
     def __repr__(self):
-        """Return a detailed string representation of the Session object.
-
-        :return: A string representation suitable for debugging.
-        :rtype: str
-        """
+        """Return detailed string representation for debugging."""
         return (
             f"Session(hostname={self.hostname!r}, port_number={self.port_number!r}, "
             f"version={self.version!r}, community={'***' if self.community else ''!r}, "
@@ -591,26 +587,19 @@ class Session(SessionBase):
         )
 
     def __str__(self):
-        """Return a user-friendly string representation of the Session object.
-
-        :return: A readable string representation for end users.
-        :rtype: str
-        """
+        """Return readable string representation."""
         return (
             f"SNMP Session: {self.hostname}:{self.port_number or 'default'} "
             f"(version={self.version})"
         )
 
     def to_dict(self):
-        """Convert the Session object to a dictionary for logging or JSON serialization.
+        """Convert session to dictionary for logging/JSON serialization.
 
-        Note: Sensitive fields like community, auth_passphrase, and privacy_passphrase
-        are masked for security.
-
-        :return: A dictionary containing all session parameters.
-        :rtype: dict
+        Sensitive fields (community, passwords) are masked.
         """
-        return {
+        # Core properties that should always work
+        result = {
             "hostname": self.hostname,
             "port_number": self.port_number,
             "version": self.version,
@@ -627,14 +616,27 @@ class Session(SessionBase):
             "boots_time": self.boots_time,
             "retries": self.retries,
             "timeout": self.timeout,
-            "load_mibs": self.load_mibs,
-            "mib_directories": self.mib_directories,
-            "print_enums_numerically": self.print_enums_numerically,
-            "print_full_oids": self.print_full_oids,
-            "print_oids_numerically": self.print_oids_numerically,
-            "print_timeticks_numerically": self.print_timeticks_numerically,
-            "set_max_repeaters_to_num": self.set_max_repeaters_to_num,
         }
+
+        # Optional properties - some may not have getters implemented in C++
+        optional_props = [
+            "load_mibs",
+            "mib_directories",
+            "print_enums_numerically",
+            "print_full_oids",
+            "print_oids_numerically",
+            "print_timeticks_numerically",
+            "set_max_repeaters_to_num",
+        ]
+
+        for prop in optional_props:
+            try:
+                result[prop] = getattr(self, prop)
+            except AttributeError:
+                # Getter not implemented in SessionBase
+                result[prop] = None
+
+        return result
 
     def walk(self, oid="."):
         """
