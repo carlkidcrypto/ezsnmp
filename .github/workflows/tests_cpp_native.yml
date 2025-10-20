@@ -109,6 +109,8 @@ jobs:
   comment-cpp-test-report:
     runs-on: ubuntu-latest
     needs: build-and-test
+    permissions:
+      pull-requests: write # This is needed to create/update comments
     if: always() && github.event_name == 'pull_request'
     steps:
       - name: Download All Test Results
