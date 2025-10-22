@@ -4,7 +4,7 @@ set -euo pipefail
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 # Path to the root of the ezsnmp repository (current working directory)
-HOST_SOURCE_PATH="$(pwd)../" 
+HOST_SOURCE_PATH=$(realpath "$(pwd)/../")
 CONTAINER_WORK_DIR="/ezsnmp"
 TEST_TARGET="" # Removed, as tox.ini defines testpaths.
 
@@ -49,10 +49,16 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
     FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
     CONTAINER_NAME="${DISTRO_NAME}_test_container"
     # The entry script path must be adjusted for the container mount, which is always /ezsnmp/docker/[distro]/...
-    ENTRY_SCRIPT_PATH="/ezsnmp/${DISTRO_NAME}/DockerEntry.sh"
+    ENTRY_SCRIPT_PATH="/ezsnmp/docker/${DISTRO_NAME}/DockerEntry.sh"
 
     echo ">>> Running tests for distribution: ${DISTRO_NAME}"
     echo "    - Target Image: ${FULL_IMAGE_TAG}"
+
+    # Cleanup any existing container with the same name
+    if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        docker stop $CONTAINER_NAME
+    fi
+    docker rm -f $CONTAINER_NAME
 
     # 1. Pull the image
     echo "    - Pulling image..."
@@ -63,7 +69,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
     fi
 
     # 2. Start the container
-    echo "    - Starting container and daemon..."
+    echo "    - Starting container: ${CONTAINER_NAME} and daemon..."
     # The command runs the entry script in the background and uses 'tail' as the foreground process
     if ! docker run -d \
       --name "${CONTAINER_NAME}" \
@@ -108,50 +114,45 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
     # Special handling for rockylinux8 to run multiple python versions
     if [ "${DISTRO_NAME}" == "rockylinux8" ]; then
-        echo "    - Running multiple tox environments for rockylinux8 (py39, py311, py312)..."
+        echo "      - Running multiple tox environments for rockylinux8 (py39, py311, py312)..."
         TOX_ENVS=("py39" "py311" "py312")
+        TOX_SUCCESS=0 # Initialize flag for overall success/failure
         
         for ENV in "${TOX_ENVS[@]}"; do
-            echo "    - Running tox environment: ${ENV}"
+            echo "      - Running tox environment: ${ENV}"
             
-            # Execute tox and capture results
+            # Execute tox inside the container. We use double quotes to allow
+            # expansion of host variables (DISTRO_NAME, ENV) but escape the
+            # container's variables and the inner quotes.
             docker exec -t "${CONTAINER_NAME}" bash -c "
-                # Ensure the test results are written to a unique file
-                tox -e ${ENV} > test-outputs_${DISTRO_NAME}_${ENV}.txt 2>&1;
-                TOX_EXIT_CODE=\$?;
+                # Execute tox and capture results
+                tox -e ${ENV} > test-outputs_${DISTRO_NAME}_${ENV}.txt 2>&1
+                TOX_EXIT_CODE=\$?
                 # The '|| true' prevents 'mv' from failing the script if test-results.xml wasn't created
-                mv test-results.xml test-results_${DISTRO_NAME}_${ENV}.xml || true; 
-                exit \$TOX_EXIT_CODE;
+                mv test-results.xml test-results_${DISTRO_NAME}_${ENV}.xml 2>/dev/null || true
+                exit \$TOX_EXIT_CODE
             "
-            
-            # Check the exit code of the docker exec command
-            if [ $? -ne 0 ]; then
-                echo "    - Test FAILED for ${DISTRO_NAME} environment ${ENV}."
-                TOX_SUCCESS=1 # Set flag for overall failure
-            else
-                echo "    - Test PASSED for ${DISTRO_NAME} environment ${ENV}."
-            fi
+
+            # Copy artifacts from the container to host
+            docker cp "${CONTAINER_NAME}:/ezsnmp/test-outputs_${DISTRO_NAME}_${ENV}.txt" .
+            docker cp "${CONTAINER_NAME}:/ezsnmp/test-results_${DISTRO_NAME}_${ENV}.xml" .
+
         done
-        
-        # If any tox env failed, set overall script exit code
-        if [ "${TOX_SUCCESS}" -ne 0 ]; then
-             TEST_EXIT_CODE=1
-        fi
-        
+
     else
+        # Define a unique root directory inside the container's working directory
+        UNIQUE_TOX_DIR="/ezsnmp/.tox_${DISTRO_NAME}"
+
         # Default single tox run for other distributions
-        docker exec -t "${CONTAINER_NAME}" bash -c "
-            tox > test-outputs_${DISTRO_NAME}.txt 2>&1;
-            TOX_EXIT_CODE=\$?;
-            mv test-results.xml test-results_${DISTRO_NAME}.xml || true;
-            exit \$TOX_EXIT_CODE;
-        "
-        if [ $? -ne 0 ]; then
-            echo "    - Test FAILED for ${DISTRO_NAME}."
-            TEST_EXIT_CODE=1
-        else
-            echo "    - Test PASSED for ${DISTRO_NAME}."
-        fi
+        docker exec -t "${CONTAINER_NAME}" bash -c '
+              rm -drf .tox; \
+              export TOX_ROOT=${UNIQUE_TOX_DIR}; \
+              tox > test-outputs_${CONTAINER_NAME}.txt 2>&1; \
+              mv test-results.xml test-results_${CONTAINER_NAME}.xml;
+            '
+        # Copy artifacts from the container to host
+        docker cp ${CONTAINER_NAME}:/ezsnmp/test-results_${CONTAINER_NAME}.xml .
+        docker cp ${CONTAINER_NAME}:/ezsnmp/test-outputs_${CONTAINER_NAME}.txt .
     fi
 
 

@@ -11,9 +11,16 @@ RUN pacman -S --noconfirm findutils base-devel python python-pip python-setuptoo
 COPY pacman-requirements.txt /tmp/pacman-requirements.txt
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt
 
-# Perform the downgrade to net-snmp5.8 and its dependencies
-RUN pacman -U https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.8-1-x86_64.pkg.tar.xz --noconfirm
-RUN pacman -U https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst --noconfirm
+###### Downgrade Net-SNMP to 5.8 and install dependencies ######
+# Perform the downgrade to net-snmp 5.8
+RUN sudo pacman -U https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.8-1-x86_64.pkg.tar.xz --noconfirm
+
+# Install pcre 8.43 to provide libpcre.so.1
+RUN sudo pacman -U https://archive.archlinux.org/packages/p/pcre/pcre-8.43-1-x86_64.pkg.tar.xz --noconfirm
+
+# Install openssl 1.1 to provide libssl.so.1.1 and libcrypto.so.1.1
+RUN sudo pacman -U https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst --noconfirm
+##################################################################
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder
