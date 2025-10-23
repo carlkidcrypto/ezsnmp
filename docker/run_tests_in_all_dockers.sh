@@ -70,11 +70,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# 2. Start the container
 	echo "    - Starting container: ${CONTAINER_NAME} and daemon..."
-	echo "      * Using host source path: ${HOST_SOURCE_PATH}"
+	echo "      * Using host source path: $HOST_SOURCE_PATH"
 	# The command runs the entry script in the background and uses 'tail' as the foreground process
 	if ! docker run -d \
 		--name "${CONTAINER_NAME}" \
-		-v "${HOST_SOURCE_PATH}:${CONTAINER_WORK_DIR}" \
+		-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
 		"${FULL_IMAGE_TAG}" \
 		/bin/bash -c "${ENTRY_SCRIPT_PATH} & tail -f /dev/null"; then
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
@@ -116,7 +116,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# Default single tox run for other distributions
 	# ISSUE HERE THIS EXISTS IMEEDIATELY AFTER AND DOESNT WAIT FOR TOX TO FINIDH
-	docker exec -t -i "${CONTAINER_NAME}" bash -c '
+	docker exec -t ${CONTAINER_NAME} bash -c '
+	        cd /ezsnmp;
             rm -drf .tox;
             export TOX_ROOT=${UNIQUE_TOX_DIR};
             tox > test-outputs_${CONTAINER_NAME}.txt 2>&1;
