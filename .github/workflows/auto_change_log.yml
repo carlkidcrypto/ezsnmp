@@ -19,7 +19,7 @@ jobs:
                   fetch-depth: 0
 
             - name: Setup git-chglog
-              uses: carlkidcrypto/os-specific-runner@v2.1.2
+              uses: carlkidcrypto/os-specific-runner@v2.1.3
               with:
                   linux: |
                       sudo snap install go --classic
