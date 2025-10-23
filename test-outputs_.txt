@@ -1,7 +1,0 @@
-py39: skipped because could not find python interpreter with spec(s): py39
-py39: SKIP ⚠ in 0.22 seconds
-py310: skipped because could not find python interpreter with spec(s): py310
-py310: SKIP ⚠ in 0.06 seconds
-py311: skipped because could not find python interpreter with spec(s): py311
-py311: SKIP ⚠ in 0.07 seconds
-py312: install_deps> python -I -m pip install -r python_tests/requirements.txt
