@@ -42,7 +42,6 @@ echo "Images to test: ${DISTROS_TO_TEST[@]}"
 echo "--------------------------------------------------"
 
 # --- Test Loop ---
-TEST_EXIT_CODE=0
 
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
@@ -64,7 +63,6 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	echo "    - Pulling image..."
 	if ! docker pull "${FULL_IMAGE_TAG}"; then
 		echo "ERROR: Docker pull failed for ${DISTRO_NAME}. Skipping tests."
-		TEST_EXIT_CODE=1
 		continue
 	fi
 
@@ -78,7 +76,6 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		"${FULL_IMAGE_TAG}" \
 		/bin/bash -c "${ENTRY_SCRIPT_PATH} & tail -f /dev/null"; then
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
-		TEST_EXIT_CODE=1
 		continue
 	fi
 
@@ -101,56 +98,37 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	if [ "${SNMP_READY}" -eq 0 ]; then
 		echo -ne "\nERROR: Timeout waiting for SNMP daemon to start in ${CONTAINER_NAME}. Skipping tests.\n"
-		TEST_EXIT_CODE=1
 
 		# Cleanup failed container start attempt
-		docker stop "${CONTAINER_NAME}" >/dev/null 2>&1 || true
-		docker rm "${CONTAINER_NAME}" >/dev/null 2>&1 || true
+		docker stop $CONTAINER_NAME >/dev/null 2>&1 || true
+		docker rm $CONTAINER_NAME >/dev/null 2>&1 || true
 		continue
 	fi
 
 	# 4. Run tests using tox
 	echo "    - Executing tox tests..."
 	# Define a unique root directory inside the container's working directory
-	UNIQUE_TOX_DIR="/ezsnmp/.tox_${DISTRO_NAME}"
+	UNIQUE_TOX_DIR="/ezsnmp/.tox_$DISTRO_NAME"
 
 	# Default single tox run for other distributions
-	# ISSUE HERE THIS EXISTS IMEEDIATELY AFTER AND DOESNT WAIT FOR TOX TO FINIDH
-	docker exec -t ${CONTAINER_NAME} bash -c '
+	docker exec -t $CONTAINER_NAME bash -c '
 	        cd /ezsnmp;
             rm -drf .tox;
-            export TOX_ROOT=${UNIQUE_TOX_DIR};
-            tox > test-outputs_${CONTAINER_NAME}.txt 2>&1;
-            mv test-results.xml test-results_${CONTAINER_NAME}.xml;
+            export TOX_ROOT=$UNIQUE_TOX_DIR;
+            tox > test-outputs.txt 2>&1;
         '
-	# Copy artifacts from the container to host
-	docker cp ${CONTAINER_NAME}:/ezsnmp/test-results_${CONTAINER_NAME}.xml .
-	docker cp ${CONTAINER_NAME}:/ezsnmp/test-outputs_${CONTAINER_NAME}.txt .
-
-	# 5. Copy results
-	echo "    - Copying test artifacts back to host..."
-	# Copy the whole mount directory content back
-	# The trailing '.' is crucial here
-	docker cp "${CONTAINER_NAME}":/ezsnmp/. "${HOST_SOURCE_PATH}"
+	# 5. Copy artifacts from the container to host
+	echo "    - Renaming files from container: $CONTAINER_NAME"
+	mv ../test-results.xml ./test-results_$CONTAINER_NAME.xml
+	mv ../test-outputs.txt ./test-outputs_$CONTAINER_NAME.txt
 
 	# 6. Cleanup container
-	echo "    - Cleaning up container: ${CONTAINER_NAME}"
-	docker stop "${CONTAINER_NAME}"
-	docker rm "${CONTAINER_NAME}"
+	echo "    - Cleaning up container: $CONTAINER_NAME"
+	docker stop $CONTAINER_NAME
+	docker rm $CONTAINER_NAME
 
 	echo "--------------------------------------------------"
 
 done
 
-# --- Cleanup ---
-
 echo "All specified images tested."
-# Docker Hub logout is removed.
-
-# Exit with the overall test result
-if [ "${TEST_EXIT_CODE}" -ne 0 ]; then
-	echo "WARNING: One or more test suites failed."
-	exit "${TEST_EXIT_CODE}"
-else
-	echo "SUCCESS: All test suites passed."
-fi
