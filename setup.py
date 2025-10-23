@@ -75,7 +75,7 @@ class SwigBuildExt(build_ext):
             "-builtin",  # Use native Python data types
             "-threads",  # Add thread support
             "-doxygen",  # Convert Doxygen comments to pydoc
-            "-std=c++17",  # Specify C++17 standard
+            # Note: -std=c++17 is a compiler flag, not a SWIG flag
             "-outdir",  # Specify output directory for the .py module
             "ezsnmp/.",
         ]

@@ -29,11 +29,20 @@ struct Result {
     * @brief Converts the Result object to a string representation.
     *
     * This method generates a human-readable string representation of the
-    * Result object, including all its members.
+    * Result object, including all its members (oid, index, type, value, and converted_value).
     *
     * @return A string representation of the Result object.
     */
    std::string _to_string() const;
+
+   /**
+    * @brief Converts the converted_value variant to a string representation.
+    *
+    * Helper method to convert the std::variant converted_value to a readable string.
+    *
+    * @return A string representation of the converted_value.
+    */
+   std::string _converted_value_to_string() const;
 
    /**
     * @brief Factory function to obtain the appropriate ConvertedValue type based on an SNMP type
