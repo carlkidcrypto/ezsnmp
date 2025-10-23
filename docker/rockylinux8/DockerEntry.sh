@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 echo "Installing Python dependencies..."
+rm -drf ezsnmp.egg-info/ build/ dist/
 python3.9 -m pip install --upgrade pip
 python3.9 -m pip install -r /ezsnmp/requirements.txt
 python3.9 -m pip install -r /ezsnmp/python_tests/requirements.txt
