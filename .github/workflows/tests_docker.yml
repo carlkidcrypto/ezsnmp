@@ -135,7 +135,7 @@ jobs:
           fi
 
       - name: Upload Test Results (${{ matrix.distribution }})
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pytest-results_${{ matrix.distribution }}
           path: |
