@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/bash -e
 # Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
-set -euo pipefail
 
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 # Path to the root of the ezsnmp repository (current working directory)
 HOST_SOURCE_PATH=$(realpath "$(pwd)/../")
 CONTAINER_WORK_DIR="/ezsnmp"
+TOX_PYTHON_VERSION=("py39" "py310" "py311" "py312" "py313")
 
 # --- Script Usage and Input Validation ---
 
@@ -107,20 +107,30 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# 4. Run tests using tox
 	echo "    - Executing tox tests..."
-	# Define a unique root directory inside the container's working directory
-	UNIQUE_TOX_DIR="/ezsnmp/.tox_$DISTRO_NAME"
-
-	# Default single tox run for other distributions
-	docker exec -t $CONTAINER_NAME bash -c '
+	for TOX_PYTHON_VERSION_ITERATOR in "${!TOX_PYTHON_VERSION[@]}"; do
+    	TOX_PY=${TOX_PYTHON_VERSION[$TOX_PYTHON_VERSION_ITERATOR]}
+		echo "      * Running tox for environment: $TOX_PY"
+		
+		# Default single tox run for other distributions
+		docker exec -t $CONTAINER_NAME bash -c '
 	        cd /ezsnmp;
             rm -drf .tox;
-            export TOX_ROOT=$UNIQUE_TOX_DIR;
-            tox > test-outputs.txt 2>&1;
+            tox -e $TOX_PY > test-outputs.txt 2>&1;
+			exit 0;
         '
-	# 5. Copy artifacts from the container to host
-	echo "    - Renaming files from container: $CONTAINER_NAME"
-	mv ../test-results.xml ./test-results_$CONTAINER_NAME.xml
-	mv ../test-outputs.txt ./test-outputs_$CONTAINER_NAME.txt
+	
+		# 5. Copy artifacts from the container to host.
+		echo "    - Renaming files from container: $CONTAINER_NAME for environment: $TOX_PY"
+		mv ../test-results.xml ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
+		mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME"_"$TOX_PY".txt
+	done
+
+	# # 5. Copy artifacts from the container to host
+	# echo "    - Copying artifacts from container: $CONTAINER_NAME"
+	# # Use 'docker cp' to get the artifacts
+	# docker cp "${CONTAINER_NAME}:/ezsnmp/test-outputs.txt" "./test-outputs_${CONTAINER_NAME}.txt"
+	# # Assuming 'test-results.xml' is also generated in /ezsnmp by tox
+	# docker cp "${CONTAINER_NAME}:/ezsnmp/test-results.xml" "./test-results_${CONTAINER_NAME}.xml"
 
 	# 6. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
