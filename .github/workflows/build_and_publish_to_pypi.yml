@@ -65,6 +65,9 @@ jobs:
   build-n-publish-pypi:
     name: Build and Publish To PyPi
     runs-on: ubuntu-latest
+    environment: build_and_publish_to_pypi
+    permissions:
+      id-token: write
     needs: build_wheels
 
     steps:
@@ -108,4 +111,3 @@ jobs:
           packages_dir: dist/
           verify_metadata: false
           print_hash: true
-          password: ${{ secrets.PYPI_API_TOKEN }}

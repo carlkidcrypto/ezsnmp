@@ -1,5 +1,7 @@
 #!/bin/bash -e
+
 # Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
+sudo chown $USER /var/run/docker.sock
 
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
@@ -108,29 +110,27 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	# 4. Run tests using tox
 	echo "    - Executing tox tests..."
 	for TOX_PYTHON_VERSION_ITERATOR in "${!TOX_PYTHON_VERSION[@]}"; do
-    	TOX_PY=${TOX_PYTHON_VERSION[$TOX_PYTHON_VERSION_ITERATOR]}
+		TOX_PY=${TOX_PYTHON_VERSION[$TOX_PYTHON_VERSION_ITERATOR]}
 		echo "      * Running tox for environment: $TOX_PY"
-		
+
 		# Default single tox run for other distributions
-		docker exec -t $CONTAINER_NAME bash -c '
+		docker exec -t $CONTAINER_NAME bash -c "
 	        cd /ezsnmp;
             rm -drf .tox;
             tox -e $TOX_PY > test-outputs.txt 2>&1;
 			exit 0;
-        '
-	
+        "
+
 		# 5. Copy artifacts from the container to host.
 		echo "    - Renaming files from container: $CONTAINER_NAME for environment: $TOX_PY"
-		mv ../test-results.xml ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
+		if [ -f ../test-results.xml ]; then
+			mv ../test-results.xml ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
+		else
+			echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME and environment: $TOX_PY"
+			touch ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
+		fi
 		mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME"_"$TOX_PY".txt
 	done
-
-	# # 5. Copy artifacts from the container to host
-	# echo "    - Copying artifacts from container: $CONTAINER_NAME"
-	# # Use 'docker cp' to get the artifacts
-	# docker cp "${CONTAINER_NAME}:/ezsnmp/test-outputs.txt" "./test-outputs_${CONTAINER_NAME}.txt"
-	# # Assuming 'test-results.xml' is also generated in /ezsnmp by tox
-	# docker cp "${CONTAINER_NAME}:/ezsnmp/test-results.xml" "./test-results_${CONTAINER_NAME}.xml"
 
 	# 6. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
