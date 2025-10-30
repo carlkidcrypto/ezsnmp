@@ -51,3 +51,7 @@ pythonpath = "python_tests"
 addopts = [
     "--import-mode=importlib",
 ]
+norecursedirs = [
+"docker",
+"integration_tests",
+]
