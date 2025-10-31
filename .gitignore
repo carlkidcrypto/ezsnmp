@@ -59,6 +59,5 @@ ezsnmp/src/ezsnmp_sessionbase.cpp
 # Tox files
 ezsnmp-2.*.*/
 .tox/**
-test-results.xml
-docker/test-outputs_*_py*.txt
-docker/test-results_*_py*.xml
+**test-outputs*.txt
+**test-results*.xml

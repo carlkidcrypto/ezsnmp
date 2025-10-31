@@ -8,7 +8,6 @@ DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 # Path to the root of the ezsnmp repository (current working directory)
 HOST_SOURCE_PATH=$(realpath "$(pwd)/../")
 CONTAINER_WORK_DIR="/ezsnmp"
-TOX_PYTHON_VERSION=("py39" "py310" "py311" "py312" "py313")
 
 # --- Script Usage and Input Validation ---
 
@@ -44,7 +43,7 @@ echo "Images to test: ${DISTROS_TO_TEST[@]}"
 echo "--------------------------------------------------"
 
 # --- Test Loop ---
-
+rm -f *.xml *.txt
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
@@ -107,30 +106,27 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		continue
 	fi
 
-	# 4. Run tests using tox
-	echo "    - Executing tox tests..."
-	for TOX_PYTHON_VERSION_ITERATOR in "${!TOX_PYTHON_VERSION[@]}"; do
-		TOX_PY=${TOX_PYTHON_VERSION[$TOX_PYTHON_VERSION_ITERATOR]}
-		echo "      * Running tox for environment: $TOX_PY"
+	# 4. Run cpp tests using meson
+	echo "    - Executing meson tests..."
+	docker exec -t $CONTAINER_NAME bash -c "
+		cd /ezsnmp/cpp_tests;
+		rm -drf build/;
+		meson setup build/; 
+		ninja -C build/; 
+		meson test -C build/ --no-rebuild --xml test-results.xml > test-output.txt 2>&1;
+		exit 0;
+	"
 
-		# Default single tox run for other distributions
-		docker exec -t $CONTAINER_NAME bash -c "
-	        cd /ezsnmp;
-            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/;
-            tox -e $TOX_PY > test-outputs.txt 2>&1;
-			exit 0;
-        "
+	# 5. Copy artifacts from the container to host.
+	echo "    - Renaming files from container: $CONTAINER_NAME"
+	if [ -f ../test-results.xml ]; then
+		mv ../test-results.xml ./test-results_"$CONTAINER_NAME".xml
+	else
+		echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME"
+		touch ./test-results_"$CONTAINER_NAME".xml
+	fi
+	mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
 
-		# 5. Copy artifacts from the container to host.
-		echo "    - Renaming files from container: $CONTAINER_NAME for environment: $TOX_PY"
-		if [ -f ../test-results.xml ]; then
-			mv ../test-results.xml ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
-		else
-			echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME and environment: $TOX_PY"
-			touch ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
-		fi
-		mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME"_"$TOX_PY".txt
-	done
 
 	# 6. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
