@@ -116,7 +116,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		# Default single tox run for other distributions
 		docker exec -t $CONTAINER_NAME bash -c "
 	        cd /ezsnmp;
-            rm -drf .tox;
+            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/;
             tox -e $TOX_PY > test-outputs.txt 2>&1;
 			exit 0;
         "
