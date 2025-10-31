@@ -577,6 +577,67 @@ class Session(SessionBase):
             except Exception as e:
                 _handle_error(e)
 
+    def __repr__(self):
+        """Return detailed string representation for debugging."""
+        return (
+            f"Session(hostname={self.hostname!r}, port_number={self.port_number!r}, "
+            f"version={self.version!r}, community={('***' if self.community else '')!r}, "
+            f"security_username={self.security_username!r}, "
+            f"retries={self.retries!r}, timeout={self.timeout!r})"
+        )
+
+    def __str__(self):
+        """Return readable string representation."""
+        return (
+            f"SNMP Session: {self.hostname}:{self.port_number or 'default'} "
+            f"(version={self.version})"
+        )
+
+    def to_dict(self):
+        """Convert session to dictionary for logging/JSON serialization.
+
+        Sensitive fields (community, passwords) are masked.
+        """
+        # Core properties that should always work
+        result = {
+            "hostname": self.hostname,
+            "port_number": self.port_number,
+            "version": self.version,
+            "community": "***" if self.community else "",
+            "auth_protocol": self.auth_protocol,
+            "auth_passphrase": "***" if self.auth_passphrase else "",
+            "security_engine_id": self.security_engine_id,
+            "context_engine_id": self.context_engine_id,
+            "security_level": self.security_level,
+            "context": self.context,
+            "security_username": self.security_username,
+            "privacy_protocol": self.privacy_protocol,
+            "privacy_passphrase": "***" if self.privacy_passphrase else "",
+            "boots_time": self.boots_time,
+            "retries": self.retries,
+            "timeout": self.timeout,
+        }
+
+        # Optional properties - some may not have getters implemented in C++
+        optional_props = [
+            "load_mibs",
+            "mib_directories",
+            "print_enums_numerically",
+            "print_full_oids",
+            "print_oids_numerically",
+            "print_timeticks_numerically",
+            "set_max_repeaters_to_num",
+        ]
+
+        for prop in optional_props:
+            try:
+                result[prop] = getattr(self, prop)
+            except AttributeError:
+                # Getter not implemented in SessionBase
+                result[prop] = None
+
+        return result
+
     def walk(self, oid="."):
         """
         Walks through the SNMP tree starting from the given OID.

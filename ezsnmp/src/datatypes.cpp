@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>   // For ::isspace, ::isxdigit
+#include <iomanip>  // For std::setfill, std::setw
 #include <iostream> // For debug prints
 #include <regex>    // For regex parsing of numeric values
 #include <sstream>
@@ -105,9 +106,42 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
    return "Unknown Type Conversion";
 }
 
+std::string Result::_converted_value_to_string() const {
+   // Use std::visit for type-safe, idiomatic variant handling (as suggested by Gemini review)
+   return std::visit([](auto&& arg) -> std::string {
+      using T = std::decay_t<decltype(arg)>;
+
+      if constexpr (std::is_same_v<T, int>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, uint32_t>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, uint64_t>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, double>) {
+         return std::to_string(arg);
+      } else if constexpr (std::is_same_v<T, std::string>) {
+         return arg;
+      } else if constexpr (std::is_same_v<T, std::vector<unsigned char>>) {
+         // Convert bytes to hex string representation
+         std::ostringstream oss;
+         oss << "bytes[" << arg.size() << "]: ";
+         for (size_t i = 0; i < std::min(arg.size(), size_t(32)); ++i) {
+            oss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(arg[i]);
+            if (i < std::min(arg.size(), size_t(32)) - 1) oss << " ";
+         }
+         if (arg.size() > 32) {
+            oss << "...";
+         }
+         return oss.str();
+      } else {
+         return "<variant holds unexpected type>";
+      }
+   }, converted_value);
+}
+
 std::string Result::_to_string() const {
    return "oid: " + this->oid + ", index: " + this->index + ", type: " + this->type +
-          ", value: " + this->value;
+          ", value: " + this->value + ", converted_value: " + _converted_value_to_string();
 }
 
 void Result::update_converted_value() {
