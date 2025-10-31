@@ -122,3 +122,35 @@ template<typename... Ts> class std::variant {};
 
 // Include the header file
 %include "../include/datatypes.h"
+
+// ---- START: PYTHON SPECIAL METHODS FOR RESULT ----
+// Add Python __str__ and __repr__ methods to the Result struct
+%extend Result {
+    %pythoncode %{
+    def __str__(self):
+        """Return a user-friendly string representation of the Result object."""
+        return self._to_string()
+
+    def __repr__(self):
+        """Return a detailed string representation of the Result object."""
+        return f"Result({self._to_string()})"
+
+    def to_dict(self):
+        """Convert the Result object to a dictionary for logging or JSON serialization.
+
+        :return: A dictionary containing all result fields.
+        :rtype: dict
+        """
+        # Get converted_value as the appropriate Python type
+        conv_val = self.converted_value
+
+        return {
+            "oid": self.oid,
+            "index": self.index,
+            "type": self.type,
+            "value": self.value,
+            "converted_value": conv_val,
+        }
+    %}
+}
+// ---- END: PYTHON SPECIAL METHODS FOR RESULT ----
