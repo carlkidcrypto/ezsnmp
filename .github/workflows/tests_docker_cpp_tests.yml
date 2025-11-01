@@ -1,4 +1,4 @@
-name: Run Dockerized Unit Tests
+name: Run Dockerized C++ Tests
 
 concurrency: tests-docker
 
