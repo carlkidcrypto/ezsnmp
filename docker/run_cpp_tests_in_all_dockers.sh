@@ -43,7 +43,7 @@ echo "Images to test: ${DISTROS_TO_TEST[@]}"
 echo "--------------------------------------------------"
 
 # --- Test Loop ---
-rm -f *.xml *.txt
+rm -f *.xml *.txt *.info
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
@@ -75,7 +75,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		--name "${CONTAINER_NAME}" \
 		-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
 		"${FULL_IMAGE_TAG}" \
-		/bin/bash -c "${ENTRY_SCRIPT_PATH} & tail -f /dev/null"; then
+		/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null"; then
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
 		continue
 	fi
@@ -110,26 +110,37 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	echo "    - Executing meson tests..."
 	docker exec -t $CONTAINER_NAME bash -c "
 		cd /ezsnmp/cpp_tests;
-		rm -drf build/;
+		rm -drf build/ *.info *.txt *.xml;
 		meson setup build/; 
 		ninja -C build/ -j $(nproc); 
 		ninja -C build/ test > test-outputs.txt 2>&1;
-		lcov --capture --directory  build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
-		lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info
+		lcov --capture --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
+		lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty
 		exit 0;
 	"
 
 	# 5. Copy artifacts from the container to host.
 	echo "    - Renaming files from container: $CONTAINER_NAME"
 	if [ -f ../test-results.xml ]; then
-		mv ../test-results.xml ./test-results_"$CONTAINER_NAME".xml
+		mv ../cpp_tests/test-results.xml ./test-results_"$CONTAINER_NAME".xml
 	else
 		echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME"
 		touch ./test-results_"$CONTAINER_NAME".xml
 	fi
-	mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
-	mv ../updated_coverage.info ./lcov_coverage_"$CONTAINER_NAME".info
 
+	if [ -f ../cpp_tests/test-outputs.txt ]; then
+		mv ../cpp_tests/test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
+	else
+		echo "      ! Warning: test-outputs.txt not found for $CONTAINER_NAME"
+		touch ./test-outputs_"$CONTAINER_NAME".txt
+	fi
+
+	if [ -f ../cpp_tests/updated_coverage.info ]; then
+		mv ../cpp_tests/updated_coverage.info ./lcov_coverage_"$CONTAINER_NAME".info
+	else
+		echo "      ! Warning: updated_coverage.info not found for $CONTAINER_NAME"
+		touch ./lcov_coverage_"$CONTAINER_NAME".info
+	fi
 
 	# 6. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
