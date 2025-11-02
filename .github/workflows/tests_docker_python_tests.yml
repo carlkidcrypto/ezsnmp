@@ -36,21 +36,18 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
       - name: Set up Docker Compose
         run: |
-          if ! command -v docker-compose &> /dev/null; then
-            echo "docker-compose not found, installing..."
+          if ! command -v docker &> /dev/null; then
+            echo "docker not found, installing..."
             sudo apt-get update
-            sudo apt-get install -y docker-compose
+            sudo apt-get install -y docker
           else
-            echo "docker-compose is already installed."
+            echo "docker is already installed."
           fi
       
       - name: Set up Docker Buildx
@@ -75,9 +72,6 @@ jobs:
           path: |
             test-results_${{ matrix.distribution }}*.xml
             test-outputs_${{ matrix.distribution }}*.txt
-
-      - name: Bring down Docker containers (${{ matrix.distribution }})
-        run: docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml down
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
@@ -106,8 +100,15 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            almalinux10, test-outputs_almalinux10.txt, test-results_almalinux10.xml
-            archlinux, test-outputs_archlinux.txt, test-results_archlinux.xml
-            rockylinux8_py39, test-outputs_rockylinux8_py39.txt, test-results_rockylinux8_py39.xml
+            almalinux10_py310, test-outputs_almalinux10_py310.txt, test-results_almalinux10_py310.xml
+            almalinux10_py311, test-outputs_almalinux10_py311.txt, test-results_almalinux10_py311.xml
+            almalinux10_py312, test-outputs_almalinux10_py312.txt, test-results_almalinux10_py312.xml
+            almalinux10_py313, test-outputs_almalinux10_py313.txt, test-results_almalinux10_py313.xml
+            archlinux_py310, test-outputs_archlinux_py310.txt, test-results_archlinux_py310.xml
+            archlinux_py311, test-outputs_archlinux_py311.txt, test-results_archlinux_py311.xml
+            archlinux_py312, test-outputs_archlinux_py312.txt, test-results_archlinux_py312.xml
+            archlinux_py313, test-outputs_archlinux_py313.txt, test-results_archlinux_py313.xml
+            rockylinux8_py310, test-outputs_rockylinux8_py310.txt, test-results_rockylinux8_py310.xml
             rockylinux8_py311, test-outputs_rockylinux8_py311.txt, test-results_rockylinux8_py311.xml
             rockylinux8_py312, test-outputs_rockylinux8_py312.txt, test-results_rockylinux8_py312.xml
+            rockylinux8_py313, test-outputs_rockylinux8_py313.txt, test-results_rockylinux8_py313.xml

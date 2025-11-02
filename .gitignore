@@ -61,3 +61,4 @@ ezsnmp-2.*.*/
 .tox/**
 **test-outputs*.txt
 **test-results*.xml
+**lcov**.info
