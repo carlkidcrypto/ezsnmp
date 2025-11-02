@@ -112,8 +112,10 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		cd /ezsnmp/cpp_tests;
 		rm -drf build/;
 		meson setup build/; 
-		ninja -C build/; 
-		meson test -C build/ --no-rebuild --xml test-results.xml > test-output.txt 2>&1;
+		ninja -C build/ -j $(nproc); 
+		ninja -C build/ test > test-outputs.txt 2>&1;
+		lcov --capture --directory  build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
+		lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info
 		exit 0;
 	"
 
@@ -126,6 +128,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		touch ./test-results_"$CONTAINER_NAME".xml
 	fi
 	mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
+	mv ../updated_coverage.info ./lcov_coverage_"$CONTAINER_NAME".info
 
 
 	# 6. Cleanup container
