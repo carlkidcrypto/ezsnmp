@@ -1,6 +1,6 @@
 name: Run Dockerized Python Tests
 
-concurrency: tests-docker
+concurrency: tests-docker-python-tests
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
-            .github/workflows/tests_docker.yml
+            .github/workflows/tests_docker_python_tests.yml
             **/*.py
             **/*.cpp
             **/*.h

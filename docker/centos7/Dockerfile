@@ -26,12 +26,42 @@ RUN yum install -y yum-utils findutils \
     lcov \
     && yum clean all
 
-# Fix: PERSISTENT devtoolset-9 PATH for future commands (e.g., tests)
-RUN echo "source /opt/rh/devtoolset-9/enable" >> /etc/bashrc
+# --- CRITICAL FIX 3: PERSISTENT devtoolset-9 PATH for all commands ---
+# This ensures that all future commands (tests, etc.) run in the container 
+# automatically have the newer GCC 9 in their PATH.
+RUN echo 'export PATH=/opt/rh/devtoolset-9/root/usr/bin/:$PATH' > /etc/profile.d/devtoolset.sh && \
+    chmod +x /etc/profile.d/devtoolset.sh
 
-# Build Python 3.9 from source (uses GCC 9 via /etc/bashrc)
+# Build Python 3.9 from source (uses GCC 9 via the updated system PATH)
 ENV PYTHON_VERSION=3.9.18
 RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-optimizations && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+    RUN PYTHON_VERSION=3.10.13 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-optimizations && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+RUN PYTHON_VERSION=3.11.8 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-optimizations && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+RUN PYTHON_VERSION=3.12.3 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
     ./configure --enable-optimizations && \

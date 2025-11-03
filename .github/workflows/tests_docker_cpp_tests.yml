@@ -1,6 +1,6 @@
-name: Run Dockerized C++ Tests
+name: Run Dockerized Cpp Tests
 
-concurrency: tests-docker
+concurrency: tests-docker-cpp-tests
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
-            .github/workflows/tests_docker.yml
+            .github/workflows/tests_docker_cpp_tests.yml
             **/*.py
             **/*.cpp
             **/*.h
@@ -36,22 +36,18 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        distribution: [almalinux10, rockylinux8, archlinux]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
       - name: Set up Docker Compose
         run: |
-          if ! command -v docker-compose &> /dev/null; then
-            echo "docker-compose not found, installing..."
+          if ! command -v docker &> /dev/null; then
+            echo "docker not found, installing..."
             sudo apt-get update
-            sudo apt-get install -y docker-compose
+            sudo apt-get install -y docker
           else
-            echo "docker-compose is already installed."
+            echo "docker is already installed."
           fi
       
       - name: Set up Docker Buildx
@@ -61,78 +57,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ matrix.distribution }}-${{ hashFiles(format('docker/{0}/Dockerfile', matrix.distribution)) }}
+          key: ${{ runner.os }}-buildx-docker-tests-${{ hashFiles(format('docker/{0}/Dockerfile', 'docker-tests')) }}
           restore-keys: |
-            ${{ runner.os }}-buildx-${{ matrix.distribution }}-
-
-      - name: Ensure DockerEntry.sh is executable (${{ matrix.distribution }})
-        run: chmod +x ./docker/${{ matrix.distribution }}/DockerEntry.sh
-
-      - name: Build and spin up Docker containers (${{ matrix.distribution }})
+            ${{ runner.os }}-buildx-docker-tests-
+  
+      - name: Run unit tests inside the Docker container
         run: |
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml build
-          docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml up -d
-
-      - name: Wait for services to be ready (${{ matrix.distribution }})
-        run: |
-          WAIT_TIME=120
-          for i in $(seq $WAIT_TIME -1 1); do
-              if docker logs ${{ matrix.distribution }}_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
-                  echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"
-                  break
-              fi
-              echo -ne "Waiting for container to start... $i seconds remaining\r"
-              sleep 1
-          done
-          echo -ne "\n"
-
-      - name: Run unit tests inside the Docker container (${{ matrix.distribution }})
-        run: |
-          DISTRIBUTION=${{ matrix.distribution }}
-          CONTAINER_NAME="${DISTRIBUTION}_snmp_container"
-          COMPOSE_FILE="./docker/${DISTRIBUTION}/docker-compose.yml"
-          
-          if [ "$DISTRIBUTION" == "rockylinux8" ]; then
-            # --- Python 3.9 (py39) ---
-            echo "Running tox for py39 on rockylinux8..."
-            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
-              tox -e py39 > test-outputs_rockylinux8_py39.txt 2>&1;
-              mv test-results.xml test-results_rockylinux8_py39.xml;
-            '
-            # Copy artifacts for py39
-            docker cp $CONTAINER_NAME:/ezsnmp/test-results_rockylinux8_py39.xml .
-            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_rockylinux8_py39.txt .
-
-            # --- Python 3.11 (py311) ---
-            echo "Running tox for py311 on rockylinux8..."
-            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
-              tox -e py311 > test-outputs_rockylinux8_py311.txt 2>&1;
-              mv test-results.xml test-results_rockylinux8_py311.xml;
-            '
-            # Copy artifacts for py311
-            docker cp $CONTAINER_NAME:/ezsnmp/test-results_rockylinux8_py311.xml .
-            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_rockylinux8_py311.txt .
-            
-            # --- Python 3.12 (py312) ---
-            echo "Running tox for py312 on rockylinux8..."
-            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
-              tox -e py312 > test-outputs_rockylinux8_py312.txt 2>&1;
-              mv test-results.xml test-results_rockylinux8_py312.xml;
-            '
-            # Copy artifacts for py312
-            docker cp $CONTAINER_NAME:/ezsnmp/test-results_rockylinux8_py312.xml .
-            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_rockylinux8_py312.txt .
-            
-          else
-            echo "Running default tox environment for $DISTRIBUTION..."
-            docker-compose -f $COMPOSE_FILE exec -T $CONTAINER_NAME bash -c '
-              tox > test-outputs_${{ matrix.distribution }}.txt 2>&1;
-              mv test-results.xml test-results_${{ matrix.distribution }}.xml;
-            '
-            # Copy artifacts for the default run (almalinux10)
-            docker cp $CONTAINER_NAME:/ezsnmp/test-results_${{ matrix.distribution }}.xml .
-            docker cp $CONTAINER_NAME:/ezsnmp/test-outputs_${{ matrix.distribution }}.txt .
-          fi
+          sh docker/run_cpp_tests_in_all_dockers.sh
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
@@ -141,9 +72,6 @@ jobs:
           path: |
             test-results_${{ matrix.distribution }}*.xml
             test-outputs_${{ matrix.distribution }}*.txt
-
-      - name: Bring down Docker containers (${{ matrix.distribution }})
-        run: docker-compose -f ./docker/${{ matrix.distribution }}/docker-compose.yml down
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
@@ -172,8 +100,15 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            almalinux10, test-outputs_almalinux10.txt, test-results_almalinux10.xml
-            archlinux, test-outputs_archlinux.txt, test-results_archlinux.xml
-            rockylinux8_py39, test-outputs_rockylinux8_py39.txt, test-results_rockylinux8_py39.xml
+            almalinux10_py310, test-outputs_almalinux10_py310.txt, test-results_almalinux10_py310.xml
+            almalinux10_py311, test-outputs_almalinux10_py311.txt, test-results_almalinux10_py311.xml
+            almalinux10_py312, test-outputs_almalinux10_py312.txt, test-results_almalinux10_py312.xml
+            almalinux10_py313, test-outputs_almalinux10_py313.txt, test-results_almalinux10_py313.xml
+            archlinux_py310, test-outputs_archlinux_py310.txt, test-results_archlinux_py310.xml
+            archlinux_py311, test-outputs_archlinux_py311.txt, test-results_archlinux_py311.xml
+            archlinux_py312, test-outputs_archlinux_py312.txt, test-results_archlinux_py312.xml
+            archlinux_py313, test-outputs_archlinux_py313.txt, test-results_archlinux_py313.xml
+            rockylinux8_py310, test-outputs_rockylinux8_py310.txt, test-results_rockylinux8_py310.xml
             rockylinux8_py311, test-outputs_rockylinux8_py311.txt, test-results_rockylinux8_py311.xml
             rockylinux8_py312, test-outputs_rockylinux8_py312.txt, test-results_rockylinux8_py312.xml
+            rockylinux8_py313, test-outputs_rockylinux8_py313.txt, test-results_rockylinux8_py313.xml
