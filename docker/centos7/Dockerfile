@@ -5,16 +5,31 @@ FROM centos:7
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-# Install the EPEL repository package
-RUN yum install -y epel-release
+# Install EPEL and Software Collections (SCL)
+RUN yum install -y epel-release centos-release-scl
 
-# Update system and install essential tools and build dependencies for Python
-RUN yum update -y && \
-    yum install -y yum-utils findutils gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
-    unzip file  openssl net-snmp net-snmp-utils net-snmp-devel gcc-c++ gdb meson ninja-build gtest-devel \
+# Fix: Rerun sed commands on newly installed SCL repo files
+RUN sed -i 's/^mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i -e 's|^#baseurl=|baseurl=|g' -e 's|mirror.centos.org|vault.centos.org|g' -e 's|https://vault.centos.org|http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+# Fix: Permanently disable the failing centos-sclo-sclo repo
+RUN yum-config-manager --disable centos-sclo-sclo
+
+# Update system
+RUN yum update -y && yum clean all
+
+# Install devtoolset-9 (GCC 9) and all build dependencies, including lcov
+RUN yum install -y yum-utils findutils \
+    devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils \
+    openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
+    unzip file openssl net-snmp net-snmp-utils net-snmp-devel gdb meson ninja-build gtest-devel \
+    lcov \
     && yum clean all
 
-# --- Build Python 3.9 from source ---
+# Fix: PERSISTENT devtoolset-9 PATH for future commands (e.g., tests)
+RUN echo "source /opt/rh/devtoolset-9/enable" >> /etc/bashrc
+
+# Build Python 3.9 from source (uses GCC 9 via /etc/bashrc)
 ENV PYTHON_VERSION=3.9.18
 RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
@@ -24,12 +39,11 @@ RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSIO
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
-# Install debug symbols for relevant packages
+# Install net-snmp debug symbols
 RUN yum-config-manager --enable base-debuginfo && \
     debuginfo-install -y net-snmp-libs
 
-# Manually create the pkg-config file for net-snmp by dynamically
-# getting the correct flags and version from the system.
+# Manually create the pkg-config file for net-snmp
 RUN LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
