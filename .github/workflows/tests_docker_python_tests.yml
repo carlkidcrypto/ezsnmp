@@ -32,7 +32,7 @@ jobs:
             tox.ini
             python_tests/requirements.txt
 
-  test-distributions:
+  test-python-tests:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
@@ -63,7 +63,8 @@ jobs:
   
       - name: Run unit tests inside the Docker container
         run: |
-          sh docker/run_python_tests_in_all_dockers.sh
+           chmod +x ./docker/run_python_tests_in_all_dockers.sh
+          ./docker/run_python_tests_in_all_dockers.sh
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
@@ -75,7 +76,7 @@ jobs:
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
-    needs: test-distributions
+    needs: test-python-tests
     permissions:
       pull-requests: write # This is needed to create/update comments
     if: always() 
@@ -93,7 +94,7 @@ jobs:
         uses: MishaKav/pytest-coverage-comment@v1.1.57
         with:
           title: Pytest Coverage Report - Dockerized Tests
-          unique-id-for-comment: dockerized-tests
+          unique-id-for-comment: dockerized-python-tests
           hide-badge: true
           hide-report: true
           create-new-comment: false

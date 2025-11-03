@@ -8,11 +8,11 @@ RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|
 # Install EPEL and Software Collections (SCL)
 RUN yum install -y epel-release centos-release-scl
 
-# Fix: Rerun sed commands on newly installed SCL repo files
+# Fix 1: Rerun sed commands on newly installed SCL repo files
 RUN sed -i 's/^mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
     sed -i -e 's|^#baseurl=|baseurl=|g' -e 's|mirror.centos.org|vault.centos.org|g' -e 's|https://vault.centos.org|http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-# Fix: Permanently disable the failing centos-sclo-sclo repo
+# Fix 2: Permanently disable the failing centos-sclo-sclo repo
 RUN yum-config-manager --disable centos-sclo-sclo
 
 # Update system
@@ -26,48 +26,64 @@ RUN yum install -y yum-utils findutils \
     lcov \
     && yum clean all
 
-# --- CRITICAL FIX 3: PERSISTENT devtoolset-9 PATH for all commands ---
-# This ensures that all future commands (tests, etc.) run in the container 
-# automatically have the newer GCC 9 in their PATH.
+# Fix 3: PERSISTENT devtoolset-9 PATH for non-login shells (Crucial for meson/ninja tests)
 RUN echo 'export PATH=/opt/rh/devtoolset-9/root/usr/bin/:$PATH' > /etc/profile.d/devtoolset.sh && \
     chmod +x /etc/profile.d/devtoolset.sh
 
-# Build Python 3.9 from source (uses GCC 9 via the updated system PATH)
-ENV PYTHON_VERSION=3.9.18
-RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations && \
-    make altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+# --- Build Multiple Python Versions from Source (Uses GCC 9 via the updated PATH) ---
 
-    RUN PYTHON_VERSION=3.10.13 && \
+# Build Python 3.9.18
+RUN PYTHON_VERSION=3.9.18 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
+# Build Python 3.10.13
+RUN PYTHON_VERSION=3.10.13 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-optimizations --enable-shared && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# Build Python 3.11.8
 RUN PYTHON_VERSION=3.11.8 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
+# Build Python 3.12.3
 RUN PYTHON_VERSION=3.12.3 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-optimizations --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# Build Python 3.13.0
+RUN PYTHON_VERSION=3.13.0 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-optimizations --enable-shared && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# --- End Python Builds ---
+# NOTE: The --enable-shared flag is added to ensure shared libraries are available if needed.
 
 # Install net-snmp debug symbols
 RUN yum-config-manager --enable base-debuginfo && \
@@ -92,8 +108,15 @@ RUN LIBS=$(net-snmp-config --libs) && \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using the newly compiled python3.9
-RUN python3.9 -m venv $VENV_PATH
+# Create the virtual environment using the latest compiled python3.13
+RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 ENV PATH="$VENV_PATH/bin:$PATH"
+
+# --- FINAL IMAGE CLEANUP (Marks image as final) ---
+# # Removes temporary files, build tools, and caches to reduce image size.
+# RUN yum remove -y wget devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils \
+#     && rm -rf /var/cache/yum \
+#     /usr/local/src/* \
+#     /tmp/*
