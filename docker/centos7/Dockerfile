@@ -26,11 +26,11 @@ RUN yum install -y yum-utils findutils \
     lcov \
     && yum clean all
 
-# Fix 3: PERSISTENT devtoolset-9 PATH for non-login shells (Crucial for meson/ninja tests)
+# Fix 3: PERSISTENT devtoolset-9 PATH for non-login shells
 RUN echo 'export PATH=/opt/rh/devtoolset-9/root/usr/bin/:$PATH' > /etc/profile.d/devtoolset.sh && \
     chmod +x /etc/profile.d/devtoolset.sh
 
-# --- Build Multiple Python Versions from Source (Optimizations DISABLED to fix SystemError) ---
+# --- Build Multiple Python Versions from Source (Optimizations DISABLED) ---
 
 # Build Python 3.9.18
 RUN PYTHON_VERSION=3.9.18 && \
@@ -52,7 +52,7 @@ RUN PYTHON_VERSION=3.10.13 && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
-# Build Python 3.11.8 (FIXED: --enable-optimizations removed)
+# Build Python 3.11.8
 RUN PYTHON_VERSION=3.11.8 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
@@ -84,6 +84,10 @@ RUN PYTHON_VERSION=3.13.0 && \
 
 # --- End Python Builds ---
 
+# CRITICAL FIX 4: Update Dynamic Linker Cache
+RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/usr_local_lib.conf && \
+    ldconfig
+
 # Install net-snmp debug symbols
 RUN yum-config-manager --enable base-debuginfo && \
     debuginfo-install -y net-snmp-libs
@@ -112,10 +116,3 @@ RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 ENV PATH="$VENV_PATH/bin:$PATH"
-
-# --- FINAL IMAGE CLEANUP (Marks image as final) ---
-# # Removes temporary files, build tools, and caches to reduce image size.
-# RUN yum remove -y wget devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils \
-#     && rm -rf /var/cache/yum \
-#     /usr/local/src/* \
-#     /tmp/*

@@ -40,39 +40,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set up Docker Compose
-        run: |
-          if ! command -v docker &> /dev/null; then
-            echo "docker not found, installing..."
-            sudo apt-get update
-            sudo apt-get install -y docker
-          else
-            echo "docker is already installed."
-          fi
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-docker-tests-${{ hashFiles(format('docker/{0}/Dockerfile', 'docker-tests')) }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-docker-tests-
-
       - name: Run unit tests inside the Docker container
         run: |
            cd docker/
            chmod +x run_python_tests_in_all_dockers.sh
            ./run_python_tests_in_all_dockers.sh
 
-      - name: Upload Test Results (${{ matrix.distribution }})
+      - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: pytest-results_${{ matrix.distribution }}
-          path: docker/
-          merge-multiple: true
+          path: |
+            docker/test-results_${{ matrix.distribution }}*.xml
+            docker/test-outputs_${{ matrix.distribution }}*.txt
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
