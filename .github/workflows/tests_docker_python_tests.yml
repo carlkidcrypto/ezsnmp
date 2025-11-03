@@ -60,11 +60,11 @@ jobs:
           key: ${{ runner.os }}-buildx-docker-tests-${{ hashFiles(format('docker/{0}/Dockerfile', 'docker-tests')) }}
           restore-keys: |
             ${{ runner.os }}-buildx-docker-tests-
-  
+
       - name: Run unit tests inside the Docker container
         run: |
            chmod +x ./docker/run_python_tests_in_all_dockers.sh
-          ./docker/run_python_tests_in_all_dockers.sh
+           ./docker/run_python_tests_in_all_dockers.sh
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
