@@ -71,9 +71,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pytest-results_${{ matrix.distribution }}
-          path: |
-            test-results_${{ matrix.distribution }}*.xml
-            test-outputs_${{ matrix.distribution }}*.txt
+          path: docker/
+          merge-multiple: true
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
