@@ -63,8 +63,9 @@ jobs:
 
       - name: Run unit tests inside the Docker container
         run: |
-           chmod +x ./docker/run_python_tests_in_all_dockers.sh
-           ./docker/run_python_tests_in_all_dockers.sh
+           cd docker/
+           chmod +x run_python_tests_in_all_dockers.sh
+           ./run_python_tests_in_all_dockers.sh
 
       - name: Upload Test Results (${{ matrix.distribution }})
         uses: actions/upload-artifact@v4
