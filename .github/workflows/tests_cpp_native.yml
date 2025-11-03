@@ -130,5 +130,5 @@ jobs:
           create-new-comment: false
           hide-comment: false
           multiple-files: |
-            macOS, **/*macos*.xml
-            Ubuntu, **/*ubuntu*.xml
+            macOS, test-results/cpp-test-results_macos-latest.xml
+            Ubuntu, test-results/cpp-test-results_ubuntu-latest.xml

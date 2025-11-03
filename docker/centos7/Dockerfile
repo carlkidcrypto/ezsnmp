@@ -30,14 +30,14 @@ RUN yum install -y yum-utils findutils \
 RUN echo 'export PATH=/opt/rh/devtoolset-9/root/usr/bin/:$PATH' > /etc/profile.d/devtoolset.sh && \
     chmod +x /etc/profile.d/devtoolset.sh
 
-# --- Build Multiple Python Versions from Source (Uses GCC 9 via the updated PATH) ---
+# --- Build Multiple Python Versions from Source (Optimizations DISABLED to fix SystemError) ---
 
 # Build Python 3.9.18
 RUN PYTHON_VERSION=3.9.18 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations --enable-shared && \
+    ./configure --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
@@ -47,17 +47,17 @@ RUN PYTHON_VERSION=3.10.13 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations --enable-shared && \
+    ./configure --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
-# Build Python 3.11.8
+# Build Python 3.11.8 (FIXED: --enable-optimizations removed)
 RUN PYTHON_VERSION=3.11.8 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations --enable-shared && \
+    ./configure --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
@@ -67,7 +67,7 @@ RUN PYTHON_VERSION=3.12.3 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations --enable-shared && \
+    ./configure --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
@@ -77,13 +77,12 @@ RUN PYTHON_VERSION=3.13.0 && \
     wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations --enable-shared && \
+    ./configure --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
 # --- End Python Builds ---
-# NOTE: The --enable-shared flag is added to ensure shared libraries are available if needed.
 
 # Install net-snmp debug symbols
 RUN yum-config-manager --enable base-debuginfo && \
