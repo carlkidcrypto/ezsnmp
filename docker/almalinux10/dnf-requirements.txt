@@ -16,3 +16,4 @@ dnf-utils
 meson
 ninja-build
 gtest-devel
+lcov

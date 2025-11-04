@@ -5,31 +5,94 @@ FROM centos:7
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-# Install the EPEL repository package
-RUN yum install -y epel-release
+# Install EPEL and Software Collections (SCL)
+RUN yum install -y epel-release centos-release-scl
 
-# Update system and install essential tools and build dependencies for Python
-RUN yum update -y && \
-    yum install -y yum-utils findutils gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
-    unzip file  openssl net-snmp net-snmp-utils net-snmp-devel gcc-c++ gdb meson ninja-build gtest-devel \
+# Fix 1: Rerun sed commands on newly installed SCL repo files
+RUN sed -i 's/^mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i -e 's|^#baseurl=|baseurl=|g' -e 's|mirror.centos.org|vault.centos.org|g' -e 's|https://vault.centos.org|http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+# Fix 2: Permanently disable the failing centos-sclo-sclo repo
+RUN yum-config-manager --disable centos-sclo-sclo
+
+# Update system
+RUN yum update -y && yum clean all
+
+# Install devtoolset-9 (GCC 9) and all build dependencies, including lcov
+RUN yum install -y yum-utils findutils \
+    devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils \
+    openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
+    unzip file openssl net-snmp net-snmp-utils net-snmp-devel gdb meson ninja-build gtest-devel \
+    lcov \
     && yum clean all
 
-# --- Build Python 3.9 from source ---
-ENV PYTHON_VERSION=3.9.18
-RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+# Fix 3: PERSISTENT devtoolset-9 PATH for non-login shells
+RUN echo 'export PATH=/opt/rh/devtoolset-9/root/usr/bin/:$PATH' > /etc/profile.d/devtoolset.sh && \
+    chmod +x /etc/profile.d/devtoolset.sh
+
+# --- Build Multiple Python Versions from Source (Optimizations DISABLED) ---
+
+# Build Python 3.9.18
+RUN PYTHON_VERSION=3.9.18 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
     tar -xzf Python-$PYTHON_VERSION.tgz && \
     cd Python-$PYTHON_VERSION && \
-    ./configure --enable-optimizations && \
+    ./configure --enable-shared && \
     make altinstall && \
     cd .. && \
     rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
 
-# Install debug symbols for relevant packages
+# Build Python 3.10.13
+RUN PYTHON_VERSION=3.10.13 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-shared && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# Build Python 3.11.8
+RUN PYTHON_VERSION=3.11.8 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-shared && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# Build Python 3.12.3
+RUN PYTHON_VERSION=3.12.3 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-shared && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# Build Python 3.13.0
+RUN PYTHON_VERSION=3.13.0 && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-shared && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
+
+# --- End Python Builds ---
+
+# CRITICAL FIX 4: Update Dynamic Linker Cache
+RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/usr_local_lib.conf && \
+    ldconfig
+
+# Install net-snmp debug symbols
 RUN yum-config-manager --enable base-debuginfo && \
     debuginfo-install -y net-snmp-libs
 
-# Manually create the pkg-config file for net-snmp by dynamically
-# getting the correct flags and version from the system.
+# Manually create the pkg-config file for net-snmp
 RUN LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
@@ -48,8 +111,8 @@ RUN LIBS=$(net-snmp-config --libs) && \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using the newly compiled python3.9
-RUN python3.9 -m venv $VENV_PATH
+# Create the virtual environment using the latest compiled python3.13
+RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 ENV PATH="$VENV_PATH/bin:$PATH"
