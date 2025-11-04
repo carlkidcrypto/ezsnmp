@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Development Guide" href="development.html" /><link rel="prev" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Development Guide" href="development.html"><link rel="prev" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Datatypes C++ Module - EzSnmp v2.1.0b0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -207,7 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input aria-label="Toggle navigation of Swig Interface File(s)" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
@@ -247,8 +240,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -256,102 +248,16 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="datatypes-c-module">
 <h1>Datatypes C++ Module<a class="headerlink" href="#datatypes-c-module" title="Link to this heading">¶</a></h1>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv46Result">
-<span id="_CPPv36Result"></span><span id="_CPPv26Result"></span><span id="Result"></span><span class="target" id="structResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Result</span></span></span><a class="headerlink" href="#_CPPv46Result" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Structure to represent an SNMP result. </p>
-<p>This structure holds the information retrieved from an SNMP operation, including the OID, index, type, and value of the retrieved data. </p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result14ConvertedValueE">
-<span id="_CPPv3N6Result14ConvertedValueE"></span><span id="_CPPv2N6Result14ConvertedValueE"></span><span class="target" id="structResult_1a1143913f91a69341fa44f9bedff22a6b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConvertedValue</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">variant</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N6Result14ConvertedValueE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find file: /home/runner/work/ezsnmp/ezsnmp/doxygen_docs_build/doxygen/xml/index.xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK6Result10_to_stringEv">
-<span id="_CPPv3NK6Result10_to_stringEv"></span><span id="_CPPv2NK6Result10_to_stringEv"></span><span id="Result::_to_stringC"></span><span class="target" id="structResult_1adb9e47059c7f6e08f46193583e1f8a64"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_to_string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK6Result10_to_stringEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Converts the <a class="reference internal" href="#structResult"><span class="std std-ref">Result</span></a> object to a string representation. </p>
-<p>This method generates a human-readable string representation of the <a class="reference internal" href="#structResult"><span class="std std-ref">Result</span></a> object, including all its members.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A string representation of the <a class="reference internal" href="#structResult"><span class="std std-ref">Result</span></a> object. </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE">
-<span id="_CPPv3N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"></span><span id="Result::_make_converted_value__ssCR.ssCR"></span><span class="target" id="structResult_1a089e3b82fcb6e49bbb98aba86e3e927e"></span><a class="reference internal" href="#_CPPv4N6Result14ConvertedValueE" title="Result::ConvertedValue"><span class="n"><span class="pre">ConvertedValue</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_make_converted_value</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">type</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Factory function to obtain the appropriate ConvertedValue type based on an SNMP type string. </p>
-<p>This function takes an SNMP type string and a value string, then attempts to convert the value into the corresponding C++ type. The converted value is stored in a ConvertedValue, which is a std::variant.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snmpType</strong> – The SNMP type as a string (e.g., “INTEGER”, “OCTETSTR”). <a class="reference external" href="https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h#L154-L170">https://github.com/net-snmp/net-snmp/blob/02bee0fe32a4136ade3de137eef6c5acdfeed508/include/net-snmp/library/parse.h#L154-L170</a></p></li>
-<li><p><strong>value</strong> – The value as a string to be converted. </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>ConvertedValue The value converted to the appropriate C++ type, wrapped in a std::variant. </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result22update_converted_valueEv">
-<span id="_CPPv3N6Result22update_converted_valueEv"></span><span id="_CPPv2N6Result22update_converted_valueEv"></span><span id="Result::update_converted_value"></span><span class="target" id="structResult_1a325c0c7a66a17c0f200b6b5710032719"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update_converted_value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Result22update_converted_valueEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Updates the converted_value member by converting the current type and value. </p>
-<p>This method recalculates and assigns the converted_value field using the current values of the type and value members. It utilizes the private helper function _make_converted_value to perform the conversion.</p>
-<p>Typically called after type or value has changed to ensure converted_value is up-to-date. </p>
-</dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result3oidE">
-<span id="_CPPv3N6Result3oidE"></span><span id="_CPPv2N6Result3oidE"></span><span id="Result::oid__ss"></span><span class="target" id="structResult_1a1e9a00584f0860461cbc4b4dbde2114f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">oid</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N6Result3oidE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Object Identifier (OID) of the retrieved data. </p>
-</dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result5indexE">
-<span id="_CPPv3N6Result5indexE"></span><span id="_CPPv2N6Result5indexE"></span><span id="Result::index__ss"></span><span class="target" id="structResult_1aeb2a87139ea4c2ba02de76e0a9ed73b0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">index</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N6Result5indexE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Index of the retrieved data (if applicable). </p>
-</dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result4typeE">
-<span id="_CPPv3N6Result4typeE"></span><span id="_CPPv2N6Result4typeE"></span><span id="Result::type__ss"></span><span class="target" id="structResult_1a82d494292a8a756cae87d78abdf5829f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N6Result4typeE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Data type of the retrieved value. </p>
-</dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result5valueE">
-<span id="_CPPv3N6Result5valueE"></span><span id="_CPPv2N6Result5valueE"></span><span id="Result::value__ss"></span><span class="target" id="structResult_1a8663178a741580314d0c1c4dc2ba01f2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N6Result5valueE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Actual value of the retrieved data. </p>
-</dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N6Result15converted_valueE">
-<span id="_CPPv3N6Result15converted_valueE"></span><span id="_CPPv2N6Result15converted_valueE"></span><span id="Result::converted_value__ConvertedValue"></span><span class="target" id="structResult_1abf2126074726b8903a8657edef4435f1"></span><a class="reference internal" href="#_CPPv4N6Result14ConvertedValueE" title="Result::ConvertedValue"><span class="n"><span class="pre">ConvertedValue</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">converted_value</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;&quot;</span></span><a class="headerlink" href="#_CPPv4N6Result15converted_valueE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Converted value of the type,value data. </p>
-</dd></dl>
-
-</div>
-</dd></dl>
-
 <section id="result-converted-value-types-and-results">
 <h2>Result.converted_value Types and Results<a class="headerlink" href="#result-converted-value-types-and-results" title="Link to this heading">¶</a></h2>
 <p>This section outlines the possible C++ data types that result from the <code class="docutils literal notranslate"><span class="pre">converted_value</span></code> member of the <code class="docutils literal notranslate"><span class="pre">Result</span></code> struct. The conversion is based on the SNMP <code class="docutils literal notranslate"><span class="pre">type</span></code> string. The underlying C++ type is a <code class="docutils literal notranslate"><span class="pre">std::variant</span></code> that can hold one of the following types or an error string.</p>
@@ -511,18 +417,6 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Datatypes C++ Module</a><ul>
-<li><a class="reference internal" href="#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N6Result14ConvertedValueE"><code class="docutils literal notranslate"><span class="pre">ConvertedValue</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK6Result10_to_stringEv"><code class="docutils literal notranslate"><span class="pre">_to_string()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">_make_converted_value()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result22update_converted_valueEv"><code class="docutils literal notranslate"><span class="pre">update_converted_value()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result3oidE"><code class="docutils literal notranslate"><span class="pre">oid</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result5indexE"><code class="docutils literal notranslate"><span class="pre">index</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result4typeE"><code class="docutils literal notranslate"><span class="pre">type</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result5valueE"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Result15converted_valueE"><code class="docutils literal notranslate"><span class="pre">converted_value</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#result-converted-value-types-and-results">Result.converted_value Types and Results</a><ul>
 <li><a class="reference internal" href="#numeric-types">Numeric Types</a><ul>
 <li><a class="reference internal" href="#integer-integer32">Integer / Integer32</a></li>
