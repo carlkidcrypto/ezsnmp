@@ -1,9 +1,6 @@
 python39
-python39-devel
 python310
-python310-devel
 python311
-python311-devel
 python312
-python312-devel
+python313
 googletest

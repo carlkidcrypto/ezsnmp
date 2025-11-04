@@ -6,11 +6,13 @@ openssl
 openssl-devel
 python3.9
 python39-devel
-python3-pip
+python3.10
+python3.10-devel
 python3.11
 python3.11-devel
 python3.12
 python3.12-devel
+python3-pip
 net-snmp
 net-snmp-utils
 net-snmp-devel

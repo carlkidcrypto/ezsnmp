@@ -1,27 +1,32 @@
 # Use Rocky Linux 8 as the base image
 FROM rockylinux:8
 
-# Update system and install essential tools
+# Update system, install essential tools, and configure repositories in one layer
 RUN dnf update -y && \
-    dnf install -y findutils dnf-plugins-core
+    dnf install -y findutils dnf-plugins-core epel-release && \
+    dnf config-manager --set-enabled powertools
 
-# Install the EPEL repository package
-RUN dnf install -y epel-release
-
-# Enable the 'powertools' repository (all lowercase)
-RUN dnf config-manager --set-enabled powertools
-
-# Install dependencies from the requirements file AND the newer GCC toolset
+# Install dependencies from requirements file
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
-    dnf clean all
+    dnf debuginfo-install -y python3 net-snmp-libs && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Install debug symbols for relevant packages
-RUN dnf debuginfo-install -y python3 net-snmp-libs
+# Build Python 3.13 from source (not available in Rocky 8 repos)
+RUN PYTHON_VERSION=3.13.1 && \
+    dnf install -y bzip2-devel libffi-devel zlib-devel && \
+    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -xzf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
+    ./configure --enable-shared --enable-optimizations && \
+    make -j$(nproc) altinstall && \
+    cd .. && \
+    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
+    ldconfig
 
-# Manually create the pkg-config file for net-snmp by dynamically
-# getting the correct flags and version from the system. This ensures
-# that Meson can find the dependency even if PKG_CONFIG_PATH is not set.
+# Manually create the pkg-config file for net-snmp
 RUN LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
@@ -40,9 +45,8 @@ RUN LIBS=$(net-snmp-config --libs) && \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment
-RUN python3.9 -m venv $VENV_PATH
+# Create the virtual environment using Python 3.13
+RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
-# All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.
 ENV PATH="$VENV_PATH/bin:$PATH"
