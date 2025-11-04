@@ -180,7 +180,7 @@ TEST(SessionBaseArgs, TestEmptyMaxRepetitionsOption) {
    ASSERT_EQ(args, expected);
 }
 
-INSTANTIATE_TEST_SUITE_P(
+INSTANTIATE_TEST_CASE_P(
     SessionVersions,
     SessionsParamTest,
     testing::Combine(

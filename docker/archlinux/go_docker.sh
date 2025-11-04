@@ -17,7 +17,7 @@ docker-compose build
 docker-compose up -d
 
 # Wait for the container to start by checking its logs
-WAIT_TIME=120
+WAIT_TIME=240
 for i in $(seq $WAIT_TIME -1 1); do
     if docker logs archlinux_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
         echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"

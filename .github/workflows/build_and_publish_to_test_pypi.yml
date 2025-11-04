@@ -84,6 +84,9 @@ jobs:
   build-n-publish-test-pypi:
     name: Build and Publish To Test PyPi
     runs-on: ubuntu-latest
+    environment: build_and_publish_to_test_pypi
+    permissions:
+      id-token: write
     needs: build_wheels
 
     steps:
@@ -128,5 +131,4 @@ jobs:
           verify_metadata: false
           skip_existing: true
           print_hash: true
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/

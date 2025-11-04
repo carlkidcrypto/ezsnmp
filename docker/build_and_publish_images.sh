@@ -8,15 +8,18 @@ DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN>"
+  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME]"
   echo ""
   echo "  <DOCKER_USERNAME>: Your Docker Hub username."
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
+  echo "  [IMAGE_NAME]: Optional. Specify a single image directory (e.g., 'almalinux10') to build only that image."
+  echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
   exit 1
 fi
 
 USERNAME=$1
 ACCESS_TOKEN=$2
+TARGET_IMAGE=${3:-} # Optional 3rd argument, empty if not provided
 
 # --- Docker Hub Login ---
 
@@ -31,10 +34,29 @@ fi
 echo "Successfully logged in to Docker Hub."
 echo "--------------------------------------------------"
 
+# --- Determine Images to Build ---
+
+if [ -n "${TARGET_IMAGE}" ]; then
+  # Build only the specified image
+  if [ ! -d "${DOCKER_DIR}/${TARGET_IMAGE}" ]; then
+    echo "ERROR: Specified image directory '${DOCKER_DIR}/${TARGET_IMAGE}' does not exist."
+    docker logout
+    exit 1
+  fi
+  DISTROS_TO_BUILD=(${TARGET_IMAGE})
+  echo "Mode: Building only the single image: ${TARGET_IMAGE}"
+else
+  # Build all images by finding directories in DOCKER_DIR
+  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d -printf "%f\n"))
+  echo "Mode: Building all found images."
+fi
+
+echo "Images to process: ${DISTROS_TO_BUILD[@]}"
+echo "--------------------------------------------------"
+
 # --- Build and Push Loop ---
 
-# Find all directories inside the DOCKER_DIR
-for DISTRO_NAME in $(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d -printf "%f\n"); do
+for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
     
     CONTEXT_PATH="${DOCKER_DIR}/${DISTRO_NAME}"
     FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
@@ -44,6 +66,7 @@ for DISTRO_NAME in $(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d -print
     echo "    - Target Tag: ${FULL_IMAGE_TAG}"
 
     # 1. Build the image
+    # Note: Use a dedicated Dockerfile if it's not named 'Dockerfile'
     if docker build -t "${FULL_IMAGE_TAG}" "${CONTEXT_PATH}"; then
         echo "    - Build successful."
     else
