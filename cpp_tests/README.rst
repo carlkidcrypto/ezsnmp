@@ -36,7 +36,7 @@ Prerequisites
 =============
 To run these tests, you need:
 
-* CMake or appropriate C++ build tools
+* Meson and Ninja build tools
 * Net-SNMP development libraries
 * Google Test framework (or similar C++ testing framework)
 * C++ compiler with C++17 support

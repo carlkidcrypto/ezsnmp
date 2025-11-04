@@ -4,7 +4,7 @@ CML Tests
 
 Overview
 ========
-This directory contains CML (Concurrent Markup Language) tests for EzSnmp.
+This directory contains CML (Command Line Interface) tests for EzSnmp.
 These tests are designed to validate SNMP functionality in various scenarios.
 
 Purpose
