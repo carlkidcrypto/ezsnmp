@@ -11,6 +11,9 @@ Focus on the following instructions:
 - Create and update doxygen files for the project in doxygen_docs_build using the doxygen tool
 - Create and maintain README.rst files in folders under this project
 - Ensure proper links between relevant files
+- Ensure to maintain various versions of documentation under docs/. For example, html is the current release, html_v1.1.0 is the v1.1.0 release, and html_v2.0.1 is the v2.0.1 release.
+- Ensure to run doxygen first since sphinx requires doxygen output for cpp files.
+- Do not edit the html directly, rather use the sphinx command `make html` inside `sphinx_docs_build` to generate it for you.
 - Create and update README.rst files with clear project descriptions
 - Structure README sections logically: overview, installation, usage, contributing, etc...
 - Write scannable content with proper headings and formatting
