@@ -80,16 +80,16 @@ jobs:
           create-new-comment: false
           hide-comment: false
           report-only-changed-files: false
-          multiple-files: |
-            almalinux10_py310, test-outputs_almalinux10_py310.txt, test-results_almalinux10_py310.xml
-            almalinux10_py311, test-outputs_almalinux10_py311.txt, test-results_almalinux10_py311.xml
-            almalinux10_py312, test-outputs_almalinux10_py312.txt, test-results_almalinux10_py312.xml
-            almalinux10_py313, test-outputs_almalinux10_py313.txt, test-results_almalinux10_py313.xml
-            archlinux_py310, test-outputs_archlinux_py310.txt, test-results_archlinux_py310.xml
-            archlinux_py311, test-outputs_archlinux_py311.txt, test-results_archlinux_py311.xml
-            archlinux_py312, test-outputs_archlinux_py312.txt, test-results_archlinux_py312.xml
-            archlinux_py313, test-outputs_archlinux_py313.txt, test-results_archlinux_py313.xml
-            rockylinux8_py310, test-outputs_rockylinux8_py310.txt, test-results_rockylinux8_py310.xml
-            rockylinux8_py311, test-outputs_rockylinux8_py311.txt, test-results_rockylinux8_py311.xml
-            rockylinux8_py312, test-outputs_rockylinux8_py312.txt, test-results_rockylinux8_py312.xml
-            rockylinux8_py313, test-outputs_rockylinux8_py313.txt, test-results_rockylinux8_py313.xml
+            multiple-files: |
+            almalinux10_py310, test-outputs_almalinux10_test_container_py310.txt, test-results_almalinux10_test_container_py310.xml
+            almalinux10_py311, test-outputs_almalinux10_test_container_py311.txt, test-results_almalinux10_test_container_py311.xml
+            almalinux10_py312, test-outputs_almalinux10_test_container_py312.txt, test-results_almalinux10_test_container_py312.xml
+            almalinux10_py313, test-outputs_almalinux10_test_container_py313.txt, test-results_almalinux10_test_container_py313.xml
+            archlinux_py310, test-outputs_archlinux_test_container_py310.txt, test-results_archlinux_test_container_py310.xml
+            archlinux_py311, test-outputs_archlinux_test_container_py311.txt, test-results_archlinux_test_container_py311.xml
+            archlinux_py312, test-outputs_archlinux_test_container_py312.txt, test-results_archlinux_test_container_py312.xml
+            archlinux_py313, test-outputs_archlinux_test_container_py313.txt, test-results_archlinux_test_container_py313.xml
+            rockylinux8_py310, test-outputs_rockylinux8_test_container_py310.txt, test-results_rockylinux8_test_container_py310.xml
+            rockylinux8_py311, test-outputs_rockylinux8_test_container_py311.txt, test-results_rockylinux8_test_container_py311.xml
+            rockylinux8_py312, test-outputs_rockylinux8_test_container_py312.txt, test-results_rockylinux8_test_container_py312.xml
+            rockylinux8_py313, test-outputs_rockylinux8_test_container_py313.txt, test-results_rockylinux8_test_container_py313.xml
