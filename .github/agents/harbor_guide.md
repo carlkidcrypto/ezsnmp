@@ -14,4 +14,5 @@ Focus on the following instructions:
 - Ensure all docker containers can be used to run both `python_tests/` and `cpp_tests/` inside them.
 - Ensure that containers maintain the smallest image size possible
 - Ensure that containers can be published to docker hub as needed via a script called `docker/build_and_publish_images.sh`.
-- Ensure that `cpp_tests/` can be ran inside publish docker containers via a script called `docker/run_cpp_tests_in_all_dockers.sh`. - Ensure that `python_tests/` can be ran inside publish docker containers via a script called `docker/run_python_tests_in_all_dockers.sh`. 
+- Ensure that `cpp_tests/` can be run inside published docker containers via a script called `docker/run_cpp_tests_in_all_dockers.sh`.
+- Ensure that `python_tests/` can be run inside published docker containers via a script called `docker/run_python_tests_in_all_dockers.sh`.
