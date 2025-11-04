@@ -78,7 +78,7 @@ License
 -------
 
 EzSnmp is released under the **BSD** license. Please see the
-`LICENSE <https://github.com/ezsnmp/ezsnmp/blob/master/LICENSE>`_
+`LICENSE <LICENSE>`_
 file for more details.
 
 Copyright
