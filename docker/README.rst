@@ -7,12 +7,22 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10**
-* **archlinux**
-* **centos7**
-* **rockylinux8**
+* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, GCC 14.x
+* **archlinux** - Arch Linux (latest) with Python 3.9-3.13, GCC 14.x
+* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing
+* **centos7** - CentOS 7 with devtoolset-9 (GCC 9.3.1), Python 3.9-3.13 from source
+* **rockylinux8** - Rocky Linux 8 with Python 3.9-3.13, GCC 8.5+
+
+All images support:
+
+* **GCC/G++ 9.5 or higher** for C++ compilation
+* **Python 3.9, 3.10, 3.11, 3.12, 3.13** for comprehensive testing
+* **Both cpp_tests and python_tests** test suites
+* **Optimized for minimal image size** with layer combining and cache cleanup
 
 The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** https://hub.docker.com/r/carlkidcrypto/ezsnmp_test_images
+
+For detailed information about recent improvements, see `IMPROVEMENTS.md <IMPROVEMENTS.md>`_.
 
 ----------------------------------------------------------------------
 

@@ -24,9 +24,7 @@ TARGET_IMAGE=${3:-} # Optional 3rd argument, empty if not provided
 # --- Docker Hub Login ---
 
 echo "Attempting to log in to Docker Hub..."
-echo "${ACCESS_TOKEN}" | docker login -u "${USERNAME}" --password-stdin
-
-if [ $? -ne 0 ]; then
+if ! echo "${ACCESS_TOKEN}" | docker login -u "${USERNAME}" --password-stdin; then
   echo "ERROR: Docker login failed. Please check your username and token."
   exit 1
 fi
@@ -43,7 +41,7 @@ if [ -n "${TARGET_IMAGE}" ]; then
     docker logout
     exit 1
   fi
-  DISTROS_TO_BUILD=(${TARGET_IMAGE})
+  DISTROS_TO_BUILD=("${TARGET_IMAGE}")
   echo "Mode: Building only the single image: ${TARGET_IMAGE}"
 else
   # Build all images by finding directories in DOCKER_DIR
@@ -51,7 +49,7 @@ else
   echo "Mode: Building all found images."
 fi
 
-echo "Images to process: ${DISTROS_TO_BUILD[@]}"
+echo "Images to process: ${DISTROS_TO_BUILD[*]}"
 echo "--------------------------------------------------"
 
 # --- Build and Push Loop ---
