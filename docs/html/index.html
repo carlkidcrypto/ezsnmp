@@ -193,8 +193,9 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
@@ -476,6 +477,19 @@ This allows you to catch and manage exceptions specific to EzSnmp more effective
 </pre></div>
 </div>
 <p>By catching exceptions, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.</p>
+</section>
+<section id="documentation-structure">
+<h2>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading">¶</a></h2>
+<p>This documentation is organized into the following sections:</p>
+<ul class="simple">
+<li><p><strong>API Reference</strong> - Detailed documentation of Python and C++ classes</p></li>
+<li><p><strong>Migration Guide</strong> - Instructions for migrating from v1.x to v2.x</p></li>
+<li><p><strong>Development Guide</strong> - Information for contributors and developers</p></li>
+<li><p><strong>Interface Documentation</strong> - SWIG interface file documentation</p></li>
+</ul>
+<p>For general project information, installation instructions for specific platforms,
+and Docker configurations, please see the README files in the respective directories
+of the <a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp">GitHub repository</a>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -487,9 +501,15 @@ This allows you to catch and manage exceptions specific to EzSnmp more effective
 <li class="toctree-l2"><a class="reference internal" href="migration_guide.html#migration-example">Migration Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#result-converted-value-types-and-results">Result.converted_value Types and Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#documentation-structure">Documentation Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#building-documentation">Building Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#documentation-workflow">Documentation Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#documentation-standards">Documentation Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#checking-documentation">Checking Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#resources">Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#related-documentation">Related Documentation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
@@ -500,6 +520,11 @@ This allows you to catch and manage exceptions specific to EzSnmp more effective
 <li class="toctree-l2"><a class="reference internal" href="development.html#running-cibuildwheels">Running cibuildwheels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development.html#formatting">Formatting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="development.html#generating-the-changelog-md">Generating The CHANGELOG.md</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#result-converted-value-types-and-results">Result.converted_value Types and Results</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
@@ -604,6 +629,7 @@ This allows you to catch and manage exceptions specific to EzSnmp more effective
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
 <li><a class="reference internal" href="#example-session-kargs">Example Session Kargs</a></li>
 <li><a class="reference internal" href="#ezsnmp-exception-handling">EzSnmp Exception Handling</a></li>
+<li><a class="reference internal" href="#documentation-structure">Documentation Structure</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>

@@ -255,6 +255,20 @@ Here's an example of how to use one of the exceptions classes.:
 
 By catching exceptions, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.
 
+Documentation Structure
+-----------------------
+
+This documentation is organized into the following sections:
+
+* **API Reference** - Detailed documentation of Python and C++ classes
+* **Migration Guide** - Instructions for migrating from v1.x to v2.x
+* **Development Guide** - Information for contributors and developers
+* **Interface Documentation** - SWIG interface file documentation
+
+For general project information, installation instructions for specific platforms, 
+and Docker configurations, please see the README files in the respective directories 
+of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
