@@ -59,4 +59,6 @@ ezsnmp/src/ezsnmp_sessionbase.cpp
 # Tox files
 ezsnmp-2.*.*/
 .tox/**
-test-results.xml
+**test-outputs*.txt
+**test-results*.xml
+**lcov**.info

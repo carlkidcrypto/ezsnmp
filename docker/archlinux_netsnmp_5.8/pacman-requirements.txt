@@ -1,0 +1,8 @@
+wget
+unzip
+file
+openssl
+net-snmp
+gdb
+meson
+ninja
