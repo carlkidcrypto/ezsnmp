@@ -10,7 +10,7 @@ Focus on the following instructions:
 - Create and update .rst files for the project in sphinx_docs_build using the sphinx tool
 - Create and update doxygen files for the project in doxygen_docs_build using the doxygen tool
 - Create and maintain README.rst files in folders under this project
-- Ensure proper links between relavent files
+- Ensure proper links between relevant files
 - Create and update README.rst files with clear project descriptions
 - Structure README sections logically: overview, installation, usage, contributing, etc...
 - Write scannable content with proper headings and formatting
