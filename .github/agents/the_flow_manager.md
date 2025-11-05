@@ -36,7 +36,7 @@ Focus on the following instructions:
     success or failure of all uts
 - Ensure that `.github/workflows/tests_docker_cpp_tests.yml` focuses on
     running `cpp_tests/` inside the docker containers in `docker/`. Comments
-    on PRs wether success or failure of all uts
+    on PRs whether success or failure of all uts
 - Ensure that `.github/workflows/tests_docker_python_tests.yml` focuses on
     running `python_tests.` inside the docker containers in `docker/`.
     Comments on PRs wether success or failure of all uts
