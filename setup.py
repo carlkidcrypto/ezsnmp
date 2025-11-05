@@ -81,6 +81,9 @@ def get_homebrew_net_snmp_info():
     try:
         brew_output = check_output("brew list net-snmp", shell=True).decode()
         lines = brew_output.splitlines()
+        
+        if not lines:
+            return None
 
         # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
         pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)?)/"
@@ -124,13 +127,17 @@ def get_homebrew_net_snmp_info():
         openssl_info_output = check_output(
             f"brew info {openssl_version}", shell=True
         ).decode()
-        openssl_path = openssl_info_output.splitlines()[4].split("(")[0].strip()
-        libdirs.append(openssl_path + "/lib")
-        incdirs.append(openssl_path + "/include")
+        openssl_lines = openssl_info_output.splitlines()
+        if len(openssl_lines) > 4:
+            openssl_path = openssl_lines[4].split("(")[0].strip()
+            libdirs.append(openssl_path + "/lib")
+            incdirs.append(openssl_path + "/include")
+        else:
+            return None
 
         return homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs
 
-    except CalledProcessError:
+    except (CalledProcessError, IndexError, ValueError):
         return None
 
 
