@@ -38,8 +38,8 @@ Focus on the following instructions:
     running `cpp_tests/` inside the docker containers in `docker/`. Comments
     on PRs whether success or failure of all uts
 - Ensure that `.github/workflows/tests_docker_python_tests.yml` focuses on
-    running `python_tests.` inside the docker containers in `docker/`.
-    Comments on PRs wether success or failure of all uts
+    running `python_tests/` inside the docker containers in `docker/`.
+    Comments on PRs whether success or failure of all uts
 - Ensure that `.github/workflows/tests_homebrew.yml` focuses on running
     `python_tests/` using homebrew dependices. Comments on PRs wether success
     or failure of all uts
