@@ -272,10 +272,12 @@ else:
         incdirs = incdirs + temp_incdirs
         print("Using Homebrew net-snmp installation...")
     else:
-        homebrew_version = None
-        # Note: get_homebrew_net_snmp_info() returns None for both cases:
-        # 1) Homebrew not installed, or 2) net-snmp not installed via Homebrew
-        print("Not using Homebrew for net-snmp (either Homebrew is not installed or net-snmp is not from Homebrew)...")
+        # Check if Homebrew is installed to provide accurate status
+        homebrew_version = get_homebrew_info()
+        if homebrew_version:
+            print("Homebrew is installed but net-snmp is not from Homebrew...")
+        else:
+            print("Homebrew is not installed...")
 
         # Fallback: try to find net-snmp include directories from library directories
         netsnmp_incdir = None
