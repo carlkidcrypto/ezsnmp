@@ -14,6 +14,6 @@ Design things to be run on a Linux system like Ubuntu 24.X.X and inside all
 docker containers under `docker/`.
 
 Focus on the following instructions:
-- Ensure that `cpp_tests/` pass relaiuble and consistenly
+- Ensure that `cpp_tests/` pass reliable and consistently
 - Ensure that `cpp_tests/` have 100 percent coverage
 - Ensure that `cpp_tests/` are written using the Google Test Framework
