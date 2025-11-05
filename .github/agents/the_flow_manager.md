@@ -25,7 +25,7 @@ Focus on the following instructions:
     cibuildwheel
 - Ensure that `.github/workflows/clang_format.yml` focuses on
     linting/formatting c++ code with clang-format
-- Ensure that `.github/workflows/codeql.yml` focuses on running Githubs
+- Ensure that `.github/workflows/codeql.yml` focuses on running GitHub
     codeql
 - Ensure that `.github/workflows/integration_tests.yml` focues on running
     the `integration_tests` in both MacOS and Ubuntu runners
