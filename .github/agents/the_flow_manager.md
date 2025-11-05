@@ -32,7 +32,7 @@ Focus on the following instructions:
 - Ensure that `.github/workflows/sphinx_build.yml` focuses on building the
     sphinx documentation to attach to published releases
 - Ensure that `.github/workflows/tests_cpp_native.yml` focuses on running
-    `cpp_tests/` on native Ubuntu and MacOS runners. Comments on PRs wether
+    `cpp_tests/` on native Ubuntu and MacOS runners. Comments on PRs whether
     success or failure of all uts
 - Ensure that `.github/workflows/tests_docker_cpp_tests.yml` focuses on
     running `cpp_tests/` inside the docker containers in `docker/`. Comments
