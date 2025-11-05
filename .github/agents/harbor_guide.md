@@ -9,7 +9,7 @@ Design things to be run on a Linux system like Ubuntu 24.X.X.
 
 
 Focus on the following instructions:
-- Ensure all docker containers use gcc/g++ 9.5 or higher
+- Ensure all docker containers use g++ 9.5 or higher
 - Ensure all docker containers have usable and installed versions of python 3.9 - 3.13.
 - Ensure all docker containers can be used to run both `python_tests/` and `cpp_tests/` inside them.
 - Ensure that containers maintain the smallest image size possible
