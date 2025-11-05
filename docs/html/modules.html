@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html" /><link rel="prev" title="Welcome to EzSnmp’s documentation!" href="index.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html"><link rel="prev" title="Welcome to EzSnmp’s documentation!" href="index.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>&lt;no title&gt; - EzSnmp v2.1.0b0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -200,14 +193,15 @@
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Swig Interface File(s)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input aria-label="Toggle navigation of Swig Interface File(s)" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
@@ -247,8 +241,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -256,8 +249,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -275,10 +267,49 @@
 <li class="toctree-l2"><a class="reference internal" href="migration_guide.html#migration-example">Migration Example</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#documentation-structure">Documentation Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#repository-documentation">Repository Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#sphinx-documentation">Sphinx Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#building-documentation">Building Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#doxygen-documentation">Doxygen Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#id1">Sphinx Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#documentation-workflow">Documentation Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#for-contributors">For Contributors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#adding-new-documentation">Adding New Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#documentation-standards">Documentation Standards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#restructuredtext-guidelines">reStructuredText Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#code-documentation">Code Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="documentation_guide.html#link-guidelines">Link Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#checking-documentation">Checking Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#resources">Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation_guide.html#related-documentation">Related Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development.html#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-patch-files">Making The Patch Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests">Running Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#running-cibuildwheels">Running cibuildwheels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#formatting">Formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html#generating-the-changelog-md">Generating The CHANGELOG.md</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#_CPPv46Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result14ConvertedValueE"><code class="docutils literal notranslate"><span class="pre">ConvertedValue</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4NK6Result10_to_stringEv"><code class="docutils literal notranslate"><span class="pre">_to_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4NK6Result26_converted_value_to_stringEv"><code class="docutils literal notranslate"><span class="pre">_converted_value_to_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result21_make_converted_valueERKNSt6stringERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">_make_converted_value()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result22update_converted_valueEv"><code class="docutils literal notranslate"><span class="pre">update_converted_value()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="datatypes_cpp.html#_CPPv4N6Result3oidE"><code class="docutils literal notranslate"><span class="pre">oid</span></code></a></li>
@@ -310,60 +341,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development.html#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#making-the-patch-files">Making The Patch Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests">Running Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#running-cibuildwheels">Running cibuildwheels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#formatting">Formatting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="development.html#generating-the-changelog-md">Generating The CHANGELOG.md</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError.__init__"><code class="docutils literal notranslate"><span class="pre">ConnectionError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError"><code class="docutils literal notranslate"><span class="pre">GenericError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError.__init__"><code class="docutils literal notranslate"><span class="pre">GenericError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError.__init__"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError.__init__"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError.__init__"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError"><code class="docutils literal notranslate"><span class="pre">PacketError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError.__init__"><code class="docutils literal notranslate"><span class="pre">PacketError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError"><code class="docutils literal notranslate"><span class="pre">ParseError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError.__init__"><code class="docutils literal notranslate"><span class="pre">ParseError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError"><code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError.__init__"><code class="docutils literal notranslate"><span class="pre">TimeoutError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError.__init__"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError.__init__"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions._handle_error"><code class="docutils literal notranslate"><span class="pre">_handle_error()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_cpp.html#_CPPv419ConnectionErrorBase"><code class="docutils literal notranslate"><span class="pre">ConnectionErrorBase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="exceptionsbase_cpp.html#_CPPv4N19ConnectionErrorBase19ConnectionErrorBaseERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">ConnectionErrorBase()</span></code></a></li>
@@ -409,44 +387,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="session_python.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.__init__"><code class="docutils literal notranslate"><span class="pre">Session.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.args"><code class="docutils literal notranslate"><span class="pre">Session.args</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.auth_passphrase"><code class="docutils literal notranslate"><span class="pre">Session.auth_passphrase</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.auth_protocol"><code class="docutils literal notranslate"><span class="pre">Session.auth_protocol</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.boots_time"><code class="docutils literal notranslate"><span class="pre">Session.boots_time</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.bulk_get"><code class="docutils literal notranslate"><span class="pre">Session.bulk_get()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.bulk_walk"><code class="docutils literal notranslate"><span class="pre">Session.bulk_walk()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.community"><code class="docutils literal notranslate"><span class="pre">Session.community</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.context"><code class="docutils literal notranslate"><span class="pre">Session.context</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.context_engine_id"><code class="docutils literal notranslate"><span class="pre">Session.context_engine_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.get"><code class="docutils literal notranslate"><span class="pre">Session.get()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.get_next"><code class="docutils literal notranslate"><span class="pre">Session.get_next()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.hostname"><code class="docutils literal notranslate"><span class="pre">Session.hostname</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.load_mibs"><code class="docutils literal notranslate"><span class="pre">Session.load_mibs</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.mib_directories"><code class="docutils literal notranslate"><span class="pre">Session.mib_directories</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.port_number"><code class="docutils literal notranslate"><span class="pre">Session.port_number</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.print_enums_numerically"><code class="docutils literal notranslate"><span class="pre">Session.print_enums_numerically</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.print_full_oids"><code class="docutils literal notranslate"><span class="pre">Session.print_full_oids</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.print_oids_numerically"><code class="docutils literal notranslate"><span class="pre">Session.print_oids_numerically</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.print_timeticks_numerically"><code class="docutils literal notranslate"><span class="pre">Session.print_timeticks_numerically</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.privacy_passphrase"><code class="docutils literal notranslate"><span class="pre">Session.privacy_passphrase</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.privacy_protocol"><code class="docutils literal notranslate"><span class="pre">Session.privacy_protocol</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.retries"><code class="docutils literal notranslate"><span class="pre">Session.retries</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.security_engine_id"><code class="docutils literal notranslate"><span class="pre">Session.security_engine_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.security_level"><code class="docutils literal notranslate"><span class="pre">Session.security_level</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.security_username"><code class="docutils literal notranslate"><span class="pre">Session.security_username</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.set"><code class="docutils literal notranslate"><span class="pre">Session.set()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.set_max_repeaters_to_num"><code class="docutils literal notranslate"><span class="pre">Session.set_max_repeaters_to_num</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.timeout"><code class="docutils literal notranslate"><span class="pre">Session.timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.version"><code class="docutils literal notranslate"><span class="pre">Session.version</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="session_python.html#ezsnmp.session.Session.walk"><code class="docutils literal notranslate"><span class="pre">Session.walk()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_cpp.html#direct-mappings">Direct Mappings</a></li>
