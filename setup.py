@@ -80,7 +80,7 @@ def get_homebrew_net_snmp_info():
     try:
         brew_output = check_output("brew list net-snmp", shell=True).decode()
         lines = brew_output.splitlines()
-        
+
         if not lines:
             return None
 
@@ -128,7 +128,7 @@ def get_homebrew_net_snmp_info():
             f"brew info {openssl_version}", shell=True
         ).decode()
         openssl_lines = openssl_info_output.splitlines()
-        
+
         # Find the installation path by looking for lines containing /Cellar/
         # This is more robust than using a magic index
         openssl_path = None
@@ -137,11 +137,11 @@ def get_homebrew_net_snmp_info():
                 # Extract the path before any parentheses or additional info
                 openssl_path = line.split("(")[0].strip()
                 break
-        
+
         # Fallback to line 4 (index 4) if pattern not found (backward compatibility)
         if not openssl_path and len(openssl_lines) > 4:
             openssl_path = openssl_lines[4].split("(")[0].strip()
-        
+
         if openssl_path:
             libdirs.append(openssl_path + "/lib")
             incdirs.append(openssl_path + "/include")
