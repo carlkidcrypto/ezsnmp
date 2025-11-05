@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Documentation Guide" href="documentation_guide.html"><link rel="prev" title="&lt;no title&gt;" href="modules.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Development Guide" href="development.html"><link rel="prev" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>Migration Guide: V1.X.X to V2.X.X - EzSnmp v2.1.0b0 documentation</title>
+        <title>Documentation Guide - EzSnmp v2.1.0b0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -192,8 +192,8 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Migration Guide: V1.X.X to V2.X.X</a></li>
-<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Documentation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
@@ -235,7 +235,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/migration_guide.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/documentation_guide.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -253,164 +253,215 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="migration-guide-v1-x-x-to-v2-x-x">
-<h1>Migration Guide: V1.X.X to V2.X.X<a class="headerlink" href="#migration-guide-v1-x-x-to-v2-x-x" title="Link to this heading">¶</a></h1>
-<p>This guide outlines the changes required to migrate from V1.X.X to V2.X.X.</p>
-<section id="major-changes">
-<h2>Major Changes<a class="headerlink" href="#major-changes" title="Link to this heading">¶</a></h2>
+          <section id="documentation-guide">
+<h1>Documentation Guide<a class="headerlink" href="#documentation-guide" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>EzSnmp documentation is organized across multiple files and directories to provide
+comprehensive information for different audiences and use cases.</p>
+</section>
+<section id="documentation-structure">
+<h2>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading">¶</a></h2>
+<section id="repository-documentation">
+<h3>Repository Documentation<a class="headerlink" href="#repository-documentation" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt><strong>Main README</strong> (<code class="docutils literal notranslate"><span class="pre">README.rst</span></code>)</dt><dd><p>The main project README provides:</p>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Session</span></code> class has been refactored to use string parameters instead of mixed types</p></li>
-<li><p>Many parameters have been removed or renamed for clarity</p></li>
-<li><p>Default values have been modified for several parameters</p></li>
+<li><p>Project overview and introduction</p></li>
+<li><p>Why EzSnmp was created</p></li>
+<li><p>Links to documentation</p></li>
+<li><p>How to support the project</p></li>
+<li><p>License and copyright information</p></li>
+<li><p>Acknowledgments</p></li>
 </ul>
-</section>
-<section id="parameter-changes">
-<h2>Parameter Changes<a class="headerlink" href="#parameter-changes" title="Link to this heading">¶</a></h2>
-<section id="renamed-parameters">
-<h3>Renamed Parameters<a class="headerlink" href="#renamed-parameters" title="Link to this heading">¶</a></h3>
+</dd>
+<dt><strong>Directory READMEs</strong></dt><dd><p>Each major directory contains its own README.rst:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">remote_port</span></code> → <code class="docutils literal notranslate"><span class="pre">port_number</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">privacy_password</span></code> → <code class="docutils literal notranslate"><span class="pre">privacy_passphrase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">auth_password</span></code> → <code class="docutils literal notranslate"><span class="pre">auth_passphrase</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">use_numeric</span></code> → <code class="docutils literal notranslate"><span class="pre">print_oids_numerically</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">use_long_names</span></code> → <code class="docutils literal notranslate"><span class="pre">print_full_oids</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">use_enums</span></code> → <code class="docutils literal notranslate"><span class="pre">print_enums_numerically</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cml_tests/README.rst</span></code> - CML testing overview</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpp_tests/README.rst</span></code> - C++ unit tests documentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python_tests/README.rst</span></code> - Python test suite with setup instructions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ezsnmp/README.rst</span></code> - Source code structure and build process</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">images/README.rst</span></code> - Image assets documentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">integration_tests/README.rst</span></code> - Integration test scenarios</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docker/*/README.rst</span></code> - Docker container documentation for each platform</p></li>
 </ul>
+</dd>
+</dl>
 </section>
-<section id="removed-parameters">
-<h3>Removed Parameters<a class="headerlink" href="#removed-parameters" title="Link to this heading">¶</a></h3>
-<p>The following parameters have been removed in V2.X.X and will be reintroduced in future releases,
-as we focus on stabilizing core functionality:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">local_port</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">engine_boots</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">engine_time</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">our_identity</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">their_identity</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">their_hostname</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">trust_cert</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">use_sprint_value</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">best_guess</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">retry_no_such</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">abort_on_nonexistent</span></code></p></li>
+<section id="sphinx-documentation">
+<h3>Sphinx Documentation<a class="headerlink" href="#sphinx-documentation" title="Link to this heading">¶</a></h3>
+<p>The Sphinx documentation (this site) provides:</p>
+<dl class="simple">
+<dt><strong>Getting Started</strong></dt><dd><ul class="simple">
+<li><p>Installation instructions for multiple platforms</p></li>
+<li><p>Quick start examples</p></li>
+<li><p>Session configuration examples</p></li>
+<li><p>Exception handling guide</p></li>
 </ul>
+</dd>
+<dt><strong>API Reference</strong></dt><dd><ul class="simple">
+<li><p>Python class documentation</p></li>
+<li><p>C++ class documentation (via Doxygen/Breathe)</p></li>
+<li><p>SWIG interface documentation</p></li>
+</ul>
+</dd>
+<dt><strong>Guides</strong></dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="migration_guide.html"><span class="doc">Migration Guide: V1.X.X to V2.X.X</span></a> - Migrating from v1.x to v2.x</p></li>
+<li><p><a class="reference internal" href="development.html"><span class="doc">Development Guide</span></a> - Development and contribution guide</p></li>
+</ul>
+</dd>
+</dl>
 </section>
 </section>
-<section id="parameter-value-changes">
-<h2>Parameter Value Changes<a class="headerlink" href="#parameter-value-changes" title="Link to this heading">¶</a></h2>
-<p>In V2.X.X, all parameters have updated acceptable values to align with the requirements of the
-underlying net-snmp applications. For example:</p>
-<p><code class="docutils literal notranslate"><span class="pre">security_level</span></code>: In V1.X.X, this parameter accepted values like <code class="docutils literal notranslate"><span class="pre">auth_with_privacy</span></code>. In
-V2.X.X, the possible values are now <code class="docutils literal notranslate"><span class="pre">noAuthNoPriv</span></code>, <code class="docutils literal notranslate"><span class="pre">authNoPriv</span></code>, and <code class="docutils literal notranslate"><span class="pre">authPriv</span></code>, as
-required by net-snmp tools like <code class="docutils literal notranslate"><span class="pre">snmpwalk</span></code>.</p>
-<p>For more details on the acceptable values for <code class="docutils literal notranslate"><span class="pre">security_level</span></code> and other parameters, refer to the
-official net-snmp documentation: <a class="reference external" href="http://www.net-snmp.org/docs/man/snmpcmd.html">Net-SNMP Command Line Applications</a>.</p>
-</section>
-<section id="parameter-mapping-table">
-<h2>Parameter Mapping Table<a class="headerlink" href="#parameter-mapping-table" title="Link to this heading">¶</a></h2>
-<p>The following table maps EzSnmp parameter names to their corresponding net-snmp parameter options:</p>
-<div class="table-wrapper docutils container" id="id1">
-<table class="docutils align-default" id="id1">
-<caption><span class="caption-text">EzSnmp to Net-SNMP Parameter Mapping</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
-<thead>
-<tr class="row-odd"><th class="head"><p>EzSnmp Parameter</p></th>
-<th class="head"><p>Net-SNMP Parameter Option</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">VERSION</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">community</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">COMMUNITY</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">security_level</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">LEVEL</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">auth_protocol</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-a</span> <span class="pre">PROTOCOL</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auth_passphrase</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-A</span> <span class="pre">PASSPHRASE</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">privacy_protocol</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-x</span> <span class="pre">PROTOCOL</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">privacy_passphrase</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-X</span> <span class="pre">PASSPHRASE</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">security_username</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-u</span> <span class="pre">USERNAME</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">context_name</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">CONTEXT</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">security_engine_id</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">ENGINE-ID</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">context_engine_id</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-E</span> <span class="pre">ENGINE-ID</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">boots_time</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-Z</span> <span class="pre">BOOTS,TIME</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">timeout</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">TIMEOUT</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retries</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">RETRIES</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_mibs</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">MIB[:MIB...]</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mib_directories</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-M</span> <span class="pre">DIR[:DIR...]</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">print_enums_numerically</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">e</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">print_full_oids</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">f</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">print_oids_numerically</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">-O</span> <span class="pre">n</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="migration-example">
-<h2>Migration Example<a class="headerlink" href="#migration-example" title="Link to this heading">¶</a></h2>
-<p>Old code (V1.X.X):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span>
-     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;example.com&quot;</span><span class="p">,</span>
-     <span class="n">version</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-     <span class="n">remote_port</span><span class="o">=</span><span class="mi">161</span><span class="p">,</span>
-     <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-     <span class="n">use_numeric</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<section id="building-documentation">
+<h2>Building Documentation<a class="headerlink" href="#building-documentation" title="Link to this heading">¶</a></h2>
+<section id="doxygen-documentation">
+<h3>Doxygen Documentation<a class="headerlink" href="#doxygen-documentation" title="Link to this heading">¶</a></h3>
+<p>Doxygen generates C++ API documentation from source code comments.</p>
+<p>Build doxygen documentation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/ezsnmp
+rm<span class="w"> </span>-rf<span class="w"> </span>doxygen_docs_build/
+mkdir<span class="w"> </span>doxygen_docs_build
+doxygen<span class="w"> </span>.doxygen
 </pre></div>
 </div>
-<p>New code (V2.X.X):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span>
-     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;example.com&quot;</span><span class="p">,</span>
-     <span class="n">version</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">,</span>
-     <span class="n">port_number</span><span class="o">=</span><span class="s2">&quot;161&quot;</span><span class="p">,</span>
-     <span class="n">timeout</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-     <span class="n">print_oids_numerically</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<p>The XML output will be generated in <code class="docutils literal notranslate"><span class="pre">doxygen_docs_build/doxygen/xml/</span></code>.</p>
+<p><strong>Important</strong>: Doxygen must be run <strong>before</strong> building Sphinx documentation,
+as Sphinx uses the Breathe extension to integrate the doxygen XML files.</p>
+</section>
+<section id="id1">
+<h3>Sphinx Documentation<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>Sphinx builds the HTML documentation from reStructuredText (.rst) files.</p>
+<p>Prerequisites:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>sphinx_docs_build
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
-<p>or</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span>
-     <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;example.com&quot;</span><span class="p">,</span>
-     <span class="n">version</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-     <span class="n">port_number</span><span class="o">=</span><span class="mi">161</span><span class="p">,</span>
-     <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-     <span class="n">print_oids_numerically</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<p>Build process:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. First build doxygen (see above)</span>
+<span class="nb">cd</span><span class="w"> </span>/path/to/ezsnmp
+mkdir<span class="w"> </span>doxygen_docs_build
+doxygen<span class="w"> </span>.doxygen
+
+<span class="c1"># 2. Then build sphinx</span>
+<span class="nb">cd</span><span class="w"> </span>sphinx_docs_build
+mkdir<span class="w"> </span>-p<span class="w"> </span>source/_static<span class="w"> </span>source/_templates
+make<span class="w"> </span>clean
+make<span class="w"> </span>html
 </pre></div>
 </div>
+<p>The HTML output will be in <code class="docutils literal notranslate"><span class="pre">docs/html/</span></code>.</p>
+</section>
+</section>
+<section id="documentation-workflow">
+<h2>Documentation Workflow<a class="headerlink" href="#documentation-workflow" title="Link to this heading">¶</a></h2>
+<section id="for-contributors">
+<h3>For Contributors<a class="headerlink" href="#for-contributors" title="Link to this heading">¶</a></h3>
+<p>When contributing to EzSnmp:</p>
+<ol class="arabic simple">
+<li><p><strong>Update relevant README files</strong> if you add new directories or major features</p></li>
+<li><p><strong>Add docstrings</strong> to Python code following existing style</p></li>
+<li><p><strong>Add Doxygen comments</strong> to C++ code using standard Doxygen format</p></li>
+<li><p><strong>Update .rst files</strong> if you change APIs or add major functionality</p></li>
+<li><p><strong>Rebuild documentation</strong> locally to verify your changes</p></li>
+</ol>
+</section>
+<section id="adding-new-documentation">
+<h3>Adding New Documentation<a class="headerlink" href="#adding-new-documentation" title="Link to this heading">¶</a></h3>
+<p>To add new documentation pages:</p>
+<ol class="arabic simple">
+<li><p>Create a new <code class="docutils literal notranslate"><span class="pre">.rst</span></code> file in <code class="docutils literal notranslate"><span class="pre">sphinx_docs_build/source/</span></code></p></li>
+<li><p>Add appropriate reStructuredText content</p></li>
+<li><p>Include the file in an appropriate toctree (usually in <code class="docutils literal notranslate"><span class="pre">modules.rst</span></code>)</p></li>
+<li><p>Rebuild documentation to verify</p></li>
+</ol>
+</section>
+</section>
+<section id="documentation-standards">
+<h2>Documentation Standards<a class="headerlink" href="#documentation-standards" title="Link to this heading">¶</a></h2>
+<section id="restructuredtext-guidelines">
+<h3>reStructuredText Guidelines<a class="headerlink" href="#restructuredtext-guidelines" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Use descriptive section headers with proper underlining</p></li>
+<li><p>Include code blocks with appropriate language tags</p></li>
+<li><p>Use relative links for internal documentation</p></li>
+<li><p>Add alt text to all images</p></li>
+<li><p>Keep line length reasonable (80-100 characters)</p></li>
+</ul>
+</section>
+<section id="code-documentation">
+<h3>Code Documentation<a class="headerlink" href="#code-documentation" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt><strong>Python:</strong></dt><dd><ul class="simple">
+<li><p>Use Google-style or NumPy-style docstrings</p></li>
+<li><p>Document all public classes, methods, and functions</p></li>
+<li><p>Include parameter types and return types</p></li>
+<li><p>Provide usage examples where helpful</p></li>
+</ul>
+</dd>
+<dt><strong>C++:</strong></dt><dd><ul class="simple">
+<li><p>Use Doxygen comment style (<code class="docutils literal notranslate"><span class="pre">/**</span> <span class="pre">...</span> <span class="pre">*/</span></code> or <code class="docutils literal notranslate"><span class="pre">///</span></code>)</p></li>
+<li><p>Document all public classes, methods, and functions</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">&#64;param</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;return</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;throws</span></code> tags</p></li>
+<li><p>Include brief and detailed descriptions</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="link-guidelines">
+<h3>Link Guidelines<a class="headerlink" href="#link-guidelines" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Use <strong>relative links</strong> for files within the repository</p></li>
+<li><p>Use <strong>descriptive link text</strong> (not “click here”)</p></li>
+<li><p>Verify all links work before committing</p></li>
+<li><p>Update links if files are moved or renamed</p></li>
+</ul>
+</section>
+</section>
+<section id="checking-documentation">
+<h2>Checking Documentation<a class="headerlink" href="#checking-documentation" title="Link to this heading">¶</a></h2>
+<p>Before committing documentation changes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build doxygen</span>
+doxygen<span class="w"> </span>.doxygen
+
+<span class="c1"># Build sphinx</span>
+<span class="nb">cd</span><span class="w"> </span>sphinx_docs_build
+make<span class="w"> </span>clean
+make<span class="w"> </span>html
+
+<span class="c1"># Check for warnings</span>
+<span class="c1"># Sphinx will show warnings for:</span>
+<span class="c1"># - Broken links</span>
+<span class="c1"># - Missing files</span>
+<span class="c1"># - Invalid syntax</span>
+<span class="c1"># - Missing references</span>
+</pre></div>
+</div>
+<p>View the generated HTML in <code class="docutils literal notranslate"><span class="pre">docs/html/index.html</span></code> to verify:</p>
+<ul class="simple">
+<li><p>All pages render correctly</p></li>
+<li><p>Links work properly</p></li>
+<li><p>Code examples display properly</p></li>
+<li><p>Images appear correctly</p></li>
+<li><p>Table of contents is accurate</p></li>
+</ul>
+</section>
+<section id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html">reStructuredText Primer</a></p></li>
+<li><p><a class="reference external" href="https://www.sphinx-doc.org/">Sphinx Documentation</a></p></li>
+<li><p><a class="reference external" href="https://www.doxygen.nl/manual/">Doxygen Manual</a></p></li>
+<li><p><a class="reference external" href="https://breathe.readthedocs.io/">Breathe Documentation</a></p></li>
+</ul>
+</section>
+<section id="related-documentation">
+<h2>Related Documentation<a class="headerlink" href="#related-documentation" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="development.html"><span class="doc">Development Guide</span></a> - Development guide</p></li>
+<li><p><a class="reference internal" href="migration_guide.html"><span class="doc">Migration Guide: V1.X.X to V2.X.X</span></a> - Migration guide</p></li>
+<li><p><a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp">GitHub Repository</a></p></li>
+</ul>
 </section>
 </section>
 
@@ -419,23 +470,23 @@ official net-snmp documentation: <a class="reference external" href="http://www.
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="documentation_guide.html">
+          <a class="next-page" href="development.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Documentation Guide</div>
+                <div class="title">Development Guide</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="modules.html">
+          <a class="prev-page" href="migration_guide.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">&lt;no title&gt;</div>
+                <div class="title">Migration Guide: V1.X.X to V2.X.X</div>
                 
               </div>
             </a>
@@ -469,16 +520,32 @@ official net-snmp documentation: <a class="reference external" href="http://www.
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Migration Guide: V1.X.X to V2.X.X</a><ul>
-<li><a class="reference internal" href="#major-changes">Major Changes</a></li>
-<li><a class="reference internal" href="#parameter-changes">Parameter Changes</a><ul>
-<li><a class="reference internal" href="#renamed-parameters">Renamed Parameters</a></li>
-<li><a class="reference internal" href="#removed-parameters">Removed Parameters</a></li>
+<li><a class="reference internal" href="#">Documentation Guide</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#documentation-structure">Documentation Structure</a><ul>
+<li><a class="reference internal" href="#repository-documentation">Repository Documentation</a></li>
+<li><a class="reference internal" href="#sphinx-documentation">Sphinx Documentation</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#parameter-value-changes">Parameter Value Changes</a></li>
-<li><a class="reference internal" href="#parameter-mapping-table">Parameter Mapping Table</a></li>
-<li><a class="reference internal" href="#migration-example">Migration Example</a></li>
+<li><a class="reference internal" href="#building-documentation">Building Documentation</a><ul>
+<li><a class="reference internal" href="#doxygen-documentation">Doxygen Documentation</a></li>
+<li><a class="reference internal" href="#id1">Sphinx Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation-workflow">Documentation Workflow</a><ul>
+<li><a class="reference internal" href="#for-contributors">For Contributors</a></li>
+<li><a class="reference internal" href="#adding-new-documentation">Adding New Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation-standards">Documentation Standards</a><ul>
+<li><a class="reference internal" href="#restructuredtext-guidelines">reStructuredText Guidelines</a></li>
+<li><a class="reference internal" href="#code-documentation">Code Documentation</a></li>
+<li><a class="reference internal" href="#link-guidelines">Link Guidelines</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#checking-documentation">Checking Documentation</a></li>
+<li><a class="reference internal" href="#resources">Resources</a></li>
+<li><a class="reference internal" href="#related-documentation">Related Documentation</a></li>
 </ul>
 </li>
 </ul>
