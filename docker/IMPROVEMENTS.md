@@ -8,13 +8,15 @@ All Docker images have been updated to support Python 3.9-3.13 and use GCC/G++ 9
 
 ## GCC/G++ Version Requirements
 
-All containers now use GCC/G++ version 9.5 or higher:
+All containers now use GCC/G++ version 9.5 or higher for C++ compilation with g++:
 
-- **CentOS 7**: Uses devtoolset-9 (GCC 9.3.1)
-- **RockyLinux 8**: Uses system gcc-c++ (GCC 8.5, then upgraded packages typically bring 9+)
-- **AlmaLinux 10**: Uses system gcc-c++ (GCC 14.x)
-- **Arch Linux**: Uses system gcc (GCC 14.x, rolling release)
-- **Arch Linux (netsnmp 5.8)**: Uses system gcc (GCC 14.x, rolling release)
+- **CentOS 7**: Uses devtoolset-11 (GCC 11.2.1, g++ 11.2.1)
+- **RockyLinux 8**: Uses gcc-toolset-11 (GCC 11.3.1, g++ 11.3.1)
+- **AlmaLinux 10**: Uses system gcc-c++ (GCC 14.x, g++ 14.x)
+- **Arch Linux**: Uses system gcc (GCC 14.x, includes g++ 14.x, rolling release)
+- **Arch Linux (netsnmp 5.8)**: Uses system gcc (GCC 14.x, includes g++ 14.x, rolling release)
+
+**Note**: On Arch Linux, the `gcc` package includes both gcc and g++. On RHEL-based systems (CentOS, RockyLinux, AlmaLinux), g++ is provided by either `gcc-c++` (system default) or via toolsets (devtoolset/gcc-toolset) which include gcc, g++, and binutils.
 
 ## Python Version Support
 

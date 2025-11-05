@@ -6,12 +6,16 @@ RUN dnf update -y && \
     dnf install -y findutils dnf-plugins-core epel-release && \
     dnf config-manager --set-enabled powertools
 
-# Install dependencies from requirements file
+# Install gcc-toolset-11 (GCC 11.3.1, g++ 11.3.1) and dependencies from requirements file
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
-RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
+RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binutils && \
+    xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf debuginfo-install -y python3 net-snmp-libs && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
+
+# Set gcc-toolset-11 PATH persistently for non-login shells
+ENV PATH="/opt/rh/gcc-toolset-11/root/usr/bin:$PATH"
 
 # Build Python 3.13 from source (not available in Rocky 8 repos)
 RUN PYTHON_VERSION=3.13.1 && \

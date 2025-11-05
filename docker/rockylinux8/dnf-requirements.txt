@@ -16,7 +16,6 @@ python3-pip
 net-snmp
 net-snmp-utils
 net-snmp-devel
-gcc-c++
 gdb
 dnf-utils
 meson

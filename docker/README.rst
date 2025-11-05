@@ -7,15 +7,15 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, GCC 14.x
-* **archlinux** - Arch Linux (latest) with Python 3.9-3.13, GCC 14.x
-* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing
-* **centos7** - CentOS 7 with devtoolset-9 (GCC 9.3.1), Python 3.9-3.13 from source
-* **rockylinux8** - Rocky Linux 8 with Python 3.9-3.13, GCC 8.5+
+* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, g++ 14.x
+* **archlinux** - Arch Linux (latest) with Python 3.9-3.13, g++ 14.x
+* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13 from source
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
 
 All images support:
 
-* **GCC/G++ 9.5 or higher** for C++ compilation
+* **g++ 9.5 or higher** for C++ compilation
 * **Python 3.9, 3.10, 3.11, 3.12, 3.13** for comprehensive testing
 * **Both cpp_tests and python_tests** test suites
 * **Optimized for minimal image size** with layer combining and cache cleanup
