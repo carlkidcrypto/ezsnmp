@@ -41,7 +41,7 @@ Focus on the following instructions:
     running `python_tests/` inside the docker containers in `docker/`.
     Comments on PRs whether success or failure of all uts
 - Ensure that `.github/workflows/tests_homebrew.yml` focuses on running
-    `python_tests/` using homebrew dependices. Comments on PRs wether success
+    `python_tests/` using homebrew dependencies. Comments on PRs whether success
     or failure of all uts
 - Ensure that `.github/workflows/tests_native.yml` focuses on running
     `python_tests` using native dependices. Comments on PRs wether success
