@@ -69,11 +69,10 @@ def get_homebrew_net_snmp_info():
     Retrieves net-snmp and its OpenSSL dependency information from Homebrew.
 
     Returns:
-      tuple: A tuple containing (homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs)
-             or None if net-snmp is not installed via Homebrew.
-             Or None if Homebrew is not installed.
+      tuple or None: A 5-tuple (homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs)
+                     if net-snmp is installed via Homebrew, None otherwise (including when Homebrew
+                     is not installed).
     """
-    
     homebrew_version = get_homebrew_info()
     if not homebrew_version:
         return None
@@ -129,10 +128,21 @@ def get_homebrew_net_snmp_info():
             f"brew info {openssl_version}", shell=True
         ).decode()
         openssl_lines = openssl_info_output.splitlines()
-        # Line 4 (index 4) typically contains the installation path in brew info output
-        # Example: "/opt/homebrew/Cellar/openssl@3/3.x.x (xxxx files, xxx MB)"
-        if len(openssl_lines) > 4:
+        
+        # Find the installation path by looking for lines containing /Cellar/
+        # This is more robust than using a magic index
+        openssl_path = None
+        for line in openssl_lines:
+            if "/Cellar/" in line and openssl_version in line:
+                # Extract the path before any parentheses or additional info
+                openssl_path = line.split("(")[0].strip()
+                break
+        
+        # Fallback to line 4 (index 4) if pattern not found (backward compatibility)
+        if not openssl_path and len(openssl_lines) > 4:
             openssl_path = openssl_lines[4].split("(")[0].strip()
+        
+        if openssl_path:
             libdirs.append(openssl_path + "/lib")
             incdirs.append(openssl_path + "/include")
         else:
