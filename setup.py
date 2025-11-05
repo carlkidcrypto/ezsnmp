@@ -112,12 +112,13 @@ def get_homebrew_net_snmp_info():
                 libdirs.append(lib_dir[: lib_dir.index("lib/libnetsnmp.so") + 3])
 
         # Get OpenSSL dependency information
+        # Look for any OpenSSL version (e.g., openssl@3, openssl@1.1, etc.)
         brew_info_output = check_output("brew info net-snmp", shell=True).decode()
         openssl_version = next(
             (
                 line.split()[0]
                 for line in brew_info_output.splitlines()
-                if "/openssl@3/" in line
+                if "/openssl@" in line
             ),
             None,
         )
@@ -128,6 +129,8 @@ def get_homebrew_net_snmp_info():
             f"brew info {openssl_version}", shell=True
         ).decode()
         openssl_lines = openssl_info_output.splitlines()
+        # Line 4 (index 4) typically contains the installation path in brew info output
+        # Example: "/opt/homebrew/Cellar/openssl@3/3.x.x (xxxx files, xxx MB)"
         if len(openssl_lines) > 4:
             openssl_path = openssl_lines[4].split("(")[0].strip()
             libdirs.append(openssl_path + "/lib")
@@ -267,12 +270,12 @@ else:
         homebrew_version, homebrew_netsnmp_version, homebrew_openssl_version, temp_libdirs, temp_incdirs = homebrew_info
         libdirs = libdirs + temp_libdirs
         incdirs = incdirs + temp_incdirs
+        print("Using Homebrew net-snmp installation...")
     else:
         homebrew_version = None
-        if get_homebrew_info() is None:
-            print("Homebrew is not installed...")
-        else:
-            print("net-snmp is not installed via Homebrew...")
+        # Note: get_homebrew_net_snmp_info() returns None for both cases:
+        # 1) Homebrew not installed, or 2) net-snmp not installed via Homebrew
+        print("Not using Homebrew for net-snmp (either Homebrew is not installed or net-snmp is not from Homebrew)...")
 
         # Fallback: try to find net-snmp include directories from library directories
         netsnmp_incdir = None
