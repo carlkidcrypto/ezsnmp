@@ -30,7 +30,7 @@ Focus on the following instructions:
 - Ensure that `.github/workflows/integration_tests.yml` focuses on running
     the `integration_tests` in both MacOS and Ubuntu runners
 - Ensure that `.github/workflows/sphinx_build.yml` focuses on building the
-    sphinx documentation to attach to publsihed releases
+    sphinx documentation to attach to published releases
 - Ensure that `.github/workflows/tests_cpp_native.yml` focuses on running
     `cpp_tests/` on native Ubuntu and MacOS runners. Comments on PRs wether
     success or failure of all uts
