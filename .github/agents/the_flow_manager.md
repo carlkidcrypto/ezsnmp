@@ -11,7 +11,7 @@ contents of `.github/workflows/` in this repository. Do not modify code outside
 `.github/workflows/` or project-wide settings unless explicitly instructed.
 
 Focus on the following instructions:
-- Ensure that `.github/workflows/` pass relaiuble and consistenly within
+- Ensure that `.github/workflows/` pass reliable and consistently within
     their runners
 - Ensure that `.github/workflows/auto_change_log.yml` focuses on
     upadting/running the `changelog.md updating chore`.
