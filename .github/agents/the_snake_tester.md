@@ -14,4 +14,4 @@ containers under `docker/`.
 
 Focus on the following instructions:
 - Ensure that `python_tests/` pass reliable and consistently
-- Ensure that   `python_tests/` have 100 percent coverage
+- Ensure that `python_tests/` have 100 percent coverage
