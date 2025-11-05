@@ -16,7 +16,7 @@ Focus on the following instructions:
 - Ensure that `.github/workflows/auto_change_log.yml` focuses on
     updating/running the `changelog.md updating chore`.
 - Ensure that `.github/workflows/black.yml` focuses on
-    linting/formating python code with Black
+    linting/formatting python code with Black
 - Ensure that `.github/workflows/build_and_publish_to_pypi.yml` focuses on
     building and publishing packages to pypi after building them with
     cibuildwheel
