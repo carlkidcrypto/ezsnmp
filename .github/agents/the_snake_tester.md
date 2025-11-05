@@ -13,5 +13,5 @@ things to be run on a Linux system like Ubuntu 24.X.X and inside all docker
 containers under `docker/`.
 
 Focus on the following instructions:
-- Ensure that `python_tests/` pass relaiuble and consistenly
+- Ensure that `python_tests/` pass reliable and consistently
 - Ensure that   `python_tests/` have 100 percent coverage
