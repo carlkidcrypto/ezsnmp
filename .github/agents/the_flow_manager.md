@@ -27,7 +27,7 @@ Focus on the following instructions:
     linting/formatting c++ code with clang-format
 - Ensure that `.github/workflows/codeql.yml` focuses on running GitHub
     codeql
-- Ensure that `.github/workflows/integration_tests.yml` focues on running
+- Ensure that `.github/workflows/integration_tests.yml` focuses on running
     the `integration_tests` in both MacOS and Ubuntu runners
 - Ensure that `.github/workflows/sphinx_build.yml` focuses on building the
     sphinx documentation to attach to publsihed releases
