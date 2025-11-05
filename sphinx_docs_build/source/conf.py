@@ -10,12 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
+# import os
+# import sys
 
-# Remove the source directory from sys.path to prevent importing uncompiled code
-source_dir = os.path.abspath("../../ezsnmp/")
-sys.path = [p for p in sys.path if os.path.abspath(p) != source_dir]
+# This doesn't work, but if we install it via pip install sphinx can find stuff.
+# sys.path.insert(0, os.path.abspath("../../ezsnmp/"))
 
 
 # -- Project information -----------------------------------------------------
@@ -39,6 +38,9 @@ extensions = [
 ]
 
 breathe_projects = {"EzSnmp": "../../doxygen_docs_build/doxygen/xml"}
+
+# Mock C++ extension modules that can't be imported during documentation build
+autodoc_mock_imports = ["ezsnmp._datatypes", "ezsnmp._sessionbase", "ezsnmp._exceptionsbase", "ezsnmp._netsnmpbase"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
