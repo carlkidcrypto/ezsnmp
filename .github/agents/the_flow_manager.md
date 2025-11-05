@@ -44,5 +44,5 @@ Focus on the following instructions:
     `python_tests/` using homebrew dependencies. Comments on PRs whether success
     or failure of all uts
 - Ensure that `.github/workflows/tests_native.yml` focuses on running
-    `python_tests` using native dependices. Comments on PRs wether success
+    `python_tests` using native dependencies. Comments on PRs whether success
     or failure of all uts
