@@ -123,10 +123,10 @@ def test_set_operation_error_handling():
     # Try a set operation (this should work or raise an error)
     try:
         result = sess.set("sysLocation.0", "Test Location")
-        assert result is not None or result is None
-    except Exception as e:
+        pass  # Accept any result
+    except Exception:
         # Error handling was exercised
-        assert "error" in str(e).lower() or True
+        pass
 
 
 def test_get_next_error_handling():

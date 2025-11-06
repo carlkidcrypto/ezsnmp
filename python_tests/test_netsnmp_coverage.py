@@ -29,10 +29,10 @@ def test_snmpset_with_error_handling(netsnmp):
     try:
         result = netsnmp.snmpset(netsnmp_args)
         # If we get here, the operation succeeded
-        assert result is not None or result is None  # Accept any result
-    except Exception as e:
-        # Error handling path was exercised
-        assert "error" in str(e).lower() or True  # Accept errors
+        pass  # Accept any result (including None)
+    except Exception:
+        # Error handling path was exercised - this is expected for some configurations
+        pass
 
 
 def test_snmptrap_with_error_handling(netsnmp):
@@ -44,8 +44,8 @@ def test_snmptrap_with_error_handling(netsnmp):
     try:
         # Try to send a trap (this may fail depending on configuration)
         result = netsnmp.snmptrap(netsnmp_args)
-        # If we get here, the operation succeeded or returned None
-        assert result is None or result is not None
-    except Exception as e:
-        # Error handling path was exercised - this is expected
-        assert "error" in str(e).lower() or "trap" in str(e).lower() or True
+        # If we get here, the operation succeeded
+        pass  # Accept any result (including None)
+    except Exception:
+        # Error handling path was exercised - this is expected for trap operations
+        pass

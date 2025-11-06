@@ -210,10 +210,10 @@ def test_session_use_sprint_value_setter():
     
     # Set use_sprint_value
     sess.use_sprint_value = True
-    assert sess.use_sprint_value == True
+    assert sess.use_sprint_value is True
     
     sess.use_sprint_value = False
-    assert sess.use_sprint_value == False
+    assert sess.use_sprint_value is False
 
 
 def test_session_use_enums_setter():
@@ -227,10 +227,10 @@ def test_session_use_enums_setter():
     
     # Set use_enums
     sess.use_enums = True
-    assert sess.use_enums == True
+    assert sess.use_enums is True
     
     sess.use_enums = False
-    assert sess.use_enums == False
+    assert sess.use_enums is False
 
 
 def test_session_use_long_names_setter():
@@ -244,10 +244,10 @@ def test_session_use_long_names_setter():
     
     # Set use_long_names
     sess.use_long_names = True
-    assert sess.use_long_names == True
+    assert sess.use_long_names is True
     
     sess.use_long_names = False
-    assert sess.use_long_names == False
+    assert sess.use_long_names is False
 
 
 def test_session_use_numeric_setter():
@@ -261,10 +261,10 @@ def test_session_use_numeric_setter():
     
     # Set use_numeric
     sess.use_numeric = True
-    assert sess.use_numeric == True
+    assert sess.use_numeric is True
     
     sess.use_numeric = False
-    assert sess.use_numeric == False
+    assert sess.use_numeric is False
 
 
 def test_session_best_guess_setter():
@@ -295,10 +295,10 @@ def test_session_non_increasing_setter():
     
     # Set non_increasing
     sess.non_increasing = True
-    assert sess.non_increasing == True
+    assert sess.non_increasing is True
     
     sess.non_increasing = False
-    assert sess.non_increasing == False
+    assert sess.non_increasing is False
 
 
 def test_session_use_snmpget_bulk_setter():
@@ -312,10 +312,10 @@ def test_session_use_snmpget_bulk_setter():
     
     # Set use_snmpget_bulk
     sess.use_snmpget_bulk = True
-    assert sess.use_snmpget_bulk == True
+    assert sess.use_snmpget_bulk is True
     
     sess.use_snmpget_bulk = False
-    assert sess.use_snmpget_bulk == False
+    assert sess.use_snmpget_bulk is False
 
 
 def test_session_use_snmpwalk_bulk_setter():
@@ -329,7 +329,7 @@ def test_session_use_snmpwalk_bulk_setter():
     
     # Set use_snmpwalk_bulk
     sess.use_snmpwalk_bulk = True
-    assert sess.use_snmpwalk_bulk == True
+    assert sess.use_snmpwalk_bulk is True
     
     sess.use_snmpwalk_bulk = False
-    assert sess.use_snmpwalk_bulk == False
+    assert sess.use_snmpwalk_bulk is False
