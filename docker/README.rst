@@ -7,7 +7,7 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, g++ 14.x
+* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.9-3.13, g++ 14.x (3.9-3.11 built from source)
 * **archlinux** - Arch Linux (latest) with Python 3.9-3.13, g++ 14.x
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13 from source

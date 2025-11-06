@@ -23,8 +23,10 @@ All containers now use GCC/G++ version 9.5 or higher for C++ compilation with g+
 All containers now support Python versions 3.9 through 3.13:
 
 ### AlmaLinux 10
-- Python 3.9, 3.10, 3.11, 3.12, 3.13 via dnf packages
+- Python 3.12, 3.13 via dnf packages
+- Python 3.9.21, 3.10.16, 3.11.11 built from source with optimizations
 - Virtual environment created with Python 3.13
+- Note: AlmaLinux 10 is a preview release and only ships with Python 3.12 and 3.13
 
 ### RockyLinux 8
 - Python 3.9, 3.10, 3.11, 3.12 via dnf packages
