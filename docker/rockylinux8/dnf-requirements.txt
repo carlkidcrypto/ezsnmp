@@ -4,10 +4,11 @@ file
 make
 openssl
 openssl-devel
+bzip2-devel
+libffi-devel
+zlib-devel
 python3.9
 python39-devel
-python3.10
-python3.10-devel
 python3.11
 python3.11-devel
 python3.12

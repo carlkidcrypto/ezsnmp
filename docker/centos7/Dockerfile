@@ -22,14 +22,15 @@ RUN yum install -y yum-utils findutils \
 # Set devtoolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 
-# Build Python 3.9.21, 3.10.16, 3.11.11, 3.12.8, 3.13.1 from source with optimizations
+# Build Python 3.9.21, 3.10.16, 3.11.11, 3.12.8, 3.13.1 from source
+# Note: --enable-optimizations disabled due to GCC coverage profiling conflicts with devtoolset-11
 RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.13.1:3.13; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
         tar -xzf Python-$FULL_VERSION.tgz && \
         cd Python-$FULL_VERSION && \
-        ./configure --enable-shared --enable-optimizations && \
+        ./configure --enable-shared && \
         make -j$(nproc) altinstall && \
         cd .. && \
         rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \

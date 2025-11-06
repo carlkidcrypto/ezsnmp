@@ -17,16 +17,18 @@ RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binu
 # Set gcc-toolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/gcc-toolset-11/root/usr/bin:$PATH"
 
-# Build Python 3.13 from source (not available in Rocky 8 repos)
-RUN PYTHON_VERSION=3.13.1 && \
-    dnf install -y bzip2-devel libffi-devel zlib-devel && \
-    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-shared --enable-optimizations && \
-    make -j$(nproc) altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION && \
+# Build Python 3.10 and 3.13 from source (not available in Rocky 8 repos)
+RUN for PY_VER in 3.10.16:3.10 3.13.1:3.13; do \
+        FULL_VERSION=${PY_VER%%:*}; \
+        SHORT_VERSION=${PY_VER##*:}; \
+        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
+        tar -xzf Python-$FULL_VERSION.tgz && \
+        cd Python-$FULL_VERSION && \
+        ./configure --enable-shared && \
+        make -j$(nproc) altinstall && \
+        cd .. && \
+        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
+    done && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
 

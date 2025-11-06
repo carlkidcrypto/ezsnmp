@@ -49,7 +49,7 @@ RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
         tar -xzf Python-$FULL_VERSION.tgz && \
         cd Python-$FULL_VERSION && \
-        ./configure --enable-shared --enable-optimizations && \
+        ./configure --enable-shared && \
         make -j$(nproc) altinstall && \
         cd .. && \
         rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
