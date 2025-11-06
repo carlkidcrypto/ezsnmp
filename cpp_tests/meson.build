@@ -109,9 +109,90 @@ test_snmpget = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_snmpgetnext = executable(
+    'test_snmpgetnext',
+    [
+        'test_snmpgetnext.cpp',
+        join_paths(snmp_source_dir, 'snmpgetnext.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpset = executable(
+    'test_snmpset',
+    [
+        'test_snmpset.cpp',
+        join_paths(snmp_source_dir, 'snmpset.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpwalk = executable(
+    'test_snmpwalk',
+    [
+        'test_snmpwalk.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkget = executable(
+    'test_snmpbulkget',
+    [
+        'test_snmpbulkget.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkget.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkwalk = executable(
+    'test_snmpbulkwalk',
+    [
+        'test_snmpbulkwalk.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_exceptionsbase = executable(
+    'test_exceptionsbase',
+    [
+        'test_exceptionsbase.cpp',
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 # Register tests
 test('datatypes_test', test_datatypes)
 test('helpers_test', test_helpers)
 test('sessionbase_test', test_sessionbase)
 test('sessionbase_parameters_test', test_sessionbase_parameters)
 test('snmpget_test', test_snmpget)
+test('snmpgetnext_test', test_snmpgetnext)
+test('snmpset_test', test_snmpset)
+test('snmpwalk_test', test_snmpwalk)
+test('snmpbulkget_test', test_snmpbulkget)
+test('snmpbulkwalk_test', test_snmpbulkwalk)
+test('exceptionsbase_test', test_exceptionsbase)
