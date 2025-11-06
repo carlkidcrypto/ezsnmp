@@ -49,3 +49,5 @@ Focus on the following instructions:
 - Ensure that `.github/workflows/tests_native.yml` focuses on running
     `python_tests` using native dependencies. Comments on PRs whether success
     or failure of all uts
+- Ensure that workflows cache items that are commonly downloaded like pip updates/packages.
+- Ensure that workflows all trigger when they are updated.
