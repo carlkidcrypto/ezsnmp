@@ -145,7 +145,7 @@ TEST_P(SessionsParamTest, TestSessionPrintOptions) {
          ASSERT_EQ(results.size(), 1);
          EXPECT_EQ(
              results[0]._to_string(),
-             "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090");
+             "oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, value: 46090, converted_value: 46090");
       } else {
          // Verify get output with print options
          auto results = session.get("ifAdminStatus.1");
@@ -192,7 +192,7 @@ INSTANTIATE_TEST_CASE_P(
                          false,
                          false,
                          {},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)"}},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
 
             PrintOptions{// Case 2: enums true, others false
                          true,
@@ -200,7 +200,7 @@ INSTANTIATE_TEST_CASE_P(
                          false,
                          false,
                          {"e"},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1"}},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, converted_value: 1"}},
 
             PrintOptions{
                 // Case 3: full_oids true, others false
@@ -210,7 +210,7 @@ INSTANTIATE_TEST_CASE_P(
                 false,
                 {"f"},
                 {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
-                 "index: 1, type: INTEGER, value: up(1)"}},
+                 "index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
 
             PrintOptions{// Case 4: oids_numeric true, others false
                          false,
@@ -218,7 +218,7 @@ INSTANTIATE_TEST_CASE_P(
                          true,
                          false,
                          {"n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
 
             PrintOptions{
                 // Case 5: enums and full_oids true, oids_numeric false
@@ -228,7 +228,7 @@ INSTANTIATE_TEST_CASE_P(
                 false,
                 {"e", "f"},
                 {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
-                 "index: 1, type: INTEGER, value: 1"}},
+                 "index: 1, type: INTEGER, value: 1, converted_value: 1"}},
 
             PrintOptions{// Case 6: enums and oids_numeric true, full_oids false
                          true,
@@ -236,7 +236,7 @@ INSTANTIATE_TEST_CASE_P(
                          true,
                          false,
                          {"e", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, converted_value: 1"}},
 
             PrintOptions{// Case 7: full_oids and oids_numeric true, enums false
                          false,
@@ -244,7 +244,7 @@ INSTANTIATE_TEST_CASE_P(
                          true,
                          false,
                          {"f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1)"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
 
             PrintOptions{// Case 8: All true except timeticks numeric
                          true,
@@ -252,7 +252,7 @@ INSTANTIATE_TEST_CASE_P(
                          true,
                          false,
                          {"e", "f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, converted_value: 1"}},
 
             PrintOptions{// Case 9: Only timeticks numeric
                          false,
@@ -261,4 +261,4 @@ INSTANTIATE_TEST_CASE_P(
                          true,
                          {"t"},
                          {"oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, "
-                          "value: 46090"}})));
+                          "value: 46090, converted_value: 46090"}})));
