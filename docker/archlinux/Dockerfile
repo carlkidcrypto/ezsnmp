@@ -27,7 +27,7 @@ RUN export MAKEFLAGS="-j$(nproc)" && \
     cd .. && \
     rm -rf yay
 
-# Install AUR packages from requirements file using yay
+# Install AUR packages from requirements file using yay (only googletest now)
 COPY aur-requirements.txt /tmp/aur-requirements.txt
 RUN export MAKEFLAGS="-j$(nproc)" && \
     xargs yay -S --noconfirm --removemake --cleanafter < /tmp/aur-requirements.txt && \
@@ -40,6 +40,21 @@ WORKDIR /
 # Clean up package cache to reduce image size
 RUN pacman -Scc --noconfirm && \
     rm -rf /home/$USERNAME/.cache
+
+# Build Python 3.9, 3.10, 3.11, 3.12 from source (system has 3.13 already)
+# This is faster and more reliable than AUR packages
+RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
+        FULL_VERSION=${PY_VER%%:*}; \
+        SHORT_VERSION=${PY_VER##*:}; \
+        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
+        tar -xzf Python-$FULL_VERSION.tgz && \
+        cd Python-$FULL_VERSION && \
+        ./configure --enable-shared --enable-optimizations && \
+        make -j$(nproc) altinstall && \
+        cd .. && \
+        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
+    done && \
+    ldconfig
 
 # Virtual Environment Setup using latest Python (3.13)
 ENV VENV_PATH=/opt/venv
