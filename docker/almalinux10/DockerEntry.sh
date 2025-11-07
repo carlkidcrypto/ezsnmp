@@ -11,7 +11,7 @@ if [ -n "$1" ]; then
     # We set RUN_PYTHON_CODE to 'false' only if the argument is explicitly 'false'
     # For simplicity, we can check for common "falsy" values.
     # For a simple true/false check, we just check if the first arg is 'false'
-    if [[ "$1" =~ ^(false|no|0)$ ]]; then
+    if [[ "${1,,}" =~ ^(false|no|0)$ ]]; then
         RUN_PYTHON_CODE=false
     fi
 fi
@@ -41,5 +41,4 @@ cp /ezsnmp/python_tests/snmpd.conf /etc/snmp/snmpd.conf
 
 echo "Starting SNMP daemon..."
 cd /usr/sbin
-# The last command in a Docker entrypoint script should be the main process
-exec snmpd -f -C -c /etc/snmp/snmpd.conf
+snmpd -f -C -c /etc/snmp/snmpd.conf

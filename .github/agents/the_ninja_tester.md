@@ -17,3 +17,14 @@ Focus on the following instructions:
 - Ensure that `cpp_tests/` pass reliable and consistently
 - Ensure that `cpp_tests/` have 100 percent coverage
 - Ensure that `cpp_tests/` are written using the Google Test Framework
+- Ensure to make tests platform agnostic as much as possible.
+- Ensure to test with a live snmpd server. Configure one from the `python_tests/snmpd.conf` file.
+For example, `/usr/sbin/snmpd -f -C -c /etc/snmp/snmpd.conf`
+
+Tools needed:
+- ninja
+- meson
+- lcov
+- google test
+- g++
+- snmpd

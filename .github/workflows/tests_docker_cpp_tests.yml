@@ -31,6 +31,7 @@ jobs:
             setup.cfg
             tox.ini
             python_tests/requirements.txt
+            docker/**
 
   test-cpp-tests:
     needs: check-changes
