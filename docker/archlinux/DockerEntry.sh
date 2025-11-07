@@ -18,7 +18,7 @@ fi
 
 # --- 2. Python Code Block (Conditional) ---
 
-if $RUN_PYTHON_CODE; then
+if [ "$RUN_PYTHON_CODE" = "true" ]; then
     echo "Starting Python setup (RUN_PYTHON_CODE=true)..."
     
     echo "Installing Python dependencies..."

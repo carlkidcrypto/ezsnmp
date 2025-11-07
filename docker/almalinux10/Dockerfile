@@ -1,24 +1,36 @@
 # Use AlmaLinux 10-kitten as the base image
 FROM almalinux:10-kitten
 
-# Install the EPEL repository package
-RUN dnf install -y epel-release
-
-# Update system
-RUN dnf update -y
-
-# Install required tools
-RUN dnf install -y findutils
-
-# Install dependencies
+# Install EPEL, update system, and install dependencies in one layer to reduce image size
 COPY dnf-requirements.txt /tmp/dnf-requirements.txt
-RUN xargs dnf install -y < /tmp/dnf-requirements.txt && dnf clean all
+RUN dnf install -y epel-release && \
+    dnf update -y && \
+    dnf install -y findutils && \
+    xargs dnf install -y < /tmp/dnf-requirements.txt && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
+
+# Build Python 3.9, 3.10, 3.11 from source (not available in AlmaLinux 10 repos)
+# AlmaLinux 10 only ships with Python 3.12 and 3.13
+RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11; do \
+        FULL_VERSION=${PY_VER%%:*}; \
+        SHORT_VERSION=${PY_VER##*:}; \
+        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
+        tar -xzf Python-$FULL_VERSION.tgz && \
+        cd Python-$FULL_VERSION && \
+        ./configure --enable-shared && \
+        make -j$(nproc) altinstall && \
+        cd .. && \
+        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
+    done && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
+    ldconfig
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment
-RUN python3 -m venv $VENV_PATH
+# Create the virtual environment using Python 3.13
+RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 # All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.

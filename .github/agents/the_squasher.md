@@ -24,3 +24,4 @@ Focus on the following instructions:
 - Ensure that all new code is covered with `cpp_tests` and `python_tests`.
   Delegate to `the_ninja_testser` and `the_snake_tester` agenets as needed for
   testing coverage.
+- Ensure that python code is linted/formated with Black.

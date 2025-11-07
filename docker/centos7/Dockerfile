@@ -1,118 +1,58 @@
 # Use CentOS 7 as the base image
 FROM centos:7
 
-# Fix for CentOS 7 EOL: Point repositories to the vault archive
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+# Fix for CentOS 7 EOL and install EPEL/SCL in one layer
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
+    yum install -y epel-release centos-release-scl && \
+    sed -i 's/^mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i -e 's|^#baseurl=|baseurl=|g' -e 's|mirror.centos.org|vault.centos.org|g' -e 's|https://vault.centos.org|http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
+    yum-config-manager --disable centos-sclo-sclo && \
+    yum update -y && \
+    yum clean all
 
-# Install EPEL and Software Collections (SCL)
-RUN yum install -y epel-release centos-release-scl
-
-# Fix 1: Rerun sed commands on newly installed SCL repo files
-RUN sed -i 's/^mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-    sed -i -e 's|^#baseurl=|baseurl=|g' -e 's|mirror.centos.org|vault.centos.org|g' -e 's|https://vault.centos.org|http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-
-# Fix 2: Permanently disable the failing centos-sclo-sclo repo
-RUN yum-config-manager --disable centos-sclo-sclo
-
-# Update system
-RUN yum update -y && yum clean all
-
-# Install devtoolset-9 (GCC 9) and all build dependencies, including lcov
+# Install devtoolset-11 (GCC 11.2.1, g++ 11.2.1) and all build dependencies in one layer
 RUN yum install -y yum-utils findutils \
-    devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils \
+    devtoolset-11-gcc devtoolset-11-gcc-c++ devtoolset-11-binutils \
     openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
-    unzip file openssl net-snmp net-snmp-utils net-snmp-devel gdb meson ninja-build gtest-devel \
-    lcov \
-    && yum clean all
+    unzip file openssl net-snmp net-snmp-utils net-snmp-devel gdb meson ninja-build gtest-devel lcov && \
+    yum clean all && \
+    rm -rf /var/cache/yum
 
-# Fix 3: PERSISTENT devtoolset-9 PATH for non-login shells
-RUN echo 'export PATH=/opt/rh/devtoolset-9/root/usr/bin/:$PATH' > /etc/profile.d/devtoolset.sh && \
-    chmod +x /etc/profile.d/devtoolset.sh
+# Set devtoolset-11 PATH persistently for non-login shells
+ENV PATH="/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 
-# --- Build Multiple Python Versions from Source (Optimizations DISABLED) ---
-
-# Build Python 3.9.18
-RUN PYTHON_VERSION=3.9.18 && \
-    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-shared && \
-    make altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
-
-# Build Python 3.10.13
-RUN PYTHON_VERSION=3.10.13 && \
-    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-shared && \
-    make altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
-
-# Build Python 3.11.8
-RUN PYTHON_VERSION=3.11.8 && \
-    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-shared && \
-    make altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
-
-# Build Python 3.12.3
-RUN PYTHON_VERSION=3.12.3 && \
-    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-shared && \
-    make altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
-
-# Build Python 3.13.0
-RUN PYTHON_VERSION=3.13.0 && \
-    wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -xzf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --enable-shared && \
-    make altinstall && \
-    cd .. && \
-    rm -rf Python-$PYTHON_VERSION.tgz Python-$PYTHON_VERSION
-
-# --- End Python Builds ---
-
-# CRITICAL FIX 4: Update Dynamic Linker Cache
-RUN echo "/usr/local/lib" >> /etc/ld.so.conf.d/usr_local_lib.conf && \
+# Build Python 3.9.21, 3.10.16, 3.11.11, 3.12.8, 3.13.1 from source
+# Note: --enable-optimizations disabled due to GCC coverage profiling conflicts with devtoolset-11
+RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.13.1:3.13; do \
+        FULL_VERSION=${PY_VER%%:*}; \
+        SHORT_VERSION=${PY_VER##*:}; \
+        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
+        tar -xzf Python-$FULL_VERSION.tgz && \
+        cd Python-$FULL_VERSION && \
+        ./configure --enable-shared && \
+        make -j$(nproc) altinstall && \
+        cd .. && \
+        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
+    done && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
 
-# Install net-snmp debug symbols
+# Install net-snmp debug symbols and create pkg-config file
 RUN yum-config-manager --enable base-debuginfo && \
-    debuginfo-install -y net-snmp-libs
-
-# Manually create the pkg-config file for net-snmp
-RUN LIBS=$(net-snmp-config --libs) && \
+    debuginfo-install -y net-snmp-libs && \
+    yum clean all && \
+    LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
     mkdir -p /usr/lib64/pkgconfig && \
-    echo "prefix=/usr" > /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "exec_prefix=\${prefix}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "libdir=\${exec_prefix}/lib64" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "includedir=\${prefix}/include" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Name: netsnmp" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Description: A collection of libraries for SNMP applications." >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/netsnmp.pc
+    printf "prefix=/usr\nexec_prefix=\${prefix}\nlibdir=\${exec_prefix}/lib64\nincludedir=\${prefix}/include\n\nName: netsnmp\nDescription: A collection of libraries for SNMP applications.\nVersion: %s\nLibs: %s\nCflags: %s\n" "$VERSION" "$LIBS" "$CFLAGS" > /usr/lib64/pkgconfig/netsnmp.pc
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using the latest compiled python3.13
+# Create the virtual environment using Python 3.13
 RUN python3.13 -m venv $VENV_PATH
 
-# Activate the virtual environment by adding its bin directory to the PATH.
+# Activate the virtual environment
 ENV PATH="$VENV_PATH/bin:$PATH"

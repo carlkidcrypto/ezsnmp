@@ -17,3 +17,13 @@ Focus on the following instructions:
 - Ensure that `cpp_tests/` pass reliable and consistently
 - Ensure that `cpp_tests/` have 100 percent coverage
 - Ensure that `cpp_tests/` are written using the Google Test Framework
+- Ensure to make tests platform agnostic as much as possible.
+- Ensure tests make live querys to snmpd for proper validation.
+
+Tools needed:
+- ninja
+- meson
+- lcov
+- google test
+- g++
+- snmpd
