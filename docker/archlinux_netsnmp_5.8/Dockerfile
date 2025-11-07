@@ -1,62 +1,64 @@
 # Use Arch Linux as the base image
 FROM archlinux:latest
 
-# Update system
-RUN pacman -Syu --noconfirm
-
-# Install core packages (base-devel for makepkg, git, go, and sudo for AUR build)
-RUN pacman -S --noconfirm findutils base-devel python python-pip python-setuptools pacman-contrib git go sudo
+# Update system and install core packages in one layer
+RUN pacman -Syu --noconfirm && \
+    pacman -S --noconfirm findutils base-devel python python-pip python-setuptools \
+    pacman-contrib git go sudo gcc
 
 # Install official repository dependencies
 COPY pacman-requirements.txt /tmp/pacman-requirements.txt
-RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt
+RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
+    rm -f /tmp/pacman-requirements.txt
 
-###### Downgrade Net-SNMP to 5.8 and install dependencies ######
-# Perform the downgrade to net-snmp 5.8
-RUN sudo pacman -U https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.8-1-x86_64.pkg.tar.xz --noconfirm
-
-# Install pcre 8.43 to provide libpcre.so.1
-RUN sudo pacman -U https://archive.archlinux.org/packages/p/pcre/pcre-8.43-1-x86_64.pkg.tar.xz --noconfirm
-
-# Install openssl 1.1 to provide libssl.so.1.1 and libcrypto.so.1.1
-RUN sudo pacman -U https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst --noconfirm
-##################################################################
+# Downgrade Net-SNMP to 5.8 and install dependencies
+RUN pacman -U --noconfirm \
+    https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.8-1-x86_64.pkg.tar.xz \
+    https://archive.archlinux.org/packages/p/pcre/pcre-8.43-1-x86_64.pkg.tar.xz \
+    https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder
-# Create non-root user and set workspace
-RUN useradd -m -G wheel $USERNAME
+RUN useradd -m -G wheel $USERNAME && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/docker-builder
+
 WORKDIR /home/$USERNAME
-
-# Configure passwordless sudo for the builder user (needed for makepkg -si and yay)
-RUN echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/docker-builder
-
-# Switch to the non-root user for all AUR operations
 USER $USERNAME
 
-# Clone, build, and install 'yay'
-# Set MAKEFLAGS for parallel compilation to speed up the build.
+# Clone, build, and install 'yay' with parallel compilation
 RUN export MAKEFLAGS="-j$(nproc)" && \
-    git clone https://aur.archlinux.org/yay.git && \
+    git clone --depth=1 https://aur.archlinux.org/yay.git && \
     cd yay && \
-    makepkg -si --noconfirm
+    makepkg -si --noconfirm && \
+    cd .. && \
+    rm -rf yay
 
-# Install AUR packages from requirements file using yay
-COPY aur-requirements.txt /tmp/aur-requirements.txt
-# Set MAKEFLAGS for parallel compilation again to speed up the build of AUR dependencies.
-RUN export MAKEFLAGS="-j$(nproc)" && \
-    xargs yay -S --noconfirm < /tmp/aur-requirements.txt
+# Note: All packages now available in official repos, no AUR packages needed
 
 # --- Switch back to root for final setup ---
 USER root
 WORKDIR /
 
-# Clean up package cache
-RUN pacman -Scc --noconfirm
+# Clean up package cache to reduce image size
+RUN pacman -Scc --noconfirm && \
+    rm -rf /home/$USERNAME/.cache
 
-# Virtual Environment Setup
+# Build Python 3.9, 3.10, 3.11, 3.12 from source (system has 3.13 already)
+# This is faster and more reliable than AUR packages
+RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
+        FULL_VERSION=${PY_VER%%:*}; \
+        SHORT_VERSION=${PY_VER##*:}; \
+        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
+        tar -xzf Python-$FULL_VERSION.tgz && \
+        cd Python-$FULL_VERSION && \
+        ./configure --enable-shared && \
+        make -j$(nproc) altinstall && \
+        cd .. && \
+        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
+    done && \
+    ldconfig
+
+# Virtual Environment Setup using latest Python (3.13)
 ENV VENV_PATH=/opt/venv
-
-# Create virtual environment and add its bin directory to PATH
 RUN python -m venv $VENV_PATH
 ENV PATH="$VENV_PATH/bin:$PATH"

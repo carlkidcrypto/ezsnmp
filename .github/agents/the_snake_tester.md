@@ -15,3 +15,9 @@ containers under `docker/`.
 Focus on the following instructions:
 - Ensure that `python_tests/` pass reliable and consistently
 - Ensure that `python_tests/` have 100 percent coverage
+- Ensure to test with a live snmpd server. Configure one from the `python_tests/snmpd.conf` file.
+For example, `/usr/sbin/snmpd -f -C -c /etc/snmp/snmpd.conf`
+
+Tools needed:
+- Pytest
+- Pytest Coverage
