@@ -10,3 +10,4 @@ net-snmp
 gdb
 meson
 ninja
+gtest

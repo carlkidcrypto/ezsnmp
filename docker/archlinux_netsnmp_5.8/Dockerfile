@@ -33,11 +33,7 @@ RUN export MAKEFLAGS="-j$(nproc)" && \
     cd .. && \
     rm -rf yay
 
-# Install AUR packages from requirements file using yay (only googletest now)
-COPY aur-requirements.txt /tmp/aur-requirements.txt
-RUN export MAKEFLAGS="-j$(nproc)" && \
-    xargs yay -S --noconfirm --removemake --cleanafter < /tmp/aur-requirements.txt && \
-    rm -f /tmp/aur-requirements.txt
+# Note: All packages now available in official repos, no AUR packages needed
 
 # --- Switch back to root for final setup ---
 USER root
