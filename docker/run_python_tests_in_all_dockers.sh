@@ -117,6 +117,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		docker exec -t "$CONTAINER_NAME" bash -c "
 	        cd /ezsnmp;
             rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/;
+			python3 -m pip install -r requirements.txt;
+    		python3 -m pip install -r python_tests/requirements.txt;
             tox -e $TOX_PY > test-outputs.txt 2>&1;
 			exit 0;
         "
