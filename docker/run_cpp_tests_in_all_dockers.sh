@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 # Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
-sudo chown $USER /var/run/docker.sock
+sudo chown "$USER" /var/run/docker.sock
 
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
@@ -31,7 +31,7 @@ if [ -n "${TARGET_IMAGE}" ]; then
 		echo "ERROR: Specified image directory '${TARGET_IMAGE}' does not exist in the current folder. Cannot determine DockerEntry.sh path."
 		exit 1
 	fi
-	DISTROS_TO_TEST=(${TARGET_IMAGE})
+	DISTROS_TO_TEST=("${TARGET_IMAGE}")
 	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
 else
 	# Test all images by finding directories in the current folder (excluding the current directory itself).
@@ -39,11 +39,11 @@ else
 	echo "Mode: Testing all found images."
 fi
 
-echo "Images to test: ${DISTROS_TO_TEST[@]}"
+echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
 # --- Test Loop ---
-rm -f *.xml *.txt *.info
+rm -f -- *.xml *.txt *.info
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
@@ -56,9 +56,9 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# Cleanup any existing container with the same name
 	if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-		docker stop $CONTAINER_NAME
+		docker stop "$CONTAINER_NAME"
 	fi
-	docker rm -f $CONTAINER_NAME
+	docker rm -f "$CONTAINER_NAME"
 
 	# 1. Pull the image
 	echo "    - Pulling image..."
@@ -101,14 +101,14 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		echo -ne "\nERROR: Timeout waiting for SNMP daemon to start in ${CONTAINER_NAME}. Skipping tests.\n"
 
 		# Cleanup failed container start attempt
-		docker stop $CONTAINER_NAME >/dev/null 2>&1 || true
-		docker rm $CONTAINER_NAME >/dev/null 2>&1 || true
+		docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
+		docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
 		continue
 	fi
 
 	# 4. Run cpp tests using meson
 	echo "    - Executing meson tests..."
-	docker exec -t $CONTAINER_NAME bash -c "
+	docker exec -t "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
 		rm -drf build/ *.info *.txt *.xml;
 		meson setup build/; 
@@ -144,8 +144,8 @@ if [ -f ../cpp_tests/test-results.xml ]; then
 
 	# 6. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
-	docker stop $CONTAINER_NAME
-	docker rm $CONTAINER_NAME
+	docker stop "$CONTAINER_NAME"
+	docker rm "$CONTAINER_NAME"
 
 	echo "--------------------------------------------------"
 
