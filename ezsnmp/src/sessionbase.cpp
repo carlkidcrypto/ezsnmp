@@ -184,6 +184,10 @@ void SessionBase::populate_args() {
    // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
+         // Skip community for SNMPv3 (v3 uses security username, not community)
+         if (key == "community" && m_version == "3") {
+            continue;
+         }
          // This one is different, it does not have a space between flag and value
          if (key == "set_max_repeaters_to_num") {
             m_args.push_back(CML_PARAM_LOOKUP[key] + val);
