@@ -2,10 +2,12 @@ import pytest
 from ezsnmp.session import Session
 from ezsnmp.exceptions import TimeoutError
 import faulthandler
+from platform_compat import is_des_supported
 
 faulthandler.enable()
 
 
+@pytest.mark.skipif(not is_des_supported(), reason="DES not supported on AlmaLinux 10+")
 def test_v3_not_caching_user(sess_v3_md5_des):
     s = Session(**sess_v3_md5_des)
     assert s.args == (
@@ -13,8 +15,6 @@ def test_v3_not_caching_user(sess_v3_md5_des):
         "auth_pass",
         "-a",
         "MD5",
-        "-c",
-        "public",
         "-X",
         "priv_pass",
         "-x",
@@ -45,8 +45,6 @@ def test_v3_not_caching_user(sess_v3_md5_des):
             "auth_pass",
             "-a",
             "MD5",
-            "-c",
-            "public",
             "-X",
             "wrong_pass",
             "-x",
@@ -75,8 +73,6 @@ def test_v3_not_caching_user(sess_v3_md5_des):
             "auth_pass",
             "-a",
             "MD5",
-            "-c",
-            "public",
             "-X",
             "wrong_pass",
             "-x",
@@ -102,8 +98,6 @@ def test_v3_not_caching_user(sess_v3_md5_des):
         "auth_pass",
         "-a",
         "MD5",
-        "-c",
-        "public",
         "-X",
         "priv_pass",
         "-x",
