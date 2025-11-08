@@ -81,7 +81,7 @@ jobs:
           create-new-comment: false
           hide-comment: false
           report-only-changed-files: false
-            multiple-files: |
+          multiple-files: |
             almalinux10_py39, test-outputs_almalinux10_test_container_py39.txt, test-results_almalinux10_test_container_py39.xml
             almalinux10_py310, test-outputs_almalinux10_test_container_py310.txt, test-results_almalinux10_test_container_py310.xml
             almalinux10_py311, test-outputs_almalinux10_test_container_py311.txt, test-results_almalinux10_test_container_py311.xml
