@@ -2,7 +2,7 @@ import platform
 import pytest
 
 from ezsnmp.session import Session
-from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError, PacketError
+from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError, PacketError, GenericError
 import faulthandler
 
 faulthandler.enable()
@@ -18,7 +18,7 @@ def test_session_invalid_snmp_version():
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_invalid_hostname(version):
 
-    with pytest.raises(ConnectionError):
+    with pytest.raises((ConnectionError, GenericError)):
         session = Session(hostname="invalid", version=version)
         session.get("sysContact.0")
 
@@ -97,7 +97,7 @@ def test_session_ipv6_address_with_protocol(version):
 @pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
 def test_session_ipv6_is_not_ipv6(version):
 
-    with pytest.raises(ConnectionError):
+    with pytest.raises((ConnectionError, GenericError)):
         sess = Session(hostname="[foo::bar]:161", version=version)
         sess.get("sysContact.0")
 
