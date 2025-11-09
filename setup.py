@@ -277,7 +277,13 @@ else:
     # Try to get Homebrew net-snmp information
     homebrew_info = get_homebrew_net_snmp_info()
     if homebrew_info:
-        homebrew_version, homebrew_netsnmp_version, homebrew_openssl_version, temp_libdirs, temp_incdirs = homebrew_info
+        (
+            homebrew_version,
+            homebrew_netsnmp_version,
+            homebrew_openssl_version,
+            temp_libdirs,
+            temp_incdirs,
+        ) = homebrew_info
         libdirs = libdirs + temp_libdirs
         incdirs = incdirs + temp_incdirs
         print("Using Homebrew net-snmp installation...")
