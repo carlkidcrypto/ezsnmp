@@ -141,7 +141,7 @@ def test_session_set_multiple_next(sess, reset_values):
     assert res[0].type == "OID"
     assert res[1].oid == "SNMP-TARGET-MIB::snmpTargetAddrTAddress"
     assert res[1].index == "'test'"
-    assert res[1].value == '"1234"'
+    assert res[1].value == '1234'
     assert res[1].type == "STRING"
     assert res[2].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[2].index == "'test'"
@@ -159,7 +159,7 @@ def test_session_set_multiple_next(sess, reset_values):
 
     assert res[1].oid == "SNMP-TARGET-MIB::snmpTargetAddrTAddress"
     assert res[1].index == "'test'"
-    assert res[1].value == '"1234"'
+    assert res[1].value == '1234'
     assert res[1].type == "STRING"
 
     assert res[2].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"

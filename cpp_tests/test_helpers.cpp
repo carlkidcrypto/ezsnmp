@@ -130,9 +130,9 @@ TEST_F(ParseResultsTest, TestMixedResults) {
 
 TEST_F(ParseResultsTest, TestLongValues) {
    std::vector<std::string> inputs = {
-       "SNMPv2-MIB::sysDescr.0 = STRING: " + std::string(1024, 'A'),    // Long string value
-       "SNMPv2-MIB::sysLocation.0 = STRING: " + std::string(2048, 'B'), // Very long string
-       "SNMPv2-MIB::sysName.0 = STRING: " + std::string(4096, 'C')      // Even longer string
+       "SNMPv2-MIB::sysDescr.0 = STRING: " + std::string(1024, 'A'),     // Long string value
+       "SNMPv2-MIB::sysLocation.0 = STRING: " + std::string(2048, 'B'),  // Very long string
+       "SNMPv2-MIB::sysName.0 = STRING: " + std::string(4096, 'C')       // Even longer string
    };
 
    auto results = parse_results(inputs);
@@ -334,4 +334,85 @@ TEST_F(ParseResultsTest, TestSnmpwalkNetworkAddressType) {
    EXPECT_EQ(results[0].index, "2.1.172.25.0.1");
    EXPECT_EQ(results[0].type, "Network Address");
    EXPECT_EQ(results[0].value, "AC:19:00:01");
+}
+
+TEST_F(ParseResultsTest, TestStringValuesWithQuotes) {
+   // Test for issue #355: String values returned with extra quotes
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = STRING: \"LEDI Network TS\"",
+                                      "SNMPv2-MIB::sysName.0 = STRING: \"TOP\"",
+                                      "SNMPv2-MIB::sysContact.0 = STRING: \"admin@example.com\"",
+                                      "IF-MIB::ifDescr.1 = STRING: \"GigabitEthernet0/0/1\""};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 4);
+
+   // Test that quotes are stripped from STRING values
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "LEDI Network TS");
+
+   EXPECT_EQ(results[1].oid, "SNMPv2-MIB::sysName");
+   EXPECT_EQ(results[1].index, "0");
+   EXPECT_EQ(results[1].type, "STRING");
+   EXPECT_EQ(results[1].value, "TOP");
+
+   EXPECT_EQ(results[2].oid, "SNMPv2-MIB::sysContact");
+   EXPECT_EQ(results[2].index, "0");
+   EXPECT_EQ(results[2].type, "STRING");
+   EXPECT_EQ(results[2].value, "admin@example.com");
+
+   EXPECT_EQ(results[3].oid, "IF-MIB::ifDescr");
+   EXPECT_EQ(results[3].index, "1");
+   EXPECT_EQ(results[3].type, "STRING");
+   EXPECT_EQ(results[3].value, "GigabitEthernet0/0/1");
+}
+
+TEST_F(ParseResultsTest, TestStringValuesWithoutQuotes) {
+   // Test that strings without quotes still work correctly
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = STRING: LEDI Network TS",
+                                      "SNMPv2-MIB::sysName.0 = STRING: TOP",
+                                      "SNMPv2-MIB::sysContact.0 = STRING: admin@example.com"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 3);
+
+   // Test that values remain unchanged
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "LEDI Network TS");
+
+   EXPECT_EQ(results[1].oid, "SNMPv2-MIB::sysName");
+   EXPECT_EQ(results[1].index, "0");
+   EXPECT_EQ(results[1].type, "STRING");
+   EXPECT_EQ(results[1].value, "TOP");
+
+   EXPECT_EQ(results[2].oid, "SNMPv2-MIB::sysContact");
+   EXPECT_EQ(results[2].index, "0");
+   EXPECT_EQ(results[2].type, "STRING");
+   EXPECT_EQ(results[2].value, "admin@example.com");
+}
+
+TEST_F(ParseResultsTest, TestNonStringValuesWithQuotesNotStripped) {
+   // Test that quotes in non-STRING types are not stripped
+   std::vector<std::string> inputs = {
+       "SNMP-TARGET-MIB::snmpTargetAddrTAddress.test = STRING: \"1234\"",
+       "IF-MIB::ifOperStatus.1 = INTEGER: \"up(1)\"",  // hypothetical case
+       "SNMPv2-MIB::sysObjectID.0 = OID: \"NET-SNMP-TC::linux\""};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 3);
+
+   // STRING type should have quotes stripped
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "1234");
+
+   // INTEGER type should have quotes stripped as well for consistency
+   EXPECT_EQ(results[1].type, "INTEGER");
+   EXPECT_EQ(results[1].value, "up(1)");
+
+   // OID type should have quotes stripped
+   EXPECT_EQ(results[2].type, "OID");
+   EXPECT_EQ(results[2].value, "NET-SNMP-TC::linux");
 }
