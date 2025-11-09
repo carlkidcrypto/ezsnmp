@@ -48,7 +48,7 @@ jobs:
            ./run_cpp_tests_in_all_dockers.sh
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pytest-results_${{ matrix.distribution }}
           path: |
