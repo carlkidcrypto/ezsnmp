@@ -81,15 +81,28 @@ jobs:
           create-new-comment: false
           hide-comment: false
           report-only-changed-files: false
-            multiple-files: |
+          multiple-files: |
+            almalinux10_py39, test-outputs_almalinux10_test_container_py39.txt, test-results_almalinux10_test_container_py39.xml
             almalinux10_py310, test-outputs_almalinux10_test_container_py310.txt, test-results_almalinux10_test_container_py310.xml
             almalinux10_py311, test-outputs_almalinux10_test_container_py311.txt, test-results_almalinux10_test_container_py311.xml
             almalinux10_py312, test-outputs_almalinux10_test_container_py312.txt, test-results_almalinux10_test_container_py312.xml
             almalinux10_py313, test-outputs_almalinux10_test_container_py313.txt, test-results_almalinux10_test_container_py313.xml
+            archlinux_py39, test-outputs_archlinux_test_container_py39.txt, test-results_archlinux_test_container_py39.xml
             archlinux_py310, test-outputs_archlinux_test_container_py310.txt, test-results_archlinux_test_container_py310.xml
             archlinux_py311, test-outputs_archlinux_test_container_py311.txt, test-results_archlinux_test_container_py311.xml
             archlinux_py312, test-outputs_archlinux_test_container_py312.txt, test-results_archlinux_test_container_py312.xml
             archlinux_py313, test-outputs_archlinux_test_container_py313.txt, test-results_archlinux_test_container_py313.xml
+            archlinux_netsnmp_5.8_py39, test-outputs_archlinux_netsnmp_5.8_test_container_py39.txt, test-results_archlinux_netsnmp_5.8_test_container_py39.xml
+            archlinux_netsnmp_5.8_py310, test-outputs_archlinux_netsnmp_5.8_test_container_py310.txt, test-results_archlinux_netsnmp_5.8_test_container_py310.xml
+            archlinux_netsnmp_5.8_py311, test-outputs_archlinux_netsnmp_5.8_test_container_py311.txt, test-results_archlinux_netsnmp_5.8_test_container_py311.xml
+            archlinux_netsnmp_5.8_py312, test-outputs_archlinux_netsnmp_5.8_test_container_py312.txt, test-results_archlinux_netsnmp_5.8_test_container_py312.xml
+            archlinux_netsnmp_5.8_py313, test-outputs_archlinux_netsnmp_5.8_test_container_py313.txt, test-results_archlinux_netsnmp_5.8_test_container_py313.xml
+            centos7_py39, test-outputs_centos7_test_container_py39.txt, test-results_centos7_test_container_py39.xml
+            centos7_py310, test-outputs_centos7_test_container_py310.txt, test-results_centos7_test_container_py310.xml
+            centos7_py311, test-outputs_centos7_test_container_py311.txt, test-results_centos7_test_container_py311.xml
+            centos7_py312, test-outputs_centos7_test_container_py312.txt, test-results_centos7_test_container_py312.xml
+            centos7_py313, test-outputs_centos7_test_container_py313.txt, test-results_centos7_test_container_py313.xml
+            rockylinux8_py39, test-outputs_rockylinux8_test_container_py39.txt, test-results_rockylinux8_test_container_py39.xml
             rockylinux8_py310, test-outputs_rockylinux8_test_container_py310.txt, test-results_rockylinux8_test_container_py310.xml
             rockylinux8_py311, test-outputs_rockylinux8_test_container_py311.txt, test-results_rockylinux8_test_container_py311.xml
             rockylinux8_py312, test-outputs_rockylinux8_test_container_py312.txt, test-results_rockylinux8_test_container_py312.xml

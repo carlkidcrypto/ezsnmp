@@ -1,6 +1,9 @@
+import pytest
 from ezsnmp import Session
+from platform_compat import is_des_supported
 
 
+@pytest.mark.skipif(not is_des_supported(), reason="DES not supported on AlmaLinux 10+")
 def test_v3_authentication_md5_privacy_des(sess_v3_md5_des):
     s = Session(**sess_v3_md5_des)
 

@@ -121,7 +121,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# 5. Copy artifacts from the container to host.
 	echo "    - Renaming files from container: $CONTAINER_NAME"
-if [ -f ../cpp_tests/test-results.xml ]; then
+	if [ -f ../cpp_tests/test-results.xml ]; then
 		mv ../cpp_tests/test-results.xml ./test-results_"$CONTAINER_NAME".xml
 	else
 		echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME"
