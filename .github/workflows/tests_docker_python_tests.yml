@@ -72,7 +72,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@v1.1.57
+        uses: MishaKav/pytest-coverage-comment@v1.1.59
         with:
           title: Pytest Coverage Report - Dockerized Tests
           unique-id-for-comment: dockerized-python-tests

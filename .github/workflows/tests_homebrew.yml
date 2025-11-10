@@ -160,7 +160,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.57
+        uses: MishaKav/pytest-coverage-comment@v1.1.59
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew

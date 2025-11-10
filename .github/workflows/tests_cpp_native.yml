@@ -121,7 +121,7 @@ jobs:
           merge-multiple: true
 
       - name: Cpp test coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.57
+        uses: MishaKav/pytest-coverage-comment@v1.1.59
         with:
           title: Cpp Test Coverage Report - Native
           unique-id-for-comment: cpp-tests
