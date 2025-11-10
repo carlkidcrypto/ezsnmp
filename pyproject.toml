@@ -48,7 +48,7 @@ requires = [
 
 [tool.pytest.ini_options]
 addopts = [
-    "--import-mode=importlib",
+    "--import-mode=prepend",
 ]
 norecursedirs = [
 "docker",
