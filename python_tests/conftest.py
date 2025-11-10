@@ -1,6 +1,7 @@
 import pytest
 from subprocess import Popen, DEVNULL
 import ezsnmp
+import platform
 from session_parameters import (
     SESS_V1_ARGS,
     SESS_V2_ARGS,
@@ -20,6 +21,9 @@ from netsnmp_parameters import (
     NETSNMP_SESS_V3_SHA_NO_PRIV_ARGS,
     NETSNMP_SESS_V3_MD5_NO_PRIV_ARGS,
 )
+
+
+from platform_compat import is_des_supported
 
 
 class SNMPSetCLIError(Exception):
@@ -55,15 +59,19 @@ def snmp_set_via_cli(oid, value, type):
         )
 
 
-@pytest.fixture(
-    params=[
+def _get_netsnmp_params():
+    params = [
         NETSNMP_SESS_V1_ARGS,
         NETSNMP_SESS_V2_ARGS,
-        NETSNMP_SESS_V3_MD5_DES_ARGS,
         NETSNMP_SESS_V3_MD5_AES_ARGS,
         NETSNMP_SESS_V3_SHA_AES_ARGS,
     ]
-)
+    if is_des_supported():
+        params.insert(2, NETSNMP_SESS_V3_MD5_DES_ARGS)
+    return params
+
+
+@pytest.fixture(params=_get_netsnmp_params())
 def netsnmp_args(request):
     return request.param
 
@@ -73,15 +81,19 @@ def netsnmp(netsnmp_args):
     return netsnmp_args
 
 
-@pytest.fixture(
-    params=[
+def _get_sess_params():
+    params = [
         SESS_V1_ARGS,
         SESS_V2_ARGS,
-        SESS_V3_MD5_DES_ARGS,
         SESS_V3_MD5_AES_ARGS,
         SESS_V3_SHA_AES_ARGS,
     ]
-)
+    if is_des_supported():
+        params.insert(2, SESS_V3_MD5_DES_ARGS)
+    return params
+
+
+@pytest.fixture(params=_get_sess_params())
 def sess_args(request):
     return request.param
 

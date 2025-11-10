@@ -81,33 +81,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		continue
 	fi
 
-	# 3. Wait for SNMP daemon to start
-	WAIT_TIME=240
-	echo "    - Waiting for SNMP daemon to be ready (max ${WAIT_TIME}s)..."
-	SNMP_READY=0
-	for i in $(seq $WAIT_TIME -1 1); do
-		if docker logs "${CONTAINER_NAME}" 2>&1 | grep -q "Starting SNMP daemon..."; then
-			echo -ne "\n    - Container started successfully in $((WAIT_TIME - i)) seconds.\n"
-			SNMP_READY=1
-			break
-		fi
-		echo -ne "    - Waiting... $i seconds remaining\r"
-		sleep 1
-		if [ "$i" -eq 1 ] && [ "${SNMP_READY}" -eq 0 ]; then
-			break # Break out of loop on final check if not ready
-		fi
-	done
-
-	if [ "${SNMP_READY}" -eq 0 ]; then
-		echo -ne "\nERROR: Timeout waiting for SNMP daemon to start in ${CONTAINER_NAME}. Skipping tests.\n"
-
-		# Cleanup failed container start attempt
-		docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
-		docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
-		continue
-	fi
-
-	# 4. Run tests using tox
+	# 3. Run tests using tox
 	echo "    - Executing tox tests..."
 	for TOX_PYTHON_VERSION_ITERATOR in "${!TOX_PYTHON_VERSION[@]}"; do
 		TOX_PY=${TOX_PYTHON_VERSION[$TOX_PYTHON_VERSION_ITERATOR]}
@@ -117,6 +91,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		docker exec -t "$CONTAINER_NAME" bash -c "
 	        cd /ezsnmp;
             rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/;
+			python3 -m pip install tox;
             tox -e $TOX_PY > test-outputs.txt 2>&1;
 			exit 0;
         "
@@ -132,7 +107,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME"_"$TOX_PY".txt
 	done
 
-	# 6. Cleanup container
+	# 4. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
 	docker stop "$CONTAINER_NAME"
 	docker rm "$CONTAINER_NAME"
