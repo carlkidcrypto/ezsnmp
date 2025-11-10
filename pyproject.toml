@@ -47,11 +47,13 @@ requires = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = "python_tests"
 addopts = [
     "--import-mode=importlib",
 ]
 norecursedirs = [
 "docker",
 "integration_tests",
+]
+testpaths = [
+    "python_tests",
 ]
