@@ -322,11 +322,12 @@ TEST_F(SessionBaseTest, TestSetters) {
    EXPECT_EQ(session._get_privacy_passphrase(), "new_priv_pass");
 
    // Verify final args construction
+   // Note: When version is "3", community string (-c) should NOT be included
+   // because v3 uses username-based authentication instead
    auto args = session._get_args();
    std::vector<std::string> expected = {"-A",         "new_auth_pass",
                                         "-a",         "SHA",
                                         "-Z",         "2,3",
-                                        "-c",         "private",
                                         "-n",         "newcontext",
                                         "-E",         "8000000001020307",
                                         "-X",         "new_priv_pass",
