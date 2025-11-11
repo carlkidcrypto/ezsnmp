@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from subprocess import check_output, CalledProcessError, run
 from sys import argv, platform
 from shlex import split as s_split
@@ -170,6 +171,27 @@ class SwigBuildExt(build_ext):
     Custom build_ext command to run SWIG before building the C++ extensions.
     """
 
+    def _run_swig_command(self, swig_command, interface_file, wrapper_file):
+        """
+        Run a single SWIG command for a given interface file.
+
+        Args:
+            swig_command: Base SWIG command list
+            interface_file: Path to the SWIG interface file
+            wrapper_file: Path to the output wrapper file
+
+        Returns:
+            tuple: (success: bool, interface_file: str, error_msg: str or None)
+        """
+        command = swig_command + ["-o", wrapper_file, interface_file]
+        print(f"Executing: {' '.join(command)}")
+        try:
+            run(command, check=True)
+            return (True, interface_file, None)
+        except (CalledProcessError, FileNotFoundError) as e:
+            error_msg = f"Error: SWIG execution failed for {interface_file}."
+            return (False, interface_file, error_msg)
+
     def run(self):
         print("--- Running SWIG to generate wrapper code ---")
 
@@ -194,16 +216,27 @@ class SwigBuildExt(build_ext):
         # Also add the interface directory to the include path for SWIG
         swig_command.append("-Iezsnmp/interface")
 
-        # Run SWIG for each target
-        for interface_file, wrapper_file in swig_targets:
-            command = swig_command + ["-o", wrapper_file, interface_file]
-            print(f"Executing: {' '.join(command)}")
-            try:
-                run(command, check=True)
-            except (CalledProcessError, FileNotFoundError):
-                print(f"Error: SWIG execution failed for {interface_file}.")
-                print("Please ensure that SWIG is installed and in your system's PATH.")
-                exit(1)
+        # Run SWIG for each target in parallel using ThreadPoolExecutor
+        # This speeds up the build process since SWIG targets are independent
+        max_workers = min(len(swig_targets), os.cpu_count() or 1)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all SWIG tasks
+            future_to_target = {
+                executor.submit(
+                    self._run_swig_command, swig_command, interface_file, wrapper_file
+                ): (interface_file, wrapper_file)
+                for interface_file, wrapper_file in swig_targets
+            }
+
+            # Collect results and check for errors
+            for future in as_completed(future_to_target):
+                success, interface_file, error_msg = future.result()
+                if not success:
+                    print(error_msg)
+                    print(
+                        "Please ensure that SWIG is installed and in your system's PATH."
+                    )
+                    exit(1)
 
         print("--- SWIG processing complete ---")
         # After SWIG has run, proceed with the original build process
