@@ -796,35 +796,35 @@ TEST_F(SessionBaseTest, TestBulkGet) {
              "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
              "logging SNMP Notifications.");
    EXPECT_EQ(results[15]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[16]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[17]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[18]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[19]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[20]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 2, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[21]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[22]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[23]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 3, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[24]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[25]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[26]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 4, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[27]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[28]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[29]._to_string(),
-             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00");
+             "oid: SNMPv2-MIB::sysORUpTime, index: 5, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
 #else
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The SNMP Management "
