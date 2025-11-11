@@ -1,4 +1,5 @@
 [run]
+source = ../ezsnmp
 omit = */python_tests/*
 
 [report]
