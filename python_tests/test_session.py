@@ -2,7 +2,13 @@ import platform
 import pytest
 
 from ezsnmp.session import Session
-from ezsnmp.exceptions import ConnectionError, ParseError, TimeoutError, PacketError, GenericError
+from ezsnmp.exceptions import (
+    ConnectionError,
+    ParseError,
+    TimeoutError,
+    PacketError,
+    GenericError,
+)
 import faulthandler
 
 faulthandler.enable()

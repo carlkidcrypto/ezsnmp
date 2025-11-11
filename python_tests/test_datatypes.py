@@ -282,7 +282,9 @@ def test_converted_value_octetstr_from_hex(snmp_session):
         )
 
     converted_value = result[0].converted_value
-    assert isinstance(converted_value, (bytes, str)), "Converted value is not of type bytes or str"
+    assert isinstance(
+        converted_value, (bytes, str)
+    ), "Converted value is not of type bytes or str"
 
 
 def test_converted_value_oid(snmp_session):
