@@ -133,7 +133,7 @@ jobs:
             mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -141,7 +141,7 @@ jobs:
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Valgrind Reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
@@ -154,7 +154,7 @@ jobs:
       pull-requests: write # This is needed to create/update comments
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: pytest-results_*
           merge-multiple: false
@@ -192,7 +192,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: valgrind-report_*
           merge-multiple: false
@@ -210,7 +210,7 @@ jobs:
           EOF
 
       - name: Upload Stripped Valgrind Reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -222,7 +222,7 @@ jobs:
   
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: valgrind-stripped_*
           merge-multiple: false

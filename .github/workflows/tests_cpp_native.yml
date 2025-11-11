@@ -101,7 +101,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cpp-test-results_${{matrix.os}}
           path: cpp_tests/**/*.xml
@@ -114,7 +114,7 @@ jobs:
     if: always() && github.event_name == 'pull_request'
     steps:
       - name: Download All Test Results
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: cpp-test-results_*
           path: test-results
