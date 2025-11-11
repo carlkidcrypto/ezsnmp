@@ -153,7 +153,7 @@ jobs:
             echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
       
       - name: Upload Integration Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
           path: |

@@ -4,7 +4,7 @@ FROM centos:7
 # Fix for CentOS 7 EOL and install EPEL/SCL in one layer
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
     sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
-    yum install -y epel-release centos-release-scl && \
+    yum install -y epel-release centos-release-scl openssl-devel && \
     sed -i 's/^mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
     sed -i -e 's|^#baseurl=|baseurl=|g' -e 's|mirror.centos.org|vault.centos.org|g' -e 's|https://vault.centos.org|http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
     yum-config-manager --disable centos-sclo-sclo && \
