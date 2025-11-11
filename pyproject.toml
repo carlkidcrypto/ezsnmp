@@ -45,13 +45,3 @@ requires = [
     "wheel == 0.46.1",
     "swig==4.3.1",
 ]
-
-[tool.pytest.ini_options]
-pythonpath = "python_tests"
-addopts = [
-    "--import-mode=importlib",
-]
-norecursedirs = [
-"docker",
-"integration_tests",
-]
