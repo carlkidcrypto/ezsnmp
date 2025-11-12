@@ -5,11 +5,11 @@
 
 class SnmpGetTest : public ::testing::Test {
   protected:
-   void SetUp() override {}
-   void TearDown() override {
-      // Reset SNMP values to defaults after each test
+   void SetUp() override {
+      // Reset SNMP values to defaults before each test
       system("snmpset -v2c -c public localhost:11161 sysLocation.0 s \"my original location\" > /dev/null 2>&1");
    }
+   void TearDown() override {}
 };
 
 TEST_F(SnmpGetTest, TestBasicGet) {
