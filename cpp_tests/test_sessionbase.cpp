@@ -752,49 +752,49 @@ TEST_F(SessionBaseTest, TestBulkGet) {
 #ifdef __APPLE__
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
+             "Processing and Dispatching., converted_value: The MIB for Message Processing and Dispatching.");
    EXPECT_EQ(results[1]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
+             "Processing and Dispatching., converted_value: The MIB for Message Processing and Dispatching.");
    EXPECT_EQ(results[2]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 1, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
+             "Processing and Dispatching., converted_value: The MIB for Message Processing and Dispatching.");
    EXPECT_EQ(results[3]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
+             "Processing and Dispatching., converted_value: The MIB for Message Processing and Dispatching.");
    EXPECT_EQ(results[4]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
+             "Processing and Dispatching., converted_value: The MIB for Message Processing and Dispatching.");
    EXPECT_EQ(results[5]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 2, type: STRING, value: The MIB for Message "
-             "Processing and Dispatching.");
+             "Processing and Dispatching., converted_value: The MIB for Message Processing and Dispatching.");
    EXPECT_EQ(results[6]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
-             "Architecture MIB.");
+             "Architecture MIB., converted_value: The SNMP Management Architecture MIB.");
    EXPECT_EQ(results[7]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
-             "Architecture MIB.");
+             "Architecture MIB., converted_value: The SNMP Management Architecture MIB.");
    EXPECT_EQ(results[8]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 3, type: STRING, value: The SNMP Management "
-             "Architecture MIB.");
+             "Architecture MIB., converted_value: The SNMP Management Architecture MIB.");
    EXPECT_EQ(results[9]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
-             "managing SNMP Notification, plus filtering.");
+             "managing SNMP Notification, plus filtering., converted_value: The MIB modules for managing SNMP Notification, plus filtering.");
    EXPECT_EQ(results[10]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
-             "managing SNMP Notification, plus filtering.");
+             "managing SNMP Notification, plus filtering., converted_value: The MIB modules for managing SNMP Notification, plus filtering.");
    EXPECT_EQ(results[11]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 4, type: STRING, value: The MIB modules for "
-             "managing SNMP Notification, plus filtering.");
+             "managing SNMP Notification, plus filtering., converted_value: The MIB modules for managing SNMP Notification, plus filtering.");
    EXPECT_EQ(results[12]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
-             "logging SNMP Notifications.");
+             "logging SNMP Notifications., converted_value: The MIB module for logging SNMP Notifications.");
    EXPECT_EQ(results[13]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
-             "logging SNMP Notifications.");
+             "logging SNMP Notifications., converted_value: The MIB module for logging SNMP Notifications.");
    EXPECT_EQ(results[14]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 5, type: STRING, value: The MIB module for "
-             "logging SNMP Notifications.");
+             "logging SNMP Notifications., converted_value: The MIB module for logging SNMP Notifications.");
    EXPECT_EQ(results[15]._to_string(),
              "oid: SNMPv2-MIB::sysORUpTime, index: 1, type: Timeticks, value: (0) 0:00:00.00, converted_value: 0");
    EXPECT_EQ(results[16]._to_string(),
