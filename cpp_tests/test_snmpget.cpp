@@ -7,7 +7,12 @@ class SnmpGetTest : public ::testing::Test {
   protected:
    void SetUp() override {
       // Reset SNMP values to defaults before each test
-      system("snmpset -v2c -c public localhost:11161 sysLocation.0 s \"my original location\" > /dev/null 2>&1");
+      // Use snmpset to reset sysLocation to "my original location"
+      int result = system("snmpset -v2c -c public localhost:11161 SNMPv2-MIB::sysLocation.0 s \"my original location\" > /dev/null 2>&1");
+      if (result != 0) {
+         // snmpset failed - server might not be configured or accessible
+         // Tests that depend on this value will fail with meaningful errors
+      }
    }
    void TearDown() override {}
 };
