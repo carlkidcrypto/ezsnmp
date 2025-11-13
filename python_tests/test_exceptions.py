@@ -1,6 +1,7 @@
 """
 Tests to achieve 100% coverage for exception handling and error paths.
 """
+
 import pytest
 import faulthandler
 from ezsnmp import Session

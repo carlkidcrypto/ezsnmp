@@ -5,7 +5,15 @@
 
 class SnmpGetTest : public ::testing::Test {
   protected:
-   void SetUp() override {}
+   void SetUp() override {
+      // Reset SNMP values to defaults before each test
+      // Use snmpset to reset sysLocation to "my original location"
+      int result = system("snmpset -v2c -c public localhost:11161 SNMPv2-MIB::sysLocation.0 s \"my original location\" > /dev/null 2>&1");
+      if (result != 0) {
+         // snmpset failed - server might not be configured or accessible
+         // Tests that depend on this value will fail with meaningful errors
+      }
+   }
    void TearDown() override {}
 };
 
@@ -16,7 +24,7 @@ TEST_F(SnmpGetTest, TestBasicGet) {
    auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, converted_value: my original location");
 }
 
 TEST_F(SnmpGetTest, TestMultipleOids) {
@@ -31,9 +39,9 @@ TEST_F(SnmpGetTest, TestMultipleOids) {
    auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 2);
    EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, converted_value: my original location");
    EXPECT_EQ(results[1]._to_string(),
-             "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)");
+             "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1");
 }
 
 TEST_F(SnmpGetTest, TestV3Get) {
@@ -57,7 +65,7 @@ TEST_F(SnmpGetTest, TestV3Get) {
    auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location");
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, converted_value: my original location");
 }
 
 TEST_F(SnmpGetTest, TestMissingOid) {
@@ -106,7 +114,10 @@ TEST_F(SnmpGetTest, TestInvalidOid) {
           try {
              auto results = snmpget(args, "testing");
           } catch (GenericErrorBase const& e) {
-             EXPECT_STREQ(e.what(), "INVALID-MIB::nonexistent.0: Unknown Object Identifier");
+             // Error message may vary by platform, just check it contains key parts
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("INVALID-MIB::nonexistent.0") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("Unknown Object Identifier") != std::string::npos);
              throw;
           }
        },
@@ -122,7 +133,11 @@ TEST_F(SnmpGetTest, TestUknownHost) {
           try {
              auto results = snmpget(args, "testing");
           } catch (ConnectionErrorBase const& e) {
-             EXPECT_STREQ(e.what(), "snmpget: Unknown host (nonexistenthost:11161)");
+             // Error message may vary by platform, just check it contains key parts
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("snmpget") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("Unknown host") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("nonexistenthost:11161") != std::string::npos);
              throw;
           }
        },
@@ -149,7 +164,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "-O", "e", "localhost:11161", "IF-MIB::ifAdminStatus.1"};
 
-   std::string expected_result = "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
+   std::string expected_result = "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, converted_value: 1";
 
    for (int i = 0; i < 5; ++i) {
       auto results = snmpget(args, "testing");
@@ -163,9 +178,9 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
        "-v", "2c", "-c", "public", "localhost:11161", "IF-MIB::ifAdminStatus.1"};
 
    std::string expected_result_enum =
-       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1";
+       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, converted_value: 1";
    std::string expected_result_no_enum =
-       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1)";
+       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1";
 
    for (int i = 0; i < 2; ++i) {
       std::vector<std::string> args = base_args;
