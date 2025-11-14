@@ -5,13 +5,13 @@ name: C++ Tests
 concurrency: cpp-tests
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/github_runners ]
   pull_request:
     branches: [ main ]
 
 jobs:
   check-source-changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-24, macos-latest]
 
     steps:
       - name: Set up dependencies
@@ -107,7 +107,7 @@ jobs:
           path: cpp_tests/**/*.xml
 
   comment-cpp-test-report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     needs: build-and-test
     permissions:
       pull-requests: write # This is needed to create/update comments
@@ -131,4 +131,4 @@ jobs:
           hide-comment: false
           multiple-files: |
             macOS, test-results/cpp-test-results_macos-latest.xml
-            Ubuntu, test-results/cpp-test-results_ubuntu-latest.xml
+            Ubuntu, test-results/cpp-test-results_ubuntu-24.xml

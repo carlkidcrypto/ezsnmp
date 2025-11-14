@@ -5,14 +5,14 @@ name: Tests With Homebrew Package Manager
 concurrency: tests-homebrew
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/github_runners ]
 
   pull_request:
     branches: [ main ]
 
 jobs:
   check-source-changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-24, macos-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
   
     steps:
@@ -142,13 +142,13 @@ jobs:
 
       - name: Upload Valgrind Reports
         uses: actions/upload-artifact@v5
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-24' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
 
   comment-pytest-coverage-report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     needs: build-and-test
     permissions:
       pull-requests: write # This is needed to create/update comments
@@ -175,11 +175,11 @@ jobs:
             macos-latest - Homebrew - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
             macos-latest - Homebrew - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
             macos-latest - Homebrew - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            ubuntu-latest - Homebrew - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
-            ubuntu-latest - Homebrew - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
-            ubuntu-latest - Homebrew - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
-            ubuntu-latest - Homebrew - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
-            ubuntu-latest - Homebrew - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+            ubuntu-24 - Homebrew - 3.9, pytest-results_ubuntu-24_3.9/test-outputs_ubuntu-24_3.9.txt, pytest-results_ubuntu-24_3.9/test-results_ubuntu-24_3.9.xml
+            ubuntu-24 - Homebrew - 3.10, pytest-results_ubuntu-24_3.10/test-outputs_ubuntu-24_3.10.txt, pytest-results_ubuntu-24_3.10/test-results_ubuntu-24_3.10.xml
+            ubuntu-24 - Homebrew - 3.11, pytest-results_ubuntu-24_3.11/test-outputs_ubuntu-24_3.11.txt, pytest-results_ubuntu-24_3.11/test-results_ubuntu-24_3.11.xml
+            ubuntu-24 - Homebrew - 3.12, pytest-results_ubuntu-24_3.12/test-outputs_ubuntu-24_3.12.txt, pytest-results_ubuntu-24_3.12/test-results_ubuntu-24_3.12.xml
+            ubuntu-24 - Homebrew - 3.13, pytest-results_ubuntu-24_3.13/test-outputs_ubuntu-24_3.13.txt, pytest-results_ubuntu-24_3.13/test-results_ubuntu-24_3.13.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -187,7 +187,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-24]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
@@ -217,7 +217,7 @@ jobs:
             valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log
 
   comment-valgrind:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     needs: make-stripped-valgrind-files
   
     steps:
@@ -230,11 +230,11 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
+         temp1=$(cat valgrind-stripped_ubuntu-24_3.9/valgrind-stripped_ubuntu-24_3.9.log);
+         temp2=$(cat valgrind-stripped_ubuntu-24_3.10/valgrind-stripped_ubuntu-24_3.10.log);
+         temp3=$(cat valgrind-stripped_ubuntu-24_3.11/valgrind-stripped_ubuntu-24_3.11.log);
+         temp4=$(cat valgrind-stripped_ubuntu-24_3.12/valgrind-stripped_ubuntu-24_3.12.log);
+         temp5=$(cat valgrind-stripped_ubuntu-24_3.13/valgrind-stripped_ubuntu-24_3.13.log);
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;

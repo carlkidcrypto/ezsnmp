@@ -5,13 +5,13 @@ name: Tests With Native Package Manager
 concurrency: tests-native
 on:
   push:
-    branches: [ main ]
+    branches: [ feature/github_runners ]
   pull_request:
     branches: [ main ]
 
 jobs:
   check-source-changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
@@ -42,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-24, macos-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
@@ -110,7 +110,7 @@ jobs:
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
   comment-pytest-coverage-report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24
     needs: build-and-test
     permissions:
       pull-requests: write # This is needed to create/update comments
@@ -140,8 +140,8 @@ jobs:
             macos-latest - Native - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
             macos-latest - Native - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
             macos-latest - Native - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            ubuntu-latest - Native - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
-            ubuntu-latest - Native - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
-            ubuntu-latest - Native - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
-            ubuntu-latest - Native - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
-            ubuntu-latest - Native - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+            ubuntu-24 - Native - 3.9, pytest-results_ubuntu-24_3.9/test-outputs_ubuntu-24_3.9.txt, pytest-results_ubuntu-24_3.9/test-results_ubuntu-24_3.9.xml
+            ubuntu-24 - Native - 3.10, pytest-results_ubuntu-24_3.10/test-outputs_ubuntu-24_3.10.txt, pytest-results_ubuntu-24_3.10/test-results_ubuntu-24_3.10.xml
+            ubuntu-24 - Native - 3.11, pytest-results_ubuntu-24_3.11/test-outputs_ubuntu-24_3.11.txt, pytest-results_ubuntu-24_3.11/test-results_ubuntu-24_3.11.xml
+            ubuntu-24 - Native - 3.12, pytest-results_ubuntu-24_3.12/test-outputs_ubuntu-24_3.12.txt, pytest-results_ubuntu-24_3.12/test-results_ubuntu-24_3.12.xml
+            ubuntu-24 - Native - 3.13, pytest-results_ubuntu-24_3.13/test-outputs_ubuntu-24_3.13.txt, pytest-results_ubuntu-24_3.13/test-results_ubuntu-24_3.13.xml
