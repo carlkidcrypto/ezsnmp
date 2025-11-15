@@ -4,7 +4,7 @@ Python Tests
 
 Overview
 ========
-This directory contains the Python unit tests for EzSnmp. These tests use pytest to 
+This directory contains the Python unit tests for EzSnmp. These tests use unittest to 
 validate the Python API and ensure compatibility across different Python versions.
 
 Purpose
@@ -46,24 +46,33 @@ To run all tests:
     # From the repository root
     tox
 
-To run tests with pytest directly:
+To run tests with unittest directly:
 
 .. code-block:: bash
 
     # From the repository root
-    python3 -m pytest python_tests/
+    python3 -m unittest discover python_tests/
 
 To run a specific test file:
 
 .. code-block:: bash
 
-    python3 -m pytest python_tests/test_session.py
+    python3 -m unittest python_tests.test_session
 
 To run with verbose output:
 
 .. code-block:: bash
 
-    python3 -m pytest -v python_tests/
+    python3 -m unittest discover -v python_tests/
+
+To run with coverage:
+
+.. code-block:: bash
+
+    # From the repository root
+    coverage run -m unittest discover python_tests/
+    coverage report
+    coverage html
 
 SNMP Daemon Configuration
 ==========================
