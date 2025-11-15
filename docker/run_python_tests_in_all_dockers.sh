@@ -98,11 +98,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 		# 5. Copy artifacts from the container to host.
 		echo "    - Renaming files from container: $CONTAINER_NAME for environment: $TOX_PY"
-		if [ -f ../test-results.xml ]; then
-			mv ../test-results.xml ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
+		if [ -f ../coverage.xml ]; then
+			mv ../coverage.xml ./coverage_"$CONTAINER_NAME"_"$TOX_PY".xml
 		else
-			echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME and environment: $TOX_PY"
-			touch ./test-results_"$CONTAINER_NAME"_"$TOX_PY".xml
+			echo "      ! Warning: coverage.xml not found for $CONTAINER_NAME and environment: $TOX_PY"
+			touch ./coverage_"$CONTAINER_NAME"_"$TOX_PY".xml
 		fi
 		mv ../test-outputs.txt ./test-outputs_"$CONTAINER_NAME"_"$TOX_PY".txt
 	done
