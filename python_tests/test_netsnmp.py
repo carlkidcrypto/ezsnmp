@@ -1,6 +1,6 @@
 import platform
-
-import pytest
+import unittest
+import faulthandler
 from ezsnmp.netsnmp import (
     snmpget,
     snmpset,
@@ -10,276 +10,349 @@ from ezsnmp.netsnmp import (
 )
 
 from ezsnmp.exceptions import GenericError, PacketError
-
-import faulthandler
+from unittest_fixtures import BaseTestCase
 
 faulthandler.enable()
 
 
-def test_snmp_get_regular(netsnmp_args):
-    netsnmp_args = netsnmp_args + ["sysDescr.0"]
-    res = snmpget(netsnmp_args, "testing_value")
+class TestNetSNMP(BaseTestCase):
+    def test_snmp_get_regular(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a regular snmpget on sysDescr.0
+        Then the result should contain the system description
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                args = netsnmp_args + ["sysDescr.0"]
+                res = snmpget(args, "testing_value")
 
-    assert platform.version() in res[0].value
-    assert res[0].oid == "SNMPv2-MIB::sysDescr"
-    assert res[0].index == "0"
-    assert res[0].type == "STRING"
-
-
-def test_snmp_get_fully_qualified(netsnmp_args):
-
-    netsnmp_args = netsnmp_args + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
-    res = snmpget(netsnmp_args, "testing_value")
-
-    assert platform.version() in res[0].value
-    assert res[0].oid == "SNMPv2-MIB::sysDescr"
-    assert res[0].index == "0"
-    assert res[0].type == "STRING"
+                self.assertIn(platform.version(), res[0].value)
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysDescr")
+                self.assertEqual(res[0].index, "0")
+                self.assertEqual(res[0].type, "STRING")
 
 
-def test_snmp_get_numeric(netsnmp_args):
+    def test_snmp_get_fully_qualified(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpget with a fully qualified OID
+        Then the result should normalize to SNMPv2-MIB::sysDescr
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                args = netsnmp_args + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
+                res = snmpget(args, "testing_value")
 
-    netsnmp_args = netsnmp_args + [".1.3.6.1.2.1.1.1.0"]
-    res = snmpget(netsnmp_args, "testing_value")
+                self.assertIn(platform.version(), res[0].value)
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysDescr")
+                self.assertEqual(res[0].index, "0")
+                self.assertEqual(res[0].type, "STRING")
 
-    assert platform.version() in res[0].value
-    assert res[0].oid == "SNMPv2-MIB::sysDescr"
-    assert res[0].index == "0"
-    assert res[0].type == "STRING"
+    def test_snmp_get_numeric(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpget with a numeric OID
+        Then the result should normalize to SNMPv2-MIB::sysDescr
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                args = netsnmp_args + [".1.3.6.1.2.1.1.1.0"]
+                res = snmpget(args, "testing_value")
+
+                self.assertIn(platform.version(), res[0].value)
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysDescr")
+                self.assertEqual(res[0].index, "0")
+                self.assertEqual(res[0].type, "STRING")
+
+    def test_snmp_get_numeric_no_leading_dot(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpget with a numeric OID
+        Then the result should normalize to SNMPv2-MIB::sysDescr
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                args = netsnmp_args + ["1.3.6.1.2.1.1.1.0"]
+                res = snmpget(args, "testing_value")
+
+                self.assertIn(platform.version(), res[0].value)
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysDescr")
+                self.assertEqual(res[0].index, "0")
+                self.assertEqual(res[0].type, "STRING")
+
+    def test_snmp_get_unknown(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpget on an unknown OID
+        Then it should raise a GenericError
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                with self.assertRaises(GenericError):
+                    args = netsnmp_args + ["sysDescripto.0"]
+                    snmpget(args, "testing_value")
+
+    def test_snmp_get_invalid_instance(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpget on an invalid instance
+        Then it should raise NoSuchInstanceError
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                if netsnmp_args[1] == "1":
+                    if platform.system() != "Darwin":
+                        with self.assertRaises(PacketError):
+                            args = netsnmp_args + ["sysContact.1"]
+                            snmpget(args, "testing_value")
+                else:
+                    args = netsnmp_args + ["sysContact.1"]
+                    res = snmpget(args, "testing_value")
+                    self.assertEqual(res[0].type, "NOSUCHINSTANCE")
+
+    def test_snmp_get_invalid_object(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpget on an invalid object
+        Then it should raise NoSuchObjectError
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                if netsnmp_args[1] == "1":
+                    with self.assertRaises(PacketError):
+                        args = netsnmp_args + ["iso"]
+                        snmpget(args, "testing_value")
+                else:
+                    args = netsnmp_args + ["iso"]
+                    res = snmpget(args, "testing_value")
+                    self.assertEqual(res[0].type, "NOSUCHOBJECT")
+
+    def test_snmp_set_string(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpset with a string value
+        Then the value should be set successfully
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                self.addCleanup(self.reset_snmp_values)
+                
+                args_1 = netsnmp_args + ["sysLocation.0"]
+                res = snmpget(args_1, "testing_value")
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysLocation")
+                self.assertEqual(res[0].index, "0")
+                self.assertNotEqual(res[0].value, "my newer location")
+                self.assertEqual(res[0].type, "STRING")
+
+                args_2 = netsnmp_args + ["sysLocation.0", "s", "my newer location"]
+                success = snmpset(args_2, "testing_value")
+                self.assertTrue(success)
+
+                res = snmpget(args_1, "testing_value")
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysLocation")
+                self.assertEqual(res[0].index, "0")
+                self.assertEqual(res[0].value, "my newer location")
+                self.assertEqual(res[0].type, "STRING")
+
+    def test_snmp_set_integer(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpset with an integer value
+        Then the value should be set successfully
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                self.addCleanup(self.reset_snmp_values)
+                
+                args_1 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "65"]
+                success = snmpset(args_1, "testing_value")
+                self.assertTrue(success)
+
+                args_2 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2"]
+                res = snmpget(args_2, "testing_value")
+                self.assertEqual(res[0].oid, "NET-SNMP-AGENT-MIB::nsCacheTimeout.1.3.6.1.2.1.2")
+                self.assertEqual(res[0].index, "2")
+                self.assertEqual(res[0].value, "65")
+                self.assertEqual(res[0].type, "INTEGER")
 
 
-def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
+    def test_snmpbulkget(self):
+        """
+        Given netsnmp parameters (excluding SNMPv1 which doesn't support bulk)
+        When performing a snmpbulkget operation
+        Then it should return multiple results
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                if netsnmp_args[1] == "1":
+                    with self.assertRaises(PacketError):
+                        args = netsnmp_args + [
+                            "sysUpTime",
+                            "sysORLastChange",
+                            "sysORID",
+                            "sysORDescr",
+                            "sysORUpTime",
+                        ]
+                        snmpbulkget(args, "testing_value")
+                else:
+                    args = netsnmp_args + [
+                        "sysUpTime",
+                        "sysORLastChange",
+                        "sysORID",
+                        "sysORDescr",
+                        "sysORUpTime",
+                    ]
+                    res = snmpbulkget(args, "testing_value")
 
-    netsnmp_args = netsnmp_args + ["1.3.6.1.2.1.1.1.0"]
-    res = snmpget(netsnmp_args, "testing_value")
+                    self.assertEqual(len(res), 50)
 
-    assert platform.version() in res[0].value
-    assert res[0].oid == "SNMPv2-MIB::sysDescr"
-    assert res[0].index == "0"
-    assert res[0].type == "STRING"
+                    self.assertIn("sysUpTimeInstance", res[0].oid)
+                    self.assertEqual(res[0].index, "")
+                    self.assertEqual(res[0].type, "Timeticks")
 
+                    self.assertEqual(res[4].oid, "SNMPv2-MIB::sysORUpTime")
+                    self.assertEqual(res[4].index, "1")
+                    self.assertEqual(res[4].type, "Timeticks")
 
-def test_snmp_get_unknown(netsnmp_args):
+    def test_snmpwalk(self):
+        """
+        Given netsnmp parameters (excluding SNMPv1 for bulkwalk)
+        When performing a snmpbulkwalk on the system tree
+        Then it should return all system MIB variables
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                if netsnmp_args[1] == "1":
+                    with self.assertRaises(PacketError):
+                        args = netsnmp_args + ["system"]
+                        res = snmpbulkwalk(args, "testing_value")
+                else:
+                    args = netsnmp_args + ["system"]
+                    res = snmpbulkwalk(args, "testing_value")
+                    self.assertGreaterEqual(len(res), 7)
 
-    with pytest.raises(GenericError):
-        netsnmp_args = netsnmp_args + ["sysDescripto.0"]
-        snmpget(netsnmp_args, "testing_value")
+                    self.assertIn(platform.version(), res[0].value)
+                    self.assertEqual(res[3].value, "G. S. Marzot <gmarzot@marzot.net>")
+                    self.assertEqual(res[4].value, platform.node())
+                    self.assertEqual(res[5].value, "my original location")
 
+    def test_snmp_walk_res(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpwalk on the system tree
+        Then it should return all system MIB variables with correct types
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                args = netsnmp_args + ["system"]
+                res = snmpwalk(args, "testing_value")
 
-def test_snmp_get_invalid_instance(netsnmp_args):
+                self.assertGreaterEqual(len(res), 7)
 
-    # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
-    # invalid object ID, instead it excepts with noSuchName
-    if netsnmp_args[1] == "1":
+                self.assertEqual(res[0].oid, "SNMPv2-MIB::sysDescr")
+                self.assertEqual(res[0].index, "0")
+                self.assertIn(platform.version(), res[0].value)
+                self.assertEqual(res[0].type, "STRING")
 
+                self.assertEqual(res[3].oid, "SNMPv2-MIB::sysContact")
+                self.assertEqual(res[3].index, "0")
+                self.assertEqual(res[3].value, "G. S. Marzot <gmarzot@marzot.net>")
+                self.assertEqual(res[3].type, "STRING")
+
+                self.assertEqual(res[4].oid, "SNMPv2-MIB::sysName")
+                self.assertEqual(res[4].index, "0")
+                self.assertEqual(res[4].value, platform.node())
+                self.assertEqual(res[4].type, "STRING")
+
+                self.assertEqual(res[5].oid, "SNMPv2-MIB::sysLocation")
+                self.assertEqual(res[5].index, "0")
+                self.assertEqual(res[5].value, "my original location")
+                self.assertEqual(res[5].type, "STRING")
+
+    def test_snmp_bulkwalk_res(self):
+        """
+        Given netsnmp parameters (excluding SNMPv1 which doesn't support bulk)
+        When performing a snmpbulkwalk on the system tree
+        Then it should return all system MIB variables with correct types
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                if netsnmp_args[1] == "1":
+                    with self.assertRaises(PacketError):
+                        args = netsnmp_args + ["system"]
+                        snmpbulkwalk(args, "testing_value")
+                else:
+                    args = netsnmp_args + ["system"]
+                    res = snmpbulkwalk(args, "testing_value")
+
+                    self.assertGreaterEqual(len(res), 7)
+
+                    self.assertEqual(res[0].oid, "SNMPv2-MIB::sysDescr")
+                    self.assertEqual(res[0].index, "0")
+                    self.assertIn(platform.version(), res[0].value)
+                    self.assertEqual(res[0].type, "STRING")
+
+                    self.assertEqual(res[3].oid, "SNMPv2-MIB::sysContact")
+                    self.assertEqual(res[3].index, "0")
+                    self.assertEqual(res[3].value, "G. S. Marzot <gmarzot@marzot.net>")
+                    self.assertEqual(res[3].type, "STRING")
+
+                    self.assertEqual(res[4].oid, "SNMPv2-MIB::sysName")
+                    self.assertEqual(res[4].index, "0")
+                    self.assertEqual(res[4].value, platform.node())
+                    self.assertEqual(res[4].type, "STRING")
+
+                    self.assertEqual(res[5].oid, "SNMPv2-MIB::sysLocation")
+                    self.assertEqual(res[5].index, "0")
+                    self.assertEqual(res[5].value, "my original location")
+                    self.assertEqual(res[5].type, "STRING")
+
+    def test_snmp_walk_unknown(self):
+        """
+        Given netsnmp parameters for various SNMP versions
+        When performing a snmpwalk on an unknown OID
+        Then it should raise a GenericError
+        """
+        for netsnmp_args in self.netsnmp_params:
+            with self.subTest(netsnmp=netsnmp_args):
+                with self.assertRaises(GenericError):
+                    args = netsnmp_args + ["systemo123"]
+                    snmpwalk(args, "testing_value")
+
+    def test_snmp_bulkwalk_non_sequential_oids(self):
+        """
+        Given netsnmp parameters (excluding SNMPv1 and macOS)
+        When performing a snmpbulkwalk on non-sequential OIDs
+        Then it should return the correct results
+        """
         if platform.system() != "Darwin":
-            with pytest.raises(PacketError):
-                netsnmp_args = netsnmp_args + ["sysContact.1"]
-                # On Mac `snmpwalk -v 1 -c public localhost:11161 sysContact.1`
-                # produces no output, but on Ubuntu it does...
-                snmpget(netsnmp_args, "testing_value")
-    else:
-        netsnmp_args = netsnmp_args + ["sysContact.1"]
-        res = snmpget(netsnmp_args, "testing_value")
-        assert res[0].type == "NOSUCHINSTANCE"
+            for netsnmp_args in self.netsnmp_params:
+                with self.subTest(netsnmp=netsnmp_args):
+                    if netsnmp_args[1] == "1":
+                        with self.assertRaises(PacketError):
+                            args = netsnmp_args + [
+                                "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+                            ]
+                            snmpbulkwalk(args, "testing_value")
+                    else:
+                        args = netsnmp_args + [
+                            "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
+                        ]
+                        res = snmpbulkwalk(args, "testing_value")
 
+                        self.assertEqual(len(res), 2)
 
-def test_snmp_get_invalid_object(netsnmp_args):
+                        self.assertEqual(res[0].oid, "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24")
+                        self.assertEqual(res[0].type, "INTEGER")
+                        self.assertEqual(res[0].index, "4")
 
-    if netsnmp_args[1] == "1":
-        with pytest.raises(PacketError):
-            netsnmp_args = netsnmp_args + ["iso"]
-            snmpget(netsnmp_args, "testing_value")
-    else:
-        netsnmp_args = netsnmp_args + ["iso"]
-        res = snmpget(netsnmp_args, "testing_value")
-        assert res[0].type == "NOSUCHOBJECT"
-
-
-def test_snmp_set_string(netsnmp_args, request, reset_values):
-
-    netsnmp_args_1 = netsnmp_args + ["sysLocation.0"]
-    res = snmpget(netsnmp_args_1, "testing_value")
-    assert res[0].oid == "SNMPv2-MIB::sysLocation"
-    assert res[0].index == "0"
-    assert res[0].value != "my newer location"
-    assert res[0].type == "STRING"
-
-    netsnmp_args_2 = netsnmp_args + ["sysLocation.0", "s", "my newer location"]
-    success = snmpset(netsnmp_args_2, "testing_value")
-    assert success
-
-    res = snmpget(netsnmp_args_1, "testing_value")
-    assert res[0].oid == "SNMPv2-MIB::sysLocation"
-    assert res[0].index == "0"
-    assert res[0].value == "my newer location"
-    assert res[0].type == "STRING"
-
-
-def test_snmp_set_integer(netsnmp_args, reset_values):
-
-    netsnmp_args_1 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "65"]
-    success = snmpset(netsnmp_args_1, "testing_value")
-    assert success
-
-    netsnmp_args_2 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2"]
-    res = snmpget(netsnmp_args_2, "testing_value")
-    assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheTimeout.1.3.6.1.2.1.2"
-    assert res[0].index == "2"
-    assert res[0].value == "65"
-    assert res[0].type == "INTEGER"
-
-
-def test_snmpbulkget(netsnmp_args):
-
-    if netsnmp_args[1] == "1":
-        with pytest.raises(PacketError):
-            netsnmp_args = netsnmp_args + [
-                "sysUpTime",
-                "sysORLastChange",
-                "sysORID",
-                "sysORDescr",
-                "sysORUpTime",
-            ]
-            snmpbulkget(netsnmp_args, "testing_value")
-    else:
-        netsnmp_args = netsnmp_args + [
-            "sysUpTime",
-            "sysORLastChange",
-            "sysORID",
-            "sysORDescr",
-            "sysORUpTime",
-        ]
-        res = snmpbulkget(netsnmp_args, "testing_value")
-
-        assert len(res) == 50
-
-        # Checking if "sysUpTimeInstance" is in "oid" is enough. The preamble
-        # changes per OS system
-        # "DISMAN-EVENT-MIB::sysUpTimeInstance" MacOS
-        # "DISMAN-EXPRESSION-MIB::sysUpTimeInstance" Linux
-        assert "sysUpTimeInstance" in res[0].oid
-        assert res[0].index == ""
-        assert res[0].type == "Timeticks"
-
-        assert res[4].oid == "SNMPv2-MIB::sysORUpTime"
-        assert res[4].index == "1"
-        assert res[4].type == "Timeticks"
-
-
-def test_snmpwalk(netsnmp_args):
-    if netsnmp_args[1] == "1":
-        with pytest.raises(PacketError):
-            netsnmp_args = netsnmp_args + ["system"]
-            res = snmpbulkwalk(netsnmp_args, "testing_value")
-
-    else:
-        netsnmp_args = netsnmp_args + ["system"]
-        res = snmpbulkwalk(netsnmp_args, "testing_value")
-        assert len(res) >= 7
-
-        assert platform.version() in res[0].value
-        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[4].value == platform.node()
-        assert res[5].value == "my original location"
-
-
-def test_snmp_walk_res(netsnmp_args):
-
-    netsnmp_args = netsnmp_args + ["system"]
-    res = snmpwalk(netsnmp_args, "testing_value")
-
-    assert len(res) >= 7
-
-    assert res[0].oid == "SNMPv2-MIB::sysDescr"
-    assert res[0].index == "0"
-    assert platform.version() in res[0].value
-    assert res[0].type == "STRING"
-
-    assert res[3].oid == "SNMPv2-MIB::sysContact"
-    assert res[3].index == "0"
-    assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-    assert res[3].type == "STRING"
-
-    assert res[4].oid == "SNMPv2-MIB::sysName"
-    assert res[4].index == "0"
-    assert res[4].value == platform.node()
-    assert res[4].type == "STRING"
-
-    assert res[5].oid == "SNMPv2-MIB::sysLocation"
-    assert res[5].index == "0"
-    assert res[5].value == "my original location"
-    assert res[5].type == "STRING"
-
-
-def test_snmp_bulkwalk_res(netsnmp_args):
-
-    if netsnmp_args[1] == "1":
-        with pytest.raises(PacketError):
-            netsnmp_args = netsnmp_args + ["system"]
-            snmpbulkwalk(netsnmp_args, "testing_value")
-    else:
-        netsnmp_args = netsnmp_args + ["system"]
-        res = snmpbulkwalk(netsnmp_args, "testing_value")
-
-        assert len(res) >= 7
-
-        assert res[0].oid == "SNMPv2-MIB::sysDescr"
-        assert res[0].index == "0"
-        assert platform.version() in res[0].value
-        assert res[0].type == "STRING"
-
-        assert res[3].oid == "SNMPv2-MIB::sysContact"
-        assert res[3].index == "0"
-        assert res[3].value == "G. S. Marzot <gmarzot@marzot.net>"
-        assert res[3].type == "STRING"
-
-        assert res[4].oid == "SNMPv2-MIB::sysName"
-        assert res[4].index == "0"
-        assert res[4].value == platform.node()
-        assert res[4].type == "STRING"
-
-        assert res[5].oid == "SNMPv2-MIB::sysLocation"
-        assert res[5].index == "0"
-        assert res[5].value == "my original location"
-        assert res[5].type == "STRING"
-
-
-def test_snmp_walk_unknown(netsnmp_args):
-
-    with pytest.raises(GenericError):
-        netsnmp_args = netsnmp_args + ["systemo123"]
-        snmpwalk(netsnmp_args, "testing_value")
-
-
-def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
-
-    if platform.system() != "Darwin":
-        if netsnmp_args[1] == "1":
-            with pytest.raises(PacketError):
-                netsnmp_args = netsnmp_args + [
-                    "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-                ]
-                snmpbulkwalk(netsnmp_args, "testing_value")
+                        self.assertEqual(res[1].oid, "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24")
+                        self.assertEqual(res[1].type, "INTEGER")
+                        self.assertEqual(res[1].index, "7")
         else:
-            netsnmp_args = netsnmp_args + [
-                "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-            ]
-            res = snmpbulkwalk(netsnmp_args, "testing_value")
+            self.assertTrue(True)
 
-            assert len(res) == 2
 
-            assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-            assert res[0].type == "INTEGER"
-            assert res[0].index == "4"
-            # Don't verify the value, this always changes
-            # assert res[0].value == "expired(5)"
-
-            assert res[1].oid == "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
-            assert res[1].type == "INTEGER"
-            assert res[1].index == "7"
-            # Don't verify the value, this always changes
-            # assert res[1].value == "expired(5)"
-
-    else:
-        assert True
+if __name__ == '__main__':
+    unittest.main()
