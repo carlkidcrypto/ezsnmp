@@ -8,7 +8,9 @@ class SnmpGetTest : public ::testing::Test {
    void SetUp() override {
       // Reset SNMP values to defaults before each test
       // Use snmpset to reset sysLocation to "my original location"
-      int result = system("snmpset -v2c -c public localhost:11161 SNMPv2-MIB::sysLocation.0 s \"my original location\" > /dev/null 2>&1");
+      int result = system(
+          "snmpset -v2c -c public localhost:11161 SNMPv2-MIB::sysLocation.0 s \"my original "
+          "location\" > /dev/null 2>&1");
       if (result != 0) {
          // snmpset failed - server might not be configured or accessible
          // Tests that depend on this value will fail with meaningful errors
@@ -24,7 +26,8 @@ TEST_F(SnmpGetTest, TestBasicGet) {
    auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, converted_value: my original location");
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
+             "converted_value: my original location");
 }
 
 TEST_F(SnmpGetTest, TestMultipleOids) {
@@ -39,9 +42,11 @@ TEST_F(SnmpGetTest, TestMultipleOids) {
    auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 2);
    EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, converted_value: my original location");
-   EXPECT_EQ(results[1]._to_string(),
-             "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1");
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
+             "converted_value: my original location");
+   EXPECT_EQ(
+       results[1]._to_string(),
+       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1");
 }
 
 TEST_F(SnmpGetTest, TestV3Get) {
@@ -65,7 +70,8 @@ TEST_F(SnmpGetTest, TestV3Get) {
    auto results = snmpget(args, "testing");
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, converted_value: my original location");
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
+             "converted_value: my original location");
 }
 
 TEST_F(SnmpGetTest, TestMissingOid) {
@@ -164,7 +170,8 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "-O", "e", "localhost:11161", "IF-MIB::ifAdminStatus.1"};
 
-   std::string expected_result = "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, converted_value: 1";
+   std::string expected_result =
+       "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, converted_value: 1";
 
    for (int i = 0; i < 5; ++i) {
       auto results = snmpget(args, "testing");

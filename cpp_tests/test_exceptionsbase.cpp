@@ -14,11 +14,7 @@ TEST(ExceptionsBaseTest, GenericErrorEmptyMessage) {
 }
 
 TEST(ExceptionsBaseTest, GenericErrorThrow) {
-   EXPECT_THROW(
-       {
-          throw GenericErrorBase("Test throw");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw GenericErrorBase("Test throw"); }, GenericErrorBase);
 }
 
 // Test ConnectionErrorBase
@@ -28,11 +24,7 @@ TEST(ExceptionsBaseTest, ConnectionErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, ConnectionErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw ConnectionErrorBase("Connection error");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw ConnectionErrorBase("Connection error"); }, GenericErrorBase);
 }
 
 // Test TimeoutErrorBase
@@ -42,11 +34,7 @@ TEST(ExceptionsBaseTest, TimeoutErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, TimeoutErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw TimeoutErrorBase("Timeout occurred");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw TimeoutErrorBase("Timeout occurred"); }, GenericErrorBase);
 }
 
 // Test UnknownObjectIDErrorBase
@@ -56,11 +44,7 @@ TEST(ExceptionsBaseTest, UnknownObjectIDErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, UnknownObjectIDErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw UnknownObjectIDErrorBase("OID not found");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw UnknownObjectIDErrorBase("OID not found"); }, GenericErrorBase);
 }
 
 // Test NoSuchNameErrorBase
@@ -70,11 +54,7 @@ TEST(ExceptionsBaseTest, NoSuchNameErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, NoSuchNameErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw NoSuchNameErrorBase("Name not found");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw NoSuchNameErrorBase("Name not found"); }, GenericErrorBase);
 }
 
 // Test NoSuchObjectErrorBase
@@ -84,11 +64,7 @@ TEST(ExceptionsBaseTest, NoSuchObjectErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, NoSuchObjectErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw NoSuchObjectErrorBase("Object not available");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw NoSuchObjectErrorBase("Object not available"); }, GenericErrorBase);
 }
 
 // Test NoSuchInstanceErrorBase
@@ -98,11 +74,7 @@ TEST(ExceptionsBaseTest, NoSuchInstanceErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, NoSuchInstanceErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw NoSuchInstanceErrorBase("Instance not found");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw NoSuchInstanceErrorBase("Instance not found"); }, GenericErrorBase);
 }
 
 // Test UndeterminedTypeErrorBase
@@ -112,11 +84,7 @@ TEST(ExceptionsBaseTest, UndeterminedTypeErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, UndeterminedTypeErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw UndeterminedTypeErrorBase("Cannot determine type");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw UndeterminedTypeErrorBase("Cannot determine type"); }, GenericErrorBase);
 }
 
 // Test ParseErrorBase
@@ -126,11 +94,7 @@ TEST(ExceptionsBaseTest, ParseErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, ParseErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw ParseErrorBase("Failed to parse");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw ParseErrorBase("Failed to parse"); }, GenericErrorBase);
 }
 
 // Test PacketErrorBase
@@ -140,11 +104,7 @@ TEST(ExceptionsBaseTest, PacketErrorConstruction) {
 }
 
 TEST(ExceptionsBaseTest, PacketErrorInheritance) {
-   EXPECT_THROW(
-       {
-          throw PacketErrorBase("Malformed packet");
-       },
-       GenericErrorBase);
+   EXPECT_THROW({ throw PacketErrorBase("Malformed packet"); }, GenericErrorBase);
 }
 
 // Test catching specific exception types

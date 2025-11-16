@@ -27,14 +27,9 @@ TEST_F(SnmpSetTest, TestInvalidOid) {
 }
 
 TEST_F(SnmpSetTest, TestUnknownHost) {
-   std::vector<std::string> args = {"-v",
-                                    "2c",
-                                    "-c",
-                                    "public",
-                                    "nonexistenthost:11161",
-                                    "SNMPv2-MIB::sysLocation.0",
-                                    "s",
-                                    "test"};
+   std::vector<std::string> args = {
+       "-v", "2c",  "-c", "public", "nonexistenthost:11161", "SNMPv2-MIB::sysLocation.0",
+       "s",  "test"};
 
    EXPECT_THROW(
        {
@@ -53,14 +48,8 @@ TEST_F(SnmpSetTest, TestUnknownHost) {
 }
 
 TEST_F(SnmpSetTest, TestInvalidVersion) {
-   std::vector<std::string> args = {"-v",
-                                    "999",
-                                    "-c",
-                                    "public",
-                                    "localhost:11161",
-                                    "SNMPv2-MIB::sysLocation.0",
-                                    "s",
-                                    "test"};
+   std::vector<std::string> args = {
+       "-v", "999", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0", "s", "test"};
 
    EXPECT_THROW(
        {
@@ -73,5 +62,3 @@ TEST_F(SnmpSetTest, TestInvalidVersion) {
        },
        ParseErrorBase);
 }
-
-

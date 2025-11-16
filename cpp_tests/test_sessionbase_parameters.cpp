@@ -194,7 +194,8 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          false,
                          {},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), "
+                          "converted_value: 1"}},
 
             PrintOptions{// Case 2: enums true, others false
                          true,
@@ -202,7 +203,8 @@ INSTANTIATE_TEST_SUITE_P(
                          false,
                          false,
                          {"e"},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, converted_value: 1"}},
+                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, "
+                          "converted_value: 1"}},
 
             PrintOptions{
                 // Case 3: full_oids true, others false
@@ -220,7 +222,8 @@ INSTANTIATE_TEST_SUITE_P(
                          true,
                          false,
                          {"n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), "
+                          "converted_value: 1"}},
 
             PrintOptions{
                 // Case 5: enums and full_oids true, oids_numeric false
@@ -238,7 +241,8 @@ INSTANTIATE_TEST_SUITE_P(
                          true,
                          false,
                          {"e", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, converted_value: 1"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, "
+                          "converted_value: 1"}},
 
             PrintOptions{// Case 7: full_oids and oids_numeric true, enums false
                          false,
@@ -246,7 +250,8 @@ INSTANTIATE_TEST_SUITE_P(
                          true,
                          false,
                          {"f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), "
+                          "converted_value: 1"}},
 
             PrintOptions{// Case 8: All true except timeticks numeric
                          true,
@@ -254,7 +259,8 @@ INSTANTIATE_TEST_SUITE_P(
                          true,
                          false,
                          {"e", "f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, converted_value: 1"}},
+                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, "
+                          "converted_value: 1"}},
 
             PrintOptions{// Case 9: Only timeticks numeric
                          false,

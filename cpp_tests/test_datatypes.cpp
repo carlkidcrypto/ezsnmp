@@ -11,7 +11,8 @@ TEST(ResultTest, BasicResultTest) {
    r1.update_converted_value();
 
    EXPECT_EQ(r1._to_string(),
-             "oid: SNMPv2-MIB::sysDescr, index: 0, type: STRING, value: Test Description, converted_value: Test Description");
+             "oid: SNMPv2-MIB::sysDescr, index: 0, type: STRING, value: Test Description, "
+             "converted_value: Test Description");
 }
 
 TEST(ResultTest, EmptyFieldsTest) {
@@ -22,7 +23,8 @@ TEST(ResultTest, EmptyFieldsTest) {
    r2.value = "";
    r2.update_converted_value();
 
-   EXPECT_EQ(r2._to_string(), "oid: , index: , type: , value: , converted_value: Unknown Type Conversion");
+   EXPECT_EQ(r2._to_string(),
+             "oid: , index: , type: , value: , converted_value: Unknown Type Conversion");
 }
 
 TEST(ResultTest, SpecialCharactersTest) {
@@ -33,7 +35,8 @@ TEST(ResultTest, SpecialCharactersTest) {
    r3.value = "456";
    r3.update_converted_value();
 
-   EXPECT_EQ(r3._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: 456, converted_value: 456");
+   EXPECT_EQ(r3._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: 456, converted_value: 456");
 }
 
 TEST(ResultTest, NegativeIntegerTest) {
@@ -44,7 +47,8 @@ TEST(ResultTest, NegativeIntegerTest) {
    r4.value = "-456";
    r4.update_converted_value();
 
-   EXPECT_EQ(r4._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: -456, converted_value: -456");
+   EXPECT_EQ(r4._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: -456, converted_value: -456");
 }
 
 TEST(ResultTest, EmptyValueTest) {
@@ -55,7 +59,9 @@ TEST(ResultTest, EmptyValueTest) {
    r5.value = "";
    r5.update_converted_value();
 
-   EXPECT_EQ(r5._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: , converted_value: INTEGER Conversion Error: Empty value for numeric type");
+   EXPECT_EQ(r5._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: , converted_value: INTEGER "
+             "Conversion Error: Empty value for numeric type");
 }
 
 TEST(ResultTest, AssignmentOperatorTest) {
@@ -80,14 +86,16 @@ TEST(ResultTest, AssignmentOperatorTest) {
    EXPECT_EQ(r1.index, "123");
    EXPECT_EQ(r1.type, "INTEGER");
    EXPECT_EQ(r1.value, "456");
-   EXPECT_EQ(r1._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: 456, converted_value: 456");
+   EXPECT_EQ(r1._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: 456, converted_value: 456");
 
    // r2 should have the modified values but old converted_value
    EXPECT_EQ(r2.oid, "new::oid");
    EXPECT_EQ(r2.index, "123");
    EXPECT_EQ(r2.type, "INTEGER");
    EXPECT_EQ(r2.value, "789");
-   EXPECT_EQ(r2._to_string(), "oid: new::oid, index: 123, type: INTEGER, value: 789, converted_value: 456");
+   EXPECT_EQ(r2._to_string(),
+             "oid: new::oid, index: 123, type: INTEGER, value: 789, converted_value: 456");
 }
 
 TEST(ResultTest, MoveOperatorTest) {
@@ -128,12 +136,15 @@ TEST(ResultTest, VectorOfResultsTest) {
    results.push_back(r2);
 
    EXPECT_EQ(results.size(), 2);
-   EXPECT_EQ(results[0]._to_string(), "oid: oid1, index: 1, type: STRING, value: value1, converted_value: value1");
-   EXPECT_EQ(results[1]._to_string(), "oid: oid2, index: 2, type: INTEGER, value: 123, converted_value: 123");
+   EXPECT_EQ(results[0]._to_string(),
+             "oid: oid1, index: 1, type: STRING, value: value1, converted_value: value1");
+   EXPECT_EQ(results[1]._to_string(),
+             "oid: oid2, index: 2, type: INTEGER, value: 123, converted_value: 123");
 
    // Test modifying vector elements (without updating converted_value)
    results[0].value = "new_value";
-   EXPECT_EQ(results[0]._to_string(), "oid: oid1, index: 1, type: STRING, value: new_value, converted_value: value1");
+   EXPECT_EQ(results[0]._to_string(),
+             "oid: oid1, index: 1, type: STRING, value: new_value, converted_value: value1");
 }
 
 // Helper function to create and test a Result object
@@ -151,9 +162,8 @@ void testResultConversion(std::string const& oid,
    r.update_converted_value();
 
    // Build expected string with converted_value appended
-   std::string expected_with_converted = expected_string_without_converted + 
-                                         ", converted_value: " + 
-                                         r._converted_value_to_string();
+   std::string expected_with_converted =
+       expected_string_without_converted + ", converted_value: " + r._converted_value_to_string();
    EXPECT_EQ(r._to_string(), expected_with_converted);
 
    // Use std::visit to compare the variant types and values
@@ -517,7 +527,9 @@ TEST(ResultIntegrationTest, MissingDatatype) {
    r.value = "some value";
    r.update_converted_value();
 
-   EXPECT_EQ(r._to_string(), "oid: test::oid, index: 1, type: , value: some value, converted_value: Unknown Type Conversion");
+   EXPECT_EQ(r._to_string(),
+             "oid: test::oid, index: 1, type: , value: some value, converted_value: Unknown Type "
+             "Conversion");
    EXPECT_EQ(std::get<std::string>(r.converted_value), "Unknown Type Conversion");
 }
 
