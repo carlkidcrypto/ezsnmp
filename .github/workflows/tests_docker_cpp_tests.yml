@@ -51,47 +51,31 @@ jobs:
       - name: Upload Test Results
         uses: actions/upload-artifact@v5
         with:
-          name: pytest-results_${{ matrix.distribution }}
+          name: cpp-test-results-dockerized
           path: |
-            docker/test-results_${{ matrix.distribution }}*.xml
-            docker/test-outputs_${{ matrix.distribution }}*.txt
+            docker/test-results_*.xml
+            docker/test-outputs_*.txt
 
-  comment-pytest-coverage-report:
+  comment-cpp-test-report:
     runs-on: ubuntu-latest
     needs: test-cpp-tests
     permissions:
       pull-requests: write # This is needed to create/update comments
-    if: always() 
+    if: always()
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v6
         with:
-          pattern: pytest-results_*
+          pattern: cpp-test-results-*
           merge-multiple: true 
       
       - name: List files
         run: ls -Rlah
 
-      - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@v1.1.57
+      - name: Publish C++ Test Results (Dockerized Tests)
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
         with:
-          title: Cpp Tests Coverage Report - Dockerized Tests
-          unique-id-for-comment: dockerized-cpp-tests
-          hide-badge: true
-          hide-report: true
-          create-new-comment: false
-          hide-comment: false
-          report-only-changed-files: false
-          multiple-files: |
-            almalinux10_py310, test-outputs_almalinux10_test_container_py310.txt, test-results_almalinux10__test_container_py310.xml
-            almalinux10_py311, test-outputs_almalinux10_test_container_py311.txt, test-results_almalinux10_test_container_py311.xml
-            almalinux10_py312, test-outputs_almalinux10_test_container_py312.txt, test-results_almalinux10_test_container_py312.xml
-            almalinux10_py313, test-outputs_almalinux10_test_container_py313.txt, test-results_almalinux10_test_container_py313.xml
-            archlinux_py310, test-outputs_archlinux_test_container_py310.txt, test-results_archlinux_test_container_py310.xml
-            archlinux_py311, test-outputs_archlinux_test_container_py311.txt, test-results_archlinux_test_container_py311.xml
-            archlinux_py312, test-outputs_archlinux_test_container_py312.txt, test-results_archlinux_test_container_py312.xml
-            archlinux_py313, test-outputs_archlinux_test_container_py313.txt, test-results_archlinux_test_container_py313.xml
-            rockylinux8_py310, test-outputs_rockylinux8_test_container_py310.txt, test-results_rockylinux8_test_container_py310.xml
-            rockylinux8_py311, test-outputs_rockylinux8_test_container_py311.txt, test-results_rockylinux8_test_container_py311.xml
-            rockylinux8_py312, test-outputs_rockylinux8_test_container_py312.txt, test-results_rockylinux8_test_container_py312.xml
-            rockylinux8_py313, test-outputs_rockylinux8_test_container_py313.txt, test-results_rockylinux8_test_container_py313.xml
+          files: "test-results_*.xml"
+          check_name: C++ Test Results - Dockerized
+          comment_title: C++ Test Results - Dockerized

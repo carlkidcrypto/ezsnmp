@@ -122,15 +122,9 @@ jobs:
           path: test-results
           merge-multiple: true
 
-      - name: Cpp test coverage comment
-        uses: MishaKav/pytest-coverage-comment@v1.1.57
+      - name: Publish C++ Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          title: Cpp Test Coverage Report - Native
-          unique-id-for-comment: cpp-tests
-          hide-badge: true
-          hide-report: false
-          create-new-comment: false
-          hide-comment: false
-          multiple-files: |
-            macOS, test-results/cpp-test-results_macos-latest.xml
-            Ubuntu, test-results/cpp-test-results_ubuntu-latest.xml
+          files: test-results/**/*.xml
+          check_name: C++ Test Results - Native
+          comment_title: C++ Test Results - Native

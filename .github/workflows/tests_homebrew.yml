@@ -32,7 +32,6 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
-            tox.ini
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -116,7 +115,9 @@ jobs:
       - name: Run Tests
         uses: carlkidcrypto/os-specific-runner@v2.1.3
         with:
-          linux: wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
+          linux: |
+                 python3 -m pip install .
+                 wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
                  VALGRIND=(
                    'valgrind'
                    '--tool=memcheck'
@@ -130,9 +131,8 @@ jobs:
 
           macos: |
             python3 -m pip install .
-            rm -drf build/ ezsnmp.egg-info/ .tox/
-            tox | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
-            mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
+            rm -drf build/ ezsnmp.egg-info/
+            pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v5

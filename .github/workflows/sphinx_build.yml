@@ -41,11 +41,11 @@ jobs:
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/;
-            mkdir doxygen_docs_build;
+            mkdir -p doxygen_docs_build;
             doxygen .doxygen;
             cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            mkdir source/_static;
-            mkdir source/_templates;
+            mkdir -p source/_static;
+            mkdir -p source/_templates;
             make clean && make html SPHINXOPTS="-W";
 
       - name: Archive Sphinx Documentation
