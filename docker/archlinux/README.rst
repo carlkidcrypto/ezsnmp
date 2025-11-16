@@ -52,7 +52,7 @@ The `docker/archlinux` folder contains the following files:
 - **Dockerfile**: Defines the instructions for building the Docker image.
 - **README.rst**: Documentation for the Docker image.
 - **go_docker.sh**: A shell script to automate the build and run process for the Docker image.
-- **dnf-requirements.txt**: A list of required packages to be installed in the Docker image.
+- **pacman-requirements.txt**: A list of required packages to be installed in the Docker image.
 - **docker-compose.yml**: A Docker Compose file for defining and running multi-container Docker applications.
 - **DockerEntry.sh**: A script that serves as the entry point for the Docker container, allowing for custom initialization or setup tasks.
 
