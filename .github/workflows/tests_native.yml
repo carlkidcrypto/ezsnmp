@@ -24,14 +24,14 @@ jobs:
         with:
           files: |
             .github/workflows/tests_native.yml
-            **/*.py
-            **/*.cpp
-            **/*.h
+            ezsnmp/*.cpp
+            ezsnmp/*.h
             python_tests/*.conf
-            setup.py
-            setup.cfg
-            tox.ini
+            python_tests/*.py
             python_tests/requirements.txt
+            setup.cfg
+            setup.py
+            tox.ini
 
   build-and-test:
     runs-on: ${{ matrix.os }}
