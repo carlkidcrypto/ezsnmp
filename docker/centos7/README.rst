@@ -1,54 +1,75 @@
 =========================
-CentOS 7 Dockerfile
+CentOS 7 Docker Image
 =========================
 
 Overview
 ========
-This directory contains the Dockerfile and related resources for building a Docker image based on **CentOS 7**.
-The image is designed to contain all the necessary components for testing and development purposes.
+This directory contains build resources for the **CentOS 7** test image. It is tailored for EzSnmp development and CI and now includes:
 
-Usage
-=====
+* devtoolset-11 (g++ 11.2.1)
+* Python 3.9–3.13 built from source with OpenSSL 1.1.1w (enables SSL for pip)
+* Virtual environment at ``/opt/venv`` pre-installed with project and test requirements
+* net-snmp libraries/utilities for SNMP tests
 
-Building the Image
-------------------
-To build the Docker image, navigate to the `docker/centos7` directory and run the following command:
-
-.. code-block:: bash
-
-    ./go_docker.sh
-
-This assumes that you have Docker installed and running on your system. The script will build the Docker image using the `Dockerfile` in the current directory. If you want to clean up any intermediate or dangling Docker images before building, you can use the `--clean` flag:
+Quick Build & Run
+=================
+Use the helper script (from this folder):
 
 .. code-block:: bash
 
-    ./go_docker.sh --clean
+    ./go_docker.sh            # build + start detached
+    ./go_docker.sh --clean    # prune then build + start
 
-The `--clean` flag ensures that your Docker environment is tidy by removing unnecessary images before proceeding with the build.
-
-Running the Container
----------------------
-The ./go_docker.sh script will also run the container after building the image. You can customize the script to pass additional arguments to the `docker run` command if needed. To run the container interactively, you can use the following command:
+Manual Build (Repository Root Context)
+-------------------------------------
+Because the Dockerfile copies top-level files (``requirements.txt``, ``python_tests/requirements.txt``), the build context must be the repo root:
 
 .. code-block:: bash
 
-    docker run -it --rm centos7_snmp_container /bin/bash
+    docker build -f docker/centos7/Dockerfile -t local/centos7 ..
+
+Starting an Interactive Container
+---------------------------------
+If already built (image tag ``carlkidcrypto/ezsnmp_test_images:centos7`` or locally):
+
+.. code-block:: bash
+
+    docker run -it --rm \
+      -v "$(pwd):/ezsnmp" \
+      --name centos7_snmp_container \
+      local/centos7 /bin/bash
+
+Activate the virtual environment:
+
+.. code-block:: bash
+
+    source /opt/venv/bin/activate
+    python -V
+    pip list
 
 Extending the Image
 -------------------
-You can extend the base image by modifying the `Dockerfile` to include additional packages, configurations, or scripts. After making changes, rebuild the image using the ./go_docker.sh script.
+Add system packages or tools by editing ``Dockerfile`` then rebuild. Keep build context at repo root for consistency.
 
 Directory Structure
 ===================
-The `docker/centos7` folder contains the following files:
+* **Dockerfile** – Python & OpenSSL source builds, venv provisioning
+* **README.rst** – This documentation
+* **go_docker.sh** – Local convenience build/run script
+* **docker-compose.yml** – Compose file mounting the repo at ``/ezsnmp``
+* **DockerEntry.sh** – Starts SNMP daemon & prepares environment
 
-- **Dockerfile**: Defines the instructions for building the Docker image.
-- **README.rst**: Documentation for the Docker image.
-- **go_docker.sh**: A shell script to automate the build and run process for the Docker image.
-- **yum-requirements.txt**: A list of required packages to be installed in the Docker image.
-- **docker-compose.yml**: A Docker Compose file for defining and running multi-container Docker applications.
-- **DockerEntryPoint.sh**: A script that serves as the entry point for the Docker container, allowing for custom initialization or setup tasks.
+Python & SSL
+============
+CentOS 7 ships OpenSSL 1.0.2 (too old for Python 3.13). The Dockerfile builds OpenSSL 1.1.1w and configures each Python build with ``--with-openssl=/usr/local/openssl`` so the ``ssl`` module and pip work.
+
+Virtual Environment
+===================
+Created with Python 3.13 at ``/opt/venv``; contains both:
+
+* ``requirements.txt`` (project tooling)
+* ``python_tests/requirements.txt`` (pytest, coverage, tox, etc.)
 
 Contributing
 ============
-Contributions are welcome! If you encounter issues, have suggestions, or want to add features, feel free to open an issue or submit a pull request on the project's GitHub repository.
+Improvements welcome—open an issue or PR if you spot problems or want enhancements.

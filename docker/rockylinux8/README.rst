@@ -52,7 +52,7 @@ The `docker/rockylinux8` folder contains the following files:
 - **go_docker.sh**: A shell script to automate the build and run process for the Docker image.
 - **dnf-requirements.txt**: A list of required packages to be installed in the Docker image.
 - **docker-compose.yml**: A Docker Compose file for defining and running multi-container Docker applications.
-- **DockerEntryPoint.sh**: A script that serves as the entry point for the Docker container, allowing for custom initialization or setup tasks.
+- **DockerEntry.sh**: A script that serves as the entry point for the Docker container, allowing for custom initialization or setup tasks.
 
 Contributing
 ============

@@ -10,15 +10,16 @@ This project uses pre-built Docker images hosted on Docker Hub for running unit 
 * **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.9-3.13, g++ 14.x (3.9-3.11 from source)
 * **archlinux** - Arch Linux (latest) with Python 3.9-3.13, g++ 14.x (3.9-3.12 from source)
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.9-3.12 from source)
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13 all from source
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13 all from source (OpenSSL 1.1.1w built to enable SSL)
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13 (3.10, 3.13 from source)
 
 All images support:
 
 * **g++ 9.5 or higher** for C++ compilation
-* **Python 3.9, 3.10, 3.11, 3.12, 3.13** for comprehensive testing
+* **Python 3.9, 3.10, 3.11, 3.12, 3.13** (source builds provided where distro lacks versions)
+* **Virtual environment at /opt/venv** (Python 3.13 or latest available) with both ``requirements.txt`` and ``python_tests/requirements.txt`` pre-installed
 * **Both cpp_tests and python_tests** test suites
-* **Optimized for minimal image size** with layer combining and cache cleanup
+* **Optimized for minimal image size** (combined RUNs, cache cleanup, removal of build artifacts)
 
 The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** https://hub.docker.com/r/carlkidcrypto/ezsnmp_test_images
 
@@ -37,7 +38,7 @@ To run a specific distribution image locally, you must use the ``-d`` (detached)
 
 **2. Run the Container and Start the Service:**
 
-The command below runs the container, mounts the current directory (``$(pwd)``) to ``/ezsnmp`` inside the container, exposes UDP port 161 (for SNMP communication), and runs the distribution-specific entry script (``DockerEntry.sh``).
+The command below runs the container, mounts the current directory (``$(pwd)``) to ``/ezsnmp`` inside the container, exposes UDP port 161 (for SNMP communication), and runs the distribution-specific entry script (``DockerEntry.sh``). A virtualenv with dependencies is already active via ``PATH`` modification.
 
 .. code-block:: bash
 
@@ -65,12 +66,14 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 
     # Execute tox for a default environment (like on almalinux10)
     sudo docker exec -t almalinux10_snmp_container /bin/bash -c '
+      source /opt/venv/bin/activate;
       tox > test-outputs_almalinux10.txt 2>&1;
       mv test-results.xml test-results_almalinux10.xml;
     '
 
     # Example for a specific environment (like py312 on rockylinux8)
     sudo docker exec -t rockylinux8_snmp_container /bin/bash -c '
+      source /opt/venv/bin/activate;
       tox -e py312 > test-outputs_rockylinux8_py312.txt 2>&1;
       mv test-results.xml test-results_rockylinux8_py312.xml;
     '
@@ -85,7 +88,28 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 
 **3. Cleanup:**
 
-Stop and remove the container once testing is complete:
+Stop and remove the container once testing is complete (or use the provided helper scripts described below):
+Helper Scripts
+==============
+From the ``docker`` directory:
+
+* ``build_and_publish_images.sh`` – Builds (repo root context) and pushes all distro images or a selected one.
+* ``run_python_tests_in_all_dockers.sh`` – Pulls images and executes tox for py39–py313 across all distros.
+* ``run_cpp_tests_in_all_dockers.sh`` – Pulls images and runs Meson/Ninja C++ tests + coverage.
+
+Example (build single image):
+
+.. code-block:: bash
+
+  ./build_and_publish_images.sh <docker_user> <docker_pat> centos7
+
+Example (run python tests in all images):
+
+.. code-block:: bash
+
+  ./run_python_tests_in_all_dockers.sh
+
+All scripts assume access to the repository root when mounting inside containers at ``/ezsnmp``.
 
 .. code-block:: bash
 
