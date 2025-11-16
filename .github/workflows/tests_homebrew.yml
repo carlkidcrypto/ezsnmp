@@ -39,6 +39,7 @@ jobs:
     env:
       PYTHONPATH: ${{ github.workspace }}
     needs: check-source-changes
+    timeout-minutes: 15
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
