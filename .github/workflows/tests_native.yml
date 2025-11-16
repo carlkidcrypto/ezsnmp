@@ -98,7 +98,7 @@ jobs:
         run: |
           python3 -m pip install .
           rm -drf build/ ezsnmp.egg-info/ .tox/
-          tox | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          tox -e py${{ matrix.python-version }} | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
           mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
 
       - name: Upload Test Results
