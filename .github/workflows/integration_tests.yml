@@ -21,12 +21,13 @@ jobs:
         uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
-            **/*.py
-            **/*.cpp
-            **/*.h
+            .github/workflows/tests_native.yml
+            ezsnmp/*.cpp
+            ezsnmp/*.h
             python_tests/*.conf
-            setup.py
+            python_tests/*.py
             setup.cfg
+            setup.py
 
   build-and-integration-test:
     runs-on: ${{ matrix.os }}

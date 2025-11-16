@@ -23,13 +23,14 @@ jobs:
         uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
-            **/*.py
-            **/*.cpp
-            **/*.h
+            .github/workflows/tests_cpp_native.yml
             cpp_tests/**
+            ezsnmp/*.cpp
+            ezsnmp/*.h
             python_tests/*.conf
-            setup.py
+            python_tests/*.py
             setup.cfg
+            setup.py
 
   build-and-test:
     name: Build and Run C++ Tests on ${{ matrix.os }}

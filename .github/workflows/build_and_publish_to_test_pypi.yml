@@ -21,9 +21,10 @@ jobs:
         uses: tj-actions/changed-files@v47.0.0
         with:
           files: |
-            setup.py
-            setup.cfg
-            pyproject.toml
+          .github/workflows/build_and_publish_to_test_pypi.yml
+          pyproject.toml
+          setup.cfg
+          setup.py
 
   build_wheels:
     name: Build wheels on ${{ matrix.os }}

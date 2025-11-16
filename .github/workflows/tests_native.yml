@@ -5,7 +5,7 @@ name: Tests With Native Package Manager
 concurrency: tests-native
 on:
   push:
-    branches: [ main, feature/get_uts_to_run_in_gh_runners ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 

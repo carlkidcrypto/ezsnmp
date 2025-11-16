@@ -25,14 +25,14 @@ jobs:
         with:
           files: |
             .github/workflows/tests_homebrew.yml
-            **/*.py
-            **/*.cpp
-            **/*.h
+            ezsnmp/*.cpp
+            ezsnmp/*.h
             python_tests/*.conf
-            setup.py
-            setup.cfg
-            tox.ini
+            python_tests/*.py
             python_tests/requirements.txt
+            setup.cfg
+            setup.py
+            tox.ini
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -128,6 +128,7 @@ jobs:
                  LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml  python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
+            python3 -m pip install .
             rm -drf build/ ezsnmp.egg-info/ .tox/
             tox | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
             mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml

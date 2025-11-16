@@ -23,15 +23,15 @@ jobs:
         with:
           files: |
             .github/workflows/tests_docker_cpp_tests.yml
-            **/*.py
-            **/*.cpp
-            **/*.h
-            python_tests/*.conf
-            setup.py
-            setup.cfg
-            tox.ini
-            python_tests/requirements.txt
             docker/**
+            ezsnmp/*.cpp
+            ezsnmp/*.h
+            python_tests/*.conf
+            python_tests/*.py
+            python_tests/requirements.txt
+            setup.cfg
+            setup.py
+            tox.ini
 
   test-cpp-tests:
     needs: check-changes

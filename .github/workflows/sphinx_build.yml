@@ -27,7 +27,7 @@ jobs:
             sudo apt install -y libsnmp-dev g++ python3-dev doxygen;
             cd /home/runner/work/ezsnmp/ezsnmp/ &&
             rm -drf build ezsnmp.egg-info &&
-            python -m pip install . --user;
+            python3 -m pip install .;
 
       - name: Install Pip Requirements
         uses: carlkidcrypto/os-specific-runner@v2.1.3
