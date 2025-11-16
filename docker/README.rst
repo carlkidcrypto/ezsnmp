@@ -72,7 +72,6 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 
     # Example for a specific environment (like py312 on rockylinux8)
     sudo docker exec -t rockylinux8_snmp_container /bin/bash -c '
-      source /opt/venv/bin/activate;
       tox -e py312 > test-outputs_rockylinux8_py312.txt 2>&1;
       mv test-results.xml test-results_rockylinux8_py312.xml;
     '
