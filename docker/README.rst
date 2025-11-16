@@ -66,7 +66,6 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 
     # Execute tox for a default environment (like on almalinux10)
     sudo docker exec -t almalinux10_snmp_container /bin/bash -c '
-      source /opt/venv/bin/activate;
       tox > test-outputs_almalinux10.txt 2>&1;
       mv test-results.xml test-results_almalinux10.xml;
     '
