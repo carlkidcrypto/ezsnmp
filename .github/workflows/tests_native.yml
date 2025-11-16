@@ -100,6 +100,8 @@ jobs:
           rm -drf build/ ezsnmp.egg-info/ .tox/
           tox -e py${{ matrix.python-version }} | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
           mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
+          # Generate coverage summary file (pytest-cov already collected data)
+          if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi
 
       - name: Upload Test Results
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
@@ -108,12 +110,14 @@ jobs:
           path: |
             test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+            pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
     needs: build-and-test
     permissions:
-      pull-requests: write # This is needed to create/update comments
+      pull-requests: write # This is needed to create/update PR comments
+      contents: write # Needed for commit comments when workflow runs on push
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
