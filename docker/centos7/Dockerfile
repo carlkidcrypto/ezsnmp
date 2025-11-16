@@ -22,15 +22,26 @@ RUN yum install -y yum-utils findutils \
 # Set devtoolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 
-# Build Python 3.9.21, 3.10.16, 3.11.11, 3.12.8, 3.13.1 from source
-# Note: --enable-optimizations disabled due to GCC coverage profiling conflicts with devtoolset-11
+# Build modern OpenSSL (CentOS 7 ships 1.0.2 which is too old for Python >=3.13 SSL module)
+RUN mkdir -p /tmp/build && cd /tmp/build && \
+    wget -q https://www.openssl.org/source/openssl-1.1.1w.tar.gz && \
+    tar -xzf openssl-1.1.1w.tar.gz && \
+    cd openssl-1.1.1w && \
+    ./Configure linux-x86_64 no-shared --prefix=/usr/local/openssl && \
+    make -j$(nproc) && \
+    make install_sw && \
+    cd / && rm -rf /tmp/build && \
+    echo "/usr/local/openssl/lib" > /etc/ld.so.conf.d/openssl_local.conf && ldconfig
+
+# Build Python 3.9.21, 3.10.16, 3.11.11, 3.12.8, 3.13.1 from source with OpenSSL 1.1.1w
+# Note: --enable-optimizations disabled due to coverage profiling conflicts
 RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.13.1:3.13; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
         tar -xzf Python-$FULL_VERSION.tgz && \
         cd Python-$FULL_VERSION && \
-        ./configure --enable-shared && \
+        ./configure --enable-shared --with-openssl=/usr/local/openssl && \
         make -j$(nproc) altinstall && \
         cd .. && \
         rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
@@ -56,3 +67,11 @@ RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment
 ENV PATH="$VENV_PATH/bin:$PATH"
+
+# Install Python requirements for project and tests inside the virtualenv
+COPY requirements.txt /tmp/requirements.txt
+COPY python_tests/requirements.txt /tmp/python_tests_requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    pip install -r /tmp/python_tests_requirements.txt && \
+    rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt

@@ -80,7 +80,7 @@ them with the following on Linux:
 
 .. code:: bash
 
-    git clone https://github.com/ezsnmp/ezsnmp.git;
+    git clone https://github.com/carlkidcrypto/ezsnmp.git;
     cd ezsnmp;
     sudo apt update && sudo apt upgrade -y;
     sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
@@ -103,11 +103,46 @@ them with the following on Linux:
     # python3 -m pip install . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
 
 
+Running Tests with Docker
+--------------------------
+
+EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
+
+* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, g++ 14.x
+* **archlinux** - Arch Linux with Python 3.9-3.13, g++ 14.x
+* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
+
+To run tests in Docker:
+
+.. code:: bash
+
+    # Run all Python tests across all distributions
+    cd docker/
+    chmod +x run_python_tests_in_all_dockers.sh
+    ./run_python_tests_in_all_dockers.sh
+
+    # Run a specific distribution image
+    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10
+    sudo docker run -d \
+      --name "almalinux10_snmp_container" \
+      -v "$(pwd):/ezsnmp" \
+      -p 161/udp \
+      carlkidcrypto/ezsnmp_test_images:almalinux10 \
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh"
+
+    # Execute tests inside the container
+    sudo docker exec -t almalinux10_snmp_container /bin/bash -c 'tox'
+
+For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
+
+
 On MacOS
 
 .. code:: bash
 
-    git clone https://github.com/ezsnmp/ezsnmp.git;
+    git clone https://github.com/carlkidcrypto/ezsnmp.git;
     cd ezsnmp;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
     sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;

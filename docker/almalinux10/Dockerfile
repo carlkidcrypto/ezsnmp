@@ -2,7 +2,7 @@
 FROM almalinux:10-kitten
 
 # Install EPEL, update system, and install dependencies in one layer to reduce image size
-COPY dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/almalinux10/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN dnf install -y epel-release && \
     dnf update -y && \
     dnf install -y findutils && \
@@ -35,3 +35,11 @@ RUN python3.13 -m venv $VENV_PATH
 # Activate the virtual environment by adding its bin directory to the PATH.
 # All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.
 ENV PATH="$VENV_PATH/bin:$PATH"
+
+# Install Python requirements for project and tests inside the virtualenv
+COPY requirements.txt /tmp/requirements.txt
+COPY python_tests/requirements.txt /tmp/python_tests_requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    pip install -r /tmp/python_tests_requirements.txt && \
+    rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
