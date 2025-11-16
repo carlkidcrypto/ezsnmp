@@ -7,7 +7,7 @@ RUN dnf update -y && \
     dnf config-manager --set-enabled powertools
 
 # Install gcc-toolset-11 (GCC 11.3.1, g++ 11.3.1) and dependencies from requirements file
-COPY dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/rockylinux8/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binutils && \
     xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf debuginfo-install -y python3 net-snmp-libs && \
@@ -56,3 +56,11 @@ RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 ENV PATH="$VENV_PATH/bin:$PATH"
+
+# Install Python requirements for project and tests inside the virtualenv
+COPY requirements.txt /tmp/requirements.txt
+COPY python_tests/requirements.txt /tmp/python_tests_requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    pip install -r /tmp/python_tests_requirements.txt && \
+    rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt

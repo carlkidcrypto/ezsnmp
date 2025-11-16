@@ -56,3 +56,11 @@ RUN python3.13 -m venv $VENV_PATH
 
 # Activate the virtual environment
 ENV PATH="$VENV_PATH/bin:$PATH"
+
+# Install Python requirements for project and tests inside the virtualenv
+COPY requirements.txt /tmp/requirements.txt
+COPY python_tests/requirements.txt /tmp/python_tests_requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    pip install -r /tmp/python_tests_requirements.txt && \
+    rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
