@@ -27,8 +27,8 @@ TEST_F(SnmpBulkWalkTest, TestInvalidOid) {
 }
 
 TEST_F(SnmpBulkWalkTest, TestUnknownHost) {
-   std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "nonexistenthost:11161", "1.3.6.1.2.1.1"};
+   std::vector<std::string> args = {"-v",           "2c", "-c", "public", "nonexistenthost:11161",
+                                    "1.3.6.1.2.1.1"};
 
    EXPECT_THROW(
        {
@@ -59,5 +59,3 @@ TEST_F(SnmpBulkWalkTest, TestInvalidVersion) {
        },
        ParseErrorBase);
 }
-
-

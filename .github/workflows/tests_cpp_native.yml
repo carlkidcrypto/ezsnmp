@@ -9,6 +9,11 @@ on:
   pull_request:
     branches: [ main ]
 
+# Added explicit permissions so the publish-unit-test-result action can create check runs
+permissions:
+  contents: write
+  checks: write
+
 jobs:
   check-source-changes:
     runs-on: ubuntu-latest
@@ -112,7 +117,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-test
     permissions:
-      pull-requests: write # This is needed to create/update comments
+      pull-requests: write # Needed to create/update PR comments
+      contents: write      # Needed to read artifacts/content for check run
+      checks: write        # Needed to create/update check runs
     if: always() && github.event_name == 'pull_request'
     steps:
       - name: Download All Test Results
