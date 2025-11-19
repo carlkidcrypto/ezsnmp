@@ -1,8 +1,8 @@
 name: "Pull Request Sphinx Docs Check"
 
 on:
- push:
-    branches: [ main , feature/get_uts_to_run_in_gh_runners_3]
+  push:
+    branches: [ main, feature/get_uts_to_run_in_gh_runners_3 ]
 
   pull_request:
     branches: [ main ]
