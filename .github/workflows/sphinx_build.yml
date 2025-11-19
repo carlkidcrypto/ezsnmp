@@ -49,7 +49,7 @@ jobs:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/;
             rm -drf build ezsnmp.egg-info;
-            python3 -m pip install .;
+            python3 -m pip install . -v;
             mkdir -p doxygen_docs_build;
             doxygen .doxygen;
             cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;

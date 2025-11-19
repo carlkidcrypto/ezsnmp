@@ -6,6 +6,7 @@ from subprocess import check_output, CalledProcessError, run
 from sys import argv, platform
 from shlex import split as s_split
 from setuptools import setup, Extension
+from setuptools.command.build_py import build_py as _build_py
 from re import search
 from setuptools.command.build_ext import build_ext
 
@@ -245,6 +246,18 @@ class SwigBuildExt(build_ext):
 
 # ---------------------------------------------------------------------------
 
+class BuildPyEnsureSwig(_build_py):
+    """
+    Ensure SWIG-generated Python wrappers exist before packaging Python modules.
+    Wheels typically run build_py before build_ext; this reorders to include
+    generated wrapper .py files (e.g., ezsnmp/datatypes.py) in the wheel.
+    """
+
+    def run(self):
+        # Run build_ext first so SWIG generates wrapper .py files into ezsnmp/
+        self.run_command("build_ext")
+        super().run()
+
 
 # Determine if a base directory has been provided with the --basedir option
 basedir = None
@@ -454,5 +467,6 @@ setup(
     # Tell setuptools to use your custom command
     cmdclass={
         "build_ext": SwigBuildExt,
+        "build_py": BuildPyEnsureSwig,
     },
 )
