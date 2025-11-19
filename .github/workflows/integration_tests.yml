@@ -2,7 +2,7 @@ name: Integration Tests
 concurrency: integration_tests
 on:
   push:
-    branches: [ main, get_uts_to_run_in_gh_runners_3 ]
+    branches: [ main ]
 
   pull_request:
     branches: [ main ]
