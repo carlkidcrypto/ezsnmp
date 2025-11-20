@@ -30,6 +30,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_py import build_py as _build_py
 from re import search
 from setuptools.command.build_ext import build_ext
+import time
 
 
 def is_macports_installed():
@@ -186,25 +187,32 @@ class SwigBuildExt(build_ext):
     """Custom build_ext: run SWIG on interface files before compiling extensions."""
 
     def _run_swig_command(self, swig_command, interface_file, wrapper_file):
+        start_time = time.perf_counter()
+        print(f"\t[PROFILE] SWIG start for {interface_file} at {start_time:.6f}")
         command = swig_command + ["-o", wrapper_file, interface_file]
-        print(f"SWIG: {' '.join(command)}")
         try:
             run(command, check=True)
+            end_time = time.perf_counter()
+            delta = end_time - start_time
+            print(f"\t[PROFILE] SWIG end for {interface_file} at {end_time:.6f} (delta: {delta:.6f}s)")
             return True, interface_file, None
         except (CalledProcessError, FileNotFoundError):
+            end_time = time.perf_counter()
+            delta = end_time - start_time
+            print(f"\t[PROFILE] SWIG failed for {interface_file} at {end_time:.6f} (delta: {delta:.6f}s)")
             return False, interface_file, f"SWIG failed for {interface_file}"
 
     def run(self):
-        print("--- Running SWIG to generate wrapper code ---")
+        print("------- Running SWIG to generate wrapper code -------")
         swig_command = [
             "swig",
-            "-c++",
-            "-python",
-            "-builtin",
-            "-threads",
-            "-doxygen",
-            "-std=c++17",
-            "-outdir",
+            "-c++",  # Force C++ code generation
+            "-python",  # Generate Python bindings
+            "-builtin",  # Use native Python data types
+            "-threads",  # Add thread support
+            "-doxygen",  # Convert Doxygen comments to pydoc
+            "-std=c++17",  # Specify C++17 standard
+            "-outdir",  # Specify output directory for the .py module
             "ezsnmp/.",
         ]
 
@@ -226,11 +234,10 @@ class SwigBuildExt(build_ext):
                     raise RuntimeError(
                         f"{error_msg}. Ensure SWIG is installed and on PATH."
                     )
-        print("--- SWIG processing complete ---")
-        super().run()
+        print("------- SWIG processing complete -------")
 
 
-class BuildPyEnsureSwig(_build_py):
+class BuildEverythingWithSwig(_build_py):
     """Run build_ext first so SWIG outputs .py wrappers before packaging."""
 
     def run(self):
@@ -444,7 +451,7 @@ def main():
     )
     setup(
         ext_modules=extensions,
-        cmdclass={"build_ext": SwigBuildExt, "build_py": BuildPyEnsureSwig},
+        cmdclass={"build_ext": SwigBuildExt, "build_py": BuildEverythingWithSwig},
     )
 
 
