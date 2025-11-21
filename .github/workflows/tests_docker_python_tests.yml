@@ -96,19 +96,41 @@ jobs:
           IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
           ENTRY_SCRIPT="/ezsnmp/docker/${{ matrix.distribution }}/DockerEntry.sh"
+          HOST_SOURCE_PATH="$PWD"
+          CONTAINER_WORK_DIR="/ezsnmp"
+          echo ">>> Starting container: $CONTAINER_NAME"
+          echo "    - Using host source path: $HOST_SOURCE_PATH"
+          echo "    - Mounting to: $CONTAINER_WORK_DIR"
           docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
-          docker run -d --name "$CONTAINER_NAME" -v "$PWD:/ezsnmp" "$IMAGE" \
-            /bin/bash -c "$ENTRY_SCRIPT true & tail -f /dev/null"
+          if ! docker run -d \
+            --name "$CONTAINER_NAME" \
+            -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+            "$IMAGE" \
+            /bin/bash -c "$ENTRY_SCRIPT true & tail -f /dev/null"; then
+              echo "ERROR: Docker run failed for $IMAGE" >&2
+              exit 1
+          fi
 
       - name: Run tox for ${{ matrix.python }}
         run: |
           set -euo pipefail
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
+          echo ">>> Executing tox tests inside container: $CONTAINER_NAME"
           docker exec -t "$CONTAINER_NAME" bash -c '
+            set -e
             cd /ezsnmp;
-            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/;
-            python3 -m pip install tox;
-            tox -e "${{ matrix.python }}" > test-outputs.txt 2>&1 || true;
+            echo "    - Cleaning previous build artifacts";
+            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/ || true;
+            echo "    - Installing tox";
+            python3 -m pip install --quiet tox;
+            TOX_ENV="${{ matrix.python }}";
+            echo "    - Running tox environment: $TOX_ENV";
+            if tox -e "$TOX_ENV" > test-outputs.txt 2>&1; then
+              echo "    - Tox completed for $TOX_ENV";
+            else
+              echo "    - Tox reported failures for $TOX_ENV (continuing to collect artifacts)";
+            fi;
+            exit 0;
           '
 
       - name: Collect artifacts

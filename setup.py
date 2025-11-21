@@ -194,12 +194,16 @@ class SwigBuildExt(build_ext):
             run(command, check=True)
             end_time = time.perf_counter()
             delta = end_time - start_time
-            print(f"\t[PROFILE] SWIG end for {interface_file} at {end_time:.6f} (delta: {delta:.6f}s)")
+            print(
+                f"\t[PROFILE] SWIG end for {interface_file} at {end_time:.6f} (delta: {delta:.6f}s)"
+            )
             return True, interface_file, None
         except (CalledProcessError, FileNotFoundError):
             end_time = time.perf_counter()
             delta = end_time - start_time
-            print(f"\t[PROFILE] SWIG failed for {interface_file} at {end_time:.6f} (delta: {delta:.6f}s)")
+            print(
+                f"\t[PROFILE] SWIG failed for {interface_file} at {end_time:.6f} (delta: {delta:.6f}s)"
+            )
             return False, interface_file, f"SWIG failed for {interface_file}"
 
     def run(self):
@@ -235,6 +239,7 @@ class SwigBuildExt(build_ext):
                         f"{error_msg}. Ensure SWIG is installed and on PATH."
                     )
         print("------- SWIG processing complete -------")
+        super().run()
 
 
 class BuildEverythingWithSwig(_build_py):
