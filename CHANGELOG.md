@@ -1,7 +1,90 @@
-Last Updated: 2025-10-08 14:02:09 UTC
+Last Updated: 2025-11-14 03:33:51 UTC
 
 # Changelog
 
+
+<a name="v2.1.0b1"></a>
+## [v2.1.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/2.1.0b0...v2.1.0b1) (2025-11-12)
+
+
+### Changes
+
+#### 461
+
+- 461 feature   add support for   exit    enter    del   ([#468](https://github.com/carlkidcrypto/ezsnmp/issues/468))
+
+
+#### Add
+
+- Add comprehensive unit test coverage for cpp_tests error paths and exceptions ([#487](https://github.com/carlkidcrypto/ezsnmp/issues/487))
+
+- Add The Scribe agent documentation guidelines ([#480](https://github.com/carlkidcrypto/ezsnmp/issues/480))
+
+
+#### Bump
+
+- Bump actions/upload-artifact from 4 to 5 ([#476](https://github.com/carlkidcrypto/ezsnmp/issues/476))
+
+- Bump actions/download-artifact from 5 to 6 ([#475](https://github.com/carlkidcrypto/ezsnmp/issues/475))
+
+- Bump carlkidcrypto/os-specific-runner from 2.1.2 to 2.1.3 ([#474](https://github.com/carlkidcrypto/ezsnmp/issues/474))
+
+- Bump tomli from 2.2.1 to 2.3.0 ([#465](https://github.com/carlkidcrypto/ezsnmp/issues/465))
+
+- Bump github/codeql-action from 3 to 4 ([#462](https://github.com/carlkidcrypto/ezsnmp/issues/462))
+
+- Bump platformdirs from 4.4.0 to 4.5.0 ([#464](https://github.com/carlkidcrypto/ezsnmp/issues/464))
+
+- Bump peter-evans/create-or-update-comment from 4 to 5 ([#454](https://github.com/carlkidcrypto/ezsnmp/issues/454))
+
+- Bump peter-evans/commit-comment from 3 to 4 ([#453](https://github.com/carlkidcrypto/ezsnmp/issues/453))
+
+- Bump tox from 4.30.2 to 4.30.3 ([#455](https://github.com/carlkidcrypto/ezsnmp/issues/455))
+
+- Bump furo from 2025.7.19 to 2025.9.25 ([#451](https://github.com/carlkidcrypto/ezsnmp/issues/451))
+
+- Bump tj-actions/changed-files from 46.0.5 to 47.0.0 ([#439](https://github.com/carlkidcrypto/ezsnmp/issues/439))
+
+
+#### Document
+
+- Document project structure and add missing README files ([#481](https://github.com/carlkidcrypto/ezsnmp/issues/481))
+
+
+#### Increase
+
+- Increase python_tests coverage from 80% to 88% ([#488](https://github.com/carlkidcrypto/ezsnmp/issues/488))
+
+
+#### Modernize
+
+- Modernize Docker infrastructure: Python 3.9-3.13, g++ 11+, optimized images ([#483](https://github.com/carlkidcrypto/ezsnmp/issues/483))
+
+
+#### Python
+
+- Python Tests: Docker ([#498](https://github.com/carlkidcrypto/ezsnmp/issues/498))
+
+
+#### Refactor
+
+- Refactor setup.py: Extract Homebrew detection into reusable functions and parallelize SWIG build ([#485](https://github.com/carlkidcrypto/ezsnmp/issues/485))
+
+
+#### Update
+
+- Update docs for v2.1.0b1 and refresh styles ([#501](https://github.com/carlkidcrypto/ezsnmp/issues/501))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="2.1.0b0"></a>
 ## [2.1.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0a3...2.1.0b0) (2025-10-06)

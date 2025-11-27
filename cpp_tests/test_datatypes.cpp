@@ -8,9 +8,11 @@ TEST(ResultTest, BasicResultTest) {
    r1.index = "0";
    r1.type = "STRING";
    r1.value = "Test Description";
+   r1.update_converted_value();
 
    EXPECT_EQ(r1._to_string(),
-             "oid: SNMPv2-MIB::sysDescr, index: 0, type: STRING, value: Test Description");
+             "oid: SNMPv2-MIB::sysDescr, index: 0, type: STRING, value: Test Description, "
+             "converted_value: Test Description");
 }
 
 TEST(ResultTest, EmptyFieldsTest) {
@@ -19,8 +21,10 @@ TEST(ResultTest, EmptyFieldsTest) {
    r2.index = "";
    r2.type = "";
    r2.value = "";
+   r2.update_converted_value();
 
-   EXPECT_EQ(r2._to_string(), "oid: , index: , type: , value: ");
+   EXPECT_EQ(r2._to_string(),
+             "oid: , index: , type: , value: , converted_value: Unknown Type Conversion");
 }
 
 TEST(ResultTest, SpecialCharactersTest) {
@@ -29,8 +33,10 @@ TEST(ResultTest, SpecialCharactersTest) {
    r3.index = "123";
    r3.type = "INTEGER";
    r3.value = "456";
+   r3.update_converted_value();
 
-   EXPECT_EQ(r3._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: 456");
+   EXPECT_EQ(r3._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: 456, converted_value: 456");
 }
 
 TEST(ResultTest, NegativeIntegerTest) {
@@ -39,8 +45,10 @@ TEST(ResultTest, NegativeIntegerTest) {
    r4.index = "123";
    r4.type = "INTEGER";
    r4.value = "-456";
+   r4.update_converted_value();
 
-   EXPECT_EQ(r4._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: -456");
+   EXPECT_EQ(r4._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: -456, converted_value: -456");
 }
 
 TEST(ResultTest, EmptyValueTest) {
@@ -49,8 +57,11 @@ TEST(ResultTest, EmptyValueTest) {
    r5.index = "123";
    r5.type = "INTEGER";
    r5.value = "";
+   r5.update_converted_value();
 
-   EXPECT_EQ(r5._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: ");
+   EXPECT_EQ(r5._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: , converted_value: INTEGER "
+             "Conversion Error: Empty value for numeric type");
 }
 
 TEST(ResultTest, AssignmentOperatorTest) {
@@ -59,6 +70,7 @@ TEST(ResultTest, AssignmentOperatorTest) {
    r1.index = "123";
    r1.type = "INTEGER";
    r1.value = "456";
+   r1.update_converted_value();
 
    Result r2;
    r2 = r1;
@@ -67,20 +79,23 @@ TEST(ResultTest, AssignmentOperatorTest) {
    // Modify r2 after assignment
    r2.oid = "new::oid";
    r2.value = "789";
+   // Note: converted_value is still 456 since we didn't call update_converted_value()
 
    // r1 should remain unchanged
    EXPECT_EQ(r1.oid, "test::oid");
    EXPECT_EQ(r1.index, "123");
    EXPECT_EQ(r1.type, "INTEGER");
    EXPECT_EQ(r1.value, "456");
-   EXPECT_EQ(r1._to_string(), "oid: test::oid, index: 123, type: INTEGER, value: 456");
+   EXPECT_EQ(r1._to_string(),
+             "oid: test::oid, index: 123, type: INTEGER, value: 456, converted_value: 456");
 
-   // r2 should have the modified values
+   // r2 should have the modified values but old converted_value
    EXPECT_EQ(r2.oid, "new::oid");
    EXPECT_EQ(r2.index, "123");
    EXPECT_EQ(r2.type, "INTEGER");
    EXPECT_EQ(r2.value, "789");
-   EXPECT_EQ(r2._to_string(), "oid: new::oid, index: 123, type: INTEGER, value: 789");
+   EXPECT_EQ(r2._to_string(),
+             "oid: new::oid, index: 123, type: INTEGER, value: 789, converted_value: 456");
 }
 
 TEST(ResultTest, MoveOperatorTest) {
@@ -108,23 +123,28 @@ TEST(ResultTest, VectorOfResultsTest) {
    r1.index = "1";
    r1.type = "STRING";
    r1.value = "value1";
+   r1.update_converted_value();
 
    Result r2;
    r2.oid = "oid2";
    r2.index = "2";
    r2.type = "INTEGER";
    r2.value = "123";
+   r2.update_converted_value();
 
    results.push_back(r1);
    results.push_back(r2);
 
    EXPECT_EQ(results.size(), 2);
-   EXPECT_EQ(results[0]._to_string(), "oid: oid1, index: 1, type: STRING, value: value1");
-   EXPECT_EQ(results[1]._to_string(), "oid: oid2, index: 2, type: INTEGER, value: 123");
+   EXPECT_EQ(results[0]._to_string(),
+             "oid: oid1, index: 1, type: STRING, value: value1, converted_value: value1");
+   EXPECT_EQ(results[1]._to_string(),
+             "oid: oid2, index: 2, type: INTEGER, value: 123, converted_value: 123");
 
-   // Test modifying vector elements
+   // Test modifying vector elements (without updating converted_value)
    results[0].value = "new_value";
-   EXPECT_EQ(results[0]._to_string(), "oid: oid1, index: 1, type: STRING, value: new_value");
+   EXPECT_EQ(results[0]._to_string(),
+             "oid: oid1, index: 1, type: STRING, value: new_value, converted_value: value1");
 }
 
 // Helper function to create and test a Result object
@@ -132,7 +152,7 @@ void testResultConversion(std::string const& oid,
                           std::string const& index,
                           std::string const& type,
                           std::string const& value,
-                          std::string const& expected_string,
+                          std::string const& expected_string_without_converted,
                           Result::ConvertedValue const& expected_converted_value) {
    Result r;
    r.oid = oid;
@@ -141,7 +161,10 @@ void testResultConversion(std::string const& oid,
    r.value = value;
    r.update_converted_value();
 
-   EXPECT_EQ(r._to_string(), expected_string);
+   // Build expected string with converted_value appended
+   std::string expected_with_converted =
+       expected_string_without_converted + ", converted_value: " + r._converted_value_to_string();
+   EXPECT_EQ(r._to_string(), expected_with_converted);
 
    // Use std::visit to compare the variant types and values
    std::visit(
@@ -220,7 +243,10 @@ TEST_F(ResultConvertedValueTest, HandlesIpAddress) {
 
 TEST_F(ResultConvertedValueTest, HandlesInvalidInteger) {
    auto converted = result_obj._make_converted_value("INTEGER", "not-a-number");
-   EXPECT_EQ(std::get<std::string>(converted), "INTEGER Conversion Error: stoi: no conversion");
+   // The error message may vary slightly between platforms, just check it's an error string
+   EXPECT_TRUE(std::holds_alternative<std::string>(converted));
+   std::string error_msg = std::get<std::string>(converted);
+   EXPECT_TRUE(error_msg.find("INTEGER Conversion Error") != std::string::npos);
 }
 
 // --- New Tests for Various SNMP Types and Edge Cases ---
@@ -501,7 +527,9 @@ TEST(ResultIntegrationTest, MissingDatatype) {
    r.value = "some value";
    r.update_converted_value();
 
-   EXPECT_EQ(r._to_string(), "oid: test::oid, index: 1, type: , value: some value");
+   EXPECT_EQ(r._to_string(),
+             "oid: test::oid, index: 1, type: , value: some value, converted_value: Unknown Type "
+             "Conversion");
    EXPECT_EQ(std::get<std::string>(r.converted_value), "Unknown Type Conversion");
 }
 
