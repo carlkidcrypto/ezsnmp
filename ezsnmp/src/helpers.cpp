@@ -14,7 +14,8 @@
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
  */
 /* Slight modifications to return std::string instead of print to stdout */
-std::string print_variable_to_string(oid const *objid, size_t objidlen,
+std::string print_variable_to_string(oid const *objid,
+                                     size_t objidlen,
                                      netsnmp_variable_list const *variable) {
    u_char *buf = nullptr;
    size_t buf_len = 256, out_len = 0;
@@ -25,12 +26,12 @@ std::string print_variable_to_string(oid const *objid, size_t objidlen,
       if (sprint_realloc_variable(&buf, &buf_len, &out_len, 1, objid, objidlen, variable)) {
          // Construct the formatted string
          std::string result(reinterpret_cast<char *>(buf), out_len);
-         SNMP_FREE(buf);  // Free the allocated buffer
+         SNMP_FREE(buf); // Free the allocated buffer
          return result;
       } else {
          // Construct the truncated string
          std::string truncated(reinterpret_cast<char *>(buf));
-         SNMP_FREE(buf);  // Free the allocated buffer
+         SNMP_FREE(buf); // Free the allocated buffer
          return truncated + " [TRUNCATED]";
       }
    }
@@ -79,7 +80,7 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
  */
 /* Slight modifications to raise GenericError instead of print to stderr */
 void snmp_perror_exception(char const *prog_string) {
-   int xerr = snmp_errno;  // MTCRITICAL_RESOURCE
+   int xerr = snmp_errno; // MTCRITICAL_RESOURCE
    char const *str = snmp_api_errstring(xerr);
 
    // Construct the error message
@@ -300,9 +301,8 @@ void clear_net_snmp_library_data() {
    // From:
    // https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
-                      0);  // Clear -O n && Clear -O f
+                      0); // Clear -O n && Clear -O f
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM,
-                          0);  // Clear -O e
-   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS,
-                          0);  // Clear -O t
+                          0);                                                          // Clear -O e
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
 }
