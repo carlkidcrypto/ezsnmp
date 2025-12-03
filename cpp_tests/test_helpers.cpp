@@ -130,9 +130,9 @@ TEST_F(ParseResultsTest, TestMixedResults) {
 
 TEST_F(ParseResultsTest, TestLongValues) {
    std::vector<std::string> inputs = {
-       "SNMPv2-MIB::sysDescr.0 = STRING: " + std::string(1024, 'A'),     // Long string value
-       "SNMPv2-MIB::sysLocation.0 = STRING: " + std::string(2048, 'B'),  // Very long string
-       "SNMPv2-MIB::sysName.0 = STRING: " + std::string(4096, 'C')       // Even longer string
+       "SNMPv2-MIB::sysDescr.0 = STRING: " + std::string(1024, 'A'),    // Long string value
+       "SNMPv2-MIB::sysLocation.0 = STRING: " + std::string(2048, 'B'), // Very long string
+       "SNMPv2-MIB::sysName.0 = STRING: " + std::string(4096, 'C')      // Even longer string
    };
 
    auto results = parse_results(inputs);
@@ -398,7 +398,7 @@ TEST_F(ParseResultsTest, TestNonStringValuesWithQuotesNotStripped) {
    // Test that quotes in non-STRING types are not stripped
    std::vector<std::string> inputs = {
        "SNMP-TARGET-MIB::snmpTargetAddrTAddress.test = STRING: \"1234\"",
-       "IF-MIB::ifOperStatus.1 = INTEGER: \"up(1)\"",  // hypothetical case
+       "IF-MIB::ifOperStatus.1 = INTEGER: \"up(1)\"", // hypothetical case
        "SNMPv2-MIB::sysObjectID.0 = OID: \"NET-SNMP-TC::linux\""};
 
    auto results = parse_results(inputs);
