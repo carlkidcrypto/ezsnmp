@@ -15,31 +15,32 @@ jobs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@v47.0.0
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47.0.0
         with:
           files: |
             .github/workflows/tests_docker_python_tests.yml
-            **/*.py
-            **/*.cpp
-            **/*.h
-            python_tests/*.conf
-            setup.py
-            setup.cfg
-            tox.ini
-            python_tests/requirements.txt
             docker/**
+            ezsnmp/*.cpp
+            ezsnmp/*.h
+            python_tests/*.conf
+            python_tests/*.py
+            python_tests/requirements.txt
+            setup.cfg
+            setup.py
+            tox.ini
 
   test-python-tests:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Run unit tests inside the Docker container
         run: |
@@ -48,7 +49,7 @@ jobs:
            ./run_python_tests_in_all_dockers.sh
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: pytest-results_${{ matrix.distribution }}
           path: |
@@ -63,7 +64,7 @@ jobs:
     if: always() 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           pattern: pytest-results_*
           merge-multiple: true 
@@ -72,7 +73,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@v1.1.57
+        uses: MishaKav/pytest-coverage-comment@1bdbba85fb74a2fdc1ec66383acec1091610f82b # v1.1.57
         with:
           title: Pytest Coverage Report - Dockerized Tests
           unique-id-for-comment: dockerized-python-tests

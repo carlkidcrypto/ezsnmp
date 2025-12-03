@@ -55,22 +55,23 @@ echo "--------------------------------------------------"
 # --- Build and Push Loop ---
 
 for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
-    
-    CONTEXT_PATH="${DOCKER_DIR}/${DISTRO_NAME}"
-    FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
 
-    echo ">>> Processing image: ${DISTRO_NAME}"
-    echo "    - Context Path: ${CONTEXT_PATH}"
-    echo "    - Target Tag: ${FULL_IMAGE_TAG}"
+  CONTEXT_PATH=".." # Build from repo root so we can COPY top-level files
+  DOCKERFILE_PATH="${DOCKER_DIR}/${DISTRO_NAME}/Dockerfile"
+  FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
 
-    # 1. Build the image
-    # Note: Use a dedicated Dockerfile if it's not named 'Dockerfile'
-    if docker build -t "${FULL_IMAGE_TAG}" "${CONTEXT_PATH}"; then
-        echo "    - Build successful."
-    else
-        echo "ERROR: Docker build failed for ${DISTRO_NAME}."
-        continue # Skip pushing if the build failed
-    fi
+  echo ">>> Processing image: ${DISTRO_NAME}"
+  echo "    - Context Path: ${CONTEXT_PATH}"
+  echo "    - Dockerfile: ${DOCKERFILE_PATH}"
+  echo "    - Target Tag: ${FULL_IMAGE_TAG}"
+
+  # 1. Build the image using the distro-specific Dockerfile with repo-root context
+  if docker build -f "${DOCKERFILE_PATH}" -t "${FULL_IMAGE_TAG}" "${CONTEXT_PATH}"; then
+    echo "    - Build successful."
+  else
+    echo "ERROR: Docker build failed for ${DISTRO_NAME}."
+    continue # Skip pushing if the build failed
+  fi
 
     # 2. Push the image
     if docker push "${FULL_IMAGE_TAG}"; then

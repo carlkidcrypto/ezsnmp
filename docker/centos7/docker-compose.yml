@@ -1,7 +1,8 @@
 services:
   centos7_snmp_container:
     build:
-      context: .
+      context: ../../
+      dockerfile: docker/centos7/Dockerfile
     container_name: centos7_snmp_container
     volumes:
       - ../../:/ezsnmp

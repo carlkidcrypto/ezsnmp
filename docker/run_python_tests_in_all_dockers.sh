@@ -76,7 +76,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		--name "${CONTAINER_NAME}" \
 		-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
 		"${FULL_IMAGE_TAG}" \
-		/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null"; then
+		/bin/bash -c "${ENTRY_SCRIPT_PATH} true & tail -f /dev/null"; then
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
 		continue
 	fi

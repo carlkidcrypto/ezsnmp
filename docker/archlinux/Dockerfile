@@ -7,7 +7,7 @@ RUN pacman -Syu --noconfirm && \
     pacman-contrib git go sudo gcc
 
 # Install official repository dependencies
-COPY pacman-requirements.txt /tmp/pacman-requirements.txt
+COPY docker/archlinux/pacman-requirements.txt /tmp/pacman-requirements.txt
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
@@ -39,6 +39,7 @@ RUN pacman -Scc --noconfirm && \
 
 # Build Python 3.9, 3.10, 3.11, 3.12 from source (system has 3.13 already)
 # This is faster and more reliable than AUR packages
+# altinstall puts binaries as python3.X in /usr/local/bin
 RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
@@ -52,7 +53,18 @@ RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
     done && \
     ldconfig
 
+# Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
+ENV PATH="/usr/local/bin:$PATH"
+
 # Virtual Environment Setup using latest Python (3.13)
 ENV VENV_PATH=/opt/venv
 RUN python -m venv $VENV_PATH
 ENV PATH="$VENV_PATH/bin:$PATH"
+
+# Install Python requirements for project and tests inside the virtualenv
+COPY requirements.txt /tmp/requirements.txt
+COPY python_tests/requirements.txt /tmp/python_tests_requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    pip install -r /tmp/python_tests_requirements.txt && \
+    rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
