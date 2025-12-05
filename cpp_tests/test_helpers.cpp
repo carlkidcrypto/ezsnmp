@@ -395,7 +395,7 @@ TEST_F(ParseResultsTest, TestStringValuesWithoutQuotes) {
 }
 
 TEST_F(ParseResultsTest, TestNonStringValuesWithQuotesNotStripped) {
-   // Test that quotes in non-STRING types are not stripped
+   // Test that quotes are stripped consistently from all types including STRING, INTEGER, and OID
    std::vector<std::string> inputs = {
        "SNMP-TARGET-MIB::snmpTargetAddrTAddress.test = STRING: \"1234\"",
        "IF-MIB::ifOperStatus.1 = INTEGER: \"up(1)\"", // hypothetical case
