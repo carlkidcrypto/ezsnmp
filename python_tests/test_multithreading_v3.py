@@ -25,7 +25,9 @@ def test_v3_multiple_sessions_same_user_sequential(sess_v3_md5_des):
     s1 = Session(**sess_v3_md5_des)
 
     # Perform an operation with first session
-    res1 = s1.get("1.3.6.1.2.1.1.1.0")  # Use numeric OID to avoid MIB resolution issues
+    res1 = s1.get(
+        "1.3.6.1.2.1.1.1.0"
+    )  # sysDescr.0 - using numeric OID for test reliability
     assert res1 is not None
     assert len(res1) > 0
     assert res1[0].value is not None
@@ -36,17 +38,17 @@ def test_v3_multiple_sessions_same_user_sequential(sess_v3_md5_des):
     # Perform an operation with second session
     # Before fix: This could fail with usmStatsNotInTimeWindows
     # After fix: The cache is cleared before each operation, so it should work
-    res2 = s2.get("1.3.6.1.2.1.1.1.0")
+    res2 = s2.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
     assert res2 is not None
     assert len(res2) > 0
     assert res2[0].value is not None
 
     # Alternate between sessions multiple times
     for i in range(3):
-        res1_alt = s1.get("1.3.6.1.2.1.1.1.0")
+        res1_alt = s1.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
         assert res1_alt is not None
 
-        res2_alt = s2.get("1.3.6.1.2.1.1.1.0")
+        res2_alt = s2.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
         assert res2_alt is not None
 
 
@@ -60,7 +62,7 @@ def test_v3_session_recreation_same_user(sess_v3_md5_des):
     """
     # Create and use first session
     s1 = Session(**sess_v3_md5_des)
-    res1 = s1.get("1.3.6.1.2.1.1.1.0")
+    res1 = s1.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
     assert res1 is not None
 
     # Destroy first session (in Python, just let it go out of scope)
@@ -73,7 +75,7 @@ def test_v3_session_recreation_same_user(sess_v3_md5_des):
     s2 = Session(**sess_v3_md5_des)
 
     # This should work without usmStatsNotInTimeWindows error
-    res2 = s2.get("1.3.6.1.2.1.1.1.0")
+    res2 = s2.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
     assert res2 is not None
     assert len(res2) > 0
 
@@ -82,5 +84,5 @@ def test_v3_session_recreation_same_user(sess_v3_md5_des):
     time.sleep(0.1)
 
     s3 = Session(**sess_v3_md5_des)
-    res3 = s3.get("1.3.6.1.2.1.1.1.0")
+    res3 = s3.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
     assert res3 is not None
