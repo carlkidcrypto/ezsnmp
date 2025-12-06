@@ -186,6 +186,12 @@ Result parse_result(std::string const &input) {
    }
    result.value = temp.substr(0, temp.find_last_not_of(" \t\n\r") + 1);
 
+   // Strip surrounding quotes from values (fix for issue #355)
+   // Some net-snmp versions/configurations return string values enclosed in quotes
+   if (result.value.length() >= 2 && result.value.front() == '"' && result.value.back() == '"') {
+      result.value = result.value.substr(1, result.value.length() - 2);
+   }
+
    // Check for "No Such Object" in the value
    if (result.value.find("No Such Object") != std::string::npos) {
       result.type = "NOSUCHOBJECT";

@@ -147,7 +147,7 @@ def test_session_set_multiple_next(sess, reset_values):
     assert res[0].type == "OID"
     assert res[1].oid == "SNMP-TARGET-MIB::snmpTargetAddrTAddress"
     assert res[1].index == "'test'"
-    assert res[1].value == '"1234"'
+    assert res[1].value == "1234"
     assert res[1].type == "STRING"
     assert res[2].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
     assert res[2].index == "'test'"
@@ -165,7 +165,7 @@ def test_session_set_multiple_next(sess, reset_values):
 
     assert res[1].oid == "SNMP-TARGET-MIB::snmpTargetAddrTAddress"
     assert res[1].index == "'test'"
-    assert res[1].value == '"1234"'
+    assert res[1].value == "1234"
     assert res[1].type == "STRING"
 
     assert res[2].oid == "SNMP-TARGET-MIB::snmpTargetAddrRowStatus"
@@ -444,3 +444,35 @@ def test_session_update():
     assert s.version == "1"
 
     del s
+
+
+def test_string_values_no_surrounding_quotes(sess):
+    """
+    Test for issue #355: String values should not be enclosed in quotes.
+
+    Some net-snmp versions/configurations return string values with surrounding
+    quotes like '"LEDI Network TS"' instead of 'LEDI Network TS'. The C++ code
+    in helpers.cpp strips these surrounding quotes.
+    """
+    # Test sysContact which is a STRING type
+    res = sess.get("sysContact.0")
+    assert res[0].type == "STRING"
+    # Value should NOT start or end with a quote
+    assert not res[0].value.startswith(
+        '"'
+    ), f"Value should not start with quote: {res[0].value}"
+    assert not res[0].value.endswith(
+        '"'
+    ), f"Value should not end with quote: {res[0].value}"
+
+    # Test sysLocation which is also a STRING type
+    res = sess.get("sysLocation.0")
+    assert res[0].type == "STRING"
+    assert not res[0].value.startswith(
+        '"'
+    ), f"Value should not start with quote: {res[0].value}"
+    assert not res[0].value.endswith(
+        '"'
+    ), f"Value should not end with quote: {res[0].value}"
+
+    del sess
