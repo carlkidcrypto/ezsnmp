@@ -339,6 +339,7 @@ void SessionBase::check_and_clear_v3_user() {
 }
 
 std::vector<Result> SessionBase::walk(std::string const& mib) {
+   check_and_clear_v3_user();
    populate_args();
 
    if (!mib.empty()) {
@@ -349,6 +350,7 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
+   check_and_clear_v3_user();
    populate_args();
 
    if (!mib.empty()) {
@@ -359,6 +361,7 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
+   check_and_clear_v3_user();
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -369,6 +372,7 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 }
 
 std::vector<Result> SessionBase::get(std::string const& mib) {
+   check_and_clear_v3_user();
    populate_args();
 
    if (!mib.empty()) {
@@ -379,6 +383,7 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
+   check_and_clear_v3_user();
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -389,6 +394,7 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
+   check_and_clear_v3_user();
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -399,6 +405,7 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
 }
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
+   check_and_clear_v3_user();
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -409,6 +416,7 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 }
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
+   check_and_clear_v3_user();
    populate_args();
 
    for (auto const& entry : mibs) {
