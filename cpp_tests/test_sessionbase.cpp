@@ -1261,10 +1261,20 @@ TEST_F(SessionBaseTest, TestMibSetters) {
    auto args = session._get_args();
    EXPECT_TRUE(std::find(args.begin(), args.end(), "-m") != args.end());
    
+   // Test clearing _set_load_mibs (setting to empty string should remove the argument)
+   session._set_load_mibs("");
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-m") == args.end());
+   
    // Test _set_mib_directories
    session._set_mib_directories("/usr/share/snmp/mibs");
    args = session._get_args();
    EXPECT_TRUE(std::find(args.begin(), args.end(), "-M") != args.end());
+   
+   // Test clearing _set_mib_directories (setting to empty string should remove the argument)
+   session._set_mib_directories("");
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-M") == args.end());
 }
 
 TEST_F(SessionBaseTest, TestMaxRepeatersToNumSetter) {
