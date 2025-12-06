@@ -1114,8 +1114,10 @@ TEST_F(SessionBaseTest, TestAllV3Parameters) {
    ASSERT_FALSE(args.empty());
    EXPECT_EQ(args.back(), "localhost:161") << "Hostname should be the last argument";
    
-   // Verify the total number of arguments (15 pairs * 2 + 1 hostname = 31)
-   EXPECT_EQ(args.size(), 31) << "Unexpected number of arguments";
+   // Verify the total number of arguments
+   // Expected: 15 flag-value pairs (2 elements each) + 1 hostname = 31 elements
+   const size_t expected_arg_count = 15 * 2 + 1;
+   EXPECT_EQ(args.size(), expected_arg_count) << "Unexpected number of arguments";
 }
 
 TEST_F(SessionBaseTest, TestV3WithCommunityIgnored) {
