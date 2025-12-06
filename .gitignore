@@ -62,4 +62,3 @@ ezsnmp-2.*.*/
 **test-outputs*.txt
 **test-results*.xml
 **lcov**.info
-_codeql_detected_source_root
