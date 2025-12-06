@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
@@ -1081,24 +1083,41 @@ TEST_F(SessionBaseTest, TestAllV3Parameters) {
        /* mib_directories */ "/usr/share/snmp/mibs");
    
    auto args = session._get_args();
-   // The actual order is based on input_arg_name_map processing order
-   std::vector<std::string> expected = {"-A", "authpass",
-                                        "-a", "SHA",
-                                        "-Z", "1,2",
-                                        "-n", "mycontext",
-                                        "-E", "80000002",
-                                        "-m", "ALL",
-                                        "-M", "/usr/share/snmp/mibs",
-                                        "-X", "privpass",
-                                        "-x", "AES",
-                                        "-r", "5",
-                                        "-e", "80000001",
-                                        "-l", "authPriv",
-                                        "-u", "myuser",
-                                        "-t", "10",
-                                        "-v", "3",
-                                        "localhost:161"};
-   ASSERT_EQ(args, expected);
+   
+   // Helper lambda to check if a flag-value pair exists in args
+   auto hasArgPair = [&args](const std::string& flag, const std::string& value) -> bool {
+      auto it = std::find(args.begin(), args.end(), flag);
+      if (it != args.end() && std::next(it) != args.end()) {
+         return *std::next(it) == value;
+      }
+      return false;
+   };
+   
+   // Check each expected argument pair independently of order
+   EXPECT_TRUE(hasArgPair("-A", "authpass")) << "Auth passphrase not found";
+   EXPECT_TRUE(hasArgPair("-a", "SHA")) << "Auth protocol not found";
+   EXPECT_TRUE(hasArgPair("-Z", "1,2")) << "Boots time not found";
+   EXPECT_TRUE(hasArgPair("-n", "mycontext")) << "Context not found";
+   EXPECT_TRUE(hasArgPair("-E", "80000002")) << "Context engine ID not found";
+   EXPECT_TRUE(hasArgPair("-m", "ALL")) << "Load MIBs not found";
+   EXPECT_TRUE(hasArgPair("-M", "/usr/share/snmp/mibs")) << "MIB directories not found";
+   EXPECT_TRUE(hasArgPair("-X", "privpass")) << "Privacy passphrase not found";
+   EXPECT_TRUE(hasArgPair("-x", "AES")) << "Privacy protocol not found";
+   EXPECT_TRUE(hasArgPair("-r", "5")) << "Retries not found";
+   EXPECT_TRUE(hasArgPair("-e", "80000001")) << "Security engine ID not found";
+   EXPECT_TRUE(hasArgPair("-l", "authPriv")) << "Security level not found";
+   EXPECT_TRUE(hasArgPair("-u", "myuser")) << "Security username not found";
+   EXPECT_TRUE(hasArgPair("-t", "10")) << "Timeout not found";
+   EXPECT_TRUE(hasArgPair("-v", "3")) << "Version not found";
+   
+   // Check that the hostname is the last argument
+   ASSERT_FALSE(args.empty());
+   EXPECT_EQ(args.back(), "localhost:161") << "Hostname should be the last argument";
+   
+   // Verify the total number of arguments
+   // Expected: 15 flag-value pairs (2 elements each) + 1 hostname = 31 elements
+   const size_t expected_arg_count = 15 * 2 + 1;
+   EXPECT_EQ(args.size(), expected_arg_count) << "Unexpected number of arguments";
 }
 
 TEST_F(SessionBaseTest, TestV3WithCommunityIgnored) {
