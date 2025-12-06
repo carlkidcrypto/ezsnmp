@@ -33,7 +33,7 @@ lcov --capture --directory "$BUILD_DIR" --output-file coverage.info --rc geninfo
 
 # Remove unwanted coverage data
 echo "Removing unwanted coverage data..."
-lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' '*/cpp_tests/*' '*/net-snmp-5.9-final-patched/*' --output-file updated_coverage.info
+lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' '*/cpp_tests/*' --output-file updated_coverage.info
 
 # Generate HTML coverage report
 echo "Generating HTML coverage report..."
