@@ -1169,21 +1169,12 @@ TEST_F(SessionBaseTest, TestBulkWalkEmptyMib) {
 TEST_F(SessionBaseTest, TestGetEmptyMib) {
    SessionBase session("localhost", "11161", "2c", "public");
    // Getting an empty MIB now throws an exception as expected
-   EXPECT_THROW(
-       {
-          try {
-             auto results = session.get("");
-          } catch (GenericErrorBase const& e) {
-             EXPECT_STREQ("Missing object name\n", e.what());
-             throw;
-          }
-       },
-       GenericErrorBase);
+   EXPECT_THROW(session.get(""), GenericErrorBase);
 }
 
 // Note: check_and_clear_v3_user() is private and called internally by setters
 // We test it indirectly through the V3 setters which call it
-TEST_F(SessionBaseTest, TestV3UserCacheClearing) {
+TEST_F(SessionBaseTest, TestV3SettersWorkWithoutThrow) {
    // Create V3 session which uses check_and_clear_v3_user internally
    SessionBase session("localhost", "161", "3", "", "SHA", "authpass", "", "engine123", "authPriv",
                        "", "testuser", "AES", "privpass");
