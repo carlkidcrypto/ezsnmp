@@ -1219,30 +1219,38 @@ TEST_F(SessionBaseTest, TestPrintOptionSetters) {
    // Test _set_print_enums_numerically
    session._set_print_enums_numerically(true);
    auto args = session._get_args();
-   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
    
    session._set_print_enums_numerically(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
    
    // Test _set_print_full_oids
    session._set_print_full_oids(true);
    args = session._get_args();
-   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
    
    session._set_print_full_oids(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
    
    // Test _set_print_oids_numerically
    session._set_print_oids_numerically(true);
    args = session._get_args();
-   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
    
    session._set_print_oids_numerically(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
    
    // Test _set_print_timeticks_numerically
    session._set_print_timeticks_numerically(true);
    args = session._get_args();
-   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
    
    session._set_print_timeticks_numerically(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
 }
 
 TEST_F(SessionBaseTest, TestMibSetters) {
