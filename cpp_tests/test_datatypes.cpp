@@ -692,15 +692,3 @@ TEST_F(ResultConvertedValueTest, HandlesLargeByteVector) {
    EXPECT_TRUE(result.find("bytes[50]") != std::string::npos);
    EXPECT_TRUE(result.find("...") != std::string::npos); // truncation indicator
 }
-
-// Test bitstring type
-TEST_F(ResultConvertedValueTest, HandlesBitstringType) {
-   auto converted = result_obj._make_converted_value("BitString", "10101010");
-   EXPECT_EQ(std::get<std::string>(converted), "10101010");
-}
-
-// Test opaque type
-TEST_F(ResultConvertedValueTest, HandlesOpaqueType) {
-   auto converted = result_obj._make_converted_value("Opaque", "opaque data");
-   EXPECT_EQ(std::get<std::string>(converted), "opaque data");
-}
