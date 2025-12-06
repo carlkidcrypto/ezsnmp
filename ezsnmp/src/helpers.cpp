@@ -136,9 +136,10 @@ std::regex const OID_INDEX_RE3(R"(^(RFC1213-MIB::[\w-]+)\.([\d\.]+)$)");
 // Matches MIB-style OIDs (e.g., IP-MIB::ipNetToPhysicalPhysAddress) and captures
 // the base OID and index separately. This handles cases with quoted strings in the index.
 // Format: MIB-NAME::object-name.index-components
-// This regex only matches when the index contains a quoted string or non-numeric components
+// This regex only matches when the index contains properly quoted string literals
 // to avoid interfering with OIDs that have numeric sub-OIDs (like nsCacheStatus.1.3.6.1...)
-std::regex const OID_INDEX_RE4(R"(^([\w-]+::[\w-]+)\.(.+".+")$)");
+// The pattern specifically looks for quoted strings as index components: \"[^\"]*\"
+std::regex const OID_INDEX_RE4(R"(^([\w-]+::[\w-]+)\.(.+\"[^\"]*\".*)$)");
 
 // This is a helper to turn OID results into a Result type
 Result parse_result(std::string const &input) {
@@ -158,6 +159,8 @@ Result parse_result(std::string const &input) {
 
    // Try OID_INDEX_RE4 first (MIB-style OIDs with potential quoted strings)
    // This handles cases like IP-MIB::ipNetToPhysicalPhysAddress.16.ipv4."192.168.1.181"
+   // IMPORTANT: Must be checked before OID_INDEX_RE2, which would incorrectly split
+   // inside quoted strings (e.g., splitting "192.168.1.181" at the last dot)
    if (std::regex_match(result.oid, fourth_match, OID_INDEX_RE4)) {
       std::string temp_oid = fourth_match[1].str();
       std::string temp_index = fourth_match[2].str();
