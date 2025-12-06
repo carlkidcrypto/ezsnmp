@@ -649,3 +649,58 @@ TEST_F(ResultConvertedValueTest, HandlesCaseInsensitiveTypes) {
    auto converted3 = result_obj._make_converted_value("Gauge32", "100");
    EXPECT_EQ(std::get<uint32_t>(converted3), 100);
 }
+
+// Test invalid hex string conversion
+TEST_F(ResultConvertedValueTest, HandlesInvalidHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "GG ZZ");
+   std::string result = std::get<std::string>(converted);
+   EXPECT_TRUE(result.find("Conversion Error") != std::string::npos);
+}
+
+// Test hex string with overly long byte
+TEST_F(ResultConvertedValueTest, HandlesHexStringLongByte) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "ABCD");
+   std::string result = std::get<std::string>(converted);
+   EXPECT_TRUE(result.find("Conversion Error") != std::string::npos);
+}
+
+// Test hex string with empty/whitespace value
+TEST_F(ResultConvertedValueTest, HandlesEmptyHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "  ");
+   auto bytes = std::get<std::vector<unsigned char>>(converted);
+   EXPECT_TRUE(bytes.empty());
+}
+
+// Test OctetStr conversion
+TEST_F(ResultConvertedValueTest, HandlesOctetStrType) {
+   auto converted = result_obj._make_converted_value("OctetStr", "test");
+   auto bytes = std::get<std::vector<unsigned char>>(converted);
+   EXPECT_EQ(bytes.size(), 4);
+   EXPECT_EQ(bytes[0], 't');
+   EXPECT_EQ(bytes[1], 'e');
+   EXPECT_EQ(bytes[2], 's');
+   EXPECT_EQ(bytes[3], 't');
+}
+
+// Test large byte vector serialization (over 32 bytes triggers truncation)
+TEST_F(ResultConvertedValueTest, HandlesLargeByteVector) {
+   Result r;
+   r.type = "Hex-STRING";
+   std::vector<unsigned char> large_vec(50, 0xAB);
+   r.converted_value = large_vec;
+   std::string result = r._converted_value_to_string();
+   EXPECT_TRUE(result.find("bytes[50]") != std::string::npos);
+   EXPECT_TRUE(result.find("...") != std::string::npos); // truncation indicator
+}
+
+// Test bitstring type
+TEST_F(ResultConvertedValueTest, HandlesBitstringType) {
+   auto converted = result_obj._make_converted_value("BitString", "10101010");
+   EXPECT_EQ(std::get<std::string>(converted), "10101010");
+}
+
+// Test opaque type
+TEST_F(ResultConvertedValueTest, HandlesOpaqueType) {
+   auto converted = result_obj._make_converted_value("Opaque", "opaque data");
+   EXPECT_EQ(std::get<std::string>(converted), "opaque data");
+}
