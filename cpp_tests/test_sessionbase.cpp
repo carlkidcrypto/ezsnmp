@@ -1202,6 +1202,62 @@ TEST_F(SessionBaseTest, TestV3UserCacheClearing) {
    EXPECT_EQ(session._get_security_username(), "newuser");
 }
 
+// Test additional setters that were not covered
+TEST_F(SessionBaseTest, TestPrintOptionSetters) {
+   SessionBase session("localhost", "161", "2c", "public");
+   
+   // Test _set_print_enums_numerically
+   session._set_print_enums_numerically(true);
+   auto args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   
+   session._set_print_enums_numerically(false);
+   
+   // Test _set_print_full_oids
+   session._set_print_full_oids(true);
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   
+   session._set_print_full_oids(false);
+   
+   // Test _set_print_oids_numerically
+   session._set_print_oids_numerically(true);
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   
+   session._set_print_oids_numerically(false);
+   
+   // Test _set_print_timeticks_numerically
+   session._set_print_timeticks_numerically(true);
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-O") != args.end());
+   
+   session._set_print_timeticks_numerically(false);
+}
+
+TEST_F(SessionBaseTest, TestMibSetters) {
+   SessionBase session("localhost", "161", "2c", "public");
+   
+   // Test _set_load_mibs
+   session._set_load_mibs("ALL");
+   auto args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-m") != args.end());
+   
+   // Test _set_mib_directories
+   session._set_mib_directories("/usr/share/snmp/mibs");
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-M") != args.end());
+}
+
+TEST_F(SessionBaseTest, TestMaxRepeatersToNumSetter) {
+   SessionBase session("localhost", "161", "2c", "public");
+   
+   // Test _set_max_repeaters_to_num
+   session._set_max_repeaters_to_num("50");
+   auto args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-Cr50") != args.end());
+}
+
 TEST_F(SessionBaseTest, TestBulkGetSingleMib) {
    SessionBase session("localhost", "11161", "2c", "public");
    std::vector<std::string> mibs = {"SNMPv2-MIB::sysORDescr"};
