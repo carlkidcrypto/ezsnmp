@@ -335,3 +335,79 @@ TEST_F(ParseResultsTest, TestSnmpwalkNetworkAddressType) {
    EXPECT_EQ(results[0].type, "Network Address");
    EXPECT_EQ(results[0].value, "AC:19:00:01");
 }
+
+TEST_F(ParseResultsTest, TestDotOIDEdgeCase) {
+   std::vector<std::string> inputs = {". = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
+TEST_F(ParseResultsTest, TestOIDWithEmptyType) {
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 =  Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
+// Test for create_argv function
+TEST(CreateArgvTest, TestBasicArgv) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public"};
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+   
+   EXPECT_EQ(argc, 5); // netsnmp + 4 args
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_STREQ(argv[1], "-v");
+   EXPECT_STREQ(argv[2], "2c");
+   EXPECT_STREQ(argv[3], "-c");
+   EXPECT_STREQ(argv[4], "public");
+   EXPECT_EQ(argv[5], nullptr);
+}
+
+TEST(CreateArgvTest, TestEmptyArgv) {
+   std::vector<std::string> args;
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+   
+   EXPECT_EQ(argc, 1); // Just netsnmp
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_EQ(argv[1], nullptr);
+}
+
+TEST(CreateArgvTest, TestLargeArgv) {
+   std::vector<std::string> args;
+   for (int i = 0; i < 100; i++) {
+      args.push_back("arg" + std::to_string(i));
+   }
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+   
+   EXPECT_EQ(argc, 101); // netsnmp + 100 args
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_STREQ(argv[1], "arg0");
+   EXPECT_STREQ(argv[100], "arg99");
+   EXPECT_EQ(argv[101], nullptr);
+}
+
+// Test for clear_net_snmp_library_data function
+TEST(ClearNetSnmpLibraryDataTest, TestClearFunction) {
+   // Set some values first
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 5);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 1);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 1);
+   
+   // Clear them
+   clear_net_snmp_library_data();
+   
+   // Verify they're cleared
+   EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS), 0);
+}

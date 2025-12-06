@@ -1038,3 +1038,160 @@ TEST_F(SessionBaseTest, TestBulkGetEmptyMibs) {
                                              "2c", "localhost:11161"};
    ASSERT_EQ(args, expected_args);
 }
+
+// Additional tests for edge cases and uncovered lines
+
+TEST_F(SessionBaseTest, TestEmptyHostname) {
+   SessionBase session("", "161", "1", "public");
+   EXPECT_EQ(session._get_hostname(), "");
+   auto args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public", "-r", "3", "-t", "1", "-v", "1", ":161"};
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestIPv6WithoutBrackets) {
+   SessionBase session("2001:db8::1", "", "1", "public");
+   EXPECT_EQ(session._get_hostname(), "2001:db8::1");
+   auto args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public", "-r",        "3", "-t", "1",
+                                        "-v", "1",      "2001:db8::1"};
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestAllV3Parameters) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "3",
+       /* community */ "",
+       /* auth_protocol */ "SHA",
+       /* auth_passphrase */ "authpass",
+       /* security_engine_id */ "80000001",
+       /* context_engine_id */ "80000002",
+       /* security_level */ "authPriv",
+       /* context */ "mycontext",
+       /* security_username */ "myuser",
+       /* privacy_protocol */ "AES",
+       /* privacy_passphrase */ "privpass",
+       /* boots_time */ "1,2",
+       /* retries */ "5",
+       /* timeout */ "10",
+       /* load_mibs */ "ALL",
+       /* mib_directories */ "/usr/share/snmp/mibs");
+   
+   auto args = session._get_args();
+   std::vector<std::string> expected = {"-A", "authpass",
+                                        "-a", "SHA",
+                                        "-Z", "1,2",
+                                        "-n", "mycontext",
+                                        "-E", "80000002",
+                                        "-X", "privpass",
+                                        "-x", "AES",
+                                        "-r", "5",
+                                        "-e", "80000001",
+                                        "-l", "authPriv",
+                                        "-u", "myuser",
+                                        "-m", "ALL",
+                                        "-M", "/usr/share/snmp/mibs",
+                                        "-t", "10",
+                                        "-v", "3",
+                                        "localhost:161"};
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestV3WithCommunityIgnored) {
+   // When version is 3, community string should be ignored
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "3",
+       /* community */ "public", // This should be ignored for v3
+       /* auth_protocol */ "SHA",
+       /* auth_passphrase */ "authpass",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "authPriv",
+       /* context */ "",
+       /* security_username */ "myuser",
+       /* privacy_protocol */ "AES",
+       /* privacy_passphrase */ "privpass");
+   
+   auto args = session._get_args();
+   // community flag (-c) should NOT be present
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-c"), args.end());
+}
+
+TEST_F(SessionBaseTest, TestMaxRepeatersParam) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "2c",
+       /* community */ "public",
+       /* auth_protocol */ "",
+       /* auth_passphrase */ "",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "",
+       /* context */ "",
+       /* security_username */ "",
+       /* privacy_protocol */ "",
+       /* privacy_passphrase */ "",
+       /* boots_time */ "",
+       /* retries */ "",
+       /* timeout */ "",
+       /* load_mibs */ "",
+       /* mib_directories */ "",
+       /* print_enums_numerically */ false,
+       /* print_full_oids */ false,
+       /* print_oids_numerically */ false,
+       /* print_timeticks_numerically */ false,
+       /* set_max_repeaters_to_num */ "25");
+   
+   auto args = session._get_args();
+   // Should contain -Cr25 (no space between flag and value)
+   EXPECT_NE(std::find(args.begin(), args.end(), "-Cr25"), args.end());
+}
+
+TEST_F(SessionBaseTest, TestWalkEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   auto results = session.walk("");
+   EXPECT_FALSE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestBulkWalkEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   auto results = session.bulk_walk("");
+   EXPECT_FALSE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestGetEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   auto results = session.get("");
+   EXPECT_TRUE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestCheckAndClearV3User) {
+   SessionBase session("localhost", "161", "3", "", "SHA", "authpass", "", "engine123", "authPriv",
+                       "", "testuser", "AES", "privpass");
+   // This should not throw
+   session.check_and_clear_v3_user();
+}
+
+TEST_F(SessionBaseTest, TestCheckAndClearV3UserNonV3) {
+   SessionBase session("localhost", "161", "2c", "public");
+   // This should not throw and should not do anything
+   session.check_and_clear_v3_user();
+}
+
+TEST_F(SessionBaseTest, TestBulkGetSingleMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   std::vector<std::string> mibs = {"SNMPv2-MIB::sysORDescr"};
+   auto results = session.bulk_get(mibs);
+   EXPECT_FALSE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestCloseSession) {
+   SessionBase session("localhost", "161", "2c", "public");
+   // This should not throw
+   session._close();
+}

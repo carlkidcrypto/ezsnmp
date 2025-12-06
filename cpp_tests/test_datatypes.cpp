@@ -542,3 +542,110 @@ TEST(ResultIntegrationTest, OctetStringConversion) {
        "oid: TEST-MIB::octetString, index: 1, type: OCTETSTR, value: hello\x01\x02\x03world",
        expected_vector);
 }
+
+// Test for hex string with invalid hex characters in middle of conversion
+TEST_F(ResultConvertedValueTest, HandlesHexStringWithLongInvalidPart) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "00 15 5D TOOLONG");
+   EXPECT_TRUE(std::holds_alternative<std::string>(converted));
+   std::string error_msg = std::get<std::string>(converted);
+   EXPECT_TRUE(error_msg.find("Hex-STRING Conversion Error: Malformed hex part 'TOOLONG'") != std::string::npos);
+}
+
+// Test for double type (not commonly used but supported)
+TEST_F(ResultConvertedValueTest, HandlesDoubleType) {
+   Result r;
+   r.converted_value = 3.14159;
+   std::string result = r._converted_value_to_string();
+   EXPECT_TRUE(result.find("3.14") != std::string::npos);
+}
+
+// Test for vector with > 32 bytes
+TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
+   std::string large_hex = "";
+   for (int i = 0; i < 40; i++) {
+      large_hex += "FF ";
+   }
+   auto converted = result_obj._make_converted_value("Hex-STRING", large_hex);
+   std::vector<unsigned char> vec = std::get<std::vector<unsigned char>>(converted);
+   EXPECT_EQ(vec.size(), 40);
+   
+   Result r;
+   r.converted_value = vec;
+   std::string result = r._converted_value_to_string();
+   EXPECT_TRUE(result.find("bytes[40]:") != std::string::npos);
+   EXPECT_TRUE(result.find("...") != std::string::npos); // Should truncate display
+}
+
+// Test all the other types that return string
+TEST_F(ResultConvertedValueTest, HandlesObjIdentity) {
+   auto converted = result_obj._make_converted_value("OBJIDENTITY", "some value");
+   EXPECT_EQ(std::get<std::string>(converted), "some value");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesOpaque) {
+   auto converted = result_obj._make_converted_value("Opaque", "opaque data");
+   EXPECT_EQ(std::get<std::string>(converted), "opaque data");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesBitString) {
+   auto converted = result_obj._make_converted_value("BITSTRING", "10101010");
+   EXPECT_EQ(std::get<std::string>(converted), "10101010");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesNsapAddress) {
+   auto converted = result_obj._make_converted_value("NSAPAddress", "some address");
+   EXPECT_EQ(std::get<std::string>(converted), "some address");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesTrapType) {
+   auto converted = result_obj._make_converted_value("TrapType", "trap");
+   EXPECT_EQ(std::get<std::string>(converted), "trap");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesNotifType) {
+   auto converted = result_obj._make_converted_value("NotifType", "notif");
+   EXPECT_EQ(std::get<std::string>(converted), "notif");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesObjGroup) {
+   auto converted = result_obj._make_converted_value("ObjGroup", "group");
+   EXPECT_EQ(std::get<std::string>(converted), "group");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesNotifGroup) {
+   auto converted = result_obj._make_converted_value("NotifGroup", "notif group");
+   EXPECT_EQ(std::get<std::string>(converted), "notif group");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesModId) {
+   auto converted = result_obj._make_converted_value("ModID", "module id");
+   EXPECT_EQ(std::get<std::string>(converted), "module id");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesAgentCap) {
+   auto converted = result_obj._make_converted_value("AgentCap", "agent cap");
+   EXPECT_EQ(std::get<std::string>(converted), "agent cap");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesModComp) {
+   auto converted = result_obj._make_converted_value("ModComp", "mod comp");
+   EXPECT_EQ(std::get<std::string>(converted), "mod comp");
+}
+
+// Test Integer32 type (variant of INTEGER)
+TEST_F(ResultConvertedValueTest, HandlesInteger32) {
+   auto converted = result_obj._make_converted_value("Integer32", "42");
+   EXPECT_EQ(std::get<int>(converted), 42);
+}
+
+// Test case-insensitivity
+TEST_F(ResultConvertedValueTest, HandlesCaseInsensitiveTypes) {
+   auto converted1 = result_obj._make_converted_value("integer", "42");
+   EXPECT_EQ(std::get<int>(converted1), 42);
+   
+   auto converted2 = result_obj._make_converted_value("STRING", "test");
+   EXPECT_EQ(std::get<std::string>(converted2), "test");
+   
+   auto converted3 = result_obj._make_converted_value("Gauge32", "100");
+   EXPECT_EQ(std::get<uint32_t>(converted3), 100);
+}
