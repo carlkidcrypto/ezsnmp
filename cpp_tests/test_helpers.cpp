@@ -394,8 +394,8 @@ TEST_F(ParseResultsTest, TestStringValuesWithoutQuotes) {
    EXPECT_EQ(results[2].value, "admin@example.com");
 }
 
-TEST_F(ParseResultsTest, TestNonStringValuesWithQuotesNotStripped) {
-   // Test that quotes are stripped consistently from all types including STRING, INTEGER, and OID
+TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
+   // Test that quotes are stripped from all types (STRING, INTEGER, OID)
    std::vector<std::string> inputs = {
        "SNMP-TARGET-MIB::snmpTargetAddrTAddress.test = STRING: \"1234\"",
        "IF-MIB::ifOperStatus.1 = INTEGER: \"up(1)\"", // hypothetical case
