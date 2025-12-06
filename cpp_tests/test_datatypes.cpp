@@ -576,61 +576,39 @@ TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
    EXPECT_TRUE(result.find("...") != std::string::npos); // Should truncate display
 }
 
-// Test all the other types that return string
-TEST_F(ResultConvertedValueTest, HandlesObjIdentity) {
-   auto converted = result_obj._make_converted_value("OBJIDENTITY", "some value");
-   EXPECT_EQ(std::get<std::string>(converted), "some value");
+// Parameterized test for string-like types
+struct StringTypeTestCase {
+   std::string type_name;
+   std::string input_value;
+   std::string test_name;  // For gtest output
+};
+
+class StringTypesTest : public ResultConvertedValueTest,
+                        public ::testing::WithParamInterface<StringTypeTestCase> {};
+
+TEST_P(StringTypesTest, HandlesStringLikeTypes) {
+   const auto& param = GetParam();
+   auto converted = result_obj._make_converted_value(param.type_name, param.input_value);
+   EXPECT_EQ(std::get<std::string>(converted), param.input_value);
 }
 
-TEST_F(ResultConvertedValueTest, HandlesOpaque) {
-   auto converted = result_obj._make_converted_value("Opaque", "opaque data");
-   EXPECT_EQ(std::get<std::string>(converted), "opaque data");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesBitString) {
-   auto converted = result_obj._make_converted_value("BITSTRING", "10101010");
-   EXPECT_EQ(std::get<std::string>(converted), "10101010");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesNsapAddress) {
-   auto converted = result_obj._make_converted_value("NSAPAddress", "some address");
-   EXPECT_EQ(std::get<std::string>(converted), "some address");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesTrapType) {
-   auto converted = result_obj._make_converted_value("TrapType", "trap");
-   EXPECT_EQ(std::get<std::string>(converted), "trap");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesNotifType) {
-   auto converted = result_obj._make_converted_value("NotifType", "notif");
-   EXPECT_EQ(std::get<std::string>(converted), "notif");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesObjGroup) {
-   auto converted = result_obj._make_converted_value("ObjGroup", "group");
-   EXPECT_EQ(std::get<std::string>(converted), "group");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesNotifGroup) {
-   auto converted = result_obj._make_converted_value("NotifGroup", "notif group");
-   EXPECT_EQ(std::get<std::string>(converted), "notif group");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesModId) {
-   auto converted = result_obj._make_converted_value("ModID", "module id");
-   EXPECT_EQ(std::get<std::string>(converted), "module id");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesAgentCap) {
-   auto converted = result_obj._make_converted_value("AgentCap", "agent cap");
-   EXPECT_EQ(std::get<std::string>(converted), "agent cap");
-}
-
-TEST_F(ResultConvertedValueTest, HandlesModComp) {
-   auto converted = result_obj._make_converted_value("ModComp", "mod comp");
-   EXPECT_EQ(std::get<std::string>(converted), "mod comp");
-}
+INSTANTIATE_TEST_SUITE_P(
+   ResultConvertedValueStringTypes,
+   StringTypesTest,
+   ::testing::Values(StringTypeTestCase{"OBJIDENTITY", "some value", "ObjIdentity"},
+                     StringTypeTestCase{"Opaque", "opaque data", "Opaque"},
+                     StringTypeTestCase{"BITSTRING", "10101010", "BitString"},
+                     StringTypeTestCase{"NSAPAddress", "some address", "NsapAddress"},
+                     StringTypeTestCase{"TrapType", "trap", "TrapType"},
+                     StringTypeTestCase{"NotifType", "notif", "NotifType"},
+                     StringTypeTestCase{"ObjGroup", "group", "ObjGroup"},
+                     StringTypeTestCase{"NotifGroup", "notif group", "NotifGroup"},
+                     StringTypeTestCase{"ModID", "module id", "ModId"},
+                     StringTypeTestCase{"AgentCap", "agent cap", "AgentCap"},
+                     StringTypeTestCase{"ModComp", "mod comp", "ModComp"}),
+   [](const ::testing::TestParamInfo<StringTypesTest::ParamType>& info) {
+      return info.param.test_name;
+   });
 
 // Test Integer32 type (variant of INTEGER)
 TEST_F(ResultConvertedValueTest, HandlesInteger32) {
