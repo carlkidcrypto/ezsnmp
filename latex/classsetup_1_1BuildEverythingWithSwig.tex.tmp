@@ -1,0 +1,25 @@
+\doxysection{setup.\+Build\+Everything\+With\+Swig Class Reference}
+\hypertarget{classsetup_1_1BuildEverythingWithSwig}{}\label{classsetup_1_1BuildEverythingWithSwig}\index{setup.BuildEverythingWithSwig@{setup.BuildEverythingWithSwig}}
+
+
+Inheritance diagram for setup.\+Build\+Everything\+With\+Swig\+:
+% FIG 0
+
+
+Collaboration diagram for setup.\+Build\+Everything\+With\+Swig\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classsetup_1_1BuildEverythingWithSwig_a1298cebe83186694ea11419033f0fe88}\label{classsetup_1_1BuildEverythingWithSwig_a1298cebe83186694ea11419033f0fe88} 
+{\bfseries run} (self)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Run build_ext first so SWIG outputs .py wrappers before packaging.\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+setup.\+py\end{DoxyCompactItemize}

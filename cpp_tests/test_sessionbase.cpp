@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
@@ -1037,4 +1039,262 @@ TEST_F(SessionBaseTest, TestBulkGetEmptyMibs) {
    std::vector<std::string> expected_args = {"-c", "public",         "-r", "3", "-t", "5", "-v",
                                              "2c", "localhost:11161"};
    ASSERT_EQ(args, expected_args);
+}
+
+// Additional tests for edge cases and uncovered lines
+
+TEST_F(SessionBaseTest, TestEmptyHostname) {
+   SessionBase session("", "161", "1", "public");
+   EXPECT_EQ(session._get_hostname(), "");
+   auto args = session._get_args();
+   // When hostname is empty, the result is just "" (not ":161")
+   std::vector<std::string> expected = {"-c", "public", "-r", "3", "-t", "1", "-v", "1", ""};
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestIPv6WithoutBrackets) {
+   SessionBase session("2001:db8::1", "", "1", "public");
+   EXPECT_EQ(session._get_hostname(), "2001:db8::1");
+   auto args = session._get_args();
+   std::vector<std::string> expected = {"-c", "public", "-r", "3",          "-t",
+                                        "1",  "-v",     "1",  "2001:db8::1"};
+   ASSERT_EQ(args, expected);
+}
+
+TEST_F(SessionBaseTest, TestAllV3Parameters) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "3",
+       /* community */ "",
+       /* auth_protocol */ "SHA",
+       /* auth_passphrase */ "authpass",
+       /* security_engine_id */ "80000001",
+       /* context_engine_id */ "80000002",
+       /* security_level */ "authPriv",
+       /* context */ "mycontext",
+       /* security_username */ "myuser",
+       /* privacy_protocol */ "AES",
+       /* privacy_passphrase */ "privpass",
+       /* boots_time */ "1,2",
+       /* retries */ "5",
+       /* timeout */ "10",
+       /* load_mibs */ "ALL",
+       /* mib_directories */ "/usr/share/snmp/mibs");
+
+   auto args = session._get_args();
+
+   // Helper lambda to check if a flag-value pair exists in args
+   auto hasArgPair = [&args](std::string const& flag, std::string const& value) -> bool {
+      auto it = std::find(args.begin(), args.end(), flag);
+      if (it != args.end() && std::next(it) != args.end()) {
+         return *std::next(it) == value;
+      }
+      return false;
+   };
+
+   // Check each expected argument pair independently of order
+   EXPECT_TRUE(hasArgPair("-A", "authpass")) << "Auth passphrase not found";
+   EXPECT_TRUE(hasArgPair("-a", "SHA")) << "Auth protocol not found";
+   EXPECT_TRUE(hasArgPair("-Z", "1,2")) << "Boots time not found";
+   EXPECT_TRUE(hasArgPair("-n", "mycontext")) << "Context not found";
+   EXPECT_TRUE(hasArgPair("-E", "80000002")) << "Context engine ID not found";
+   EXPECT_TRUE(hasArgPair("-m", "ALL")) << "Load MIBs not found";
+   EXPECT_TRUE(hasArgPair("-M", "/usr/share/snmp/mibs")) << "MIB directories not found";
+   EXPECT_TRUE(hasArgPair("-X", "privpass")) << "Privacy passphrase not found";
+   EXPECT_TRUE(hasArgPair("-x", "AES")) << "Privacy protocol not found";
+   EXPECT_TRUE(hasArgPair("-r", "5")) << "Retries not found";
+   EXPECT_TRUE(hasArgPair("-e", "80000001")) << "Security engine ID not found";
+   EXPECT_TRUE(hasArgPair("-l", "authPriv")) << "Security level not found";
+   EXPECT_TRUE(hasArgPair("-u", "myuser")) << "Security username not found";
+   EXPECT_TRUE(hasArgPair("-t", "10")) << "Timeout not found";
+   EXPECT_TRUE(hasArgPair("-v", "3")) << "Version not found";
+
+   // Check that the hostname is the last argument
+   ASSERT_FALSE(args.empty());
+   EXPECT_EQ(args.back(), "localhost:161") << "Hostname should be the last argument";
+
+   // Verify the total number of arguments
+   // Expected: 15 flag-value pairs (2 elements each) + 1 hostname = 31 elements
+   size_t const expected_arg_count = 15 * 2 + 1;
+   EXPECT_EQ(args.size(), expected_arg_count) << "Unexpected number of arguments";
+}
+
+TEST_F(SessionBaseTest, TestV3WithCommunityIgnored) {
+   // When version is 3, community string should be ignored
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "3",
+       /* community */ "public", // This should be ignored for v3
+       /* auth_protocol */ "SHA",
+       /* auth_passphrase */ "authpass",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "authPriv",
+       /* context */ "",
+       /* security_username */ "myuser",
+       /* privacy_protocol */ "AES",
+       /* privacy_passphrase */ "privpass");
+
+   auto args = session._get_args();
+   // community flag (-c) should NOT be present
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-c"), args.end());
+}
+
+TEST_F(SessionBaseTest, TestMaxRepeatersParam) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "161",
+       /* version */ "2c",
+       /* community */ "public",
+       /* auth_protocol */ "",
+       /* auth_passphrase */ "",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "",
+       /* context */ "",
+       /* security_username */ "",
+       /* privacy_protocol */ "",
+       /* privacy_passphrase */ "",
+       /* boots_time */ "",
+       /* retries */ "",
+       /* timeout */ "",
+       /* load_mibs */ "",
+       /* mib_directories */ "",
+       /* print_enums_numerically */ false,
+       /* print_full_oids */ false,
+       /* print_oids_numerically */ false,
+       /* print_timeticks_numerically */ false,
+       /* set_max_repeaters_to_num */ "25");
+
+   auto args = session._get_args();
+   // Should contain -Cr25 (no space between flag and value)
+   EXPECT_NE(std::find(args.begin(), args.end(), "-Cr25"), args.end());
+}
+
+TEST_F(SessionBaseTest, TestWalkEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   auto results = session.walk("");
+   EXPECT_FALSE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestBulkWalkEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   auto results = session.bulk_walk("");
+   EXPECT_FALSE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestGetEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   // Getting an empty MIB now throws an exception as expected
+   EXPECT_THROW(session.get(""), GenericErrorBase);
+}
+
+// Note: check_and_clear_v3_user() is private and called internally by setters
+// We test it indirectly through the V3 setters which call it
+TEST_F(SessionBaseTest, TestV3SettersWorkWithoutThrow) {
+   // Create V3 session which uses check_and_clear_v3_user internally
+   SessionBase session("localhost", "161", "3", "", "SHA", "authpass", "", "engine123", "authPriv",
+                       "", "testuser", "AES", "privpass");
+   // When changing V3 parameters, check_and_clear_v3_user is called internally
+   // Just verify the setters work without throwing
+   session._set_auth_protocol("MD5");
+   EXPECT_EQ(session._get_auth_protocol(), "MD5");
+
+   session._set_auth_passphrase("new_pass");
+   EXPECT_EQ(session._get_auth_passphrase(), "new_pass");
+
+   session._set_privacy_protocol("DES");
+   EXPECT_EQ(session._get_privacy_protocol(), "DES");
+
+   session._set_security_username("newuser");
+   EXPECT_EQ(session._get_security_username(), "newuser");
+}
+
+// Test additional setters that were not covered
+TEST_F(SessionBaseTest, TestPrintOptionSetters) {
+   SessionBase session("localhost", "161", "2c", "public");
+
+   // Test _set_print_enums_numerically
+   session._set_print_enums_numerically(true);
+   auto args = session._get_args();
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   session._set_print_enums_numerically(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   // Test _set_print_full_oids
+   session._set_print_full_oids(true);
+   args = session._get_args();
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   session._set_print_full_oids(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   // Test _set_print_oids_numerically
+   session._set_print_oids_numerically(true);
+   args = session._get_args();
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   session._set_print_oids_numerically(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   // Test _set_print_timeticks_numerically
+   session._set_print_timeticks_numerically(true);
+   args = session._get_args();
+   EXPECT_NE(std::find(args.begin(), args.end(), "-O"), args.end());
+
+   session._set_print_timeticks_numerically(false);
+   args = session._get_args();
+   EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
+}
+
+TEST_F(SessionBaseTest, TestMibSetters) {
+   SessionBase session("localhost", "161", "2c", "public");
+
+   // Test _set_load_mibs
+   session._set_load_mibs("ALL");
+   auto args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-m") != args.end());
+
+   // Test clearing _set_load_mibs (setting to empty string should remove the argument)
+   session._set_load_mibs("");
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-m") == args.end());
+
+   // Test _set_mib_directories
+   session._set_mib_directories("/usr/share/snmp/mibs");
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-M") != args.end());
+
+   // Test clearing _set_mib_directories (setting to empty string should remove the argument)
+   session._set_mib_directories("");
+   args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-M") == args.end());
+}
+
+TEST_F(SessionBaseTest, TestMaxRepeatersToNumSetter) {
+   SessionBase session("localhost", "161", "2c", "public");
+
+   // Test _set_max_repeaters_to_num
+   session._set_max_repeaters_to_num("50");
+   auto args = session._get_args();
+   EXPECT_TRUE(std::find(args.begin(), args.end(), "-Cr50") != args.end());
+}
+
+TEST_F(SessionBaseTest, TestBulkGetSingleMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   std::vector<std::string> mibs = {"SNMPv2-MIB::sysORDescr"};
+   auto results = session.bulk_get(mibs);
+   EXPECT_FALSE(results.empty());
+}
+
+TEST_F(SessionBaseTest, TestCloseSession) {
+   SessionBase session("localhost", "161", "2c", "public");
+   // This should not throw
+   session._close();
 }
