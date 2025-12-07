@@ -29,10 +29,9 @@ jobs:
                       ~/.cache/go-build
                       ~/go/pkg/mod
                       ~/go/bin
-                  key: ${{ runner.os }}-go-git-chglog-${{ hashFiles('**/go.sum') }}
+                  key: ${{ runner.os }}-go-git-chglog-v1
                   restore-keys: |
                       ${{ runner.os }}-go-git-chglog-
-                      ${{ runner.os }}-go-
 
             - name: Setup git-chglog
               uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
@@ -52,26 +51,18 @@ jobs:
             - name: Generate CHANGELOG.md
               id: generate
               run: |
-                  # Store old CHANGELOG.md for comparison
+                  # Store old CHANGELOG.md content (without timestamp) for comparison
                   if [ -f CHANGELOG.md ]; then
-                      cp CHANGELOG.md CHANGELOG.md.old
+                      # Skip the first 2 lines (timestamp header and blank line)
+                      tail -n +3 CHANGELOG.md > CHANGELOG.md.old
                   fi
                   
-                  # Generate new changelog
-                  rm -f CHANGELOG.md
+                  # Generate new changelog content
                   git-chglog --config .chglog/config.yml -o CHANGELOG.tmp
                   
-                  # Add timestamp header
-                  TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S %Z")
-                  echo "Last Updated: $TIMESTAMP" > CHANGELOG.md.new
-                  echo "" >> CHANGELOG.md.new
-                  cat CHANGELOG.tmp >> CHANGELOG.md.new
-                  mv CHANGELOG.md.new CHANGELOG.md
-                  rm CHANGELOG.tmp
-                  
-                  # Check if CHANGELOG actually changed
+                  # Check if CHANGELOG content actually changed (excluding timestamp)
                   if [ -f CHANGELOG.md.old ]; then
-                      if diff -q CHANGELOG.md CHANGELOG.md.old > /dev/null; then
+                      if diff -q CHANGELOG.tmp CHANGELOG.md.old > /dev/null; then
                           echo "has_changes=false" >> $GITHUB_OUTPUT
                       else
                           echo "has_changes=true" >> $GITHUB_OUTPUT
@@ -80,6 +71,13 @@ jobs:
                   else
                       echo "has_changes=true" >> $GITHUB_OUTPUT
                   fi
+                  
+                  # Add timestamp header to final CHANGELOG.md
+                  TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S %Z")
+                  echo "Last Updated: $TIMESTAMP" > CHANGELOG.md
+                  echo "" >> CHANGELOG.md
+                  cat CHANGELOG.tmp >> CHANGELOG.md
+                  rm CHANGELOG.tmp
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
