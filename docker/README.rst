@@ -7,17 +7,17 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.9-3.13, g++ 14.x (3.9-3.11 from source)
-* **archlinux** - Arch Linux (latest) with Python 3.9-3.13, g++ 14.x (3.9-3.12 from source)
-* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.9-3.12 from source)
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13 all from source (OpenSSL 1.1.1w built to enable SSL)
-* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13 (3.10, 3.13 from source)
+* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.10-3.14, g++ 14.x (3.10-3.11 from source)
+* **archlinux** - Arch Linux (latest) with Python 3.10-3.14, g++ 14.x (3.10-3.12 from source)
+* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.10-3.12 from source)
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source (OpenSSL 1.1.1w built to enable SSL)
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14 (3.10, 3.13 from source)
 
 All images support:
 
 * **g++ 9.5 or higher** for C++ compilation
-* **Python 3.9, 3.10, 3.11, 3.12, 3.13** (source builds provided where distro lacks versions)
-* **Virtual environment at /opt/venv** (Python 3.13 or latest available) with both ``requirements.txt`` and ``python_tests/requirements.txt`` pre-installed
+* **Python 3.10, 3.11, 3.12, 3.13, 3.14** (source builds provided where distro lacks versions)
+* **Virtual environment at /opt/venv** (Python 3.14 or latest available) with both ``requirements.txt`` and ``python_tests/requirements.txt`` pre-installed
 * **Both cpp_tests and python_tests** test suites
 * **Optimized for minimal image size** (combined RUNs, cache cleanup, removal of build artifacts)
 
