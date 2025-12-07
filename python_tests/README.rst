@@ -16,7 +16,7 @@ The Python tests ensure that:
 * Authentication and privacy protocols work as expected
 * Error handling and exceptions are raised appropriately
 * Results are formatted correctly
-* Python 3.9+ compatibility is maintained
+* Python 3.10+ compatibility is maintained
 
 Test Structure
 ==============
