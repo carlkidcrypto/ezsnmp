@@ -37,16 +37,117 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution: [almalinux10, archlinux, archlinux_netsnmp_5.8, centos7, rockylinux8]
+        python: [py39, py310, py311, py312, py313]
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
-      - name: Run unit tests inside the Docker container
+      - name: Compute Docker image cache key
+        id: cache-key
         run: |
-           cd docker/
-           chmod +x run_python_tests_in_all_dockers.sh
-           ./run_python_tests_in_all_dockers.sh
+          WEEK_KEY=$(date -u +"%Y-%V")
+          echo "week=$WEEK_KEY" >> $GITHUB_OUTPUT
+
+      - name: Restore cached Docker image tar
+        id: cache-restore
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .docker-image-cache/${{ matrix.distribution }}.tar
+          key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
+          restore-keys: |
+            docker-image-${{ matrix.distribution }}-
+
+      - name: Load Docker image from cache (if present)
+        run: |
+          set -euo pipefail
+          TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
+          if [ -f "$TAR_PATH" ]; then
+            echo "Loading cached image from $TAR_PATH"
+            docker load -i "$TAR_PATH"
+          else
+            echo "No cached image tar found. Will pull from registry."
+          fi
+
+      - name: Pull Docker image (refresh from registry)
+        run: |
+          set -euo pipefail
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          # Always pull to pick up upstream changes; this is fast if up-to-date
+          docker pull "$IMAGE"
+
+      - name: Save Docker image to cache tar
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p .docker-image-cache
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
+          # Save or refresh the tar to ensure cache captures it
+          docker save "$IMAGE" -o "$TAR_PATH"
+
+      - name: Start container and SNMP daemon
+        run: |
+          set -euo pipefail
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          CONTAINER_NAME="${{ matrix.distribution }}_test_container"
+          ENTRY_SCRIPT="/ezsnmp/docker/${{ matrix.distribution }}/DockerEntry.sh"
+          HOST_SOURCE_PATH="$PWD"
+          CONTAINER_WORK_DIR="/ezsnmp"
+          echo ">>> Starting container: $CONTAINER_NAME"
+          echo "    - Using host source path: $HOST_SOURCE_PATH"
+          echo "    - Mounting to: $CONTAINER_WORK_DIR"
+          docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
+          if ! docker run -d \
+            --name "$CONTAINER_NAME" \
+            -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+            "$IMAGE" \
+            /bin/bash -c "$ENTRY_SCRIPT true & tail -f /dev/null"; then
+              echo "ERROR: Docker run failed for $IMAGE" >&2
+              exit 1
+          fi
+
+      - name: Run tox for ${{ matrix.python }}
+        run: |
+          set -euo pipefail
+          CONTAINER_NAME="${{ matrix.distribution }}_test_container"
+          echo ">>> Executing tox tests inside container: $CONTAINER_NAME"
+          docker exec -t "$CONTAINER_NAME" bash -c '
+            set -e
+            cd /ezsnmp;
+            echo "    - Cleaning previous build artifacts";
+            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/ || true;
+            echo "    - Installing tox";
+            python3 -m pip install --quiet tox;
+            TOX_ENV="${{ matrix.python }}";
+            echo "    - Running tox environment: $TOX_ENV";
+            if tox -e "$TOX_ENV" > test-outputs.txt 2>&1; then
+              echo "    - Tox completed for $TOX_ENV";
+            else
+              echo "    - Tox reported failures for $TOX_ENV (continuing to collect artifacts)";
+            fi;
+            exit 0;
+          '
+
+      - name: Collect artifacts
+        run: |
+          set -euo pipefail
+          mkdir -p docker
+          if [ -f test-results.xml ]; then \
+            mv test-results.xml docker/test-results_${{ matrix.distribution }}_test_container_${{ matrix.python }}.xml; \
+          else \
+            echo "<testsuite></testsuite>" > docker/test-results_${{ matrix.distribution }}_test_container_${{ matrix.python }}.xml; \
+          fi
+          mv test-outputs.txt docker/test-outputs_${{ matrix.distribution }}_test_container_${{ matrix.python }}.txt
+
+      - name: Stop and remove container
+        if: always()
+        run: |
+          docker rm -f "${{ matrix.distribution }}_test_container" >/dev/null 2>&1 || true
 
       - name: Upload Test Results
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5

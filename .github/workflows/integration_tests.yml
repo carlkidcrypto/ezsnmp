@@ -22,9 +22,8 @@ jobs:
         with:
           files: |
             .github/workflows/integration_tests.yml
-            **/*.py
-            **/*.cpp
-            **/*.h
+            ezsnmp/*.cpp
+            ezsnmp/*.h
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
@@ -92,7 +91,8 @@ jobs:
 
       - name: Build source
         run: |
-          python3 -m pip install .
+          python3 -m pip install . --verbose;
+          rm -drf build/ ezsnmp.egg-info/;
       
       - name: Start SNMP daemon
         run: |
