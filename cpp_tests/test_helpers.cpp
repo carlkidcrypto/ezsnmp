@@ -497,3 +497,50 @@ TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
    EXPECT_EQ(results[2].type, "OID");
    EXPECT_EQ(results[2].value, "NET-SNMP-TC::linux");
 }
+
+TEST_F(ParseResultsTest, TestOIDWithEmptyTypeField) {
+   // Test case where getline for type results in empty string after trimming
+   // This happens when input has "= :" pattern (space then immediate colon)
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = : Test Value"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "");
+   EXPECT_EQ(results[0].value, "Test Value");
+}
+
+TEST_F(ParseResultsTest, TestFullyQualifiedNumericOID) {
+   // Test fully qualified numeric OID format .1.3.6.1.2.1.1.1.0
+   std::vector<std::string> inputs = {".1.3.6.1.2.1.1.1.0 = STRING: Test System"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".1.3.6.1.2.1.1.1");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test System");
+}
+
+TEST_F(ParseResultsTest, TestISOFormattedOID) {
+   // Test fully qualified ISO format OID
+   std::vector<std::string> inputs = {".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0 = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
+TEST_F(ParseResultsTest, TestOIDWithNoDot) {
+   // Test OID with no dots (would trigger OID_INDEX_RE path potentially)
+   // This is an unusual case but tests the regex fallback logic
+   std::vector<std::string> inputs = {"sysDescr = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "sysDescr");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
