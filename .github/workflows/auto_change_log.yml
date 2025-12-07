@@ -41,8 +41,8 @@ jobs:
                       if ! command -v go > /dev/null 2>&1; then
                           sudo snap install go --classic
                       fi
-                      # Install git-chglog if not cached
-                      if [ ! -f ~/go/bin/git-chglog ]; then
+                      # Install git-chglog if not already available
+                      if ! command -v git-chglog > /dev/null 2>&1; then
                           go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
                       fi
                       # Ensure git-chglog is in PATH
@@ -66,7 +66,7 @@ jobs:
                       fi
                       
                       # Compare new and old content (excluding timestamp)
-                      if diff -q CHANGELOG.tmp CHANGELOG.md.old > /dev/null 2>&1; then
+                      if cmp -s CHANGELOG.tmp CHANGELOG.md.old; then
                           echo "has_changes=false" >> $GITHUB_OUTPUT
                           echo "No changes detected in changelog content"
                       else
