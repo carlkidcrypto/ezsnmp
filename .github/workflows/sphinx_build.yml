@@ -12,6 +12,8 @@ on:
 jobs:
   sphinx_docs_build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -67,11 +69,7 @@ jobs:
 
       - name: Upload Release Asset
         if: github.event_name == 'release'
-        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: /home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip
-          asset_name: sphinx_documentation.zip
-          asset_content_type: application/zip
+          files: /home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip
+          tag_name: ${{ github.event.release.tag_name }}
