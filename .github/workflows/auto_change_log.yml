@@ -38,7 +38,7 @@ jobs:
               with:
                   linux: |
                       # Install Go if not cached
-                      if ! command -v go &> /dev/null; then
+                      if ! command -v go > /dev/null 2>&1; then
                           sudo snap install go --classic
                       fi
                       # Install git-chglog if not cached
@@ -51,25 +51,32 @@ jobs:
             - name: Generate CHANGELOG.md
               id: generate
               run: |
-                  # Store old CHANGELOG.md content (without timestamp) for comparison
-                  if [ -f CHANGELOG.md ]; then
-                      # Skip the first 2 lines (timestamp header and blank line)
-                      tail -n +3 CHANGELOG.md > CHANGELOG.md.old
-                  fi
-                  
-                  # Generate new changelog content
+                  # Generate new changelog content (without timestamp)
                   git-chglog --config .chglog/config.yml -o CHANGELOG.tmp
                   
-                  # Check if CHANGELOG content actually changed (excluding timestamp)
-                  if [ -f CHANGELOG.md.old ]; then
-                      if diff -q CHANGELOG.tmp CHANGELOG.md.old > /dev/null; then
+                  # Extract old changelog content (without timestamp) for comparison
+                  if [ -f CHANGELOG.md ]; then
+                      # Check if file has timestamp header (starts with "Last Updated:")
+                      if head -n 1 CHANGELOG.md | grep -q "^Last Updated:"; then
+                          # Skip the first 2 lines (timestamp header and blank line)
+                          tail -n +3 CHANGELOG.md > CHANGELOG.md.old
+                      else
+                          # No timestamp header, use entire file
+                          cp CHANGELOG.md CHANGELOG.md.old
+                      fi
+                      
+                      # Compare new and old content (excluding timestamp)
+                      if diff -q CHANGELOG.tmp CHANGELOG.md.old > /dev/null 2>&1; then
                           echo "has_changes=false" >> $GITHUB_OUTPUT
+                          echo "No changes detected in changelog content"
                       else
                           echo "has_changes=true" >> $GITHUB_OUTPUT
+                          echo "Changes detected in changelog content"
                       fi
                       rm CHANGELOG.md.old
                   else
                       echo "has_changes=true" >> $GITHUB_OUTPUT
+                      echo "First time generating changelog"
                   fi
                   
                   # Add timestamp header to final CHANGELOG.md
