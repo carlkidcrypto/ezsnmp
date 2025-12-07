@@ -1,0 +1,131 @@
+\doxysection{setup Namespace Reference}
+\hypertarget{namespacesetup}{}\label{namespacesetup}\index{setup@{setup}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classsetup_1_1BuildEverythingWithSwig}{Build\+Everything\+With\+Swig}}
+\item 
+class \mbox{\hyperlink{classsetup_1_1SwigBuildExt}{Swig\+Build\+Ext}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacesetup_ab2bdb9195b8cba8afe668c6beae21b2c}{is\+\_\+macports\+\_\+installed}} ()
+\item 
+\mbox{\hyperlink{namespacesetup_aa660be9f57d934319d47a81e0b01504e}{is\+\_\+net\+\_\+snmp\+\_\+installed\+\_\+macports}} ()
+\item 
+\mbox{\hyperlink{namespacesetup_a3b524ca8a3f26f809a2f03a9de169294}{get\+\_\+homebrew\+\_\+info}} ()
+\item 
+\mbox{\hyperlink{namespacesetup_afb9e1e09a6cfd4666bc5c9250b49b4e0}{get\+\_\+homebrew\+\_\+net\+\_\+snmp\+\_\+info}} ()
+\item 
+\Hypertarget{namespacesetup_a512810f180b3b458a99e4ee276e5b38c}\label{namespacesetup_a512810f180b3b458a99e4ee276e5b38c} 
+{\bfseries gather\+\_\+build\+\_\+configuration} ()
+\item 
+\Hypertarget{namespacesetup_aad619ddd34f56ec328e574217adb4325}\label{namespacesetup_aad619ddd34f56ec328e574217adb4325} 
+str {\bfseries resolve\+\_\+snmp\+\_\+source\+\_\+path} (str version\+\_\+str)
+\item 
+\Hypertarget{namespacesetup_a15921eb8c237766a64f8d762cd76c8d4}\label{namespacesetup_a15921eb8c237766a64f8d762cd76c8d4} 
+{\bfseries build\+\_\+extensions} (dict cfg)
+\item 
+\Hypertarget{namespacesetup_a9332d34549b1e61ac351657fd38a38a8}\label{namespacesetup_a9332d34549b1e61ac351657fd38a38a8} 
+{\bfseries debug\+\_\+print} (dict cfg)
+\item 
+\Hypertarget{namespacesetup_ac5bae0f6726e20b949b10f607c63ad28}\label{namespacesetup_ac5bae0f6726e20b949b10f607c63ad28} 
+{\bfseries main} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \mbox{\hyperlink{namespacesetup_a88e152b149f8f7715525c5cb812669c1}{swig\+\_\+targets}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Build script for ezsnmp.
+
+This script configures and builds the ezsnmp package, a blazingly fast Python SNMP library
+based on Net-SNMP. It performs the following tasks:
+
+1. Detects the system's Net-SNMP installation (system, Homebrew, or MacPorts)
+2. Runs SWIG to generate C++ wrapper code from interface files (.i -> .cpp)
+3. Compiles four C++ extension modules (_datatypes, _exceptionsbase, _netsnmpbase, _sessionbase)
+4. Selects version-specific Net-SNMP source files based on detected version (5.6, 5.7, 5.8, or 5.9)
+
+Command-line options:
+    --debug         Enable debug compilation flags (-Wall -O0 -g)
+    --basedir=PATH  Use in-tree Net-SNMP build from specified directory
+
+Requirements:
+    - Net-SNMP library and headers (via system package manager, Homebrew, or MacPorts)
+    - SWIG 4.x for generating Python bindings
+    - C++17 compatible compiler
+    - setuptools and wheel
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacesetup_a3b524ca8a3f26f809a2f03a9de169294}\label{namespacesetup_a3b524ca8a3f26f809a2f03a9de169294} 
+\index{setup@{setup}!get\_homebrew\_info@{get\_homebrew\_info}}
+\index{get\_homebrew\_info@{get\_homebrew\_info}!setup@{setup}}
+\doxysubsubsection{\texorpdfstring{get\_homebrew\_info()}{get\_homebrew\_info()}}
+{\footnotesize\ttfamily setup.\+get\+\_\+homebrew\+\_\+info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Checks if Homebrew is installed and retrieves its version.
+
+Returns:
+  str: Homebrew version or None if Homebrew is not installed.
+\end{DoxyVerb}
+ \Hypertarget{namespacesetup_afb9e1e09a6cfd4666bc5c9250b49b4e0}\label{namespacesetup_afb9e1e09a6cfd4666bc5c9250b49b4e0} 
+\index{setup@{setup}!get\_homebrew\_net\_snmp\_info@{get\_homebrew\_net\_snmp\_info}}
+\index{get\_homebrew\_net\_snmp\_info@{get\_homebrew\_net\_snmp\_info}!setup@{setup}}
+\doxysubsubsection{\texorpdfstring{get\_homebrew\_net\_snmp\_info()}{get\_homebrew\_net\_snmp\_info()}}
+{\footnotesize\ttfamily setup.\+get\+\_\+homebrew\+\_\+net\+\_\+snmp\+\_\+info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Retrieves net-snmp and its OpenSSL dependency information from Homebrew.
+
+Returns:
+  tuple or None: A 5-tuple (homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs)
+                 if net-snmp is installed via Homebrew, None otherwise (including when Homebrew
+                 is not installed).
+\end{DoxyVerb}
+ \Hypertarget{namespacesetup_ab2bdb9195b8cba8afe668c6beae21b2c}\label{namespacesetup_ab2bdb9195b8cba8afe668c6beae21b2c} 
+\index{setup@{setup}!is\_macports\_installed@{is\_macports\_installed}}
+\index{is\_macports\_installed@{is\_macports\_installed}!setup@{setup}}
+\doxysubsubsection{\texorpdfstring{is\_macports\_installed()}{is\_macports\_installed()}}
+{\footnotesize\ttfamily setup.\+is\+\_\+macports\+\_\+installed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Checks if MacPorts is installed on the system.
+
+Returns:
+  str: The MacPorts version if installed, "" otherwise.
+\end{DoxyVerb}
+ \Hypertarget{namespacesetup_aa660be9f57d934319d47a81e0b01504e}\label{namespacesetup_aa660be9f57d934319d47a81e0b01504e} 
+\index{setup@{setup}!is\_net\_snmp\_installed\_macports@{is\_net\_snmp\_installed\_macports}}
+\index{is\_net\_snmp\_installed\_macports@{is\_net\_snmp\_installed\_macports}!setup@{setup}}
+\doxysubsubsection{\texorpdfstring{is\_net\_snmp\_installed\_macports()}{is\_net\_snmp\_installed\_macports()}}
+{\footnotesize\ttfamily setup.\+is\+\_\+net\+\_\+snmp\+\_\+installed\+\_\+macports (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Checks if any version of net-snmp is installed via MacPorts.
+
+Returns:
+  str: The net-snmp version if installed, "" otherwise.
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespacesetup_a88e152b149f8f7715525c5cb812669c1}\label{namespacesetup_a88e152b149f8f7715525c5cb812669c1} 
+\index{setup@{setup}!swig\_targets@{swig\_targets}}
+\index{swig\_targets@{swig\_targets}!setup@{setup}}
+\doxysubsubsection{\texorpdfstring{swig\_targets}{swig\_targets}}
+{\footnotesize\ttfamily list setup.\+swig\+\_\+targets}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ [}
+\DoxyCodeLine{00002\ \ \ \ \ (\textcolor{stringliteral}{"{}ezsnmp/interface/datatypes.i"{}},\ \textcolor{stringliteral}{"{}ezsnmp/src/ezsnmp\_datatypes.cpp"{}}),}
+\DoxyCodeLine{00003\ \ \ \ \ (\textcolor{stringliteral}{"{}ezsnmp/interface/exceptionsbase.i"{}},\ \textcolor{stringliteral}{"{}ezsnmp/src/ezsnmp\_exceptionsbase.cpp"{}}),}
+\DoxyCodeLine{00004\ \ \ \ \ (\textcolor{stringliteral}{"{}ezsnmp/interface/netsnmpbase.i"{}},\ \textcolor{stringliteral}{"{}ezsnmp/src/ezsnmp\_netsnmpbase.cpp"{}}),}
+\DoxyCodeLine{00005\ \ \ \ \ (\textcolor{stringliteral}{"{}ezsnmp/interface/sessionbase.i"{}},\ \textcolor{stringliteral}{"{}ezsnmp/src/ezsnmp\_sessionbase.cpp"{}}),}
+\DoxyCodeLine{00006\ ]}
+
+\end{DoxyCode}
