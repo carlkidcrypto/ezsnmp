@@ -415,6 +415,8 @@ TEST(ClearNetSnmpLibraryDataTest, TestClearFunction) {
    EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT), 0);
    EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM), 0);
    EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS), 0);
+}
+
 TEST_F(ParseResultsTest, TestStringValuesWithQuotes) {
    // Test for issue #355: String values returned with extra quotes
    std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = STRING: \"LEDI Network TS\"",
