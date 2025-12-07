@@ -7,7 +7,7 @@ Overview
 This directory contains build resources for the **CentOS 7** test image. It is tailored for EzSnmp development and CI and now includes:
 
 * devtoolset-11 (g++ 11.2.1)
-* Python 3.9–3.13 built from source with OpenSSL 1.1.1w (enables SSL for pip)
+* Python 3.10–3.14 built from source with OpenSSL 1.1.1w (enables SSL for pip)
 * Virtual environment at ``/opt/venv`` pre-installed with project and test requirements
 * net-snmp libraries/utilities for SNMP tests
 
@@ -61,11 +61,11 @@ Directory Structure
 
 Python & SSL
 ============
-CentOS 7 ships OpenSSL 1.0.2 (too old for Python 3.13). The Dockerfile builds OpenSSL 1.1.1w and configures each Python build with ``--with-openssl=/usr/local/openssl`` so the ``ssl`` module and pip work.
+CentOS 7 ships OpenSSL 1.0.2 (too old for Python 3.14). The Dockerfile builds OpenSSL 1.1.1w and configures each Python build with ``--with-openssl=/usr/local/openssl`` so the ``ssl`` module and pip work.
 
 Virtual Environment
 ===================
-Created with Python 3.13 at ``/opt/venv``; contains both:
+Created with Python 3.14 at ``/opt/venv``; contains both:
 
 * ``requirements.txt`` (project tooling)
 * ``python_tests/requirements.txt`` (pytest, coverage, tox, etc.)

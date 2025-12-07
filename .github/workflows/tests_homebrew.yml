@@ -42,7 +42,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
   
     steps:
       - name: Set up Homebrew
@@ -114,7 +114,8 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: |
-                 python3 -m pip install .
+                 python3 -m pip install . --verbose
+                 rm -drf build/ ezsnmp.egg-info/
                  wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
                  VALGRIND=(
                    'valgrind'
@@ -128,7 +129,7 @@ jobs:
                  LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:$LD_LIBRARY_PATH ${VALGRIND[@]} pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml  python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
-            python3 -m pip install .
+            python3 -m pip install . --verbose
             rm -drf build/ ezsnmp.egg-info/
             pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
@@ -170,16 +171,16 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - Homebrew - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
             macos-latest - Homebrew - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
             macos-latest - Homebrew - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
             macos-latest - Homebrew - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
             macos-latest - Homebrew - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            ubuntu-latest - Homebrew - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            macos-latest - Homebrew - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
             ubuntu-latest - Homebrew - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
             ubuntu-latest - Homebrew - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
             ubuntu-latest - Homebrew - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
             ubuntu-latest - Homebrew - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+            ubuntu-latest - Homebrew - 3.14, pytest-results_ubuntu-latest_3.14/test-outputs_ubuntu-latest_3.14.txt, pytest-results_ubuntu-latest_3.14/test-results_ubuntu-latest_3.14.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -188,7 +189,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Download Artifacts
@@ -230,16 +231,16 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp4 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
+         temp1=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
+         temp2=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
+         temp3=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
+         temp4=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
+         temp5=$(cat valgrind-stripped_ubuntu-latest_3.14/valgrind-stripped_ubuntu-latest_3.14.log);
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp1 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp2 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp3 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp4 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_14=$temp5 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -250,11 +251,11 @@ jobs:
         with:
           template: .github/comment-valgrind-template.md
           vars: |
-           py3_9:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9 }}"
            py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
            py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"
            py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
            py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
+           py3_14: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_14 }}"
 
       - name: Create A Comment For PR
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
