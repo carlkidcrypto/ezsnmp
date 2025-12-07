@@ -207,3 +207,33 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
       }
    }
 }
+
+// Test -Cf option (don't fix PDUs)
+TEST_F(SnmpGetTest, TestDontFixPDUsOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cf", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
+
+   auto results = snmpget(args, "testing");
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0]._to_string(),
+             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
+             "converted_value: my original location");
+}
+
+// Test unknown -C option
+TEST_F(SnmpGetTest, TestUnknownCOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cz", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpget(args, "testing");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
+                         std::string::npos);
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
