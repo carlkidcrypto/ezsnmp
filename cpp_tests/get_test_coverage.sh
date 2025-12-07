@@ -21,11 +21,11 @@ rm -rf coverage.info
 echo "Compiling the project..."
 mkdir -p $BUILD_DIR
 meson setup $BUILD_DIR
-ninja -C "$BUILD_DIR"
+ninja -C "$BUILD_DIR" -j $(nproc)
 
 # Generate coverage data
 echo "Generating coverage data..."
-ninja -C "$BUILD_DIR" test
+ninja -C "$BUILD_DIR" test -j $(nproc)
 
 # Capture coverage data with lcov
 echo "Capturing coverage data with lcov..."
