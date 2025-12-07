@@ -4,7 +4,7 @@ Welcome to EzSnmp's documentation!
 Introduction
 ------------
 EzSnmp has been tested and is supported on systems running net-snmp
-5.9.x and newer. All Python versions 3.9 and above are fully supported.
+5.9.x and newer. All Python versions 3.10 and above are fully supported.
 
 Installation via Package Manager
 --------------------------------
