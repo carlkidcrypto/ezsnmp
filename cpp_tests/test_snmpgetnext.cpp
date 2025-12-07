@@ -118,7 +118,8 @@ TEST_F(SnmpGetNextTest, TestUnknownCOption) {
           try {
              auto results = snmpgetnext(args, "testing");
           } catch (ParseErrorBase const& e) {
-             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") != std::string::npos);
+             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
+                         std::string::npos);
              throw;
           }
        },

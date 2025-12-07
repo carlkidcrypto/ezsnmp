@@ -76,14 +76,16 @@ TEST_F(SnmpSetTest, TestInvalidVersion) {
 // Test unknown -C option
 TEST_F(SnmpSetTest, TestUnknownCOption) {
    std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "-Cz", "localhost:11161", "SNMPv2-MIB::sysLocation.0", "s", "test"};
+       "-v", "2c",  "-c", "public", "-Cz", "localhost:11161", "SNMPv2-MIB::sysLocation.0",
+       "s",  "test"};
 
    EXPECT_THROW(
        {
           try {
              auto results = snmpset(args, "testing");
           } catch (ParseErrorBase const& e) {
-             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") != std::string::npos);
+             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
+                         std::string::npos);
              throw;
           }
        },
@@ -92,14 +94,9 @@ TEST_F(SnmpSetTest, TestUnknownCOption) {
 
 // Test successful set operation
 TEST_F(SnmpSetTest, TestSuccessfulSet) {
-   std::vector<std::string> args = {"-v",
-                                    "2c",
-                                    "-c",
-                                    "public",
-                                    "localhost:11161",
-                                    "SNMPv2-MIB::sysLocation.0",
-                                    "s",
-                                    "test location"};
+   std::vector<std::string> args = {
+       "-v", "2c",           "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0",
+       "s",  "test location"};
 
    auto results = snmpset(args, "testing_set");
    ASSERT_FALSE(results.empty());

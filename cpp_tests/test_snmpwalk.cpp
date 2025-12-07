@@ -130,7 +130,8 @@ TEST_F(SnmpWalkTest, TestTimeResultsSingleOption) {
 // Test -CE option (end OID) - commented out because end_name is a global that pollutes other tests
 // TEST_F(SnmpWalkTest, TestEndOidOption) {
 //    std::vector<std::string> args = {
-//        "-v", "2c", "-c", "public", "-CE", "SNMPv2-MIB::sysORDescr.5", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+//        "-v", "2c", "-c", "public", "-CE", "SNMPv2-MIB::sysORDescr.5", "localhost:11161",
+//        "SNMPv2-MIB::sysORDescr"};
 //
 //    auto results = snmpwalk(args, "testing");
 //    EXPECT_FALSE(results.empty());
@@ -146,7 +147,8 @@ TEST_F(SnmpWalkTest, TestUnknownCOption) {
           try {
              auto results = snmpwalk(args, "testing");
           } catch (ParseErrorBase const& e) {
-             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") != std::string::npos);
+             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
+                         std::string::npos);
              throw;
           }
        },

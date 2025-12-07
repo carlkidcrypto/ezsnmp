@@ -548,7 +548,8 @@ TEST_F(ResultConvertedValueTest, HandlesHexStringWithLongInvalidPart) {
    auto converted = result_obj._make_converted_value("Hex-STRING", "00 15 5D TOOLONG");
    EXPECT_TRUE(std::holds_alternative<std::string>(converted));
    std::string error_msg = std::get<std::string>(converted);
-   EXPECT_TRUE(error_msg.find("Hex-STRING Conversion Error: Malformed hex part 'TOOLONG'") != std::string::npos);
+   EXPECT_TRUE(error_msg.find("Hex-STRING Conversion Error: Malformed hex part 'TOOLONG'") !=
+               std::string::npos);
 }
 
 // Test for double type (not commonly used but supported)
@@ -568,7 +569,7 @@ TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
    auto converted = result_obj._make_converted_value("Hex-STRING", large_hex);
    std::vector<unsigned char> vec = std::get<std::vector<unsigned char>>(converted);
    EXPECT_EQ(vec.size(), 40);
-   
+
    Result r;
    r.converted_value = vec;
    std::string result = r._converted_value_to_string();
@@ -580,35 +581,35 @@ TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
 struct StringTypeTestCase {
    std::string type_name;
    std::string input_value;
-   std::string test_name;  // For gtest output
+   std::string test_name; // For gtest output
 };
 
 class StringTypesTest : public ResultConvertedValueTest,
                         public ::testing::WithParamInterface<StringTypeTestCase> {};
 
 TEST_P(StringTypesTest, HandlesStringLikeTypes) {
-   const auto& param = GetParam();
+   auto const& param = GetParam();
    auto converted = result_obj._make_converted_value(param.type_name, param.input_value);
    EXPECT_EQ(std::get<std::string>(converted), param.input_value);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-   ResultConvertedValueStringTypes,
-   StringTypesTest,
-   ::testing::Values(StringTypeTestCase{"OBJIDENTITY", "some value", "ObjIdentity"},
-                     StringTypeTestCase{"Opaque", "opaque data", "Opaque"},
-                     StringTypeTestCase{"BITSTRING", "10101010", "BitString"},
-                     StringTypeTestCase{"NSAPAddress", "some address", "NsapAddress"},
-                     StringTypeTestCase{"TrapType", "trap", "TrapType"},
-                     StringTypeTestCase{"NotifType", "notif", "NotifType"},
-                     StringTypeTestCase{"ObjGroup", "group", "ObjGroup"},
-                     StringTypeTestCase{"NotifGroup", "notif group", "NotifGroup"},
-                     StringTypeTestCase{"ModID", "module id", "ModId"},
-                     StringTypeTestCase{"AgentCap", "agent cap", "AgentCap"},
-                     StringTypeTestCase{"ModComp", "mod comp", "ModComp"}),
-   [](const ::testing::TestParamInfo<StringTypesTest::ParamType>& info) {
-      return info.param.test_name;
-   });
+    ResultConvertedValueStringTypes,
+    StringTypesTest,
+    ::testing::Values(StringTypeTestCase{"OBJIDENTITY", "some value", "ObjIdentity"},
+                      StringTypeTestCase{"Opaque", "opaque data", "Opaque"},
+                      StringTypeTestCase{"BITSTRING", "10101010", "BitString"},
+                      StringTypeTestCase{"NSAPAddress", "some address", "NsapAddress"},
+                      StringTypeTestCase{"TrapType", "trap", "TrapType"},
+                      StringTypeTestCase{"NotifType", "notif", "NotifType"},
+                      StringTypeTestCase{"ObjGroup", "group", "ObjGroup"},
+                      StringTypeTestCase{"NotifGroup", "notif group", "NotifGroup"},
+                      StringTypeTestCase{"ModID", "module id", "ModId"},
+                      StringTypeTestCase{"AgentCap", "agent cap", "AgentCap"},
+                      StringTypeTestCase{"ModComp", "mod comp", "ModComp"}),
+    [](::testing::TestParamInfo<StringTypesTest::ParamType> const& info) {
+       return info.param.test_name;
+    });
 
 // Test Integer32 type (variant of INTEGER)
 TEST_F(ResultConvertedValueTest, HandlesInteger32) {
@@ -620,10 +621,10 @@ TEST_F(ResultConvertedValueTest, HandlesInteger32) {
 TEST_F(ResultConvertedValueTest, HandlesCaseInsensitiveTypes) {
    auto converted1 = result_obj._make_converted_value("integer", "42");
    EXPECT_EQ(std::get<int>(converted1), 42);
-   
+
    auto converted2 = result_obj._make_converted_value("STRING", "test");
    EXPECT_EQ(std::get<std::string>(converted2), "test");
-   
+
    auto converted3 = result_obj._make_converted_value("Gauge32", "100");
    EXPECT_EQ(std::get<uint32_t>(converted3), 100);
 }

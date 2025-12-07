@@ -366,7 +366,7 @@ TEST(CreateArgvTest, TestBasicArgv) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public"};
    int argc = 0;
    auto argv = create_argv(args, argc);
-   
+
    EXPECT_EQ(argc, 5); // netsnmp + 4 args
    EXPECT_STREQ(argv[0], "netsnmp");
    EXPECT_STREQ(argv[1], "-v");
@@ -380,7 +380,7 @@ TEST(CreateArgvTest, TestEmptyArgv) {
    std::vector<std::string> args;
    int argc = 0;
    auto argv = create_argv(args, argc);
-   
+
    EXPECT_EQ(argc, 1); // Just netsnmp
    EXPECT_STREQ(argv[0], "netsnmp");
    EXPECT_EQ(argv[1], nullptr);
@@ -393,7 +393,7 @@ TEST(CreateArgvTest, TestLargeArgv) {
    }
    int argc = 0;
    auto argv = create_argv(args, argc);
-   
+
    EXPECT_EQ(argc, 101); // netsnmp + 100 args
    EXPECT_STREQ(argv[0], "netsnmp");
    EXPECT_STREQ(argv[1], "arg0");
@@ -407,10 +407,10 @@ TEST(ClearNetSnmpLibraryDataTest, TestClearFunction) {
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 5);
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 1);
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 1);
-   
+
    // Clear them
    clear_net_snmp_library_data();
-   
+
    // Verify they're cleared
    EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT), 0);
    EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM), 0);
