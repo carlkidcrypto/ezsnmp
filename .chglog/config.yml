@@ -30,22 +30,22 @@ options:
       Refactor: Code Refactoring
       Bump: Dependency Updates
       Add: New Features
-      Update: Updates
+      Update: Updates & Improvements
       Document: Documentation Updates
       Increase: Performance Improvements
       Modernize: Code Improvements
-      Python: Python Changes
+      Python: Python-related Changes
       Feature: Features
       Hotfix: Bug Fixes
       Enhance: Enhancements
-      Use: Code Changes
-      Initial: Initial Changes
+      Use: Code Refactoring
+      Initial: Initial Setup
       # Merge commits
       Merge: Merged Pull Requests
       # Fallback
       other: Other Changes
   header:
-    pattern: "^\\s*(([\\w\\d]+)(?:[:\\s/-].*)?)$"
+    pattern: "^\\s*(([\\w]+)(?:[:\\s/-].*)?)$"
     pattern_maps:
       - Subject
       - Type
