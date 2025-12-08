@@ -64,7 +64,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         id: get_tag
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git tag | sort -V | tail -1)
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git tag --sort=-version:refname | head -1)
           if [ -z "$LATEST_TAG" ]; then
             echo "Error: No tags found in repository. Cannot upload documentation without a release tag."
             exit 1
