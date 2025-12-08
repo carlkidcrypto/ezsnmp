@@ -1,4 +1,4 @@
-Last Updated: 2025-12-08 03:53:50 UTC
+Last Updated: 2025-12-08 03:57:26 UTC
 
 # Changelog
 
@@ -119,6 +119,36 @@ Last Updated: 2025-12-08 03:53:50 UTC
 - feat: Add logging and dict/json support for Session and Result objects ([#470](https://github.com/carlkidcrypto/ezsnmp/issues/470))
 
 
+#### Features
+
+- Add comprehensive unit test coverage for cpp_tests error paths and exceptions ([#487](https://github.com/carlkidcrypto/ezsnmp/issues/487))
+
+- Add The Scribe agent documentation guidelines ([#480](https://github.com/carlkidcrypto/ezsnmp/issues/480))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md ([#463](https://github.com/carlkidcrypto/ezsnmp/issues/463))
+
+
+#### Performance Improvements
+
+- Feature/fix docker test scripts ([#491](https://github.com/carlkidcrypto/ezsnmp/issues/491))
+
+- Feature/add agents ([#489](https://github.com/carlkidcrypto/ezsnmp/issues/489))
+
+- Feature/add agents ([#484](https://github.com/carlkidcrypto/ezsnmp/issues/484))
+
+- Feature/documentation agent ([#482](https://github.com/carlkidcrypto/ezsnmp/issues/482))
+
+- Feature/prep for 2.1.0b1 2 ([#479](https://github.com/carlkidcrypto/ezsnmp/issues/479))
+
+
+#### Features
+
+- feat: Add logging and dict/json support for Session and Result objects ([#470](https://github.com/carlkidcrypto/ezsnmp/issues/470))
+
+
 #### Maintenance
 
 - chore: update CHANGELOG.md ([#463](https://github.com/carlkidcrypto/ezsnmp/issues/463))
@@ -221,7 +251,7 @@ Last Updated: 2025-12-08 03:53:50 UTC
 - 422 feature per bulk walk configurable max repetitions ([#443](https://github.com/carlkidcrypto/ezsnmp/issues/443))
 
 
-#### Bug Fixes
+#### Critical Bug Fixes
 
 - Hotfix/fix test pypi and pypi ([#449](https://github.com/carlkidcrypto/ezsnmp/issues/449))
 
@@ -734,7 +764,7 @@ Last Updated: 2025-12-08 03:53:50 UTC
 
 ### Changes
 
-#### Bug Fixes
+#### Critical Bug Fixes
 
 - Hotfix/fix status buttons in readme ([#277](https://github.com/carlkidcrypto/ezsnmp/issues/277))
 
@@ -786,7 +816,7 @@ Last Updated: 2025-12-08 03:53:50 UTC
 
 ### Changes
 
-#### Bug Fixes
+#### Critical Bug Fixes
 
 - Hotfix/ga macos runners 2 ([#273](https://github.com/carlkidcrypto/ezsnmp/issues/273))
 
