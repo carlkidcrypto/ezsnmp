@@ -1,4 +1,4 @@
-Last Updated: 2025-12-07 23:14:37 UTC
+Last Updated: 2025-12-08 03:57:26 UTC
 
 # Changelog
 
@@ -82,7 +82,37 @@ Last Updated: 2025-12-07 23:14:37 UTC
 - Document project structure and add missing README files ([#481](https://github.com/carlkidcrypto/ezsnmp/issues/481))
 
 
-#### Increase
+#### Features
+
+- Feature/fix docker test scripts ([#491](https://github.com/carlkidcrypto/ezsnmp/issues/491))
+
+- Feature/add agents ([#489](https://github.com/carlkidcrypto/ezsnmp/issues/489))
+
+- Feature/add agents ([#484](https://github.com/carlkidcrypto/ezsnmp/issues/484))
+
+- Feature/documentation agent ([#482](https://github.com/carlkidcrypto/ezsnmp/issues/482))
+
+- Feature/prep for 2.1.0b1 2 ([#479](https://github.com/carlkidcrypto/ezsnmp/issues/479))
+
+
+#### Features
+
+- feat: Add logging and dict/json support for Session and Result objects ([#470](https://github.com/carlkidcrypto/ezsnmp/issues/470))
+
+
+#### Features
+
+- Add comprehensive unit test coverage for cpp_tests error paths and exceptions ([#487](https://github.com/carlkidcrypto/ezsnmp/issues/487))
+
+- Add The Scribe agent documentation guidelines ([#480](https://github.com/carlkidcrypto/ezsnmp/issues/480))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md ([#463](https://github.com/carlkidcrypto/ezsnmp/issues/463))
+
+
+#### Performance Improvements
 
 - Increase python_tests coverage from 80% to 88% ([#488](https://github.com/carlkidcrypto/ezsnmp/issues/488))
 
@@ -172,7 +202,12 @@ Last Updated: 2025-12-07 23:14:37 UTC
 - 422 feature per bulk walk configurable max repetitions ([#443](https://github.com/carlkidcrypto/ezsnmp/issues/443))
 
 
-#### Bump
+#### Critical Bug Fixes
+
+- Hotfix/fix test pypi and pypi ([#449](https://github.com/carlkidcrypto/ezsnmp/issues/449))
+
+
+#### Dependency Updates
 
 - Bump platformdirs from 4.3.8 to 4.4.0 ([#425](https://github.com/carlkidcrypto/ezsnmp/issues/425))
 
@@ -609,6 +644,16 @@ Last Updated: 2025-12-07 23:14:37 UTC
 
 ### Changes
 
+#### Critical Bug Fixes
+
+- Hotfix/fix status buttons in readme ([#277](https://github.com/carlkidcrypto/ezsnmp/issues/277))
+
+
+#### Features
+
+- Feature/sphinx docs ([#276](https://github.com/carlkidcrypto/ezsnmp/issues/276))
+
+
 #### PyPi
 
 - PyPi ([#278](https://github.com/carlkidcrypto/ezsnmp/issues/278))
@@ -651,7 +696,12 @@ Last Updated: 2025-12-07 23:14:37 UTC
 
 ### Changes
 
-#### Bump
+#### Critical Bug Fixes
+
+- Hotfix/ga macos runners 2 ([#273](https://github.com/carlkidcrypto/ezsnmp/issues/273))
+
+
+#### Dependency Updates
 
 - Bump click from 8.1.7 to 8.1.8 ([#269](https://github.com/carlkidcrypto/ezsnmp/issues/269))
 
