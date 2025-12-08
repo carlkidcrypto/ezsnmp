@@ -65,6 +65,10 @@ jobs:
         id: get_tag
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git tag | sort -V | tail -1)
+          if [ -z "$LATEST_TAG" ]; then
+            echo "Error: No tags found in repository. Cannot upload documentation without a release tag."
+            exit 1
+          fi
           echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           echo "Latest tag: $LATEST_TAG"
 
