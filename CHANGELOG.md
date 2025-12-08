@@ -1,7 +1,38 @@
-Last Updated: 2025-11-14 03:33:51 UTC
+Last Updated: 2025-12-07 23:14:37 UTC
 
 # Changelog
 
+
+<a name="v2.1.0b2"></a>
+## [v2.1.0b2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0b1...v2.1.0b2) (2025-12-06)
+
+
+### Changes
+
+#### Bump
+
+- Bump pytest from 8.4.2 to 9.0.1 ([#500](https://github.com/carlkidcrypto/ezsnmp/issues/500))
+
+
+#### Fix
+
+- Fix issue [#355](https://github.com/carlkidcrypto/ezsnmp/issues/355): Strip surrounding quotes from SNMP string values ([#492](https://github.com/carlkidcrypto/ezsnmp/issues/492))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#502](https://github.com/carlkidcrypto/ezsnmp/issues/502) from carlkidcrypto/update-changelog-19353407644
+
+
+
+
+
+---
 
 <a name="v2.1.0b1"></a>
 ## [v2.1.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/2.1.0b0...v2.1.0b1) (2025-11-12)
