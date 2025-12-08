@@ -13,6 +13,7 @@ options:
     #     - refactor
   commit_groups:
     title_maps:
+      # Lowercase conventional commits
       feat: Features
       fix: Bug Fixes
       perf: Performance Improvements
@@ -24,9 +25,27 @@ options:
       test: Tests
       style: Styles
       revert: Reverts
+      # Capitalized word prefixes
+      Fix: Bug Fixes
+      Refactor: Code Refactoring
+      Bump: Dependency Updates
+      Add: New Features
+      Update: Updates
+      Document: Documentation Updates
+      Increase: Improvements
+      Modernize: Improvements
+      Python: Python Changes
+      Feature: Features
+      Hotfix: Bug Fixes
+      Enhance: Improvements
+      Use: Changes
+      Initial: Changes
+      # Merge commits
+      Merge: Merged Pull Requests
+      # Fallback
       other: Other Changes
   header:
-    pattern: "^((\\w+)\\s.*)$"
+    pattern: "^\\s*(([\\w\\d]+)(?:[:\\s/-].*)?)$"
     pattern_maps:
       - Subject
       - Type
