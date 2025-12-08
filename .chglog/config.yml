@@ -32,14 +32,14 @@ options:
       Add: New Features
       Update: Updates
       Document: Documentation Updates
-      Increase: Improvements
-      Modernize: Improvements
+      Increase: Performance Improvements
+      Modernize: Code Improvements
       Python: Python Changes
       Feature: Features
       Hotfix: Bug Fixes
-      Enhance: Improvements
-      Use: Changes
-      Initial: Changes
+      Enhance: Enhancements
+      Use: Code Changes
+      Initial: Initial Changes
       # Merge commits
       Merge: Merged Pull Requests
       # Fallback
