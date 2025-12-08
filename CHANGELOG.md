@@ -9,14 +9,30 @@ Last Updated: 2025-12-08 03:57:26 UTC
 
 ### Changes
 
-#### Bump
+#### Bug Fixes
+
+- Fix issue [#355](https://github.com/carlkidcrypto/ezsnmp/issues/355): Strip surrounding quotes from SNMP string values ([#492](https://github.com/carlkidcrypto/ezsnmp/issues/492))
+
+
+#### Dependency Updates
 
 - Bump pytest from 8.4.2 to 9.0.1 ([#500](https://github.com/carlkidcrypto/ezsnmp/issues/500))
 
 
-#### Fix
+#### Features
 
-- Fix issue [#355](https://github.com/carlkidcrypto/ezsnmp/issues/355): Strip surrounding quotes from SNMP string values ([#492](https://github.com/carlkidcrypto/ezsnmp/issues/492))
+- Feature/fix cpp tests ([#527](https://github.com/carlkidcrypto/ezsnmp/issues/527))
+
+- Feature/get uts to run in gh runners 3 ([#510](https://github.com/carlkidcrypto/ezsnmp/issues/510))
+
+- Feature/get uts to run in gh runners 2 ([#505](https://github.com/carlkidcrypto/ezsnmp/issues/505))
+
+- Feature/get uts to run in gh runners ([#504](https://github.com/carlkidcrypto/ezsnmp/issues/504))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
 
 
 
@@ -45,14 +61,17 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 461 feature   add support for   exit    enter    del   ([#468](https://github.com/carlkidcrypto/ezsnmp/issues/468))
 
 
-#### Add
+#### Code Improvements
 
-- Add comprehensive unit test coverage for cpp_tests error paths and exceptions ([#487](https://github.com/carlkidcrypto/ezsnmp/issues/487))
-
-- Add The Scribe agent documentation guidelines ([#480](https://github.com/carlkidcrypto/ezsnmp/issues/480))
+- Modernize Docker infrastructure: Python 3.9-3.13, g++ 11+, optimized images ([#483](https://github.com/carlkidcrypto/ezsnmp/issues/483))
 
 
-#### Bump
+#### Code Refactoring
+
+- Refactor setup.py: Extract Homebrew detection into reusable functions and parallelize SWIG build ([#485](https://github.com/carlkidcrypto/ezsnmp/issues/485))
+
+
+#### Dependency Updates
 
 - Bump actions/upload-artifact from 4 to 5 ([#476](https://github.com/carlkidcrypto/ezsnmp/issues/476))
 
@@ -77,7 +96,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump tj-actions/changed-files from 46.0.5 to 47.0.0 ([#439](https://github.com/carlkidcrypto/ezsnmp/issues/439))
 
 
-#### Document
+#### Documentation Updates
 
 - Document project structure and add missing README files ([#481](https://github.com/carlkidcrypto/ezsnmp/issues/481))
 
@@ -114,25 +133,50 @@ Last Updated: 2025-12-08 03:57:26 UTC
 
 #### Performance Improvements
 
+- Feature/fix docker test scripts ([#491](https://github.com/carlkidcrypto/ezsnmp/issues/491))
+
+- Feature/add agents ([#489](https://github.com/carlkidcrypto/ezsnmp/issues/489))
+
+- Feature/add agents ([#484](https://github.com/carlkidcrypto/ezsnmp/issues/484))
+
+- Feature/documentation agent ([#482](https://github.com/carlkidcrypto/ezsnmp/issues/482))
+
+- Feature/prep for 2.1.0b1 2 ([#479](https://github.com/carlkidcrypto/ezsnmp/issues/479))
+
+
+#### Features
+
+- feat: Add logging and dict/json support for Session and Result objects ([#470](https://github.com/carlkidcrypto/ezsnmp/issues/470))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md ([#463](https://github.com/carlkidcrypto/ezsnmp/issues/463))
+
+
+#### New Features
+
+- Add comprehensive unit test coverage for cpp_tests error paths and exceptions ([#487](https://github.com/carlkidcrypto/ezsnmp/issues/487))
+
+- Add The Scribe agent documentation guidelines ([#480](https://github.com/carlkidcrypto/ezsnmp/issues/480))
+
+
+#### Performance Improvements
+
 - Increase python_tests coverage from 80% to 88% ([#488](https://github.com/carlkidcrypto/ezsnmp/issues/488))
 
 
-#### Modernize
-
-- Modernize Docker infrastructure: Python 3.9-3.13, g++ 11+, optimized images ([#483](https://github.com/carlkidcrypto/ezsnmp/issues/483))
-
-
-#### Python
+#### Python-related Changes
 
 - Python Tests: Docker ([#498](https://github.com/carlkidcrypto/ezsnmp/issues/498))
 
 
-#### Refactor
+#### Release
 
-- Refactor setup.py: Extract Homebrew detection into reusable functions and parallelize SWIG build ([#485](https://github.com/carlkidcrypto/ezsnmp/issues/485))
+- Release/prep for 2.1.0b1 ([#472](https://github.com/carlkidcrypto/ezsnmp/issues/472))
 
 
-#### Update
+#### Updates & Improvements
 
 - Update docs for v2.1.0b1 and refresh styles ([#501](https://github.com/carlkidcrypto/ezsnmp/issues/501))
 
@@ -158,7 +202,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 442 question session close ([#456](https://github.com/carlkidcrypto/ezsnmp/issues/456))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump psf/black from 25.1.0 to 25.9.0 ([#444](https://github.com/carlkidcrypto/ezsnmp/issues/444))
 
@@ -169,6 +213,11 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump pyparsing from 3.2.3 to 3.2.5 ([#447](https://github.com/carlkidcrypto/ezsnmp/issues/447))
 
 - Bump pytest-cov from 6.2.1 to 7.0.0 ([#438](https://github.com/carlkidcrypto/ezsnmp/issues/438))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
 
 
 
@@ -214,6 +263,11 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump actions/setup-python from 5 to 6 ([#430](https://github.com/carlkidcrypto/ezsnmp/issues/430))
 
 
+#### Maintenance
+
+- chore: update CHANGELOG.md
+
+
 
 
 
@@ -250,7 +304,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - AlmaLinux10 Docker ([#435](https://github.com/carlkidcrypto/ezsnmp/issues/435))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump coverage from 7.10.3 to 7.10.6 ([#427](https://github.com/carlkidcrypto/ezsnmp/issues/427))
 
@@ -281,7 +335,19 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump actions/download-artifact from 4 to 5 ([#413](https://github.com/carlkidcrypto/ezsnmp/issues/413))
 
 
-#### Update
+#### Features
+
+- Feature/get auto uts in docker containers ([#412](https://github.com/carlkidcrypto/ezsnmp/issues/412))
+
+- Feature: Updating the docker containers ([#411](https://github.com/carlkidcrypto/ezsnmp/issues/411))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
+
+
+#### Updates & Improvements
 
 - Update pyproject.toml ([#434](https://github.com/carlkidcrypto/ezsnmp/issues/434))
 
@@ -314,12 +380,22 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 401 feature   add convertvalue to datatypes ([#403](https://github.com/carlkidcrypto/ezsnmp/issues/403))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump setuptools from 80.3.1 to 80.9.0 ([#382](https://github.com/carlkidcrypto/ezsnmp/issues/382))
 
 
-#### Update
+#### Features
+
+- Feature/Update Pyproject File For Linux Builds ([#399](https://github.com/carlkidcrypto/ezsnmp/issues/399))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md ([#398](https://github.com/carlkidcrypto/ezsnmp/issues/398))
+
+
+#### Updates & Improvements
 
 - Update README.rst ([#400](https://github.com/carlkidcrypto/ezsnmp/issues/400))
 
@@ -353,7 +429,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 385 question getting raw value of timeticks ([#393](https://github.com/carlkidcrypto/ezsnmp/issues/393))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump pluggy from 1.5.0 to 1.6.0 ([#378](https://github.com/carlkidcrypto/ezsnmp/issues/378))
 
@@ -372,6 +448,11 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump pytest-cov from 6.1.1 to 6.2.0 ([#386](https://github.com/carlkidcrypto/ezsnmp/issues/386))
 
 - Bump coverage from 7.8.0 to 7.9.0 ([#387](https://github.com/carlkidcrypto/ezsnmp/issues/387))
+
+
+#### Features
+
+- Feature/manual changelog update ([#373](https://github.com/carlkidcrypto/ezsnmp/issues/373))
 
 
 #### MacOS
@@ -405,7 +486,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - AlmaLinux ([#371](https://github.com/carlkidcrypto/ezsnmp/issues/371))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump MishaKav/pytest-coverage-comment from 1.1.53 to 1.1.54 ([#361](https://github.com/carlkidcrypto/ezsnmp/issues/361))
 
@@ -450,7 +531,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Issue 356 migration guide updates ([#357](https://github.com/carlkidcrypto/ezsnmp/issues/357))
 
 
-#### Update
+#### Updates & Improvements
 
 - Update bug_report.md ([#364](https://github.com/carlkidcrypto/ezsnmp/issues/364))
 
@@ -471,7 +552,14 @@ Last Updated: 2025-12-08 03:57:26 UTC
 
 ### Changes
 
-#### Bump
+#### Bugfix
+
+- Bugfix/fix dist upload pipeline - 2 ([#339](https://github.com/carlkidcrypto/ezsnmp/issues/339))
+
+- Bugfix/fix dist upload pipeline ([#338](https://github.com/carlkidcrypto/ezsnmp/issues/338))
+
+
+#### Dependency Updates
 
 - Bump pytest-cov from 6.0.0 to 6.1.1 ([#333](https://github.com/carlkidcrypto/ezsnmp/issues/333))
 
@@ -490,6 +578,26 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump termcolor from 2.5.0 to 3.0.1 ([#332](https://github.com/carlkidcrypto/ezsnmp/issues/332))
 
 - Bump setuptools from 77.0.3 to 78.1.0 ([#324](https://github.com/carlkidcrypto/ezsnmp/issues/324))
+
+
+#### Features
+
+- Feature/fix py pi ([#343](https://github.com/carlkidcrypto/ezsnmp/issues/343))
+
+
+#### Macos
+
+- macos-15 ([#340](https://github.com/carlkidcrypto/ezsnmp/issues/340))
+
+
+#### Release
+
+- Release/prep for v2.0.0 ([#337](https://github.com/carlkidcrypto/ezsnmp/issues/337))
+
+
+#### Verify
+
+- verify-metadata ([#344](https://github.com/carlkidcrypto/ezsnmp/issues/344))
 
 
 
@@ -518,7 +626,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 303 bug session parameters in v200b2   better compatiblity with v1xx ([#307](https://github.com/carlkidcrypto/ezsnmp/issues/307))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump pyparsing from 3.2.1 to 3.2.3 ([#323](https://github.com/carlkidcrypto/ezsnmp/issues/323))
 
@@ -555,7 +663,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump sphinx from 8.1.3 to 8.2.0 ([#296](https://github.com/carlkidcrypto/ezsnmp/issues/296))
 
 
-#### Update
+#### Updates & Improvements
 
 - Update session.py
 
@@ -586,7 +694,14 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 290 bug   all ezsnmp exceptions should inherit from genericerror ([#291](https://github.com/carlkidcrypto/ezsnmp/issues/291))
 
 
-#### Update
+#### Bugfix
+
+- Bugfix/update auto change log ([#288](https://github.com/carlkidcrypto/ezsnmp/issues/288))
+
+- Bugfix/update auto change log ([#287](https://github.com/carlkidcrypto/ezsnmp/issues/287))
+
+
+#### Updates & Improvements
 
 - Update auto_change_log.yml ([#286](https://github.com/carlkidcrypto/ezsnmp/issues/286))
 
@@ -612,7 +727,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 281 bug unable to import ezexceptions with ezsnmp v200b0 ([#285](https://github.com/carlkidcrypto/ezsnmp/issues/285))
 
 
-#### Bump
+#### Cleanup
+
+- Cleanup ([#279](https://github.com/carlkidcrypto/ezsnmp/issues/279))
+
+
+#### Dependency Updates
 
 - Bump attrs from 24.3.0 to 25.1.0 ([#282](https://github.com/carlkidcrypto/ezsnmp/issues/282))
 
@@ -623,9 +743,9 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump setuptools from 75.7.0 to 75.8.0 ([#274](https://github.com/carlkidcrypto/ezsnmp/issues/274))
 
 
-#### Cleanup
+#### Features
 
-- Cleanup ([#279](https://github.com/carlkidcrypto/ezsnmp/issues/279))
+- Feature/auto changelog ([#280](https://github.com/carlkidcrypto/ezsnmp/issues/280))
 
 
 
@@ -740,7 +860,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 255 ga builds ([#258](https://github.com/carlkidcrypto/ezsnmp/issues/258))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump attrs from 24.2.0 to 24.3.0 ([#264](https://github.com/carlkidcrypto/ezsnmp/issues/264))
 
@@ -791,7 +911,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 240 bug bulkwalk runs indefinitely when encountering a non increasing oid ([#247](https://github.com/carlkidcrypto/ezsnmp/issues/247))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump coverage from 7.6.4 to 7.6.5 ([#245](https://github.com/carlkidcrypto/ezsnmp/issues/245))
 
@@ -826,7 +946,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump setuptools from 75.1.0 to 75.2.0 ([#227](https://github.com/carlkidcrypto/ezsnmp/issues/227))
 
 
-#### Update
+#### Dev
+
+- Dev/v2.0.0 ([#239](https://github.com/carlkidcrypto/ezsnmp/issues/239))
+
+
+#### Updates & Improvements
 
 - Update setup.py ([#248](https://github.com/carlkidcrypto/ezsnmp/issues/248))
 
@@ -870,7 +995,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 182 snmpsetc support ([#199](https://github.com/carlkidcrypto/ezsnmp/issues/199))
 
 
-#### Bump
+#### Cibuildwheel
+
+- Cibuildwheel/fix for cibuildwheel ([#221](https://github.com/carlkidcrypto/ezsnmp/issues/221))
+
+
+#### Dependency Updates
 
 - Bump sphinx from 8.0.2 to 8.1.0 ([#220](https://github.com/carlkidcrypto/ezsnmp/issues/220))
 
@@ -885,7 +1015,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump cibuildwheel from 2.21.2 to 2.21.3 ([#213](https://github.com/carlkidcrypto/ezsnmp/issues/213))
 
 
-#### Merge
+#### Experimental
+
+- Experimental/swig ([#193](https://github.com/carlkidcrypto/ezsnmp/issues/193))
+
+
+#### Merged Pull Requests
 
 - Merge branch 'main' into dev/v2.0.0
 
@@ -932,7 +1067,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Adding Python Version ([#216](https://github.com/carlkidcrypto/ezsnmp/issues/216))
 
 
-#### Bump
+#### Create
+
+- Create codeql-analysis.yml ([#214](https://github.com/carlkidcrypto/ezsnmp/issues/214))
+
+
+#### Dependency Updates
 
 - Bump psf/black from 24.8.0 to 24.10.0 ([#207](https://github.com/carlkidcrypto/ezsnmp/issues/207))
 
@@ -963,12 +1103,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump setuptools from 74.1.2 to 75.1.0 ([#190](https://github.com/carlkidcrypto/ezsnmp/issues/190))
 
 
-#### Create
-
-- Create codeql-analysis.yml ([#214](https://github.com/carlkidcrypto/ezsnmp/issues/214))
-
-
-#### Python
+#### Python-related Changes
 
 - Python 3.13 ([#198](https://github.com/carlkidcrypto/ezsnmp/issues/198))
 
@@ -999,7 +1134,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 167 investigate arm64 builds for macos ([#168](https://github.com/carlkidcrypto/ezsnmp/issues/168))
 
 
-#### Bump
+#### Create
+
+- Create FUNDING.yml ([#185](https://github.com/carlkidcrypto/ezsnmp/issues/185))
+
+
+#### Dependency Updates
 
 - Bump urllib3 from 2.2.2 to 2.2.3 ([#176](https://github.com/carlkidcrypto/ezsnmp/issues/176))
 
@@ -1020,12 +1160,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump setuptools from 74.0.0 to 74.1.1 ([#171](https://github.com/carlkidcrypto/ezsnmp/issues/171))
 
 
-#### Create
-
-- Create FUNDING.yml ([#185](https://github.com/carlkidcrypto/ezsnmp/issues/185))
-
-
-#### Update
+#### Updates & Improvements
 
 - Update build_and_publish_to_pypi.yml ([#187](https://github.com/carlkidcrypto/ezsnmp/issues/187))
 
@@ -1046,7 +1181,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 
 ### Changes
 
-#### Bump
+#### Cibuildwheel
+
+- Cibuildwheel/fix the pipeline for ga ([#165](https://github.com/carlkidcrypto/ezsnmp/issues/165))
+
+
+#### Dependency Updates
 
 - Bump setuptools from 73.0.1 to 74.0.0 ([#162](https://github.com/carlkidcrypto/ezsnmp/issues/162))
 
@@ -1079,6 +1219,16 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump tj-actions/changed-files from 44.5.6 to 44.5.7 ([#146](https://github.com/carlkidcrypto/ezsnmp/issues/146))
 
 
+#### Features
+
+- feat: add type annotations for internal code ([#149](https://github.com/carlkidcrypto/ezsnmp/issues/149))
+
+
+#### Release
+
+- Release/v1.0.0rc4 ([#164](https://github.com/carlkidcrypto/ezsnmp/issues/164))
+
+
 
 
 
@@ -1095,7 +1245,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 
 ### Changes
 
-#### Bump
+#### Dependency Updates
 
 - Bump pip from 24.1.2 to 24.2 ([#143](https://github.com/carlkidcrypto/ezsnmp/issues/143))
 
@@ -1146,12 +1296,22 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump pycodestyle from 2.11.1 to 2.12.0 ([#111](https://github.com/carlkidcrypto/ezsnmp/issues/111))
 
 
+#### Features
+
+- Feature/pull in more upstream fixes ([#134](https://github.com/carlkidcrypto/ezsnmp/issues/134))
+
+
+#### Features
+
+- feat: add type for high level api # 138 ([#139](https://github.com/carlkidcrypto/ezsnmp/issues/139))
+
+
 #### Prepping
 
 - Prepping For V1.0.0.c3 ([#145](https://github.com/carlkidcrypto/ezsnmp/issues/145))
 
 
-#### Update
+#### Updates & Improvements
 
 - Update build_and_publish_to_test_pypi.yml ([#113](https://github.com/carlkidcrypto/ezsnmp/issues/113))
 
@@ -1177,7 +1337,17 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 50 bug ezsnmperror usm unknown security name no such user exists ([#108](https://github.com/carlkidcrypto/ezsnmp/issues/108))
 
 
-#### Bump
+#### Bugfix
+
+- Bugfix/look into [#96](https://github.com/carlkidcrypto/ezsnmp/issues/96) ([#102](https://github.com/carlkidcrypto/ezsnmp/issues/102))
+
+
+#### Code Refactoring
+
+- Use snprintf ([#104](https://github.com/carlkidcrypto/ezsnmp/issues/104))
+
+
+#### Dependency Updates
 
 - Bump cibuildwheel from 2.19.0 to 2.19.1 ([#107](https://github.com/carlkidcrypto/ezsnmp/issues/107))
 
@@ -1268,6 +1438,11 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump packaging from 23.2 to 24.0 ([#51](https://github.com/carlkidcrypto/ezsnmp/issues/51))
 
 
+#### Features
+
+- Feature/fix pypi deployment ([#103](https://github.com/carlkidcrypto/ezsnmp/issues/103))
+
+
 #### Manual
 
 - Manual Pull In ([#109](https://github.com/carlkidcrypto/ezsnmp/issues/109))
@@ -1278,14 +1453,9 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Pulls in Three PRs From upstream easysnmp ([#67](https://github.com/carlkidcrypto/ezsnmp/issues/67))
 
 
-#### Update
+#### Updates & Improvements
 
 - Update setup.py
-
-
-#### Use
-
-- Use snprintf ([#104](https://github.com/carlkidcrypto/ezsnmp/issues/104))
 
 
 
@@ -1309,7 +1479,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 44 bug v3 multi threading fails due to user cache ([#45](https://github.com/carlkidcrypto/ezsnmp/issues/45))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump wheel from 0.37.1 to 0.38.1 ([#49](https://github.com/carlkidcrypto/ezsnmp/issues/49))
 
@@ -1345,7 +1515,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - 19 cibuildwheel tests ([#40](https://github.com/carlkidcrypto/ezsnmp/issues/40))
 
 
-#### Bump
+#### Dependency Updates
 
 - Bump coverage from 7.4.2 to 7.4.3 ([#38](https://github.com/carlkidcrypto/ezsnmp/issues/38))
 
@@ -1376,7 +1546,7 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump pytest-sugar from 0.9.7 to 1.0.0 ([#28](https://github.com/carlkidcrypto/ezsnmp/issues/28))
 
 
-#### Update
+#### Updates & Improvements
 
 - Update README.rst
 
@@ -1427,7 +1597,17 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - apk add
 
 
-#### Bump
+#### Cibuildwheel
+
+- Cibuildwheel ([#20](https://github.com/carlkidcrypto/ezsnmp/issues/20))
+
+
+#### Create
+
+- Create pyproject.toml
+
+
+#### Dependency Updates
 
 - Bump psf/black from 24.1.0 to 24.1.1 ([#17](https://github.com/carlkidcrypto/ezsnmp/issues/17))
 
@@ -1450,14 +1630,9 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Bump tj-actions/changed-files from 41.0.1 to 42.0.0 ([#13](https://github.com/carlkidcrypto/ezsnmp/issues/13))
 
 
-#### Cibuildwheel
+#### Features
 
-- Cibuildwheel ([#20](https://github.com/carlkidcrypto/ezsnmp/issues/20))
-
-
-#### Create
-
-- Create pyproject.toml
+- Feature/rename stuff ([#2](https://github.com/carlkidcrypto/ezsnmp/issues/2))
 
 
 #### Fixing
@@ -1465,12 +1640,12 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Fixing PyPi
 
 
-#### Initial
+#### Initial Setup
 
 - Initial commit
 
 
-#### Merge
+#### Merged Pull Requests
 
 - Merge branch 'main' of https://github.com/carlkidcrypto/ezsnmp
 
@@ -1494,13 +1669,17 @@ Last Updated: 2025-12-08 03:57:26 UTC
 
 - PyPi Workflows Again
 
+- PyPi
+
 
 #### TOML
 
 - TOML 2
 
+- TOML
 
-#### Update
+
+#### Updates & Improvements
 
 - Update pyproject.toml
 
@@ -1519,6 +1698,11 @@ Last Updated: 2025-12-08 03:57:26 UTC
 - Update README.rst
 
 - Update README.rst
+
+
+#### YUM
+
+- YUM
 
 
 
