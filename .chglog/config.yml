@@ -29,14 +29,14 @@ options:
       Fix: Bug Fixes
       Refactor: Code Refactoring
       Bump: Dependency Updates
-      Add: New Features
+      Add: Features
       Update: Updates & Improvements
       Document: Documentation Updates
       Increase: Performance Improvements
       Modernize: Code Improvements
       Python: Python-related Changes
       Feature: Features
-      Hotfix: Bug Fixes
+      Hotfix: Critical Bug Fixes
       Enhance: Enhancements
       Use: Code Refactoring
       Initial: Initial Setup
@@ -45,6 +45,8 @@ options:
       # Fallback
       other: Other Changes
   header:
+    # Pattern matches: conventional commits (feat:, fix:), capitalized prefixes (Fix, Add),
+    # and number-prefixed commits (461 feature, 442 question)
     pattern: "^\\s*(([\\w]+)(?:[:\\s/-].*)?)$"
     pattern_maps:
       - Subject
