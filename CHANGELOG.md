@@ -1,4 +1,4 @@
-Last Updated: 2025-12-08 03:57:26 UTC
+Last Updated: 2025-12-09 23:09:36 UTC
 
 # Changelog
 
@@ -129,36 +129,6 @@ Last Updated: 2025-12-08 03:57:26 UTC
 #### Maintenance
 
 - chore: update CHANGELOG.md ([#463](https://github.com/carlkidcrypto/ezsnmp/issues/463))
-
-
-#### Performance Improvements
-
-- Feature/fix docker test scripts ([#491](https://github.com/carlkidcrypto/ezsnmp/issues/491))
-
-- Feature/add agents ([#489](https://github.com/carlkidcrypto/ezsnmp/issues/489))
-
-- Feature/add agents ([#484](https://github.com/carlkidcrypto/ezsnmp/issues/484))
-
-- Feature/documentation agent ([#482](https://github.com/carlkidcrypto/ezsnmp/issues/482))
-
-- Feature/prep for 2.1.0b1 2 ([#479](https://github.com/carlkidcrypto/ezsnmp/issues/479))
-
-
-#### Features
-
-- feat: Add logging and dict/json support for Session and Result objects ([#470](https://github.com/carlkidcrypto/ezsnmp/issues/470))
-
-
-#### Maintenance
-
-- chore: update CHANGELOG.md ([#463](https://github.com/carlkidcrypto/ezsnmp/issues/463))
-
-
-#### New Features
-
-- Add comprehensive unit test coverage for cpp_tests error paths and exceptions ([#487](https://github.com/carlkidcrypto/ezsnmp/issues/487))
-
-- Add The Scribe agent documentation guidelines ([#480](https://github.com/carlkidcrypto/ezsnmp/issues/480))
 
 
 #### Performance Improvements
