@@ -46,7 +46,7 @@ echo "--------------------------------------------------"
 
 # --- Test Loop ---
 rm -f -- *.xml *.txt ../.coverage.* ../test-outputs*.txt
-rm -rdf test_outputs_*
+rm -rdf test_outputs_*/
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# Create output directory for this distribution
@@ -65,10 +65,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	# Run each distribution in the background
 	(
 		# Cleanup any existing container with the same name
-		if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-			docker stop "$CONTAINER_NAME" 2>/dev/null
-		fi
-		docker rm -f "$CONTAINER_NAME" 2>/dev/null
+		docker stop "$CONTAINER_NAME" 2>/dev/null || true
+		docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
 		# 1. Pull the image
 		echo "    - [${DISTRO_NAME}] Pulling image..."
