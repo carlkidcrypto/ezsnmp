@@ -9,6 +9,7 @@
 
 # Nosetests and coverage information
 .coverage
+.coverage.*
 nosetests.xml
 coverage.xml
 
@@ -65,4 +66,3 @@ ezsnmp-2.*.*/
 
 # CodeQL temporary files and artifacts
 _codeql_detected_source_root
-.coverage.*
