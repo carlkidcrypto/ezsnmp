@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         distribution: [almalinux10, archlinux, archlinux_netsnmp_5.8, centos7, rockylinux8]
     steps:
