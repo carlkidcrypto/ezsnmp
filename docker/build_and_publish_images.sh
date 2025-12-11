@@ -5,6 +5,37 @@ set -euo pipefail
 DOCKER_DIR="."
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 
+# --- Helper Function to Generate Dated Tags ---
+# Generates tags in format: MM-DD-YYYY.N where N increments per day
+get_next_version() {
+  local image_name=$1
+  local today=$(date +%m-%d-%Y)
+  local base_tag="${DOCKER_REPO_PATH}:${image_name}-${today}"
+  
+  # Get the highest version number for today from Docker Hub
+  local highest_version=0
+  
+  # Try to list all tags for this repo and filter for today's tags
+  # We'll use docker pull and check locally if images exist
+  # For a more robust solution, we could query the registry API
+  # but this approach is simpler and doesn't require auth to read tags
+  
+  # Check if any today's tags exist locally by trying to inspect them
+  for version in {1..100}; do
+    local tag="${base_tag}.${version}"
+    if docker inspect "${tag}" &>/dev/null 2>&1; then
+      highest_version=$version
+    else
+      # Stop checking after we find a gap
+      break
+    fi
+  done
+  
+  # Increment for next version
+  local next_version=$((highest_version + 1))
+  echo "${base_tag}.${next_version}"
+}
+
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
@@ -14,6 +45,9 @@ if [ $# -lt 2 ]; then
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
   echo "  [IMAGE_NAME]: Optional. Specify a single image directory (e.g., 'almalinux10') to build only that image."
   echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
+  echo ""
+  echo "Images will be tagged with format: MM-DD-YYYY.N (e.g., 12-24-2025.1)"
+  echo "The .N version increments per day for each image."
   exit 1
 fi
 
@@ -58,26 +92,38 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
 
   CONTEXT_PATH=".." # Build from repo root so we can COPY top-level files
   DOCKERFILE_PATH="${DOCKER_DIR}/${DISTRO_NAME}/Dockerfile"
-  FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
+  
+  # Generate the dated version tag
+  DATED_TAG=$(get_next_version "${DISTRO_NAME}")
+  
+  # Also tag with 'latest' for convenience
+  LATEST_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
 
   echo ">>> Processing image: ${DISTRO_NAME}"
   echo "    - Context Path: ${CONTEXT_PATH}"
   echo "    - Dockerfile: ${DOCKERFILE_PATH}"
-  echo "    - Target Tag: ${FULL_IMAGE_TAG}"
+  echo "    - Dated Tag: ${DATED_TAG}"
+  echo "    - Latest Tag: ${LATEST_TAG}"
 
   # 1. Build the image using the distro-specific Dockerfile with repo-root context
-  if docker build -f "${DOCKERFILE_PATH}" -t "${FULL_IMAGE_TAG}" "${CONTEXT_PATH}"; then
+  if docker build -f "${DOCKERFILE_PATH}" -t "${DATED_TAG}" -t "${LATEST_TAG}" "${CONTEXT_PATH}"; then
     echo "    - Build successful."
   else
     echo "ERROR: Docker build failed for ${DISTRO_NAME}."
     continue # Skip pushing if the build failed
   fi
 
-    # 2. Push the image
-    if docker push "${FULL_IMAGE_TAG}"; then
-        echo "    - Push successful. Image is now available at ${FULL_IMAGE_TAG}"
+    # 2. Push both the dated and latest tags
+    if docker push "${DATED_TAG}"; then
+        echo "    - Pushed dated tag: ${DATED_TAG}"
     else
-        echo "ERROR: Docker push failed for ${DISTRO_NAME}."
+        echo "ERROR: Docker push failed for dated tag ${DATED_TAG}."
+    fi
+    
+    if docker push "${LATEST_TAG}"; then
+        echo "    - Pushed latest tag: ${LATEST_TAG}"
+    else
+        echo "ERROR: Docker push failed for latest tag ${LATEST_TAG}."
     fi
     
     echo "--------------------------------------------------"
