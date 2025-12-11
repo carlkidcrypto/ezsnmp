@@ -14,7 +14,7 @@ RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
 # Install devtoolset-11 (GCC 11.2.1, g++ 11.2.1) and all build dependencies in one layer
 RUN yum install -y yum-utils findutils \
     devtoolset-11-gcc devtoolset-11-gcc-c++ devtoolset-11-binutils \
-    openssl-devel bzip2-devel libffi-devel zlib-devel wget make \
+    openssl-devel bzip2-devel libffi-devel zlib-devel sqlite-devel wget make \
     unzip file openssl net-snmp net-snmp-utils net-snmp-devel gdb meson ninja-build gtest-devel lcov && \
     yum clean all && \
     rm -rf /var/cache/yum

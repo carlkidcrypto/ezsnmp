@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 # Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
-sudo chown "$USER" /var/run/docker.sock
+# Try to fix docker socket permissions, but don't fail if we can't
+sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
 
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
@@ -89,6 +90,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 		# Default single tox run for other distributions
 		docker exec -t "$CONTAINER_NAME" bash -c "
+	        export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:\$PATH;
+	        export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:\$LD_LIBRARY_PATH;
 	        cd /ezsnmp;
             rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/;
 			python3 -m pip install tox;

@@ -7,6 +7,7 @@ openssl-devel
 bzip2-devel
 libffi-devel
 zlib-devel
+sqlite-devel
 python3.9
 python39-devel
 python3.11
