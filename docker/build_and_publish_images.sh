@@ -68,6 +68,7 @@ echo "--------------------------------------------------"
 
 # --- Determine Images to Build ---
 
+# We assume the images are tagged the same as the folder names in the current directory.
 if [ -n "${TARGET_IMAGE}" ]; then
   # Build only the specified image
   if [ ! -d "${DOCKER_DIR}/${TARGET_IMAGE}" ]; then

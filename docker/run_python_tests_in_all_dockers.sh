@@ -48,7 +48,7 @@ echo "--------------------------------------------------"
 rm -f -- *.xml *.txt
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
-	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
+	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
 	CONTAINER_NAME="${DISTRO_NAME}_test_container"
 	# The entry script path must be adjusted for the container mount, which is always /ezsnmp/docker/[distro]/...
 	ENTRY_SCRIPT_PATH="/ezsnmp/docker/${DISTRO_NAME}/DockerEntry.sh"
