@@ -4,7 +4,7 @@ concurrency: tests-docker-python-tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/100_percent_working_docker_builds ]
   pull_request:
     branches: [ main ]
 
@@ -37,12 +37,61 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        distribution: [almalinux10, archlinux, archlinux_netsnmp_5.8, centos7, rockylinux8]
-        python: [py39, py310, py311, py312, py313]
+        include:
+          - distribution: almalinux10
+            python: py39
+          - distribution: almalinux10
+            python: py310
+          - distribution: almalinux10
+            python: py311
+          - distribution: almalinux10
+            python: py312
+          - distribution: almalinux10
+            python: py313
+          - distribution: archlinux
+            python: py39
+          - distribution: archlinux
+            python: py310
+          - distribution: archlinux
+            python: py311
+          - distribution: archlinux
+            python: py312
+          - distribution: archlinux
+            python: py313
+          - distribution: archlinux_netsnmp_5.8
+            python: py39
+          - distribution: archlinux_netsnmp_5.8
+            python: py310
+          - distribution: archlinux_netsnmp_5.8
+            python: py311
+          - distribution: archlinux_netsnmp_5.8
+            python: py312
+          - distribution: archlinux_netsnmp_5.8
+            python: py313
+          - distribution: centos7
+            python: py39
+          - distribution: centos7
+            python: py310
+          - distribution: centos7
+            python: py311
+          - distribution: centos7
+            python: py312
+          - distribution: centos7
+            python: py313
+          - distribution: rockylinux8
+            python: py39
+          - distribution: rockylinux8
+            python: py310
+          - distribution: rockylinux8
+            python: py311
+          - distribution: rockylinux8
+            python: py312
+          - distribution: rockylinux8
+            python: py313
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -106,43 +155,71 @@ jobs:
             --name "$CONTAINER_NAME" \
             -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
             "$IMAGE" \
-            /bin/bash -c "$ENTRY_SCRIPT true & tail -f /dev/null"; then
+            /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
               echo "ERROR: Docker run failed for $IMAGE" >&2
               exit 1
           fi
+          echo "    - Container started successfully"
 
       - name: Run tox for ${{ matrix.python }}
         run: |
           set -euo pipefail
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
+          TOX_ENV="${{ matrix.python }}"
           echo ">>> Executing tox tests inside container: $CONTAINER_NAME"
+          echo "    - Python environment: $TOX_ENV"
           docker exec -t "$CONTAINER_NAME" bash -c '
             set -e
-            cd /ezsnmp;
-            echo "    - Cleaning previous build artifacts";
-            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/ || true;
-            echo "    - Installing tox";
-            python3 -m pip install --quiet tox;
-            TOX_ENV="${{ matrix.python }}";
-            echo "    - Running tox environment: $TOX_ENV";
-            if tox -e "$TOX_ENV" > test-outputs.txt 2>&1; then
-              echo "    - Tox completed for $TOX_ENV";
+            export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH
+            export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
+            export WORK_DIR=/tmp/ezsnmp_${{ matrix.distribution }}
+            export TOX_WORK_DIR=/tmp/tox_${{ matrix.distribution }}
+            
+            # Create isolated copy of source to avoid build conflicts
+            echo "    - Cleaning previous build artifacts"
+            rm -rf $WORK_DIR $TOX_WORK_DIR
+            mkdir -p $WORK_DIR
+            
+            echo "    - Copying source to isolated directory"
+            cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -)
+            
+            cd $WORK_DIR
+            echo "    - Installing tox"
+            python3 -m pip install --quiet tox
+            
+            echo "    - Running tox environment: '${{ matrix.python }}''"'"'
+            if tox -e ${{ matrix.python }} --workdir $TOX_WORK_DIR > /tmp/test-outputs.txt 2>&1; then
+              echo "    - Tox completed for ${{ matrix.python }}"
             else
-              echo "    - Tox reported failures for $TOX_ENV (continuing to collect artifacts)";
-            fi;
-            exit 0;
+              echo "    - Tox reported failures for ${{ matrix.python }} (continuing to collect artifacts)"
+            fi
+            exit 0
           '
+          
+          # Copy output file
+          docker exec "$CONTAINER_NAME" cat /tmp/test-outputs.txt > test-outputs.txt || echo "Warning: Could not retrieve test outputs" 2>&1
 
       - name: Collect artifacts
+        if: always()
         run: |
           set -euo pipefail
           mkdir -p docker
-          if [ -f test-results.xml ]; then \
-            mv test-results.xml docker/test-results_${{ matrix.distribution }}_test_container_${{ matrix.python }}.xml; \
-          else \
-            echo "<testsuite></testsuite>" > docker/test-results_${{ matrix.distribution }}_test_container_${{ matrix.python }}.xml; \
+          CONTAINER_NAME="${{ matrix.distribution }}_test_container"
+          
+          # Try to get test results XML from container
+          if docker exec "$CONTAINER_NAME" test -f /tmp/test-results.xml 2>/dev/null; then
+            docker cp "$CONTAINER_NAME":/tmp/test-results.xml \
+              "docker/test-results_${{ matrix.distribution }}_test_container_${{ matrix.python }}.xml" || true
+          else
+            echo "<testsuite></testsuite>" > "docker/test-results_${{ matrix.distribution }}_test_container_${{ matrix.python }}.xml"
           fi
-          mv test-outputs.txt docker/test-outputs_${{ matrix.distribution }}_test_container_${{ matrix.python }}.txt
+          
+          # Copy test outputs
+          if [ -f test-outputs.txt ]; then
+            mv test-outputs.txt "docker/test-outputs_${{ matrix.distribution }}_test_container_${{ matrix.python }}.txt"
+          else
+            echo "No test outputs found" > "docker/test-outputs_${{ matrix.distribution }}_test_container_${{ matrix.python }}.txt"
+          fi
 
       - name: Stop and remove container
         if: always()
