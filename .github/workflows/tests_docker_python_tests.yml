@@ -166,35 +166,36 @@ jobs:
           set -euo pipefail
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
           TOX_ENV="${{ matrix.python }}"
+          DISTRO="${{ matrix.distribution }}"
           echo ">>> Executing tox tests inside container: $CONTAINER_NAME"
           echo "    - Python environment: $TOX_ENV"
-          docker exec -t "$CONTAINER_NAME" bash -c '
+          docker exec -t "$CONTAINER_NAME" bash << 'DOCKER_SCRIPT'
             set -e
             export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH
             export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
-            export WORK_DIR=/tmp/ezsnmp_${{ matrix.distribution }}
-            export TOX_WORK_DIR=/tmp/tox_${{ matrix.distribution }}
+            WORK_DIR="/tmp/ezsnmp_${DISTRO}"
+            TOX_WORK_DIR="/tmp/tox_${DISTRO}"
             
             # Create isolated copy of source to avoid build conflicts
             echo "    - Cleaning previous build artifacts"
-            rm -rf $WORK_DIR $TOX_WORK_DIR
-            mkdir -p $WORK_DIR
+            rm -rf "$WORK_DIR" "$TOX_WORK_DIR"
+            mkdir -p "$WORK_DIR"
             
             echo "    - Copying source to isolated directory"
-            cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -)
+            cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -)
             
-            cd $WORK_DIR
+            cd "$WORK_DIR"
             echo "    - Installing tox"
             python3 -m pip install --quiet tox
             
-            echo "    - Running tox environment: '${{ matrix.python }}''"'"'
-            if tox -e ${{ matrix.python }} --workdir $TOX_WORK_DIR > /tmp/test-outputs.txt 2>&1; then
-              echo "    - Tox completed for ${{ matrix.python }}"
+            echo "    - Running tox environment: '${TOX_ENV}'"
+            if tox -e "${TOX_ENV}" --workdir "$TOX_WORK_DIR" > /tmp/test-outputs.txt 2>&1; then
+              echo "    - Tox completed for ${TOX_ENV}"
             else
-              echo "    - Tox reported failures for ${{ matrix.python }} (continuing to collect artifacts)"
+              echo "    - Tox reported failures for ${TOX_ENV} (continuing to collect artifacts)"
             fi
             exit 0
-          '
+          DOCKER_SCRIPT
           
           # Copy output file
           docker exec "$CONTAINER_NAME" cat /tmp/test-outputs.txt > test-outputs.txt || echo "Warning: Could not retrieve test outputs" 2>&1
