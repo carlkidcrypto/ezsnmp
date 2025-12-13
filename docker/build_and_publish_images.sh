@@ -39,12 +39,13 @@ get_next_version() {
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME]"
+  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache]"
   echo ""
   echo "  <DOCKER_USERNAME>: Your Docker Hub username."
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
   echo "  [IMAGE_NAME]: Optional. Specify a single image directory (e.g., 'almalinux10') to build only that image."
   echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
+  echo "  [--no-cache]: Optional. Add this flag to force rebuild without using Docker cache."
   echo ""
   echo "Images will be tagged with format: MM-DD-YYYY.N (e.g., 12-24-2025.1)"
   echo "The .N version increments per day for each image."
@@ -53,7 +54,24 @@ fi
 
 USERNAME=$1
 ACCESS_TOKEN=$2
-TARGET_IMAGE=${3:-} # Optional 3rd argument, empty if not provided
+TARGET_IMAGE=""
+NO_CACHE=""
+
+# Parse optional arguments
+shift 2
+while [ $# -gt 0 ]; do
+  case $1 in
+    --no-cache)
+      NO_CACHE="--no-cache"
+      echo "Build mode: --no-cache enabled (forcing clean rebuild)"
+      shift
+      ;;
+    *)
+      TARGET_IMAGE=$1
+      shift
+      ;;
+  esac
+done
 
 # --- Docker Hub Login ---
 
@@ -105,9 +123,10 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
   echo "    - Dockerfile: ${DOCKERFILE_PATH}"
   echo "    - Dated Tag: ${DATED_TAG}"
   echo "    - Latest Tag: ${LATEST_TAG}"
+  echo "    - Build Options: ${NO_CACHE}"
 
   # 1. Build the image using the distro-specific Dockerfile with repo-root context
-  if docker build -f "${DOCKERFILE_PATH}" -t "${DATED_TAG}" -t "${LATEST_TAG}" "${CONTEXT_PATH}"; then
+  if docker build ${NO_CACHE} -f "${DOCKERFILE_PATH}" -t "${DATED_TAG}" -t "${LATEST_TAG}" "${CONTEXT_PATH}"; then
     echo "    - Build successful."
   else
     echo "ERROR: Docker build failed for ${DISTRO_NAME}."
