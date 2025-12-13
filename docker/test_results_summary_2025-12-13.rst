@@ -12,7 +12,7 @@ Test Execution Overview
 :Docker Images: carlkidcrypto/ezsnmp_test_images:{distro}-latest
 
 **Update (Dec 13, post-rebuild):**
-CentOS 7 Docker image was rebuilt with explicit LDFLAGS/CPPFLAGS for sqlite3 and OpenSSL support in Python 3.13.7. Results below show py313 still failing with SSL module issue—additional rebuild with corrected flags in progress.
+CentOS 7 Docker image was rebuilt with explicit LDFLAGS/CPPFLAGS for sqlite3 and OpenSSL support in Python 3.13.7. Results below show py313 still failing with SSL module issue. Suggested fixes have not resolved the problem—further investigation required.
 
 
 Distribution Test Matrix
@@ -95,10 +95,10 @@ CentOS 7
 :Total Duration: ~293s (4m 53s) for passing environments
 :py313 Status:
 
-  - **Current Error**: ``ModuleNotFoundError: No module named '_ssl'`` (pip SSL error during package install)
-  - **Root Cause**: Python 3.13 built without SSL support despite OpenSSL 1.1.1w present
-  - **Action Taken**: Added ``LDFLAGS="-L/usr/lib64 -L/usr/local/openssl/lib" CPPFLAGS="-I/usr/include -I/usr/local/openssl/include"`` to configure
-  - **Next Action**: Rebuild in progress with corrected flags
+   - **Current Error**: ``ModuleNotFoundError: No module named '_ssl'`` (pip SSL error during package install)
+   - **Root Cause**: Python 3.13 built without SSL support despite OpenSSL 1.1.1w present
+   - **Action Taken**: Added ``LDFLAGS="-L/usr/lib64 -L/usr/local/openssl/lib" CPPFLAGS="-I/usr/include -I/usr/local/openssl/include"`` to configure
+   - **Next Action**: Rebuild in progress with corrected flags
 
 :Notes: Python 3.9-3.12 pass. Python 3.13 SSL module issue preventing pip from installing test dependencies.
 
@@ -181,20 +181,22 @@ Known Issues
 Issue #1: CentOS 7 Python 3.13 Missing SSL Module
 ------------------------------------------------------------------------
 
-:Status: ❌ BLOCKING (Changed from sqlite3 to SSL issue)
+:Status: ❌ BLOCKING (Unresolved despite fix attempts)
 :Affected: CentOS 7 - Python 3.13.7 only
 :Error: ``SSLError("Can't connect to HTTPS URL because the SSL module is not available.")``
 :Root Cause: Python 3.13 compiled without SSL module despite OpenSSL 1.1.1w built and available
 
-**Fix Applied (Pending Rebuild):**
+**Fix Attempted (NOT WORKING):**
 
-Updated Dockerfile to include OpenSSL paths in LDFLAGS/CPPFLAGS:
+Dockerfile updated with OpenSSL paths in LDFLAGS/CPPFLAGS:
 
 .. code-block:: dockerfile
 
    LDFLAGS="-L/usr/lib64 -L/usr/local/openssl/lib" \
    CPPFLAGS="-I/usr/include -I/usr/local/openssl/include" \
    ./configure --enable-shared --with-openssl=/usr/local/openssl
+
+**Status:** Rebuild completed but SSL module still not available in Python 3.13.
 
 **Technical Details:**
 
@@ -205,17 +207,20 @@ Updated Dockerfile to include OpenSSL paths in LDFLAGS/CPPFLAGS:
    SSLError("Can't connect to HTTPS URL because the SSL module is not available.")
    ERROR: Could not find a version that satisfies the requirement black==25.9.0
 
-**Previous Issue (RESOLVED):** 
-  - sqlite3 module was missing (`ModuleNotFoundError: No module named '_sqlite3'`)
-  - Fixed by adding `-L/usr/lib64 -I/usr/include` to configure flags
-  - Now encountering SSL module issue
+**Issue Timeline:** 
+
+- Dec 11: sqlite3 module missing (``ModuleNotFoundError: No module named '_sqlite3'``)
+- Dec 13 (first attempt): Added LDFLAGS/CPPFLAGS for OpenSSL paths
+- Dec 13 (current): SSL module still unavailable despite fixes
 
 **Workaround:** None—SSL required for pip package installation.
 
 **Next Steps:**
-  1. Rebuild CentOS 7 image with corrected LDFLAGS/CPPFLAGS (in progress)
-  2. Verify both SSL and sqlite3 modules load in Python 3.13
-  3. Re-run tests to confirm fix
+
+1. Investigate Python 3.13 build logs for SSL module compilation errors
+2. Check if OpenSSL dev headers are available during Python 3.13 compile
+3. Consider alternative approach: pre-install packages or use system Python 3.13
+4. Evaluate if CentOS 7 environment is suitable for Python 3.13 (EOL distro)
 
 
 Issue #2: net-snmp 5.8 API Incompatibility
@@ -290,27 +295,29 @@ Recommendations
 High Priority
 ------------------------------------------------------------------------
 
-1. **Rebuild CentOS 7 Image with SSL Fix** - Critical for Python 3.13
+1. **Resolve CentOS 7 Python 3.13 SSL Issue** - Critical blocker
+
+   Current approach (LDFLAGS/CPPFLAGS) has not resolved the problem.
+   
+   Options to investigate:
 
    .. code-block:: bash
 
-      cd docker
-      ./build_and_publish_images.sh --no-cache --single centos7
+      # Option 1: Check build logs for SSL compilation errors
+      docker build --progress=plain -t test:latest docker/centos7 2>&1 | grep -i ssl
+      
+      # Option 2: Verify OpenSSL headers are present during build
+      docker run centos7 bash -c "ls -la /usr/include/openssl* /usr/local/openssl/include/*"
+      
+      # Option 3: Use system Python 3.13 if available, or skip this version
+      # Option 4: Pre-install test dependencies in Docker image (workaround)
 
-   Expected outcome: Python 3.13 with both SSL and sqlite3 support
-
-2. **Verify Python 3.13 Module Availability** - After rebuild
-
-   .. code-block:: bash
-
-      docker run --rm carlkidcrypto/ezsnmp_test_images:centos7-latest \
-        bash -c "python3.13 -c 'import sqlite3, ssl; print(\"✓ sqlite:\", sqlite3.sqlite_version, \"| ssl:\", ssl.OPENSSL_VERSION)'"
-
-3. **Document net-snmp Requirements** - Update README.rst
+2. **Document net-snmp Requirements** - Update README.rst
 
    - Minimum version: net-snmp 5.9
    - Known incompatible: net-snmp 5.8
    - Tested versions: 5.9, 5.7.3 (Rocky/CentOS)
+   - Python 3.13 support: Under investigation on CentOS 7
 
 
 Medium Priority
@@ -370,10 +377,11 @@ Changes Since Last Report
 
 **Regressions:**
 
-- ❌ CentOS 7 py313 issue evolved from sqlite3 to SSL module (different root cause)
+- ❌ CentOS 7 py313 issue unresolved—fix attempts unsuccessful
   
-  - Dec 11: ``ModuleNotFoundError: No module named '_sqlite3'``
-  - Dec 13: ``SSLError("SSL module is not available")``
+  - Dec 11: ``ModuleNotFoundError: No module named '_sqlite3'`` (identified)
+  - Dec 13: ``SSLError("SSL module is not available")`` (attempted fix failed)
+  - Root cause appears more complex than initial diagnosis
 
 **Unchanged:**
 
@@ -394,22 +402,22 @@ Immediate Actions (Today)
 ------------------------------------------------------------------------
 
 1. ✅ **Document current test status** (this file)
-2. ⚠️ **Rebuild CentOS 7 with corrected SSL+sqlite3 flags**
+2. ⚠️ **Investigate CentOS 7 Python 3.13 SSL compilation issue**
 
-   .. code-block:: bash
-
-      cd docker
-      ./build_and_publish_images.sh --no-cache --single centos7
+   - Review Docker build logs for SSL module compilation errors
+   - Verify OpenSSL dev headers availability during Python 3.13 build
+   - Consider alternative solutions (system Python, pre-installed dependencies, or skip version)
 
 3. ✅ **Verify archlinux_netsnmp_5.8 complete** (all 5 Python versions tested)
 
 Follow-Up Tasks (This Week)
 ------------------------------------------------------------------------
 
-1. Verify CentOS 7 Python 3.13 passes after rebuild with both SSL and sqlite3
+1. Resolve CentOS 7 Python 3.13 SSL issue (if possible) or document workaround
 2. Update documentation with net-snmp version requirements
 3. Mark archlinux_netsnmp_5.8 as informational/excluded from pass rate
 4. Create compatibility matrix table for README
+5. Decide on CentOS 7 Python 3.13 support (viable fix vs. deprecate)
 
 
 Test Infrastructure Status
@@ -481,11 +489,11 @@ Conclusion
 
 - ❌ Arch Linux net-snmp 5.8: 0/5 Python versions pass (API incompatibility—all versions now tested)
 
-**Critical Issue:** CentOS 7 Python 3.13 missing SSL module—requires Docker image rebuild with corrected LDFLAGS/CPPFLAGS to build both SSL and sqlite3 support.
+**Critical Issue:** CentOS 7 Python 3.13 SSL module missing—suggested fixes (LDFLAGS/CPPFLAGS) have not resolved the issue. Requires deeper investigation into Python 3.13 build process or alternative approach.
 
 **Progress Since Dec 11:** 
 - Arch netsnmp 5.8 testing complete (py312/py313 finished)
-- CentOS 7 issue diagnosed but not yet resolved (SSL module replaces sqlite3 as blocker)
+- CentOS 7 issue worsened: sqlite3 fixed but SSL module still missing (fix attempt unsuccessful)
 
 **Test Infrastructure:** Stable, parallel execution working reliably with isolated build directories.
 

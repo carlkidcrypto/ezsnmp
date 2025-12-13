@@ -98,8 +98,9 @@ if [ -n "${TARGET_IMAGE}" ]; then
   echo "Mode: Building only the single image: ${TARGET_IMAGE}"
 else
   # Build all images by finding directories in DOCKER_DIR
-  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d -printf "%f\n"))
-  echo "Mode: Building all found images."
+  # Exclude test_outputs_* directories
+  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d ! -name "test_outputs_*" -printf "%f\n"))
+  echo "Mode: Building all found images (excluding test_outputs directories)."
 fi
 
 echo "Images to process: ${DISTROS_TO_BUILD[*]}"
