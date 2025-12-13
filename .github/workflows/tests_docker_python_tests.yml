@@ -37,7 +37,7 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
@@ -125,16 +125,26 @@ jobs:
       - name: Pull Docker image (refresh from registry)
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
-          # Always pull to pick up upstream changes; this is fast if up-to-date
-          docker pull "$IMAGE"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          echo "Attempting to pull Docker image: $IMAGE"
+          if docker pull "$IMAGE" 2>&1; then
+            echo "Successfully pulled image from registry"
+          else
+            echo "WARNING: Could not pull image from registry. Checking if local cache exists..."
+            if docker image inspect "$IMAGE" > /dev/null 2>&1; then
+              echo "Using locally cached image: $IMAGE"
+            else
+              echo "ERROR: Docker image not found in registry or local cache: $IMAGE"
+              exit 1
+            fi
+          fi
 
       - name: Save Docker image to cache tar
         if: always()
         run: |
           set -euo pipefail
           mkdir -p .docker-image-cache
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
@@ -142,7 +152,7 @@ jobs:
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
           ENTRY_SCRIPT="/ezsnmp/docker/${{ matrix.distribution }}/DockerEntry.sh"
           HOST_SOURCE_PATH="$PWD"
