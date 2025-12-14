@@ -114,26 +114,44 @@ EzSnmp provides pre-built Docker images for testing across multiple Linux distri
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
 
-To run tests in Docker:
+**Recent Improvements**
+
+The Docker testing infrastructure has been significantly improved:
+
+* **Parallel Execution**: Tests run across all distributions simultaneously
+* **CI/CD Integration**: Automated testing via GitHub Actions with Docker image caching
+* **Matrix Testing**: Comprehensive coverage across 5 distributions × 5 Python versions
+* **Isolated Environments**: Each test runs in a dedicated temporary directory
+* **Better Error Handling**: Graceful cleanup and comprehensive error reporting
+
+**Running Tests in Docker**
 
 .. code:: bash
 
-    # Run all Python tests across all distributions
+    # Run all Python tests across all distributions (parallel)
     cd docker/
     chmod +x run_python_tests_in_all_dockers.sh
     ./run_python_tests_in_all_dockers.sh
 
-    # Run a specific distribution image
-    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10
+    # Run tests in a specific distribution only
+    ./run_python_tests_in_all_dockers.sh almalinux10
+
+    # Run a specific distribution image manually
+    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
       -p 161/udp \
-      carlkidcrypto/ezsnmp_test_images:almalinux10 \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh"
+      carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false"
 
     # Execute tests inside the container
-    sudo docker exec -t almalinux10_snmp_container /bin/bash -c 'tox'
+    sudo docker exec -t almalinux10_snmp_container /bin/bash -c '
+      cd /ezsnmp;
+      rm -drf build/ ezsnmp.egg-info/ .tox/ dist/;
+      python3 -m pip install tox;
+      tox
+    '
 
 For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
 
