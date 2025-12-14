@@ -51,14 +51,14 @@ The ``DockerEntry.sh`` script accepts an optional parameter to control Python se
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh"
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh & tail -f /dev/null"
 
     # Or skip Python setup for faster startup (daemon only)
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false"
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
 
 ----------------------------------------------------------------------
 
@@ -71,22 +71,18 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 
 .. code-block:: bash
 
-    # Execute tox for a default environment (e.g., on almalinux10)
-    sudo docker exec -t almalinux10_snmp_container /bin/bash -c '
-      cd /ezsnmp;
-      rm -drf build/ ezsnmp.egg-info/ .tox/ dist/;
-      python3 -m pip install tox;
-      tox > test-outputs_almalinux10.txt 2>&1;
-      mv test-results.xml test-results_almalinux10.xml;
-    '
-
-    # Example for a specific environment (like py312 on rockylinux8)
-    sudo docker exec -t rockylinux8_snmp_container /bin/bash -c '
-      cd /ezsnmp;
-      rm -drf build/ ezsnmp.egg-info/ .tox/ dist/;
-      python3 -m pip install tox;
-      tox -e py312 > test-outputs_rockylinux8_py312.txt 2>&1;
-      mv test-results.xml test-results_rockylinux8_py312.xml;
+    # Execute tox for a specific environment (e.g., py312 on almalinux10)
+    sudo docker exec -t almalinux10_snmp_container bash -c '
+      export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
+      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
+      export WORK_DIR=/tmp/ezsnmp_almalinux10;
+      export TOX_WORK_DIR=/tmp/tox_almalinux10;
+      rm -rf $WORK_DIR $TOX_WORK_DIR;
+      mkdir -p $WORK_DIR;
+      cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -);
+      cd $WORK_DIR;
+      python3 -m pip install tox > /dev/null 2>&1;
+      tox -e py312 --workdir $TOX_WORK_DIR > /ezsnmp/test-outputs_almalinux10_py312.txt 2>&1;
     '
 
 **2. Copy Results to Host:**
@@ -94,8 +90,7 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 .. code-block:: bash
 
     # Copy the results back to the current directory
-    sudo docker cp almalinux10_snmp_container:/ezsnmp/test-results_almalinux10.xml .
-    sudo docker cp almalinux10_snmp_container:/ezsnmp/test-outputs_almalinux10.txt .
+    sudo docker cp almalinux10_snmp_container:/ezsnmp/test-outputs_almalinux10_py312.txt .
 
 **3. Cleanup:**
 
@@ -125,6 +120,9 @@ Builds and publishes Docker images to Docker Hub.
   # Build and publish a single distribution
   ./build_and_publish_images.sh <docker_user> <docker_pat> centos7
 
+  # Build from scratch without using cache
+  ./build_and_publish_images.sh <docker_user> <docker_pat> centos7 --no-cache
+
 **run_python_tests_in_all_dockers.sh**
 
 Runs Python tests across all distributions in parallel or a specific distribution.
@@ -137,7 +135,15 @@ Runs Python tests across all distributions in parallel or a specific distributio
   # Run tests in a specific distribution only
   ./run_python_tests_in_all_dockers.sh almalinux10
 
-Output files are organized in ``test_outputs_<distribution>/`` directories:
+The script creates a separate output directory for each distribution in the ``docker/`` directory. For example, after running all tests, you'll see:
+
+- ``test_outputs_almalinux10/``
+- ``test_outputs_archlinux/``
+- ``test_outputs_archlinux_netsnmp_5.8/``
+- ``test_outputs_centos7/``
+- ``test_outputs_rockylinux8/``
+
+Each directory contains test results and outputs for all Python versions:
 
 - ``test-results_<distribution>_test_container_<python_version>.xml``
 - ``test-outputs_<distribution>_test_container_<python_version>.txt``
