@@ -4,7 +4,7 @@ concurrency: tests-docker-python-tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/100_percent_working_docker_builds ]
   pull_request:
     branches: [ main ]
 
