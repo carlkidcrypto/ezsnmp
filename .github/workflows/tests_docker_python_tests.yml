@@ -76,7 +76,7 @@ jobs:
       - name: Pull Docker image (refresh from registry)
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           # Always pull to pick up upstream changes; this is fast if up-to-date
           docker pull "$IMAGE"
 
@@ -85,7 +85,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .docker-image-cache
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
@@ -93,7 +93,7 @@ jobs:
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
           ENTRY_SCRIPT="/ezsnmp/docker/${{ matrix.distribution }}/DockerEntry.sh"
           HOST_SOURCE_PATH="$PWD"
