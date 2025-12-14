@@ -38,7 +38,7 @@ To run a specific distribution image locally, you must use the ``-d`` (detached)
 
 **2. Run the Container and Start the Service:**
 
-The command below runs the container, mounts the current directory (``$(pwd)``) to ``/ezsnmp`` inside the container, exposes UDP port 161 (for SNMP communication), and runs the distribution-specific entry script (``DockerEntry.sh``). 
+The command below runs the container, mounts the current directory (``$(pwd)``) to ``/ezsnmp`` inside the container, and runs the distribution-specific entry script (``DockerEntry.sh``). 
 
 The ``DockerEntry.sh`` script accepts an optional parameter to control Python setup:
 - **true** (default): Installs Python dependencies and builds the package
@@ -50,7 +50,6 @@ The ``DockerEntry.sh`` script accepts an optional parameter to control Python se
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
-      -p 161/udp \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
       /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh"
 
@@ -58,7 +57,6 @@ The ``DockerEntry.sh`` script accepts an optional parameter to control Python se
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
-      -p 161/udp \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
       /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false"
 

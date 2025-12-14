@@ -131,9 +131,8 @@ To run tests in Docker:
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
-      -p 161/udp \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false"
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false"  # false = skip Python setup, only start SNMP daemon
 
     # Execute tests inside the container
     sudo docker exec -t almalinux10_snmp_container /bin/bash -c '
