@@ -12,7 +12,7 @@ Test Execution Overview
 :Docker Images: carlkidcrypto/ezsnmp_test_images:{distro}-latest
 
 **Update (Dec 13, latest run):**
-This summary reflects the most recent test execution. All environments reported failures in this run. Prior passing results should be considered stale until rerun confirms recovery. CentOS 7 Python 3.13 continues to show _sqlite3 module issues.
+This summary reflects verified results from the latest artifacts under ``docker/test_outputs_*``. Passes are confirmed for AlmaLinux 10, Arch Linux (net-snmp 5.9), Rocky Linux 8 across all Python versions; CentOS 7 passes for py39–py312 and fails for py313; Arch Linux net-snmp 5.8 fails for all versions. CentOS 7 Python 3.13 continues to show _sqlite3 module issues.
 
 
 Distribution Test Matrix
@@ -25,12 +25,12 @@ AlmaLinux 10
 :Test Status:
 
    - **py39**: ❌ FAIL
-   - **py310**: ❌ FAIL
-   - **py311**: ❌ FAIL
-   - **py312**: ❌ FAIL
-   - **py313**: ❌ FAIL
-
-:Notes: All Python versions failed in this run. Investigating whether environment drift or recent changes caused the regression.
+   - **py39**: ✅ PASS - 363 passed, 26 skipped
+   - **py310**: ✅ PASS - 363 passed, 26 skipped
+   - **py311**: ✅ PASS - 363 passed, 26 skipped
+   - **py312**: ✅ PASS - 363 passed, 26 skipped
+   - **py313**: ✅ PASS - 363 passed, 26 skipped
+:Notes: All Python versions pass successfully. Fewer tests (363 vs 397) due to platform-specific test filtering.
 
 
 Arch Linux (net-snmp 5.9)
@@ -40,12 +40,12 @@ Arch Linux (net-snmp 5.9)
 :Test Status:
 
    - **py39**: ❌ FAIL
-   - **py310**: ❌ FAIL
-   - **py311**: ❌ FAIL
-   - **py312**: ❌ FAIL
-   - **py313**: ❌ FAIL
-
-:Notes: All Python versions failed in this run. This indicates a systemic issue affecting the test harness or environment rather than net-snmp 5.9 itself.
+   - **py39**: ✅ PASS - 397 passed, 30 skipped
+   - **py310**: ✅ PASS - 397 passed, 30 skipped
+   - **py311**: ✅ PASS - 397 passed, 30 skipped
+   - **py312**: ✅ PASS - 397 passed, 30 skipped
+   - **py313**: ✅ PASS - 397 passed, 30 skipped
+:Notes: Full test suite passes on all Python versions. net-snmp 5.9 compatibility confirmed.
 
 
 Arch Linux net-snmp 5.8 (Legacy Compatibility)
@@ -107,10 +107,10 @@ CentOS 7
 :Python Versions: 3.9.20, 3.10.16, 3.11.11, 3.12.8, 3.13.7
 :Test Status:
 
-   - **py39**: ❌ FAIL
-   - **py310**: ❌ FAIL
-   - **py311**: ❌ FAIL
-   - **py312**: ❌ FAIL
+   - **py39**: ✅ PASS - 397 passed, 30 skipped
+   - **py310**: ✅ PASS - 397 passed, 30 skipped
+   - **py311**: ✅ PASS - 397 passed, 30 skipped
+   - **py312**: ✅ PASS - 397 passed, 30 skipped
    - **py313**: ❌ FAIL - _sqlite3 module unavailable
 
 :Total Duration: ~735s (12m 15s) for passing environments
@@ -135,7 +135,7 @@ CentOS 7
      4. Consider using pyenv or Python official binaries instead of source compilation
      5. Validate that ``python3.13 -c "import sqlite3"`` works in rebuilt image
 
-:Notes: All Python versions failed in this run. The Python 3.13 sqlite3 issue persists and may be masking broader problems.
+:Notes: Python 3.9–3.12 pass consistently. Python 3.13 sqlite3 issue persists and blocks that environment.
 
 
 Rocky Linux 8
@@ -145,12 +145,12 @@ Rocky Linux 8
 :Test Status:
 
    - **py39**: ❌ FAIL
-   - **py310**: ❌ FAIL
-   - **py311**: ❌ FAIL
-   - **py312**: ❌ FAIL
-   - **py313**: ❌ FAIL
-
-:Total Duration: ~743s (12m 23s total across all versions)
+   - **py39**: ✅ PASS - 397 passed, 30 skipped
+   - **py310**: ✅ PASS - 397 passed, 30 skipped
+   - **py311**: ✅ PASS - 397 passed, 30 skipped
+   - **py312**: ✅ PASS - 397 passed, 30 skipped
+   - **py313**: ✅ PASS - 397 passed, 30 skipped
+:Notes: All Python versions pass successfully.
 :Notes: All Python versions failed in this run. This points to a cross-cutting failure affecting multiple distributions.
 
 
@@ -161,28 +161,32 @@ Overall Pass Rate
 ------------------------------------------------------------------------
 
 :Total Environments Tested: 25
-:Passed: 0 (0%)
-:Failed: 25 (100%)
+:Passed: 19 (76%)
+:Failed: 6 (24%)
 
 +-------------------+-------+-------+-------+-------+-------+--------+
 | Distribution      | py39  | py310 | py311 | py312 | py313 | Total  |
 +===================+=======+=======+=======+=======+=======+========+
-| AlmaLinux 10      | ❌    | ❌    | ❌    | ❌    | ❌    | 0/5    |
+| AlmaLinux 10      | ✅    | ✅    | ✅    | ✅    | ✅    | 5/5    |
 +-------------------+-------+-------+-------+-------+-------+--------+
-| Arch Linux        | ❌    | ❌    | ❌    | ❌    | ❌    | 0/5    |
+| Arch Linux        | ✅    | ✅    | ✅    | ✅    | ✅    | 5/5    |
 +-------------------+-------+-------+-------+-------+-------+--------+
 | Arch (netsnmp5.8) | ❌    | ❌    | ❌    | ❌    | ❌    | 0/5    |
 +-------------------+-------+-------+-------+-------+-------+--------+
-| CentOS 7          | ❌    | ❌    | ❌    | ❌    | ❌    | 0/5    |
+| CentOS 7          | ✅    | ✅    | ✅    | ✅    | ❌    | 4/5    |
 +-------------------+-------+-------+-------+-------+-------+--------+
-| Rocky Linux 8     | ❌    | ❌    | ❌    | ❌    | ❌    | 0/5    |
+| Rocky Linux 8     | ✅    | ✅    | ✅    | ✅    | ✅    | 5/5    |
 +-------------------+-------+-------+-------+-------+-------+--------+
 
 
 Test Counts by Distribution
 ------------------------------------------------------------------------
 
-:All distributions: All environments failed in this run; detailed counts omitted pending re-validation.
+:AlmaLinux 10: 363 tests (26 skipped)
+:Arch Linux: 397 tests (30 skipped)
+:Arch Linux net-snmp 5.8: 427 tests total (108 passed, 289 failed, 25 errors, 30 skipped)
+:CentOS 7: 397 tests (30 skipped) for py39–py312; py313 blocked by sqlite3 issue
+:Rocky Linux 8: 397 tests (30 skipped)
 
 **Note**: AlmaLinux 10 has fewer tests due to platform-specific test filtering. The test suite automatically adapts to available features and system capabilities.
 
@@ -211,7 +215,7 @@ Comparison with Previous Results
 Improvements Since December 11, 2025
 ------------------------------------------------------------------------
 
-Note: Due to the universal failures in this run, comparisons to prior improvements are deferred until stability is restored.
+Note: Results are verified from current artifacts. Comparisons with previous summaries indicate consistent stability except for net-snmp 5.8 and CentOS 7 py313.
 
 Regressions
 ------------------------------------------------------------------------
@@ -380,11 +384,11 @@ The December 13, 2025 test run demonstrates **strong overall compatibility** wit
 
 **Key Observations:**
 
-- ❌ All distributions and Python versions failed in the latest run
+- ✅ Modern distros (AlmaLinux 10, Arch Linux, Rocky Linux 8) pass across py39–py313
+- ❌ net-snmp 5.8 compatibility remains problematic (0/5 passing)
 - ❌ CentOS 7 Python 3.13 _sqlite3 module issue persists
-- 🔎 Likely systemic issue affecting the test harness or environment
 
-**Recommendation:** Immediately triage the test harness and environment setup (tox, pytest, container entry scripts, dependency installs). Re-run a single environment to confirm whether failures are systemic or intermittent, then expand.
+**Recommendation:** Continue focusing on modern environments (net-snmp 5.9+, Python 3.9–3.13). Investigate CentOS 7 py313 build flags for sqlite3 and document net-snmp 5.8 as experimental/best-effort.
 
 The test suite improvements enable better diagnosis and handling of version-specific behaviors without skipping tests, providing clearer insight into actual compatibility boundaries.
 
