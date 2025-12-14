@@ -29,42 +29,8 @@ The tests in this directory cover:
 
 Usage
 =====
-
-**Local Testing (Native)**
-
-For detailed instructions on building and running C++ tests locally, please refer to the 
+For detailed instructions on building and running C++ tests, please refer to the 
 `Development Guide <../sphinx_docs_build/source/development.rst>`_.
-
-**Docker-Based Testing (Recommended)**
-
-The recommended approach for testing is to use the Docker-based testing infrastructure, which provides:
-
-* Consistent build and test environments across multiple Linux distributions
-* Pre-configured compilers and build tools (g++ 9.5+ or higher)
-* Automated coverage report generation
-* Parallel execution across all supported distributions
-
-.. code-block:: bash
-
-    # Run C++ tests across all distributions
-    cd docker/
-    ./run_cpp_tests_in_all_dockers.sh
-
-    # Run C++ tests in a specific distribution only
-    ./run_cpp_tests_in_all_dockers.sh rockylinux8
-
-The Docker testing infrastructure tests across:
-
-* **5 Linux distributions**: AlmaLinux 10, Arch Linux, Arch Linux (net-snmp 5.8), CentOS 7, Rocky Linux 8
-* **Multiple compiler versions**: g++ 11.2.1 to 14.x depending on distribution
-* **Automated coverage**: Generates lcov coverage reports for each distribution
-
-Output files are generated in the ``docker/`` directory:
-- ``test-results_<distribution>_test_container.xml`` - Test results in JUnit format
-- ``test-outputs_<distribution>_test_container.txt`` - Test execution logs
-- ``lcov_coverage_<distribution>_test_container.info`` - Code coverage data
-
-For more details, see the `Docker README <../docker/README.rst>`_.
 
 Prerequisites
 =============

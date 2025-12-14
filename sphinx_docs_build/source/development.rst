@@ -114,17 +114,7 @@ EzSnmp provides pre-built Docker images for testing across multiple Linux distri
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
 
-**Recent Improvements**
-
-The Docker testing infrastructure has been significantly improved:
-
-* **Parallel Execution**: Tests run across all distributions simultaneously
-* **CI/CD Integration**: Automated testing via GitHub Actions with Docker image caching
-* **Matrix Testing**: Comprehensive coverage across 5 distributions × 5 Python versions
-* **Isolated Environments**: Each test runs in a dedicated temporary directory
-* **Better Error Handling**: Graceful cleanup and comprehensive error reporting
-
-**Running Tests in Docker**
+To run tests in Docker:
 
 .. code:: bash
 

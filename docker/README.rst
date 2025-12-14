@@ -23,32 +23,6 @@ All images support:
 
 The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** https://hub.docker.com/r/carlkidcrypto/ezsnmp_test_images
 
-Recent Improvements
-===================
-
-The Docker testing infrastructure has been significantly improved with the following enhancements:
-
-**GitHub Actions CI/CD:**
-
-* **Docker Image Caching**: Implemented weekly cache rotation for Docker images to reduce pull times and improve CI performance
-* **Extended Test Timeout**: Increased job timeout from 25 to 30 minutes to accommodate comprehensive test suites across all distributions
-* **Matrix Testing**: Automated testing across 5 distributions × 5 Python versions (25 test combinations) with parallel execution
-* **Enhanced Permissions**: Added explicit ``pull-requests: write`` permission for automated test reporting
-* **Improved Artifact Collection**: Automated upload of test results and outputs for all test combinations
-
-**Test Runner Scripts:**
-
-* **Parallel Execution**: ``run_python_tests_in_all_dockers.sh`` now runs all distributions in parallel for faster testing
-* **Isolated Test Environments**: Each test runs in an isolated temporary directory to prevent cross-contamination
-* **Better Error Handling**: Graceful cleanup on interruption (Ctrl+C) and comprehensive error reporting
-* **Selective Testing**: Support for testing a single distribution or all distributions via command-line argument
-* **Resource Cleanup**: Automatic cleanup of containers, build artifacts, and temporary files
-
-**Docker Entry Scripts:**
-
-* **Conditional Setup**: DockerEntry.sh scripts now accept a parameter to skip Python setup when only SNMP daemon is needed
-* **Improved Reliability**: Better error handling and status reporting during container startup
-
 ----------------------------------------------------------------------
 
 Running a Container Locally
@@ -155,22 +129,18 @@ Builds and publishes Docker images to Docker Hub.
 
 **run_python_tests_in_all_dockers.sh**
 
-Runs Python tests across all or a specific distribution. This script has been enhanced with:
-
-* **Parallel execution**: All distributions are tested simultaneously for faster results
-* **Isolated environments**: Each test runs in a temporary directory to prevent conflicts
-* **Graceful cleanup**: Handles Ctrl+C interruption and cleans up containers automatically
-* **Comprehensive reporting**: Generates test results and outputs for each Python version (py39-py313)
+Runs Python tests across all distributions in parallel or a specific distribution.
 
 .. code-block:: bash
 
-  # Run tests in all distributions (parallel execution)
+  # Run tests in all distributions
   ./run_python_tests_in_all_dockers.sh
 
   # Run tests in a specific distribution only
   ./run_python_tests_in_all_dockers.sh almalinux10
 
-Output files are organized in ``test_outputs_<distribution>/`` directories with naming pattern:
+Output files are organized in ``test_outputs_<distribution>/`` directories:
+
 - ``test-results_<distribution>_test_container_<python_version>.xml``
 - ``test-outputs_<distribution>_test_container_<python_version>.txt``
 
@@ -187,6 +157,7 @@ Runs C++ tests using Meson/Ninja and generates coverage reports.
   ./run_cpp_tests_in_all_dockers.sh rockylinux8
 
 Generates:
+
 - ``test-results_<distribution>_test_container.xml`` - Test results in JUnit format
 - ``test-outputs_<distribution>_test_container.txt`` - Test execution logs
 - ``lcov_coverage_<distribution>_test_container.info`` - Code coverage data

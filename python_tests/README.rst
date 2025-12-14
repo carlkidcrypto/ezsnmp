@@ -70,12 +70,7 @@ To run with verbose output:
 
 **Docker-Based Testing (Recommended)**
 
-The recommended approach for testing is to use the Docker-based testing infrastructure, which provides:
-
-* Consistent testing environments across multiple Linux distributions
-* Automated testing across Python 3.9-3.13
-* Parallel execution for faster results
-* Isolated test environments to prevent conflicts
+To run tests using Docker across multiple distributions:
 
 .. code-block:: bash
 
@@ -85,14 +80,6 @@ The recommended approach for testing is to use the Docker-based testing infrastr
 
     # Run tests in a specific distribution only
     ./run_python_tests_in_all_dockers.sh almalinux10
-
-The Docker testing infrastructure includes:
-
-* **5 Linux distributions**: AlmaLinux 10, Arch Linux, Arch Linux (net-snmp 5.8), CentOS 7, Rocky Linux 8
-* **5 Python versions**: 3.9, 3.10, 3.11, 3.12, 3.13 (25 test combinations)
-* **Parallel execution**: All distributions tested simultaneously
-* **Comprehensive reporting**: Test results and outputs for each combination
-* **CI/CD integration**: Automated testing via GitHub Actions
 
 For more details, see the `Docker README <../docker/README.rst>`_.
 
