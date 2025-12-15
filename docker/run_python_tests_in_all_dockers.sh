@@ -64,7 +64,7 @@ echo "--------------------------------------------------"
 
 # --- Test Loop ---
 rm -f -- *.xml *.txt ../.coverage.* ../test-outputs*.txt
-rm -rdf test_outputs_*/
+rm -rf test_outputs_*/
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# Create output directory for this distribution
