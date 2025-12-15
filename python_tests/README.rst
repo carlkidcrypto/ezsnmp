@@ -39,7 +39,10 @@ Install test dependencies:
 
 Running Tests
 =============
-To run all tests:
+
+**Local Testing (Native)**
+
+To run all tests locally:
 
 .. code-block:: bash
 
@@ -64,6 +67,21 @@ To run with verbose output:
 .. code-block:: bash
 
     python3 -m pytest -v python_tests/
+
+**Docker-Based Testing (Recommended)**
+
+To run tests using Docker across multiple distributions:
+
+.. code-block:: bash
+
+    # Run all Python tests across all distributions
+    cd docker/
+    ./run_python_tests_in_all_dockers.sh
+
+    # Run tests in a specific distribution only
+    ./run_python_tests_in_all_dockers.sh almalinux10
+
+For more details, see the `Docker README <../docker/README.rst>`_.
 
 SNMP Daemon Configuration
 ==========================
