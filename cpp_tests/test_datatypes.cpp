@@ -2,6 +2,7 @@
 
 #include "datatypes.h"
 
+
 TEST(ResultTest, BasicResultTest) {
    Result r1;
    r1.oid = "SNMPv2-MIB::sysDescr";
@@ -593,23 +594,32 @@ TEST_P(StringTypesTest, HandlesStringLikeTypes) {
    EXPECT_EQ(std::get<std::string>(converted), param.input_value);
 }
 
+#define STRING_TYPE_PARAMS                                                            \
+   ::testing::Values(StringTypeTestCase{"OBJIDENTITY", "some value", "ObjIdentity"},         \
+                StringTypeTestCase{"Opaque", "opaque data", "Opaque"},                 \
+                StringTypeTestCase{"BITSTRING", "10101010", "BitString"},              \
+                StringTypeTestCase{"NSAPAddress", "some address", "NsapAddress"},      \
+                StringTypeTestCase{"TrapType", "trap", "TrapType"},                    \
+                StringTypeTestCase{"NotifType", "notif", "NotifType"},                \
+                StringTypeTestCase{"ObjGroup", "group", "ObjGroup"},                  \
+                StringTypeTestCase{"NotifGroup", "notif group", "NotifGroup"},        \
+                StringTypeTestCase{"ModID", "module id", "ModId"},                    \
+                StringTypeTestCase{"AgentCap", "agent cap", "AgentCap"},              \
+                StringTypeTestCase{"ModComp", "mod comp", "ModComp"})
+
+#if defined(INSTANTIATE_TEST_SUITE_P)
 INSTANTIATE_TEST_SUITE_P(
-    ResultConvertedValueStringTypes,
-    StringTypesTest,
-    ::testing::Values(StringTypeTestCase{"OBJIDENTITY", "some value", "ObjIdentity"},
-                      StringTypeTestCase{"Opaque", "opaque data", "Opaque"},
-                      StringTypeTestCase{"BITSTRING", "10101010", "BitString"},
-                      StringTypeTestCase{"NSAPAddress", "some address", "NsapAddress"},
-                      StringTypeTestCase{"TrapType", "trap", "TrapType"},
-                      StringTypeTestCase{"NotifType", "notif", "NotifType"},
-                      StringTypeTestCase{"ObjGroup", "group", "ObjGroup"},
-                      StringTypeTestCase{"NotifGroup", "notif group", "NotifGroup"},
-                      StringTypeTestCase{"ModID", "module id", "ModId"},
-                      StringTypeTestCase{"AgentCap", "agent cap", "AgentCap"},
-                      StringTypeTestCase{"ModComp", "mod comp", "ModComp"}),
-    [](::testing::TestParamInfo<StringTypesTest::ParamType> const& info) {
-       return info.param.test_name;
-    });
+   ResultConvertedValueStringTypes,
+   StringTypesTest,
+   STRING_TYPE_PARAMS,
+   [](::testing::TestParamInfo<StringTypesTest::ParamType> const& info) {
+      return info.param.test_name;
+   });
+#else
+INSTANTIATE_TEST_CASE_P(ResultConvertedValueStringTypes, StringTypesTest, STRING_TYPE_PARAMS);
+#endif
+
+#undef STRING_TYPE_PARAMS
 
 // Test Integer32 type (variant of INTEGER)
 TEST_F(ResultConvertedValueTest, HandlesInteger32) {

@@ -34,95 +34,108 @@ if [ -n "${TARGET_IMAGE}" ]; then
 	DISTROS_TO_TEST=("${TARGET_IMAGE}")
 	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
 else
-	# Test all images by finding directories in the current folder (excluding the current directory itself).
-	DISTROS_TO_TEST=($(find . -mindepth 1 -maxdepth 1 -type d -not -name '.' -printf "%f\n"))
+	# Test all images by finding directories in the current folder (excluding test_outputs_* folders).
+	DISTROS_TO_TEST=($(find . -mindepth 1 -maxdepth 1 -type d -not -name '.' -not -name 'test_outputs_*' -printf "%f\n"))
 	echo "Mode: Testing all found images."
 fi
 
 echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
-# --- Test Loop ---
+# --- Test Loop (parallelized) ---
 rm -f -- *.xml *.txt *.info
+rm -rf test_outputs_*/
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
+
+	# Create output directory for this distribution
+	OUTPUT_DIR="test_outputs_${DISTRO_NAME}"
+	mkdir -p "${OUTPUT_DIR}"
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
 	CONTAINER_NAME="${DISTRO_NAME}_test_container"
 	# The entry script path must be adjusted for the container mount, which is always /ezsnmp/docker/[distro]/...
 	ENTRY_SCRIPT_PATH="/ezsnmp/docker/${DISTRO_NAME}/DockerEntry.sh"
 
-	echo ">>> Running tests for distribution: ${DISTRO_NAME}"
+	echo ">>> Launching C++ tests for distribution: ${DISTRO_NAME} (async)"
 	echo "    - Target Image: ${FULL_IMAGE_TAG}"
+	echo "    - Output Directory: ${OUTPUT_DIR}"
 
-	# Cleanup any existing container with the same name
-	if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-		docker stop "$CONTAINER_NAME"
-	fi
-	docker rm -f "$CONTAINER_NAME"
+	(
+		START_TIME=$(date +%s)
+		# Cleanup any existing container with the same name
+		docker stop "$CONTAINER_NAME" 2>/dev/null || true
+		docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
-	# 1. Pull the image
-	echo "    - Pulling image..."
-	if ! docker pull "${FULL_IMAGE_TAG}"; then
-		echo "ERROR: Docker pull failed for ${DISTRO_NAME}. Skipping tests."
-		continue
-	fi
+		# 1. Pull the image
+		echo "    - [${DISTRO_NAME}] Pulling image..."
+		if ! docker pull "${FULL_IMAGE_TAG}" > /dev/null 2>&1; then
+			echo "ERROR: [${DISTRO_NAME}] Docker pull failed. Skipping tests."
+			exit 1
+		fi
+		echo "    - [${DISTRO_NAME}] Image pulled successfully"
 
-	# 2. Start the container
-	echo "    - Starting container: ${CONTAINER_NAME} and daemon..."
-	echo "      * Using host source path: $HOST_SOURCE_PATH"
-	# The command runs the entry script in the background and uses 'tail' as the foreground process
-	if ! docker run -d \
-		--name "${CONTAINER_NAME}" \
-		-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
-		"${FULL_IMAGE_TAG}" \
-		/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null"; then
-		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
-		continue
-	fi
+		# 2. Start the container
+		echo "    - [${DISTRO_NAME}] Starting container and daemon..."
+		if ! docker run -d \
+			--name "${CONTAINER_NAME}" \
+			-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+			"${FULL_IMAGE_TAG}" \
+			/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null" > /dev/null 2>&1; then
+			echo "ERROR: [${DISTRO_NAME}] Docker run failed. Skipping tests."
+			exit 1
+		fi
+		echo "    - [${DISTRO_NAME}] Container started successfully"
 
-	# 3. Run cpp tests using meson
-	echo "    - Executing meson tests..."
-	docker exec -t "$CONTAINER_NAME" bash -c "
-		cd /ezsnmp/cpp_tests;
-		rm -drf build/ *.info *.txt *.xml;
-		meson setup build/; 
-		ninja -C build/ -j $(nproc); 
-		ninja -C build/ -j $(nproc) test > test-outputs.txt 2>&1;
-		lcov --capture --directory build --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
-		lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty
-		exit 0;
-	"
+		# 3. Run cpp tests using meson in an isolated workdir
+		echo "    - [${DISTRO_NAME}] Executing meson tests..."
+		docker exec -t "$CONTAINER_NAME" bash -c "
+			set -e;
+			export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:\$PATH;
+			export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:\$LD_LIBRARY_PATH;
+			WORK_DIR=/tmp/ezsnmp_${DISTRO_NAME};
+			ARTIFACT_DIR=/tmp/artifacts_${DISTRO_NAME};
+			rm -rf \$WORK_DIR \$ARTIFACT_DIR;
+			mkdir -p \$WORK_DIR \$ARTIFACT_DIR;
+			# Copy source to isolated directory, excluding build artifacts and venvs
+			cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd \$WORK_DIR && tar xf -);
+			cd \$WORK_DIR/cpp_tests;
+			rm -drf build/ *.info *.txt *.xml || true;
+			meson setup build/ > \$ARTIFACT_DIR/meson-setup.log 2>&1;
+			ninja -C build/ -j \$(nproc) > \$ARTIFACT_DIR/ninja-build.log 2>&1;
+			ninja -C build/ -j \$(nproc) test > \$ARTIFACT_DIR/test-outputs.txt 2>&1;
+			lcov --capture --directory build --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty || true;
+			lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty || true;
+			# Gather artifacts
+			cp coverage.info \$ARTIFACT_DIR/coverage.info || true;
+			cp updated_coverage.info \$ARTIFACT_DIR/updated_coverage.info || true;
+			cp build/meson-logs/testlog.xml \$ARTIFACT_DIR/test-results.xml || true;
+			exit 0;
+		"
 
-	# 4. Copy artifacts from the container to host.
-	echo "    - Renaming files from container: $CONTAINER_NAME"
-	if [ -f ../cpp_tests/test-results.xml ]; then
-		mv ../cpp_tests/test-results.xml ./test-results_"$CONTAINER_NAME".xml
-	else
-		echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME"
-		touch ./test-results_"$CONTAINER_NAME".xml
-	fi
+		# 4. Copy artifacts from the container to host.
+		if docker cp "$CONTAINER_NAME:/tmp/artifacts_${DISTRO_NAME}/." "${OUTPUT_DIR}" > /dev/null 2>&1; then
+			echo "    - [${DISTRO_NAME}] Artifacts copied to ${OUTPUT_DIR}"
+		else
+			echo "      ! [${DISTRO_NAME}] Warning: failed to copy artifacts"
+		fi
 
-	if [ -f ../cpp_tests/test-outputs.txt ]; then
-		mv ../cpp_tests/test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
-	else
-		echo "      ! Warning: test-outputs.txt not found for $CONTAINER_NAME"
-		touch ./test-outputs_"$CONTAINER_NAME".txt
-	fi
+		# 5. Cleanup container
+		echo "    - [${DISTRO_NAME}] Cleaning up container"
+		docker stop "$CONTAINER_NAME" > /dev/null 2>&1
+		docker rm "$CONTAINER_NAME" > /dev/null 2>&1
 
-	if [ -f ../cpp_tests/updated_coverage.info ]; then
-		mv ../cpp_tests/updated_coverage.info ./lcov_coverage_"$CONTAINER_NAME".info
-	else
-		echo "      ! Warning: updated_coverage.info not found for $CONTAINER_NAME"
-		touch ./lcov_coverage_"$CONTAINER_NAME".info
-	fi
-
-	# 5. Cleanup container
-	echo "    - Cleaning up container: $CONTAINER_NAME"
-	docker stop "$CONTAINER_NAME"
-	docker rm "$CONTAINER_NAME"
-
-	echo "--------------------------------------------------"
+		END_TIME=$(date +%s)
+		TOTAL_DURATION=$((END_TIME - START_TIME))
+		echo "    - [${DISTRO_NAME}] COMPLETED (Total time: ${TOTAL_DURATION}s)"
+	) &
 
 done
+
+# Wait for all background jobs to complete
+echo ""
+echo "Waiting for all distributions to complete testing..."
+wait
+
+echo "--------------------------------------------------"
 
 echo "All specified images tested."

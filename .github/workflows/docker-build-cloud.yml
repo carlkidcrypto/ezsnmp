@@ -6,7 +6,7 @@ on:
     # Run every 2 weeks on Monday at 00:00 UTC
     - cron: '0 0 * * 1'
   push:
-    branches: [ main ]
+    branches: [ main, feature/100_percent_working_docker_builds_v2]
   pull_request:
     branches: [ main ]
 
