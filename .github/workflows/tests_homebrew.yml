@@ -243,7 +243,7 @@ jobs:
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
-        uses: actions/checkout@a60793c3201303ea50de3625905cb5b65a53f2cda # v6
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Render Valgrind Comment Template
         id: template
@@ -257,26 +257,12 @@ jobs:
            py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
            py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
 
-      - name: Find existing PR comment (Valgrind)
-        id: find-valgrind-comment
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v3
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
-
       - name: Create A Comment For PR
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         if: github.event_name == 'pull_request'
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-id: ${{ steps.find-valgrind-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: |
-            ## Valgrind (Homebrew)
-            <!-- ezsnmp-homebrew-valgrind -->
-            ${{ steps.template.outputs.result }}
+          body: ${{ steps.template.outputs.result }}
 
       - name: Create A Comment For Push
         uses: peter-evans/commit-comment@f6d60c65d05bb59f750fa51ad3de1d443ba0eb52 # v4
