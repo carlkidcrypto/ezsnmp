@@ -118,22 +118,35 @@ To run tests in Docker:
 
 .. code:: bash
 
-    # Run all Python tests across all distributions
+    # Run all Python tests across all distributions (parallel)
     cd docker/
     chmod +x run_python_tests_in_all_dockers.sh
     ./run_python_tests_in_all_dockers.sh
 
-    # Run a specific distribution image
-    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10
+    # Run tests in a specific distribution only
+    ./run_python_tests_in_all_dockers.sh almalinux10
+
+    # Run a specific distribution image manually
+    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
-      -p 161/udp \
-      carlkidcrypto/ezsnmp_test_images:almalinux10 \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh"
+      carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
 
     # Execute tests inside the container
-    sudo docker exec -t almalinux10_snmp_container /bin/bash -c 'tox'
+    sudo docker exec -t almalinux10_snmp_container bash -c '
+      export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
+      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
+      export WORK_DIR=/tmp/ezsnmp_test;
+      export TOX_WORK_DIR=/tmp/tox_test;
+      rm -rf $WORK_DIR $TOX_WORK_DIR;
+      mkdir -p $WORK_DIR;
+      cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -);
+      cd $WORK_DIR;
+      python3 -m pip install tox > /dev/null 2>&1;
+      tox --workdir $TOX_WORK_DIR;
+    '
 
 For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
 
