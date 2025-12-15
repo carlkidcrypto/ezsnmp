@@ -87,8 +87,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		rm -drf build/ *.info *.txt *.xml;
 		meson setup build/; 
 		ninja -C build/ -j $(nproc); 
-		ninja -C build/ test > test-outputs.txt 2>&1;
-		lcov --capture --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
+		ninja -C build/ -j $(nproc) test > test-outputs.txt 2>&1;
+		lcov --capture --directory build --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
 		lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty
 		exit 0;
 	"
