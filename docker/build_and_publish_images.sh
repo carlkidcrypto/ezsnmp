@@ -12,13 +12,13 @@ get_next_version() {
   local today=$(date +%m-%d-%Y)
   local base_tag="${DOCKER_REPO_PATH}:${image_name}-${today}"
   
-  # Get the highest version number for today from Docker Hub
+  # Get the highest version number for today from local Docker image cache
   local highest_version=0
   
-  # Try to list all tags for this repo and filter for today's tags
-  # We'll use docker pull and check locally if images exist
-  # For a more robust solution, we could query the registry API
-  # but this approach is simpler and doesn't require auth to read tags
+  # Check locally cached images to find the highest existing version for today
+  # Note: This only checks local Docker cache, not Docker Hub
+  # If local cache is out of sync with remote registry, versioning may be incorrect
+  # For a more robust solution, we could query the Docker Hub registry API
   
   # Check if any today's tags exist locally by trying to inspect them
   for version in {1..100}; do
