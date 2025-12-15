@@ -523,7 +523,8 @@ TEST_F(ParseResultsTest, TestFullyQualifiedNumericOID) {
 
 TEST_F(ParseResultsTest, TestISOFormattedOID) {
    // Test fully qualified ISO format OID
-   std::vector<std::string> inputs = {".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0 = STRING: Test"};
+   std::vector<std::string> inputs = {
+       ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0 = STRING: Test"};
    auto results = parse_results(inputs);
    ASSERT_EQ(results.size(), 1);
    EXPECT_EQ(results[0].oid, ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr");
@@ -543,4 +544,3 @@ TEST_F(ParseResultsTest, TestOIDWithNoDot) {
    EXPECT_EQ(results[0].type, "STRING");
    EXPECT_EQ(results[0].value, "Test");
 }
-

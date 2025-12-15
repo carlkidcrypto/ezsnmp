@@ -7,7 +7,7 @@
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>EzSnmp v2.1.0b2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
@@ -315,9 +315,9 @@ First remove any lingering folders like <cite>build/</cite> or <cite>ezsnmp.egg-
 Then run the same command that is shown above <cite>pip install –force-reinstall –no-binary :all: ezsnmp</cite>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ne">ImportError</span> <span class="k">while</span> <span class="n">loading</span> <span class="n">conftest</span> <span class="s1">&#39;/home/$USER/Documents/repos/ezsnmp/python_tests/conftest.py&#39;</span><span class="o">.</span>
 <span class="n">python_tests</span><span class="o">/</span><span class="n">conftest</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">ezsnmp</span>
+    <span class="kn">import</span> <span class="nn">ezsnmp</span>
 <span class="o">../../../</span><span class="n">python3</span><span class="mf">.12</span><span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">ezsnmp</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">.datatypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
+    <span class="kn">from</span> <span class="nn">.datatypes</span> <span class="kn">import</span> <span class="n">Result</span>
 <span class="n">E</span>   <span class="ne">ModuleNotFoundError</span><span class="p">:</span> <span class="n">No</span> <span class="n">module</span> <span class="n">named</span> <span class="s1">&#39;ezsnmp.datatypes&#39;</span>
 </pre></div>
 </div>
@@ -327,7 +327,7 @@ Then run the same command that is shown above <cite>pip install –force-reinsta
 <p>There are primarily two ways you can use the EzSnmp library.</p>
 <p>The first is with the use of a Session object which is most suitable when you
 are planning on requesting multiple pieces of SNMP data from a source.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">Session</span>
 
 <span class="c1"># Create an SNMP session to be used for all our requests</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -362,7 +362,7 @@ are planning on requesting multiple pieces of SNMP data from a source.</p>
 </div>
 <p>You may also use EzSnmp via its simple interface which is intended for
 one-off operations where you wish to specify all details in the request:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">snmp_get</span><span class="p">,</span> <span class="n">snmp_set</span><span class="p">,</span> <span class="n">snmp_walk</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">snmp_get</span><span class="p">,</span> <span class="n">snmp_set</span><span class="p">,</span> <span class="n">snmp_walk</span>
 
 <span class="c1"># Grab a single piece of information using an SNMP GET</span>
 <span class="n">snmp_get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -380,7 +380,7 @@ one-off operations where you wish to specify all details in the request:</p>
 </section>
 <section id="example-session-kargs">
 <h2>Example Session Kargs<a class="headerlink" href="#example-session-kargs" title="Link to this heading">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">Session</span>
 
 <span class="n">SESS_V1_ARGS</span> <span class="o">=</span> <span class="p">{</span>
 <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
@@ -466,7 +466,7 @@ one-off operations where you wish to specify all details in the request:</p>
 <p>EzSnmp provides custom exception classes contained in <cite>exceptions</cite> to handle errors that may occur during SNMP operations.
 This allows you to catch and manage exceptions specific to EzSnmp more effectively.</p>
 <p>Here’s an example of how to use one of the exceptions classes.:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">exceptions</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ezsnmp</span> <span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">exceptions</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -528,20 +528,7 @@ of the <a class="reference external" href="https://github.com/carlkidcrypto/ezsn
 <li class="toctree-l2"><a class="reference internal" href="datatypes_cpp.html#result-converted-value-types-and-results">Result.converted_value Types and Results</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ConnectionError"><code class="docutils literal notranslate"><span class="pre">ConnectionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.GenericError"><code class="docutils literal notranslate"><span class="pre">GenericError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchInstanceError"><code class="docutils literal notranslate"><span class="pre">NoSuchInstanceError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchNameError"><code class="docutils literal notranslate"><span class="pre">NoSuchNameError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.NoSuchObjectError"><code class="docutils literal notranslate"><span class="pre">NoSuchObjectError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.PacketError"><code class="docutils literal notranslate"><span class="pre">PacketError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.ParseError"><code class="docutils literal notranslate"><span class="pre">ParseError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.TimeoutError"><code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UndeterminedTypeError"><code class="docutils literal notranslate"><span class="pre">UndeterminedTypeError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions.UnknownObjectIDError"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="exceptions_python.html#ezsnmp.exceptions._handle_error"><code class="docutils literal notranslate"><span class="pre">_handle_error()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_cpp.html#_CPPv419ConnectionErrorBase"><code class="docutils literal notranslate"><span class="pre">ConnectionErrorBase</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_cpp.html#_CPPv416GenericErrorBase"><code class="docutils literal notranslate"><span class="pre">GenericErrorBase</span></code></a></li>
@@ -555,10 +542,7 @@ of the <a class="reference external" href="https://github.com/carlkidcrypto/ezsn
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_cpp.html#_CPPv424UnknownObjectIDErrorBase"><code class="docutils literal notranslate"><span class="pre">UnknownObjectIDErrorBase</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="session_python.html#ezsnmp.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sessionbase_cpp.html#direct-mappings">Direct Mappings</a></li>

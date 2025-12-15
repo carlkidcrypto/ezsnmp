@@ -9,6 +9,7 @@
 
 # Nosetests and coverage information
 .coverage
+.coverage.*
 nosetests.xml
 coverage.xml
 
