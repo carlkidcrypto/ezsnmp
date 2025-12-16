@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-# Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
-sudo chown "$USER" /var/run/docker.sock
+# Formatting `sudo apt install shfmt && shfmt -w run_cpp_tests_in_all_dockers.sh`
+# Try to fix docker socket permissions, but don't fail if we can't
+sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
 
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
@@ -87,7 +88,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		rm -drf build/ *.info *.txt *.xml;
 		meson setup build/; 
 		ninja -C build/ -j $(nproc); 
-		ninja -C build/ test > test-outputs.txt 2>&1;
+		ninja -C build/ -j $(nproc) test > test-outputs.txt 2>&1;
 		lcov --capture --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
 		lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty
 		exit 0;
