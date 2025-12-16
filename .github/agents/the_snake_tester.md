@@ -17,6 +17,8 @@ Focus on the following instructions:
 - Ensure that `python_tests/` have 100 percent coverage
 - Ensure to test with a live snmpd server. Configure one from the `python_tests/snmpd.conf` file.
 For example, `/usr/sbin/snmpd -f -C -c /etc/snmp/snmpd.conf`
+- Ensure tests are skipped as a last resort if they cannot run in certain environments.
+- Ensure tests are compatiable with all net-snmp versions supported by the repository.
 
 Tools needed:
 - Pytest
