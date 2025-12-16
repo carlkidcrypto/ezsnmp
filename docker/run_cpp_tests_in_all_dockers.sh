@@ -12,29 +12,23 @@ CONTAINER_WORK_DIR="/ezsnmp"
 # Track started containers to allow clean shutdown on Ctrl+C
 declare -a STARTED_CONTAINERS=()
 
-# Cleanup function to stop and remove any started containers and kill background jobs
+# --- Cleanup function for Ctrl+C ---
 cleanup() {
-	echo "\nCaught interrupt or exiting. Cleaning up..."
-	# Stop/remove any containers we started
-	for cname in "${STARTED_CONTAINERS[@]}"; do
-		if [ -n "$cname" ]; then
-			echo "  - Stopping container: $cname"
-			docker stop "$cname" >/dev/null 2>&1 || true
-			echo "  - Removing container: $cname"
-			docker rm "$cname" >/dev/null 2>&1 || true
-		fi
+	echo ""
+	echo "Caught interrupt signal - cleaning up..."
+	# Kill all background jobs
+	kill $(jobs -p) 2>/dev/null || true
+	# Stop and remove any test containers
+	for DISTRO in almalinux10 archlinux archlinux_netsnmp_5.8 centos7 rockylinux8; do
+		docker stop "${DISTRO}_test_container" 2>/dev/null || true
+		docker rm -f "${DISTRO}_test_container" 2>/dev/null || true
 	done
-	# Kill any background jobs spawned by this script
-	JOB_PIDS=$(jobs -p)
-	if [ -n "$JOB_PIDS" ]; then
-		echo "  - Killing background jobs: $JOB_PIDS"
-		kill $JOB_PIDS >/dev/null 2>&1 || true
-		wait >/dev/null 2>&1 || true
-	fi
+	echo "Cleanup complete. Exiting."
+	exit 130
 }
 
-# Trap Ctrl+C (SIGINT) and script exit to run cleanup
-trap cleanup INT EXIT
+# Set trap for Ctrl+C (SIGINT) and SIGTERM
+trap cleanup SIGINT SIGTERM
 
 # --- Script Usage and Input Validation ---
 
@@ -129,15 +123,31 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd \$WORK_DIR && tar xf -);
 			cd \$WORK_DIR/cpp_tests;
 			rm -drf build/ *.info *.txt *.xml || true;
+			SETUP_START=\$(date +%s);
 			meson setup build/ > \$ARTIFACT_DIR/meson-setup.log 2>&1;
+			SETUP_END=\$(date +%s);
+			SETUP_DURATION=\$((SETUP_END - SETUP_START));
+			echo "Meson setup duration: \${SETUP_DURATION}s" >> \$ARTIFACT_DIR/meson-setup.log;
+			BUILD_START=\$(date +%s);
 			ninja -C build/ -j \$(nproc) > \$ARTIFACT_DIR/ninja-build.log 2>&1;
+			BUILD_END=\$(date +%s);
+			BUILD_DURATION=\$((BUILD_END - BUILD_START));
+			echo "Ninja build duration: \${BUILD_DURATION}s" >> \$ARTIFACT_DIR/ninja-build.log;
+			TEST_START=\$(date +%s);
 			ninja -C build/ -j \$(nproc) test > \$ARTIFACT_DIR/test-outputs.txt 2>&1;
+			TEST_END=\$(date +%s);
+			TEST_DURATION=\$((TEST_END - TEST_START));
+			echo "Ninja test duration: \${TEST_DURATION}s" >> \$ARTIFACT_DIR/test-outputs.txt;
 			lcov --capture --directory build --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty || true;
 			lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty || true;
 			# Gather artifacts
 			cp coverage.info \$ARTIFACT_DIR/coverage.info || true;
 			cp updated_coverage.info \$ARTIFACT_DIR/updated_coverage.info || true;
 			cp build/meson-logs/testlog.xml \$ARTIFACT_DIR/test-results.xml || true;
+			# Write a summary timings file
+			echo "Meson setup: \${SETUP_DURATION}s" > \$ARTIFACT_DIR/timings.txt;
+			echo "Ninja build: \${BUILD_DURATION}s" >> \$ARTIFACT_DIR/timings.txt;
+			echo "Ninja test:  \${TEST_DURATION}s" >> \$ARTIFACT_DIR/timings.txt;
 			exit 0;
 		"
 
