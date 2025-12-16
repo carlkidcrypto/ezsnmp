@@ -4,7 +4,7 @@ concurrency: tests-docker-cpp-tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/100_percent_working_docker_builds_v2]
   pull_request:
     branches: [ main ]
 

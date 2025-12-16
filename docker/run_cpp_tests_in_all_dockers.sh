@@ -9,6 +9,33 @@ DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 HOST_SOURCE_PATH=$(realpath "$(pwd)/../")
 CONTAINER_WORK_DIR="/ezsnmp"
 
+# Track started containers to allow clean shutdown on Ctrl+C
+declare -a STARTED_CONTAINERS=()
+
+# Cleanup function to stop and remove any started containers and kill background jobs
+cleanup() {
+	echo "\nCaught interrupt or exiting. Cleaning up..."
+	# Stop/remove any containers we started
+	for cname in "${STARTED_CONTAINERS[@]}"; do
+		if [ -n "$cname" ]; then
+			echo "  - Stopping container: $cname"
+			docker stop "$cname" >/dev/null 2>&1 || true
+			echo "  - Removing container: $cname"
+			docker rm "$cname" >/dev/null 2>&1 || true
+		fi
+	done
+	# Kill any background jobs spawned by this script
+	JOB_PIDS=$(jobs -p)
+	if [ -n "$JOB_PIDS" ]; then
+		echo "  - Killing background jobs: $JOB_PIDS"
+		kill $JOB_PIDS >/dev/null 2>&1 || true
+		wait >/dev/null 2>&1 || true
+	fi
+}
+
+# Trap Ctrl+C (SIGINT) and script exit to run cleanup
+trap cleanup INT EXIT
+
 # --- Script Usage and Input Validation ---
 
 # The script now only accepts 0 or 1 argument (the optional image name).
@@ -84,6 +111,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			echo "ERROR: [${DISTRO_NAME}] Docker run failed. Skipping tests."
 			exit 1
 		fi
+		# Record container for cleanup
+		STARTED_CONTAINERS+=("${CONTAINER_NAME}")
 		echo "    - [${DISTRO_NAME}] Container started successfully"
 
 		# 3. Run cpp tests using meson in an isolated workdir
