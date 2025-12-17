@@ -23,18 +23,21 @@ RUN pacman -U --noconfirm \
     ln -sf "$PERL_CORE_DIR" /usr/lib/perl5/5.28/core_perl/CORE && \
     if [ -f "$PERL_CORE_DIR/libperl.so" ]; then ln -sf "$PERL_CORE_DIR/libperl.so" /usr/lib/libperl.so; fi && \
     ldconfig && \
-    # Ensure pkg-config metadata exists for netsnmp 5.8 (archived package may omit it)
-    cat >/usr/lib/pkgconfig/net-snmp.pc <<'EOF'
+    # Verify netsnmp headers exist and create pkg-config metadata
+    if [ ! -d /usr/include/net-snmp ]; then echo "WARNING: /usr/include/net-snmp not found"; fi && \
+    mkdir -p /usr/lib/pkgconfig && \
+    cat >/usr/lib/pkgconfig/netsnmp.pc <<'EOF'
 prefix=/usr
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: Net-SNMP
-Description: SNMP library
+Description: SNMP client and agent libraries
 Version: 5.8
-Libs: -L${libdir} -lnetsnmp
-Cflags: -I${includedir}/net-snmp
+Libs: -L${libdir} -lnetsnmp -lcrypto
+Libs.private: -lwrap
+Cflags: -I${includedir}
 EOF
 
 # --- AUR Installation: Must be run as a non-root user ---
@@ -81,6 +84,9 @@ RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
 
 # Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
 ENV PATH="/usr/local/bin:$PATH"
+
+# Ensure pkg-config finds netsnmp 5.8
+ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 # Virtual Environment Setup using latest Python (3.13)
 ENV VENV_PATH=/opt/venv

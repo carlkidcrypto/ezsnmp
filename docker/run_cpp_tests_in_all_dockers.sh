@@ -91,13 +91,13 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		cd /ezsnmp/cpp_tests;
 		rm -drf build/ *.info *.txt *.xml;
 		meson setup build/; 
-		ninja -C build/ -j $(nproc); 
-		GTEST_OUTPUT=xml:../test-results.xml ninja -C build/ -j $(nproc) test > test-outputs.txt 2>&1;
+		ninja -C build/ -j \$(nproc); 
+		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ > test-outputs.txt 2>&1;
 		# Coverage collection: tolerate lcov option differences across distros
-		LCOV_BASE="lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1"
-		${LCOV_BASE} --ignore-errors inconsistent,empty,mismatch || ${LCOV_BASE} --ignore-errors empty || ${LCOV_BASE} || true
+		LCOV_BASE=\"lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1\"
+		\${LCOV_BASE} --ignore-errors inconsistent,empty,mismatch || \${LCOV_BASE} --ignore-errors empty || \${LCOV_BASE} || true
 		if [ -f coverage.info ]; then
-			lcov --remove coverage.info '*/bits/*' '*/ext/*' --output-file updated_coverage.info --ignore-errors unused,empty || cp coverage.info updated_coverage.info
+			lcov --remove coverage.info '*/bits/*' '*/ext/*' --output-file updated_coverage.info --ignore-errors unused,empty,mismatch || cp coverage.info updated_coverage.info
 		fi
 		exit 0;
 	"
