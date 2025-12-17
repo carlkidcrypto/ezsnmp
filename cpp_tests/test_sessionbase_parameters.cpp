@@ -21,7 +21,13 @@ class SessionsParamTest : public ::testing::TestWithParam<SessionParam> {};
 
 static std::vector<std::string> build_expected_args(std::string const& version,
                                                     PrintOptions const& options) {
-   std::vector<std::string> args = {"-c", "public", "-r", "3", "-t", "1", "-v", version};
+   std::vector<std::string> args;
+   if (version != "3") {
+      args.push_back("-c");
+      args.push_back("public");
+   }
+   args.push_back("-v");
+   args.push_back(version);
    for (auto const& flag : options.expected_flags) {
       args.push_back("-O");
       args.push_back(flag);

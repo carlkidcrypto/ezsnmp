@@ -90,6 +90,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	docker exec -t "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
 		rm -drf build/ *.info *.txt *.xml;
+		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
+		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
 		meson setup build/; 
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ > test-outputs.txt 2>&1;
