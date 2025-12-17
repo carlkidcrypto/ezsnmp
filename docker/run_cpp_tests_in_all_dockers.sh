@@ -35,8 +35,12 @@ if [ -n "${TARGET_IMAGE}" ]; then
 	DISTROS_TO_TEST=("${TARGET_IMAGE}")
 	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
 else
-	# Test all images by finding directories in the current folder (excluding the current directory itself).
-	DISTROS_TO_TEST=($(find . -mindepth 1 -maxdepth 1 -type d -not -name '.' -printf "%f\n"))
+	# Test all images by finding directories in the current folder that contain a Dockerfile.
+	DISTROS_TO_TEST=()
+	while IFS= read -r DOCKERFILE_PATH; do
+		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		DISTROS_TO_TEST+=("$DIR_NAME")
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n')
 	echo "Mode: Testing all found images."
 fi
 
@@ -88,9 +92,13 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		rm -drf build/ *.info *.txt *.xml;
 		meson setup build/; 
 		ninja -C build/ -j $(nproc); 
-		ninja -C build/ -j $(nproc) test > test-outputs.txt 2>&1;
-		lcov --capture --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
-		lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty
+		GTEST_OUTPUT=xml:../test-results.xml ninja -C build/ -j $(nproc) test > test-outputs.txt 2>&1;
+		# Coverage collection: tolerate lcov option differences across distros
+		LCOV_BASE="lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1"
+		${LCOV_BASE} --ignore-errors inconsistent,empty,mismatch || ${LCOV_BASE} --ignore-errors empty || ${LCOV_BASE} || true
+		if [ -f coverage.info ]; then
+			lcov --remove coverage.info '*/bits/*' '*/ext/*' --output-file updated_coverage.info --ignore-errors unused,empty || cp coverage.info updated_coverage.info
+		fi
 		exit 0;
 	"
 

@@ -22,7 +22,20 @@ RUN pacman -U --noconfirm \
     mkdir -p /usr/lib/perl5/5.28/core_perl && \
     ln -sf "$PERL_CORE_DIR" /usr/lib/perl5/5.28/core_perl/CORE && \
     if [ -f "$PERL_CORE_DIR/libperl.so" ]; then ln -sf "$PERL_CORE_DIR/libperl.so" /usr/lib/libperl.so; fi && \
-    ldconfig
+    ldconfig && \
+    # Ensure pkg-config metadata exists for netsnmp 5.8 (archived package may omit it)
+    cat >/usr/lib/pkgconfig/net-snmp.pc <<'EOF'
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Net-SNMP
+Description: SNMP library
+Version: 5.8
+Libs: -L${libdir} -lnetsnmp
+Cflags: -I${includedir}/net-snmp
+EOF
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder
