@@ -48,6 +48,7 @@ echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
 # --- Test Loop ---
+# Clean any previous top-level outputs
 rm -f -- *.xml *.txt *.info
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
@@ -104,27 +105,31 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		exit 0;
 	"
 
-	# 4. Copy artifacts from the container to host.
-	echo "    - Renaming files from container: $CONTAINER_NAME"
+	# 4. Copy artifacts from the container to host into per-distro folder
+	OUT_DIR="./test_outputs_${DISTRO_NAME}"
+	mkdir -p "$OUT_DIR"
+	rm -f "${OUT_DIR}"/*.xml "${OUT_DIR}"/*.txt "${OUT_DIR}"/*.info 2>/dev/null || true
+
+	echo "    - Saving artifacts to ${OUT_DIR}"
 	if [ -f ../cpp_tests/test-results.xml ]; then
-		mv ../cpp_tests/test-results.xml ./test-results_"$CONTAINER_NAME".xml
+		mv ../cpp_tests/test-results.xml "${OUT_DIR}/test-results.xml"
 	else
 		echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME"
-		touch ./test-results_"$CONTAINER_NAME".xml
+		touch "${OUT_DIR}/test-results.xml"
 	fi
 
 	if [ -f ../cpp_tests/test-outputs.txt ]; then
-		mv ../cpp_tests/test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
+		mv ../cpp_tests/test-outputs.txt "${OUT_DIR}/test-outputs.txt"
 	else
 		echo "      ! Warning: test-outputs.txt not found for $CONTAINER_NAME"
-		touch ./test-outputs_"$CONTAINER_NAME".txt
+		touch "${OUT_DIR}/test-outputs.txt"
 	fi
 
 	if [ -f ../cpp_tests/updated_coverage.info ]; then
-		mv ../cpp_tests/updated_coverage.info ./lcov_coverage_"$CONTAINER_NAME".info
+		mv ../cpp_tests/updated_coverage.info "${OUT_DIR}/lcov_coverage.info"
 	else
 		echo "      ! Warning: updated_coverage.info not found for $CONTAINER_NAME"
-		touch ./lcov_coverage_"$CONTAINER_NAME".info
+		touch "${OUT_DIR}/lcov_coverage.info"
 	fi
 
 	# 5. Cleanup container

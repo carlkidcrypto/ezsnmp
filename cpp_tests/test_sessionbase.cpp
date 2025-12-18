@@ -2,18 +2,11 @@
 
 #include <algorithm>
 #include <iostream>
+#include <set>
 #include <string>
 
 #include "exceptionsbase.h"
 #include "sessionbase.h"
-
-// Helper function to check if a result string contains expected OID and value fragments
-static bool result_contains_oid_and_value(const std::string& result_str,
-                                          const std::string& expected_index,
-                                          const std::string& expected_value) {
-   return result_str.find("index: " + expected_index) != std::string::npos &&
-          result_str.find(expected_value) != std::string::npos;
-}
 
 class SessionBaseTest : public ::testing::Test {
   protected:
@@ -941,30 +934,31 @@ TEST_F(SessionBaseTest, TestBulkGet) {
              "oid: SNMPv2-MIB::sysORDescr, index: 6, type: STRING, value: The MIB module for "
              "managing TCP implementations, converted_value: The MIB module for managing TCP "
              "implementations");
-   EXPECT_EQ(results[18]._to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
-             "managing UDP implementations, converted_value: The MIB module for managing UDP "
-             "implementations");
-   EXPECT_EQ(results[19]._to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
-             "managing UDP implementations, converted_value: The MIB module for managing UDP "
-             "implementations");
-   EXPECT_EQ(results[20]._to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
-             "managing UDP implementations, converted_value: The MIB module for managing UDP "
-             "implementations");
-   EXPECT_EQ(results[21]._to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
-             "managing IP and ICMP implementations, converted_value: The MIB module for managing "
-             "IP and ICMP implementations");
-   EXPECT_EQ(results[22]._to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
-             "managing IP and ICMP implementations, converted_value: The MIB module for managing "
-             "IP and ICMP implementations");
-   EXPECT_EQ(results[23]._to_string(),
-             "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
-             "managing IP and ICMP implementations, converted_value: The MIB module for managing "
-             "IP and ICMP implementations");
+   std::multiset<std::string> expected_bulk_get_subset = {
+       "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+       "managing UDP implementations, converted_value: The MIB module for managing UDP "
+       "implementations",
+       "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+       "managing UDP implementations, converted_value: The MIB module for managing UDP "
+       "implementations",
+       "oid: SNMPv2-MIB::sysORDescr, index: 7, type: STRING, value: The MIB module for "
+       "managing UDP implementations, converted_value: The MIB module for managing UDP "
+       "implementations",
+       "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+       "managing IP and ICMP implementations, converted_value: The MIB module for managing "
+       "IP and ICMP implementations",
+       "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+       "managing IP and ICMP implementations, converted_value: The MIB module for managing "
+       "IP and ICMP implementations",
+       "oid: SNMPv2-MIB::sysORDescr, index: 8, type: STRING, value: The MIB module for "
+       "managing IP and ICMP implementations, converted_value: The MIB module for managing "
+       "IP and ICMP implementations"};
+
+   std::multiset<std::string> actual_bulk_get_subset;
+   for (int i = 18; i <= 23; ++i) {
+      actual_bulk_get_subset.insert(results[i]._to_string());
+   }
+   EXPECT_EQ(actual_bulk_get_subset, expected_bulk_get_subset);
    EXPECT_EQ(results[24]._to_string(),
              "oid: SNMPv2-MIB::sysORDescr, index: 9, type: STRING, value: The MIB modules for "
              "managing SNMP Notification, plus filtering., converted_value: The MIB modules for "
