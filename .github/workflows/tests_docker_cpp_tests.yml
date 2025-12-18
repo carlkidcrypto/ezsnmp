@@ -58,8 +58,8 @@ jobs:
         with:
           name: cpp-test-results-dockerized
           path: |
-            docker/test-results_*.xml
-            docker/test-outputs_*.txt
+            docker/test_outputs_*/test-results.xml
+            docker/test_outputs_*/test-outputs.txt
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
@@ -83,6 +83,6 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2
         if: always()
         with:
-          files: "test-results_*.xml"
+          files: "test_outputs_*/test-results.xml"
           check_name: C++ Test Results - Dockerized
           comment_title: C++ Test Results - Dockerized
