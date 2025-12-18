@@ -96,11 +96,42 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		meson setup build/; 
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ > test-outputs.txt 2>&1;
-		# Coverage collection: tolerate lcov option differences across distros
-		LCOV_BASE=\"lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1\"
-		\${LCOV_BASE} --ignore-errors inconsistent,empty,mismatch || \${LCOV_BASE} --ignore-errors empty || \${LCOV_BASE} || true
-		if [ -f coverage.info ]; then
-			lcov --remove coverage.info '*/bits/*' '*/ext/*' --output-file updated_coverage.info --ignore-errors unused,empty,mismatch || cp coverage.info updated_coverage.info
+		# Coverage collection: tolerate lcov version differences and reduce noisy warnings
+		LCOV_CMD=\"lcov\"
+		LCOV_HELP=\"\$($LCOV_CMD --help 2>/dev/null || true)\"
+		IGNORE_ERRORS_FLAG=\"\"
+		if echo \"$LCOV_HELP\" | grep -q -- '--ignore-errors'; then
+		  if echo \"$LCOV_HELP\" | grep -q 'inconsistent'; then
+		    IGNORE_ERRORS_FLAG=\"--ignore-errors inconsistent,empty,mismatch\"
+		  elif echo \"$LCOV_HELP\" | grep -q 'empty'; then
+		    IGNORE_ERRORS_FLAG=\"--ignore-errors empty\"
+		  fi
+		fi
+
+		NO_EXTERNAL_FLAG=\"\"
+		if echo \"$LCOV_HELP\" | grep -q -- '--no-external'; then
+		  NO_EXTERNAL_FLAG=\"--no-external\"
+		fi
+
+		LCOV_BASE=\"$LCOV_CMD --capture --directory build/ --output-file coverage.info $NO_EXTERNAL_FLAG --rc geninfo_unexecuted_blocks=1\"
+		sh -lc \"$LCOV_BASE $IGNORE_ERRORS_FLAG\" || sh -lc \"$LCOV_BASE\" || true
+
+		if [ -f coverage.info ] && [ -s coverage.info ]; then
+			# Aggressively strip system and third-party paths to quiet geninfo warnings
+			REMOVE_PATTERNS=(
+			  '/usr/*'
+			  '/opt/*'
+			  '*/bits/*'
+			  '*/ext/*'
+			  '*/gtest/*'
+			  '*/googletest/*'
+			  '*/site-packages/*'
+			)
+			lcov --remove coverage.info \"${REMOVE_PATTERNS[@]}\" --output-file updated_coverage.info 2>/dev/null \
+			  || cp coverage.info updated_coverage.info
+		else
+			# Ensure an output exists even if capture failed
+			touch updated_coverage.info
 		fi
 		exit 0;
 	"
