@@ -93,7 +93,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		rm -drf build/ *.info *.txt *.xml;
 		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
-		meson setup build/; 
+		# Disable sanitizer aborts to ensure gcda files are written via atexit handlers
+		export ASAN_OPTIONS='halt_on_error=0'
+		export UBSAN_OPTIONS='halt_on_error=0'
+		export MSAN_OPTIONS='halt_on_error=0'
+		meson setup build/ -Db_coverage=true; 
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ > test-outputs.txt 2>&1;
 		
