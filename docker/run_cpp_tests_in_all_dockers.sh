@@ -96,42 +96,39 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		meson setup build/; 
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ > test-outputs.txt 2>&1;
-		# Coverage collection: tolerate lcov version differences and reduce noisy warnings
-		LCOV_CMD=\"lcov\"
-		LCOV_HELP=\"\$($LCOV_CMD --help 2>/dev/null || true)\"
-		IGNORE_ERRORS_FLAG=\"\"
-		if echo \"$LCOV_HELP\" | grep -q -- '--ignore-errors'; then
-		  if echo \"$LCOV_HELP\" | grep -q 'inconsistent'; then
-		    IGNORE_ERRORS_FLAG=\"--ignore-errors inconsistent,empty,mismatch\"
-		  elif echo \"$LCOV_HELP\" | grep -q 'empty'; then
-		    IGNORE_ERRORS_FLAG=\"--ignore-errors empty\"
+		
+		# Coverage collection: build lcov command with supported flags
+		LCOV_HELP=\$(lcov --help 2>/dev/null || true)
+		
+		# Build the base lcov command
+		LCOV_CMD='lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1'
+		
+		# Add --no-external if supported
+		if echo \"\$LCOV_HELP\" | grep -q -- '--no-external'; then
+		  LCOV_CMD=\"\$LCOV_CMD --no-external\"
+		fi
+		
+		# Try with ignore-errors flags if supported
+		if echo \"\$LCOV_HELP\" | grep -q -- '--ignore-errors'; then
+		  if echo \"\$LCOV_HELP\" | grep -q 'inconsistent'; then
+		    eval \"\$LCOV_CMD --ignore-errors inconsistent,empty,mismatch\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
+		  else
+		    eval \"\$LCOV_CMD --ignore-errors empty\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
 		  fi
-		fi
-
-		NO_EXTERNAL_FLAG=\"\"
-		if echo \"$LCOV_HELP\" | grep -q -- '--no-external'; then
-		  NO_EXTERNAL_FLAG=\"--no-external\"
-		fi
-
-		LCOV_BASE=\"$LCOV_CMD --capture --directory build/ --output-file coverage.info $NO_EXTERNAL_FLAG --rc geninfo_unexecuted_blocks=1\"
-		sh -lc \"$LCOV_BASE $IGNORE_ERRORS_FLAG\" || sh -lc \"$LCOV_BASE\" || true
-
-		if [ -f coverage.info ] && [ -s coverage.info ]; then
-			# Aggressively strip system and third-party paths to quiet geninfo warnings
-			REMOVE_PATTERNS=(
-			  '/usr/*'
-			  '/opt/*'
-			  '*/bits/*'
-			  '*/ext/*'
-			  '*/gtest/*'
-			  '*/googletest/*'
-			  '*/site-packages/*'
-			)
-			lcov --remove coverage.info \"${REMOVE_PATTERNS[@]}\" --output-file updated_coverage.info 2>/dev/null \
-			  || cp coverage.info updated_coverage.info
 		else
-			# Ensure an output exists even if capture failed
-			touch updated_coverage.info
+		  eval \"\$LCOV_CMD\" || true
+		fi
+		
+		# Ensure coverage.info exists for next step
+		if [ ! -f coverage.info ]; then
+		  touch coverage.info
+		fi
+		
+		# Strip system/third-party paths if coverage exists and has content
+		if [ -f coverage.info ] && [ -s coverage.info ]; then
+		  lcov --remove coverage.info '/usr/*' '/opt/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' '*/site-packages/*' --output-file updated_coverage.info 2>/dev/null || cp coverage.info updated_coverage.info
+		else
+		  touch updated_coverage.info
 		fi
 		exit 0;
 	"
