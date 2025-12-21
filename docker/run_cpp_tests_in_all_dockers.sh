@@ -47,9 +47,10 @@ fi
 echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
-# --- Test Loop ---
 # Clean any previous top-level outputs
 rm -f -- *.xml *.txt *.info
+
+# --- Test Loop ---
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"

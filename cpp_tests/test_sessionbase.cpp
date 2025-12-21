@@ -5,6 +5,7 @@
 #include <set>
 #include <string>
 
+#include "datatypes.h"
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
@@ -13,6 +14,28 @@ class SessionBaseTest : public ::testing::Test {
    void SetUp() override {}
    void TearDown() override {}
 };
+
+// Helper function to verify MIB descriptions exist in results
+void VerifyMibDescriptions(const std::vector<Result>& result,
+                           const std::vector<std::string>& expected_descriptions) {
+   // Verify we have results
+   ASSERT_FALSE(result.empty());
+
+   // For each expected description, verify it exists somewhere in the results
+   for (const auto& expected_desc : expected_descriptions) {
+      bool found = false;
+      for (const auto& res : result) {
+         std::string res_str = res._to_string();
+         // Check both exact value and converted_value fields
+         if (res_str.find("value: " + expected_desc) != std::string::npos ||
+             res_str.find("converted_value: " + expected_desc) != std::string::npos) {
+            found = true;
+            break;
+         }
+      }
+      EXPECT_TRUE(found) << "Expected MIB description not found: " << expected_desc;
+   }
+}
 
 TEST_F(SessionBaseTest, TestIPv6AddressWithPort) {
    SessionBase session("[2001:db8::]:162", "", "1", "public");
@@ -352,9 +375,6 @@ TEST_F(SessionBaseTest, TestWalkSingleMib) {
                        "3", "5");
    auto result = session.walk("SNMPv2-MIB::sysORDescr");
 
-   // Verify we have results
-   ASSERT_FALSE(result.empty());
-   
    // Expected MIB descriptions - check for presence rather than exact order
    // since different SNMP daemon versions/platforms return sysORDescr entries in different orders
    std::vector<std::string> expected_descriptions = {
@@ -370,20 +390,7 @@ TEST_F(SessionBaseTest, TestWalkSingleMib) {
       "The MIB module for logging SNMP Notifications."
    };
 
-   // For each expected description, verify it exists somewhere in the results
-   for (const auto& expected_desc : expected_descriptions) {
-      bool found = false;
-      for (const auto& res : result) {
-         std::string res_str = res._to_string();
-         // Check both exact value and converted_value fields
-         if (res_str.find("value: " + expected_desc) != std::string::npos ||
-             res_str.find("converted_value: " + expected_desc) != std::string::npos) {
-            found = true;
-            break;
-         }
-      }
-      EXPECT_TRUE(found) << "Expected MIB description not found: " << expected_desc;
-   }
+   VerifyMibDescriptions(result, expected_descriptions);
 }
 
 TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
@@ -391,9 +398,6 @@ TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
                        "3", "5");
    auto result = session.bulk_walk("SNMPv2-MIB::sysORDescr");
 
-   // Verify we have results
-   ASSERT_FALSE(result.empty());
-   
    // Expected MIB descriptions - check for presence rather than exact order
    // since different SNMP daemon versions/platforms return sysORDescr entries in different orders
    std::vector<std::string> expected_descriptions = {
@@ -409,20 +413,7 @@ TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
       "The MIB module for logging SNMP Notifications."
    };
 
-   // For each expected description, verify it exists somewhere in the results
-   for (const auto& expected_desc : expected_descriptions) {
-      bool found = false;
-      for (const auto& res : result) {
-         std::string res_str = res._to_string();
-         // Check both exact value and converted_value fields
-         if (res_str.find("value: " + expected_desc) != std::string::npos ||
-             res_str.find("converted_value: " + expected_desc) != std::string::npos) {
-            found = true;
-            break;
-         }
-      }
-      EXPECT_TRUE(found) << "Expected MIB description not found: " << expected_desc;
-   }
+   VerifyMibDescriptions(result, expected_descriptions);
 }
 
 // BROKEN< THERE"S A BUG HERE. bulkwalk only walks one OID.
@@ -581,7 +572,7 @@ TEST_F(SessionBaseTest, TestGetV3MD5DES) {
       
       if (is_deprecated_algorithm_error) {
          // Use GTEST_SKIP if available (GTest 1.10+), otherwise just return successfully
-         #if GTEST_HAS_GTEST_SKIP
+         #if defined(GTEST_SKIP)
             GTEST_SKIP() << "MD5/DES algorithms not supported on this platform: " << error_msg;
          #else
             // For older GoogleTest versions, just document and return
