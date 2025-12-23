@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
+# Formatting `sudo apt install shfmt && shfmt -w run_python_tests_in_all_dockers.sh`
 # Try to fix docker socket permissions, but don't fail if we can't
 sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
 
@@ -89,7 +89,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 		# 1. Pull the image
 		echo "    - [${DISTRO_NAME}] Pulling image..."
-		if ! docker pull "${FULL_IMAGE_TAG}" > /dev/null 2>&1; then
+		if ! docker pull "${FULL_IMAGE_TAG}" >/dev/null 2>&1; then
 			echo "ERROR: [${DISTRO_NAME}] Docker pull failed. Skipping tests."
 			exit 1
 		fi
@@ -101,7 +101,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			--name "${CONTAINER_NAME}" \
 			-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
 			"${FULL_IMAGE_TAG}" \
-			/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null" > /dev/null 2>&1; then
+			/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null" >/dev/null 2>&1; then
 			echo "ERROR: [${DISTRO_NAME}] Docker run failed. Skipping tests."
 			exit 1
 		fi
@@ -114,9 +114,9 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			TOX_START=$(date +%s)
 			echo "      * [${DISTRO_NAME}] Running tox for environment: $TOX_PY"
 
-		OUTPUT_FILE="test-outputs_${DISTRO_NAME}_${TOX_PY}.txt"
-		
-		docker exec -t "$CONTAINER_NAME" bash -c "
+			OUTPUT_FILE="test-outputs_${DISTRO_NAME}_${TOX_PY}.txt"
+
+			docker exec -t "$CONTAINER_NAME" bash -c "
 			export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:\$PATH;
 			export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:\$LD_LIBRARY_PATH;
 			export WORK_DIR=/tmp/ezsnmp_${DISTRO_NAME};
@@ -130,9 +130,9 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			tox -e $TOX_PY --workdir \$TOX_WORK_DIR > /ezsnmp/$OUTPUT_FILE 2>&1;
 			exit 0;
 		"
-		TOX_END=$(date +%s)
-		TOX_DURATION=$((TOX_END - TOX_START))
-		echo "      * [${DISTRO_NAME}] Completed: $TOX_PY (${TOX_DURATION}s)"			# 4. Copy artifacts from the container to the distribution's output folder
+			TOX_END=$(date +%s)
+			TOX_DURATION=$((TOX_END - TOX_START))
+			echo "      * [${DISTRO_NAME}] Completed: $TOX_PY (${TOX_DURATION}s)" # 4. Copy artifacts from the container to the distribution's output folder
 			if [ -f ../test-results.xml ]; then
 				mv ../test-results.xml "${OUTPUT_DIR}/test-results_${CONTAINER_NAME}_${TOX_PY}.xml"
 			else
@@ -150,7 +150,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		END_TIME=$(date +%s)
 		TOTAL_DURATION=$((END_TIME - START_TIME))
 		echo "    - [${DISTRO_NAME}] COMPLETED (Total time: ${TOTAL_DURATION}s)"
-	) &  # Run in background
+	) & # Run in background
 
 done
 
