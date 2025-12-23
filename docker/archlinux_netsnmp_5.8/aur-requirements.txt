@@ -1,0 +1,1 @@
+# No AUR packages needed - all dependencies available in official repos

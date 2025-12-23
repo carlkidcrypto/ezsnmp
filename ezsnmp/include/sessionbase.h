@@ -39,6 +39,17 @@ class SessionBase {
    bool m_print_enums_numerically = false; ///< Print enums numerically (-O e).
    bool m_print_full_oids = false;         ///< Print full OIDs on output (-O f).
    bool m_print_oids_numerically = false;  ///< Print OIDs numerically (-O n).
+   bool m_print_timeticks_numerically =
+       false; ///< Print timeticks unparsed as numeric integers (-O t).
+   std::string m_set_max_repeaters_to_num = ""; ///< Set max-repeaters to <NUM> (-C r<NUM>).
+
+   std::string m_walk_init_name;
+   std::string m_bulkwalk_init_name;
+   std::string m_get_init_name;
+   std::string m_getnext_init_name;
+   std::string m_bulkget_init_name;
+   std::string m_set_init_name;
+
    /**
     * @brief Populates the m_args vector with SNMP command arguments.
     *
@@ -82,6 +93,9 @@ class SessionBase {
     * @param print_enums_numerically Print enums numerically (default: false).
     * @param print_full_oids Print full OIDs on output (default: false).
     * @param print_oids_numerically Print OIDs numerically (default: false).
+    * @param print_timeticks_numerically Print timeticks as numeric integers (default: false).
+    * @param set_max_repeaters_to_num Set max-repeaters to <NUM> (default: ""). Only applies to
+    * GETBULK PDUs.
     */
    SessionBase(std::string const& hostname = "localhost",
                std::string const& port_number = "",
@@ -103,12 +117,22 @@ class SessionBase {
                std::string const& mib_directories = "",
                bool print_enums_numerically = false,
                bool print_full_oids = false,
-               bool print_oids_numerically = false);
+               bool print_oids_numerically = false,
+               bool print_timeticks_numerically = false,
+               std::string const& set_max_repeaters_to_num = "");
 
    /**
     * @brief Destructor for SessionBase.
     */
    ~SessionBase();
+
+   /**
+    * @brief Closes the SNMP session and releases resources via the snmp snmp_shutdown function.
+    * It use the initialization name to identify the session to close.
+    * A unique initialization name is generated for each net-snmp function to avoid conflicts.
+    * i.e bulkwalk, bulkget, get, getnext, set, walk...
+    */
+   void _close();
 
    /**
     * @brief Performs an SNMP WALK operation.
@@ -424,6 +448,55 @@ class SessionBase {
     * @param timeout The new timeout value to set.
     */
    void _set_timeout(std::string const& timeout);
+
+   /**
+    * @brief Sets the list of MIBs to load.
+    *
+    * @param load_mibs The new list of MIBs to load.
+    */
+   void _set_load_mibs(std::string const& load_mibs);
+
+   /**
+    * @brief Sets the directories to search for MIBs.
+    *
+    * @param mib_directories The new directories to search for MIBs.
+    */
+   void _set_mib_directories(std::string const& mib_directories);
+
+   /**
+    * @brief Sets whether to print enums numerically.
+    *
+    * @param print_enums_numerically The new value for printing enums numerically.
+    */
+   void _set_print_enums_numerically(bool print_enums_numerically);
+
+   /**
+    * @brief Sets whether to print full OIDs on output.
+    *
+    * @param print_full_oids The new value for printing full OIDs.
+    */
+   void _set_print_full_oids(bool print_full_oids);
+
+   /**
+    * @brief Sets whether to print OIDs numerically.
+    *
+    * @param print_oids_numerically The new value for printing OIDs numerically.
+    */
+   void _set_print_oids_numerically(bool print_oids_numerically);
+
+   /**
+    * @brief Sets whether to print timeticks as numeric integers.
+    *
+    * @param print_timeticks_numerically The new value for printing timeticks numerically.
+    */
+   void _set_print_timeticks_numerically(bool print_timeticks_numerically);
+
+   /**
+    * @brief Sets max-repeaters to <NUM>.
+    *
+    * @param set_max_repeaters_to_num The new value for max-repeaters.
+    */
+   void _set_max_repeaters_to_num(std::string const& set_max_repeaters_to_num);
 };
 
 #endif // SESSIONBASE_H

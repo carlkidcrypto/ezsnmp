@@ -2,10 +2,14 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstring>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -46,6 +50,9 @@
 //                           e:  print enums numerically
 //                           f:  print full OIDs on output
 //                           n:  print OIDs numerically
+//                           t:  print timeticks unparsed as numeric integers
+//   -C APPOPTS            Set various application specific behaviours:
+//                           r<NUM>:  set max-repeaters to <NUM>. Only applies to GETBULK PDUs.
 static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"version", "-v"},
     {"community", "-c"},
@@ -66,6 +73,8 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_enums_numerically", "-O e"},
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
+    {"print_timeticks_numerically", "-O t"},
+    {"set_max_repeaters_to_num", "-Cr"},
 };
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -88,7 +97,9 @@ SessionBase::SessionBase(std::string const& hostname,
                          std::string const& mib_directories,
                          bool print_enums_numerically,
                          bool print_full_oids,
-                         bool print_oids_numerically)
+                         bool print_oids_numerically,
+                         bool print_timeticks_numerically,
+                         std::string const& set_max_repeaters_to_num)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -109,11 +120,41 @@ SessionBase::SessionBase(std::string const& hostname,
       m_mib_directories(mib_directories),
       m_print_enums_numerically(print_enums_numerically),
       m_print_full_oids(print_full_oids),
-      m_print_oids_numerically(print_oids_numerically) {
+      m_print_oids_numerically(print_oids_numerically),
+      m_print_timeticks_numerically(print_timeticks_numerically),
+      m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
    populate_args();
+
+   int rand_num = 1 + (std::rand() % 100000);
+   m_walk_init_name = "ezsnmp_walk_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_bulkwalk_init_name = "ezsnmp_bulkwalk_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_get_init_name = "ezsnmp_get_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_getnext_init_name = "ezsnmp_getnext_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_bulkget_init_name = "ezsnmp_bulkget_" + std::to_string(rand_num);
+   rand_num = 1 + (std::rand() % 100000);
+   m_set_init_name = "ezsnmp_set_" + std::to_string(rand_num);
 }
 
 SessionBase::~SessionBase() {}
+
+void SessionBase::_close() {
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_walk_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_bulkwalk_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_get_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_getnext_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_bulkget_init_name.c_str());
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   snmp_shutdown(m_set_init_name.c_str());
+}
 
 void SessionBase::populate_args() {
    m_args.clear();
@@ -137,13 +178,23 @@ void SessionBase::populate_args() {
        {"retries", m_retries},
        {"timeout", m_timeout},
        {"load_mibs", m_load_mibs},
-       {"mib_directories", m_mib_directories}};
+       {"mib_directories", m_mib_directories},
+       {"set_max_repeaters_to_num", m_set_max_repeaters_to_num}};
 
    // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
       if (!val.empty() && key != "hostname" && key != "port_number") {
-         m_args.push_back(CML_PARAM_LOOKUP[key]);
-         m_args.push_back(val);
+         // Skip community for SNMPv3 (v3 uses security username, not community)
+         if (key == "community" && m_version == "3") {
+            continue;
+         }
+         // This one is different, it does not have a space between flag and value
+         if (key == "set_max_repeaters_to_num") {
+            m_args.push_back(CML_PARAM_LOOKUP[key] + val);
+         } else {
+            m_args.push_back(CML_PARAM_LOOKUP[key]);
+            m_args.push_back(val);
+         }
       }
    }
 
@@ -177,6 +228,13 @@ void SessionBase::populate_args() {
       auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
       auto const& option = num_parts[0];
       auto const& value = num_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
+   }
+   if (m_print_timeticks_numerically) {
+      auto const& t_parts = split_string(CML_PARAM_LOOKUP["print_timeticks_numerically"], ' ');
+      auto const& option = t_parts[0];
+      auto const& value = t_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
@@ -287,7 +345,7 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
       m_args.push_back(mib);
    }
 
-   return snmpwalk(m_args);
+   return snmpwalk(m_args, m_walk_init_name);
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
@@ -297,7 +355,7 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
       m_args.push_back(mib);
    }
 
-   return snmpbulkwalk(m_args);
+   return snmpbulkwalk(m_args, m_bulkwalk_init_name);
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
@@ -307,7 +365,7 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
       m_args.push_back(entry);
    }
 
-   return snmpbulkwalk(m_args);
+   return snmpbulkwalk(m_args, m_bulkwalk_init_name);
 }
 
 std::vector<Result> SessionBase::get(std::string const& mib) {
@@ -317,7 +375,7 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
       m_args.push_back(mib);
    }
 
-   return snmpget(m_args);
+   return snmpget(m_args, m_get_init_name);
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
@@ -327,7 +385,7 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
       m_args.push_back(entry);
    }
 
-   return snmpget(m_args);
+   return snmpget(m_args, m_get_init_name);
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
@@ -337,7 +395,7 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
       m_args.push_back(entry);
    }
 
-   return snmpgetnext(m_args);
+   return snmpgetnext(m_args, m_getnext_init_name);
 }
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
@@ -347,7 +405,7 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
       m_args.push_back(entry);
    }
 
-   return snmpbulkget(m_args);
+   return snmpbulkget(m_args, m_bulkget_init_name);
 }
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
@@ -357,7 +415,7 @@ std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
       m_args.push_back(entry);
    }
 
-   return snmpset(m_args);
+   return snmpset(m_args, m_set_init_name);
 }
 
 std::vector<std::string> const& SessionBase::_get_args() const { return m_args; }
@@ -448,5 +506,40 @@ void SessionBase::_set_retries(std::string const& retries) {
 }
 void SessionBase::_set_timeout(std::string const& timeout) {
    m_timeout = timeout;
+   populate_args();
+}
+
+void SessionBase::_set_load_mibs(std::string const& load_mibs) {
+   m_load_mibs = load_mibs;
+   populate_args();
+}
+
+void SessionBase::_set_mib_directories(std::string const& mib_directories) {
+   m_mib_directories = mib_directories;
+   populate_args();
+}
+
+void SessionBase::_set_print_enums_numerically(bool print_enums_numerically) {
+   m_print_enums_numerically = print_enums_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_full_oids(bool print_full_oids) {
+   m_print_full_oids = print_full_oids;
+   populate_args();
+}
+
+void SessionBase::_set_print_oids_numerically(bool print_oids_numerically) {
+   m_print_oids_numerically = print_oids_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_timeticks_numerically(bool print_timeticks_numerically) {
+   m_print_timeticks_numerically = print_timeticks_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_max_repeaters_to_num(std::string const& set_max_repeaters_to_num) {
+   m_set_max_repeaters_to_num = set_max_repeaters_to_num;
    populate_args();
 }

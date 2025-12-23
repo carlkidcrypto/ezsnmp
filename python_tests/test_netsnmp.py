@@ -18,7 +18,7 @@ faulthandler.enable()
 
 def test_snmp_get_regular(netsnmp_args):
     netsnmp_args = netsnmp_args + ["sysDescr.0"]
-    res = snmpget(netsnmp_args)
+    res = snmpget(netsnmp_args, "testing_value")
 
     assert platform.version() in res[0].value
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -29,7 +29,7 @@ def test_snmp_get_regular(netsnmp_args):
 def test_snmp_get_fully_qualified(netsnmp_args):
 
     netsnmp_args = netsnmp_args + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
-    res = snmpget(netsnmp_args)
+    res = snmpget(netsnmp_args, "testing_value")
 
     assert platform.version() in res[0].value
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -40,7 +40,7 @@ def test_snmp_get_fully_qualified(netsnmp_args):
 def test_snmp_get_numeric(netsnmp_args):
 
     netsnmp_args = netsnmp_args + [".1.3.6.1.2.1.1.1.0"]
-    res = snmpget(netsnmp_args)
+    res = snmpget(netsnmp_args, "testing_value")
 
     assert platform.version() in res[0].value
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -51,7 +51,7 @@ def test_snmp_get_numeric(netsnmp_args):
 def test_snmp_get_numeric_no_leading_dot(netsnmp_args):
 
     netsnmp_args = netsnmp_args + ["1.3.6.1.2.1.1.1.0"]
-    res = snmpget(netsnmp_args)
+    res = snmpget(netsnmp_args, "testing_value")
 
     assert platform.version() in res[0].value
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
@@ -63,7 +63,7 @@ def test_snmp_get_unknown(netsnmp_args):
 
     with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["sysDescripto.0"]
-        snmpget(netsnmp_args)
+        snmpget(netsnmp_args, "testing_value")
 
 
 def test_snmp_get_invalid_instance(netsnmp_args):
@@ -77,10 +77,10 @@ def test_snmp_get_invalid_instance(netsnmp_args):
                 netsnmp_args = netsnmp_args + ["sysContact.1"]
                 # On Mac `snmpwalk -v 1 -c public localhost:11161 sysContact.1`
                 # produces no output, but on Ubuntu it does...
-                snmpget(netsnmp_args)
+                snmpget(netsnmp_args, "testing_value")
     else:
         netsnmp_args = netsnmp_args + ["sysContact.1"]
-        res = snmpget(netsnmp_args)
+        res = snmpget(netsnmp_args, "testing_value")
         assert res[0].type == "NOSUCHINSTANCE"
 
 
@@ -89,27 +89,27 @@ def test_snmp_get_invalid_object(netsnmp_args):
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["iso"]
-            snmpget(netsnmp_args)
+            snmpget(netsnmp_args, "testing_value")
     else:
         netsnmp_args = netsnmp_args + ["iso"]
-        res = snmpget(netsnmp_args)
+        res = snmpget(netsnmp_args, "testing_value")
         assert res[0].type == "NOSUCHOBJECT"
 
 
 def test_snmp_set_string(netsnmp_args, request, reset_values):
 
     netsnmp_args_1 = netsnmp_args + ["sysLocation.0"]
-    res = snmpget(netsnmp_args_1)
+    res = snmpget(netsnmp_args_1, "testing_value")
     assert res[0].oid == "SNMPv2-MIB::sysLocation"
     assert res[0].index == "0"
     assert res[0].value != "my newer location"
     assert res[0].type == "STRING"
 
     netsnmp_args_2 = netsnmp_args + ["sysLocation.0", "s", "my newer location"]
-    success = snmpset(netsnmp_args_2)
+    success = snmpset(netsnmp_args_2, "testing_value")
     assert success
 
-    res = snmpget(netsnmp_args_1)
+    res = snmpget(netsnmp_args_1, "testing_value")
     assert res[0].oid == "SNMPv2-MIB::sysLocation"
     assert res[0].index == "0"
     assert res[0].value == "my newer location"
@@ -119,11 +119,11 @@ def test_snmp_set_string(netsnmp_args, request, reset_values):
 def test_snmp_set_integer(netsnmp_args, reset_values):
 
     netsnmp_args_1 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "65"]
-    success = snmpset(netsnmp_args_1)
+    success = snmpset(netsnmp_args_1, "testing_value")
     assert success
 
     netsnmp_args_2 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2"]
-    res = snmpget(netsnmp_args_2)
+    res = snmpget(netsnmp_args_2, "testing_value")
     assert res[0].oid == "NET-SNMP-AGENT-MIB::nsCacheTimeout.1.3.6.1.2.1.2"
     assert res[0].index == "2"
     assert res[0].value == "65"
@@ -141,7 +141,7 @@ def test_snmpbulkget(netsnmp_args):
                 "sysORDescr",
                 "sysORUpTime",
             ]
-            snmpbulkget(netsnmp_args)
+            snmpbulkget(netsnmp_args, "testing_value")
     else:
         netsnmp_args = netsnmp_args + [
             "sysUpTime",
@@ -150,7 +150,7 @@ def test_snmpbulkget(netsnmp_args):
             "sysORDescr",
             "sysORUpTime",
         ]
-        res = snmpbulkget(netsnmp_args)
+        res = snmpbulkget(netsnmp_args, "testing_value")
 
         assert len(res) == 50
 
@@ -171,11 +171,11 @@ def test_snmpwalk(netsnmp_args):
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]
-            res = snmpbulkwalk(netsnmp_args)
+            res = snmpbulkwalk(netsnmp_args, "testing_value")
 
     else:
         netsnmp_args = netsnmp_args + ["system"]
-        res = snmpbulkwalk(netsnmp_args)
+        res = snmpbulkwalk(netsnmp_args, "testing_value")
         assert len(res) >= 7
 
         assert platform.version() in res[0].value
@@ -187,7 +187,7 @@ def test_snmpwalk(netsnmp_args):
 def test_snmp_walk_res(netsnmp_args):
 
     netsnmp_args = netsnmp_args + ["system"]
-    res = snmpwalk(netsnmp_args)
+    res = snmpwalk(netsnmp_args, "testing_value")
 
     assert len(res) >= 7
 
@@ -217,10 +217,10 @@ def test_snmp_bulkwalk_res(netsnmp_args):
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]
-            snmpbulkwalk(netsnmp_args)
+            snmpbulkwalk(netsnmp_args, "testing_value")
     else:
         netsnmp_args = netsnmp_args + ["system"]
-        res = snmpbulkwalk(netsnmp_args)
+        res = snmpbulkwalk(netsnmp_args, "testing_value")
 
         assert len(res) >= 7
 
@@ -249,7 +249,7 @@ def test_snmp_walk_unknown(netsnmp_args):
 
     with pytest.raises(GenericError):
         netsnmp_args = netsnmp_args + ["systemo123"]
-        snmpwalk(netsnmp_args)
+        snmpwalk(netsnmp_args, "testing_value")
 
 
 def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
@@ -260,12 +260,12 @@ def test_snmp_bulkwalk_non_sequential_oids(netsnmp_args):
                 netsnmp_args = netsnmp_args + [
                     "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
                 ]
-                snmpbulkwalk(netsnmp_args)
+                snmpbulkwalk(netsnmp_args, "testing_value")
         else:
             netsnmp_args = netsnmp_args + [
                 "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24"
             ]
-            res = snmpbulkwalk(netsnmp_args)
+            res = snmpbulkwalk(netsnmp_args, "testing_value")
 
             assert len(res) == 2
 

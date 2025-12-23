@@ -1,0 +1,286 @@
+--- a/net-snmp-5.7/apps/snmpbulkget.c
++++ b/net-snmp-5.7/apps/snmpbulkget.cpp
+@@ -1,3 +1,4 @@
++/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
+ /*
+  * snmpbulkget.c - send SNMPv2 Bulk requests to a network entity.
+  *
+@@ -25,47 +26,47 @@
+ **********************************************************************/
+ #include <net-snmp/net-snmp-config.h>
+ 
+-#if HAVE_STDLIB_H
++#ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+ #endif
+-#if HAVE_UNISTD_H
++#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+-#if HAVE_STRING_H
++#ifdef HAVE_STRING_H
+ #include <string.h>
+ #else
+ #include <strings.h>
+ #endif
+ #include <net-snmp/utilities.h>
+ #include <sys/types.h>
+-#if HAVE_NETINET_IN_H
++#ifdef HAVE_NETINET_IN_H
+ #include <netinet/in.h>
+ #endif
+-#if TIME_WITH_SYS_TIME
++#ifdef TIME_WITH_SYS_TIME
+ # include <sys/time.h>
+ # include <time.h>
+ #else
+-# if HAVE_SYS_TIME_H
++#ifdef HAVE_SYS_TIME_H
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+ # endif
+ #endif
+-#if HAVE_SYS_SELECT_H
++#ifdef HAVE_SYS_SELECT_H
+ #include <sys/select.h>
+ #endif
+-#include <stdio.h>
+ #include <ctype.h>
+-#if HAVE_NETDB_H
++#include <stdio.h>
++#ifdef HAVE_NETDB_H
+ #include <netdb.h>
+ #endif
+-#if HAVE_ARPA_INET_H
++#ifdef HAVE_ARPA_INET_H
+ #include <arpa/inet.h>
+ #endif
+ 
+ #include <net-snmp/net-snmp-includes.h>
+ 
+-oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
++oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
+ int             max_repetitions = 10;
+ int             non_repeaters = 0;
+ struct nameStruct {
+@@ -74,23 +75,21 @@
+ }              *name, *namep;
+ int             names;
+ 
+-void
+-usage(void)
+-{
++#include "exceptionsbase.h"
++#include "helpers.h"
++#include "snmpbulkget.h"
++
++void snmpbulkget_usage(void) {
+     fprintf(stderr, "USAGE: snmpbulkget ");
+     snmp_parse_args_usage(stderr);
+     fprintf(stderr, " OID [OID]...\n\n");
+     snmp_parse_args_descriptions(stderr);
+-    fprintf(stderr,
+-            "  -C APPOPTS\t\tSet various application specific behaviours:\n");
++   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviours:\n");
+     fprintf(stderr, "\t\t\t  n<NUM>:  set non-repeaters to <NUM>\n");
+     fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
+ }
+ 
+-static
+-    void
+-optProc(int argc, char *const *argv, int opt)
+-{
++void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
+     char           *endptr = NULL;
+ 
+     switch (opt) {
+@@ -109,7 +108,7 @@
+                     /*
+                      * No number given -- error.  
+                      */
+-                    usage();
++                     snmpbulkget_usage();
+                     exit(1);
+                 } else {
+                     optarg = endptr;
+@@ -120,17 +119,22 @@
+                 break;
+ 
+             default:
+-                fprintf(stderr, "Unknown flag passed to -C: %c\n",
+-                        optarg[-1]);
+-                exit(1);
++                  std::string err_msg =
++                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
++                  throw ParseErrorBase(err_msg);
+             }
+         }
+     }
+ }
+ 
+-int
+-main(int argc, char *argv[])
+-{
++std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
++   /* completely disable logging otherwise it will default to stderr */
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++
++   int argc;
++   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
++
++   std::vector<std::string> return_vector;
+     netsnmp_session session, *ss;
+     netsnmp_pdu    *pdu;
+     netsnmp_pdu    *response;
+@@ -138,19 +142,22 @@
+     int             arg;
+     int             count;
+     int             status;
+-    int             exitval = 0;
++
++   SOCK_STARTUP;
+ 
+     /*
+      * get the common command line arguments 
+      */
+-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
++   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
+     case NETSNMP_PARSE_ARGS_ERROR:
+-        exit(1);
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++
+     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+-        exit(0);
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++
+     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+-        usage();
+-        exit(1);
++         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++
+     default:
+         break;
+     }
+@@ -158,23 +165,20 @@
+     names = argc - arg;
+     if (names < non_repeaters) {
+         fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
+-        exit(1);
++      return parse_results(return_vector);
+     }
+ 
+     namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
+     while (arg < argc) {
+         namep->name_len = MAX_OID_LEN;
+-        if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) ==
+-            NULL) {
+-            snmp_perror(argv[arg]);
+-            exit(1);
++      if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
++         snmp_perror_exception(argv[arg]);
++         return parse_results(return_vector);
+         }
+         arg++;
+         namep++;
+     }
+ 
+-    SOCK_STARTUP;
+-
+     /*
+      * open an SNMP session 
+      */
+@@ -183,9 +187,8 @@
+         /*
+          * diagnose snmp_open errors with the input netsnmp_session pointer 
+          */
+-        snmp_sess_perror("snmpbulkget", &session);
+-        SOCK_CLEANUP;
+-        exit(1);
++      snmp_sess_perror_exception("snmpbulkget", &session);
++      return parse_results(return_vector);
+     }
+ 
+     /*
+@@ -194,8 +197,9 @@
+     pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
+     pdu->non_repeaters = non_repeaters;
+     pdu->max_repetitions = max_repetitions;     /* fill the packet */
+-    for (arg = 0; arg < names; arg++)
++   for (arg = 0; arg < names; arg++) {
+         snmp_add_null_var(pdu, name[arg].name, name[arg].name_len);
++   }
+ 
+     /*
+      * do the request 
+@@ -206,45 +210,49 @@
+             /*
+              * check resulting variables 
+              */
+-            for (vars = response->variables; vars;
+-                 vars = vars->next_variable)
+-                print_variable(vars->name, vars->name_length, vars);
++         for (vars = response->variables; vars; vars = vars->next_variable) {
++            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
++            return_vector.push_back(str_value);
++         }
+         } else {
+             /*
+              * error in response, print it 
+              */
+             if (response->errstat == SNMP_ERR_NOSUCHNAME) {
+-                printf("End of MIB.\n");
++            // printf("End of MIB.\n");
+             } else {
+-                fprintf(stderr, "Error in packet.\nReason: %s\n",
+-                        snmp_errstring(response->errstat));
++            std::string err_msg =
++                "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) +
++                "\n";
+                 if (response->errindex != 0) {
+-                    fprintf(stderr, "Failed object: ");
+-                    for (count = 1, vars = response->variables;
+-                         vars && (count != response->errindex);
++               err_msg = err_msg + "Failed object: ";
++               for (count = 1, vars = response->variables; vars && (count != response->errindex);
+                          vars = vars->next_variable, count++)
+                         /*EMPTY*/;
+-                    if (vars)
+-                        fprint_objid(stderr, vars->name,
+-                                     vars->name_length);
+-                    fprintf(stderr, "\n");
++               if (vars) {
++                  err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
++               }
++               err_msg = err_msg + "\n";
++               throw PacketErrorBase(err_msg);
+                 }
+-                exitval = 2;
+             }
+         }
+     } else if (status == STAT_TIMEOUT) {
+-        fprintf(stderr, "Timeout: No Response from %s\n",
+-                session.peername);
+-        exitval = 1;
++      std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
++      throw TimeoutErrorBase(err_msg);
++
+     } else {                    /* status == STAT_ERROR */
+-        snmp_sess_perror("snmpbulkget", ss);
+-        exitval = 1;
++      snmp_sess_perror_exception("snmpbulkget", ss);
+     }
+ 
+-    if (response)
++   if (response) {
+         snmp_free_pdu(response);
++   }
+ 
+     snmp_close(ss);
++
++                                            
++   clear_net_snmp_library_data();
+     SOCK_CLEANUP;
+-    return exitval;
++   return parse_results(return_vector);
+ }
