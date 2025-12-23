@@ -2,8 +2,9 @@
    :maxdepth: 8
 
    migration_guide
-   datatypes_cpp
+   documentation_guide
    development
+   datatypes_cpp
    exceptions_python
    exceptionsbase_cpp
    session_python

@@ -30,8 +30,8 @@ On macOS systems:
 
     brew install net-snmp
 
-Installation via Bulidng net-snmp from Source
----------------------------------------------
+Installation via Building net-snmp from Source
+----------------------------------------------
 If your OS doesn't ship with net-snmp 5.9.x or newer, please follow instructions
 provided on the `net-snmp install page <http://www.net-snmp.org/docs/INSTALL.html>`_
 to build and install net-snmp on your system.
@@ -73,6 +73,20 @@ something like this:
 .. code-block:: bash
 
     pip install --force-reinstall --no-binary :all: ezsnmp
+
+
+If you have import issues like whats below, try reinstalling the package forcing a build from source.
+First remove any lingering folders like `build/` or `ezsnmp.egg-info/`.
+Then run the same command that is shown above `pip install --force-reinstall --no-binary :all: ezsnmp`.
+
+.. code-block:: python
+
+    ImportError while loading conftest '/home/$USER/Documents/repos/ezsnmp/python_tests/conftest.py'.
+    python_tests/conftest.py:3: in <module>
+        import ezsnmp
+    ../../../python3.12.venv/lib/python3.12/site-packages/ezsnmp/__init__.py:1: in <module>
+        from .datatypes import Result
+    E   ModuleNotFoundError: No module named 'ezsnmp.datatypes'
 
 
 Quick Start
@@ -240,6 +254,20 @@ Here's an example of how to use one of the exceptions classes.:
         print(f"An error occurred: {e}")
 
 By catching exceptions, you can handle errors such as connection issues, authentication failures, or invalid OIDs in a more granular way, providing better control over your SNMP operations.
+
+Documentation Structure
+-----------------------
+
+This documentation is organized into the following sections:
+
+* **API Reference** - Detailed documentation of Python and C++ classes
+* **Migration Guide** - Instructions for migrating from v1.x to v2.x
+* **Development Guide** - Information for contributors and developers
+* **Interface Documentation** - SWIG interface file documentation
+
+For general project information, installation instructions for specific platforms, 
+and Docker configurations, please see the README files in the respective directories 
+of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
 
 .. toctree::
    :maxdepth: 2

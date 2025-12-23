@@ -51,8 +51,9 @@ int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmptrap command.
+ * @param init_app_name A string representing the initial application name.
  * @return An integer indicating the result of the TRAP operation.
  */
-int snmptrap(std::vector<std::string> const &args);
+int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name);
 
 #endif // SNMPTRAP_H

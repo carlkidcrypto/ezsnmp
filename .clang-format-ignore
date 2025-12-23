@@ -1,0 +1,2 @@
+ezsnmp/patches/net-snmp-5.*/**
+ezsnmp/src/ezsnmp_*.cpp

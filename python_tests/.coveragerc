@@ -1,5 +1,6 @@
 [run]
-omit = */tests/*
+source = ../ezsnmp
+omit = */python_tests/*
 
 [report]
-omit = */tests/*
+omit = */python_tests/*

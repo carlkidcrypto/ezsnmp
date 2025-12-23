@@ -32,6 +32,8 @@ class Session(SessionBase):
         print_enums_numerically: bool = False,
         print_full_oids: bool = False,
         print_oids_numerically: bool = False,
+        print_timeticks_numerically: bool = False,
+        set_max_repeaters_to_num: Union[str, int] = "10",
     ):
         """Initialize the SessionBase object with NetSNMP session parameters.
 
@@ -77,6 +79,11 @@ class Session(SessionBase):
         :type print_full_oids: bool
         :param print_oids_numerically: Whether to print OIDs numerically.
         :type print_oids_numerically: bool
+        :param print_timeticks_numerically: Whether to print timeticks numerically.
+        :type print_timeticks_numerically: bool
+        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num. Default is 10. Only applies to GETBULK PDUs.
+        :type set_max_repeaters_to_num: Union[str, int].
+
         """
 
         # Note that underlying SesssionBase object depends on all parameters to be strings.
@@ -112,10 +119,38 @@ class Session(SessionBase):
                 print_enums_numerically,
                 print_full_oids,
                 print_oids_numerically,
+                print_timeticks_numerically,
+                "",  # Set to emtpy string here. We will set it in the bulk methods.
             )
+
+            # Track the closed state for __del__ and multiple closes
+            self._closed = False
+            self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
 
         except Exception as e:
             _handle_error(e)
+
+    def __enter__(self):
+        """Enter the context manager, returning the session object."""
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit the context manager, automatically closing the session."""
+        self.close()
+        return None
+
+    def __del__(self):
+        """
+        Finalizer: A last-ditch effort to call .close() when the object
+        is garbage collected, preventing resource leaks.
+        """
+
+        if hasattr(self, "_closed") and not self._closed:
+            try:
+                self.close()
+            except Exception:
+                # Must not raise exceptions in __del__
+                pass
 
     @property
     def args(self):
@@ -414,6 +449,195 @@ class Session(SessionBase):
         """
         self._session_base._set_timeout(value)
 
+    @property
+    def load_mibs(self):
+        """Get the list of MIBs to load.
+
+        :type: str
+        """
+        return self._session_base._get_load_mibs()
+
+    @load_mibs.setter
+    def load_mibs(self, value):
+        """Set the list of MIBs to load.
+
+        :param value: The new list of MIBs to load.
+        :type value: str
+        """
+        self._session_base._set_load_mibs(value)
+
+    @property
+    def mib_directories(self):
+        """Get the directories to search for MIBs.
+
+        :type: str
+        """
+        return self._session_base._get_mib_directories()
+
+    @mib_directories.setter
+    def mib_directories(self, value):
+        """Set the directories to search for MIBs.
+
+        :param value: The new directories to search for MIBs.
+        :type value: str
+        """
+        self._session_base._set_mib_directories(value)
+
+    @property
+    def print_enums_numerically(self):
+        """Get whether to print enums numerically.
+
+        :type: bool
+        """
+        return self._session_base._get_print_enums_numerically()
+
+    @print_enums_numerically.setter
+    def print_enums_numerically(self, value):
+        """Set whether to print enums numerically.
+
+        :param value: The new value for printing enums numerically.
+        :type value: bool
+        """
+        self._session_base._set_print_enums_numerically(value)
+
+    @property
+    def print_full_oids(self):
+        """Get whether to print full OIDs.
+
+        :type: bool
+        """
+        return self._session_base._get_print_full_oids()
+
+    @print_full_oids.setter
+    def print_full_oids(self, value):
+        """Set whether to print full OIDs.
+
+        :param value: The new value for printing full OIDs.
+        :type value: bool
+        """
+        self._session_base._set_print_full_oids(value)
+
+    @property
+    def print_oids_numerically(self):
+        """Get whether to print OIDs numerically.
+
+        :type: bool
+        """
+        return self._session_base._get_print_oids_numerically()
+
+    @print_oids_numerically.setter
+    def print_oids_numerically(self, value):
+        """Set whether to print OIDs numerically.
+
+        :param value: The new value for printing OIDs numerically.
+        :type value: bool
+        """
+        self._session_base._set_print_oids_numerically(value)
+
+    @property
+    def print_timeticks_numerically(self):
+        """Get whether to print timeticks numerically.
+
+        :type: bool
+        """
+        return self._session_base._get_print_timeticks_numerically()
+
+    @print_timeticks_numerically.setter
+    def print_timeticks_numerically(self, value):
+        """Set whether to print timeticks numerically.
+
+        :param value: The new value for printing timeticks numerically.
+        :type value: bool
+        """
+        self._session_base._set_print_timeticks_numerically(value)
+
+    @property
+    def set_max_repeaters_to_num(self):
+        """Get max-repeaters value.
+
+        :type: str
+        """
+        return self._session_base._get_set_max_repeaters_to_num()
+
+    @set_max_repeaters_to_num.setter
+    def set_max_repeaters_to_num(self, value):
+        """Set max-repeaters value.
+
+        :param value: The new value for max-repeaters.
+        :type value: str
+        """
+        self._session_base._set_max_repeaters_to_num(value)
+
+    def close(self):
+        """Close the SNMP session and release resources."""
+        if not self._closed:
+            self._closed = True
+            try:
+                self._session_base._close()
+            except Exception as e:
+                _handle_error(e)
+
+    def __repr__(self):
+        """Return detailed string representation for debugging."""
+        return (
+            f"Session(hostname={self.hostname!r}, port_number={self.port_number!r}, "
+            f"version={self.version!r}, community={('***' if self.community else '')!r}, "
+            f"security_username={self.security_username!r}, "
+            f"retries={self.retries!r}, timeout={self.timeout!r})"
+        )
+
+    def __str__(self):
+        """Return readable string representation."""
+        return (
+            f"SNMP Session: {self.hostname}:{self.port_number or 'default'} "
+            f"(version={self.version})"
+        )
+
+    def to_dict(self):
+        """Convert session to dictionary for logging/JSON serialization.
+
+        Sensitive fields (community, passwords) are masked.
+        """
+        # Core properties that should always work
+        result = {
+            "hostname": self.hostname,
+            "port_number": self.port_number,
+            "version": self.version,
+            "community": "***" if self.community else "",
+            "auth_protocol": self.auth_protocol,
+            "auth_passphrase": "***" if self.auth_passphrase else "",
+            "security_engine_id": self.security_engine_id,
+            "context_engine_id": self.context_engine_id,
+            "security_level": self.security_level,
+            "context": self.context,
+            "security_username": self.security_username,
+            "privacy_protocol": self.privacy_protocol,
+            "privacy_passphrase": "***" if self.privacy_passphrase else "",
+            "boots_time": self.boots_time,
+            "retries": self.retries,
+            "timeout": self.timeout,
+        }
+
+        # Optional properties - some may not have getters implemented in C++
+        optional_props = [
+            "load_mibs",
+            "mib_directories",
+            "print_enums_numerically",
+            "print_full_oids",
+            "print_oids_numerically",
+            "print_timeticks_numerically",
+            "set_max_repeaters_to_num",
+        ]
+
+        for prop in optional_props:
+            try:
+                result[prop] = getattr(self, prop)
+            except AttributeError:
+                # Getter not implemented in SessionBase
+                result[prop] = None
+
+        return result
+
     def walk(self, oid="."):
         """
         Walks through the SNMP tree starting from the given OID.
@@ -497,6 +721,7 @@ class Session(SessionBase):
         """
 
         try:
+            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_walk(oid)
             return result
         except Exception as e:
@@ -540,7 +765,9 @@ class Session(SessionBase):
         """
 
         try:
+            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_walk(oids)
+            self.set_max_repeaters_to_num = ""
             return result
         except Exception as e:
             _handle_error(e)
@@ -704,7 +931,9 @@ class Session(SessionBase):
         """
 
         try:
+            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = self._session_base.bulk_get(oids)
+            self.set_max_repeaters_to_num = ""
             return result
         except Exception as e:
             _handle_error(e)

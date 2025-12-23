@@ -1,0 +1,10 @@
+services:
+  centos7_snmp_container:
+    build:
+      context: ../../
+      dockerfile: docker/centos7/Dockerfile
+    container_name: centos7_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/ezsnmp/docker/centos7/DockerEntry.sh"]

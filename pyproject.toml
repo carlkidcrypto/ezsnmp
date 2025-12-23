@@ -2,29 +2,18 @@
 manylinux-x86_64-image = "manylinux_2_28"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
 skip = "cp27-* cp36-* cp37-* cp38-* pp*"
+environment = { CIBW_BUILD_VERBOSITY = "1" }
 
 [[tool.cibuildwheel.overrides]]
 select = "*manylinux_2_2*"
-before-all = """apt-get --assume-yes install wget unzip;
-                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download;
-                unzip download;
-                cd net-snmp-5.9.4;
-                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
-                make;
-                make install;"""
+before-all = """apt-get --assume-yes update; apt-get --assume-yes install net-snmp net-snmp-dev openssl libssl-dev;"""
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
-before-all = "apk add net-snmp-dev;"
+before-all = "apk add net-snmp-dev openssl openssl-dev;"
 
 [tool.cibuildwheel.linux]
-before-all = """yum -y install wget;
-                wget https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.zip/download ;
-                unzip download;
-                cd net-snmp-5.9.4;
-                ./configure --with-defaults --disable-mibs --disable-manual --without-perl-modules --disable-embedded-perl;
-                make ;
-                make install ;"""
+before-all = """yum -y update; yum -y install net-snmp net-snmp-devel openssl openssl-devel;"""
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
@@ -49,15 +38,25 @@ before-all = """
           port -N upgrade net-snmp openssl;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
+[tool.cibuildwheel.windows]
+archs = "AMD64"
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-   "setuptools == 78.1.0",
+   "setuptools == 80.9.0",
     "wheel == 0.46.1",
+    "swig==4.3.1",
 ]
 
 [tool.pytest.ini_options]
-pythonpath = "tests"
+pythonpath = "python_tests"
 addopts = [
     "--import-mode=importlib",
+]
+norecursedirs = [
+"docker",
+"integration_tests",
 ]

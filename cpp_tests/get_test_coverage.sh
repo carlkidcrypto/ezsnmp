@@ -21,11 +21,11 @@ rm -rf coverage.info
 echo "Compiling the project..."
 mkdir -p $BUILD_DIR
 meson setup $BUILD_DIR
-ninja -C "$BUILD_DIR"
+ninja -C "$BUILD_DIR" -j $(nproc)
 
 # Generate coverage data
 echo "Generating coverage data..."
-ninja -C "$BUILD_DIR" test
+ninja -C "$BUILD_DIR" test -j $(nproc)
 
 # Capture coverage data with lcov
 echo "Capturing coverage data with lcov..."
@@ -33,7 +33,7 @@ lcov --capture --directory "$BUILD_DIR" --output-file coverage.info --rc geninfo
 
 # Remove unwanted coverage data
 echo "Removing unwanted coverage data..."
-lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info
+lcov --remove coverage.info '/usr/include/*' '*/13/bits/*' '*/13/ext/*' '*/cpp_tests/*' --output-file updated_coverage.info
 
 # Generate HTML coverage report
 echo "Generating HTML coverage report..."
