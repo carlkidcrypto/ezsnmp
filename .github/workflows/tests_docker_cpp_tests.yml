@@ -1,6 +1,8 @@
 name: Run Dockerized Cpp Tests
 
-concurrency: tests-docker-cpp-tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:

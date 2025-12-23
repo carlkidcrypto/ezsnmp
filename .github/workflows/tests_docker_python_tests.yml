@@ -1,6 +1,8 @@
 name: Run Dockerized Python Tests
 
-concurrency: tests-docker-python-tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
