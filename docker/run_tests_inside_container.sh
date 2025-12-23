@@ -21,13 +21,13 @@ export WORK_DIR=/tmp/ezsnmp_${DISTRO_NAME}
 export TOX_WORK_DIR=/tmp/tox_${DISTRO_NAME}
 
 # Copy source to isolated directory, excluding build artifacts and venvs
-rm -rf $WORK_DIR $TOX_WORK_DIR
-mkdir -p $WORK_DIR
-cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -)
+rm -rf "$WORK_DIR" "$TOX_WORK_DIR"
+mkdir -p "$WORK_DIR"
+cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -)
 
 # Run tox tests
-cd $WORK_DIR
+cd "$WORK_DIR"
 python3 -m pip install tox > /dev/null 2>&1
-tox -e $TOX_PY --workdir $TOX_WORK_DIR > /ezsnmp/$OUTPUT_FILE 2>&1
+tox -e "$TOX_PY" --workdir "$TOX_WORK_DIR" > /ezsnmp/"$OUTPUT_FILE" 2>&1
 
 exit 0
