@@ -34,14 +34,17 @@ jobs:
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-14, macos-15]
+        os: [ubuntu-latest, macos-14, macos-15, windows-latest]
 
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - name: Cache pip dependencies
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
-          path: ~/.cache/pip
+          path: |
+            ~/.cache/pip
+            ~/Library/Caches/pip
+            ~\AppData\Local\pip\Cache
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -51,7 +54,37 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Cache vcpkg on Windows
+        if: runner.os == 'Windows'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: C:\vcpkg
+          key: ${{ runner.os }}-vcpkg-netsnmp-${{ hashFiles('.github/workflows/build_and_publish_to_test_pypi.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-netsnmp-
+
+      - name: Setup vcpkg on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Install vcpkg if not cached
+          if (-Not (Test-Path C:\vcpkg)) {
+            git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
+            C:\vcpkg\bootstrap-vcpkg.bat
+          }
+          
+          # Install net-snmp if not already installed
+          $installed = C:\vcpkg\vcpkg.exe list net-snmp
+          if (-Not $installed) {
+            C:\vcpkg\vcpkg.exe install net-snmp:x64-windows
+          }
+          
+          # Set environment variables
+          echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
+          echo "VCPKG_INSTALLATION_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
+
       - name: Install cibuildwheel
+        shell: bash
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
@@ -84,6 +117,8 @@ jobs:
                 sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\110.15"/' pyproject.toml
             fi
             python -m cibuildwheel --output-dir wheelhouse --platform macos;
+
+          windows: python -m cibuildwheel --output-dir wheelhouse --platform windows;
 
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:

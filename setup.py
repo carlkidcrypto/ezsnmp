@@ -175,6 +175,59 @@ def get_homebrew_net_snmp_info():
         return None
 
 
+def get_windows_vcpkg_info():
+    """
+    Retrieves net-snmp information from vcpkg on Windows.
+
+    Returns:
+      tuple or None: A tuple (vcpkg_root, libdirs, incdirs) if vcpkg is found and net-snmp is installed,
+                     None otherwise.
+    """
+    if platform != "win32":
+        return None
+
+    # Try to get vcpkg root from environment
+    vcpkg_root = os.environ.get("VCPKG_ROOT") or os.environ.get("VCPKG_INSTALLATION_ROOT")
+    
+    if not vcpkg_root:
+        # Try common vcpkg installation locations
+        possible_roots = [
+            os.path.join(os.environ.get("USERPROFILE", ""), "vcpkg"),
+            "C:\\vcpkg",
+            os.path.join(os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"), "vcpkg"),
+        ]
+        for root in possible_roots:
+            if os.path.exists(root):
+                vcpkg_root = root
+                break
+    
+    if not vcpkg_root or not os.path.exists(vcpkg_root):
+        return None
+
+    # Determine architecture
+    import platform as plat_mod
+    arch = "x64" if plat_mod.machine().endswith("64") else "x86"
+    triplet = f"{arch}-windows"
+    
+    # Check for net-snmp installation
+    installed_dir = os.path.join(vcpkg_root, "installed", triplet)
+    include_dir = os.path.join(installed_dir, "include")
+    lib_dir = os.path.join(installed_dir, "lib")
+    
+    # Verify net-snmp headers exist
+    netsnmp_header = os.path.join(include_dir, "net-snmp", "net-snmp-config.h")
+    if not os.path.exists(netsnmp_header):
+        return None
+    
+    return vcpkg_root, [lib_dir], [include_dir]
+
+
+def get_windows_system_libs():
+    """Get system libraries required on Windows."""
+    # Common Windows libraries required by Net-SNMP
+    return ["ws2_32", "advapi32", "user32", "iphlpapi"]
+
+
 swig_targets = [
     ("ezsnmp/interface/datatypes.i", "ezsnmp/src/ezsnmp_datatypes.cpp"),
     ("ezsnmp/interface/exceptionsbase.i", "ezsnmp/src/ezsnmp_exceptionsbase.cpp"),
@@ -254,7 +307,13 @@ class BuildEverythingWithSwig(_build_py):
 def gather_build_configuration():
     basedir = None
     in_tree = False
-    compile_args = ["-std=c++17"]
+    
+    # Windows uses MSVC flags, Unix uses GCC/Clang flags
+    if platform == "win32":
+        compile_args = ["/std:c++17", "/EHsc"]  # MSVC flags
+    else:
+        compile_args = ["-std=c++17"]
+    
     link_args = []
     libs = []
     libdirs = []
@@ -262,11 +321,59 @@ def gather_build_configuration():
 
     for arg in argv:
         if arg.startswith("--debug"):
-            compile_args.extend(["-Wall", "-O0", "-g"])
+            if platform == "win32":
+                compile_args.extend(["/W4", "/Od", "/Zi"])
+            else:
+                compile_args.extend(["-Wall", "-O0", "-g"])
         elif arg.startswith("--basedir="):
             basedir = arg.split("=", 1)[1]
             in_tree = True
 
+    # Handle Windows platform
+    if platform == "win32":
+        windows_info = get_windows_vcpkg_info()
+        if not windows_info:
+            raise RuntimeError(
+                "Net-SNMP not found on Windows. Please install via vcpkg:\n"
+                "  vcpkg install net-snmp:x64-windows\n"
+                "And ensure VCPKG_ROOT environment variable is set."
+            )
+        
+        vcpkg_root, win_libdirs, win_incdirs = windows_info
+        libdirs.extend(win_libdirs)
+        incdirs.extend(win_incdirs)
+        incdirs.append("ezsnmp/include/")
+        
+        # Add Net-SNMP libraries for Windows
+        libs.extend(["netsnmp", "netsnmpagent", "netsnmphelpers", "netsnmpmibs", "netsnmptrapd"])
+        # Add Windows system libraries
+        libs.extend(get_windows_system_libs())
+        
+        # Try to detect version, default to 5.9
+        system_netsnmp_version = "5.9"
+        homebrew_version = None
+        homebrew_netsnmp_version = None
+        homebrew_openssl_version = None
+        macports_version = None
+        macports_netsnmp_version = None
+        
+        return {
+            "basedir": basedir,
+            "in_tree": in_tree,
+            "compile_args": compile_args,
+            "link_args": link_args,
+            "libs": libs,
+            "libdirs": libdirs,
+            "incdirs": incdirs,
+            "system_netsnmp_version": system_netsnmp_version,
+            "homebrew_version": homebrew_version,
+            "homebrew_netsnmp_version": homebrew_netsnmp_version,
+            "homebrew_openssl_version": homebrew_openssl_version,
+            "macports_version": macports_version,
+            "macports_netsnmp_version": macports_netsnmp_version,
+        }
+
+    # Unix-like systems (Linux, macOS)
     system_netsnmp_version = check_output(
         "net-snmp-config --version", shell=True
     ).decode()
