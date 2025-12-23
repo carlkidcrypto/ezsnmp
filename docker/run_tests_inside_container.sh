@@ -24,7 +24,11 @@ export TOX_WORK_DIR="/tmp/tox_${DISTRO_NAME}"
 # Copy source to isolated directory, excluding build artifacts and venvs
 rm -rf "$WORK_DIR" "$TOX_WORK_DIR"
 mkdir -p "$WORK_DIR"
-cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -)
+cd /ezsnmp && \
+  tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' \
+      --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' \
+      --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' \
+      -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -)
 
 # Run tox tests
 cd "$WORK_DIR"
