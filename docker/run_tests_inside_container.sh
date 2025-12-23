@@ -18,8 +18,8 @@ fi
 # Set up environment variables
 export PATH="/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 export LD_LIBRARY_PATH="/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-}"
-export WORK_DIR=/tmp/ezsnmp_${DISTRO_NAME}
-export TOX_WORK_DIR=/tmp/tox_${DISTRO_NAME}
+export WORK_DIR="/tmp/ezsnmp_${DISTRO_NAME}"
+export TOX_WORK_DIR="/tmp/tox_${DISTRO_NAME}"
 
 # Copy source to isolated directory, excluding build artifacts and venvs
 rm -rf "$WORK_DIR" "$TOX_WORK_DIR"
@@ -29,6 +29,6 @@ cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --ex
 # Run tox tests
 cd "$WORK_DIR"
 python3 -m pip install tox > /dev/null 2>&1
-tox -e "$TOX_PY" --workdir "$TOX_WORK_DIR" > /ezsnmp/"$OUTPUT_FILE" 2>&1
+tox -e "$TOX_PY" --workdir "$TOX_WORK_DIR" > "/ezsnmp/$OUTPUT_FILE" 2>&1
 
 exit 0
