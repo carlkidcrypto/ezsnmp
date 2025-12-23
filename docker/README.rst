@@ -72,18 +72,8 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 .. code-block:: bash
 
     # Execute tox for a specific environment (e.g., py312 on almalinux10)
-    sudo docker exec -t almalinux10_snmp_container bash -c '
-      export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
-      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
-      export WORK_DIR=/tmp/ezsnmp_almalinux10;
-      export TOX_WORK_DIR=/tmp/tox_almalinux10;
-      rm -rf $WORK_DIR $TOX_WORK_DIR;
-      mkdir -p $WORK_DIR;
-      cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -);
-      cd $WORK_DIR;
-      python3 -m pip install tox > /dev/null 2>&1;
-      tox -e py312 --workdir $TOX_WORK_DIR > /ezsnmp/test-outputs_almalinux10_py312.txt 2>&1;
-    '
+    sudo docker exec -t almalinux10_snmp_container bash /ezsnmp/docker/run_tests_inside_container.sh \
+      almalinux10 py312 test-outputs_almalinux10_py312.txt
 
 **2. Copy Results to Host:**
 
@@ -107,6 +97,24 @@ Helper Scripts
 ==============
 
 The ``docker`` directory includes helper scripts for automated testing:
+
+**run_tests_inside_container.sh**
+
+A helper script designed to be executed inside Docker containers via ``docker exec``. It sets up the test environment, isolates the source code, and runs tox tests with the specified Python version.
+
+.. code-block:: bash
+
+  # Usage: run_tests_inside_container.sh <DISTRO_NAME> <TOX_PY> <OUTPUT_FILE>
+  docker exec -t container_name bash /ezsnmp/docker/run_tests_inside_container.sh \
+    almalinux10 py312 test-outputs_almalinux10_py312.txt
+
+This script:
+
+* Sets up the necessary environment variables (PATH, LD_LIBRARY_PATH)
+* Creates isolated work directories for testing
+* Copies source code while excluding build artifacts and virtual environments
+* Installs and runs tox for the specified Python version
+* Outputs results to the specified file in the ``/ezsnmp`` directory
 
 **build_and_publish_images.sh**
 
