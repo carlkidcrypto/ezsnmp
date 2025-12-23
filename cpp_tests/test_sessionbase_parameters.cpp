@@ -67,6 +67,85 @@ TEST_P(SessionsParamTest, PrintOptionsAreAppliedToArgs) {
    EXPECT_EQ(args, expected);
 }
 
+// --- Integration tests to verify print options affect actual SNMP output ---
+
+// Helper to safely get a single OID and either return the first result or skip the test.
+static Result GetSingleOidOrSkip(bool print_enums,
+                                 bool print_full,
+                                 bool print_oids_num,
+                                 bool print_timeticks_num,
+                                 std::string const& mib_oid) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "11161",
+       /* version */ "2c",
+       /* community */ "public",
+       /* auth_protocol */ "",
+       /* auth_passphrase */ "",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "",
+       /* context */ "",
+       /* security_username */ "",
+       /* privacy_protocol */ "",
+       /* privacy_passphrase */ "",
+       /* boots_time */ "",
+       /* retries */ "3",
+       /* timeout */ "5",
+       /* load_mibs */ "",
+       /* mib_directories */ "",
+       /* print_enums_numerically */ print_enums,
+       /* print_full_oids */ print_full,
+       /* print_oids_numerically */ print_oids_num,
+       /* print_timeticks_numerically */ print_timeticks_num);
+
+   auto result = session.get(mib_oid);
+   if (result.empty()) {
+      GTEST_SKIP() << "SNMP agent returned no data for OID: " << mib_oid;
+   }
+   return result.front();
+}
+
+TEST(SessionBaseParametersIntegration, TimeticksNumericFlagChangesValueFormat) {
+   // With print_timeticks_numerically = false: value is human-friendly (e.g., "X days, ...")
+   auto r_text = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
+                                    /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
+   EXPECT_NE(r_text.type.find("Timeticks"), std::string::npos);
+   // Heuristic: textual timeticks usually contain a space or comma
+   bool looks_textual = (r_text.value.find(" ") != std::string::npos) ||
+                        (r_text.value.find(",") != std::string::npos) ||
+                        (r_text.value.find("milli-seconds") != std::string::npos);
+   EXPECT_TRUE(looks_textual) << "Expected non-numeric timeticks representation, got: "
+                              << r_text.value;
+
+   // With print_timeticks_numerically = true: value should be purely numeric
+   auto r_num = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
+                                   /*timeticks_num*/ true, "SNMPv2-MIB::sysUpTime.0");
+   EXPECT_NE(r_num.type.find("Timeticks"), std::string::npos);
+   // Check value is digits only
+   bool all_digits = !r_num.value.empty() &&
+                     std::all_of(r_num.value.begin(), r_num.value.end(), ::isdigit);
+   EXPECT_TRUE(all_digits) << "Expected numeric timeticks, got: " << r_num.value;
+}
+
+TEST(SessionBaseParametersIntegration, OidsNumericFlagChangesOidFormat) {
+   // Without numeric OIDs: expect textual module name in oid string
+   auto r_text = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
+                                    /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
+   std::string oid_text = r_text.oid;
+   bool has_module = (oid_text.find("SNMPv2-MIB") != std::string::npos) ||
+                     (oid_text.find("::") != std::string::npos);
+   EXPECT_TRUE(has_module) << "Expected textual OID, got: " << oid_text;
+
+   // With numeric OIDs: expect dotted numeric form, avoid module markers
+   auto r_num = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ true,
+                                   /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
+   std::string oid_num = r_num.oid;
+   bool dotted_numeric = !oid_num.empty() && oid_num.find("::") == std::string::npos &&
+                         std::count(oid_num.begin(), oid_num.end(), '.') >= 3;
+   EXPECT_TRUE(dotted_numeric) << "Expected numeric/dotted OID, got: " << oid_num;
+}
+
 static const auto SESSION_PARAM_VALUES = testing::Combine(
     testing::Values(std::string("1"), std::string("2c"), std::string("3")),
     testing::Values(
