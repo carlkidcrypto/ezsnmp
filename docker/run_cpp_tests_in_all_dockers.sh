@@ -102,7 +102,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		LCOV_HELP=\$(lcov --help 2>/dev/null || true)
 		
 		# Build the base lcov command
-		LCOV_CMD='lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1'
+		LCOV_CMD='lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --rc geninfo_gcov_all_blocks=0'
 		
 		# Add --no-external if supported
 		if echo \"\$LCOV_HELP\" | grep -q -- '--no-external'; then
