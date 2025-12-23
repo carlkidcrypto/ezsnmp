@@ -11,3 +11,4 @@ gdb
 meson
 ninja
 gtest
+lcov

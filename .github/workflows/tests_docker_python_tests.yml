@@ -1,6 +1,8 @@
 name: Run Dockerized Python Tests
 
-concurrency: tests-docker-python-tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
@@ -172,7 +174,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: test-python-tests
     permissions:
-      pull-requests: write
+      contents: write # This is needed to create/update commit comments
+      pull-requests: write # This is needed to create/update comments
     if: always() 
     steps:
       - name: Download Artifacts
