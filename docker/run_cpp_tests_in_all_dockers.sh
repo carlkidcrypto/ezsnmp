@@ -98,27 +98,10 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
-		# Coverage collection: build lcov command with supported flags
-		LCOV_HELP=\$(lcov --help 2>/dev/null || true)
-		
-		# Build the base lcov command
-		LCOV_CMD='lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --rc geninfo_gcov_all_blocks=0'
-		
-		# Add --no-external if supported
-		if echo \"\$LCOV_HELP\" | grep -q -- '--no-external'; then
-		  LCOV_CMD=\"\$LCOV_CMD --no-external\"
-		fi
-		
-		# Try with ignore-errors flags if supported
-		if echo \"\$LCOV_HELP\" | grep -q -- '--ignore-errors'; then
-		  if echo \"\$LCOV_HELP\" | grep -q 'inconsistent'; then
-		    eval \"\$LCOV_CMD --ignore-errors inconsistent,empty,mismatch\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
-		  else
-		    eval \"\$LCOV_CMD --ignore-errors empty\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
-		  fi
-		else
-		  eval \"\$LCOV_CMD\" || true
-		fi
+		# Coverage collection: use lcov with ignore-errors to bypass mismatch issues
+		lcov --capture --directory build/ --output-file coverage.info \
+		     --rc geninfo_unexecuted_blocks=1 --rc geninfo_gcov_all_blocks=0 \
+		     --ignore-errors mismatch,inconsistent,empty 2>&1 | grep -v "WARNING\|Duplicate" || true
 		
 		# Ensure coverage.info exists for next step
 		if [ ! -f coverage.info ]; then
