@@ -2,7 +2,9 @@
 # on multiple operating systems and Python versions.
 # It checks for changes in the source code and runs tests only if there are changes.
 name: Tests With Native Package Manager
-concurrency: tests-native
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches: [ main ]
