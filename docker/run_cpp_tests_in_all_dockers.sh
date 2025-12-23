@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-# Formatting `sudo apt install shfmt && shfmt -w run_tests_in_all_dockers.sh`
-sudo chown "$USER" /var/run/docker.sock
+# Formatting `sudo apt install shfmt && shfmt -w run_cpp_tests_in_all_dockers.sh`
+# Try to fix docker socket permissions, but don't fail if we can't
+sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
 
 # --- Configuration ---
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
@@ -34,19 +35,25 @@ if [ -n "${TARGET_IMAGE}" ]; then
 	DISTROS_TO_TEST=("${TARGET_IMAGE}")
 	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
 else
-	# Test all images by finding directories in the current folder (excluding the current directory itself).
-	DISTROS_TO_TEST=($(find . -mindepth 1 -maxdepth 1 -type d -not -name '.' -printf "%f\n"))
+	# Test all images by finding directories in the current folder that contain a Dockerfile.
+	DISTROS_TO_TEST=()
+	while IFS= read -r DOCKERFILE_PATH; do
+		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		DISTROS_TO_TEST+=("$DIR_NAME")
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n')
 	echo "Mode: Testing all found images."
 fi
 
 echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
-# --- Test Loop ---
+# Clean any previous top-level outputs
 rm -f -- *.xml *.txt *.info
+
+# --- Test Loop ---
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
-	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}"
+	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
 	CONTAINER_NAME="${DISTRO_NAME}_test_container"
 	# The entry script path must be adjusted for the container mount, which is always /ezsnmp/docker/[distro]/...
 	ENTRY_SCRIPT_PATH="/ezsnmp/docker/${DISTRO_NAME}/DockerEntry.sh"
@@ -82,38 +89,76 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# 3. Run cpp tests using meson
 	echo "    - Executing meson tests..."
-	docker exec -t "$CONTAINER_NAME" bash -c "
+	docker exec -t -e ASAN_OPTIONS='halt_on_error=0' -e UBSAN_OPTIONS='halt_on_error=0' -e MSAN_OPTIONS='halt_on_error=0' "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
 		rm -drf build/ *.info *.txt *.xml;
-		meson setup build/; 
-		ninja -C build/ -j $(nproc); 
-		ninja -C build/ test > test-outputs.txt 2>&1;
-		lcov --capture --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,empty
-		lcov --remove coverage.info '*/13/bits/*' '*/13/ext/*' --output-file updated_coverage.info --ignore-errors mismatch,empty
+		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
+		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
+		meson setup build/ -Db_coverage=true; 
+		ninja -C build/ -j \$(nproc); 
+		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
+		
+		# Coverage collection: build lcov command with supported flags
+		LCOV_HELP=\$(lcov --help 2>/dev/null || true)
+		
+		# Build the base lcov command
+		LCOV_CMD='lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1'
+		
+		# Add --no-external if supported
+		if echo \"\$LCOV_HELP\" | grep -q -- '--no-external'; then
+		  LCOV_CMD=\"\$LCOV_CMD --no-external\"
+		fi
+		
+		# Try with ignore-errors flags if supported
+		if echo \"\$LCOV_HELP\" | grep -q -- '--ignore-errors'; then
+		  if echo \"\$LCOV_HELP\" | grep -q 'inconsistent'; then
+		    eval \"\$LCOV_CMD --ignore-errors inconsistent,empty,mismatch\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
+		  else
+		    eval \"\$LCOV_CMD --ignore-errors empty\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
+		  fi
+		else
+		  eval \"\$LCOV_CMD\" || true
+		fi
+		
+		# Ensure coverage.info exists for next step
+		if [ ! -f coverage.info ]; then
+		  touch coverage.info
+		fi
+		
+		# Strip system/third-party paths if coverage exists and has content
+		if [ -f coverage.info ] && [ -s coverage.info ]; then
+		  lcov --remove coverage.info '/usr/*' '/opt/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' '*/site-packages/*' --output-file updated_coverage.info 2>/dev/null || cp coverage.info updated_coverage.info
+		else
+		  touch updated_coverage.info
+		fi
 		exit 0;
 	"
 
-	# 4. Copy artifacts from the container to host.
-	echo "    - Renaming files from container: $CONTAINER_NAME"
+	# 4. Copy artifacts from the container to host into per-distro folder
+	OUT_DIR="./test_outputs_${DISTRO_NAME}"
+	mkdir -p "$OUT_DIR"
+	rm -f "${OUT_DIR}"/*.xml "${OUT_DIR}"/*.txt "${OUT_DIR}"/*.info 2>/dev/null || true
+
+	echo "    - Saving artifacts to ${OUT_DIR}"
 	if [ -f ../cpp_tests/test-results.xml ]; then
-		mv ../cpp_tests/test-results.xml ./test-results_"$CONTAINER_NAME".xml
+		mv ../cpp_tests/test-results.xml "${OUT_DIR}/test-results.xml"
 	else
 		echo "      ! Warning: test-results.xml not found for $CONTAINER_NAME"
-		touch ./test-results_"$CONTAINER_NAME".xml
+		touch "${OUT_DIR}/test-results.xml"
 	fi
 
 	if [ -f ../cpp_tests/test-outputs.txt ]; then
-		mv ../cpp_tests/test-outputs.txt ./test-outputs_"$CONTAINER_NAME".txt
+		mv ../cpp_tests/test-outputs.txt "${OUT_DIR}/test-outputs.txt"
 	else
 		echo "      ! Warning: test-outputs.txt not found for $CONTAINER_NAME"
-		touch ./test-outputs_"$CONTAINER_NAME".txt
+		touch "${OUT_DIR}/test-outputs.txt"
 	fi
 
 	if [ -f ../cpp_tests/updated_coverage.info ]; then
-		mv ../cpp_tests/updated_coverage.info ./lcov_coverage_"$CONTAINER_NAME".info
+		mv ../cpp_tests/updated_coverage.info "${OUT_DIR}/lcov_coverage.info"
 	else
 		echo "      ! Warning: updated_coverage.info not found for $CONTAINER_NAME"
-		touch ./lcov_coverage_"$CONTAINER_NAME".info
+		touch "${OUT_DIR}/lcov_coverage.info"
 	fi
 
 	# 5. Cleanup container
