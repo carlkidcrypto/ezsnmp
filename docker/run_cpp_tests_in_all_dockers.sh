@@ -108,8 +108,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  if lcov --help 2>&1 | grep -q 'ignore-errors'; then
 		    LCOV_IGNORE_FLAGS="--ignore-errors mismatch,inconsistent,gcov,usage"
 		  fi
-		  lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info $LCOV_IGNORE_FLAGS 2>&1 || \
-		  lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info 2>&1 || true
+		  lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info $LCOV_IGNORE_FLAGS 2>&1 || lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info 2>&1 || true
 		fi
 		
 		# Ensure coverage.info exists for next step
