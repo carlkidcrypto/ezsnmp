@@ -103,13 +103,14 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		if geninfo --help 2>&1 | grep -q 'ignore-errors'; then
 		  GENINFO_FLAGS="--ignore-errors mismatch --ignore-errors inconsistent --ignore-errors gcov --ignore-errors source --rc geninfo_unexecuted_blocks=1 --rc geninfo_gcov_all_blocks=0"
 		fi
-		geninfo build/ -b /ezsnmp/cpp_tests --output-filename coverage.info $GENINFO_FLAGS 2>&1 || \
-		LCOV_IGNORE_FLAGS=""
-		if lcov --help 2>&1 | grep -q 'ignore-errors'; then
-		  LCOV_IGNORE_FLAGS="--ignore-errors mismatch,inconsistent,gcov,usage"
+		if ! geninfo build/ -b /ezsnmp/cpp_tests --output-filename coverage.info $GENINFO_FLAGS 2>&1; then
+		  LCOV_IGNORE_FLAGS=""
+		  if lcov --help 2>&1 | grep -q 'ignore-errors'; then
+		    LCOV_IGNORE_FLAGS="--ignore-errors mismatch,inconsistent,gcov,usage"
+		  fi
+		  lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info $LCOV_IGNORE_FLAGS 2>&1 || \
+		  lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info 2>&1 || true
 		fi
-		lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info $LCOV_IGNORE_FLAGS 2>&1 || \
-		lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info 2>&1 || true
 		
 		# Ensure coverage.info exists for next step
 		if [ ! -f coverage.info ]; then
