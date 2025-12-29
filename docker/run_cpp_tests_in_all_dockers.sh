@@ -98,11 +98,17 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
-		# Coverage collection: use lcov with rc options to ignore geninfo errors
-		# Try with rc options first, fall back to basic capture if needed
+		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov
+		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros
+		geninfo build/ --output-filename coverage.info \
+		       --ignore-errors mismatch \
+		       --ignore-errors inconsistent \
+		       --ignore-errors gcov \
+		       --ignore-errors source \
+		       --rc geninfo_unexecuted_blocks=1 \
+		       --rc geninfo_gcov_all_blocks=0 2>&1 || \
 		lcov --capture --directory build/ --output-file coverage.info \
-		     --rc geninfo_unexecuted_blocks=1 --rc geninfo_gcov_all_blocks=0 \
-		     --rc geninfo_ignore_errors=mismatch --rc geninfo_ignore_errors=inconsistent 2>&1 || \
+		     --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
 		lcov --capture --directory build/ --output-file coverage.info 2>&1 || true
 		
 		# Ensure coverage.info exists for next step
