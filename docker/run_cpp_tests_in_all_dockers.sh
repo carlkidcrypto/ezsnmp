@@ -98,18 +98,18 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
-		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov
-		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros
-		geninfo build/ --output-filename coverage.info \
-		       --ignore-errors mismatch \
-		       --ignore-errors inconsistent \
-		       --ignore-errors gcov \
-		       --ignore-errors source \
-		       --rc geninfo_unexecuted_blocks=1 \
-		       --rc geninfo_gcov_all_blocks=0 2>&1 || \
-		lcov --capture --directory build/ --output-file coverage.info \
-		     --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
-		lcov --capture --directory build/ --output-file coverage.info 2>&1 || true
+		# Coverage collection: prefer geninfo (with base-dir), then fall back to lcov. Gate flags by tool support.
+		GENINFO_FLAGS=""
+		if geninfo --help 2>&1 | grep -q 'ignore-errors'; then
+		  GENINFO_FLAGS="--ignore-errors mismatch --ignore-errors inconsistent --ignore-errors gcov --ignore-errors source --rc geninfo_unexecuted_blocks=1 --rc geninfo_gcov_all_blocks=0"
+		fi
+		geninfo build/ -b /ezsnmp/cpp_tests --output-filename coverage.info $GENINFO_FLAGS 2>&1 || \
+		LCOV_IGNORE_FLAGS=""
+		if lcov --help 2>&1 | grep -q 'ignore-errors'; then
+		  LCOV_IGNORE_FLAGS="--ignore-errors mismatch,inconsistent,gcov,usage"
+		fi
+		lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info $LCOV_IGNORE_FLAGS 2>&1 || \
+		lcov --capture --directory build/ -b /ezsnmp/cpp_tests --output-file coverage.info 2>&1 || true
 		
 		# Ensure coverage.info exists for next step
 		if [ ! -f coverage.info ]; then
@@ -121,6 +121,15 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  lcov --remove coverage.info '/usr/*' '/opt/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' '*/site-packages/*' --output-file updated_coverage.info 2>/dev/null || cp coverage.info updated_coverage.info
 		else
 		  touch updated_coverage.info
+		fi
+		
+		# Print coverage summary with genhtml fallback (helps older lcov versions like CentOS 7)
+		if [ -f updated_coverage.info ]; then
+		  if command -v genhtml >/dev/null 2>&1; then
+		    genhtml -s updated_coverage.info 2>&1 || true
+		  else
+		    lcov --list updated_coverage.info 2>&1 || true
+		  fi
 		fi
 		exit 0;
 	"
