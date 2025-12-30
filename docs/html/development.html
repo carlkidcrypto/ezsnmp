@@ -371,7 +371,9 @@ meson<span class="w"> </span><span class="nb">test</span><span class="w"> </span
 <li><p><strong>centos7</strong> - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13</p></li>
 <li><p><strong>rockylinux8</strong> - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13</p></li>
 </ul>
-<p>To run tests in Docker:</p>
+<section id="docker-python-tests">
+<h3>Docker Python Tests<a class="headerlink" href="#docker-python-tests" title="Link to this heading">¶</a></h3>
+<p>To run Python tests in Docker:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run all Python tests across all distributions (parallel)</span>
 <span class="nb">cd</span><span class="w"> </span>docker/
 chmod<span class="w"> </span>+x<span class="w"> </span>run_python_tests_in_all_dockers.sh
@@ -380,14 +382,7 @@ chmod<span class="w"> </span>+x<span class="w"> </span>run_python_tests_in_all_d
 <span class="c1"># Run tests in a specific distribution only</span>
 ./run_python_tests_in_all_dockers.sh<span class="w"> </span>almalinux10
 
-<span class="c1"># Run C++ tests across all distributions</span>
-chmod<span class="w"> </span>+x<span class="w"> </span>run_cpp_tests_in_all_dockers.sh
-./run_cpp_tests_in_all_dockers.sh
-
-<span class="c1"># Run C++ tests in a specific distribution</span>
-./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>rockylinux8
-
-<span class="c1"># Run a specific distribution image manually</span>
+<span class="c1"># Run a specific distribution image manually for Python tests</span>
 sudo<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>carlkidcrypto/ezsnmp_test_images:almalinux10-latest
 sudo<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--name<span class="w"> </span><span class="s2">&quot;almalinux10_snmp_container&quot;</span><span class="w"> </span><span class="se">\</span>
@@ -395,7 +390,7 @@ sudo<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </
 <span class="w">  </span>carlkidcrypto/ezsnmp_test_images:almalinux10-latest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/ezsnmp/docker/almalinux10/DockerEntry.sh false &amp; tail -f /dev/null&quot;</span>
 
-<span class="c1"># Execute tests inside the container</span>
+<span class="c1"># Execute Python tests inside the container using tox</span>
 sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-t<span class="w"> </span>almalinux10_snmp_container<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;</span>
 <span class="s1">  export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;</span>
 <span class="s1">  export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;</span>
@@ -410,8 +405,23 @@ sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec<
 <span class="s1">&#39;</span>
 </pre></div>
 </div>
+</section>
+<section id="docker-c-tests">
+<h3>Docker C++ Tests<a class="headerlink" href="#docker-c-tests" title="Link to this heading">¶</a></h3>
+<p>To run C++ tests in Docker:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run C++ tests across all distributions</span>
+<span class="nb">cd</span><span class="w"> </span>docker/
+chmod<span class="w"> </span>+x<span class="w"> </span>run_cpp_tests_in_all_dockers.sh
+./run_cpp_tests_in_all_dockers.sh
+
+<span class="c1"># Run C++ tests in a specific distribution</span>
+./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>rockylinux8
+</pre></div>
+</div>
 <p>For more information on Docker testing, see the <a class="reference external" href="../../docker/README.rst">Docker README</a>.</p>
-<p>On MacOS</p>
+</section>
+<section id="python-tests-on-macos">
+<h3>Python Tests on MacOS<a class="headerlink" href="#python-tests-on-macos" title="Link to this heading">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/carlkidcrypto/ezsnmp.git<span class="p">;</span>
 <span class="nb">cd</span><span class="w"> </span>ezsnmp<span class="p">;</span>
 sudo<span class="w"> </span>mv<span class="w"> </span>/etc/snmp/snmpd.conf<span class="w"> </span>/etc/snmp/snmpd.conf.orig<span class="p">;</span>
@@ -435,6 +445,7 @@ softwareupdate –list</p>
 <p># Install the Command Line Tools for Xcode (use quotes around the label)
 softwareupdate -i “Command Line Tools for Xcode-16.4”</p>
 </div></blockquote>
+</section>
 </section>
 <section id="running-cibuildwheels">
 <h2>Running cibuildwheels<a class="headerlink" href="#running-cibuildwheels" title="Link to this heading">¶</a></h2>
@@ -536,7 +547,12 @@ git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </sp
 <li><a class="reference internal" href="#c-tests">C++ Tests</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#running-tests-with-docker">Running Tests with Docker</a></li>
+<li><a class="reference internal" href="#running-tests-with-docker">Running Tests with Docker</a><ul>
+<li><a class="reference internal" href="#docker-python-tests">Docker Python Tests</a></li>
+<li><a class="reference internal" href="#docker-c-tests">Docker C++ Tests</a></li>
+<li><a class="reference internal" href="#python-tests-on-macos">Python Tests on MacOS</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#running-cibuildwheels">Running cibuildwheels</a></li>
 <li><a class="reference internal" href="#formatting">Formatting</a></li>
 <li><a class="reference internal" href="#generating-the-changelog-md">Generating The CHANGELOG.md</a></li>

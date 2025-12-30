@@ -140,7 +140,10 @@ EzSnmp provides pre-built Docker images for testing across multiple Linux distri
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
 
-To run tests in Docker:
+Docker Python Tests
+~~~~~~~~~~~~~~~~~~~
+
+To run Python tests in Docker:
 
 .. code:: bash
 
@@ -152,14 +155,7 @@ To run tests in Docker:
     # Run tests in a specific distribution only
     ./run_python_tests_in_all_dockers.sh almalinux10
 
-    # Run C++ tests across all distributions
-    chmod +x run_cpp_tests_in_all_dockers.sh
-    ./run_cpp_tests_in_all_dockers.sh
-
-    # Run C++ tests in a specific distribution
-    ./run_cpp_tests_in_all_dockers.sh rockylinux8
-
-    # Run a specific distribution image manually
+    # Run a specific distribution image manually for Python tests
     sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
@@ -167,7 +163,7 @@ To run tests in Docker:
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
       /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
 
-    # Execute tests inside the container
+    # Execute Python tests inside the container using tox
     sudo docker exec -t almalinux10_snmp_container bash -c '
       export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
       export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
@@ -181,10 +177,26 @@ To run tests in Docker:
       tox --workdir $TOX_WORK_DIR;
     '
 
+Docker C++ Tests
+~~~~~~~~~~~~~~~~
+
+To run C++ tests in Docker:
+
+.. code:: bash
+
+    # Run C++ tests across all distributions
+    cd docker/
+    chmod +x run_cpp_tests_in_all_dockers.sh
+    ./run_cpp_tests_in_all_dockers.sh
+
+    # Run C++ tests in a specific distribution
+    ./run_cpp_tests_in_all_dockers.sh rockylinux8
+
 For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
 
 
-On MacOS
+Python Tests on MacOS
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
