@@ -23,6 +23,7 @@ dist/
 
 # Documentation builds
 docs/_build/
+docs/doctrees/
 doxygen_docs_build/
 
 # vim stuff

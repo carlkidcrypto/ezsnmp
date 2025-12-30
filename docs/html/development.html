@@ -313,6 +313,8 @@ swig<span class="w"> </span>-c++<span class="w"> </span>-python<span class="w"> 
 </section>
 <section id="running-tests">
 <h2>Running Tests<a class="headerlink" href="#running-tests" title="Link to this heading">¶</a></h2>
+<section id="python-tests">
+<h3>Python Tests<a class="headerlink" href="#python-tests" title="Link to this heading">¶</a></h3>
 <p>Tests use <a class="reference external" href="https://github.com/pytest-dev/pytest">Pytest</a>. You can run
 them with the following on Linux:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/carlkidcrypto/ezsnmp.git<span class="p">;</span>
@@ -339,6 +341,26 @@ tox
 </pre></div>
 </div>
 </section>
+<section id="c-tests">
+<h3>C++ Tests<a class="headerlink" href="#c-tests" title="Link to this heading">¶</a></h3>
+<p>C++ tests use Google Test and Meson/Ninja build system. To run C++ tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install prerequisites (on Ubuntu/Debian)</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>meson<span class="w"> </span>ninja-build<span class="w"> </span>libgtest-dev<span class="w"> </span>lcov
+
+<span class="c1"># Build and run C++ tests</span>
+<span class="nb">cd</span><span class="w"> </span>cpp_tests
+meson<span class="w"> </span>setup<span class="w"> </span>build
+ninja<span class="w"> </span>-C<span class="w"> </span>build
+meson<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-C<span class="w"> </span>build<span class="w"> </span>--verbose
+
+<span class="c1"># Generate coverage report</span>
+./get_test_coverage.sh
+</pre></div>
+</div>
+<p>The C++ tests include a compatibility macro <code class="docutils literal notranslate"><span class="pre">EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA</span></code> that works with both older and newer versions of Google Test. This macro gracefully skips tests when SNMP data is unavailable.</p>
+<p>For more details on C++ tests, see the <a class="reference external" href="../../cpp_tests/README.rst">C++ Tests README</a>.</p>
+</section>
+</section>
 <section id="running-tests-with-docker">
 <h2>Running Tests with Docker<a class="headerlink" href="#running-tests-with-docker" title="Link to this heading">¶</a></h2>
 <p>EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:</p>
@@ -357,6 +379,13 @@ chmod<span class="w"> </span>+x<span class="w"> </span>run_python_tests_in_all_d
 
 <span class="c1"># Run tests in a specific distribution only</span>
 ./run_python_tests_in_all_dockers.sh<span class="w"> </span>almalinux10
+
+<span class="c1"># Run C++ tests across all distributions</span>
+chmod<span class="w"> </span>+x<span class="w"> </span>run_cpp_tests_in_all_dockers.sh
+./run_cpp_tests_in_all_dockers.sh
+
+<span class="c1"># Run C++ tests in a specific distribution</span>
+./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>rockylinux8
 
 <span class="c1"># Run a specific distribution image manually</span>
 sudo<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>carlkidcrypto/ezsnmp_test_images:almalinux10-latest
@@ -502,7 +531,11 @@ git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </sp
 <li><a class="reference internal" href="#how-to-generate-the-sphinx-documentation">How to Generate the Sphinx Documentation</a></li>
 <li><a class="reference internal" href="#making-the-swig-interface-files">Making The SWIG Interface Files</a></li>
 <li><a class="reference internal" href="#making-the-patch-files">Making The Patch Files</a></li>
-<li><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li><a class="reference internal" href="#running-tests">Running Tests</a><ul>
+<li><a class="reference internal" href="#python-tests">Python Tests</a></li>
+<li><a class="reference internal" href="#c-tests">C++ Tests</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#running-tests-with-docker">Running Tests with Docker</a></li>
 <li><a class="reference internal" href="#running-cibuildwheels">Running cibuildwheels</a></li>
 <li><a class="reference internal" href="#formatting">Formatting</a></li>

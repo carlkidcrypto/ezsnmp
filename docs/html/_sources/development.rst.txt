@@ -75,6 +75,9 @@ Within the patches directory run the following command.
 Running Tests
 -------------
 
+Python Tests
+~~~~~~~~~~~~
+
 Tests use `Pytest <https://github.com/pytest-dev/pytest>`_. You can run
 them with the following on Linux:
 
@@ -102,6 +105,29 @@ them with the following on Linux:
     # Bottom one for valgrind using helgrind. Replace the top one with it if needed.
     # python3 -m pip install . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
 
+C++ Tests
+~~~~~~~~~
+
+C++ tests use Google Test and Meson/Ninja build system. To run C++ tests:
+
+.. code:: bash
+
+    # Install prerequisites (on Ubuntu/Debian)
+    sudo apt install -y meson ninja-build libgtest-dev lcov
+
+    # Build and run C++ tests
+    cd cpp_tests
+    meson setup build
+    ninja -C build
+    meson test -C build --verbose
+
+    # Generate coverage report
+    ./get_test_coverage.sh
+
+The C++ tests include a compatibility macro ``EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA`` that works with both older and newer versions of Google Test. This macro gracefully skips tests when SNMP data is unavailable.
+
+For more details on C++ tests, see the `C++ Tests README <../../cpp_tests/README.rst>`_.
+
 
 Running Tests with Docker
 --------------------------
@@ -125,6 +151,13 @@ To run tests in Docker:
 
     # Run tests in a specific distribution only
     ./run_python_tests_in_all_dockers.sh almalinux10
+
+    # Run C++ tests across all distributions
+    chmod +x run_cpp_tests_in_all_dockers.sh
+    ./run_cpp_tests_in_all_dockers.sh
+
+    # Run C++ tests in a specific distribution
+    ./run_cpp_tests_in_all_dockers.sh rockylinux8
 
     # Run a specific distribution image manually
     sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
