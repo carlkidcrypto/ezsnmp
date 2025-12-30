@@ -107,7 +107,8 @@ TEST(SessionBaseParametersIntegration, TimeticksNumericFlagChangesValueFormat) {
    auto r_text_opt = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
                                         /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
    if (!r_text_opt.has_value()) {
-      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA("SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
    }
    auto r_text = *r_text_opt;
    EXPECT_NE(r_text.type.find("Timeticks"), std::string::npos);
@@ -122,7 +123,8 @@ TEST(SessionBaseParametersIntegration, TimeticksNumericFlagChangesValueFormat) {
    auto r_num_opt = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
                                        /*timeticks_num*/ true, "SNMPv2-MIB::sysUpTime.0");
    if (!r_num_opt.has_value()) {
-      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA("SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
    }
    auto r_num = *r_num_opt;
    EXPECT_NE(r_num.type.find("Timeticks"), std::string::npos);
@@ -137,7 +139,8 @@ TEST(SessionBaseParametersIntegration, OidsNumericFlagChangesOidFormat) {
    auto r_text_opt2 = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
                                          /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
    if (!r_text_opt2.has_value()) {
-      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA("SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
    }
    auto r_text = *r_text_opt2;
    std::string oid_text = r_text.oid;
@@ -149,7 +152,8 @@ TEST(SessionBaseParametersIntegration, OidsNumericFlagChangesOidFormat) {
    auto r_num_opt2 = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ true,
                                         /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
    if (!r_num_opt2.has_value()) {
-      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA("SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
    }
    auto r_num = *r_num_opt2;
    std::string oid_num = r_num.oid;
