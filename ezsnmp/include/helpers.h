@@ -5,6 +5,7 @@
 #include <net-snmp/net-snmp-includes.h>
 
 #include <memory>
+#include <regex>
 #include <string>
 #include <vector>
 

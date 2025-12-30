@@ -5,6 +5,8 @@
 #include <iostream>
 #include <regex>
 #include <sstream>
+#include <string>
+#include <utility>
 
 #include "exceptionsbase.h"
 
@@ -112,13 +114,13 @@ std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &a
 // We attempt to extract the index from an OID (e.g. sysDescr.0
 // or .iso.org.dod.internet.mgmt.mib-2.system.sysContact.0)
 std::regex const OID_INDEX_RE(R"((
-        \.?\d+(?:\.\d+)*               # numeric OID
-        |                              # or
-        (?:\w+(?:[-:]*\w+)+)          # regular OID
-        |                              # or
-        (?:\.?iso(?:\.\w+[-:]*\w+)+)  # fully qualified OID
+        \.?\d+(?:\.\d+)* # numeric OID
+        |                        # or
+        (?:\w+(?:[-:]*\w+)+)     # regular OID
+        |                        # or
+        \.?iso(?:\.\w+[-:]*\w+)+ # fully qualified OID
     )
-    \.?(.*)                            # OID index
+    \.?(.*)                      # OID index
 )");
 
 // This regular expression takes an OID string and splits it into
@@ -126,6 +128,10 @@ std::regex const OID_INDEX_RE(R"((
 //  - 'SNMPv2::mib-2.17.7.1.4.3.1.2.300'
 //  - 'NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24.4'
 std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
+
+// Matches OIDs that are known to have a multi-component numeric index (e.g., those from
+// the RFC1213-MIB), preventing it from incorrectly matching the complex OID.
+std::regex const OID_INDEX_RE3(R"(^(RFC1213-MIB::[\w-]+)\.([\d\.]+)$)");
 
 // This is a helper to turn OID results into a Result type
 Result parse_result(std::string const &input) {
@@ -140,18 +146,23 @@ Result parse_result(std::string const &input) {
    // Extract OID index using regexes (matching Python logic)
    std::smatch first_match;
    std::smatch second_match;
+   std::smatch third_match;
 
-   if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
-      std::string temp_oid = second_match[1].str(); // Create temporary strings
+   if (std::regex_match(result.oid, third_match, OID_INDEX_RE3)) {
+      std::string temp_oid = third_match[1].str();
+      std::string temp_index = third_match[2].str();
+      result.oid = std::move(temp_oid);
+      result.index = std::move(temp_index);
+   } else if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
+      std::string temp_oid = second_match[1].str();
       std::string temp_index = second_match[2].str();
-      result.oid = std::move(temp_oid); // Move from temporary strings
+      result.oid = std::move(temp_oid);
       result.index = std::move(temp_index);
    } else if (std::regex_match(result.oid, first_match, OID_INDEX_RE)) {
-      std::string temp_oid = first_match[1].str(); // Create temporary strings
+      std::string temp_oid = first_match[1].str();
       std::string temp_index = first_match[2].str();
-      result.oid = std::move(temp_oid); // Move from temporary strings
+      result.oid = std::move(temp_oid);
       result.index = std::move(temp_index);
-
    } else if (result.oid == ".") {
       result.index = "";
    } else {
@@ -161,12 +172,25 @@ Result parse_result(std::string const &input) {
 
    // Extract type
    std::getline(ss, temp, ':');
-   result.type = temp.substr(temp.find_last_of(' ') + 1);
+   size_t first_char_pos = temp.find_first_not_of(" \t");
+   if (first_char_pos != std::string::npos) {
+      result.type = temp.substr(first_char_pos);
+   } else {
+      result.type = "";
+   }
 
    // Extract value and trim leading/trailing whitespace
    std::getline(ss, temp);
-   result.value = temp.substr(1);
-   result.value = result.value.substr(0, result.value.find_last_not_of(" \t\n\r") + 1);
+   if (!temp.empty() && temp[0] == ' ') {
+      temp.erase(0, 1);
+   }
+   result.value = temp.substr(0, temp.find_last_not_of(" \t\n\r") + 1);
+
+   // Strip surrounding quotes from values (fix for issue #355)
+   // Some net-snmp versions/configurations return string values enclosed in quotes
+   if (result.value.length() >= 2 && result.value.front() == '"' && result.value.back() == '"') {
+      result.value = result.value.substr(1, result.value.length() - 2);
+   }
 
    // Check for "No Such Object" in the value
    if (result.value.find("No Such Object") != std::string::npos) {
@@ -176,6 +200,14 @@ Result parse_result(std::string const &input) {
    else if (result.value.find("No Such Instance") != std::string::npos) {
       result.type = "NOSUCHINSTANCE";
    }
+   // This might get messy, but we will try to handle it on a case by base basis
+   // When -O t is using for print timeticks unparsed as numeric integers let's
+   // force the type to INTEGER
+   else if (result.oid.find("sysUpTime") != std::string::npos && result.type != "Timeticks") {
+      result.type = "Timeticks";
+   }
+
+   result.update_converted_value();
 
    return result;
 }
@@ -266,7 +298,11 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
 }
 
 void clear_net_snmp_library_data() {
+   // From:
+   // https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
-                      0); // Clear -On && Clear -Of
-   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 0); // Clear -Oe
+                      0); // Clear -O n && Clear -O f
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM,
+                          0);                                                          // Clear -O e
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
 }

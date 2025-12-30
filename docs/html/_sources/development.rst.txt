@@ -4,7 +4,13 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-You may generate the documentation as follows:
+First run doxygen to generate the XML files needed by Breathe.
+
+.. code-block:: bash
+
+    rm -drf doxygen_docs_build/ html/ latex/ && mkdir doxygen_docs_build && doxygen .doxygen
+
+Next you may generate the documentation as follows:
 
 .. code:: bash
 
@@ -74,7 +80,7 @@ them with the following on Linux:
 
 .. code:: bash
 
-    git clone https://github.com/ezsnmp/ezsnmp.git;
+    git clone https://github.com/carlkidcrypto/ezsnmp.git;
     cd ezsnmp;
     sudo apt update && sudo apt upgrade -y;
     sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
@@ -86,9 +92,9 @@ them with the following on Linux:
     mkdir -p -m 0755 ~/.snmp;
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
-    rm -drf build/ dist/ ezsnmp.egg-info;
+    rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
     python3 -m pip install -r python_tests/requirements.txt;
-    python3 -m pip install . && pytest python_tests/;
+    tox
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
     # Bottom one for valgrind. Replace the top one with it if needed.
@@ -97,20 +103,82 @@ them with the following on Linux:
     # python3 -m pip install . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
 
 
+Running Tests with Docker
+--------------------------
+
+EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
+
+* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, g++ 14.x
+* **archlinux** - Arch Linux with Python 3.9-3.13, g++ 14.x
+* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
+
+To run tests in Docker:
+
+.. code:: bash
+
+    # Run all Python tests across all distributions (parallel)
+    cd docker/
+    chmod +x run_python_tests_in_all_dockers.sh
+    ./run_python_tests_in_all_dockers.sh
+
+    # Run tests in a specific distribution only
+    ./run_python_tests_in_all_dockers.sh almalinux10
+
+    # Run a specific distribution image manually
+    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
+    sudo docker run -d \
+      --name "almalinux10_snmp_container" \
+      -v "$(pwd):/ezsnmp" \
+      carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
+
+    # Execute tests inside the container
+    sudo docker exec -t almalinux10_snmp_container bash -c '
+      export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
+      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
+      export WORK_DIR=/tmp/ezsnmp_test;
+      export TOX_WORK_DIR=/tmp/tox_test;
+      rm -rf $WORK_DIR $TOX_WORK_DIR;
+      mkdir -p $WORK_DIR;
+      cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -);
+      cd $WORK_DIR;
+      python3 -m pip install tox > /dev/null 2>&1;
+      tox --workdir $TOX_WORK_DIR;
+    '
+
+For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
+
+
 On MacOS
 
 .. code:: bash
 
-    git clone https://github.com/ezsnmp/ezsnmp.git;
+    git clone https://github.com/carlkidcrypto/ezsnmp.git;
     cd ezsnmp;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
     sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    rm -drf build/ dist/ ezsnmp.egg-info;
+    rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
     python3 -m pip install -r python_tests/requirements.txt;
-    python3 -m pip install . && pytest python_tests/;
+    tox
 
+
+Note: If you have issues installing the python package without HomeBrew or Ports try to update your Xcode Command Line Tools:
+.. code:: bash
+
+    # List available software updates
+    softwareupdate --list
+
+    # Example output:
+    # Software Update found the following new or updated software:
+    # * Label: Command Line Tools for Xcode-16.4
+    #         Title: Command Line Tools for Xcode, Version: 16.4, Size: 861558KiB, Recommended: YES
+
+    # Install the Command Line Tools for Xcode (use quotes around the label)
+    softwareupdate -i "Command Line Tools for Xcode-16.4"
 
 Running cibuildwheels
 ---------------------
@@ -143,3 +211,16 @@ For python3 code:
 .. code:: bash
 
     python3 -m black .
+
+Generating The CHANGELOG.md
+---------------------------
+To generate the changelog, run the following command:
+
+.. code:: bash
+
+    sudo snap install go --classic
+    go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+    rm -rf CHANGELOG.md
+    ~/go/bin/git-chglog --config .chglog/config.yml -o CHANGELOG.md
+    git add CHANGELOG.md
+    git commit -m "Updated CHANGELOG.md"

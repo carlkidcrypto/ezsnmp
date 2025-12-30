@@ -35,8 +35,9 @@ void snmpset_optProc(int argc, char *const *argv, int opt);
  *
  * @param args A vector of strings containing the command-line arguments for
  *             the snmpset command.
+ * @param init_app_name A string representing the initial application name.
  * @return A vector of Result objects containing the results of the SET operation.
  */
-std::vector<Result> snmpset(std::vector<std::string> const &args);
+std::vector<Result> snmpset(std::vector<std::string> const &args, std::string const &init_app_name);
 
 #endif // SNMPSET_H

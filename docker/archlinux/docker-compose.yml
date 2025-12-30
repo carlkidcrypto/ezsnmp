@@ -1,0 +1,10 @@
+services:
+  archlinux_snmp_container:
+    build:
+      context: ../../
+      dockerfile: docker/archlinux/Dockerfile
+    container_name: archlinux_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/ezsnmp/docker/archlinux/DockerEntry.sh"]
