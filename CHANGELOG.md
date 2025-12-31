@@ -1,7 +1,101 @@
-Last Updated: 2025-12-12 23:10:41 UTC
+Last Updated: 2025-12-31 15:50:33 UTC
 
 # Changelog
 
+
+<a name="v2.1.0"></a>
+## [v2.1.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0b2...v2.1.0) (2025-12-30)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix typo: "compatiblewith" → "compatible with" in agent configs ([#582](https://github.com/carlkidcrypto/ezsnmp/issues/582))
+
+- Fix sphinx_build workflow tag resolution on workflow_dispatch ([#544](https://github.com/carlkidcrypto/ezsnmp/issues/544))
+
+- Fix sphinx_build workflow failing to find tags on workflow_dispatch ([#543](https://github.com/carlkidcrypto/ezsnmp/issues/543))
+
+- Fix Sphinx docs workflow: replace deprecated upload-release-asset action and add manual trigger ([#536](https://github.com/carlkidcrypto/ezsnmp/issues/536))
+
+
+#### Dependency Updates
+
+- Bump Version ([#592](https://github.com/carlkidcrypto/ezsnmp/issues/592))
+
+
+#### Enhancements
+
+- Enhance auto changelog workflow with caching and intelligent change detection ([#537](https://github.com/carlkidcrypto/ezsnmp/issues/537))
+
+
+#### Features
+
+- Feature/fix cpp tests post merge from feature branch ([#587](https://github.com/carlkidcrypto/ezsnmp/issues/587))
+
+- Feature/100 percent working docker builds v2 ([#576](https://github.com/carlkidcrypto/ezsnmp/issues/576))
+
+- Feature: Update Docker Containers To Run More Python Tests ([#572](https://github.com/carlkidcrypto/ezsnmp/issues/572))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into update-changelog-20182435898
+
+- Merge branch 'main' into update-changelog-20016166965
+
+- Merge branch 'main' into update-changelog-20016100231
+
+- Merge branch 'main' into update-changelog-20012006173
+
+- Merge branch 'main' into update-changelog-20011809866
+
+
+#### Updates & Improvements
+
+- Update Sphinx build workflow to run apt update ([#593](https://github.com/carlkidcrypto/ezsnmp/issues/593))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#570](https://github.com/carlkidcrypto/ezsnmp/issues/570) from carlkidcrypto/update-changelog-20182435898
+
+- Merge pull request [#565](https://github.com/carlkidcrypto/ezsnmp/issues/565) from carlkidcrypto/update-changelog-20150388748
+
+- Merge pull request [#542](https://github.com/carlkidcrypto/ezsnmp/issues/542) from carlkidcrypto/update-changelog-20016166965
+
+- Merge pull request [#539](https://github.com/carlkidcrypto/ezsnmp/issues/539) from carlkidcrypto/update-changelog-20016100231
+
+- Merge pull request [#538](https://github.com/carlkidcrypto/ezsnmp/issues/538) from carlkidcrypto/update-changelog-20012006173
+
+- Merge pull request [#535](https://github.com/carlkidcrypto/ezsnmp/issues/535) from carlkidcrypto/update-changelog-20011809866
+
+
+
+
+
+---
 
 <a name="v2.1.0b2"></a>
 ## [v2.1.0b2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0b1...v2.1.0b2) (2025-12-06)
