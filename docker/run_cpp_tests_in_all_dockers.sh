@@ -98,27 +98,18 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
-		# Coverage collection: build lcov command with supported flags
-		LCOV_HELP=\$(lcov --help 2>/dev/null || true)
-		
-		# Build the base lcov command
-		LCOV_CMD='lcov --capture --directory build/ --output-file coverage.info --rc geninfo_unexecuted_blocks=1'
-		
-		# Add --no-external if supported
-		if echo \"\$LCOV_HELP\" | grep -q -- '--no-external'; then
-		  LCOV_CMD=\"\$LCOV_CMD --no-external\"
-		fi
-		
-		# Try with ignore-errors flags if supported
-		if echo \"\$LCOV_HELP\" | grep -q -- '--ignore-errors'; then
-		  if echo \"\$LCOV_HELP\" | grep -q 'inconsistent'; then
-		    eval \"\$LCOV_CMD --ignore-errors inconsistent,empty,mismatch\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
-		  else
-		    eval \"\$LCOV_CMD --ignore-errors empty\" 2>/dev/null || eval \"\$LCOV_CMD\" || true
-		  fi
-		else
-		  eval \"\$LCOV_CMD\" || true
-		fi
+		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov
+		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros
+		geninfo build/ --output-filename coverage.info \
+		       --ignore-errors mismatch \
+		       --ignore-errors inconsistent \
+		       --ignore-errors gcov \
+		       --ignore-errors source \
+		       --rc geninfo_unexecuted_blocks=1 \
+		       --rc geninfo_gcov_all_blocks=0 2>&1 || \
+		lcov --capture --directory build/ --output-file coverage.info \
+		     --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
+		lcov --capture --directory build/ --output-file coverage.info 2>&1 || true
 		
 		# Ensure coverage.info exists for next step
 		if [ ! -f coverage.info ]; then
