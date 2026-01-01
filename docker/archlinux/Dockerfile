@@ -37,10 +37,10 @@ WORKDIR /
 RUN pacman -Scc --noconfirm && \
     rm -rf /home/$USERNAME/.cache
 
-# Build Python 3.9, 3.10, 3.11, 3.12 from source (system has 3.13 already)
+# Build Python 3.10, 3.11, 3.12, 3.14 from source (system has 3.13 already)
 # This is faster and more reliable than AUR packages
 # altinstall puts binaries as python3.X in /usr/local/bin
-RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
+RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.14.0:3.14; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
@@ -56,9 +56,9 @@ RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12; do \
 # Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
 ENV PATH="/usr/local/bin:$PATH"
 
-# Virtual Environment Setup using latest Python (3.13)
+# Virtual Environment Setup using latest Python (3.14)
 ENV VENV_PATH=/opt/venv
-RUN python -m venv $VENV_PATH
+RUN python3.14 -m venv $VENV_PATH
 ENV PATH="$VENV_PATH/bin:$PATH"
 
 # Install Python requirements for project and tests inside the virtualenv
