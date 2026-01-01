@@ -2,5 +2,5 @@ coverage==7.10.7
 pytest==8.4.2
 pytest-cov==7.0.0
 pytest-sugar==1.1.1
-tox==4.30.3
+tox==4.32.0
 pytest-xdist==3.8.0
