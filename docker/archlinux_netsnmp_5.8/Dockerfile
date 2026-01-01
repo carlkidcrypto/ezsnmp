@@ -105,10 +105,8 @@ RUN wget -q https://www.python.org/ftp/python/3.14.2/Python-3.14.2.tgz && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.14.2.tgz Python-3.14.2
-
-# Configure dynamic linker
-RUN ldconfig
+    rm -rf Python-3.14.2.tgz Python-3.14.2 && \
+    ldconfig
 
 # Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
 ENV PATH="/usr/local/bin:$PATH"

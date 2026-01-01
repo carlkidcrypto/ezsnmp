@@ -63,10 +63,9 @@ RUN wget -q https://www.python.org/ftp/python/3.14.2/Python-3.14.2.tgz && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.14.2.tgz Python-3.14.2
-
-# Configure dynamic linker
-RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && ldconfig
+    rm -rf Python-3.14.2.tgz Python-3.14.2 && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
+    ldconfig
 
 # Manually create the pkg-config file for net-snmp
 RUN LIBS=$(net-snmp-config --libs) && \
