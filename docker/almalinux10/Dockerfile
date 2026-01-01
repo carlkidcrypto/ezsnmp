@@ -10,9 +10,10 @@ RUN dnf install -y epel-release && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Build Python 3.10, 3.11 from source (not available in AlmaLinux 10 repos)
+# Build Python 3.10, 3.11, 3.14 from source (not available in AlmaLinux 10 repos)
 # AlmaLinux 10 only ships with Python 3.12 and 3.13
-RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11; do \
+# Note: 3.14 is pre-release (alpha/beta) - update version as stable releases become available
+RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.14.0a4:3.14; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
@@ -29,8 +30,8 @@ RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11; do \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using Python 3.13
-RUN python3.13 -m venv $VENV_PATH
+# Create the virtual environment using Python 3.14
+RUN python3.14 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 # All subsequent RUN, CMD, and ENTRYPOINT instructions will use this venv.

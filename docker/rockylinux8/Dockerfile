@@ -17,8 +17,9 @@ RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binu
 # Set gcc-toolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/gcc-toolset-11/root/usr/bin:$PATH"
 
-# Build Python 3.10, 3.11, 3.12, 3.13 from source (not available in Rocky 8 repos)
-RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.13.7:3.13; do \
+# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source (not available in Rocky 8 repos)
+# Note: 3.14 is pre-release (alpha/beta) - update version as stable releases become available
+RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.13.7:3.13 3.14.0a4:3.14; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
@@ -51,8 +52,8 @@ RUN LIBS=$(net-snmp-config --libs) && \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using Python 3.13
-RUN python3.13 -m venv $VENV_PATH
+# Create the virtual environment using Python 3.14
+RUN python3.14 -m venv $VENV_PATH
 
 # Activate the virtual environment by adding its bin directory to the PATH.
 ENV PATH="$VENV_PATH/bin:$PATH"
