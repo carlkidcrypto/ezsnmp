@@ -69,19 +69,46 @@ RUN pacman -Scc --noconfirm && \
 # Build Python 3.10, 3.11, 3.12, 3.14 from source (system has 3.13 already)
 # This is faster and more reliable than AUR packages
 # altinstall puts binaries as python3.X in /usr/local/bin
-# Note: 3.14 is pre-release (alpha/beta) - update version as stable releases become available
-RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.14.0a4:3.14; do \
-        FULL_VERSION=${PY_VER%%:*}; \
-        SHORT_VERSION=${PY_VER##*:}; \
-        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
-        tar -xzf Python-$FULL_VERSION.tgz && \
-        cd Python-$FULL_VERSION && \
-        ./configure --enable-shared && \
-        make -j$(nproc) altinstall && \
-        cd .. && \
-        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
-    done && \
-    ldconfig
+# Split into separate layers for better Docker caching - only rebuilds on version changes
+
+# Build Python 3.10.16
+RUN wget -q https://www.python.org/ftp/python/3.10.16/Python-3.10.16.tgz && \
+    tar -xzf Python-3.10.16.tgz && \
+    cd Python-3.10.16 && \
+    ./configure --enable-shared && \
+    make -j$(nproc) altinstall && \
+    cd .. && \
+    rm -rf Python-3.10.16.tgz Python-3.10.16
+
+# Build Python 3.11.11
+RUN wget -q https://www.python.org/ftp/python/3.11.11/Python-3.11.11.tgz && \
+    tar -xzf Python-3.11.11.tgz && \
+    cd Python-3.11.11 && \
+    ./configure --enable-shared && \
+    make -j$(nproc) altinstall && \
+    cd .. && \
+    rm -rf Python-3.11.11.tgz Python-3.11.11
+
+# Build Python 3.12.8
+RUN wget -q https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz && \
+    tar -xzf Python-3.12.8.tgz && \
+    cd Python-3.12.8 && \
+    ./configure --enable-shared && \
+    make -j$(nproc) altinstall && \
+    cd .. && \
+    rm -rf Python-3.12.8.tgz Python-3.12.8
+
+# Build Python 3.14.2 (latest stable release)
+RUN wget -q https://www.python.org/ftp/python/3.14.2/Python-3.14.2.tgz && \
+    tar -xzf Python-3.14.2.tgz && \
+    cd Python-3.14.2 && \
+    ./configure --enable-shared && \
+    make -j$(nproc) altinstall && \
+    cd .. && \
+    rm -rf Python-3.14.2.tgz Python-3.14.2
+
+# Configure dynamic linker
+RUN ldconfig
 
 # Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
 ENV PATH="/usr/local/bin:$PATH"
