@@ -1,6 +1,7 @@
 
 #include "helpers.h"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <regex>
@@ -53,15 +54,30 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    // Construct the error message
    std::string message = std::string(prog_string) + ": " + err;
 
-   if (message.find("Unknown host") != std::string::npos) {
-      message = message.substr(0, message.find_last_not_of(' ') + 1);
+   // Perform case-insensitive matching for common connection failures across platforms
+   std::string message_lower = message;
+   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
 
+   auto const is_connection_error = [](std::string const &haystack) {
+      return haystack.find("unknown host") != std::string::npos ||
+             haystack.find("name or service not known") != std::string::npos ||
+             haystack.find("temporary failure in name resolution") != std::string::npos ||
+             haystack.find("could not translate host name") != std::string::npos ||
+             haystack.find("no address associated with hostname") != std::string::npos;
+   };
+
+   auto const is_timeout_error = [](std::string const &haystack) {
+      return haystack.find("timeout") != std::string::npos ||
+             haystack.find("timed out") != std::string::npos;
+   };
+
+   if (is_connection_error(message_lower)) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
       throw ConnectionErrorBase(message);
    }
 
-   if (message.find("Timeout") != std::string::npos) {
+   if (is_timeout_error(message_lower)) {
       message = message.substr(0, message.find_last_not_of(' ') + 1);
-
       throw TimeoutErrorBase(message);
    }
 

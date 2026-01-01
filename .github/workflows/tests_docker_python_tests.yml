@@ -1,6 +1,8 @@
 name: Run Dockerized Python Tests
 
-concurrency: tests-docker-python-tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
@@ -15,7 +17,7 @@ jobs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Check for changes in source code
         id: changed-files
@@ -37,15 +39,17 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+    permissions:
+      pull-requests: write
     strategy:
       fail-fast: false
       matrix:
         distribution: [almalinux10, archlinux, archlinux_netsnmp_5.8, centos7, rockylinux8]
-        python: [py39, py310, py311, py312, py313]
+        python: [py310, py311, py312, py313, py314]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Compute Docker image cache key
         id: cache-key
@@ -76,7 +80,7 @@ jobs:
       - name: Pull Docker image (refresh from registry)
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           # Always pull to pick up upstream changes; this is fast if up-to-date
           docker pull "$IMAGE"
 
@@ -85,7 +89,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .docker-image-cache
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
@@ -93,7 +97,7 @@ jobs:
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
           ENTRY_SCRIPT="/ezsnmp/docker/${{ matrix.distribution }}/DockerEntry.sh"
           HOST_SOURCE_PATH="$PWD"
@@ -106,7 +110,7 @@ jobs:
             --name "$CONTAINER_NAME" \
             -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
             "$IMAGE" \
-            /bin/bash -c "$ENTRY_SCRIPT true & tail -f /dev/null"; then
+            /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
               echo "ERROR: Docker run failed for $IMAGE" >&2
               exit 1
           fi
@@ -118,14 +122,23 @@ jobs:
           echo ">>> Executing tox tests inside container: $CONTAINER_NAME"
           docker exec -t "$CONTAINER_NAME" bash -c '
             set -e
-            cd /ezsnmp;
-            echo "    - Cleaning previous build artifacts";
-            rm -drf build/ ezsnmp.egg-info/ .tox/ dist/ python_tests/__pycache__/ __pycache__/ || true;
+            echo "    - Preparing environment and isolated work dirs";
+            export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
+            export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
+            export WORK_DIR=/tmp/ezsnmp_${{ matrix.distribution }};
+            export TOX_WORK_DIR=/tmp/tox_${{ matrix.distribution }};
+            rm -rf "$WORK_DIR" "$TOX_WORK_DIR";
+            mkdir -p "$WORK_DIR";
+            echo "    - Copying sources to isolated directory";
+            cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -);
+            cd "$WORK_DIR";
             echo "    - Installing tox";
             python3 -m pip install --quiet tox;
+            echo "    - Forcing pytest to write junit and coverage to /ezsnmp";
+            export PYTEST_ADDOPTS="$PYTEST_ADDOPTS --junitxml=/ezsnmp/test-results.xml --cov-report=xml:/ezsnmp/coverage.xml";
             TOX_ENV="${{ matrix.python }}";
             echo "    - Running tox environment: $TOX_ENV";
-            if tox -e "$TOX_ENV" > test-outputs.txt 2>&1; then
+            if tox -e "$TOX_ENV" --workdir "$TOX_WORK_DIR" > /ezsnmp/test-outputs.txt 2>&1; then
               echo "    - Tox completed for $TOX_ENV";
             else
               echo "    - Tox reported failures for $TOX_ENV (continuing to collect artifacts)";
@@ -152,7 +165,7 @@ jobs:
       - name: Upload Test Results
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
-          name: pytest-results_${{ matrix.distribution }}
+          name: pytest-results_${{ matrix.distribution }}_${{ matrix.python }}
           path: |
             docker/test-results_${{ matrix.distribution }}*.xml
             docker/test-outputs_${{ matrix.distribution }}*.txt
@@ -161,6 +174,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test-python-tests
     permissions:
+      contents: write # This is needed to create/update commit comments
       pull-requests: write # This is needed to create/update comments
     if: always() 
     steps:
@@ -174,7 +188,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@1bdbba85fb74a2fdc1ec66383acec1091610f82b # v1.1.57
+        uses: MishaKav/pytest-coverage-comment@ae0e8a539a3f310aefb3bfb6a2209778a21fa42b # v1.2.0
         with:
           title: Pytest Coverage Report - Dockerized Tests
           unique-id-for-comment: dockerized-python-tests
@@ -184,28 +198,28 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            almalinux10_py39, test-outputs_almalinux10_test_container_py39.txt, test-results_almalinux10_test_container_py39.xml
             almalinux10_py310, test-outputs_almalinux10_test_container_py310.txt, test-results_almalinux10_test_container_py310.xml
             almalinux10_py311, test-outputs_almalinux10_test_container_py311.txt, test-results_almalinux10_test_container_py311.xml
             almalinux10_py312, test-outputs_almalinux10_test_container_py312.txt, test-results_almalinux10_test_container_py312.xml
             almalinux10_py313, test-outputs_almalinux10_test_container_py313.txt, test-results_almalinux10_test_container_py313.xml
-            archlinux_py39, test-outputs_archlinux_test_container_py39.txt, test-results_archlinux_test_container_py39.xml
+            almalinux10_py314, test-outputs_almalinux10_test_container_py314.txt, test-results_almalinux10_test_container_py314.xml
             archlinux_py310, test-outputs_archlinux_test_container_py310.txt, test-results_archlinux_test_container_py310.xml
             archlinux_py311, test-outputs_archlinux_test_container_py311.txt, test-results_archlinux_test_container_py311.xml
             archlinux_py312, test-outputs_archlinux_test_container_py312.txt, test-results_archlinux_test_container_py312.xml
             archlinux_py313, test-outputs_archlinux_test_container_py313.txt, test-results_archlinux_test_container_py313.xml
-            archlinux_netsnmp_5.8_py39, test-outputs_archlinux_netsnmp_5.8_test_container_py39.txt, test-results_archlinux_netsnmp_5.8_test_container_py39.xml
+            archlinux_py314, test-outputs_archlinux_test_container_py314.txt, test-results_archlinux_test_container_py314.xml
             archlinux_netsnmp_5.8_py310, test-outputs_archlinux_netsnmp_5.8_test_container_py310.txt, test-results_archlinux_netsnmp_5.8_test_container_py310.xml
             archlinux_netsnmp_5.8_py311, test-outputs_archlinux_netsnmp_5.8_test_container_py311.txt, test-results_archlinux_netsnmp_5.8_test_container_py311.xml
             archlinux_netsnmp_5.8_py312, test-outputs_archlinux_netsnmp_5.8_test_container_py312.txt, test-results_archlinux_netsnmp_5.8_test_container_py312.xml
             archlinux_netsnmp_5.8_py313, test-outputs_archlinux_netsnmp_5.8_test_container_py313.txt, test-results_archlinux_netsnmp_5.8_test_container_py313.xml
-            centos7_py39, test-outputs_centos7_test_container_py39.txt, test-results_centos7_test_container_py39.xml
+            archlinux_netsnmp_5.8_py314, test-outputs_archlinux_netsnmp_5.8_test_container_py314.txt, test-results_archlinux_netsnmp_5.8_test_container_py314.xml
             centos7_py310, test-outputs_centos7_test_container_py310.txt, test-results_centos7_test_container_py310.xml
             centos7_py311, test-outputs_centos7_test_container_py311.txt, test-results_centos7_test_container_py311.xml
             centos7_py312, test-outputs_centos7_test_container_py312.txt, test-results_centos7_test_container_py312.xml
             centos7_py313, test-outputs_centos7_test_container_py313.txt, test-results_centos7_test_container_py313.xml
-            rockylinux8_py39, test-outputs_rockylinux8_test_container_py39.txt, test-results_rockylinux8_test_container_py39.xml
+            centos7_py314, test-outputs_centos7_test_container_py314.txt, test-results_centos7_test_container_py314.xml
             rockylinux8_py310, test-outputs_rockylinux8_test_container_py310.txt, test-results_rockylinux8_test_container_py310.xml
             rockylinux8_py311, test-outputs_rockylinux8_test_container_py311.txt, test-results_rockylinux8_test_container_py311.xml
             rockylinux8_py312, test-outputs_rockylinux8_test_container_py312.txt, test-results_rockylinux8_test_container_py312.xml
             rockylinux8_py313, test-outputs_rockylinux8_test_container_py313.txt, test-results_rockylinux8_test_container_py313.xml
+            rockylinux8_py314, test-outputs_rockylinux8_test_container_py314.txt, test-results_rockylinux8_test_container_py314.xml
