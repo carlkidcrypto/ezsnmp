@@ -2,7 +2,9 @@
 # on multiple operating systems.
 # It checks for changes in the C++ source code and runs tests only if there are changes.
 name: C++ Tests
-concurrency: cpp-tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches: [ main ]

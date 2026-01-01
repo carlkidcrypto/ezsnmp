@@ -27,6 +27,21 @@ The tests in this directory cover:
 * Thread safety of C++ components
 * SWIG interface bindings
 
+Test Skip Macro
+===============
+The C++ tests use a custom macro ``EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA`` for skipping tests when SNMP data is unavailable. This macro provides backward compatibility with older Google Test versions:
+
+* For newer GTest versions (with ``GTEST_SKIP``): Uses ``GTEST_SKIP()`` for proper test skipping
+* For older GTest versions: Prints a skip message and returns early
+
+**Important**: This macro causes the calling function to return early. Use it only at function scope, not inside loops or other control structures.
+
+Example usage::
+
+    if (!data_available) {
+        EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA("SNMP agent returned no data");
+    }
+
 Usage
 =====
 For detailed instructions on building and running C++ tests, please refer to the 

@@ -8,13 +8,19 @@ on:
     branches: [ main ]
   release:
     types: [ published ]
+  workflow_dispatch:
 
 jobs:
   sphinx_docs_build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Set up Python 3.11 env for sphinx...
         uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6
@@ -34,6 +40,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: |
+            sudo apt update;
             sudo apt install -y libsnmp-dev g++ python3-dev doxygen;
 
       - name: Install Pip Requirements
@@ -57,8 +64,20 @@ jobs:
             mkdir -p source/_templates;
             make clean && make html SPHINXOPTS="-W";
 
+      - name: Get Latest Tag
+        if: github.event_name == 'workflow_dispatch'
+        id: get_tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git tag --sort=-version:refname | head -1)
+          if [ -z "$LATEST_TAG" ]; then
+            echo "Error: No tags found in repository. Cannot upload documentation without a release tag."
+            exit 1
+          fi
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+
       - name: Archive Sphinx Documentation
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: |
@@ -66,12 +85,8 @@ jobs:
             zip -r sphinx_documentation.zip docs/
 
       - name: Upload Release Asset
-        if: github.event_name == 'release'
-        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: /home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip
-          asset_name: sphinx_documentation.zip
-          asset_content_type: application/zip
+          files: /home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip
+          tag_name: ${{ github.event_name == 'release' && github.event.release.tag_name || steps.get_tag.outputs.tag }}
