@@ -62,8 +62,8 @@ RUN yum-config-manager --enable base-debuginfo && \
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
 
-# Create the virtual environment using Python 3.13
-RUN python3.13 -m venv $VENV_PATH
+# Create the virtual environment using Python 3.14
+RUN python3.14 -m venv $VENV_PATH
 
 # Activate the virtual environment
 ENV PATH="$VENV_PATH/bin:$PATH"
