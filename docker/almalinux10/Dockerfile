@@ -10,9 +10,9 @@ RUN dnf install -y epel-release && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Build Python 3.9, 3.10, 3.11 from source (not available in AlmaLinux 10 repos)
+# Build Python 3.10, 3.11, 3.14 from source (not available in AlmaLinux 10 repos)
 # AlmaLinux 10 only ships with Python 3.12 and 3.13
-RUN for PY_VER in 3.9.21:3.9 3.10.16:3.10 3.11.11:3.11; do \
+RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.14.1:3.14; do \
         FULL_VERSION=${PY_VER%%:*}; \
         SHORT_VERSION=${PY_VER##*:}; \
         wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
