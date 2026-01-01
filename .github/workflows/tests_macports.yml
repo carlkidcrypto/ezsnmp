@@ -166,7 +166,7 @@ jobs:
       pull-requests: write # This is needed to create/update comments
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v6
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: pytest-results_*
           merge-multiple: false
