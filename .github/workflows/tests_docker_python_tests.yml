@@ -59,7 +59,7 @@ jobs:
 
       - name: Restore cached Docker image tar
         id: cache-restore
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           path: .docker-image-cache/${{ matrix.distribution }}.tar
           key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
@@ -179,7 +179,7 @@ jobs:
     if: always() 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: pytest-results_*
           merge-multiple: true 
