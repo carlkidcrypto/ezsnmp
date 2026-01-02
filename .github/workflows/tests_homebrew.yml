@@ -22,7 +22,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47.0.0
+        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
         with:
           files: |
             .github/workflows/tests_homebrew.yml
@@ -261,7 +261,7 @@ jobs:
       - name: Find existing PR comment (Valgrind)
         id: find-valgrind-comment
         if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
@@ -270,7 +270,7 @@ jobs:
       - name: Find existing PR comment (Valgrind)
         id: find-valgrind-comment
         if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
@@ -279,7 +279,7 @@ jobs:
       - name: Find existing PR comment (Valgrind)
         id: find-valgrind-comment
         if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
