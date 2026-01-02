@@ -5,16 +5,29 @@
 sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
 
 # --- Cleanup function for Ctrl+C ---
+CLEANUP_IN_PROGRESS=0
 cleanup() {
+	# Prevent multiple simultaneous cleanup attempts
+	if [ $CLEANUP_IN_PROGRESS -eq 1 ]; then
+		return
+	fi
+	CLEANUP_IN_PROGRESS=1
+	
+	# Disable the trap to prevent recursive calls
+	trap - SIGINT SIGTERM
+	
 	echo ""
 	echo "Caught interrupt signal - cleaning up..."
-	# Kill all background jobs
-	kill $(jobs -p) 2>/dev/null || true
-	# Stop and remove any test containers
+	
+	# Kill all background jobs forcefully
+	jobs -p | xargs -r kill -9 2>/dev/null || true
+	
+	# Stop and remove any test containers forcefully
 	for DISTRO in almalinux10 archlinux archlinux_netsnmp_5.8 centos7 rockylinux8; do
-		docker stop "${DISTRO}_test_container" 2>/dev/null || true
+		docker kill "${DISTRO}_test_container" 2>/dev/null || true
 		docker rm -f "${DISTRO}_test_container" 2>/dev/null || true
 	done
+	
 	echo "Cleanup complete. Exiting."
 	exit 130
 }
