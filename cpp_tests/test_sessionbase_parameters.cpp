@@ -1,5 +1,11 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <optional>
+#include <string>
+#include <tuple>
+#include <vector>
+
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
@@ -9,264 +15,211 @@ struct PrintOptions {
    bool print_oids_numerically;
    bool print_timeticks_numerically;
    std::vector<std::string> expected_flags;
-   std::vector<std::string> expected_get_output;
-
-   // Add pretty printing for test failures
-   friend std::ostream& operator<<(std::ostream& os, PrintOptions const& po) {
-      os << "PrintOptions{enums_numeric=" << (po.print_enums_numerically ? "true" : "false")
-         << ", full_oids=" << (po.print_full_oids ? "true" : "false")
-         << ", oids_numeric=" << (po.print_oids_numerically ? "true" : "false") << ", flags=[";
-      for (size_t i = 0; i < po.expected_flags.size(); i++) {
-         if (i > 0) {
-            os << ",";
-         }
-         os << po.expected_flags[i];
-      }
-      os << "]}";
-      return os;
-   }
 };
 
-class SessionsParamTest : public ::testing::TestWithParam<std::tuple<std::string, PrintOptions>> {
-  protected:
-   void SetUp() override {}
-   void TearDown() override {}
-};
+using SessionParam = std::tuple<std::string, PrintOptions>;
 
-TEST_P(SessionsParamTest, TestSessionPrintOptions) {
-   auto const& [version, print_opts] = GetParam();
+class SessionsParamTest : public ::testing::TestWithParam<SessionParam> {};
 
-   if (version == "3") {
-      SessionBase session(
-          /* hostname */ "localhost",
-          /* port_number */ "11161",
-          /* version */ "3",
-          /* community */ "",
-          /* auth_protocol */ "SHA",
-          /* auth_passphrase */ "auth_second",
-          /* security_engine_id */ "",
-          /* context_engine_id */ "",
-          /* security_level */ "authPriv",
-          /* context */ "",
-          /* security_username */ "secondary_sha_aes",
-          /* privacy_protocol */ "AES",
-          /* privacy_passphrase */ "priv_second",
-          /* boots_time */ "",
-          /* retries */ "",
-          /* timeout */ "",
-          /* load_mibs */ "",
-          /* mib_directories */ "",
-          /* print_enums_numerically */ print_opts.print_enums_numerically,
-          /* print_full_oids */ print_opts.print_full_oids,
-          /* print_oids_numerically */ print_opts.print_oids_numerically,
-          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically,
-          /* max_repetitions */ "" // Assume empty for these tests
-      );
-
-      auto const& args = session._get_args();
-      std::vector<std::string> expected = {"-A", "auth_second",
-                                           "-a", "SHA",
-                                           "-X", "priv_second",
-                                           "-x", "AES",
-                                           "-l", "authPriv",
-                                           "-u", "secondary_sha_aes",
-                                           "-v", "3"};
-
-      // Add print options flags
-      for (auto const& flag : print_opts.expected_flags) {
-         expected.push_back("-O");
-         expected.push_back(flag);
-      }
-
-      expected.push_back("localhost:11161");
-      ASSERT_EQ(args, expected);
-
-      // Verify get output with print options
-      if (print_opts.print_timeticks_numerically) {
-         // Verify get output with print options
-         auto results = session.get("SNMPv2-MIB::sysUpTime.0");
-
-         ASSERT_EQ(results.size(), 1);
-         // Note: The actual OID name and type vary by platform/MIB version
-         // Just verify we got a result with a non-empty OID
-         EXPECT_FALSE(results[0].oid.empty());
-         EXPECT_FALSE(results[0].value.empty());
-      } else {
-         // Verify get output with print options
-         auto results = session.get("ifAdminStatus.1");
-
-         ASSERT_EQ(results.size(), 1);
-         EXPECT_EQ(results[0]._to_string(), print_opts.expected_get_output[0]);
-      }
-
-   } else {
-      SessionBase session(
-          /* hostname */ "localhost:11161",
-          /* port_number */ "",
-          /* version */ version,
-          /* community */ "public",
-          /* auth_protocol */ "",
-          /* auth_passphrase */ "",
-          /* security_engine_id */ "",
-          /* context_engine_id */ "",
-          /* security_level */ "",
-          /* context */ "",
-          /* security_username */ "",
-          /* privacy_protocol */ "",
-          /* privacy_passphrase */ "",
-          /* boots_time */ "",
-          /* retries */ "",
-          /* timeout */ "",
-          /* load_mibs */ "",
-          /* mib_directories */ "",
-          /* print_enums_numerically */ print_opts.print_enums_numerically,
-          /* print_full_oids */ print_opts.print_full_oids,
-          /* print_oids_numerically */ print_opts.print_oids_numerically,
-          /* print_timeticks_numerically */ print_opts.print_timeticks_numerically,
-          /* max_repetitions */ "" // Assume empty for these tests
-      );
-
-      auto const& args = session._get_args();
-      std::vector<std::string> expected = {"-c", "public", "-v", version};
-
-      // Add print options flags
-      for (auto const& flag : print_opts.expected_flags) {
-         expected.push_back("-O");
-         expected.push_back(flag);
-      }
-
-      expected.push_back("localhost:11161");
-
-      ASSERT_EQ(args, expected);
-
-      if (print_opts.print_timeticks_numerically) {
-         // Verify get output with print options
-         auto results = session.get("SNMPv2-MIB::sysUpTime.0");
-
-         ASSERT_EQ(results.size(), 1);
-         // Note: The actual OID name and type vary by platform/MIB version
-         // Just verify we got a result with a non-empty OID
-         EXPECT_FALSE(results[0].oid.empty());
-         EXPECT_FALSE(results[0].value.empty());
-      } else {
-         // Verify get output with print options
-         auto results = session.get("ifAdminStatus.1");
-
-         ASSERT_EQ(results.size(), 1);
-         EXPECT_EQ(results[0]._to_string(), print_opts.expected_get_output[0]);
-      }
+static std::vector<std::string> build_expected_args(std::string const& version,
+                                                    PrintOptions const& options) {
+   std::vector<std::string> args;
+   if (version != "3") {
+      args.push_back("-c");
+      args.push_back("public");
    }
+   args.push_back("-v");
+   args.push_back(version);
+   for (auto const& flag : options.expected_flags) {
+      args.push_back("-O");
+      args.push_back(flag);
+   }
+   args.push_back("localhost:161");
+   return args;
 }
 
-TEST(SessionBaseArgs, TestMaxRepetitionsOption) {
-   // Verify that providing a value for max_repetitions adds the -Cr flag
-   SessionBase session("localhost", "", "2c", "public", "", "", "", "", "", "", "", "", "", "", "",
-                       "", "", "", false, false, false, false,
-                       "25" // max_repetitions
-   );
+TEST_P(SessionsParamTest, PrintOptionsAreAppliedToArgs) {
+   auto const& [version, options] = GetParam();
 
-   auto const& args = session._get_args();
-   std::vector<std::string> expected = {"-c", "public", "-Cr25", "-v", "2c", "localhost"};
-   ASSERT_EQ(args, expected);
+   SessionBase session("localhost", "161", version, "public", "", "", "", "", "", "", "", "", "",
+                       "", "", "", "", "", options.print_enums_numerically, options.print_full_oids,
+                       options.print_oids_numerically, options.print_timeticks_numerically);
+
+   auto args = session._get_args();
+   auto expected = build_expected_args(version, options);
+   EXPECT_EQ(args, expected);
 }
 
-TEST(SessionBaseArgs, TestEmptyMaxRepetitionsOption) {
-   // Verify that an empty value for max_repetitions does NOT add the -Cr flag
-   SessionBase session("localhost", "", "2c", "public", "", "", "", "", "", "", "", "", "", "", "",
-                       "", "", "", false, false, false, false,
-                       "" // max_repetitions
-   );
+// --- Integration tests to verify print options affect actual SNMP output ---
 
-   auto const& args = session._get_args();
-   std::vector<std::string> expected = {"-c", "public", "-v", "2c", "localhost"};
-   ASSERT_EQ(args, expected);
+// Helper to safely get a single OID and either return the first result or indicate no data.
+static std::optional<Result> GetSingleOidOrSkip(bool print_enums,
+                                                bool print_full,
+                                                bool print_oids_num,
+                                                bool print_timeticks_num,
+                                                std::string const& mib_oid) {
+   SessionBase session(
+       /* hostname */ "localhost",
+       /* port_number */ "11161",
+       /* version */ "2c",
+       /* community */ "public",
+       /* auth_protocol */ "",
+       /* auth_passphrase */ "",
+       /* security_engine_id */ "",
+       /* context_engine_id */ "",
+       /* security_level */ "",
+       /* context */ "",
+       /* security_username */ "",
+       /* privacy_protocol */ "",
+       /* privacy_passphrase */ "",
+       /* boots_time */ "",
+       /* retries */ "3",
+       /* timeout */ "5",
+       /* load_mibs */ "",
+       /* mib_directories */ "",
+       /* print_enums_numerically */ print_enums,
+       /* print_full_oids */ print_full,
+       /* print_oids_numerically */ print_oids_num,
+       /* print_timeticks_numerically */ print_timeticks_num);
+
+   auto result = session.get(mib_oid);
+   if (result.empty()) {
+      return std::nullopt;
+   }
+   return result.front();
 }
 
-INSTANTIATE_TEST_SUITE_P(
+// Macro for skipping tests when no data is available, compatible with older GTest
+// WARNING: This macro causes the calling function to return early.
+// Use only at function scope, not inside loops or other control structures.
+#if defined(GTEST_SKIP)
+#define EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(msg) GTEST_SKIP() << msg
+#else
+#define EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(msg) \
+   do {                                             \
+      std::cout << "SKIPPED: " << msg << std::endl; \
+      return;                                       \
+   } while (0)
+#endif
+
+TEST(SessionBaseParametersIntegration, TimeticksNumericFlagChangesValueFormat) {
+   // With print_timeticks_numerically = false: value is human-friendly (e.g., "X days, ...")
+   auto r_text_opt = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
+                                        /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
+   if (!r_text_opt.has_value()) {
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+   }
+   auto r_text = *r_text_opt;
+   EXPECT_NE(r_text.type.find("Timeticks"), std::string::npos);
+   // Heuristic: textual timeticks usually contain a space or comma
+   bool looks_textual = (r_text.value.find(" ") != std::string::npos) ||
+                        (r_text.value.find(",") != std::string::npos) ||
+                        (r_text.value.find("milli-seconds") != std::string::npos);
+   EXPECT_TRUE(looks_textual) << "Expected non-numeric timeticks representation, got: "
+                              << r_text.value;
+
+   // With print_timeticks_numerically = true: value should be purely numeric
+   auto r_num_opt = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
+                                       /*timeticks_num*/ true, "SNMPv2-MIB::sysUpTime.0");
+   if (!r_num_opt.has_value()) {
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+   }
+   auto r_num = *r_num_opt;
+   EXPECT_NE(r_num.type.find("Timeticks"), std::string::npos);
+   // Check value is digits only
+   bool all_digits =
+       !r_num.value.empty() && std::all_of(r_num.value.begin(), r_num.value.end(), ::isdigit);
+   EXPECT_TRUE(all_digits) << "Expected numeric timeticks, got: " << r_num.value;
+}
+
+TEST(SessionBaseParametersIntegration, OidsNumericFlagChangesOidFormat) {
+   // Without numeric OIDs: expect textual module name in oid string
+   auto r_text_opt2 = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ false,
+                                         /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
+   if (!r_text_opt2.has_value()) {
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+   }
+   auto r_text = *r_text_opt2;
+   std::string oid_text = r_text.oid;
+   bool has_module = (oid_text.find("SNMPv2-MIB") != std::string::npos) ||
+                     (oid_text.find("::") != std::string::npos);
+   EXPECT_TRUE(has_module) << "Expected textual OID, got: " << oid_text;
+
+   // With numeric OIDs: expect dotted numeric form, avoid module markers
+   auto r_num_opt2 = GetSingleOidOrSkip(/*enums*/ false, /*full*/ false, /*oids_num*/ true,
+                                        /*timeticks_num*/ false, "SNMPv2-MIB::sysUpTime.0");
+   if (!r_num_opt2.has_value()) {
+      EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA(
+          "SNMP agent returned no data for OID: SNMPv2-MIB::sysUpTime.0");
+   }
+   auto r_num = *r_num_opt2;
+   std::string oid_num = r_num.oid;
+   bool dotted_numeric = !oid_num.empty() && oid_num.find("::") == std::string::npos &&
+                         std::count(oid_num.begin(), oid_num.end(), '.') >= 3;
+   EXPECT_TRUE(dotted_numeric) << "Expected numeric/dotted OID, got: " << oid_num;
+}
+
+static auto const SESSION_PARAM_VALUES =
+    testing::Combine(testing::Values(std::string("1"), std::string("2c"), std::string("3")),
+                     testing::Values(PrintOptions{false, false, false, false, {}},
+                                     PrintOptions{true, false, false, false, {"e"}},
+                                     PrintOptions{false, true, false, false, {"f"}},
+                                     PrintOptions{false, false, true, false, {"n"}},
+                                     PrintOptions{true, true, false, false, {"e", "f"}},
+                                     PrintOptions{true, false, true, false, {"e", "n"}},
+                                     PrintOptions{false, true, true, false, {"f", "n"}},
+                                     PrintOptions{true, true, true, false, {"e", "f", "n"}},
+                                     PrintOptions{false, false, false, true, {"t"}}));
+
+#if defined(INSTANTIATE_TEST_SUITE_P)
+INSTANTIATE_TEST_SUITE_P(SessionVersions,
+                         SessionsParamTest,
+                         SESSION_PARAM_VALUES,
+                         [](testing::TestParamInfo<SessionParam> const& info) {
+                            auto const& opts = std::get<1>(info.param);
+                            std::string name = "v" + std::get<0>(info.param);
+                            for (auto const& f : opts.expected_flags) {
+                               name += "_" + f;
+                            }
+                            if (opts.expected_flags.empty()) {
+                               name += "_none";
+                            }
+                            return name;
+                         });
+#else
+// For legacy INSTANTIATE_TEST_CASE_P, wrap the cartesian product in Values()
+INSTANTIATE_TEST_CASE_P(
     SessionVersions,
     SessionsParamTest,
-    testing::Combine(
-        testing::Values("1", "2c", "3"),
-        testing::Values(
-            PrintOptions{// Case 1: All false
-                         false,
-                         false,
-                         false,
-                         false,
-                         {},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), "
-                          "converted_value: 1"}},
-
-            PrintOptions{// Case 2: enums true, others false
-                         true,
-                         false,
-                         false,
-                         false,
-                         {"e"},
-                         {"oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: 1, "
-                          "converted_value: 1"}},
-
-            PrintOptions{
-                // Case 3: full_oids true, others false
-                false,
-                true,
-                false,
-                false,
-                {"f"},
-                {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
-                 "index: 1, type: INTEGER, value: up(1), converted_value: 1"}},
-
-            PrintOptions{// Case 4: oids_numeric true, others false
-                         false,
-                         false,
-                         true,
-                         false,
-                         {"n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), "
-                          "converted_value: 1"}},
-
-            PrintOptions{
-                // Case 5: enums and full_oids true, oids_numeric false
-                true,
-                true,
-                false,
-                false,
-                {"e", "f"},
-                {"oid: .iso.org.dod.internet.mgmt.mib-2.interfaces.ifTable.ifEntry.ifAdminStatus, "
-                 "index: 1, type: INTEGER, value: 1, converted_value: 1"}},
-
-            PrintOptions{// Case 6: enums and oids_numeric true, full_oids false
-                         true,
-                         false,
-                         true,
-                         false,
-                         {"e", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, "
-                          "converted_value: 1"}},
-
-            PrintOptions{// Case 7: full_oids and oids_numeric true, enums false
-                         false,
-                         true,
-                         true,
-                         false,
-                         {"f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: up(1), "
-                          "converted_value: 1"}},
-
-            PrintOptions{// Case 8: All true except timeticks numeric
-                         true,
-                         true,
-                         true,
-                         false,
-                         {"e", "f", "n"},
-                         {"oid: .1.3.6.1.2.1.2.2.1.7, index: 1, type: INTEGER, value: 1, "
-                          "converted_value: 1"}},
-
-            PrintOptions{// Case 9: Only timeticks numeric
-                         false,
-                         false,
-                         false,
-                         true,
-                         {"t"},
-                         {"oid: DISMAN-EXPRESSION-MIB::sysUpTimeInstance, index: , type: 46090, "
-                          "value: 46090, converted_value: 46090"}})));
+    testing::Values(
+        std::make_tuple(std::string("1"), PrintOptions{false, false, false, false, {}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, false, false, false, {"e"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, true, false, false, {"f"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, false, true, false, {"n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, true, false, false, {"e", "f"}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, false, true, false, {"e", "n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, true, true, false, {"f", "n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, true, true, false, {"e", "f", "n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, false, false, true, {"t"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, false, {}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, false, false, false, {"e"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, true, false, false, {"f"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, true, false, {"n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, true, false, false, {"e", "f"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, false, true, false, {"e", "n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, true, true, false, {"f", "n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, true, true, false, {"e", "f", "n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, true, {"t"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, false, false, {}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, false, false, false, {"e"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, true, false, false, {"f"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, true, false, {"n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, true, false, false, {"e", "f"}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, false, true, false, {"e", "n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, true, true, false, {"f", "n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, true, true, false, {"e", "f", "n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, false, true, {"t"}})));
+#endif

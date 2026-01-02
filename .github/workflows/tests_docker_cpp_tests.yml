@@ -1,6 +1,8 @@
 name: Run Dockerized Cpp Tests
 
-concurrency: tests-docker-cpp-tests
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
@@ -20,11 +22,11 @@ jobs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47.0.0
+        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
         with:
           files: |
             .github/workflows/tests_docker_cpp_tests.yml
@@ -45,7 +47,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Run unit tests inside the Docker container
         run: |
@@ -54,12 +56,12 @@ jobs:
            ./run_cpp_tests_in_all_dockers.sh
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: cpp-test-results-dockerized
           path: |
-            docker/test-results_*.xml
-            docker/test-outputs_*.txt
+            docker/test_outputs_*/test-results.xml
+            docker/test_outputs_*/test-outputs.txt
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
@@ -71,7 +73,7 @@ jobs:
     if: always()
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: cpp-test-results-*
           merge-multiple: true 
@@ -80,9 +82,9 @@ jobs:
         run: ls -Rlah
 
       - name: Publish C++ Test Results (Dockerized Tests)
-        uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2
+        uses: EnricoMi/publish-unit-test-result-action@27d65e188ec43221b20d26de30f4892fad91df2f # v2
         if: always()
         with:
-          files: "test-results_*.xml"
+          files: "test_outputs_*/test-results.xml"
           check_name: C++ Test Results - Dockerized
           comment_title: C++ Test Results - Dockerized

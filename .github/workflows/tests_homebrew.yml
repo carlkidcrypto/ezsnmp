@@ -1,15 +1,16 @@
 # This workflow runs tests for the EzSnmp package using Homebrew package manager
 # on multiple operating systems and Python versions.
 # It checks for changes in the source code and runs tests only if there are changes.
-name: Tests With Homebrew Package Manager
-concurrency: tests-homebrew
+name: Tests With Homebrew
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches: [ main ]
 
   pull_request:
     branches: [ main ]
-
 jobs:
   check-source-changes:
     runs-on: ubuntu-latest
@@ -17,11 +18,11 @@ jobs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout Sourcecode
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47.0.0
+        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
         with:
           files: |
             .github/workflows/tests_homebrew.yml
@@ -42,7 +43,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
   
     steps:
       - name: Set up Homebrew
@@ -74,16 +75,16 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -134,7 +135,7 @@ jobs:
             pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -142,7 +143,7 @@ jobs:
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Valgrind Reports
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
@@ -155,13 +156,13 @@ jobs:
       pull-requests: write # This is needed to create/update comments
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: pytest-results_*
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@1bdbba85fb74a2fdc1ec66383acec1091610f82b # v1.1.57
+        uses: MishaKav/pytest-coverage-comment@ae0e8a539a3f310aefb3bfb6a2209778a21fa42b # v1.2.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
@@ -171,16 +172,16 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - Homebrew - 3.9, pytest-results_macos-latest_3.9/test-outputs_macos-latest_3.9.txt, pytest-results_macos-latest_3.9/test-results_macos-latest_3.9.xml
             macos-latest - Homebrew - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
             macos-latest - Homebrew - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
             macos-latest - Homebrew - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
             macos-latest - Homebrew - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            ubuntu-latest - Homebrew - 3.9, pytest-results_ubuntu-latest_3.9/test-outputs_ubuntu-latest_3.9.txt, pytest-results_ubuntu-latest_3.9/test-results_ubuntu-latest_3.9.xml
+            macos-latest - Homebrew - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
             ubuntu-latest - Homebrew - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
             ubuntu-latest - Homebrew - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
             ubuntu-latest - Homebrew - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
             ubuntu-latest - Homebrew - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
+            ubuntu-latest - Homebrew - 3.14, pytest-results_ubuntu-latest_3.14/test-outputs_ubuntu-latest_3.14.txt, pytest-results_ubuntu-latest_3.14/test-results_ubuntu-latest_3.14.xml
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -189,11 +190,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: valgrind-report_*
           merge-multiple: false
@@ -211,7 +212,7 @@ jobs:
           EOF
 
       - name: Upload Stripped Valgrind Reports
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -223,7 +224,7 @@ jobs:
   
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: valgrind-stripped_*
           merge-multiple: false
@@ -231,19 +232,19 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.9/valgrind-stripped_ubuntu-latest_3.9.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_9=$temp1 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp2 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp3 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp4 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp5 >> $GITHUB_OUTPUT;
+         temp1=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
+         temp2=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
+         temp3=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
+         temp4=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
+         temp5=$(cat valgrind-stripped_ubuntu-latest_3.14/valgrind-stripped_ubuntu-latest_3.14.log);
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp1 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp2 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp3 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp4 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_14=$temp5 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
 
       - name: Render Valgrind Comment Template
         id: template
@@ -251,18 +252,50 @@ jobs:
         with:
           template: .github/comment-valgrind-template.md
           vars: |
-           py3_9:  "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_9 }}"
            py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
            py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"
            py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
            py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
+           py3_14: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_14 }}"
+
+      - name: Find existing PR comment (Valgrind)
+        id: find-valgrind-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
+
+      - name: Find existing PR comment (Valgrind)
+        id: find-valgrind-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
+
+      - name: Find existing PR comment (Valgrind)
+        id: find-valgrind-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
 
       - name: Create A Comment For PR
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         if: github.event_name == 'pull_request'
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          body: ${{ steps.template.outputs.result }}
+          comment-id: ${{ steps.find-valgrind-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            ## Valgrind (Homebrew)
+            <!-- ezsnmp-homebrew-valgrind -->
+            ${{ steps.template.outputs.result }}
 
       - name: Create A Comment For Push
         uses: peter-evans/commit-comment@f6d60c65d05bb59f750fa51ad3de1d443ba0eb52 # v4
