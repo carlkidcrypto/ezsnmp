@@ -109,7 +109,9 @@ RUN wget -q https://www.python.org/ftp/python/3.14.2/Python-3.14.2.tgz && \
     ldconfig
 
 # Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
+# Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
 ENV PATH="/usr/local/bin:$PATH"
+ENV LD_LIBRARY_PATH="/usr/local/lib"
 
 # Ensure pkg-config finds netsnmp 5.8
 ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
