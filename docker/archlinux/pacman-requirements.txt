@@ -11,3 +11,6 @@ gdb
 meson
 ninja
 gtest
+lcov
+perl-json-xs
+perl-cpanel-json-xs
