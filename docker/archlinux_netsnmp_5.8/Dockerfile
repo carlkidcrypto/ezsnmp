@@ -114,7 +114,7 @@ ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
 
 # Ensure pkg-config finds netsnmp 5.8
-ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
+ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 
 # Virtual Environment Setup using latest Python (3.14)
 ENV VENV_PATH=/opt/venv
