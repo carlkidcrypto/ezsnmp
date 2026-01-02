@@ -7,19 +7,20 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.9-3.13, g++ 14.x (3.9-3.11 from source)
-* **archlinux** - Arch Linux (latest) with Python 3.9-3.13, g++ 14.x (3.9-3.12 from source)
-* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.9-3.12 from source)
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13 all from source (OpenSSL 1.1.1w built to enable SSL)
-* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13 (3.10, 3.13 from source)
+* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.10-3.14, g++ 14.x (3.10-3.11 from source)
+* **archlinux** - Arch Linux (latest) with Python 3.10-3.14, g++ 14.x (3.10-3.12 from source)
+* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.10-3.12 from source)
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source (OpenSSL 1.1.1w built to enable SSL)
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14 (3.10, 3.13 from source)
 
 All images support:
 
 * **g++ 9.5 or higher** for C++ compilation
-* **Python 3.9, 3.10, 3.11, 3.12, 3.13** (source builds provided where distro lacks versions)
-* **Virtual environment at /opt/venv** (Python 3.13 or latest available) with both ``requirements.txt`` and ``python_tests/requirements.txt`` pre-installed
+* **Python 3.10, 3.11, 3.12, 3.13, 3.14** (source builds provided where distro lacks versions)
+* **Virtual environment at /opt/venv** (Python 3.14 or latest available) with both ``requirements.txt`` and ``python_tests/requirements.txt`` pre-installed
 * **Both cpp_tests and python_tests** test suites
 * **Optimized for minimal image size** (combined RUNs, cache cleanup, removal of build artifacts)
+* **Perl JSON modules** (perl-json-xs, perl-cpanel-json-xs) for improved coverage report handling
 
 The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** https://hub.docker.com/r/carlkidcrypto/ezsnmp_test_images
 
@@ -165,6 +166,16 @@ Generates:
 - ``test-results_<distribution>_test_container.xml`` - Test results in JUnit format
 - ``test-outputs_<distribution>_test_container.txt`` - Test execution logs
 - ``lcov_coverage_<distribution>_test_container.info`` - Code coverage data
+
+**Coverage Collection Strategy**:
+
+The script uses a multi-stage fallback approach for maximum compatibility across distributions:
+
+1. **Primary**: Uses ``geninfo`` with explicit ignore-errors flags for mismatched gcov data
+2. **Fallback 1**: Uses ``lcov --capture`` with ignore-errors if geninfo fails
+3. **Fallback 2**: Uses basic ``lcov --capture`` without ignore-errors as last resort
+
+This ensures coverage collection works across different versions of lcov/gcov, handling inconsistencies in gcov output formats between distributions.
 
 **Note**: All scripts should be run from the ``docker`` directory and assume the repository root is mounted at ``/ezsnmp`` inside containers.
 
