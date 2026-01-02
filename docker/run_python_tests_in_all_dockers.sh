@@ -27,7 +27,7 @@ DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 # Path to the root of the ezsnmp repository (current working directory)
 HOST_SOURCE_PATH=$(realpath "$(pwd)/../")
 CONTAINER_WORK_DIR="/ezsnmp"
-TOX_PYTHON_VERSION=("py39" "py310" "py311" "py312" "py313")
+TOX_PYTHON_VERSION=("py310" "py311" "py312" "py313" "py314")
 
 # --- Script Usage and Input Validation ---
 
