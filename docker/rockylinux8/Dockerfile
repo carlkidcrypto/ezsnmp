@@ -1,6 +1,13 @@
 # Use Rocky Linux 8 as the base image
 FROM rockylinux:8
 
+# Define Python versions - the project supports 5 versions (latest + 4 older supported)
+ARG PYTHON_MAX_VERSION=3.14.2
+ARG PYTHON_MIN_2_VERSION=3.13.7
+ARG PYTHON_MIN_1_VERSION=3.12.8
+ARG PYTHON_MIN_0_VERSION=3.11.11
+ARG PYTHON_MIN_VERSION=3.10.16
+
 # Update system, install essential tools, and configure repositories in one layer
 RUN dnf update -y && \
     dnf install -y findutils dnf-plugins-core epel-release && \
@@ -20,50 +27,50 @@ ENV PATH="/opt/rh/gcc-toolset-11/root/usr/bin:$PATH"
 # Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source (not available in Rocky 8 repos)
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
-# Build Python 3.10.16
-RUN wget -q https://www.python.org/ftp/python/3.10.16/Python-3.10.16.tgz && \
-    tar -xzf Python-3.10.16.tgz && \
-    cd Python-3.10.16 && \
+# Build Python ${PYTHON_MIN_VERSION}
+RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_VERSION}/Python-${PYTHON_MIN_VERSION}.tgz && \
+    tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.10.16.tgz Python-3.10.16
+    rm -rf Python-${PYTHON_MIN_VERSION}.tgz Python-${PYTHON_MIN_VERSION}
 
-# Build Python 3.11.11
-RUN wget -q https://www.python.org/ftp/python/3.11.11/Python-3.11.11.tgz && \
-    tar -xzf Python-3.11.11.tgz && \
-    cd Python-3.11.11 && \
+# Build Python ${PYTHON_MIN_0_VERSION}
+RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_0_VERSION}/Python-${PYTHON_MIN_0_VERSION}.tgz && \
+    tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_0_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.11.11.tgz Python-3.11.11
+    rm -rf Python-${PYTHON_MIN_0_VERSION}.tgz Python-${PYTHON_MIN_0_VERSION}
 
-# Build Python 3.12.8
-RUN wget -q https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz && \
-    tar -xzf Python-3.12.8.tgz && \
-    cd Python-3.12.8 && \
+# Build Python ${PYTHON_MIN_1_VERSION}
+RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_1_VERSION}/Python-${PYTHON_MIN_1_VERSION}.tgz && \
+    tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_1_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.12.8.tgz Python-3.12.8
+    rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
 
-# Build Python 3.13.7
-RUN wget -q https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tgz && \
-    tar -xzf Python-3.13.7.tgz && \
-    cd Python-3.13.7 && \
+# Build Python ${PYTHON_MIN_2_VERSION}
+RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_2_VERSION}/Python-${PYTHON_MIN_2_VERSION}.tgz && \
+    tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_2_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.13.7.tgz Python-3.13.7
+    rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
 
-# Build Python 3.14.2 (latest stable release)
-RUN wget -q https://www.python.org/ftp/python/3.14.2/Python-3.14.2.tgz && \
-    tar -xzf Python-3.14.2.tgz && \
-    cd Python-3.14.2 && \
+# Build Python ${PYTHON_MAX_VERSION} (latest stable release)
+RUN wget -q https://www.python.org/ftp/python/${PYTHON_MAX_VERSION}/Python-${PYTHON_MAX_VERSION}.tgz && \
+    tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
+    cd Python-${PYTHON_MAX_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd .. && \
-    rm -rf Python-3.14.2.tgz Python-3.14.2 && \
+    rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
 
