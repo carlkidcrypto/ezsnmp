@@ -14,7 +14,7 @@ RUN pacman -Syu --noconfirm && \
     pacman-contrib git go sudo gcc
 
 # Install official repository dependencies
-COPY docker/archlinux/pacman-requirements.txt /tmp/pacman-requirements.txt
+COPY docker/archlinux_netsnmp_5.9/pacman-requirements.txt /tmp/pacman-requirements.txt
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 

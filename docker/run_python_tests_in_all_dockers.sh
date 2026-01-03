@@ -23,10 +23,12 @@ cleanup() {
 	jobs -p | xargs -r kill -9 2>/dev/null || true
 	
 	# Stop and remove any test containers forcefully
-	for DISTRO in almalinux10 archlinux archlinux_netsnmp_5.8 centos7 rockylinux8; do
+	# Dynamically discover all potential test containers
+	while IFS= read -r DOCKERFILE_PATH; do
+		DISTRO=$(basename "$(dirname "$DOCKERFILE_PATH")")
 		docker kill "${DISTRO}_test_container" 2>/dev/null || true
 		docker rm -f "${DISTRO}_test_container" 2>/dev/null || true
-	done
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n' 2>/dev/null || true)
 	
 	echo "Cleanup complete. Exiting."
 	exit 130
@@ -67,8 +69,12 @@ if [ -n "${TARGET_IMAGE}" ]; then
 	DISTROS_TO_TEST=("${TARGET_IMAGE}")
 	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
 else
-	# Test all images by finding directories in the current folder (excluding the current directory itself and test_outputs_* folders).
-	DISTROS_TO_TEST=($(find . -mindepth 1 -maxdepth 1 -type d -not -name '.' -not -name 'test_outputs_*' -printf "%f\n"))
+	# Test all images by finding directories in the current folder that contain a Dockerfile.
+	DISTROS_TO_TEST=()
+	while IFS= read -r DOCKERFILE_PATH; do
+		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		DISTROS_TO_TEST+=("$DIR_NAME")
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n')
 	echo "Mode: Testing all found images."
 fi
 
