@@ -39,13 +39,14 @@ get_next_version() {
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache]"
+  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache] [--prune]"
   echo ""
   echo "  <DOCKER_USERNAME>: Your Docker Hub username."
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
   echo "  [IMAGE_NAME]: Optional. Specify a single image directory (e.g., 'almalinux10') to build only that image."
   echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
   echo "  [--no-cache]: Optional. Add this flag to force rebuild without using Docker cache."
+  echo "  [--prune]: Optional. Add this flag to run 'docker system prune -af' before building (removes dangling images/containers)."
   echo ""
   echo "Images will be tagged with format: MM-DD-YYYY.N (e.g., 12-24-2025.1)"
   echo "The .N version increments per day for each image."
@@ -56,6 +57,7 @@ USERNAME=$1
 ACCESS_TOKEN=$2
 TARGET_IMAGE=""
 NO_CACHE=""
+PRUNE_DOCKER=""
 
 # Parse optional arguments
 shift 2
@@ -66,12 +68,26 @@ while [ $# -gt 0 ]; do
       echo "Build mode: --no-cache enabled (forcing clean rebuild)"
       shift
       ;;
+    --prune)
+      PRUNE_DOCKER=1
+      echo "Docker prune mode: --prune enabled (will clean Docker before building)"
+      shift
+      ;;
     *)
       TARGET_IMAGE=$1
       shift
       ;;
   esac
 done
+
+# --- Docker Cleanup (if requested) ---
+
+if [ -n "${PRUNE_DOCKER}" ]; then
+  echo "Cleaning up Docker (removing dangling images, containers, and unused volumes)..."
+  docker system prune -af || echo "WARNING: Docker prune had issues, but continuing..."
+  echo "Docker cleanup complete."
+  echo "--------------------------------------------------"
+fi
 
 # --- Docker Hub Login ---
 
