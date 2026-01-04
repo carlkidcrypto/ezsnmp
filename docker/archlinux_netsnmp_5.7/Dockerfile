@@ -135,3 +135,7 @@ RUN pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     pip install -r /tmp/python_tests_requirements.txt && \
     rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
+
+# Copy common DockerEntry.sh script
+COPY docker/DockerEntry.sh /usr/local/bin/DockerEntry.sh
+RUN chmod +x /usr/local/bin/DockerEntry.sh

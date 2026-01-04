@@ -34,7 +34,7 @@ RUN mkdir -p /tmp/build && cd /tmp/build && \
     wget -q https://www.openssl.org/source/openssl-1.1.1w.tar.gz && \
     tar -xzf openssl-1.1.1w.tar.gz && \
     cd openssl-1.1.1w && \
-    ./Configure linux-x86_64 no-shared --prefix=/usr/local/openssl && \
+    ./Configure linux-x86_64 shared --prefix=/usr/local/openssl && \
     make -j$(nproc) && \
     make install_sw && \
     cd / && rm -rf /tmp/build && \
@@ -75,7 +75,7 @@ RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_1_VERSION}/Python-${P
 RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_2_VERSION}/Python-${PYTHON_MIN_2_VERSION}.tgz && \
     tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_2_VERSION} && \
-    ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
     cd .. && \
     rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
@@ -84,7 +84,7 @@ RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_2_VERSION}/Python-${P
 RUN wget -q https://www.python.org/ftp/python/${PYTHON_MAX_VERSION}/Python-${PYTHON_MAX_VERSION}.tgz && \
     tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
     cd Python-${PYTHON_MAX_VERSION} && \
-    ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
     cd .. && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
@@ -117,3 +117,7 @@ RUN pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     pip install -r /tmp/python_tests_requirements.txt && \
     rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
+
+# Copy common DockerEntry.sh script
+COPY docker/DockerEntry.sh /usr/local/bin/DockerEntry.sh
+RUN chmod +x /usr/local/bin/DockerEntry.sh

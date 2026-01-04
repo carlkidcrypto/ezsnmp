@@ -7,4 +7,4 @@ services:
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp
-    entrypoint: ["/ezsnmp/docker/archlinux_netsnmp_5.9/DockerEntry.sh"]
+    entrypoint: ["/usr/local/bin/DockerEntry.sh"]
