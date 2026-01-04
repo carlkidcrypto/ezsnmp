@@ -1,5 +1,5 @@
 =========================
-Arch Linux Dockerfile
+Arch Linux (netsnmp 5.9) Dockerfile
 =========================
 
 Overview
@@ -15,7 +15,7 @@ Usage
 
 Building the Image
 ------------------
-To build the Docker image, navigate to the `docker/archlinux` directory and run the following command:
+To build the Docker image, navigate to the `docker/archlinux_netsnmp_5.9` directory and run the following command:
 
 .. code-block:: bash
 
@@ -47,7 +47,7 @@ You can extend the base image by modifying the `Dockerfile` to include additiona
 
 Directory Structure
 ===================
-The `docker/archlinux` folder contains the following files:
+The `docker/archlinux_netsnmp_5.9` folder contains the following files:
 
 - **Dockerfile**: Defines the instructions for building the Docker image.
 - **README.rst**: Documentation for the Docker image.

@@ -1,6 +1,13 @@
 # Use CentOS 7 as the base image
 FROM centos:7
 
+# Define Python versions - the project supports 5 versions (latest + 4 older supported)
+ARG PYTHON_MAX_VERSION=3.14.2
+ARG PYTHON_MIN_2_VERSION=3.13.7
+ARG PYTHON_MIN_1_VERSION=3.12.8
+ARG PYTHON_MIN_0_VERSION=3.11.11
+ARG PYTHON_MIN_VERSION=3.10.16
+
 # Fix for CentOS 7 EOL and install EPEL/SCL in one layer
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
     sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
@@ -22,31 +29,74 @@ RUN yum install -y yum-utils findutils \
 # Set devtoolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 
+# Copy OpenSSL tarball from cache
+COPY docker/cache/openssl-1.1.1w.tar.gz /tmp/build/
+
 # Build modern OpenSSL (CentOS 7 ships 1.0.2 which is too old for Python >=3.13 SSL module)
-RUN mkdir -p /tmp/build && cd /tmp/build && \
-    wget -q https://www.openssl.org/source/openssl-1.1.1w.tar.gz && \
+RUN cd /tmp/build && \
     tar -xzf openssl-1.1.1w.tar.gz && \
     cd openssl-1.1.1w && \
-    ./Configure linux-x86_64 no-shared --prefix=/usr/local/openssl && \
+    ./Configure linux-x86_64 shared --prefix=/usr/local/openssl && \
     make -j$(nproc) && \
     make install_sw && \
     cd / && rm -rf /tmp/build && \
     echo "/usr/local/openssl/lib" > /etc/ld.so.conf.d/openssl_local.conf && ldconfig
 
-# Build Python 3.10.16, 3.11.11, 3.12.8, 3.13.7, 3.14.0a4 from source with OpenSSL 1.1.1w
+# Copy Python tarballs from cache to avoid repeated downloads
+COPY docker/cache/Python-3.10.16.tgz /tmp/
+COPY docker/cache/Python-3.11.11.tgz /tmp/
+COPY docker/cache/Python-3.12.8.tgz /tmp/
+COPY docker/cache/Python-3.13.7.tgz /tmp/
+COPY docker/cache/Python-3.14.2.tgz /tmp/
+
+# Build Python 3.10.16, 3.11.11, 3.12.8, 3.13.7, 3.14.2 from source with OpenSSL 1.1.1w
 # Note: --enable-optimizations disabled due to coverage profiling conflicts
-# Note: 3.14 is pre-release (alpha/beta) - update version as stable releases become available
-RUN for PY_VER in 3.10.16:3.10 3.11.11:3.11 3.12.8:3.12 3.13.7:3.13 3.14.0a4:3.14; do \
-        FULL_VERSION=${PY_VER%%:*}; \
-        SHORT_VERSION=${PY_VER##*:}; \
-        wget -q https://www.python.org/ftp/python/$FULL_VERSION/Python-$FULL_VERSION.tgz && \
-        tar -xzf Python-$FULL_VERSION.tgz && \
-        cd Python-$FULL_VERSION && \
-        ./configure --enable-shared --with-openssl=/usr/local/openssl && \
-        make -j$(nproc) altinstall && \
-        cd .. && \
-        rm -rf Python-$FULL_VERSION.tgz Python-$FULL_VERSION; \
-    done && \
+# Split into separate layers for better Docker caching - only rebuilds on version changes
+
+# Build Python ${PYTHON_MIN_VERSION}
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_VERSION} && \
+    ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MIN_VERSION}.tgz Python-${PYTHON_MIN_VERSION}
+
+# Build Python ${PYTHON_MIN_0_VERSION}
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_0_VERSION} && \
+    ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MIN_0_VERSION}.tgz Python-${PYTHON_MIN_0_VERSION}
+
+# Build Python ${PYTHON_MIN_1_VERSION}
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_1_VERSION} && \
+    ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
+
+# Build Python ${PYTHON_MIN_2_VERSION}
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_2_VERSION} && \
+    LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
+
+# Build Python ${PYTHON_MAX_VERSION} (latest stable release)
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
+    cd Python-${PYTHON_MAX_VERSION} && \
+    LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
 
@@ -76,3 +126,7 @@ RUN pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     pip install -r /tmp/python_tests_requirements.txt && \
     rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
+
+# Copy common DockerEntry.sh script
+COPY docker/DockerEntry.sh /usr/local/bin/DockerEntry.sh
+RUN chmod +x /usr/local/bin/DockerEntry.sh

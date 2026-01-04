@@ -11,7 +11,7 @@ if [ -n "$1" ]; then
     # We set RUN_PYTHON_CODE to 'false' only if the argument is explicitly 'false'
     # For simplicity, we can check for common "falsy" values.
     # For a simple true/false check, we just check if the first arg is 'false'
-    if [[ "${1,,}" =~ ^(false|no|0)$ ]]; then
+    if [[ "$1" =~ ^(false|no|0)$ ]]; then
         RUN_PYTHON_CODE=false
     fi
 fi
@@ -40,5 +40,21 @@ echo "Copying SNMP configuration..."
 cp /ezsnmp/python_tests/snmpd.conf /etc/snmp/snmpd.conf
 
 echo "Starting SNMP daemon..."
-cd /usr/sbin
-snmpd -f -C -c /etc/snmp/snmpd.conf
+# Check if snmpd exists and is executable
+if [ ! -x "/usr/sbin/snmpd" ] && [ ! -x "/usr/bin/snmpd" ]; then
+    echo "ERROR: snmpd not found or not executable"
+    echo "Searching for snmpd..."
+    find / -name snmpd -type f 2>/dev/null || echo "snmpd binary not found on system"
+    exit 1
+fi
+
+# Try to find snmpd
+SNMPD_PATH=$(which snmpd 2>/dev/null || find /usr -name snmpd -type f 2>/dev/null | head -1)
+if [ -z "$SNMPD_PATH" ]; then
+    echo "ERROR: Could not locate snmpd binary"
+    exit 1
+fi
+
+echo "Found snmpd at: $SNMPD_PATH"
+cd /usr/sbin 2>/dev/null || cd /usr/bin 2>/dev/null || cd /
+"$SNMPD_PATH" -f -C -c /etc/snmp/snmpd.conf

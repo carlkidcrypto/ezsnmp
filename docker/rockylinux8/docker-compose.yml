@@ -7,4 +7,4 @@ services:
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp
-    entrypoint: ["/ezsnmp/docker/rockylinux8/DockerEntry.sh"]
+    entrypoint: ["/usr/local/bin/DockerEntry.sh"]
