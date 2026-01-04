@@ -24,52 +24,59 @@ RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binu
 # Set gcc-toolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/gcc-toolset-11/root/usr/bin:$PATH"
 
+# Copy Python tarballs from cache to avoid repeated downloads
+COPY docker/cache/Python-3.10.16.tgz /tmp/
+COPY docker/cache/Python-3.11.11.tgz /tmp/
+COPY docker/cache/Python-3.12.8.tgz /tmp/
+COPY docker/cache/Python-3.13.7.tgz /tmp/
+COPY docker/cache/Python-3.14.2.tgz /tmp/
+
 # Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source (not available in Rocky 8 repos)
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
 # Build Python ${PYTHON_MIN_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_VERSION}/Python-${PYTHON_MIN_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_VERSION}.tgz Python-${PYTHON_MIN_VERSION}
 
 # Build Python ${PYTHON_MIN_0_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_0_VERSION}/Python-${PYTHON_MIN_0_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_0_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_0_VERSION}.tgz Python-${PYTHON_MIN_0_VERSION}
 
 # Build Python ${PYTHON_MIN_1_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_1_VERSION}/Python-${PYTHON_MIN_1_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_1_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
 
 # Build Python ${PYTHON_MIN_2_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_2_VERSION}/Python-${PYTHON_MIN_2_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_2_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
 
 # Build Python ${PYTHON_MAX_VERSION} (latest stable release)
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MAX_VERSION}/Python-${PYTHON_MAX_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
     cd Python-${PYTHON_MAX_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig

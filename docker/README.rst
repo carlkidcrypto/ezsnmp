@@ -26,6 +26,53 @@ The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** 
 
 ----------------------------------------------------------------------
 
+Python Tarball Caching System
+==============================
+
+To significantly speed up Docker image builds and reduce bandwidth usage, this project uses a local caching system for Python source tarballs.
+
+**How It Works:**
+
+1. Python source tarballs (*.tgz) are downloaded once to ``docker/cache/``
+2. Dockerfiles use ``COPY`` instead of ``wget`` to copy from the cache
+3. The build script automatically populates the cache before building images
+
+**Setup:**
+
+Before building images, populate the cache by running:
+
+.. code-block:: bash
+
+    cd docker/cache
+    ./download_build_cache.sh
+
+Or simply run the main build script, which automatically calls the cache script:
+
+.. code-block:: bash
+
+    cd docker
+    ./build_and_publish_images.sh <username> <token>
+
+**Benefits:**
+
+* **Faster builds**: No repeated downloads across different containers
+* **Bandwidth savings**: Each Python version downloaded only once (~25MB each)
+* **Offline capability**: Once cached, builds work without internet (for Python sources)
+* **Better reliability**: Reduces dependency on external network during builds
+
+**Maintenance:**
+
+When updating Python versions in Dockerfiles:
+
+1. Update ``PYTHON_*_VERSION`` ARGs in Dockerfiles
+2. Update ``PYTHON_VERSIONS`` array in ``docker/cache/download_build_cache.sh``
+3. Run the download script to fetch new versions
+4. Old versions can be manually removed from ``docker/cache/`` if no longer needed
+
+The cache directory is git-ignored (``*.tgz`` files) but the structure and download script are version controlled.
+
+----------------------------------------------------------------------
+
 Running a Container Locally
 ===========================
 

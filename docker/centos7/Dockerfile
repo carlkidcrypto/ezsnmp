@@ -29,9 +29,11 @@ RUN yum install -y yum-utils findutils \
 # Set devtoolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 
+# Copy OpenSSL tarball from cache
+COPY docker/cache/openssl-1.1.1w.tar.gz /tmp/build/
+
 # Build modern OpenSSL (CentOS 7 ships 1.0.2 which is too old for Python >=3.13 SSL module)
-RUN mkdir -p /tmp/build && cd /tmp/build && \
-    wget -q https://www.openssl.org/source/openssl-1.1.1w.tar.gz && \
+RUN cd /tmp/build && \
     tar -xzf openssl-1.1.1w.tar.gz && \
     cd openssl-1.1.1w && \
     ./Configure linux-x86_64 shared --prefix=/usr/local/openssl && \
@@ -40,53 +42,60 @@ RUN mkdir -p /tmp/build && cd /tmp/build && \
     cd / && rm -rf /tmp/build && \
     echo "/usr/local/openssl/lib" > /etc/ld.so.conf.d/openssl_local.conf && ldconfig
 
+# Copy Python tarballs from cache to avoid repeated downloads
+COPY docker/cache/Python-3.10.16.tgz /tmp/
+COPY docker/cache/Python-3.11.11.tgz /tmp/
+COPY docker/cache/Python-3.12.8.tgz /tmp/
+COPY docker/cache/Python-3.13.7.tgz /tmp/
+COPY docker/cache/Python-3.14.2.tgz /tmp/
+
 # Build Python 3.10.16, 3.11.11, 3.12.8, 3.13.7, 3.14.2 from source with OpenSSL 1.1.1w
 # Note: --enable-optimizations disabled due to coverage profiling conflicts
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
 # Build Python ${PYTHON_MIN_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_VERSION}/Python-${PYTHON_MIN_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_VERSION} && \
     ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_VERSION}.tgz Python-${PYTHON_MIN_VERSION}
 
 # Build Python ${PYTHON_MIN_0_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_0_VERSION}/Python-${PYTHON_MIN_0_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_0_VERSION} && \
     ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_0_VERSION}.tgz Python-${PYTHON_MIN_0_VERSION}
 
 # Build Python ${PYTHON_MIN_1_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_1_VERSION}/Python-${PYTHON_MIN_1_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_1_VERSION} && \
     ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
 
 # Build Python ${PYTHON_MIN_2_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_2_VERSION}/Python-${PYTHON_MIN_2_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_2_VERSION} && \
     LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
 
 # Build Python ${PYTHON_MAX_VERSION} (latest stable release)
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MAX_VERSION}/Python-${PYTHON_MAX_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
     cd Python-${PYTHON_MAX_VERSION} && \
     LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig

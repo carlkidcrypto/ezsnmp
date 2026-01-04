@@ -18,12 +18,17 @@ COPY docker/archlinux_netsnmp_5.7/pacman-requirements.txt /tmp/pacman-requiremen
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
+# Copy Archlinux packages from cache
+COPY docker/cache/net-snmp-5.7.3-1-x86_64.pkg.tar.xz /tmp/
+COPY docker/cache/pcre-8.43-1-x86_64.pkg.tar.xz /tmp/
+COPY docker/cache/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst /tmp/
+
 # Downgrade Net-SNMP to 5.7 and install legacy dependencies (PCRE 8, OpenSSL 1.1)
 # Keep current Perl (from earlier install) and fabricate compatibility paths for libperl expected by net-snmp 5.7.
 RUN pacman -U --noconfirm \
-    https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.7.3-1-x86_64.pkg.tar.xz \
-    https://archive.archlinux.org/packages/p/pcre/pcre-8.43-1-x86_64.pkg.tar.xz \
-    https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst && \
+    /tmp/net-snmp-5.7.3-1-x86_64.pkg.tar.xz \
+    /tmp/pcre-8.43-1-x86_64.pkg.tar.xz \
+    /tmp/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst && \
     ldconfig && \
     PERL_CORE_DIR=$(perl -MConfig -e 'print $Config{archlib} . "/CORE"') && \
     mkdir -p /usr/lib/perl5/5.28/core_perl && \
@@ -73,45 +78,51 @@ WORKDIR /
 RUN pacman -Scc --noconfirm && \
     rm -rf /home/$USERNAME/.cache
 
+# Copy Python tarballs from cache to avoid repeated downloads
+COPY docker/cache/Python-3.10.16.tgz /tmp/
+COPY docker/cache/Python-3.11.11.tgz /tmp/
+COPY docker/cache/Python-3.12.8.tgz /tmp/
+COPY docker/cache/Python-3.14.2.tgz /tmp/
+
 # Build Python 3.10, 3.11, 3.12, 3.14 from source (system has 3.13 already)
 # This is faster and more reliable than AUR packages
 # altinstall puts binaries as python3.X in /usr/local/bin
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
 # Build Python ${PYTHON_MIN_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_VERSION}/Python-${PYTHON_MIN_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_VERSION}.tgz Python-${PYTHON_MIN_VERSION}
 
 # Build Python ${PYTHON_MIN_0_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_0_VERSION}/Python-${PYTHON_MIN_0_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_0_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_0_VERSION}.tgz Python-${PYTHON_MIN_0_VERSION}
 
 # Build Python ${PYTHON_MIN_1_VERSION}
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MIN_1_VERSION}/Python-${PYTHON_MIN_1_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_1_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
 
 # Build Python ${PYTHON_MAX_VERSION} (latest stable release)
-RUN wget -q https://www.python.org/ftp/python/${PYTHON_MAX_VERSION}/Python-${PYTHON_MAX_VERSION}.tgz && \
+RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
     cd Python-${PYTHON_MAX_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
-    cd .. && \
+    cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     ldconfig
 

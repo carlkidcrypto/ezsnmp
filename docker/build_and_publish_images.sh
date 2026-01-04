@@ -100,6 +100,22 @@ fi
 echo "Successfully logged in to Docker Hub."
 echo "--------------------------------------------------"
 
+# --- Populate Python Tarball Cache ---
+
+echo "Checking Python tarball cache..."
+CACHE_SCRIPT="${DOCKER_DIR}/cache/download_build_cache.sh"
+if [ -f "${CACHE_SCRIPT}" ]; then
+  echo "Running cache download script..."
+  bash "${CACHE_SCRIPT}"
+  if [ $? -ne 0 ]; then
+    echo "WARNING: Cache download script failed, but continuing (downloads may occur during build)..."
+  fi
+else
+  echo "WARNING: Cache download script not found at ${CACHE_SCRIPT}"
+  echo "Python tarballs will be downloaded during build if needed."
+fi
+echo "--------------------------------------------------"
+
 # --- Determine Images to Build ---
 
 # We assume the images are tagged the same as the folder names in the current directory.
