@@ -28,6 +28,7 @@ ARCHLINUX_PACKAGES=(
     "https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.7.3-1-x86_64.pkg.tar.xz"
     "https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.8-1-x86_64.pkg.tar.xz"
     "https://archive.archlinux.org/packages/p/pcre/pcre-8.43-1-x86_64.pkg.tar.xz"
+    "https://archive.archlinux.org/packages/o/openssl-1.0/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz"
     "https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst"
 )
 

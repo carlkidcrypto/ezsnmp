@@ -21,14 +21,14 @@ RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
 # Copy Archlinux packages from cache
 COPY docker/cache/net-snmp-5.7.3-1-x86_64.pkg.tar.xz /tmp/
 COPY docker/cache/pcre-8.43-1-x86_64.pkg.tar.xz /tmp/
-COPY docker/cache/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst /tmp/
+COPY docker/cache/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz /tmp/
 
-# Downgrade Net-SNMP to 5.7 and install legacy dependencies (PCRE 8, OpenSSL 1.1)
+# Downgrade Net-SNMP to 5.7 and install legacy dependencies (PCRE 8, OpenSSL 1.0)
 # Keep current Perl (from earlier install) and fabricate compatibility paths for libperl expected by net-snmp 5.7.
 RUN pacman -U --noconfirm \
     /tmp/net-snmp-5.7.3-1-x86_64.pkg.tar.xz \
     /tmp/pcre-8.43-1-x86_64.pkg.tar.xz \
-    /tmp/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst && \
+    /tmp/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz && \
     ldconfig && \
     PERL_CORE_DIR=$(perl -MConfig -e 'print $Config{archlib} . "/CORE"') && \
     mkdir -p /usr/lib/perl5/5.28/core_perl && \
