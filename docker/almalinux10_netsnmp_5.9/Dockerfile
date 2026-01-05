@@ -9,7 +9,7 @@ ARG PYTHON_MIN_0_VERSION=3.11.11
 ARG PYTHON_MIN_VERSION=3.10.16
 
 # Install EPEL, update system, and install dependencies in one layer to reduce image size
-COPY docker/almalinux10/dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/almalinux10_netsnmp_5.9/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN dnf install -y epel-release && \
     dnf update -y && \
     dnf install -y findutils && \

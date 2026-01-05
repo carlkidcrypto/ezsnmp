@@ -14,7 +14,7 @@ RUN dnf update -y && \
     dnf config-manager --set-enabled powertools
 
 # Install gcc-toolset-11 (GCC 11.3.1, g++ 11.3.1) and dependencies from requirements file
-COPY docker/rockylinux8/dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/rockylinux8_netsnmp_5.8/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binutils && \
     xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf debuginfo-install -y python3 net-snmp-libs && \
