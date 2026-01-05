@@ -84,13 +84,13 @@ echo "--- Archlinux Packages (for net-snmp 5.7/5.8 compatibility) ---"
 for pkg_url in "${ARCHLINUX_PACKAGES[@]}"; do
     pkg_file=$(basename "${pkg_url}")
     pkg_output="${CACHE_DIR}/${pkg_file}"
-echo "=== Cache Summary ==="
-echo "Python tarballs:"
-ls -lh "${CACHE_DIR}"/Python-*.tgz 2>/dev/null || echo "  No Python tarballs found"
-echo ""
-echo "OpenSSL and SQLite:"
-ls -lh "${CACHE_DIR}"/openssl-*.tar.gz "${CACHE_DIR}"/sqlite-*.tar.gz 2>/dev/null || echo "  No OpenSSL/SQLite tarballs found"
-echo "" echo "✓ Downloaded ${pkg_file}"
+    
+    if [ -f "${pkg_output}" ]; then
+        echo "✓ ${pkg_file} already cached"
+    else
+        echo "⬇ Downloading ${pkg_file}..."
+        wget -q --show-progress "${pkg_url}" -O "${pkg_output}"
+        echo "✓ Downloaded ${pkg_file}"
     fi
 done
 
@@ -99,8 +99,8 @@ echo "=== Cache Summary ==="
 echo "Python tarballs:"
 ls -lh "${CACHE_DIR}"/Python-*.tgz 2>/dev/null || echo "  No Python tarballs found"
 echo ""
-echo "OpenSSL:"
-ls -lh "${CACHE_DIR}"/openssl-*.tar.gz 2>/dev/null || echo "  No OpenSSL tarballs found"
+echo "OpenSSL and SQLite:"
+ls -lh "${CACHE_DIR}"/openssl-*.tar.gz "${CACHE_DIR}"/sqlite-*.tar.gz 2>/dev/null || echo "  No OpenSSL/SQLite tarballs found"
 echo ""
 echo "Archlinux packages:"
 ls -lh "${CACHE_DIR}"/*.pkg.tar.* 2>/dev/null || echo "  No Archlinux packages found"
