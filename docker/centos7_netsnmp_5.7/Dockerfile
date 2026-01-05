@@ -29,8 +29,18 @@ RUN yum install -y yum-utils findutils \
 # Set devtoolset-11 PATH persistently for non-login shells
 ENV PATH="/opt/rh/devtoolset-11/root/usr/bin:$PATH"
 
-# Copy OpenSSL tarball from cache
+# Copy OpenSSL and SQLite tarballs from cache
 COPY docker/cache/openssl-1.1.1w.tar.gz /tmp/build/
+COPY docker/cache/sqlite-autoconf-3450100.tar.gz /tmp/build/
+
+# Build modern SQLite (CentOS 7 ships 3.7.17 which is too old for Python >=3.13)
+RUN cd /tmp/build && \
+    tar -xzf sqlite-autoconf-3450100.tar.gz && \
+    cd sqlite-autoconf-3450100 && \
+    ./configure --prefix=/usr/local/sqlite && \
+    make -j$(nproc) && \
+    make install && \
+    echo "/usr/local/sqlite/lib" > /etc/ld.so.conf.d/sqlite_local.conf && ldconfig
 
 # Build modern OpenSSL (CentOS 7 ships 1.0.2 which is too old for Python >=3.13 SSL module)
 RUN cd /tmp/build && \
@@ -80,20 +90,20 @@ RUN cd /tmp && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
 
-# Build Python ${PYTHON_MIN_2_VERSION}
+# Build Python ${PYTHON_MIN_2_VERSION} with newer SQLite
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_2_VERSION} && \
-    LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    LDFLAGS="-L/usr/local/sqlite/lib -L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/sqlite/include -I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
 
-# Build Python ${PYTHON_MAX_VERSION} (latest stable release)
+# Build Python ${PYTHON_MAX_VERSION} (latest stable release) with newer SQLite
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
     cd Python-${PYTHON_MAX_VERSION} && \
-    LDFLAGS="-L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
+    LDFLAGS="-L/usr/local/sqlite/lib -L/usr/local/openssl/lib -L/usr/lib64" CPPFLAGS="-I/usr/local/sqlite/include -I/usr/local/openssl/include -I/usr/include" ./configure --enable-shared --with-openssl=/usr/local/openssl && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \

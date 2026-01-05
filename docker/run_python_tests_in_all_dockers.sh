@@ -46,16 +46,31 @@ TOX_PYTHON_VERSION=("py310" "py311" "py312" "py313" "py314")
 
 # --- Script Usage and Input Validation ---
 
-# The script now only accepts 0 or 1 argument (the optional image name).
-if [ $# -gt 1 ]; then
-	echo "Usage: $0 [IMAGE_NAME]"
-	echo ""
-	echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
-	echo "                If omitted, all distribution directories will be tested."
-	exit 1
-fi
+TARGET_IMAGE=""
+PRESERVE_LOGS=0
 
-TARGET_IMAGE=${1:-} # Optional 1st argument
+# Parse arguments
+while [ $# -gt 0 ]; do
+	case $1 in
+		--preserve-logs)
+			PRESERVE_LOGS=1
+			shift
+			;;
+		*)
+			if [ -z "${TARGET_IMAGE}" ]; then
+				TARGET_IMAGE=$1
+				shift
+			else
+				echo "Usage: $0 [IMAGE_NAME] [--preserve-logs]"
+				echo ""
+				echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
+				echo "                If omitted, all distribution directories will be tested."
+				echo "  [--preserve-logs]: Optional. Preserve previous test logs in a timestamped folder instead of deleting them."
+				exit 1
+			fi
+			;;
+	esac
+done
 
 # --- Determine Images to Test ---
 
@@ -81,9 +96,38 @@ fi
 echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
+# --- Handle Previous Logs ---
+if [ ${PRESERVE_LOGS} -eq 1 ]; then
+	# Check if there are any existing logs to preserve
+	HAS_LOGS=0
+	if compgen -G "*.xml" > /dev/null || compgen -G "*.txt" > /dev/null || \
+	   compgen -G "../.coverage.*" > /dev/null || compgen -G "../test-outputs*.txt" > /dev/null || \
+	   compgen -G "test_outputs_*/" > /dev/null; then
+		HAS_LOGS=1
+	fi
+	
+	if [ ${HAS_LOGS} -eq 1 ]; then
+		TIMESTAMP=$(date +%m_%d_%y_%H_%M_%S_%3N)
+		ARCHIVE_DIR="previous_results_${TIMESTAMP}"
+		echo "Preserving previous logs to: ${ARCHIVE_DIR}"
+		mkdir -p "${ARCHIVE_DIR}"
+		[ -n "$(compgen -G "*.xml")" ] && mv -f *.xml "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "*.txt")" ] && mv -f *.txt "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "../.coverage.*")" ] && mv -f ../.coverage.* "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "../test-outputs*.txt")" ] && mv -f ../test-outputs*.txt "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "test_outputs_*/")" ] && mv -f test_outputs_*/ "${ARCHIVE_DIR}/"
+		echo "Previous logs preserved."
+	else
+		echo "No previous logs found to preserve."
+	fi
+else
+	echo "Removing previous logs..."
+	rm -f -- *.xml *.txt ../.coverage.* ../test-outputs*.txt
+	rm -rf test_outputs_*/
+fi
+echo "--------------------------------------------------"
+
 # --- Test Loop ---
-rm -f -- *.xml *.txt ../.coverage.* ../test-outputs*.txt
-rm -rf test_outputs_*/
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# Create output directory for this distribution
