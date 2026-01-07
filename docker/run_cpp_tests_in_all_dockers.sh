@@ -152,6 +152,19 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		touch "${OUT_DIR}/lcov_coverage.info"
 	fi
 
+	# 4.5. Extract snmpd logs for debugging
+	echo "    - Extracting snmpd logs..."
+	docker exec "$CONTAINER_NAME" bash -c "
+		if [ -d /var/log/ezsnmp ]; then
+			cat /var/log/ezsnmp/snmpd.log 2>/dev/null || echo 'No snmpd.log found';
+			echo '--- SNMPD ERRORS ---';
+			cat /var/log/ezsnmp/snmpd_error.log 2>/dev/null || echo 'No snmpd_error.log found';
+		else
+			echo 'Log directory /var/log/ezsnmp not found';
+		fi
+	" > "${OUT_DIR}/snmpd_logs.txt" 2>&1
+	echo "    - Logs saved to: ${OUT_DIR}/snmpd_logs.txt"
+
 	# 5. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"
 	docker stop "$CONTAINER_NAME"

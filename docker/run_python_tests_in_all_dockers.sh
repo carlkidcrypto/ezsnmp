@@ -1,8 +1,12 @@
 #!/bin/bash -e
 
 # Formatting `sudo apt install shfmt && shfmt -w run_python_tests_in_all_dockers.sh`
-# Try to fix docker socket permissions, but don't fail if we can't
-sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
+# Try to fix docker socket permissions (best-effort, non-interactive)
+if [ "$(id -u)" -eq 0 ]; then
+	chown "${SUDO_USER:-$USER}" /var/run/docker.sock 2>/dev/null || true
+else
+	echo "Note: not root; skipping docker.sock permission adjustment."
+fi
 
 # --- Cleanup function for Ctrl+C ---
 CLEANUP_IN_PROGRESS=0
@@ -204,6 +208,19 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			fi
 			mv "../$OUTPUT_FILE" "${OUTPUT_DIR}/test-outputs_${CONTAINER_NAME}_${TOX_PY}.txt"
 		done
+
+		# 4.5. Extract snmpd logs for debugging
+		echo "    - [${DISTRO_NAME}] Extracting snmpd logs..."
+		docker exec "$CONTAINER_NAME" bash -c "
+			if [ -d /var/log/ezsnmp ]; then
+				cat /var/log/ezsnmp/snmpd.log 2>/dev/null || echo 'No snmpd.log found';
+				echo '--- SNMPD ERRORS ---';
+				cat /var/log/ezsnmp/snmpd_error.log 2>/dev/null || echo 'No snmpd_error.log found';
+			else
+				echo 'Log directory /var/log/ezsnmp not found';
+			fi
+		" > "${OUTPUT_DIR}/snmpd_logs_${CONTAINER_NAME}.txt" 2>&1
+		echo "    - [${DISTRO_NAME}] Logs saved to: snmpd_logs_${CONTAINER_NAME}.txt"
 
 		# 5. Cleanup container
 		echo "    - [${DISTRO_NAME}] Cleaning up container"

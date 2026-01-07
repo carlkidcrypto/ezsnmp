@@ -40,6 +40,13 @@ echo "Copying SNMP configuration..."
 cp /ezsnmp/python_tests/snmpd.conf /etc/snmp/snmpd.conf
 
 echo "Starting SNMP daemon..."
+
+# Setup logging directory
+LOG_DIR="/var/log/ezsnmp"
+mkdir -p "$LOG_DIR"
+SNMPD_LOG="$LOG_DIR/snmpd.log"
+SNMPD_ERROR_LOG="$LOG_DIR/snmpd_error.log"
+
 # Check if snmpd exists and is executable
 if [ ! -x "/usr/sbin/snmpd" ] && [ ! -x "/usr/bin/snmpd" ]; then
     echo "ERROR: snmpd not found or not executable"
@@ -56,5 +63,33 @@ if [ -z "$SNMPD_PATH" ]; then
 fi
 
 echo "Found snmpd at: $SNMPD_PATH"
+echo "Logging snmpd output to: $SNMPD_LOG"
+echo "Logging snmpd errors to: $SNMPD_ERROR_LOG"
+
+# Get snmpd version for debugging
+echo "SNMP daemon version:" | tee -a "$SNMPD_LOG"
+"$SNMPD_PATH" -v 2>&1 | tee -a "$SNMPD_LOG"
+echo "---" | tee -a "$SNMPD_LOG"
+
+# Verify configuration file
+echo "Verifying snmpd configuration:" | tee -a "$SNMPD_LOG"
+if [ -f /etc/snmp/snmpd.conf ]; then
+    echo "Configuration file exists at /etc/snmp/snmpd.conf" | tee -a "$SNMPD_LOG"
+    echo "Configuration file size: $(stat -c%s /etc/snmp/snmpd.conf) bytes" | tee -a "$SNMPD_LOG"
+    echo "First 10 lines of configuration:" | tee -a "$SNMPD_LOG"
+    head -10 /etc/snmp/snmpd.conf | tee -a "$SNMPD_LOG"
+else
+    echo "ERROR: Configuration file not found!" | tee -a "$SNMPD_LOG" "$SNMPD_ERROR_LOG"
+fi
+echo "---" | tee -a "$SNMPD_LOG"
+
+# Log startup timestamp
+echo "Starting snmpd at: $(date)" | tee -a "$SNMPD_LOG"
+echo "Command: $SNMPD_PATH -f -C -c /etc/snmp/snmpd.conf" | tee -a "$SNMPD_LOG"
+echo "---" | tee -a "$SNMPD_LOG"
+
 cd /usr/sbin 2>/dev/null || cd /usr/bin 2>/dev/null || cd /
-"$SNMPD_PATH" -f -C -c /etc/snmp/snmpd.conf
+
+# Start snmpd with output redirected to log files
+# -f = foreground, -C = don't read default config locations, -c = use specific config
+"$SNMPD_PATH" -f -C -c /etc/snmp/snmpd.conf >> "$SNMPD_LOG" 2>> "$SNMPD_ERROR_LOG"
