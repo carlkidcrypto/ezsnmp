@@ -189,6 +189,7 @@ jobs:
 
       - name: Pytest coverage comment (Dockerized Tests)
         uses: MishaKav/pytest-coverage-comment@ae0e8a539a3f310aefb3bfb6a2209778a21fa42b # v1.2.0
+        continue-on-error: true
         with:
           pytest-coverage-path: ""
           title: Pytest Coverage Report - Dockerized Tests
