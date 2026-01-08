@@ -67,3 +67,4 @@ ezsnmp-2.*.*/
 # CodeQL temporary files and artifacts
 _codeql_detected_source_root
 docker/test_outputs_*/snmpd_logs_*.txt
+docker/TEST_STATUS_SUMMARY_*.md

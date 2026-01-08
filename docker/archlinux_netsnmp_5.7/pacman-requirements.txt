@@ -2,6 +2,7 @@ wget
 unzip
 file
 openssl
+libxcrypt
 bzip2
 xz
 zlib
