@@ -130,9 +130,16 @@ if [ -n "${TARGET_IMAGE}" ]; then
   echo "Mode: Building only the single image: ${TARGET_IMAGE}"
 else
   # Build all images by finding directories in DOCKER_DIR
-  # Exclude test_outputs_* and cache directories
-  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d ! -name "test_outputs_*" ! -name "cache" -printf "%f\n"))
-  echo "Mode: Building all found images (excluding test_outputs and cache directories)."
+  # Exclude non-image directories (test outputs, caches, previous results, etc.)
+  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" \
+    -mindepth 1 -maxdepth 1 -type d \
+    ! -name "test_outputs*" \
+    ! -name "previous_results*" \
+    ! -name "test-results*" \
+    ! -name "cache" \
+    ! -name "__pycache__" \
+    -printf "%f\n"))
+  echo "Mode: Building all found images (excluding test_outputs*, test-results*, previous_results*, and cache directories)."
 fi
 
 echo "Images to process: ${DISTROS_TO_BUILD[*]}"

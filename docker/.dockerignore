@@ -23,7 +23,9 @@ env/
 ENV/
 
 # Test outputs (these are generated during testing, not needed for builds)
-docker/test_outputs_*/
+docker/test_outputs*/
+docker/test-results*/
+docker/previous_results*/
 
 # Documentation
 docs/
