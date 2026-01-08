@@ -1,20 +1,39 @@
 #!/bin/bash -e
 
 # Formatting `sudo apt install shfmt && shfmt -w run_python_tests_in_all_dockers.sh`
-# Try to fix docker socket permissions, but don't fail if we can't
-sudo chown "$USER" /var/run/docker.sock 2>/dev/null || true
+# Try to fix docker socket permissions (best-effort, non-interactive)
+if [ "$(id -u)" -eq 0 ]; then
+	chown "${SUDO_USER:-$USER}" /var/run/docker.sock 2>/dev/null || true
+else
+	echo "Note: not root; skipping docker.sock permission adjustment."
+fi
 
 # --- Cleanup function for Ctrl+C ---
+CLEANUP_IN_PROGRESS=0
 cleanup() {
+	# Prevent multiple simultaneous cleanup attempts
+	if [ $CLEANUP_IN_PROGRESS -eq 1 ]; then
+		return
+	fi
+	CLEANUP_IN_PROGRESS=1
+	
+	# Disable the trap to prevent recursive calls
+	trap - SIGINT SIGTERM
+	
 	echo ""
 	echo "Caught interrupt signal - cleaning up..."
-	# Kill all background jobs
-	kill $(jobs -p) 2>/dev/null || true
-	# Stop and remove any test containers
-	for DISTRO in almalinux10 archlinux archlinux_netsnmp_5.8 centos7 rockylinux8; do
-		docker stop "${DISTRO}_test_container" 2>/dev/null || true
+	
+	# Kill all background jobs forcefully
+	jobs -p | xargs -r kill -9 2>/dev/null || true
+	
+	# Stop and remove any test containers forcefully
+	# Dynamically discover all potential test containers
+	while IFS= read -r DOCKERFILE_PATH; do
+		DISTRO=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		docker kill "${DISTRO}_test_container" 2>/dev/null || true
 		docker rm -f "${DISTRO}_test_container" 2>/dev/null || true
-	done
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n' 2>/dev/null || true)
+	
 	echo "Cleanup complete. Exiting."
 	exit 130
 }
@@ -31,16 +50,31 @@ TOX_PYTHON_VERSION=("py310" "py311" "py312" "py313" "py314")
 
 # --- Script Usage and Input Validation ---
 
-# The script now only accepts 0 or 1 argument (the optional image name).
-if [ $# -gt 1 ]; then
-	echo "Usage: $0 [IMAGE_NAME]"
-	echo ""
-	echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
-	echo "                If omitted, all distribution directories will be tested."
-	exit 1
-fi
+TARGET_IMAGE=""
+PRESERVE_LOGS=0
 
-TARGET_IMAGE=${1:-} # Optional 1st argument
+# Parse arguments
+while [ $# -gt 0 ]; do
+	case $1 in
+		--preserve-logs)
+			PRESERVE_LOGS=1
+			shift
+			;;
+		*)
+			if [ -z "${TARGET_IMAGE}" ]; then
+				TARGET_IMAGE=$1
+				shift
+			else
+				echo "Usage: $0 [IMAGE_NAME] [--preserve-logs]"
+				echo ""
+				echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
+				echo "                If omitted, all distribution directories will be tested."
+				echo "  [--preserve-logs]: Optional. Preserve previous test logs in a timestamped folder instead of deleting them."
+				exit 1
+			fi
+			;;
+	esac
+done
 
 # --- Determine Images to Test ---
 
@@ -54,17 +88,50 @@ if [ -n "${TARGET_IMAGE}" ]; then
 	DISTROS_TO_TEST=("${TARGET_IMAGE}")
 	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
 else
-	# Test all images by finding directories in the current folder (excluding the current directory itself and test_outputs_* folders).
-	DISTROS_TO_TEST=($(find . -mindepth 1 -maxdepth 1 -type d -not -name '.' -not -name 'test_outputs_*' -printf "%f\n"))
+	# Test all images by finding directories in the current folder that contain a Dockerfile.
+	DISTROS_TO_TEST=()
+	while IFS= read -r DOCKERFILE_PATH; do
+		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		DISTROS_TO_TEST+=("$DIR_NAME")
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n')
 	echo "Mode: Testing all found images."
 fi
 
 echo "Images to test: ${DISTROS_TO_TEST[*]}"
 echo "--------------------------------------------------"
 
+# --- Handle Previous Logs ---
+if [ ${PRESERVE_LOGS} -eq 1 ]; then
+	# Check if there are any existing logs to preserve
+	HAS_LOGS=0
+	if compgen -G "*.xml" > /dev/null || compgen -G "*.txt" > /dev/null || \
+	   compgen -G "../.coverage.*" > /dev/null || compgen -G "../test-outputs*.txt" > /dev/null || \
+	   compgen -G "test_outputs_*/" > /dev/null; then
+		HAS_LOGS=1
+	fi
+	
+	if [ ${HAS_LOGS} -eq 1 ]; then
+		TIMESTAMP=$(date +%m_%d_%y_%H_%M_%S_%3N)
+		ARCHIVE_DIR="previous_results_${TIMESTAMP}"
+		echo "Preserving previous logs to: ${ARCHIVE_DIR}"
+		mkdir -p "${ARCHIVE_DIR}"
+		[ -n "$(compgen -G "*.xml")" ] && mv -f *.xml "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "*.txt")" ] && mv -f *.txt "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "../.coverage.*")" ] && mv -f ../.coverage.* "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "../test-outputs*.txt")" ] && mv -f ../test-outputs*.txt "${ARCHIVE_DIR}/"
+		[ -n "$(compgen -G "test_outputs_*/")" ] && mv -f test_outputs_*/ "${ARCHIVE_DIR}/"
+		echo "Previous logs preserved."
+	else
+		echo "No previous logs found to preserve."
+	fi
+else
+	echo "Removing previous logs..."
+	rm -f -- *.xml *.txt ../.coverage.* ../test-outputs*.txt
+	rm -rf test_outputs_*/
+fi
+echo "--------------------------------------------------"
+
 # --- Test Loop ---
-rm -f -- *.xml *.txt ../.coverage.* ../test-outputs*.txt
-rm -rf test_outputs_*/
 for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# Create output directory for this distribution
@@ -73,8 +140,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
 	CONTAINER_NAME="${DISTRO_NAME}_test_container"
-	# The entry script path must be adjusted for the container mount, which is always /ezsnmp/docker/[distro]/...
-	ENTRY_SCRIPT_PATH="/ezsnmp/docker/${DISTRO_NAME}/DockerEntry.sh"
+	# The entry script path is now common across all distributions
+	ENTRY_SCRIPT_PATH="/usr/local/bin/DockerEntry.sh"
 
 	echo ">>> Launching tests for distribution: ${DISTRO_NAME} (async)"
 	echo "    - Target Image: ${FULL_IMAGE_TAG}"
@@ -141,6 +208,19 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			fi
 			mv "../$OUTPUT_FILE" "${OUTPUT_DIR}/test-outputs_${CONTAINER_NAME}_${TOX_PY}.txt"
 		done
+
+		# 4.5. Extract snmpd logs for debugging
+		echo "    - [${DISTRO_NAME}] Extracting snmpd logs..."
+		docker exec "$CONTAINER_NAME" bash -c "
+			if [ -d /var/log/ezsnmp ]; then
+				cat /var/log/ezsnmp/snmpd.log 2>/dev/null || echo 'No snmpd.log found';
+				echo '--- SNMPD ERRORS ---';
+				cat /var/log/ezsnmp/snmpd_error.log 2>/dev/null || echo 'No snmpd_error.log found';
+			else
+				echo 'Log directory /var/log/ezsnmp not found';
+			fi
+		" > "${OUTPUT_DIR}/snmpd_logs_${CONTAINER_NAME}.txt" 2>&1
+		echo "    - [${DISTRO_NAME}] Logs saved to: snmpd_logs_${CONTAINER_NAME}.txt"
 
 		# 5. Cleanup container
 		echo "    - [${DISTRO_NAME}] Cleaning up container"

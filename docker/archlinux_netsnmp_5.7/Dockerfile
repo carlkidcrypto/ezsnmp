@@ -14,21 +14,21 @@ RUN pacman -Syu --noconfirm && \
     pacman-contrib git go sudo gcc
 
 # Install official repository dependencies
-COPY docker/archlinux_netsnmp_5.8/pacman-requirements.txt /tmp/pacman-requirements.txt
+COPY docker/archlinux_netsnmp_5.7/pacman-requirements.txt /tmp/pacman-requirements.txt
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
 # Copy Archlinux packages from cache
-COPY docker/cache/net-snmp-5.8-1-x86_64.pkg.tar.xz /tmp/
+COPY docker/cache/net-snmp-5.7.3-1-x86_64.pkg.tar.xz /tmp/
 COPY docker/cache/pcre-8.43-1-x86_64.pkg.tar.xz /tmp/
-COPY docker/cache/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst /tmp/
+COPY docker/cache/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz /tmp/
 
-# Downgrade Net-SNMP to 5.8 and install legacy dependencies (PCRE 8, OpenSSL 1.1)
-# Keep current Perl (from earlier install) and fabricate compatibility paths for libperl expected by net-snmp 5.8.
+# Downgrade Net-SNMP to 5.7 and install legacy dependencies (PCRE 8, OpenSSL 1.0)
+# Keep current Perl (from earlier install) and fabricate compatibility paths for libperl expected by net-snmp 5.7.
 RUN pacman -U --noconfirm \
-    /tmp/net-snmp-5.8-1-x86_64.pkg.tar.xz \
+    /tmp/net-snmp-5.7.3-1-x86_64.pkg.tar.xz \
     /tmp/pcre-8.43-1-x86_64.pkg.tar.xz \
-    /tmp/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst && \
+    /tmp/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz && \
     ldconfig && \
     PERL_CORE_DIR=$(perl -MConfig -e 'print $Config{archlib} . "/CORE"') && \
     mkdir -p /usr/lib/perl5/5.28/core_perl && \
@@ -46,7 +46,7 @@ includedir=${prefix}/include
 
 Name: Net-SNMP
 Description: SNMP client and agent libraries
-Version: 5.8
+Version: 5.7
 Libs: -L${libdir} -lnetsnmp -lcrypto
 Libs.private: -lwrap
 Cflags: -I${includedir}
@@ -131,7 +131,7 @@ RUN cd /tmp && \
 ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
 
-# Ensure pkg-config finds netsnmp 5.8
+# Ensure pkg-config finds netsnmp 5.7
 ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 
 # Virtual Environment Setup using latest Python (3.14)
