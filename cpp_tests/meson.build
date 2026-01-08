@@ -1,11 +1,5 @@
 project('ezsnmp_tests', 'cpp', version: '2.0.0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
-# Enable coverage on Linux only
-if host_machine.system() == 'linux'
-  add_project_arguments(['-fprofile-arcs', '-ftest-coverage', '--coverage'], language: 'cpp')
-  add_project_link_arguments(['--coverage'], language: 'cpp')
-endif
-
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
