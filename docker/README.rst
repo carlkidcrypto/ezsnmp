@@ -26,6 +26,53 @@ The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** 
 
 ----------------------------------------------------------------------
 
+Python Tarball Caching System
+==============================
+
+To significantly speed up Docker image builds and reduce bandwidth usage, this project uses a local caching system for Python source tarballs.
+
+**How It Works:**
+
+1. Python source tarballs (*.tgz) are downloaded once to ``docker/cache/``
+2. Dockerfiles use ``COPY`` instead of ``wget`` to copy from the cache
+3. The build script automatically populates the cache before building images
+
+**Setup:**
+
+Before building images, populate the cache by running:
+
+.. code-block:: bash
+
+    cd docker/cache
+    ./download_build_cache.sh
+
+Or simply run the main build script, which automatically calls the cache script:
+
+.. code-block:: bash
+
+    cd docker
+    ./build_and_publish_images.sh <username> <token>
+
+**Benefits:**
+
+* **Faster builds**: No repeated downloads across different containers
+* **Bandwidth savings**: Each Python version downloaded only once (~25MB each)
+* **Offline capability**: Once cached, builds work without internet (for Python sources)
+* **Better reliability**: Reduces dependency on external network during builds
+
+**Maintenance:**
+
+When updating Python versions in Dockerfiles:
+
+1. Update ``PYTHON_*_VERSION`` ARGs in Dockerfiles
+2. Update ``PYTHON_VERSIONS`` array in ``docker/cache/download_build_cache.sh``
+3. Run the download script to fetch new versions
+4. Old versions can be manually removed from ``docker/cache/`` if no longer needed
+
+The cache directory is git-ignored (``*.tgz`` files) but the structure and download script are version controlled.
+
+----------------------------------------------------------------------
+
 Running a Container Locally
 ===========================
 
@@ -186,6 +233,55 @@ The script uses a multi-stage fallback approach for maximum compatibility across
 This ensures coverage collection works across different versions of lcov/gcov, handling inconsistencies in gcov output formats between distributions.
 
 **Note**: All scripts should be run from the ``docker`` directory and assume the repository root is mounted at ``/ezsnmp`` inside containers.
+
+----------------------------------------------------------------------
+
+SNMPD Debugging and Logs
+=========================
+
+The ``DockerEntry.sh`` script automatically captures snmpd daemon output for debugging purposes.
+
+**Log Files:**
+
+All snmpd logs are stored inside containers at:
+
+- ``/var/log/ezsnmp/snmpd.log`` - Main snmpd output (startup info, version, config verification)
+- ``/var/log/ezsnmp/snmpd_error.log`` - Error output from snmpd
+
+**Automatic Log Collection:**
+
+The test runner scripts automatically extract snmpd logs after test completion:
+
+- Python tests: ``test_outputs_<distribution>/snmpd_logs_<distribution>_test_container.txt``
+- C++ tests: ``test_outputs_<distribution>/snmpd_logs.txt``
+
+**Manual Log Checking:**
+
+To check logs from a running container, use the helper script:
+
+.. code-block:: bash
+
+  # List all running test containers
+  ./check_snmpd_logs.sh
+
+  # Check logs for a specific container
+  ./check_snmpd_logs.sh archlinux_netsnmp_5.7_test_container
+
+This script displays:
+
+- snmpd output log (startup, version, configuration)
+- snmpd error log (any daemon errors)
+- snmpd process status
+- Port listening status (verifies daemon is accepting connections)
+
+**Troubleshooting snmpd Issues:**
+
+If tests fail with timeout errors or "No Response" messages:
+
+1. Check the snmpd logs for startup errors
+2. Verify snmpd process is running: ``docker exec <container> ps aux | grep snmpd``
+3. Check port binding: ``docker exec <container> netstat -tulpn | grep 161``
+4. Review configuration: ``docker exec <container> cat /etc/snmp/snmpd.conf``
 
 ----
 
