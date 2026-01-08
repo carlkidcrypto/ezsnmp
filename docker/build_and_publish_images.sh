@@ -39,13 +39,14 @@ get_next_version() {
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache]"
+  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache] [--prune]"
   echo ""
   echo "  <DOCKER_USERNAME>: Your Docker Hub username."
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
   echo "  [IMAGE_NAME]: Optional. Specify a single image directory (e.g., 'almalinux10') to build only that image."
   echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
   echo "  [--no-cache]: Optional. Add this flag to force rebuild without using Docker cache."
+  echo "  [--prune]: Optional. Add this flag to run 'docker system prune -af' before building (removes dangling images/containers)."
   echo ""
   echo "Images will be tagged with format: MM-DD-YYYY.N (e.g., 12-24-2025.1)"
   echo "The .N version increments per day for each image."
@@ -56,6 +57,7 @@ USERNAME=$1
 ACCESS_TOKEN=$2
 TARGET_IMAGE=""
 NO_CACHE=""
+PRUNE_DOCKER=""
 
 # Parse optional arguments
 shift 2
@@ -66,12 +68,26 @@ while [ $# -gt 0 ]; do
       echo "Build mode: --no-cache enabled (forcing clean rebuild)"
       shift
       ;;
+    --prune)
+      PRUNE_DOCKER=1
+      echo "Docker prune mode: --prune enabled (will clean Docker before building)"
+      shift
+      ;;
     *)
       TARGET_IMAGE=$1
       shift
       ;;
   esac
 done
+
+# --- Docker Cleanup (if requested) ---
+
+if [ -n "${PRUNE_DOCKER}" ]; then
+  echo "Cleaning up Docker (removing dangling images, containers, and unused volumes)..."
+  docker system prune -af || echo "WARNING: Docker prune had issues, but continuing..."
+  echo "Docker cleanup complete."
+  echo "--------------------------------------------------"
+fi
 
 # --- Docker Hub Login ---
 
@@ -82,6 +98,22 @@ if ! echo "${ACCESS_TOKEN}" | docker login -u "${USERNAME}" --password-stdin; th
 fi
 
 echo "Successfully logged in to Docker Hub."
+echo "--------------------------------------------------"
+
+# --- Populate Python Tarball Cache ---
+
+echo "Checking Python tarball cache..."
+CACHE_SCRIPT="${DOCKER_DIR}/cache/download_build_cache.sh"
+if [ -f "${CACHE_SCRIPT}" ]; then
+  echo "Running cache download script..."
+  bash "${CACHE_SCRIPT}"
+  if [ $? -ne 0 ]; then
+    echo "WARNING: Cache download script failed, but continuing (downloads may occur during build)..."
+  fi
+else
+  echo "WARNING: Cache download script not found at ${CACHE_SCRIPT}"
+  echo "Python tarballs will be downloaded during build if needed."
+fi
 echo "--------------------------------------------------"
 
 # --- Determine Images to Build ---
@@ -98,9 +130,9 @@ if [ -n "${TARGET_IMAGE}" ]; then
   echo "Mode: Building only the single image: ${TARGET_IMAGE}"
 else
   # Build all images by finding directories in DOCKER_DIR
-  # Exclude test_outputs_* directories
-  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d ! -name "test_outputs_*" -printf "%f\n"))
-  echo "Mode: Building all found images (excluding test_outputs directories)."
+  # Exclude test_outputs_* and cache directories
+  DISTROS_TO_BUILD=($(find "${DOCKER_DIR}" -mindepth 1 -maxdepth 1 -type d ! -name "test_outputs_*" ! -name "cache" -printf "%f\n"))
+  echo "Mode: Building all found images (excluding test_outputs and cache directories)."
 fi
 
 echo "Images to process: ${DISTROS_TO_BUILD[*]}"

@@ -1,0 +1,16 @@
+wget
+unzip
+file
+openssl
+bzip2
+xz
+zlib
+libffi
+net-snmp
+gdb
+meson
+ninja
+gtest
+lcov
+perl-json-xs
+perl-cpanel-json-xs
