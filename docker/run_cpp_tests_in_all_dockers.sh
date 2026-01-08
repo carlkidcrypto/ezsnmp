@@ -55,8 +55,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	FULL_IMAGE_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
 	CONTAINER_NAME="${DISTRO_NAME}_test_container"
-	# The entry script path must be adjusted for the container mount, which is always /ezsnmp/docker/[distro]/...
-	ENTRY_SCRIPT_PATH="/ezsnmp/docker/${DISTRO_NAME}/DockerEntry.sh"
+	# The entry script path is now common across all distributions
+	ENTRY_SCRIPT_PATH="/usr/local/bin/DockerEntry.sh"
 
 	echo ">>> Running tests for distribution: ${DISTRO_NAME}"
 	echo "    - Target Image: ${FULL_IMAGE_TAG}"
@@ -151,6 +151,19 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		echo "      ! Warning: updated_coverage.info not found for $CONTAINER_NAME"
 		touch "${OUT_DIR}/lcov_coverage.info"
 	fi
+
+	# 4.5. Extract snmpd logs for debugging
+	echo "    - Extracting snmpd logs..."
+	docker exec "$CONTAINER_NAME" bash -c "
+		if [ -d /var/log/ezsnmp ]; then
+			cat /var/log/ezsnmp/snmpd.log 2>/dev/null || echo 'No snmpd.log found';
+			echo '--- SNMPD ERRORS ---';
+			cat /var/log/ezsnmp/snmpd_error.log 2>/dev/null || echo 'No snmpd_error.log found';
+		else
+			echo 'Log directory /var/log/ezsnmp not found';
+		fi
+	" > "${OUT_DIR}/snmpd_logs.txt" 2>&1
+	echo "    - Logs saved to: ${OUT_DIR}/snmpd_logs.txt"
 
 	# 5. Cleanup container
 	echo "    - Cleaning up container: $CONTAINER_NAME"

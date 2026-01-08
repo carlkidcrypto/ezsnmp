@@ -1,0 +1,5 @@
+# Ignore all downloaded files in git - they should be downloaded locally
+*.tgz
+*.tar.gz
+*.pkg.tar.xz
+*.pkg.tar.zst
