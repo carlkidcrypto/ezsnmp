@@ -14,43 +14,9 @@ RUN pacman -Syu --noconfirm && \
     pacman-contrib git go sudo gcc
 
 # Install official repository dependencies
-COPY docker/archlinux_netsnmp_5.8/pacman-requirements.txt /tmp/pacman-requirements.txt
+COPY docker/archlinux_netsnmp_5.9/pacman-requirements.txt /tmp/pacman-requirements.txt
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
-
-# Copy Archlinux packages from cache
-COPY docker/cache/net-snmp-5.8-1-x86_64.pkg.tar.xz /tmp/
-COPY docker/cache/pcre-8.43-1-x86_64.pkg.tar.xz /tmp/
-COPY docker/cache/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst /tmp/
-
-# Downgrade Net-SNMP to 5.8 and install legacy dependencies (PCRE 8, OpenSSL 1.1)
-# Keep current Perl (from earlier install) and fabricate compatibility paths for libperl expected by net-snmp 5.8.
-RUN pacman -U --noconfirm \
-    /tmp/net-snmp-5.8-1-x86_64.pkg.tar.xz \
-    /tmp/pcre-8.43-1-x86_64.pkg.tar.xz \
-    /tmp/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst && \
-    ldconfig && \
-    PERL_CORE_DIR=$(perl -MConfig -e 'print $Config{archlib} . "/CORE"') && \
-    mkdir -p /usr/lib/perl5/5.28/core_perl && \
-    ln -sf "$PERL_CORE_DIR" /usr/lib/perl5/5.28/core_perl/CORE && \
-    if [ -f "$PERL_CORE_DIR/libperl.so" ]; then ln -sf "$PERL_CORE_DIR/libperl.so" /usr/lib/libperl.so; fi && \
-    ldconfig && \
-    # Verify netsnmp headers exist and create pkg-config metadata
-    if [ ! -d /usr/include/net-snmp ]; then echo "WARNING: /usr/include/net-snmp not found"; fi && \
-    mkdir -p /usr/lib/pkgconfig && \
-    cat >/usr/lib/pkgconfig/netsnmp.pc <<'EOF'
-prefix=/usr
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
-
-Name: Net-SNMP
-Description: SNMP client and agent libraries
-Version: 5.8
-Libs: -L${libdir} -lnetsnmp -lcrypto
-Libs.private: -lwrap
-Cflags: -I${includedir}
-EOF
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder
@@ -130,9 +96,6 @@ RUN cd /tmp && \
 # Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
 ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
-
-# Ensure pkg-config finds netsnmp 5.8
-ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 
 # Virtual Environment Setup using latest Python (3.14)
 ENV VENV_PATH=/opt/venv
