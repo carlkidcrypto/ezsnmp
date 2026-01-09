@@ -50,12 +50,48 @@ TOX_PYTHON_VERSION=("py310" "py311" "py312" "py313" "py314")
 
 # --- Script Usage and Input Validation ---
 
+show_help() {
+	cat << EOF
+Usage: $0 [OPTIONS] [IMAGE_NAME]
+
+Run Python tests in Docker containers for ezsnmp project.
+
+Options:
+  -h, --help            Show this help message and exit
+  --preserve-logs       Preserve previous test logs in a timestamped folder
+                        instead of deleting them
+
+Arguments:
+  IMAGE_NAME           Optional. Specify a single image tag to test only that
+                       distribution (e.g., 'almalinux10_netsnmp_5.9', 
+                       'archlinux_netsnmp_5.7', 'centos7_netsnmp_5.7').
+                       If omitted, all distribution directories will be tested.
+
+Examples:
+  $0                                           # Test all distributions
+  $0 --preserve-logs                           # Test all, preserve old logs
+  $0 almalinux10_netsnmp_5.9                   # Test only AlmaLinux 10
+  $0 archlinux_netsnmp_5.7 --preserve-logs     # Test Arch Linux 5.7, preserve logs
+
+Available Distributions:
+EOF
+	# List available distributions by finding Dockerfiles
+	while IFS= read -r DOCKERFILE_PATH; do
+		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		echo "  - $DIR_NAME"
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n' 2>/dev/null | sort)
+	exit 0
+}
+
 TARGET_IMAGE=""
 PRESERVE_LOGS=0
 
 # Parse arguments
 while [ $# -gt 0 ]; do
 	case $1 in
+		-h|--help)
+			show_help
+			;;
 		--preserve-logs)
 			PRESERVE_LOGS=1
 			shift
@@ -65,11 +101,9 @@ while [ $# -gt 0 ]; do
 				TARGET_IMAGE=$1
 				shift
 			else
-				echo "Usage: $0 [IMAGE_NAME] [--preserve-logs]"
+				echo "ERROR: Unknown argument or multiple image names specified: $1"
 				echo ""
-				echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
-				echo "                If omitted, all distribution directories will be tested."
-				echo "  [--preserve-logs]: Optional. Preserve previous test logs in a timestamped folder instead of deleting them."
+				echo "Run '$0 --help' for usage information."
 				exit 1
 			fi
 			;;
