@@ -115,7 +115,21 @@ COPY python_tests/requirements.txt /tmp/python_tests_requirements.txt
 RUN pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     pip install -r /tmp/python_tests_requirements.txt && \
+    pip install meson ninja && \
     rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
+
+# Install Google Test from source (not available in CentOS 8 EOL repos)
+RUN cd /tmp && \
+    wget https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz && \
+    tar -xzf v1.15.2.tar.gz && \
+    cd googletest-1.15.2 && \
+    mkdir build && cd build && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    make -j$(nproc) && \
+    make install && \
+    cd /tmp && \
+    rm -rf v1.15.2.tar.gz googletest-1.15.2 && \
+    ldconfig
 
 # Copy common DockerEntry.sh script
 COPY docker/DockerEntry.sh /usr/local/bin/DockerEntry.sh

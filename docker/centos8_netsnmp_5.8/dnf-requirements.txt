@@ -13,9 +13,6 @@ net-snmp-utils
 net-snmp-devel
 gdb
 dnf-utils
-meson
-ninja-build
-gtest-devel
+cmake
 lcov
 perl-JSON
-perl-JSON-XS
