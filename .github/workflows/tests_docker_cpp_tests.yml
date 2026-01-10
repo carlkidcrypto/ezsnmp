@@ -62,6 +62,32 @@ jobs:
           path: |
             docker/test_outputs_*/test-results.xml
             docker/test_outputs_*/test-outputs.txt
+            docker/test_outputs_*/lcov_coverage.info
+
+  upload-cpp-coverage-dockerized:
+    runs-on: ubuntu-latest
+    needs: test-cpp-tests
+    permissions:
+      contents: read
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: cpp-test-results-*
+          merge-multiple: true
+
+      - name: Upload coverage to CodeCov
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./test_outputs_*/lcov_coverage.info
+          flags: cpp,docker
+          fail_ci_if_error: false
+          verbose: true
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest

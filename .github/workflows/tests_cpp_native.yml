@@ -55,7 +55,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build libgtest-dev;
+                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build libgtest-dev lcov;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -63,7 +63,7 @@ jobs:
           macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
-                 brew install meson ninja googletest;
+                 brew install meson ninja googletest lcov;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
@@ -99,6 +99,13 @@ jobs:
             ninja -C build
             meson test -C build --print-errorlogs --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
             mv build/meson-logs/testlog.junit.xml cpp-test-results_${{ matrix.os }}.xml
+            # Generate lcov coverage report
+            lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
+            if [ -f coverage.info ] && [ -s coverage.info ]; then
+              lcov --remove coverage.info '/usr/*' '/opt/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
+            else
+              touch coverage_filtered.info
+            fi
 
           macos: |
             cd cpp_tests
@@ -107,13 +114,48 @@ jobs:
             ninja -C build
             meson test -C build --print-errorlogs --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
             mv build/meson-logs/testlog.junit.xml cpp-test-results_${{ matrix.os }}.xml
+            # Generate lcov coverage report
+            lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
+            if [ -f coverage.info ] && [ -s coverage.info ]; then
+              lcov --remove coverage.info '/usr/*' '/opt/*' '/Library/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
+            else
+              touch coverage_filtered.info
+            fi
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: cpp-test-results_${{matrix.os}}
-          path: cpp_tests/**/*.xml
+          path: |
+            cpp_tests/**/*.xml
+            cpp_tests/coverage_filtered.info
+
+  upload-cpp-coverage-native:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    permissions:
+      contents: read
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: cpp-test-results_*
+          path: test-results
+          merge-multiple: true
+
+      - name: Upload coverage to CodeCov
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./test-results/coverage_filtered.info
+          flags: cpp,native
+          fail_ci_if_error: false
+          verbose: true
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
