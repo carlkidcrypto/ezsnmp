@@ -15,7 +15,7 @@ Design things to be run on a Linux system like Ubuntu 24.X.X.
 Focus on the following instructions:
 - Ensure all docker containers use g++ 9.5 or higher
 - Ensure all docker containers have usable and installed versions of python
-    3.9 - 3.13.
+    3.10 - 3.14.
 - Ensure all docker containers can be used to run both `python_tests/` and
     `cpp_tests/` inside them.
 - Ensure that containers maintain the smallest image size possible
@@ -25,3 +25,7 @@ Focus on the following instructions:
     script called `docker/run_cpp_tests_in_all_dockers.sh`.
 - Ensure that `python_tests/` can be run inside published docker containers
     via a script called `docker/run_python_tests_in_all_dockers.sh`.
+- Ensure that all containers include the necessary tools and dependencies to
+generate C++ code coverage reports when running `cpp_tests/`.
+- Ensure that all containers can successfully generate both C++ and Python coverage
+reports for all docker containers.

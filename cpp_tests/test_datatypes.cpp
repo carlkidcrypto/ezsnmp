@@ -542,3 +542,140 @@ TEST(ResultIntegrationTest, OctetStringConversion) {
        "oid: TEST-MIB::octetString, index: 1, type: OCTETSTR, value: hello\x01\x02\x03world",
        expected_vector);
 }
+
+// Test for hex string with invalid hex characters in middle of conversion
+TEST_F(ResultConvertedValueTest, HandlesHexStringWithLongInvalidPart) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "00 15 5D TOOLONG");
+   EXPECT_TRUE(std::holds_alternative<std::string>(converted));
+   std::string error_msg = std::get<std::string>(converted);
+   EXPECT_TRUE(error_msg.find("Hex-STRING Conversion Error: Malformed hex part 'TOOLONG'") !=
+               std::string::npos);
+}
+
+// Test for double type (not commonly used but supported)
+TEST_F(ResultConvertedValueTest, HandlesDoubleType) {
+   Result r;
+   r.converted_value = 3.14159;
+   std::string result = r._converted_value_to_string();
+   EXPECT_TRUE(result.find("3.14") != std::string::npos);
+}
+
+// Test for vector with > 32 bytes
+TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
+   std::string large_hex = "";
+   for (int i = 0; i < 40; i++) {
+      large_hex += "FF ";
+   }
+   auto converted = result_obj._make_converted_value("Hex-STRING", large_hex);
+   std::vector<unsigned char> vec = std::get<std::vector<unsigned char>>(converted);
+   EXPECT_EQ(vec.size(), 40);
+
+   Result r;
+   r.converted_value = vec;
+   std::string result = r._converted_value_to_string();
+   EXPECT_TRUE(result.find("bytes[40]:") != std::string::npos);
+   EXPECT_TRUE(result.find("...") != std::string::npos); // Should truncate display
+}
+
+// Parameterized test for string-like types
+struct StringTypeTestCase {
+   std::string type_name;
+   std::string input_value;
+   std::string test_name; // For gtest output
+};
+
+class StringTypesTest : public ResultConvertedValueTest,
+                        public ::testing::WithParamInterface<StringTypeTestCase> {};
+
+TEST_P(StringTypesTest, HandlesStringLikeTypes) {
+   auto const& param = GetParam();
+   auto converted = result_obj._make_converted_value(param.type_name, param.input_value);
+   EXPECT_EQ(std::get<std::string>(converted), param.input_value);
+}
+
+#define STRING_TYPE_PARAMS                                                             \
+   ::testing::Values(StringTypeTestCase{"OBJIDENTITY", "some value", "ObjIdentity"},   \
+                     StringTypeTestCase{"Opaque", "opaque data", "Opaque"},            \
+                     StringTypeTestCase{"BITSTRING", "10101010", "BitString"},         \
+                     StringTypeTestCase{"NSAPAddress", "some address", "NsapAddress"}, \
+                     StringTypeTestCase{"TrapType", "trap", "TrapType"},               \
+                     StringTypeTestCase{"NotifType", "notif", "NotifType"},            \
+                     StringTypeTestCase{"ObjGroup", "group", "ObjGroup"},              \
+                     StringTypeTestCase{"NotifGroup", "notif group", "NotifGroup"},    \
+                     StringTypeTestCase{"ModID", "module id", "ModId"},                \
+                     StringTypeTestCase{"AgentCap", "agent cap", "AgentCap"},          \
+                     StringTypeTestCase{"ModComp", "mod comp", "ModComp"})
+
+#if defined(INSTANTIATE_TEST_SUITE_P)
+INSTANTIATE_TEST_SUITE_P(ResultConvertedValueStringTypes,
+                         StringTypesTest,
+                         STRING_TYPE_PARAMS,
+                         [](::testing::TestParamInfo<StringTypesTest::ParamType> const& info) {
+                            return info.param.test_name;
+                         });
+#else
+INSTANTIATE_TEST_CASE_P(ResultConvertedValueStringTypes, StringTypesTest, STRING_TYPE_PARAMS);
+#endif
+
+#undef STRING_TYPE_PARAMS
+
+// Test Integer32 type (variant of INTEGER)
+TEST_F(ResultConvertedValueTest, HandlesInteger32) {
+   auto converted = result_obj._make_converted_value("Integer32", "42");
+   EXPECT_EQ(std::get<int>(converted), 42);
+}
+
+// Test case-insensitivity
+TEST_F(ResultConvertedValueTest, HandlesCaseInsensitiveTypes) {
+   auto converted1 = result_obj._make_converted_value("integer", "42");
+   EXPECT_EQ(std::get<int>(converted1), 42);
+
+   auto converted2 = result_obj._make_converted_value("STRING", "test");
+   EXPECT_EQ(std::get<std::string>(converted2), "test");
+
+   auto converted3 = result_obj._make_converted_value("Gauge32", "100");
+   EXPECT_EQ(std::get<uint32_t>(converted3), 100);
+}
+
+// Test invalid hex string conversion
+TEST_F(ResultConvertedValueTest, HandlesInvalidHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "GG ZZ");
+   std::string result = std::get<std::string>(converted);
+   EXPECT_TRUE(result.find("Conversion Error") != std::string::npos);
+}
+
+// Test hex string with overly long byte
+TEST_F(ResultConvertedValueTest, HandlesHexStringLongByte) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "ABCD");
+   std::string result = std::get<std::string>(converted);
+   EXPECT_TRUE(result.find("Conversion Error") != std::string::npos);
+}
+
+// Test hex string with empty/whitespace value
+TEST_F(ResultConvertedValueTest, HandlesEmptyHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "  ");
+   auto bytes = std::get<std::vector<unsigned char>>(converted);
+   EXPECT_TRUE(bytes.empty());
+}
+
+// Test OctetStr conversion
+TEST_F(ResultConvertedValueTest, HandlesOctetStrType) {
+   auto converted = result_obj._make_converted_value("OctetStr", "test");
+   auto bytes = std::get<std::vector<unsigned char>>(converted);
+   EXPECT_EQ(bytes.size(), 4);
+   EXPECT_EQ(bytes[0], 't');
+   EXPECT_EQ(bytes[1], 'e');
+   EXPECT_EQ(bytes[2], 's');
+   EXPECT_EQ(bytes[3], 't');
+}
+
+// Test large byte vector serialization (over 32 bytes triggers truncation)
+TEST_F(ResultConvertedValueTest, HandlesLargeByteVector) {
+   Result r;
+   r.type = "Hex-STRING";
+   std::vector<unsigned char> large_vec(50, 0xAB);
+   r.converted_value = large_vec;
+   std::string result = r._converted_value_to_string();
+   EXPECT_TRUE(result.find("bytes[50]") != std::string::npos);
+   EXPECT_TRUE(result.find("...") != std::string::npos); // truncation indicator
+}

@@ -98,3 +98,41 @@ TEST_F(SnmpGetNextTest, TestInvalidVersion) {
        },
        ParseErrorBase);
 }
+
+// Test -Cf option (don't fix PDUs)
+TEST_F(SnmpGetNextTest, TestDontFixPDUsOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cf", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
+
+   auto results = snmpgetnext(args, "testing");
+   EXPECT_FALSE(results.empty());
+}
+
+// Test unknown -C option
+TEST_F(SnmpGetNextTest, TestUnknownCOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cz", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpgetnext(args, "testing");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
+                         std::string::npos);
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+// Test basic getnext
+TEST_F(SnmpGetNextTest, TestBasicGetNext) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation"};
+
+   auto results = snmpgetnext(args, "testing");
+   EXPECT_FALSE(results.empty());
+   // getnext of sysLocation should return sysLocation.0
+   EXPECT_TRUE(results[0].oid.find("sysLocation") != std::string::npos);
+}

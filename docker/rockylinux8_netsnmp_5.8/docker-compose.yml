@@ -1,0 +1,10 @@
+services:
+  rockylinux8_snmp_container:
+    build:
+      context: ../../
+      dockerfile: docker/rockylinux8/Dockerfile
+    container_name: rockylinux8_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/usr/local/bin/DockerEntry.sh"]

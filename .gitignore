@@ -9,6 +9,7 @@
 
 # Nosetests and coverage information
 .coverage
+.coverage.*
 nosetests.xml
 coverage.xml
 
@@ -62,3 +63,7 @@ ezsnmp-2.*.*/
 **test-outputs*.txt
 **test-results*.xml
 **lcov**.info
+
+# CodeQL temporary files and artifacts
+_codeql_detected_source_root
+docker/test_outputs_*/snmpd_logs_*.txt

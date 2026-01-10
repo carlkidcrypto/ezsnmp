@@ -336,6 +336,87 @@ TEST_F(ParseResultsTest, TestSnmpwalkNetworkAddressType) {
    EXPECT_EQ(results[0].value, "AC:19:00:01");
 }
 
+TEST_F(ParseResultsTest, TestDotOIDEdgeCase) {
+   std::vector<std::string> inputs = {". = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
+TEST_F(ParseResultsTest, TestOIDWithEmptyType) {
+   // Note: The input "SNMPv2-MIB::sysDescr.0 =  Test" has two spaces after "="
+   // This means the type extraction finds "Test" because the first space is
+   // consumed leaving " Test" which then has leading space trimmed for type
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 =  Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   // With the parsing logic, " Test" is extracted as type becomes "Test"
+   EXPECT_EQ(results[0].type, "Test");
+   // And value becomes " Test" (from the rest after :)
+   EXPECT_EQ(results[0].value, " Test");
+}
+
+// Test for create_argv function
+TEST(CreateArgvTest, TestBasicArgv) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public"};
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+
+   EXPECT_EQ(argc, 5); // netsnmp + 4 args
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_STREQ(argv[1], "-v");
+   EXPECT_STREQ(argv[2], "2c");
+   EXPECT_STREQ(argv[3], "-c");
+   EXPECT_STREQ(argv[4], "public");
+   EXPECT_EQ(argv[5], nullptr);
+}
+
+TEST(CreateArgvTest, TestEmptyArgv) {
+   std::vector<std::string> args;
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+
+   EXPECT_EQ(argc, 1); // Just netsnmp
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_EQ(argv[1], nullptr);
+}
+
+TEST(CreateArgvTest, TestLargeArgv) {
+   std::vector<std::string> args;
+   for (int i = 0; i < 100; i++) {
+      args.push_back("arg" + std::to_string(i));
+   }
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+
+   EXPECT_EQ(argc, 101); // netsnmp + 100 args
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_STREQ(argv[1], "arg0");
+   EXPECT_STREQ(argv[100], "arg99");
+   EXPECT_EQ(argv[101], nullptr);
+}
+
+// Test for clear_net_snmp_library_data function
+TEST(ClearNetSnmpLibraryDataTest, TestClearFunction) {
+   // Set some values first
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 5);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 1);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 1);
+
+   // Clear them
+   clear_net_snmp_library_data();
+
+   // Verify they're cleared
+   EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS), 0);
+}
+
 TEST_F(ParseResultsTest, TestStringValuesWithQuotes) {
    // Test for issue #355: String values returned with extra quotes
    std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = STRING: \"LEDI Network TS\"",
@@ -415,4 +496,51 @@ TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
    // OID type should have quotes stripped
    EXPECT_EQ(results[2].type, "OID");
    EXPECT_EQ(results[2].value, "NET-SNMP-TC::linux");
+}
+
+TEST_F(ParseResultsTest, TestOIDWithEmptyTypeField) {
+   // Test case where getline for type results in empty string after trimming
+   // This happens when input has "= :" pattern (space then immediate colon)
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = : Test Value"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "");
+   EXPECT_EQ(results[0].value, "Test Value");
+}
+
+TEST_F(ParseResultsTest, TestFullyQualifiedNumericOID) {
+   // Test fully qualified numeric OID format .1.3.6.1.2.1.1.1.0
+   std::vector<std::string> inputs = {".1.3.6.1.2.1.1.1.0 = STRING: Test System"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".1.3.6.1.2.1.1.1");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test System");
+}
+
+TEST_F(ParseResultsTest, TestISOFormattedOID) {
+   // Test fully qualified ISO format OID
+   std::vector<std::string> inputs = {
+       ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0 = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
+TEST_F(ParseResultsTest, TestOIDWithNoDot) {
+   // Test OID with no dots (would trigger OID_INDEX_RE path potentially)
+   // This is an unusual case but tests the regex fallback logic
+   std::vector<std::string> inputs = {"sysDescr = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "sysDescr");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
 }
