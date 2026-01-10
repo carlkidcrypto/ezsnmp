@@ -215,25 +215,12 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 			TOX_START=$(date +%s)
 			echo "      * [${DISTRO_NAME}] Running tox for environment: $TOX_PY"
 
-			OUTPUT_FILE="test-outputs_${DISTRO_NAME}_${TOX_PY}.txt"
-
-			docker exec -t "$CONTAINER_NAME" bash -c "
-			export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:\$PATH;
-			export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:\$LD_LIBRARY_PATH;
-			export WORK_DIR=/tmp/ezsnmp_${DISTRO_NAME};
-			export TOX_WORK_DIR=/tmp/tox_${DISTRO_NAME};
-			# Copy source to isolated directory, excluding build artifacts and venvs
-			rm -rf \$WORK_DIR \$TOX_WORK_DIR;
-			mkdir -p \$WORK_DIR;
-			cd /ezsnmp && tar --exclude='*.egg-info' --exclude='build' --exclude='dist' --exclude='.tox' --exclude='__pycache__' --exclude='*.pyc' --exclude='.coverage*' --exclude='python3.*venv' --exclude='*.venv' --exclude='venv' -cf - . 2>/dev/null | (cd \$WORK_DIR && tar xf -);
-			cd \$WORK_DIR;
-			python3 -m pip install tox > /dev/null 2>&1;
-			tox -e $TOX_PY --workdir \$TOX_WORK_DIR > /ezsnmp/$OUTPUT_FILE 2>&1;
-			exit 0;
-		"
-			TOX_END=$(date +%s)
-			TOX_DURATION=$((TOX_END - TOX_START))
-			echo "      * [${DISTRO_NAME}] Completed: $TOX_PY (${TOX_DURATION}s)" # 4. Copy artifacts from the container to the distribution's output folder
+		OUTPUT_FILE="test-outputs_${DISTRO_NAME}_${TOX_PY}.txt"
+		
+		docker exec -t "$CONTAINER_NAME" bash /ezsnmp/docker/run_tests_inside_container.sh "${DISTRO_NAME}" "$TOX_PY" "$OUTPUT_FILE"
+		TOX_END=$(date +%s)
+		TOX_DURATION=$((TOX_END - TOX_START))
+		echo "      * [${DISTRO_NAME}] Completed: $TOX_PY (${TOX_DURATION}s)"			# 4. Copy artifacts from the container to the distribution's output folder
 			if [ -f ../test-results.xml ]; then
 				mv ../test-results.xml "${OUTPUT_DIR}/test-results_${CONTAINER_NAME}_${TOX_PY}.xml"
 			else
