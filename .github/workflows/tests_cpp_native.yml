@@ -145,14 +145,13 @@ jobs:
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: cpp-test-results_*
-          path: test-results
           merge-multiple: true
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./test-results/cpp_tests/coverage_filtered.info
+          files: ./cpp_tests/coverage_filtered.info
           flags: cpp,native
           fail_ci_if_error: false
           verbose: true
