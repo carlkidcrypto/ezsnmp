@@ -102,7 +102,7 @@ jobs:
             # Generate lcov coverage report
             lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
             if [ -f coverage.info ] && [ -s coverage.info ]; then
-              lcov --remove coverage.info '/usr/*' '/opt/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
+              lcov --remove coverage.info '/usr/*' '/opt/*' '/Library/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
             else
               touch coverage_filtered.info
             fi

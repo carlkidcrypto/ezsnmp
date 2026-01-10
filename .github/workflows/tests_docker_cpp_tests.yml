@@ -84,7 +84,7 @@ jobs:
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./test_outputs_*/lcov_coverage.info
+          files: ./docker/test_outputs_*/lcov_coverage.info
           flags: cpp,docker
           fail_ci_if_error: false
           verbose: true
