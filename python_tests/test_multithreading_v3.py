@@ -4,6 +4,8 @@ Test for SNMPv3 multithreading/multi-device scenarios.
 This test validates that the fix for the usmStatsNotInTimeWindows issue works correctly
 when connecting to multiple devices (or simulated devices with different engine IDs)
 using the same security username.
+
+Related issue: https://github.com/carlkidcrypto/ezsnmp/issues/[BUG] snmpv3 usmStatsNotInTimeWindows
 """
 
 import pytest
