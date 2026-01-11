@@ -116,7 +116,13 @@ jobs:
       - name: Set up MacPorts dependencies
         run: |
           set -euo pipefail
-          sudo /opt/local/bin/port install net-snmp openssl3
+          # Clean any potentially corrupted archives and rebuild if installation fails
+          if ! sudo /opt/local/bin/port install net-snmp openssl3; then
+            echo "Installation failed, cleaning archives and retrying..."
+            sudo /opt/local/bin/port clean --all net-snmp openssl3 || true
+            sudo rm -rf /opt/local/var/macports/software/* || true
+            sudo /opt/local/bin/port install net-snmp openssl3
+          fi
           mkdir -p -m 0755 ~/.snmp
           echo 'mibs +ALL' > ~/.snmp/snmp.conf
 
