@@ -267,24 +267,6 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
 
-      - name: Find existing PR comment (Valgrind)
-        id: find-valgrind-comment
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v4
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
-
-      - name: Find existing PR comment (Valgrind)
-        id: find-valgrind-comment
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v4
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
-
       - name: Create A Comment For PR
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         if: github.event_name == 'pull_request'
