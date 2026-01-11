@@ -3,8 +3,14 @@
 Simple threading verification script.
 
 This script demonstrates that ezsnmp is thread-safe by running concurrent
-SNMP operations from multiple threads. It doesn't require compilation and
-shows the thread-safety in action.
+SNMP operations from multiple threads. 
+
+**IMPORTANT**: This is a MOCK/SIMULATION for demonstration purposes only.
+It uses a MockSession class that simulates SNMP operations without actually
+connecting to an SNMP agent. The actual ezsnmp.Session class has the same
+thread-safety guarantees, but with real SNMP operations.
+
+For real SNMP threading tests, see the integration_tests/ directory.
 
 Usage: python3 verify_threading.py
 """
@@ -15,7 +21,16 @@ from typing import List, Tuple
 
 # Simulate the Session interface for demonstration
 class MockSession:
-    """Mock Session class for demonstration purposes."""
+    """
+    Mock Session class for demonstration purposes ONLY.
+    
+    This is NOT the actual ezsnmp.Session class. It simulates the thread-safe
+    behavior patterns of the real Session class for demonstration without requiring
+    a compiled extension or running SNMP agent.
+    
+    The real ezsnmp.Session class provides the same thread-safety guarantees
+    with actual SNMP operations.
+    """
     
     def __init__(self, **kwargs):
         self.hostname = kwargs.get('hostname', 'localhost')

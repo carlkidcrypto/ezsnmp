@@ -429,6 +429,9 @@ std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
 
 std::vector<std::string> const& SessionBase::_get_args() const {
    std::lock_guard<std::mutex> lock(m_mutex);
+   // Note: Returns const reference. SWIG creates a copy when converting to Python,
+   // so this is thread-safe for Python usage. For C++ usage, the reference is
+   // only valid while no other thread modifies the session.
    return m_args;
 }
 std::string const& SessionBase::_get_hostname() const {
