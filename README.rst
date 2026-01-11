@@ -2,7 +2,7 @@
 EzSnmp
 =======
 
-|Python Code Style| |Clang-format Code Style| |Black| |Clang-format| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests Homebrew| |Tests Native| |License|
+|Python Code Style| |Clang-format Code Style| |Black| |Clang-format| |Pull Request Sphinx Docs Check| |PyPI Distributions| |TestPyPI Distributions| |Tests Homebrew| |Tests Native| |CodeCov| |License|
 
 .. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
@@ -22,6 +22,8 @@ EzSnmp
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml
 .. |Tests Native| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml/badge.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml
+.. |CodeCov| image:: https://codecov.io/gh/carlkidcrypto/ezsnmp/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/carlkidcrypto/ezsnmp
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
     :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
 
@@ -53,6 +55,25 @@ Getting Started
 ---------------
 Please check out the `EzSnmp documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
+
+Code Coverage
+-------------
+
+EzSnmp uses `CodeCov <https://codecov.io/gh/carlkidcrypto/ezsnmp>`_ for tracking code coverage across both Python and C++ components. 
+
+Coverage reports are automatically generated and uploaded for:
+
+- **Python tests**: Coverage from pytest runs (both Docker and native environments)
+- **C++ tests**: Coverage from Google Test runs using lcov (both Docker and native environments)
+
+Coverage data is collected from multiple test workflows:
+
+- Docker-based Python tests across multiple distributions
+- Native Python tests on Ubuntu and macOS
+- Docker-based C++ tests
+- Native C++ tests on Ubuntu and macOS
+
+You can view the latest coverage reports and trends at the `CodeCov dashboard <https://codecov.io/gh/carlkidcrypto/ezsnmp>`_.
 
 Want to Contribute?
 -------------------

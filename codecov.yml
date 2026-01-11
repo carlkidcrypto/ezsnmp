@@ -1,0 +1,77 @@
+# CodeCov configuration for ezsnmp
+# Documentation: https://docs.codecov.com/docs/codecov-yaml
+
+# Coverage configuration
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
+
+# Ignore paths - exclude test files from coverage reports
+ignore:
+  - "python_tests/**"
+  - "cpp_tests/**"
+  - "integration_tests/**"
+  - "cml_tests/**"
+  - "tests/**"
+  - "test_*.py"
+  - "test_*.cpp"
+  - "**/test_*.py"
+  - "**/test_*.cpp"
+  - "**/*_test.py"
+  - "**/*_test.cpp"
+  - "conftest.py"
+  - "setup.py"
+  - "setup.cfg"
+
+# Flag management for different test environments
+flags:
+  python:
+    paths:
+      - ezsnmp/**/*.py
+    carryforward: true
+  
+  cpp:
+    paths:
+      - ezsnmp/**/*.cpp
+      - ezsnmp/**/*.h
+    carryforward: true
+  
+  docker:
+    carryforward: true
+  
+  native:
+    carryforward: true
+
+# Comment configuration for pull requests
+comment:
+  layout: "header, diff, flags, components, files, footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+# Component configuration to track Python and C++ separately
+component_management:
+  individual_components:
+    - component_id: python_code
+      name: "Python Code"
+      paths:
+        - ezsnmp/**/*.py
+    - component_id: cpp_code
+      name: "C++ Code"
+      paths:
+        - ezsnmp/**/*.cpp
+        - ezsnmp/**/*.h
