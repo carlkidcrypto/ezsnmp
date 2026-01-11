@@ -118,9 +118,18 @@ jobs:
           set -euo pipefail
           # Clean any potentially corrupted archives and rebuild if installation fails
           if ! sudo /opt/local/bin/port install net-snmp openssl3; then
-            echo "Installation failed, cleaning archives and retrying..."
-            sudo /opt/local/bin/port clean --all net-snmp openssl3 || true
+            echo "Installation failed, performing aggressive cleanup and retrying..."
+            # Uninstall any partially installed packages
+            sudo /opt/local/bin/port uninstall net-snmp openssl3 || true
+            # Clean all ports including dependencies
+            sudo /opt/local/bin/port clean --all all || true
+            # Remove cached archives
             sudo rm -rf /opt/local/var/macports/software/* || true
+            # Remove build directories
+            sudo rm -rf /opt/local/var/macports/build/* || true
+            # Reclaim disk space
+            sudo /opt/local/bin/port reclaim || true
+            # Retry installation
             sudo /opt/local/bin/port install net-snmp openssl3
           fi
           mkdir -p -m 0755 ~/.snmp

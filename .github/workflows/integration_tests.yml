@@ -87,7 +87,8 @@ jobs:
 
       - name: Install pip dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Integration tests don't need cibuildwheel, skip requirements.txt
+          echo "Integration tests don't require additional pip dependencies"
 
       - name: Build source
         run: |
