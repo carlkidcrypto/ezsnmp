@@ -1279,16 +1279,8 @@ TEST_F(SessionBaseTest, TestV3MultipleSessionsSameUserSequential) {
                         "authPriv", "", "testuser", "AES", "priv_pass");
 
    // Perform an operation with first session
-   // Note: This may fail if SNMP daemon is not running, but the test is about
-   // verifying that cache clearing doesn't cause crashes or exceptions
-   try {
-      auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
-      // If we get here, the operation succeeded
-      EXPECT_FALSE(result1.empty());
-   } catch (...) {
-      // If SNMP daemon is not running, that's okay for this test
-      // We're primarily testing that the cache clearing mechanism doesn't crash
-   }
+   auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
+   EXPECT_FALSE(result1.empty());
 
    // Create second session with same credentials (simulating different device with same username)
    SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
@@ -1297,28 +1289,16 @@ TEST_F(SessionBaseTest, TestV3MultipleSessionsSameUserSequential) {
    // Perform an operation with second session
    // Before fix: This could fail with usmStatsNotInTimeWindows
    // After fix: The cache is cleared before each operation, so it should work
-   try {
-      auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
-      EXPECT_FALSE(result2.empty());
-   } catch (...) {
-      // If SNMP daemon is not running, that's okay for this test
-   }
+   auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
+   EXPECT_FALSE(result2.empty());
 
    // Alternate between sessions multiple times to verify cache clearing works consistently
    for (int i = 0; i < 3; i++) {
-      try {
-         auto result1_alt = session1.get("1.3.6.1.2.1.1.1.0");
-         EXPECT_FALSE(result1_alt.empty());
-      } catch (...) {
-         // Ignore if SNMP daemon not available
-      }
+      auto result1_alt = session1.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result1_alt.empty());
 
-      try {
-         auto result2_alt = session2.get("1.3.6.1.2.1.1.1.0");
-         EXPECT_FALSE(result2_alt.empty());
-      } catch (...) {
-         // Ignore if SNMP daemon not available
-      }
+      auto result2_alt = session2.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result2_alt.empty());
    }
 }
 
@@ -1330,12 +1310,8 @@ TEST_F(SessionBaseTest, TestV3SessionRecreationSameUser) {
    {
       SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
                            "authPriv", "", "testuser", "AES", "priv_pass");
-      try {
-         auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
-         EXPECT_FALSE(result1.empty());
-      } catch (...) {
-         // Ignore if SNMP daemon not available
-      }
+      auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result1.empty());
       // session1 goes out of scope here
    }
 
@@ -1345,12 +1321,8 @@ TEST_F(SessionBaseTest, TestV3SessionRecreationSameUser) {
                            "authPriv", "", "testuser", "AES", "priv_pass");
 
       // This should work without usmStatsNotInTimeWindows error
-      try {
-         auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
-         EXPECT_FALSE(result2.empty());
-      } catch (...) {
-         // Ignore if SNMP daemon not available
-      }
+      auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result2.empty());
       // session2 goes out of scope here
    }
 
@@ -1358,12 +1330,8 @@ TEST_F(SessionBaseTest, TestV3SessionRecreationSameUser) {
    {
       SessionBase session3("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
                            "authPriv", "", "testuser", "AES", "priv_pass");
-      try {
-         auto result3 = session3.get("1.3.6.1.2.1.1.1.0");
-         EXPECT_FALSE(result3.empty());
-      } catch (...) {
-         // Ignore if SNMP daemon not available
-      }
+      auto result3 = session3.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result3.empty());
    }
 }
 
@@ -1374,46 +1342,26 @@ TEST_F(SessionBaseTest, TestV3CacheClearingBeforeAllOperations) {
                        "authPriv", "", "testuser", "AES", "priv_pass");
 
    // Test cache clearing before get()
-   try {
-      auto result = session.get("1.3.6.1.2.1.1.1.0");
-      EXPECT_FALSE(result.empty());
-   } catch (...) {
-      // Ignore if SNMP daemon not available
-   }
+   auto result = session.get("1.3.6.1.2.1.1.1.0");
+   EXPECT_FALSE(result.empty());
 
    // Test cache clearing before walk()
-   try {
-      auto result = session.walk("1.3.6.1.2.1.1");
-      // walk may return empty if OID doesn't exist, but shouldn't crash
-   } catch (...) {
-      // Ignore if SNMP daemon not available
-   }
+   auto walk_result = session.walk("1.3.6.1.2.1.1");
+   // walk may return empty or non-empty depending on OID, but shouldn't crash
 
    // Test cache clearing before bulk_walk()
-   try {
-      auto result = session.bulk_walk("1.3.6.1.2.1.1");
-      // bulk_walk may return empty if OID doesn't exist, but shouldn't crash
-   } catch (...) {
-      // Ignore if SNMP daemon not available
-   }
+   auto bulk_walk_result = session.bulk_walk("1.3.6.1.2.1.1");
+   // bulk_walk may return empty or non-empty depending on OID, but shouldn't crash
 
    // Test cache clearing before get_next()
-   try {
-      std::vector<std::string> oids = {"1.3.6.1.2.1.1.1.0"};
-      auto result = session.get_next(oids);
-      // get_next may return empty if no next OID, but shouldn't crash
-   } catch (...) {
-      // Ignore if SNMP daemon not available
-   }
+   std::vector<std::string> oids = {"1.3.6.1.2.1.1.1.0"};
+   auto get_next_result = session.get_next(oids);
+   // get_next may return empty or non-empty depending on OID, but shouldn't crash
 
    // Test cache clearing before bulk_get()
-   try {
-      std::vector<std::string> oids = {"1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"};
-      auto result = session.bulk_get(oids);
-      // bulk_get may return empty if OIDs don't exist, but shouldn't crash
-   } catch (...) {
-      // Ignore if SNMP daemon not available
-   }
+   std::vector<std::string> bulk_oids = {"1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"};
+   auto bulk_get_result = session.bulk_get(bulk_oids);
+   // bulk_get may return empty or non-empty depending on OIDs, but shouldn't crash
 
    // Note: We skip testing set() as it requires write access and could modify the system
 }
