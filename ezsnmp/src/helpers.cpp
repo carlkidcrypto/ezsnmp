@@ -359,7 +359,7 @@ void thread_safe_init_snmp(const char* app_name) {
 
 // Thread-safe wrapper for snmp_parse_oid()
 // Protects OID parsing which accesses global MIB data structures
-int thread_safe_snmp_parse_oid(const char* argv, oid* name, size_t* name_length) {
+oid* thread_safe_snmp_parse_oid(const char* argv, oid* name, size_t* name_length) {
    std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
    return snmp_parse_oid(argv, name, name_length);
 }

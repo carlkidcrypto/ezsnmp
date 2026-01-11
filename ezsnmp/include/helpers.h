@@ -168,9 +168,9 @@ void thread_safe_init_snmp(const char* app_name);
  * @param argv OID string to parse.
  * @param name Output buffer for parsed OID.
  * @param name_length Pointer to the length of the name buffer.
- * @return 1 on success, 0 on failure.
+ * @return Pointer to the OID on success, NULL on failure.
  */
-int thread_safe_snmp_parse_oid(const char* argv, oid* name, size_t* name_length);
+oid* thread_safe_snmp_parse_oid(const char* argv, oid* name, size_t* name_length);
 
 /**
  * @brief Thread-safe wrapper for snmp_parse_args().
