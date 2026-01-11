@@ -5,11 +5,26 @@
 #include <net-snmp/net-snmp-includes.h>
 
 #include <memory>
+#include <mutex>
 #include <regex>
 #include <string>
 #include <vector>
 
 #include "datatypes.h"
+
+/**
+ * @brief Returns the global mutex for Net-SNMP library operations.
+ *
+ * This mutex protects critical sections that access Net-SNMP global state,
+ * including:
+ * - Library initialization (init_snmp)
+ * - MIB parsing operations
+ * - SNMPv3 user cache operations
+ * - Global error state (snmp_errno)
+ *
+ * @return Reference to the global mutex.
+ */
+std::mutex& get_netsnmp_mutex();
 
 /**
  * @brief Converts SNMP variable bindings to a string representation.

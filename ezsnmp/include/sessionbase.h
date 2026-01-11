@@ -1,6 +1,7 @@
 #ifndef SESSIONBASE_H
 #define SESSIONBASE_H
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -15,6 +16,7 @@
  */
 class SessionBase {
   private:
+   mutable std::mutex m_mutex;      ///< Mutex for thread-safe access to session state.
    std::vector<std::string> m_args; ///< Vector to store SNMP command arguments.
    std::string m_hostname = "";     ///< Hostname or IP address of the SNMP agent [AGENT].
    std::string m_port_number = "";  ///< Port number for the SNMP agent.

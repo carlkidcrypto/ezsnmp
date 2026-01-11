@@ -4,12 +4,31 @@
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <mutex>
 #include <regex>
 #include <sstream>
 #include <string>
 #include <utility>
 
 #include "exceptionsbase.h"
+
+/**
+ * @brief Returns the global mutex for Net-SNMP library operations.
+ *
+ * This function returns a reference to a static mutex that protects
+ * Net-SNMP global state from concurrent access across threads.
+ * 
+ * Thread-safe operations protected by this mutex:
+ * - Library initialization (init_snmp)
+ * - MIB parsing operations
+ * - SNMPv3 user cache access
+ * - Global error code access (snmp_errno)
+ */
+std::mutex& get_netsnmp_mutex() {
+   static std::mutex netsnmp_global_mutex;
+   return netsnmp_global_mutex;
+}
+
 
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
@@ -96,7 +115,10 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
  */
 /* Slight modifications to raise GenericError instead of print to stderr */
 void snmp_perror_exception(char const *prog_string) {
-   int xerr = snmp_errno; // MTCRITICAL_RESOURCE
+   // Protect access to the global snmp_errno variable with a mutex
+   // This is a thread-critical resource marked as MTCRITICAL_RESOURCE
+   std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+   int xerr = snmp_errno;
    char const *str = snmp_api_errstring(xerr);
 
    // Construct the error message
@@ -240,6 +262,11 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
 // This is a helper to remove V3 users from the cache when V3 information changes
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
+   // Protect USM user list access with mutex for thread-safety
+   // The USM (User-based Security Model) user cache is a global shared resource
+   // This fixes the v3 multi-threading issue (#45)
+   std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+   
    // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
    // std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
    struct usmUser *actUser = usm_get_userList();
@@ -267,7 +294,7 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
       //    break;
       // }
 
-      // This works for now, but it may change when threads/muli-procs are involved.
+      // Thread-safe implementation with mutex protection
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
