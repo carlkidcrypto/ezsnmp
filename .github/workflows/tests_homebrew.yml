@@ -116,6 +116,9 @@ jobs:
         with:
           linux: |
                  export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
+                 export CFLAGS="-I/home/linuxbrew/.linuxbrew/include"
+                 export LDFLAGS="-L/home/linuxbrew/.linuxbrew/lib"
+                 export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
                  wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
