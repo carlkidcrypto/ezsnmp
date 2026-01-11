@@ -108,7 +108,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                             std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   thread_safe_init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -137,7 +137,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
+   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -226,7 +226,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    pdu = snmp_pdu_create(SNMP_MSG_SET);
    for (count = 0; count < current_name; count++) {
       name_length = MAX_OID_LEN;
-      if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
+      if (thread_safe_snmp_parse_oid(names[count], name, &name_length) == NULL) {
          snmp_perror_exception(names[count]);
          failures++;
       } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {

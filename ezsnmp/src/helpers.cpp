@@ -349,3 +349,25 @@ void clear_net_snmp_library_data() {
                           0);                                                          // Clear -O e
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
 }
+
+// Thread-safe wrapper for init_snmp()
+// Protects library initialization which modifies global state
+void thread_safe_init_snmp(const char* app_name) {
+   std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+   init_snmp(app_name);
+}
+
+// Thread-safe wrapper for snmp_parse_oid()
+// Protects OID parsing which accesses global MIB data structures
+int thread_safe_snmp_parse_oid(const char* argv, oid* name, size_t* name_length) {
+   std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+   return snmp_parse_oid(argv, name, name_length);
+}
+
+// Thread-safe wrapper for snmp_parse_args()
+// Protects argument parsing which may load and parse MIBs
+int thread_safe_snmp_parse_args(int argc, char** argv, netsnmp_session* session,
+                                 const char* localOpts, void (*proc)(int, char* const*, int)) {
+   std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+   return snmp_parse_args(argc, argv, session, localOpts, proc);
+}

@@ -176,7 +176,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
                                  std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   thread_safe_init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -207,7 +207,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
+   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -229,7 +229,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        * specified on the command line
        */
       rootlen = MAX_OID_LEN;
-      if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
+      if (thread_safe_snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
          snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }

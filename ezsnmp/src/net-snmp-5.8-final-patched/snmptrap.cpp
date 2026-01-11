@@ -115,7 +115,7 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
 int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   thread_safe_init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -150,7 +150,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    }
 
    /** parse args (also initializes session) */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
+   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -253,7 +253,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          pdu->enterprise_length = OID_LENGTH(objid_enterprise);
       } else {
          name_length = MAX_OID_LEN;
-         if (!snmp_parse_oid(argv[arg], name, &name_length)) {
+         if (!thread_safe_snmp_parse_oid(argv[arg], name, &name_length)) {
             snmp_perror_exception(argv[arg]);
             snmptrap_usage();
             goto out;
@@ -344,7 +344,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          goto out;
       }
       name_length = MAX_OID_LEN;
-      if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
+      if (!thread_safe_snmp_parse_oid(argv[arg - 3], name, &name_length)) {
          snmp_perror_exception(argv[arg - 3]);
          goto out;
       }

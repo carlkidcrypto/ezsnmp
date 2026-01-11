@@ -149,4 +149,42 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen);
  */
 void clear_net_snmp_library_data();
 
+/**
+ * @brief Thread-safe wrapper for init_snmp().
+ *
+ * Protects the Net-SNMP library initialization with a global mutex to prevent
+ * race conditions when multiple threads initialize the library concurrently.
+ *
+ * @param app_name The application name for SNMP initialization.
+ */
+void thread_safe_init_snmp(const char* app_name);
+
+/**
+ * @brief Thread-safe wrapper for snmp_parse_oid().
+ *
+ * Protects OID parsing which accesses global MIB state with a mutex to prevent
+ * corruption when multiple threads parse OIDs concurrently.
+ *
+ * @param argv OID string to parse.
+ * @param name Output buffer for parsed OID.
+ * @param name_length Pointer to the length of the name buffer.
+ * @return 1 on success, 0 on failure.
+ */
+int thread_safe_snmp_parse_oid(const char* argv, oid* name, size_t* name_length);
+
+/**
+ * @brief Thread-safe wrapper for snmp_parse_args().
+ *
+ * Protects argument parsing which may access global MIB state with a mutex.
+ *
+ * @param argc Argument count.
+ * @param argv Argument vector.
+ * @param session Session structure to populate.
+ * @param localOpts Local options string.
+ * @param proc Option processor callback.
+ * @return Parse result code.
+ */
+int thread_safe_snmp_parse_args(int argc, char** argv, netsnmp_session* session,
+                                 const char* localOpts, void (*proc)(int, char* const*, int));
+
 #endif // HELPERS_H
