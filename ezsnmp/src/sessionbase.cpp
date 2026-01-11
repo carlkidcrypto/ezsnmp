@@ -427,23 +427,102 @@ std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
    return snmpset(m_args, m_set_init_name);
 }
 
-std::vector<std::string> const& SessionBase::_get_args() const { return m_args; }
-std::string const& SessionBase::_get_hostname() const { return m_hostname; }
-std::string const& SessionBase::_get_port_number() const { return m_port_number; }
-std::string const& SessionBase::_get_version() const { return m_version; }
-std::string const& SessionBase::_get_community() const { return m_community; }
-std::string const& SessionBase::_get_auth_protocol() const { return m_auth_protocol; }
-std::string const& SessionBase::_get_auth_passphrase() const { return m_auth_passphrase; }
-std::string const& SessionBase::_get_security_engine_id() const { return m_security_engine_id; }
-std::string const& SessionBase::_get_context_engine_id() const { return m_context_engine_id; }
-std::string const& SessionBase::_get_security_level() const { return m_security_level; }
-std::string const& SessionBase::_get_context() const { return m_context; }
-std::string const& SessionBase::_get_security_username() const { return m_security_username; }
-std::string const& SessionBase::_get_privacy_protocol() const { return m_privacy_protocol; }
-std::string const& SessionBase::_get_privacy_passphrase() const { return m_privacy_passphrase; }
-std::string const& SessionBase::_get_boots_time() const { return m_boots_time; }
-std::string const& SessionBase::_get_retries() const { return m_retries; }
-std::string const& SessionBase::_get_timeout() const { return m_timeout; }
+std::vector<std::string> const& SessionBase::_get_args() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_args;
+}
+std::string const& SessionBase::_get_hostname() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_hostname;
+}
+std::string const& SessionBase::_get_port_number() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_port_number;
+}
+std::string const& SessionBase::_get_version() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_version;
+}
+std::string const& SessionBase::_get_community() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_community;
+}
+std::string const& SessionBase::_get_auth_protocol() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_auth_protocol;
+}
+std::string const& SessionBase::_get_auth_passphrase() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_auth_passphrase;
+}
+std::string const& SessionBase::_get_security_engine_id() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_security_engine_id;
+}
+std::string const& SessionBase::_get_context_engine_id() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_context_engine_id;
+}
+std::string const& SessionBase::_get_security_level() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_security_level;
+}
+std::string const& SessionBase::_get_context() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_context;
+}
+std::string const& SessionBase::_get_security_username() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_security_username;
+}
+std::string const& SessionBase::_get_privacy_protocol() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_privacy_protocol;
+}
+std::string const& SessionBase::_get_privacy_passphrase() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_privacy_passphrase;
+}
+std::string const& SessionBase::_get_boots_time() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_boots_time;
+}
+std::string const& SessionBase::_get_retries() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_retries;
+}
+std::string const& SessionBase::_get_timeout() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_timeout;
+}
+std::string const& SessionBase::_get_load_mibs() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_load_mibs;
+}
+std::string const& SessionBase::_get_mib_directories() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_mib_directories;
+}
+bool SessionBase::_get_print_enums_numerically() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_print_enums_numerically;
+}
+bool SessionBase::_get_print_full_oids() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_print_full_oids;
+}
+bool SessionBase::_get_print_oids_numerically() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_print_oids_numerically;
+}
+bool SessionBase::_get_print_timeticks_numerically() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_print_timeticks_numerically;
+}
+std::string const& SessionBase::_get_set_max_repeaters_to_num() const {
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_set_max_repeaters_to_num;
+}
 void SessionBase::_set_hostname(std::string const& hostname) {
    std::lock_guard<std::mutex> lock(m_mutex);
    m_hostname = hostname;

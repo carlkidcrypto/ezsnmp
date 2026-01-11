@@ -188,16 +188,41 @@ Known Limitations
 Testing
 -------
 
-The thread-safety implementation is tested with:
+The thread-safety implementation is thoroughly tested with:
 
 - Concurrent operations on the same session
 - Concurrent operations with multiple sessions
 - Mixed operation types (GET, WALK, BULKWALK, SET)
 - SNMPv3 authentication in multiple threads
-- High concurrency stress tests (50+ concurrent threads)
+- High concurrency stress tests
 - Multiprocessing tests
 
-See ``python_tests/test_threading.py`` for the complete test suite.
+**Integration Tests**
+
+The ``integration_tests/`` directory contains real-world threading and multiprocessing tests:
+
+.. code-block:: bash
+
+    # Run with 8 threads
+    cd integration_tests
+    python3 test_snmp_get.py 8 thread
+    python3 test_snmp_walk.py 8 thread
+    python3 test_snmp_bulkwalk.py 8 thread
+
+    # Run with 8 processes
+    python3 test_snmp_get.py 8 process
+    python3 test_snmp_walk.py 8 process
+    python3 test_snmp_bulkwalk.py 8 process
+
+These integration tests:
+
+- Test all SNMP versions (v1, v2c, v3) with various auth/priv protocols
+- Randomly select different session configurations
+- Perform real SNMP operations against a running snmpd server
+- Include retry logic for transient network errors
+- Validate thread safety under real-world conditions
+
+See ``integration_tests/README.rst`` for more details.
 
 Migration Guide
 ---------------

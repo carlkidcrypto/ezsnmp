@@ -337,6 +337,55 @@ class SessionBase {
     */
    std::string const& _get_timeout() const;
 
+   /**
+    * @brief Returns the list of MIBs to load.
+    *
+    * @return A constant reference to the list of MIBs.
+    */
+   std::string const& _get_load_mibs() const;
+
+   /**
+    * @brief Returns the directories to search for MIBs.
+    *
+    * @return A constant reference to the MIB directories.
+    */
+   std::string const& _get_mib_directories() const;
+
+   /**
+    * @brief Returns whether to print enums numerically.
+    *
+    * @return Whether enums are printed numerically.
+    */
+   bool _get_print_enums_numerically() const;
+
+   /**
+    * @brief Returns whether to print full OIDs.
+    *
+    * @return Whether full OIDs are printed.
+    */
+   bool _get_print_full_oids() const;
+
+   /**
+    * @brief Returns whether to print OIDs numerically.
+    *
+    * @return Whether OIDs are printed numerically.
+    */
+   bool _get_print_oids_numerically() const;
+
+   /**
+    * @brief Returns whether to print timeticks numerically.
+    *
+    * @return Whether timeticks are printed numerically.
+    */
+   bool _get_print_timeticks_numerically() const;
+
+   /**
+    * @brief Returns the max-repeaters value.
+    *
+    * @return A constant reference to the max-repeaters value.
+    */
+   std::string const& _get_set_max_repeaters_to_num() const;
+
    // Setters
 
    /**
