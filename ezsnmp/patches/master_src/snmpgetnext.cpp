@@ -89,9 +89,11 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
+std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
+                                std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   thread_safe_init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -166,7 +168,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
 
    for (count = 0; count < current_name; count++) {
       name_length = MAX_OID_LEN;
-      if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
+      if (thread_safe_snmp_parse_oid(names[count], name, &name_length) == NULL) {
          snmp_perror_exception(names[count]);
          failures++;
       } else {
@@ -234,5 +236,6 @@ out:
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
+
    return parse_results(return_vector);
 }

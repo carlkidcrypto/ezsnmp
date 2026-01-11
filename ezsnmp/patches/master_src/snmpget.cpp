@@ -91,9 +91,11 @@ void snmpget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpget(std::vector<std::string> const &args) {
+std::vector<Result> snmpget(std::vector<std::string> const &args,
+                            std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   thread_safe_init_snmp(init_app_name.c_str());
 
    int argc = 0;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -117,7 +119,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
+   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -167,7 +169,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args) {
    pdu = snmp_pdu_create(SNMP_MSG_GET);
    for (count = 0; count < current_name; count++) {
       name_length = MAX_OID_LEN;
-      if (!snmp_parse_oid(names[count], name, &name_length)) {
+      if (!thread_safe_snmp_parse_oid(names[count], name, &name_length)) {
          snmp_perror_exception(names[count]);
          failures++;
       } else {
@@ -238,5 +240,6 @@ retry:
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
+
    return parse_results(return_vector);
 } /* end main() */

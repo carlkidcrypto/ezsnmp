@@ -127,9 +127,11 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
+std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
+                                std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   thread_safe_init_snmp(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -148,7 +150,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    /*
     * get the common command line arguments
     */
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
+   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -171,7 +173,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    namep = name = (struct nameStruct *)calloc(names, sizeof(*name));
    while (arg < argc) {
       namep->name_len = MAX_OID_LEN;
-      if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
+      if (thread_safe_snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
          snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);
       }
@@ -254,5 +256,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
+   snmp_shutdown(init_app_name.c_str());
    return parse_results(return_vector);
 }
