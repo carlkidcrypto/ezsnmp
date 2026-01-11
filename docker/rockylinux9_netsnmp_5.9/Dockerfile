@@ -17,12 +17,27 @@ RUN dnf update -y && \
 COPY docker/rockylinux9_netsnmp_5.9/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN dnf install -y gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ gcc-toolset-13-binutils && \
     xargs dnf install -y < /tmp/dnf-requirements.txt && \
-    dnf debuginfo-install -y python3 net-snmp-libs && \
+    dnf debuginfo-install -y python3 && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
 # Set gcc-toolset-13 PATH persistently for non-login shells
 ENV PATH="/opt/rh/gcc-toolset-13/root/usr/bin:$PATH"
+
+# Build NetSNMP 5.9.4 from source to ensure complete headers are available
+# (RockyLinux 9's net-snmp-devel package 5.9.1 is missing netsnmp_cleanup_session declaration)
+# Disable all Perl support to minimize image size and avoid perl-ExtUtils-MakeMaker dependency
+RUN cd /tmp && \
+    wget -q https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.tar.gz && \
+    tar -xzf net-snmp-5.9.4.tar.gz && \
+    cd net-snmp-5.9.4 && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    cd /tmp && \
+    rm -rf net-snmp-5.9.4.tar.gz net-snmp-5.9.4 && \
+    net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
 COPY docker/cache/Python-3.10.16.tgz /tmp/
@@ -81,10 +96,10 @@ RUN cd /tmp && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
 
-# Manually create the pkg-config file for net-snmp
+# Create the pkg-config file for net-snmp (built from source above)
 RUN LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
-    VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
+    VERSION=$(net-snmp-config --version) && \
     mkdir -p /usr/lib64/pkgconfig && \
     echo 'prefix=/usr' > /usr/lib64/pkgconfig/netsnmp.pc && \
     echo 'exec_prefix=${prefix}' >> /usr/lib64/pkgconfig/netsnmp.pc && \

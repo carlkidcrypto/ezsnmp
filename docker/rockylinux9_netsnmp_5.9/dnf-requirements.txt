@@ -8,9 +8,6 @@ bzip2-devel
 libffi-devel
 zlib-devel
 sqlite-devel
-net-snmp
-net-snmp-utils
-net-snmp-devel
 gdb
 dnf-utils
 meson

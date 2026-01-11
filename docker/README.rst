@@ -28,6 +28,39 @@ The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** 
 
 ----------------------------------------------------------------------
 
+Test Report Generation
+======================
+
+A comprehensive test report generation script is available to analyze all test results across containers and Python versions.
+
+**Usage:**
+
+.. code-block:: bash
+
+    cd docker
+    ./generate_test_reports.sh
+
+**Features:**
+
+* Analyzes test results for all container/Python version combinations
+* Detects build failures, crashes, and test failures
+* Checks SNMP daemon logs for errors
+* Generates both console output and timestamped report file
+* Color-coded status indicators (green=pass, red=fail, yellow=warning)
+* Identifies specific issues and provides recommendations
+
+**Output:**
+
+The script generates a comprehensive report saved to ``test_summary_report_YYYYMMDD_HHMMSS.txt`` containing:
+
+* Summary by container and Python version
+* SNMP daemon version and error status
+* Detailed test results (passed/failed/skipped/errors)
+* Overall statistics
+* Known issues and recommendations
+
+----------------------------------------------------------------------
+
 Python Tarball Caching System
 ==============================
 
