@@ -118,9 +118,9 @@ RUN pip install --upgrade pip && \
     pip install meson ninja && \
     rm -f /tmp/requirements.txt /tmp/python_tests_requirements.txt
 
-# Install Google Test from source (not available in CentOS 8 EOL repos)
+# Copy and install Google Test from cache (not available in CentOS 8 EOL repos)
+COPY docker/cache/v1.15.2.tar.gz /tmp/
 RUN cd /tmp && \
-    wget https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz && \
     tar -xzf v1.15.2.tar.gz && \
     cd googletest-1.15.2 && \
     mkdir build && cd build && \

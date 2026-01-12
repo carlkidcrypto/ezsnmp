@@ -18,14 +18,24 @@ COPY docker/archlinux_netsnmp_5.7/pacman-requirements.txt /tmp/pacman-requiremen
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
-# Build Net-SNMP 5.7.3 from source instead of using archived incompatible packages
-# This avoids memory corruption issues from legacy OpenSSL 1.0 and old PCRE libraries
+# Copy OpenSSL 1.0.2u from cache (needed for Net-SNMP 5.7.3 OpenSSL APIs)
+COPY docker/cache/openssl-1.0.2u.tar.gz /tmp/
 RUN cd /tmp && \
-    wget -q https://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.3/net-snmp-5.7.3.tar.gz && \
+    tar -xzf openssl-1.0.2u.tar.gz && \
+    cd openssl-1.0.2u && \
+    ./Configure linux-x86_64 shared --prefix=/usr/local/openssl10 && \
+    make && make install_sw && \
+    echo "/usr/local/openssl10/lib" > /etc/ld.so.conf.d/openssl10.conf && ldconfig && \
+    cd /tmp && rm -rf openssl-1.0.2u.tar.gz openssl-1.0.2u
+
+# Copy and build Net-SNMP 5.7.3 from cache, link against OpenSSL 1.0.2u
+# Disable embedded perl, and avoid parallel build to prevent race issues
+COPY docker/cache/net-snmp-5.7.3.tar.gz /tmp/
+RUN cd /tmp && \
     tar -xzf net-snmp-5.7.3.tar.gz && \
     cd net-snmp-5.7.3 && \
-    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
-    make -j$(nproc) && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules --with-openssl=/usr/local/openssl10 && \
+    make && \
     make install && \
     ldconfig && \
     cd /tmp && \

@@ -18,11 +18,11 @@ COPY docker/archlinux_netsnmp_5.8/pacman-requirements.txt /tmp/pacman-requiremen
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
-# Build Net-SNMP 5.8 from source instead of using archived incompatible packages
+# Copy and build Net-SNMP 5.8 from cache instead of using archived incompatible packages
 # This ensures proper SNMPD daemon and avoids library compatibility issues
 # Note: Net-SNMP 5.8 has makefile race conditions, so parallel build is disabled
+COPY docker/cache/net-snmp-5.8.tar.gz /tmp/
 RUN cd /tmp && \
-    wget -q https://sourceforge.net/projects/net-snmp/files/net-snmp/5.8/net-snmp-5.8.tar.gz && \
     tar -xzf net-snmp-5.8.tar.gz && \
     cd net-snmp-5.8 && \
     ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
