@@ -22,10 +22,10 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up Python 3.11 env for sphinx...
+      - name: Set up Python 3.12 env for sphinx...
         uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Cache pip dependencies
         uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
@@ -48,7 +48,13 @@ jobs:
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            pip install -r requirements.txt;
+            # Try to install requirements, if it fails then purge cache and retry
+            if ! pip install -r requirements.txt; then
+              echo "Installation failed, purging pip cache and retrying..."
+              pip install --upgrade pip || true;
+              pip cache purge || true;
+              pip install -r requirements.txt;
+            fi
 
       - name: Run sphinx...
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
