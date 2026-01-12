@@ -24,6 +24,13 @@ dist/
 # Documentation builds
 docs/_build/
 doxygen_docs_build/
+# Generated documentation (should not be committed)
+docs/html/
+docs/html_v*/
+docs/_static/
+docs/doctrees/
+docs/index.html
+docs/.nojekyll
 
 # vim stuff
 .ropeproject

@@ -106,6 +106,11 @@ Build process:
 
 The HTML output will be in ``docs/html/``.
 
+.. note::
+   Generated documentation files in ``docs/`` are **not committed** to the repository.
+   They are automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
+   This keeps the repository clean and avoids merge conflicts with generated files.
+
 Documentation Workflow
 ======================
 
@@ -118,7 +123,11 @@ When contributing to EzSnmp:
 2. **Add docstrings** to Python code following existing style
 3. **Add Doxygen comments** to C++ code using standard Doxygen format
 4. **Update .rst files** if you change APIs or add major functionality
-5. **Rebuild documentation** locally to verify your changes
+5. **Rebuild documentation** locally to verify your changes (optional, as CI will build it)
+
+.. note::
+   You do **not** need to commit generated documentation files. The documentation is automatically
+   built and deployed by GitHub Actions when your changes are merged to the main branch.
 
 Adding New Documentation
 ------------------------
@@ -168,7 +177,7 @@ Link Guidelines
 Checking Documentation
 ======================
 
-Before committing documentation changes:
+Before committing documentation changes, you can optionally build locally to verify:
 
 .. code-block:: bash
 
@@ -194,6 +203,10 @@ View the generated HTML in ``docs/html/index.html`` to verify:
 * Code examples display properly
 * Images appear correctly
 * Table of contents is accurate
+
+.. note::
+   Local builds are optional. The GitHub Actions workflow will build the documentation
+   and report any errors when you open a pull request.
 
 Resources
 =========

@@ -4,7 +4,11 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-First run doxygen to generate the XML files needed by Breathe.
+.. note::
+   Documentation is automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
+   Generated documentation files are not committed to the repository to avoid bloat and merge conflicts.
+
+For local documentation builds, first run doxygen to generate the XML files needed by Breathe.
 
 .. code-block:: bash
 
@@ -21,6 +25,9 @@ Next you may generate the documentation as follows:
     cd sphinx_docs_build
     python3 -m pip install -r requirements.txt
     make html
+
+The generated documentation will be built into the ``docs/`` directory, but these files are ignored by git.
+The documentation is automatically deployed to https://carlkidcrypto.github.io/ezsnmp/ via GitHub Actions.
 
 Making The SWIG Interface Files
 -------------------------------
