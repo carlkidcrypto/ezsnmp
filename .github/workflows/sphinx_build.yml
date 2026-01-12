@@ -48,6 +48,8 @@ jobs:
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
+            pip install --upgrade pip;
+            pip cache purge || true;
             pip install -r requirements.txt;
 
       - name: Run sphinx...
