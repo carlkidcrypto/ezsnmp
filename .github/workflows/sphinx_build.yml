@@ -22,10 +22,10 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up Python 3.11 env for sphinx...
+      - name: Set up Python 3.12 env for sphinx...
         uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Cache pip dependencies
         uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
