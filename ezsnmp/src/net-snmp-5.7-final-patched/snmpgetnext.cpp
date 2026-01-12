@@ -71,170 +71,177 @@ SOFTWARE.
 #include "snmpgetnext.h"
 
 void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
-   switch (opt) {
-      case 'C':
-         while (*optarg) {
-            switch (*optarg++) {
-               case 'f':
-                  netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
-                                            NETSNMP_DS_APP_DONT_FIX_PDUS);
-                  break;
-               default:
-                  std::string err_msg =
-                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
-            }
-         }
-         break;
-   }
+  switch (opt) {
+  case 'C':
+    while (*optarg) {
+      switch (*optarg++) {
+      case 'f':
+        netsnmp_ds_toggle_boolean(NETSNMP_DS_APPLICATION_ID,
+                                  NETSNMP_DS_APP_DONT_FIX_PDUS);
+        break;
+      default:
+        std::string err_msg =
+            "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+        throw ParseErrorBase(err_msg);
+      }
+    }
+    break;
+  }
 }
 
 std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
                                 std::string const &init_app_name) {
-   /* completely disable logging otherwise it will default to stderr */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   thread_safe_init_snmp(init_app_name.c_str());
+  /* completely disable logging otherwise it will default to stderr */
+  netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+  thread_safe_init_snmp(init_app_name.c_str());
 
-   int argc;
-   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
-   std::vector<std::string> return_vector;
+  int argc;
+  std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
+  std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
-   netsnmp_pdu *pdu, *response;
-   netsnmp_variable_list *vars;
-   int arg;
-   int count;
-   int current_name = 0;
-   char *names[SNMP_MAX_CMDLINE_OIDS];
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   int status;
-   int failures = 0;
+  netsnmp_session session, *ss;
+  netsnmp_pdu *pdu, *response;
+  netsnmp_variable_list *vars;
+  int arg;
+  int count;
+  int current_name = 0;
+  char *names[SNMP_MAX_CMDLINE_OIDS];
+  oid name[MAX_OID_LEN];
+  size_t name_length;
+  int status;
+  int failures = 0;
 
-   SOCK_STARTUP;
+  SOCK_STARTUP;
 
-   /*
-    * get the common command line arguments
-    */
-   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+  /*
+   * get the common command line arguments
+   */
+  switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session,
+                                            "C:", &snmpgetnext_optProc)) {
+  case NETSNMP_PARSE_ARGS_ERROR:
+    throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+  case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+    throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+  case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+    throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 
-      default:
-         break;
-   }
+  default:
+    break;
+  }
 
-   if (arg >= argc) {
-      std::string err_msg = "Missing object name\n";
-      throw GenericErrorBase(err_msg);
-   }
-   if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
-      std::string err_msg =
-          "Too many object identifiers specified. "
-          "Only " +
-          std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
-      throw GenericErrorBase(err_msg);
-   }
+  if (arg >= argc) {
+    std::string err_msg = "Missing object name\n";
+    throw GenericErrorBase(err_msg);
+  }
+  if ((argc - arg) > SNMP_MAX_CMDLINE_OIDS) {
+    std::string err_msg = "Too many object identifiers specified. "
+                          "Only " +
+                          std::to_string(SNMP_MAX_CMDLINE_OIDS) +
+                          " allowed in one request.\n";
+    throw GenericErrorBase(err_msg);
+  }
 
-   /*
-    * get the object names
-    */
-   for (; arg < argc; arg++) {
-      names[current_name++] = argv[arg];
-   }
+  /*
+   * get the object names
+   */
+  for (; arg < argc; arg++) {
+    names[current_name++] = argv[arg];
+  }
 
-   /*
-    * open an SNMP session
-    */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
-      /*
-       * diagnose snmp_open errors with the input netsnmp_session pointer
-       */
-      snmp_sess_perror_exception("snmpgetnext", &session);
-      goto out;
-   }
+  /*
+   * open an SNMP session
+   */
+  ss = snmp_open(&session);
+  if (ss == NULL) {
+    /*
+     * diagnose snmp_open errors with the input netsnmp_session pointer
+     */
+    snmp_sess_perror_exception("snmpgetnext", &session);
+    goto out;
+  }
 
-   /*
-    * create PDU for GET request and add object names to request
-    */
-   pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+  /*
+   * create PDU for GET request and add object names to request
+   */
+  pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
 
-   for (count = 0; count < current_name; count++) {
-      name_length = MAX_OID_LEN;
-      if (thread_safe_snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror_exception(names[count]);
-         failures++;
-      } else {
-         snmp_add_null_var(pdu, name, name_length);
-      }
-   }
-   if (failures) {
-      goto close_session;
-   }
+  for (count = 0; count < current_name; count++) {
+    name_length = MAX_OID_LEN;
+    if (thread_safe_snmp_parse_oid(names[count], name, &name_length) == NULL) {
+      snmp_perror_exception(names[count]);
+      failures++;
+    } else {
+      snmp_add_null_var(pdu, name, name_length);
+    }
+  }
+  if (failures) {
+    goto close_session;
+  }
 
-   /*
-    * do the request
-    */
+  /*
+   * do the request
+   */
 retry:
-   status = snmp_synch_response(ss, pdu, &response);
-   if (status == STAT_SUCCESS) {
-      if (response->errstat == SNMP_ERR_NOERROR) {
-         for (vars = response->variables; vars; vars = vars->next_variable) {
-            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-            return_vector.push_back(str_value);
-         }
-      } else {
-         std::string err_msg =
-             "Error in packet.\nReason: " + std::string(snmp_errstring(response->errstat)) + "\n";
-
-         if (response->errindex != 0) {
-            err_msg = err_msg + "Failed object: ";
-            for (count = 1, vars = response->variables; vars && count != response->errindex;
-                 vars = vars->next_variable, count++)
-               /*EMPTY*/;
-            if (vars) {
-               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
-            }
-            err_msg = err_msg + "\n";
-         }
-
-         /*
-          * retry if the errored variable was successfully removed
-          */
-         if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS)) {
-            pdu = snmp_fix_pdu(response, SNMP_MSG_GETNEXT);
-            snmp_free_pdu(response);
-            response = NULL;
-            if (pdu != NULL) {
-               goto retry;
-            }
-         }
-         throw PacketErrorBase(err_msg);
+  status = snmp_synch_response(ss, pdu, &response);
+  if (status == STAT_SUCCESS) {
+    if (response->errstat == SNMP_ERR_NOERROR) {
+      for (vars = response->variables; vars; vars = vars->next_variable) {
+        auto const &str_value =
+            print_variable_to_string(vars->name, vars->name_length, vars);
+        return_vector.push_back(str_value);
       }
-   } else if (status == STAT_TIMEOUT) {
-      std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
-      throw TimeoutErrorBase(err_msg);
-   } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpgetnext", ss);
-   }
+    } else {
+      std::string err_msg = "Error in packet.\nReason: " +
+                            std::string(snmp_errstring(response->errstat)) +
+                            "\n";
 
-   if (response) {
-      snmp_free_pdu(response);
-   }
+      if (response->errindex != 0) {
+        err_msg = err_msg + "Failed object: ";
+        for (count = 1, vars = response->variables;
+             vars && count != response->errindex;
+             vars = vars->next_variable, count++)
+          /*EMPTY*/;
+        if (vars) {
+          err_msg =
+              err_msg + print_objid_to_string(vars->name, vars->name_length);
+        }
+        err_msg = err_msg + "\n";
+      }
+
+      /*
+       * retry if the errored variable was successfully removed
+       */
+      if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
+                                  NETSNMP_DS_APP_DONT_FIX_PDUS)) {
+        pdu = snmp_fix_pdu(response, SNMP_MSG_GETNEXT);
+        snmp_free_pdu(response);
+        response = NULL;
+        if (pdu != NULL) {
+          goto retry;
+        }
+      }
+      throw PacketErrorBase(err_msg);
+    }
+  } else if (status == STAT_TIMEOUT) {
+    std::string err_msg =
+        "Timeout: No Response from " + std::string(session.peername) + ".\n";
+    throw TimeoutErrorBase(err_msg);
+  } else { /* status == STAT_ERROR */
+    snmp_sess_perror_exception("snmpgetnext", ss);
+  }
+
+  if (response) {
+    snmp_free_pdu(response);
+  }
 
 close_session:
-   snmp_close(ss);
+  snmp_close(ss);
 
 out:
 
-   clear_net_snmp_library_data();
-   SOCK_CLEANUP;
-   return parse_results(return_vector);
+  clear_net_snmp_library_data();
+  SOCK_CLEANUP;
+  return parse_results(return_vector);
 }

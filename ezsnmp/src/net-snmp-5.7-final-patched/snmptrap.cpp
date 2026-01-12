@@ -77,306 +77,316 @@ int inform = 0;
 #include "snmptrap.h"
 
 void snmptrap_usage(void) {
-   fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
-   snmp_parse_args_usage(stderr);
-   fprintf(stderr, " TRAP-PARAMETERS\n\n");
-   snmp_parse_args_descriptions(stderr);
-   fprintf(stderr, "  -C APPOPTS\t\tSet various application specific behaviour:\n");
-   fprintf(stderr, "\t\t\t  i:  send an INFORM instead of a TRAP\n");
-   fprintf(stderr,
-           "\n  -v 1 TRAP-PARAMETERS:\n\t enterprise-oid agent "
-           "trap-type specific-type uptime [OID TYPE VALUE]...\n");
-   fprintf(stderr, "  or\n");
-   fprintf(stderr, "  -v 2 TRAP-PARAMETERS:\n\t uptime trapoid [OID TYPE VALUE] ...\n");
+  fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
+  snmp_parse_args_usage(stderr);
+  fprintf(stderr, " TRAP-PARAMETERS\n\n");
+  snmp_parse_args_descriptions(stderr);
+  fprintf(stderr,
+          "  -C APPOPTS\t\tSet various application specific behaviour:\n");
+  fprintf(stderr, "\t\t\t  i:  send an INFORM instead of a TRAP\n");
+  fprintf(stderr, "\n  -v 1 TRAP-PARAMETERS:\n\t enterprise-oid agent "
+                  "trap-type specific-type uptime [OID TYPE VALUE]...\n");
+  fprintf(stderr, "  or\n");
+  fprintf(stderr,
+          "  -v 2 TRAP-PARAMETERS:\n\t uptime trapoid [OID TYPE VALUE] ...\n");
 }
 
-int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *pdu, void *magic) {
-   return 1;
+int snmp_input(int operation, netsnmp_session *session, int reqid,
+               netsnmp_pdu *pdu, void *magic) {
+  return 1;
 }
 
 void snmptrap_optProc(int argc, char *const *argv, int opt) {
-   switch (opt) {
-      case 'C':
-         while (*optarg) {
-            switch (*optarg++) {
-               case 'i':
-                  inform = 1;
-                  break;
-               default:
-                  std::string err_msg =
-                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
-            }
-         }
-         break;
-   }
+  switch (opt) {
+  case 'C':
+    while (*optarg) {
+      switch (*optarg++) {
+      case 'i':
+        inform = 1;
+        break;
+      default:
+        std::string err_msg =
+            "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+        throw ParseErrorBase(err_msg);
+      }
+    }
+    break;
+  }
 }
 
-int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
-   /* completely disable logging otherwise it will default to stderr */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   thread_safe_init_snmp(init_app_name.c_str());
+int snmptrap(std::vector<std::string> const &args,
+             std::string const &init_app_name) {
+  /* completely disable logging otherwise it will default to stderr */
+  netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+  thread_safe_init_snmp(init_app_name.c_str());
 
-   int argc;
-   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
+  int argc;
+  std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
-   netsnmp_session session, *ss = NULL;
-   netsnmp_pdu *pdu, *response;
-   oid name[MAX_OID_LEN];
-   size_t name_length;
-   int arg;
-   int status;
-   char *trap = NULL;
-   char *prognam;
-   int exitval = 1;
+  netsnmp_session session, *ss = NULL;
+  netsnmp_pdu *pdu, *response;
+  oid name[MAX_OID_LEN];
+  size_t name_length;
+  int arg;
+  int status;
+  char *trap = NULL;
+  char *prognam;
+  int exitval = 1;
 #ifndef NETSNMP_DISABLE_SNMPV1
-   char *specific = NULL, *description = NULL, *agent = NULL;
-   in_addr_t *pdu_in_addr_t;
+  char *specific = NULL, *description = NULL, *agent = NULL;
+  in_addr_t *pdu_in_addr_t;
 #endif
 
-   SOCK_STARTUP;
+  SOCK_STARTUP;
 
-   prognam = strrchr(argv[0], '/');
-   if (prognam) {
-      prognam++;
-   } else {
-      prognam = argv[0];
-   }
+  prognam = strrchr(argv[0], '/');
+  if (prognam) {
+    prognam++;
+  } else {
+    prognam = argv[0];
+  }
 
-   putenv(strdup("POSIXLY_CORRECT=1"));
+  putenv(strdup("POSIXLY_CORRECT=1"));
 
-   if (strcmp(prognam, "snmpinform") == 0) {
-      inform = 1;
-   }
+  if (strcmp(prognam, "snmpinform") == 0) {
+    inform = 1;
+  }
 
-   /** parse args (also initializes session) */
-   switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+  /** parse args (also initializes session) */
+  switch (arg = thread_safe_snmp_parse_args(argc, argv.get(), &session,
+                                            "C:", snmptrap_optProc)) {
+  case NETSNMP_PARSE_ARGS_ERROR:
+    throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+  case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+    throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-      default:
-         break;
-   }
+  case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+    throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+  default:
+    break;
+  }
 
-   session.callback = snmp_input;
-   session.callback_magic = NULL;
+  session.callback = snmp_input;
+  session.callback_magic = NULL;
 
-   /*
-    * setup the local engineID which may be for either or both of the
-    * contextEngineID and/or the securityEngineID.
-    */
-   setup_engineID(NULL, NULL);
+  /*
+   * setup the local engineID which may be for either or both of the
+   * contextEngineID and/or the securityEngineID.
+   */
+  setup_engineID(NULL, NULL);
 
-   /* if we don't have a contextEngineID set via command line
-      arguments, use our internal engineID as the context. */
-   if (session.contextEngineIDLen == 0 || session.contextEngineID == NULL) {
-      session.contextEngineID = snmpv3_generate_engineID(&session.contextEngineIDLen);
-   }
+  /* if we don't have a contextEngineID set via command line
+     arguments, use our internal engineID as the context. */
+  if (session.contextEngineIDLen == 0 || session.contextEngineID == NULL) {
+    session.contextEngineID =
+        snmpv3_generate_engineID(&session.contextEngineIDLen);
+  }
 
-   if (session.version == SNMP_VERSION_3 && !inform) {
-      /*
-       * for traps, we use ourselves as the authoritative engine
-       * which is really stupid since command line apps don't have a
-       * notion of a persistent engine.  Hence, our boots and time
-       * values are probably always really wacked with respect to what
-       * a manager would like to see.
-       *
-       * The following should be enough to:
-       *
-       * 1) prevent the library from doing discovery for engineid & time.
-       * 2) use our engineid instead of the remote engineid for
-       * authoritative & privacy related operations.
-       * 3) The remote engine must be configured with users for our engineID.
-       *
-       * -- Wes
-       */
+  if (session.version == SNMP_VERSION_3 && !inform) {
+    /*
+     * for traps, we use ourselves as the authoritative engine
+     * which is really stupid since command line apps don't have a
+     * notion of a persistent engine.  Hence, our boots and time
+     * values are probably always really wacked with respect to what
+     * a manager would like to see.
+     *
+     * The following should be enough to:
+     *
+     * 1) prevent the library from doing discovery for engineid & time.
+     * 2) use our engineid instead of the remote engineid for
+     * authoritative & privacy related operations.
+     * 3) The remote engine must be configured with users for our engineID.
+     *
+     * -- Wes
+     */
 
-      /*
-       * pick our own engineID
-       */
-      if (session.securityEngineIDLen == 0 || session.securityEngineID == NULL) {
-         session.securityEngineID = snmpv3_generate_engineID(&session.securityEngineIDLen);
-      }
+    /*
+     * pick our own engineID
+     */
+    if (session.securityEngineIDLen == 0 || session.securityEngineID == NULL) {
+      session.securityEngineID =
+          snmpv3_generate_engineID(&session.securityEngineIDLen);
+    }
 
-      /*
-       * set boots and time, which will cause problems if this
-       * machine ever reboots and a remote trap receiver has cached our
-       * boots and time...  I'll cause a not-in-time-window report to
-       * be sent back to this machine.
-       */
-      if (session.engineBoots == 0) {
-         session.engineBoots = 1;
-      }
-      if (session.engineTime == 0) {        /* not really correct, */
-         session.engineTime = get_uptime(); /* but it'll work. Sort of. */
-      }
+    /*
+     * set boots and time, which will cause problems if this
+     * machine ever reboots and a remote trap receiver has cached our
+     * boots and time...  I'll cause a not-in-time-window report to
+     * be sent back to this machine.
+     */
+    if (session.engineBoots == 0) {
+      session.engineBoots = 1;
+    }
+    if (session.engineTime == 0) {       /* not really correct, */
+      session.engineTime = get_uptime(); /* but it'll work. Sort of. */
+    }
 
-      set_enginetime(session.securityEngineID, session.securityEngineIDLen, session.engineBoots,
-                     session.engineTime, TRUE);
-   }
+    set_enginetime(session.securityEngineID, session.securityEngineIDLen,
+                   session.engineBoots, session.engineTime, TRUE);
+  }
 
-   ss = snmp_add(&session, netsnmp_transport_open_client("snmptrap", session.peername), NULL, NULL);
-   if (ss == NULL) {
-      /*
-       * diagnose netsnmp_transport_open_client and snmp_add errors with
-       * the input netsnmp_session pointer
-       */
-      snmp_sess_perror_exception("snmptrap", &session);
+  ss = snmp_add(&session,
+                netsnmp_transport_open_client("snmptrap", session.peername),
+                NULL, NULL);
+  if (ss == NULL) {
+    /*
+     * diagnose netsnmp_transport_open_client and snmp_add errors with
+     * the input netsnmp_session pointer
+     */
+    snmp_sess_perror_exception("snmptrap", &session);
+    goto out;
+  }
+
+#ifndef NETSNMP_DISABLE_SNMPV1
+  if (session.version == SNMP_VERSION_1) {
+    if (inform) {
+      fprintf(stderr, "Cannot send INFORM as SNMPv1 PDU\n");
       goto out;
-   }
-
-#ifndef NETSNMP_DISABLE_SNMPV1
-   if (session.version == SNMP_VERSION_1) {
-      if (inform) {
-         fprintf(stderr, "Cannot send INFORM as SNMPv1 PDU\n");
-         goto out;
-      }
-      pdu = snmp_pdu_create(SNMP_MSG_TRAP);
-      if (!pdu) {
-         fprintf(stderr, "Failed to create trap PDU\n");
-         goto out;
-      }
-      pdu_in_addr_t = (in_addr_t *)pdu->agent_addr;
-      if (arg == argc) {
-         fprintf(stderr, "No enterprise oid\n");
-         snmptrap_usage();
-         goto out;
-      }
-      if (argv[arg][0] == 0) {
-         pdu->enterprise = (oid *)malloc(sizeof(objid_enterprise));
-         memcpy(pdu->enterprise, objid_enterprise, sizeof(objid_enterprise));
-         pdu->enterprise_length = OID_LENGTH(objid_enterprise);
-      } else {
-         name_length = MAX_OID_LEN;
-         if (!thread_safe_snmp_parse_oid(argv[arg], name, &name_length)) {
-            snmp_perror_exception(argv[arg]);
-            snmptrap_usage();
-            goto out;
-         }
-         pdu->enterprise = (oid *)malloc(name_length * sizeof(oid));
-         memcpy(pdu->enterprise, name, name_length * sizeof(oid));
-         pdu->enterprise_length = name_length;
-      }
-      if (++arg >= argc) {
-         fprintf(stderr, "Missing agent parameter\n");
-         snmptrap_usage();
-         goto out;
-      }
-      agent = argv[arg];
-      if (agent != NULL && strlen(agent) != 0) {
-         int ret = netsnmp_gethostbyname_v4(agent, pdu_in_addr_t);
-         if (ret < 0) {
-            fprintf(stderr, "unknown host: %s\n", agent);
-            goto out;
-         }
-      } else {
-         *pdu_in_addr_t = get_myaddr();
-      }
-      if (++arg == argc) {
-         fprintf(stderr, "Missing generic-trap parameter\n");
-         snmptrap_usage();
-         goto out;
-      }
-      trap = argv[arg];
-      pdu->trap_type = atoi(trap);
-      if (++arg == argc) {
-         fprintf(stderr, "Missing specific-trap parameter\n");
-         snmptrap_usage();
-         goto out;
-      }
-      specific = argv[arg];
-      pdu->specific_type = atoi(specific);
-      if (++arg == argc) {
-         fprintf(stderr, "Missing uptime parameter\n");
-         snmptrap_usage();
-         goto out;
-      }
-      description = argv[arg];
-      if (description == NULL || *description == 0) {
-         pdu->time = get_uptime();
-      } else {
-         pdu->time = atol(description);
-      }
-   } else
-#endif
-   {
-      long sysuptime;
-      char csysuptime[20];
-
-      pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
-      if (!pdu) {
-         fprintf(stderr, "Failed to create notification PDU\n");
-         goto out;
-      }
-      if (arg == argc) {
-         fprintf(stderr, "Missing up-time parameter\n");
-         snmptrap_usage();
-         goto out;
-      }
-      trap = argv[arg];
-      if (*trap == 0) {
-         sysuptime = get_uptime();
-         snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
-         trap = csysuptime;
-      }
-      snmp_add_var(pdu, objid_sysuptime, OID_LENGTH(objid_sysuptime), 't', trap);
-      if (++arg == argc) {
-         fprintf(stderr, "Missing trap-oid parameter\n");
-         snmptrap_usage();
-         goto out;
-      }
-      if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
-         snmp_perror_exception(argv[arg]);
-         goto out;
-      }
-   }
-   arg++;
-
-   while (arg < argc) {
-      arg += 3;
-      if (arg > argc) {
-         fprintf(stderr, "%s: Missing type/value for variable\n", argv[arg - 3]);
-         goto out;
-      }
+    }
+    pdu = snmp_pdu_create(SNMP_MSG_TRAP);
+    if (!pdu) {
+      fprintf(stderr, "Failed to create trap PDU\n");
+      goto out;
+    }
+    pdu_in_addr_t = (in_addr_t *)pdu->agent_addr;
+    if (arg == argc) {
+      fprintf(stderr, "No enterprise oid\n");
+      snmptrap_usage();
+      goto out;
+    }
+    if (argv[arg][0] == 0) {
+      pdu->enterprise = (oid *)malloc(sizeof(objid_enterprise));
+      memcpy(pdu->enterprise, objid_enterprise, sizeof(objid_enterprise));
+      pdu->enterprise_length = OID_LENGTH(objid_enterprise);
+    } else {
       name_length = MAX_OID_LEN;
-      if (!thread_safe_snmp_parse_oid(argv[arg - 3], name, &name_length)) {
-         snmp_perror_exception(argv[arg - 3]);
-         goto out;
+      if (!thread_safe_snmp_parse_oid(argv[arg], name, &name_length)) {
+        snmp_perror_exception(argv[arg]);
+        snmptrap_usage();
+        goto out;
       }
-      if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
-         snmp_perror_exception(argv[arg - 3]);
-         goto out;
+      pdu->enterprise = (oid *)malloc(name_length * sizeof(oid));
+      memcpy(pdu->enterprise, name, name_length * sizeof(oid));
+      pdu->enterprise_length = name_length;
+    }
+    if (++arg >= argc) {
+      fprintf(stderr, "Missing agent parameter\n");
+      snmptrap_usage();
+      goto out;
+    }
+    agent = argv[arg];
+    if (agent != NULL && strlen(agent) != 0) {
+      int ret = netsnmp_gethostbyname_v4(agent, pdu_in_addr_t);
+      if (ret < 0) {
+        fprintf(stderr, "unknown host: %s\n", agent);
+        goto out;
       }
-   }
+    } else {
+      *pdu_in_addr_t = get_myaddr();
+    }
+    if (++arg == argc) {
+      fprintf(stderr, "Missing generic-trap parameter\n");
+      snmptrap_usage();
+      goto out;
+    }
+    trap = argv[arg];
+    pdu->trap_type = atoi(trap);
+    if (++arg == argc) {
+      fprintf(stderr, "Missing specific-trap parameter\n");
+      snmptrap_usage();
+      goto out;
+    }
+    specific = argv[arg];
+    pdu->specific_type = atoi(specific);
+    if (++arg == argc) {
+      fprintf(stderr, "Missing uptime parameter\n");
+      snmptrap_usage();
+      goto out;
+    }
+    description = argv[arg];
+    if (description == NULL || *description == 0) {
+      pdu->time = get_uptime();
+    } else {
+      pdu->time = atol(description);
+    }
+  } else
+#endif
+  {
+    long sysuptime;
+    char csysuptime[20];
 
-   if (inform) {
-      status = snmp_synch_response(ss, pdu, &response);
-   } else {
-      status = snmp_send(ss, pdu) == 0;
-   }
-   if (status) {
-      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
-      if (!inform) {
-         snmp_free_pdu(pdu);
-      }
-      goto close_session;
-   } else if (inform) {
-      snmp_free_pdu(response);
-   }
+    pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
+    if (!pdu) {
+      fprintf(stderr, "Failed to create notification PDU\n");
+      goto out;
+    }
+    if (arg == argc) {
+      fprintf(stderr, "Missing up-time parameter\n");
+      snmptrap_usage();
+      goto out;
+    }
+    trap = argv[arg];
+    if (*trap == 0) {
+      sysuptime = get_uptime();
+      snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
+      trap = csysuptime;
+    }
+    snmp_add_var(pdu, objid_sysuptime, OID_LENGTH(objid_sysuptime), 't', trap);
+    if (++arg == argc) {
+      fprintf(stderr, "Missing trap-oid parameter\n");
+      snmptrap_usage();
+      goto out;
+    }
+    if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o',
+                     argv[arg]) != 0) {
+      snmp_perror_exception(argv[arg]);
+      goto out;
+    }
+  }
+  arg++;
 
-   exitval = 0;
+  while (arg < argc) {
+    arg += 3;
+    if (arg > argc) {
+      fprintf(stderr, "%s: Missing type/value for variable\n", argv[arg - 3]);
+      goto out;
+    }
+    name_length = MAX_OID_LEN;
+    if (!thread_safe_snmp_parse_oid(argv[arg - 3], name, &name_length)) {
+      snmp_perror_exception(argv[arg - 3]);
+      goto out;
+    }
+    if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) !=
+        0) {
+      snmp_perror_exception(argv[arg - 3]);
+      goto out;
+    }
+  }
+
+  if (inform) {
+    status = snmp_synch_response(ss, pdu, &response);
+  } else {
+    status = snmp_send(ss, pdu) == 0;
+  }
+  if (status) {
+    snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
+    if (!inform) {
+      snmp_free_pdu(pdu);
+    }
+    goto close_session;
+  } else if (inform) {
+    snmp_free_pdu(response);
+  }
+
+  exitval = 0;
 
 close_session:
-   snmp_close(ss);
+  snmp_close(ss);
 
 out:
 
-   clear_net_snmp_library_data();
-   SOCK_CLEANUP;
-   return exitval;
+  clear_net_snmp_library_data();
+  SOCK_CLEANUP;
+  return exitval;
 }
