@@ -197,41 +197,6 @@ generate_report() {
         echo -e "${GREEN}Fully Passing:${NC} ${total_passed}"
         echo -e "${RED}With Failures:${NC} ${total_failed}"
         
-        print_header "Issues Found"
-        
-        echo ""
-        echo "1. RockyLinux 9 + NetSNMP 5.9:"
-        echo "   - BUILD FAILURE: 'netsnmp_cleanup_session' not declared in headers"
-        echo "   - Location: ezsnmp/src/net-snmp-5.9-final-patched/snmpbulkget.cpp:256"
-        echo "   - Root cause: RockyLinux 9's net-snmp-devel package (5.9.1) missing header"
-        echo "   - Note: Function works in AlmaLinux 10 (5.9.4.pre2) and ArchLinux (5.9)"
-        echo "   - Fix: Build NetSNMP from source OR make function call conditional"
-        
-        echo ""
-        echo "2. ArchLinux + NetSNMP 5.7:"
-        echo "   - RUNTIME CRASH: Segmentation fault during test execution"
-        echo "   - Likely: Memory corruption issues with older NetSNMP version"
-        
-        echo ""
-        echo "3. ArchLinux + NetSNMP 5.8:"
-        echo "   - TEST FAILURES: 289 failed tests"
-        echo "   - Likely: API incompatibilities with NetSNMP 5.8"
-        
-        print_header "Recommendations"
-        
-        echo "1. Fix RockyLinux 9 netsnmp_cleanup_session issue:"
-        echo "   Option A: Build NetSNMP 5.9.4 from source in Dockerfile"
-        echo "   Option B: Add conditional compilation (#ifdef) for the function"
-        echo "   Option C: Wait for RockyLinux to fix their net-snmp-devel package"
-        
-        echo ""
-        echo "2. NetSNMP 5.7 compatibility:"
-        echo "   - Consider dropping support or investigating memory management issues"
-        
-        echo ""
-        echo "3. NetSNMP 5.8 compatibility:"
-        echo "   - Investigate API changes between 5.7 and 5.9"
-        
         print_header "Report Complete"
         
     } 2>&1 | tee "$output_file"
