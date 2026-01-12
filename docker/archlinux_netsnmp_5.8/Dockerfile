@@ -18,25 +18,22 @@ COPY docker/archlinux_netsnmp_5.8/pacman-requirements.txt /tmp/pacman-requiremen
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
-# Copy Archlinux packages from cache
-COPY docker/cache/net-snmp-5.8-1-x86_64.pkg.tar.xz /tmp/
-COPY docker/cache/pcre-8.43-1-x86_64.pkg.tar.xz /tmp/
-COPY docker/cache/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst /tmp/
-
-# Downgrade Net-SNMP to 5.8 and install legacy dependencies (PCRE 8, OpenSSL 1.1)
-# Keep current Perl (from earlier install) and fabricate compatibility paths for libperl expected by net-snmp 5.8.
-RUN pacman -U --noconfirm \
-    /tmp/net-snmp-5.8-1-x86_64.pkg.tar.xz \
-    /tmp/pcre-8.43-1-x86_64.pkg.tar.xz \
-    /tmp/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst && \
+# Build Net-SNMP 5.8 from source instead of using archived incompatible packages
+# This ensures proper SNMPD daemon and avoids library compatibility issues
+# Note: Net-SNMP 5.8 has makefile race conditions, so parallel build is disabled
+RUN cd /tmp && \
+    wget -q https://sourceforge.net/projects/net-snmp/files/net-snmp/5.8/net-snmp-5.8.tar.gz && \
+    tar -xzf net-snmp-5.8.tar.gz && \
+    cd net-snmp-5.8 && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    make && \
+    make install && \
     ldconfig && \
-    PERL_CORE_DIR=$(perl -MConfig -e 'print $Config{archlib} . "/CORE"') && \
-    mkdir -p /usr/lib/perl5/5.28/core_perl && \
-    ln -sf "$PERL_CORE_DIR" /usr/lib/perl5/5.28/core_perl/CORE && \
-    if [ -f "$PERL_CORE_DIR/libperl.so" ]; then ln -sf "$PERL_CORE_DIR/libperl.so" /usr/lib/libperl.so; fi && \
-    ldconfig && \
-    # Verify netsnmp headers exist and create pkg-config metadata
-    if [ ! -d /usr/include/net-snmp ]; then echo "WARNING: /usr/include/net-snmp not found"; fi && \
+    cd /tmp && \
+    rm -rf net-snmp-5.8.tar.gz net-snmp-5.8 && \
+    # Verify installation
+    if ! snmpd -v 2>&1 | grep -q "5.8"; then echo "ERROR: Net-SNMP 5.8 not installed correctly"; exit 1; fi && \
+    # Create pkg-config metadata
     mkdir -p /usr/lib/pkgconfig && \
     cat >/usr/lib/pkgconfig/netsnmp.pc <<'EOF'
 prefix=/usr
@@ -48,7 +45,6 @@ Name: Net-SNMP
 Description: SNMP client and agent libraries
 Version: 5.8
 Libs: -L${libdir} -lnetsnmp -lcrypto
-Libs.private: -lwrap
 Cflags: -I${includedir}
 EOF
 
@@ -82,9 +78,10 @@ RUN pacman -Scc --noconfirm && \
 COPY docker/cache/Python-3.10.16.tgz /tmp/
 COPY docker/cache/Python-3.11.11.tgz /tmp/
 COPY docker/cache/Python-3.12.8.tgz /tmp/
+COPY docker/cache/Python-3.13.7.tgz /tmp/
 COPY docker/cache/Python-3.14.2.tgz /tmp/
 
-# Build Python 3.10, 3.11, 3.12, 3.14 from source (system has 3.13 already)
+# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source
 # This is faster and more reliable than AUR packages
 # altinstall puts binaries as python3.X in /usr/local/bin
 # Split into separate layers for better Docker caching - only rebuilds on version changes
@@ -116,6 +113,15 @@ RUN cd /tmp && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
 
+# Build Python ${PYTHON_MIN_2_VERSION}
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_2_VERSION} && \
+    ./configure --enable-shared && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
+
 # Build Python ${PYTHON_MAX_VERSION} (latest stable release)
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MAX_VERSION}.tgz && \
@@ -130,9 +136,6 @@ RUN cd /tmp && \
 # Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
 ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
-
-# Ensure pkg-config finds netsnmp 5.8
-ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig"
 
 # Virtual Environment Setup using latest Python (3.14)
 ENV VENV_PATH=/opt/venv
