@@ -35,6 +35,13 @@ Introduction
 
 EzSnmp is a fork of `Easy SNMP <https://github.com/easysnmp/easysnmp>`__
 
+**Key Features:**
+
+- **Thread-Safe & Multiprocess-Safe**: Safely use ezsnmp in multi-threaded and multi-process applications
+- **Python 3.10+ Support**: Actively maintained to support current Python versions
+- **Net-SNMP Compatibility**: Works with Net-SNMP 5.6, 5.7, 5.8, and 5.9
+- **Full SNMP v1/v2c/v3 Support**: Including authentication and privacy protocols
+
 Why Another Library?
 --------------------
 
