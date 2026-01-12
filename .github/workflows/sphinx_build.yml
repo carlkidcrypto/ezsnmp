@@ -48,9 +48,13 @@ jobs:
         with:
           linux: |
             cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            pip install --upgrade pip;
-            pip cache purge || true;
-            pip install -r requirements.txt;
+            # Try to install requirements, if it fails then purge cache and retry
+            if ! pip install -r requirements.txt; then
+              echo "Installation failed, purging pip cache and retrying..."
+              pip install --upgrade pip || true;
+              pip cache purge || true;
+              pip install -r requirements.txt;
+            fi
 
       - name: Run sphinx...
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
