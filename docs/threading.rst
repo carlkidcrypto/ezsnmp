@@ -1,269 +1,372 @@
-Thread-Safety and Multiprocessing in EzSnmp
-============================================
+Concurrency in EzSnmp: Threading vs Multiprocessing
+====================================================
 
 Overview
 --------
 
-As of version X.X.X, EzSnmp is both **thread-safe** and **multiprocess-safe**, allowing you to use it in concurrent programming scenarios without worrying about race conditions or data corruption.
+EzSnmp supports concurrent SNMP operations through both threading and multiprocessing, but with important limitations due to the underlying Net-SNMP C library.
 
-Thread-Safety Guarantees
--------------------------
+**TL;DR**: Use **multiprocessing** for production workloads. Threading has significant limitations due to Net-SNMP's architecture.
 
-Session Object Thread-Safety
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Threading Limitations
+---------------------
 
-Each ``Session`` object can be safely used from multiple threads concurrently. The implementation uses per-instance mutexes to protect internal state:
+⚠️ **Important**: The underlying Net-SNMP C library has significant threading limitations due to extensive use of global state. While EzSnmp provides thread-safety protections, these cannot fully compensate for Net-SNMP's architecture.
+
+Known Threading Issues
+~~~~~~~~~~~~~~~~~~~~~~
+
+1. **MIB Parser Corruption**: The MIB parsing subsystem uses global state that can become corrupted under concurrent access
+2. **OID Cache Contention**: OID-to-name resolution uses a shared cache that may produce incorrect results
+3. **File Descriptor Conflicts**: Persistent storage and file operations may fail with "Bad file descriptor" errors
+4. **Memory Corruption**: Internal data structures may be corrupted, leading to segmentation faults
+
+These issues occur even with mutex protection because Net-SNMP's internal code paths access shared state without synchronization.
+
+Limited Thread Support
+~~~~~~~~~~~~~~~~~~~~~~~
+
+While basic threading works for simple scenarios, **production workloads should use multiprocessing** (see below).
+
+If you must use threading:
 
 .. code-block:: python
 
     from ezsnmp import Session
     import threading
 
-    # Safe: Multiple threads using the same session
-    session = Session(hostname='localhost', community='public', version=2)
-
+    # Works for simple cases, but may fail under load
     def worker():
-        result = session.get('sysDescr.0')
-        print(result.value)
-
-    threads = [threading.Thread(target=worker) for _ in range(10)]
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-
-Independent Sessions
-~~~~~~~~~~~~~~~~~~~~
-
-Each thread can also create and manage its own ``Session`` objects independently:
-
-.. code-block:: python
-
-    def worker():
-        # Each thread creates its own session
+        # Create a new session per thread
         session = Session(hostname='localhost', community='public', version=2)
-        result = session.walk('system')
-        session.close()
+        try:
+            result = session.get('sysDescr.0')
+            print(result.value)
+        finally:
+            session.close()
 
-    threads = [threading.Thread(target=worker) for _ in range(10)]
+    # Keep concurrency low (≤4 threads) to reduce failures
+    threads = [threading.Thread(target=worker) for _ in range(4)]
     for t in threads:
         t.start()
     for t in threads:
         t.join()
 
-SNMPv3 Thread-Safety
-~~~~~~~~~~~~~~~~~~~~
+**Limitations**:
+- Expect occasional failures under high concurrency (>4 threads)
+- MIB parsing errors may occur
+- SNMPv3 operations are more likely to fail
+- Not recommended for production use
 
-SNMPv3 authentication and user cache operations are protected by a global mutex, fixing issue #45:
+Multiprocessing (✅ Recommended)
+---------------------------------
 
-.. code-block:: python
+✅ **Recommended Approach**: EzSnmp is fully multiprocess-safe and this is the **recommended way** to achieve concurrency.
 
-    # Safe: Concurrent SNMPv3 operations
-    def v3_worker():
-        session = Session(
-            hostname='localhost',
-            version=3,
-            security_level='authPriv',
-            security_username='myuser',
-            auth_protocol='SHA',
-            auth_passphrase='mypassword',
-            privacy_protocol='AES',
-            privacy_passphrase='mypassword'
-        )
-        result = session.get('sysDescr.0')
-        session.close()
-
-    threads = [threading.Thread(target=v3_worker) for _ in range(10)]
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-
-Multiprocess-Safety
--------------------
-
-EzSnmp is fully multiprocess-safe. Each process has its own independent copy of the library state, so you can use ``multiprocessing`` without any special considerations:
+Each process has its own independent copy of the Net-SNMP library state, eliminating all race conditions and data corruption issues:
 
 .. code-block:: python
 
-    from multiprocessing import Process
+    from multiprocessing import Process, Queue
     from ezsnmp import Session
+    import os
 
-    def worker():
+    def worker(queue, worker_id):
+        """Worker process that performs SNMP operations."""
         session = Session(hostname='localhost', community='public', version=2)
-        result = session.get('sysDescr.0')
-        print(f"Process {os.getpid()}: {result.value}")
-        session.close()
+        try:
+            result = session.get('sysDescr.0')
+            queue.put({
+                'worker_id': worker_id,
+                'pid': os.getpid(),
+                'value': result.value
+            })
+        finally:
+            session.close()
 
-    processes = [Process(target=worker) for _ in range(5)]
+    # Create a queue for collecting results
+    results = Queue()
+    
+    # Spawn worker processes (can safely use many)
+    processes = [
+        Process(target=worker, args=(results, i))
+        for i in range(20)  # High concurrency works perfectly
+    ]
+    
     for p in processes:
         p.start()
+    
     for p in processes:
         p.join()
+    
+    # Collect results
+    while not results.empty():
+        result = results.get()
+        print(f"Worker {result['worker_id']} (PID {result['pid']}): {result['value']}")
+
+**Advantages**:
+- ✅ **Reliable**: No race conditions or corruption issues
+- ✅ **Scalable**: Can use many processes without failures
+- ✅ **Production-ready**: Tested and stable
+- ✅ **True Parallelism**: No GIL limitations
+
+**Use Cases**:
+- Polling multiple devices
+- Bulk SNMP operations
+- Production monitoring systems
+- Any scenario requiring high reliability
 
 Implementation Details
 ----------------------
 
-The thread-safety implementation uses several techniques:
+EzSnmp provides thread-safety protections, but these are limited by Net-SNMP's architecture:
 
-1. **Per-Instance Mutexes**: Each ``SessionBase`` object has its own mutex (``std::mutex``) protecting its internal state.
+1. **Per-Instance Mutexes**: Each ``SessionBase`` object has its own mutex protecting instance state
 
-2. **Global Net-SNMP Mutex**: A global mutex protects Net-SNMP library operations that access shared state:
-   
-   - Library initialization (``init_snmp``)
-   - MIB parsing operations
-   - SNMPv3 user cache operations (``usm_get_userList``, ``usm_remove_user``)
-   - Global error state (``snmp_errno``)
+2. **Global Net-SNMP Mutex**: A global mutex serializes critical Net-SNMP operations:
+   - Library initialization
+   - MIB parsing
+   - Session creation/destruction
+   - SNMPv3 user cache access
 
-3. **GIL Release**: The SWIG bindings are generated with the ``-threads`` flag, which automatically releases the Python GIL (Global Interpreter Lock) during C++ function calls, allowing true parallel execution.
+3. **GIL Release**: SWIG bindings release the Python GIL during C++ calls for parallelism
+
+**Limitations**: Despite these protections, Net-SNMP's internal code paths access shared global state without locks, causing the threading issues described above. Multiprocessing avoids these issues entirely by giving each process its own Net-SNMP state.
+
+Why Threading Is Limited
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Net-SNMP C library was not designed for multi-threaded use. Key issues:
+
+- **Global MIB Tree**: A single shared data structure for all OID/name mappings
+- **Parser State**: MIB file parsing uses global variables
+- **Caching**: OID resolution caches are not thread-safe
+- **File I/O**: Persistent storage and configuration file access uses process-global state
+
+These architectural decisions cannot be changed without rewriting major portions of Net-SNMP.
 
 Performance Considerations
 --------------------------
 
-Thread-safety does come with some overhead due to mutex locking, but the impact is minimal:
+**Multiprocessing**:
+- ✅ Excellent throughput for I/O-bound SNMP operations
+- ✅ Full CPU utilization across cores
+- ⚠️ Higher memory usage (each process has its own Python interpreter)
+- ⚠️ Process creation overhead (use process pools for many operations)
 
-- **Negligible overhead** for single-threaded use (mutex operations are very fast)
-- **Improved throughput** in multi-threaded scenarios due to GIL release during I/O operations
-- **No performance impact** on multiprocessing (processes don't share locks)
+**Threading** (Limited Support):
+- ⚠️ Unreliable under high concurrency
+- ⚠️ Mutex contention reduces parallelism
+- ✅ Lower memory footprint than multiprocessing
+- ❌ Not recommended for production
 
 Best Practices
 --------------
 
-1. **Use Context Managers**: Always use the context manager (``with`` statement) to ensure proper cleanup:
+1. **Use Multiprocessing for Production**: This is the reliable, tested approach:
 
    .. code-block:: python
 
-       with Session(hostname='localhost', community='public', version=2) as session:
-           result = session.get('sysDescr.0')
+       from multiprocessing import Pool
+       from ezsnmp import Session
 
-2. **Separate Sessions for Long-Running Operations**: For better concurrency, create separate sessions in each thread:
+       def snmp_get(hostname):
+           with Session(hostname=hostname, community='public', version=2) as session:
+               return session.get('sysDescr.0').value
+
+       # Process pool for efficient resource usage
+       with Pool(processes=10) as pool:
+           hosts = ['host1', 'host2', 'host3', ...]
+           results = pool.map(snmp_get, hosts)
+
+2. **Limit Thread Concurrency**: If you must use threading, keep concurrency low:
 
    .. code-block:: python
 
-       def worker():
-           with Session(hostname='localhost', community='public', version=2) as session:
-               # Perform operations
-               result = session.walk('interfaces')
-
-3. **Connection Pooling**: If you need to make many requests, consider implementing a connection pool pattern:
-
-   .. code-block:: python
-
-       from queue import Queue
        import threading
+       from concurrent.futures import ThreadPoolExecutor
 
-       # Create a pool of sessions
-       session_pool = Queue()
-       for _ in range(5):
-           session_pool.put(Session(hostname='localhost', community='public', version=2))
+       # Maximum 4 concurrent threads to reduce failures
+       with ThreadPoolExecutor(max_workers=4) as executor:
+           futures = [executor.submit(snmp_operation) for _ in range(10)]
+           results = [f.result() for f in futures]
 
-       def worker():
-           session = session_pool.get()
-           try:
-               result = session.get('sysDescr.0')
-               # Process result
-           finally:
-               session_pool.put(session)
-
-4. **Error Handling**: Always handle exceptions in threaded code:
+3. **Error Handling**: Always handle exceptions, especially in threaded code:
 
    .. code-block:: python
 
        import logging
 
-       def worker():
+       def safe_snmp_operation():
            try:
                with Session(hostname='localhost', community='public', version=2) as session:
-                   result = session.get('sysDescr.0')
+                   return session.get('sysDescr.0')
            except Exception as e:
                logging.error(f"SNMP operation failed: {e}")
+               return None
+
+4. **Connection Pooling for Sequential Operations**: If operations are sequential, reuse sessions:
+
+   .. code-block:: python
+
+       # Good: Reuse session for multiple operations
+       with Session(hostname='localhost', community='public', version=2) as session:
+           for oid in oids_to_query:
+               result = session.get(oid)
+               process(result)
 
 Known Limitations
 -----------------
 
-- **Net-SNMP Library**: The underlying Net-SNMP C library has some global state that cannot be eliminated. EzSnmp protects access to this state with mutexes.
+Threading Limitations (Due to Net-SNMP)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **MIB Parsing**: MIB parsing operations are serialized through the global mutex, which may be a bottleneck if you're constantly loading different MIBs from multiple threads.
+The Net-SNMP C library has fundamental threading limitations:
+
+1. **Global State**: Extensive use of global variables for MIB parsing, OID caching, and configuration
+2. **No Internal Locking**: Net-SNMP's internal code does not use mutexes or locks
+3. **Shared Data Structures**: The MIB tree and OID cache are shared across all sessions
+4. **File I/O Conflicts**: Configuration and persistent storage use process-global state
+
+**Result**: Even with EzSnmp's thread-safety protections, high-concurrency threading will experience:
+- MIB parser corruption
+- OID resolution failures
+- File descriptor errors
+- Occasional segmentation faults
+
+**Solution**: Use multiprocessing instead, which is fully reliable.
+
+MIB Parsing
+~~~~~~~~~~~~
+
+MIB loading and parsing operations are serialized through a global mutex. If your application frequently loads different MIBs from multiple threads, this may be a bottleneck. Consider:
+- Pre-loading all needed MIBs at startup
+- Using multiprocessing if MIB loading is performance-critical
 
 Testing
 -------
 
-The thread-safety implementation is thoroughly tested with:
+Multiprocessing is thoroughly tested and reliable:
 
-- Concurrent operations on the same session
-- Concurrent operations with multiple sessions
-- Mixed operation types (GET, WALK, BULKWALK, SET)
-- SNMPv3 authentication in multiple threads
-- High concurrency stress tests
-- Multiprocessing tests
+**Integration Tests** (✅ Passing)
 
-**Integration Tests**
-
-The ``integration_tests/`` directory contains real-world threading and multiprocessing tests:
+The ``integration_tests/`` directory validates multiprocessing works correctly:
 
 .. code-block:: bash
 
-    # Run with 8 threads
+    # These tests pass reliably
     cd integration_tests
-    python3 test_snmp_get.py 8 thread
-    python3 test_snmp_walk.py 8 thread
-    python3 test_snmp_bulkwalk.py 8 thread
+    python3 test_snmp_get.py 20 process      # 20 concurrent processes
+    python3 test_snmp_walk.py 20 process
+    python3 test_snmp_bulkwalk.py 20 process
 
-    # Run with 8 processes
-    python3 test_snmp_get.py 8 process
-    python3 test_snmp_walk.py 8 process
-    python3 test_snmp_bulkwalk.py 8 process
+**Threading Tests** (⚠️ Limited)
 
-These integration tests:
+Threading tests may fail under high concurrency due to Net-SNMP limitations:
 
-- Test all SNMP versions (v1, v2c, v3) with various auth/priv protocols
-- Randomly select different session configurations
-- Perform real SNMP operations against a running snmpd server
-- Include retry logic for transient network errors
-- Validate thread safety under real-world conditions
+.. code-block:: bash
+
+    # May fail with >4 threads
+    python3 test_snmp_get.py 4 thread      # Usually works
+    python3 test_snmp_get.py 10 thread     # May experience failures
+
+**Test Coverage**:
+- All SNMP versions (v1, v2c, v3) with various auth/priv protocols
+- Multiple session configurations
+- Real operations against running snmpd  
+- Retry logic for transient network errors
+- High-concurrency stress tests (multiprocessing only)
 
 See ``integration_tests/README.rst`` for more details.
 
 Migration Guide
 ---------------
 
-If you have existing code that uses EzSnmp, no changes are required! The thread-safety improvements are backward compatible:
+Choosing Concurrency Model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Before (Not Thread-Safe)**:
-
-.. code-block:: python
-
-    # This would have been unsafe in older versions
-    session = Session(hostname='localhost', community='public', version=2)
-
-    def worker():
-        result = session.get('sysDescr.0')
-
-    threads = [threading.Thread(target=worker) for _ in range(10)]
-    # ... this could crash or produce incorrect results
-
-**After (Thread-Safe)**:
+**For New Projects**: Use multiprocessing
 
 .. code-block:: python
 
-    # This is now safe!
-    session = Session(hostname='localhost', community='public', version=2)
+    from multiprocessing import Pool
+    from ezsnmp import Session
 
-    def worker():
-        result = session.get('sysDescr.0')
+    def query_device(hostname):
+        with Session(hostname=hostname, community='public', version=2) as session:
+            return session.walk('system')
 
-    threads = [threading.Thread(target=worker) for _ in range(10)]
-    # ... this works correctly
+    with Pool(processes=10) as pool:
+        results = pool.map(query_device, device_list)
+
+**For Existing Threading Code**: Migrate to multiprocessing or limit concurrency
+
+**Option 1 - Migrate to Multiprocessing** (Recommended):
+
+.. code-block:: python
+
+    # Before (Threading - Unreliable)
+    from threading import Thread
+    
+    threads = [Thread(target=worker) for _ in range(20)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    # After (Multiprocessing - Reliable)
+    from multiprocessing import Process
+    
+    processes = [Process(target=worker) for _ in range(20)]
+    for p in processes:
+        p.start()
+    for p in processes:
+        p.join()
+
+**Option 2 - Limit Thread Concurrency** (if threading is required):
+
+.. code-block:: python
+
+    # Limit to 4 concurrent threads to reduce failures
+    from concurrent.futures import ThreadPoolExecutor
+    
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        results = list(executor.map(worker, items))
+
+Backward Compatibility
+~~~~~~~~~~~~~~~~~~~~~~
+
+Existing single-threaded code continues to work without any changes. The concurrency improvements are additive and don't break existing functionality.
 
 Contributing
 ------------
 
-If you find any thread-safety issues or have suggestions for improvement, please open an issue on GitHub: https://github.com/carlkidcrypto/ezsnmp/issues
+If you find issues or have suggestions for improvement, please open an issue on GitHub: https://github.com/carlkidcrypto/ezsnmp/issues
+
+**Known Issues**:
+- Threading reliability under high concurrency (Net-SNMP limitation)
+- Multiprocessing is the recommended approach
 
 References
 ----------
 
-- Issue #45: v3 multi threading fails due to user cache
+- Issue #45: v3 multi threading fails due to user cache (partially addressed)
+- Net-SNMP Threading Limitations: https://sourceforge.net/p/net-snmp/mailman/message/31306683/
 - SWIG Thread Support: https://swig.org/Doc4.0/Python.html#Python_multithreaded
 - Python Threading: https://docs.python.org/3/library/threading.html
 - Python Multiprocessing: https://docs.python.org/3/library/multiprocessing.html
+
+Summary
+-------
+
+**Use Multiprocessing** ✅
+- Reliable and production-ready
+- High concurrency support  
+- No race conditions or corruption
+- Recommended for all production use cases
+
+**Limit Threading** ⚠️
+- Works for simple cases (≤4 threads)
+- May fail under high concurrency
+- Not recommended for production
+- Use only when multiprocessing is not feasible
