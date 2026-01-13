@@ -156,7 +156,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
   /*
    * Open an SNMP session.
    */
-  ss = snmp_open(&session);
+  ss = thread_safe_snmp_open(&session);
   if (ss == NULL) {
     /*
      * diagnose snmp_open errors with the input netsnmp_session pointer
@@ -179,7 +179,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
   }
   if (failures) {
     snmp_free_pdu(pdu);
-    snmp_close(ss);
+    thread_safe_snmp_close(ss);
     return parse_results(return_vector);
   }
 

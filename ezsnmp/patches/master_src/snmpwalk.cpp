@@ -266,7 +266,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
   /*
    * open an SNMP session
    */
-  ss = snmp_open(&session);
+  ss = thread_safe_snmp_open(&session);
   if (ss == NULL) {
     /*
      * diagnose snmp_open errors with the input netsnmp_session pointer
@@ -428,7 +428,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       }
     }
   }
-  snmp_close(ss);
+  thread_safe_snmp_close(ss);
 
   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                              NETSNMP_DS_WALK_PRINT_STATISTICS)) {

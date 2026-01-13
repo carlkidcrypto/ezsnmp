@@ -187,7 +187,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
   /*
    * open an SNMP session
    */
-  ss = snmp_open(&session);
+  ss = thread_safe_snmp_open(&session);
   if (ss == NULL) {
     /*
      * diagnose snmp_open errors with the input netsnmp_session pointer
@@ -258,7 +258,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
     snmp_free_pdu(response);
   }
 
-  snmp_close(ss);
+  thread_safe_snmp_close(ss);
 
   netsnmp_cleanup_session(&session);
   clear_net_snmp_library_data();

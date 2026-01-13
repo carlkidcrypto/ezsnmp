@@ -153,7 +153,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
   /*
    * open an SNMP session
    */
-  ss = snmp_open(&session);
+  ss = thread_safe_snmp_open(&session);
   if (ss == NULL) {
     /*
      * diagnose snmp_open errors with the input netsnmp_session pointer
@@ -237,7 +237,7 @@ retry:
   }
 
 close_session:
-  snmp_close(ss);
+  thread_safe_snmp_close(ss);
 
 out:
 

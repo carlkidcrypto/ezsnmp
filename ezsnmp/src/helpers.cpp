@@ -389,3 +389,18 @@ int thread_safe_snmp_parse_args(int argc, char **argv, netsnmp_session *session,
   std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
   return snmp_parse_args(argc, argv, session, localOpts, proc);
 }
+
+// Thread-safe wrapper for snmp_open()
+// Protects session opening which accesses global MIB data and creates file
+// descriptors
+netsnmp_session *thread_safe_snmp_open(netsnmp_session *session) {
+  std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+  return snmp_open(session);
+}
+
+// Thread-safe wrapper for snmp_close()
+// Protects session closing which may access global state
+int thread_safe_snmp_close(netsnmp_session *session) {
+  std::lock_guard<std::mutex> lock(get_netsnmp_mutex());
+  return snmp_close(session);
+}

@@ -193,4 +193,26 @@ int thread_safe_snmp_parse_args(int argc, char **argv, netsnmp_session *session,
                                 const char *localOpts,
                                 void (*proc)(int, char *const *, int));
 
+/**
+ * @brief Thread-safe wrapper for snmp_open().
+ *
+ * Protects session opening which accesses global MIB state, creates file
+ * descriptors, and may access persistent storage with a mutex.
+ *
+ * @param session Pointer to the session structure to open.
+ * @return Pointer to the opened session on success, NULL on failure.
+ */
+netsnmp_session *thread_safe_snmp_open(netsnmp_session *session);
+
+/**
+ * @brief Thread-safe wrapper for snmp_close().
+ *
+ * Protects session closing which may access global state and persistent
+ * storage with a mutex.
+ *
+ * @param session Pointer to the session to close.
+ * @return snmp_close() return value.
+ */
+int thread_safe_snmp_close(netsnmp_session *session);
+
 #endif // HELPERS_H
