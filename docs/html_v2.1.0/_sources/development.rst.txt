@@ -4,12 +4,7 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-.. note::
-   Documentation is automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
-   Current build outputs are not committed to the repository to avoid bloat and merge conflicts.
-   However, versioned documentation folders (``docs/html_v1.1.0/``, ``docs/html_v2.0.1/``, etc.) are kept in the repository for historical reference.
-
-For local documentation builds, first run doxygen to generate the XML files needed by Breathe.
+First run doxygen to generate the XML files needed by Breathe.
 
 .. code-block:: bash
 
@@ -26,9 +21,6 @@ Next you may generate the documentation as follows:
     cd sphinx_docs_build
     python3 -m pip install -r requirements.txt
     make html
-
-The generated documentation will be built into the ``docs/`` directory. The current build outputs (``docs/html/``, ``docs/_static/``, etc.) are ignored by git, but versioned documentation folders are kept for historical reference.
-The documentation is automatically deployed to https://carlkidcrypto.github.io/ezsnmp/ via GitHub Actions.
 
 Making The SWIG Interface Files
 -------------------------------
@@ -142,11 +134,11 @@ Running Tests with Docker
 
 EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
 
-* **almalinux10** - AlmaLinux 10 Kitten with Python 3.10-3.14, g++ 14.x
-* **archlinux** - Arch Linux with Python 3.10-3.14, g++ 14.x
+* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, g++ 14.x
+* **archlinux** - Arch Linux with Python 3.9-3.13, g++ 14.x
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14
-* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
 
 Docker Python Tests
 ~~~~~~~~~~~~~~~~~~~

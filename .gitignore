@@ -24,12 +24,11 @@ dist/
 # Documentation builds
 docs/_build/
 doxygen_docs_build/
-# Generated documentation (should not be committed)
+# Generated documentation (latest/current build - should not be committed)
+# Note: Versioned documentation folders (html_v*) are kept for historical reference
 docs/html/
-docs/html_v*/
 docs/_static/
 docs/doctrees/
-docs/index.html
 docs/.nojekyll
 
 # vim stuff
