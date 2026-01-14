@@ -97,9 +97,18 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: |
-            gh release upload ${{ github.event_name == 'release' && github.event.release.tag_name || steps.get_tag.outputs.tag }} \
-              /home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip \
-              --clobber
+            TAG_NAME="${{ github.event_name == 'release' && github.event.release.tag_name || steps.get_tag.outputs.tag }}"
+            ASSET_PATH="/home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip"
+            
+            # Check if the asset already exists in the release
+            if gh release view "$TAG_NAME" --json assets -q '.assets[].name' | grep -q "^sphinx_documentation.zip$"; then
+              echo "Asset sphinx_documentation.zip already exists in release $TAG_NAME"
+              echo "Deleting existing asset before re-uploading..."
+              gh release delete-asset "$TAG_NAME" sphinx_documentation.zip --yes || echo "Failed to delete asset, continuing..."
+            fi
+            
+            # Upload the asset
+            gh release upload "$TAG_NAME" "$ASSET_PATH"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
