@@ -116,11 +116,6 @@ def sess_v3_md5_des():
 
 
 @pytest.fixture
-def sess_v2():
-    return SESS_V2_ARGS
-
-
-@pytest.fixture
 def sess_v3_md5_aes():
     return SESS_V3_MD5_AES_ARGS
 
