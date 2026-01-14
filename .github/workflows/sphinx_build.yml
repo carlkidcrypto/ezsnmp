@@ -99,15 +99,19 @@ jobs:
           linux: |
             TAG_NAME="${{ github.event_name == 'release' && github.event.release.tag_name || steps.get_tag.outputs.tag }}"
             ASSET_PATH="/home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip"
+            ASSET_NAME="sphinx_documentation.zip"
             
             # Check if the asset already exists in the release
-            if gh release view "$TAG_NAME" --json assets -q '.assets[].name' | grep -q "^sphinx_documentation.zip$"; then
-              echo "Asset sphinx_documentation.zip already exists in release $TAG_NAME"
+            if gh release view "$TAG_NAME" --json assets -q '.assets[].name' | grep -q "^${ASSET_NAME}$"; then
+              echo "Asset ${ASSET_NAME} already exists in release ${TAG_NAME}"
               echo "Deleting existing asset before re-uploading..."
-              gh release delete-asset "$TAG_NAME" sphinx_documentation.zip --yes || echo "Failed to delete asset, continuing..."
+              if ! gh release delete-asset "$TAG_NAME" "$ASSET_NAME" --yes; then
+                echo "Warning: Failed to delete asset ${ASSET_NAME} from release ${TAG_NAME}, but continuing..."
+              fi
             fi
             
             # Upload the asset
+            echo "Uploading ${ASSET_NAME} to release ${TAG_NAME}..."
             gh release upload "$TAG_NAME" "$ASSET_PATH"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
