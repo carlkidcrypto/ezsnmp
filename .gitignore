@@ -29,7 +29,6 @@ doxygen_docs_build/
 docs/html/
 docs/_static/
 docs/doctrees/
-docs/.nojekyll
 
 # vim stuff
 .ropeproject
