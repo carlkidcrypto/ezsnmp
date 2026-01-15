@@ -42,6 +42,7 @@ SOFTWARE.
 #endif
 #include <ctype.h>
 #include <stdio.h>
+#include <mutex>
 #ifdef TIME_WITH_SYS_TIME
 #include <sys/time.h>
 #include <time.h>
@@ -70,6 +71,10 @@ SOFTWARE.
 #include "helpers.h"
 #include "snmpgetnext.h"
 
+// Static mutex to protect MIB parsing operations
+// Net-SNMP's MIB tree traversal is not thread-safe
+static std::mutex mib_parse_mutex_getnext;
+
 void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
       case 'C':
@@ -93,7 +98,12 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
                                 std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   
+   // Protect init_snmp call - it initializes MIB tree structures
+   {
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_getnext);
+      init_snmp(init_app_name.c_str());
+   }
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -166,13 +176,16 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
     */
    pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
 
-   for (count = 0; count < current_name; count++) {
-      name_length = MAX_OID_LEN;
-      if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror_exception(names[count]);
-         failures++;
-      } else {
-         snmp_add_null_var(pdu, name, name_length);
+   {
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_getnext);
+      for (count = 0; count < current_name; count++) {
+         name_length = MAX_OID_LEN;
+         if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
+            snmp_perror_exception(names[count]);
+            failures++;
+         } else {
+            snmp_add_null_var(pdu, name, name_length);
+         }
       }
    }
    if (failures) {

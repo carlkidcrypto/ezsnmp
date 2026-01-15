@@ -42,6 +42,7 @@ SOFTWARE.
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
+#include <mutex>
 #ifdef TIME_WITH_SYS_TIME
 #include <sys/time.h>
 #include <time.h>
@@ -161,7 +162,12 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
                              std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   
+   // Protect init_snmp call - it initializes MIB tree structures
+   {
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_walk);
+      init_snmp(init_app_name.c_str());
+   }
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -228,6 +234,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * specified on the command line
        */
       rootlen = MAX_OID_LEN;
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_walk);
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
          snmp_perror_exception(argv[arg]);
       }
@@ -246,6 +253,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
     */
    if (end_name) {
       end_len = MAX_OID_LEN;
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_walk);
       if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
          snmp_perror_exception(end_name);
       }

@@ -43,6 +43,7 @@ SOFTWARE.
 #endif
 #include <ctype.h>
 #include <stdio.h>
+#include <mutex>
 #ifdef TIME_WITH_SYS_TIME
 #include <sys/time.h>
 #include <time.h>
@@ -68,6 +69,10 @@ SOFTWARE.
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
+
+// Static mutex to protect MIB parsing operations
+// Net-SNMP's MIB tree traversal is not thread-safe
+static std::mutex mib_parse_mutex_set;
 
 void snmpset_usage(void) {
    fprintf(stderr, "USAGE: snmpset ");
@@ -108,7 +113,12 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                             std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   
+   // Protect init_snmp call - it initializes MIB tree structures
+   {
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_set);
+      init_snmp(init_app_name.c_str());
+   }
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -224,14 +234,17 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
     * create PDU for SET request and add object names and values to request
     */
    pdu = snmp_pdu_create(SNMP_MSG_SET);
-   for (count = 0; count < current_name; count++) {
-      name_length = MAX_OID_LEN;
-      if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror_exception(names[count]);
-         failures++;
-      } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
-         snmp_perror_exception(names[count]);
-         failures++;
+   {
+      std::lock_guard<std::mutex> lock(mib_parse_mutex_set);
+      for (count = 0; count < current_name; count++) {
+         name_length = MAX_OID_LEN;
+         if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
+            snmp_perror_exception(names[count]);
+            failures++;
+         } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
+            snmp_perror_exception(names[count]);
+            failures++;
+         }
       }
    }
 
