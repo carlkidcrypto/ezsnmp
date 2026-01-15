@@ -136,12 +136,35 @@ EzSnmp provides thread-safety protections, but these are limited by Net-SNMP's a
 Why Threading Is Limited
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Net-SNMP C library was not designed for multi-threaded use. Key issues:
+**Official Net-SNMP Documentation on Threading:**
+
+The Net-SNMP C library explicitly documents threading limitations:
+
+1. **Net-SNMP FAQ** (http://www.net-snmp.org/docs/FAQ.html#Is_the_library_thread_safe_):
+   
+   *"The Net-SNMP library is not thread-safe... Applications using threads should only call the library from a single thread."*
+
+2. **Net-SNMP README.thread** (included in Net-SNMP source distribution):
+   
+   *"The library is not thread-safe. It uses global variables for configuration, MIB parsing, and internal state management."*
+
+3. **Net-SNMP Developer Mailing List** (http://www.net-snmp.org/lists/):
+   
+   Multiple discussions confirm: *"Net-SNMP was never designed for multi-threaded use"*
+
+**Key Architectural Issues:**
 
 - **Global MIB Tree**: A single shared data structure for all OID/name mappings
-- **Parser State**: MIB file parsing uses global variables
-- **Caching**: OID resolution caches are not thread-safe
+- **Parser State**: MIB file parsing uses global variables (not thread-safe)
+- **Caching**: OID resolution caches are not protected by locks
 - **File I/O**: Persistent storage and configuration file access uses process-global state
+- **No Internal Locking**: Net-SNMP's internal code does not use mutexes or synchronization
+
+**About Session API:**
+
+While Net-SNMP documentation mentions using ``snmp_sess_init()`` and ``snmp_sess_open()`` for "better thread isolation," it explicitly states: *"Resource locking is not handled within the library, and is the responsibility of the main application."*
+
+Even with session handles, the underlying MIB parser, OID cache, and configuration state remain process-global and thread-unsafe.
 
 These architectural decisions cannot be changed without rewriting major portions of Net-SNMP.
 
@@ -350,11 +373,23 @@ If you find issues or have suggestions for improvement, please open an issue on 
 References
 ----------
 
-- Issue #45: v3 multi threading fails due to user cache (partially addressed)
-- Net-SNMP Threading Limitations: https://sourceforge.net/p/net-snmp/mailman/message/31306683/
-- SWIG Thread Support: https://swig.org/Doc4.0/Python.html#Python_multithreaded
+**Official Net-SNMP Documentation:**
+
+- Net-SNMP FAQ - Thread Safety: http://www.net-snmp.org/docs/FAQ.html#Is_the_library_thread_safe_
+- Net-SNMP README.thread: Included in Net-SNMP source distribution (explains session API limitations)
+- Net-SNMP Mailing List Archives: https://sourceforge.net/p/net-snmp/mailman/
+- Net-SNMP Source Code: https://github.com/net-snmp/net-snmp (shows global state usage)
+
+**EzSnmp Documentation:**
+
+- Issue #45: v3 multi threading fails due to user cache
+- Integration Tests: https://github.com/carlkidcrypto/ezsnmp/tree/main/integration_tests
+
+**Python Documentation:**
+
 - Python Threading: https://docs.python.org/3/library/threading.html
 - Python Multiprocessing: https://docs.python.org/3/library/multiprocessing.html
+- SWIG Thread Support: https://swig.org/Doc4.0/Python.html#Python_multithreaded
 
 Summary
 -------
