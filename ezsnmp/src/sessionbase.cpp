@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstring>
 #include <map>
+#include <mutex>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -19,6 +20,10 @@
 #include "snmpgetnext.h"
 #include "snmpset.h"
 #include "snmpwalk.h"
+
+// Static mutex to protect snmp_shutdown operations
+// Net-SNMP's shutdown and MIB cleanup is not thread-safe
+static std::mutex snmp_shutdown_mutex;
 
 // Take all the SessionBase class inputs and map them to:
 // OPTIONS:
@@ -142,6 +147,10 @@ SessionBase::SessionBase(std::string const& hostname,
 SessionBase::~SessionBase() {}
 
 void SessionBase::_close() {
+   // Protect all snmp_shutdown calls with mutex
+   // snmp_shutdown() calls shutdown_mib() and unload_all_mibs() which are not thread-safe
+   std::lock_guard<std::mutex> lock(snmp_shutdown_mutex);
+   
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
    snmp_shutdown(m_walk_init_name.c_str());
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
