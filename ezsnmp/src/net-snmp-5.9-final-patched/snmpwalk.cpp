@@ -82,6 +82,10 @@ char *end_name = NULL;
 #include "helpers.h"
 #include "snmpwalk.h"
 
+// Static mutex to protect MIB parsing operations
+// Net-SNMP's MIB tree traversal is not thread-safe
+static std::mutex mib_parse_mutex_walk;
+
 std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
                                                      oid *theoid,
                                                      size_t theoid_len) {
