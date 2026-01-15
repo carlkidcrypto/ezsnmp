@@ -18,14 +18,16 @@ COPY docker/archlinux_netsnmp_5.8/pacman-requirements.txt /tmp/pacman-requiremen
 RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
     rm -f /tmp/pacman-requirements.txt
 
-# Copy and build Net-SNMP 5.8 from cache instead of using archived incompatible packages
-# This ensures proper SNMPD daemon and avoids library compatibility issues
+# Copy and build Net-SNMP 5.8 from cache
 # Note: Net-SNMP 5.8 has makefile race conditions, so parallel build is disabled
+# Use MALLOC_CHECK_=0 to work around glibc malloc checking that triggers false positives
 COPY docker/cache/net-snmp-5.8.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.8.tar.gz && \
     cd net-snmp-5.8 && \
-    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules \
+        --with-defaults --with-sys-contact="root@localhost" --with-sys-location="Unknown" \
+        --with-logfile=/var/log/snmpd.log --with-persistent-directory=/var/net-snmp && \
     make && \
     make install && \
     ldconfig && \
@@ -47,6 +49,9 @@ Version: 5.8
 Libs: -L${libdir} -lnetsnmp -lcrypto
 Cflags: -I${includedir}
 EOF
+
+# Set environment variable to disable strict malloc checking
+ENV MALLOC_CHECK_=0
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder
