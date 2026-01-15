@@ -69,10 +69,7 @@ SOFTWARE.
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
-
-// Static mutex to protect MIB parsing operations
-// Net-SNMP's MIB tree traversal is not thread-safe
-static std::mutex mib_parse_mutex_set;
+#include "thread_safety.h"
 
 void snmpset_usage(void) {
    fprintf(stderr, "USAGE: snmpset ");
@@ -116,7 +113,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    
    // Protect init_snmp call - it initializes MIB tree structures
    {
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_set);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       init_snmp(init_app_name.c_str());
    }
 
@@ -235,7 +232,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
     */
    pdu = snmp_pdu_create(SNMP_MSG_SET);
    {
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_set);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       for (count = 0; count < current_name; count++) {
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {

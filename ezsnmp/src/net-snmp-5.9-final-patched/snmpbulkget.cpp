@@ -79,10 +79,7 @@ int names;
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkget.h"
-
-// Static mutex to protect MIB parsing operations
-// Net-SNMP's MIB tree traversal is not thread-safe
-static std::mutex mib_parse_mutex_bulkget;
+#include "thread_safety.h"
 
 void snmpbulkget_usage(void) {
    fprintf(stderr, "USAGE: snmpbulkget ");
@@ -139,7 +136,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    
    // Protect init_snmp call - it initializes MIB tree structures
    {
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_bulkget);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       init_snmp(init_app_name.c_str());
    }
 
@@ -182,7 +179,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    namep = name = (struct nameStruct *)calloc(names, sizeof(*name));
    {
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_bulkget);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       while (arg < argc) {
          namep->name_len = MAX_OID_LEN;
          if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {

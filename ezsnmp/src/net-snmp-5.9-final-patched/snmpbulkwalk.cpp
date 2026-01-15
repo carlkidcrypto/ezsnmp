@@ -78,10 +78,7 @@ int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkwalk.h"
-
-// Static mutex to protect MIB parsing operations
-// Net-SNMP's MIB tree traversal is not thread-safe
-static std::mutex mib_parse_mutex_bulkwalk;
+#include "thread_safety.h"
 
 void snmpbulkwalk_usage(void) {
    fprintf(stderr, "USAGE: snmpbulkwalk ");
@@ -184,7 +181,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    
    // Protect init_snmp call - it initializes MIB tree structures
    {
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_bulkwalk);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       init_snmp(init_app_name.c_str());
    }
 
@@ -239,7 +236,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        * specified on the command line
        */
       rootlen = MAX_OID_LEN;
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_bulkwalk);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
          snmp_perror_exception(argv[arg]);
          return parse_results(return_vector);

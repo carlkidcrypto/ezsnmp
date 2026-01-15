@@ -81,10 +81,7 @@ char *end_name = NULL;
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
-
-// Static mutex to protect MIB parsing operations
-// Net-SNMP's MIB tree traversal is not thread-safe
-static std::mutex mib_parse_mutex_walk;
+#include "thread_safety.h"
 
 std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
                                                      oid *theoid,
@@ -169,7 +166,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    
    // Protect init_snmp call - it initializes MIB tree structures
    {
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_walk);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       init_snmp(init_app_name.c_str());
    }
 
@@ -238,7 +235,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * specified on the command line
        */
       rootlen = MAX_OID_LEN;
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_walk);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
          snmp_perror_exception(argv[arg]);
       }
@@ -257,7 +254,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
     */
    if (end_name) {
       end_len = MAX_OID_LEN;
-      std::lock_guard<std::mutex> lock(mib_parse_mutex_walk);
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
          snmp_perror_exception(end_name);
       }
