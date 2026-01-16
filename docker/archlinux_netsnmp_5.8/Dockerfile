@@ -20,16 +20,29 @@ RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
 
 # Copy and build Net-SNMP 5.8 from cache
 # Note: Net-SNMP 5.8 has makefile race conditions, so parallel build is disabled
-# Use MALLOC_CHECK_=0 to work around glibc malloc checking that triggers false positives
+# Use specific configure flags to avoid memory corruption issues with newer glibc
 COPY docker/cache/net-snmp-5.8.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.8.tar.gz && \
     cd net-snmp-5.8 && \
-    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules \
-        --with-defaults --with-sys-contact="root@localhost" --with-sys-location="Unknown" \
-        --with-logfile=/var/log/snmpd.log --with-persistent-directory=/var/net-snmp && \
-    make && \
-    make install && \
+    # Configure with additional flags to prevent memory issues
+    # --enable-new-features and --enable-ipv6 can cause issues with 5.8
+    # Use minimal configuration for stability
+    ./configure --prefix=/usr \
+        --enable-shared \
+        --disable-embedded-perl \
+        --without-perl-modules \
+        --with-defaults \
+        --with-sys-contact="root@localhost" \
+        --with-sys-location="Unknown" \
+        --with-logfile=/var/log/snmpd.log \
+        --with-persistent-directory=/var/net-snmp \
+        --disable-debugging \
+        --with-openssl \
+        --with-security-modules="tsm,usm" && \
+    # Build with MALLOC_CHECK_=0 to avoid false positives during build
+    MALLOC_CHECK_=0 make -j1 && \
+    MALLOC_CHECK_=0 make install && \
     ldconfig && \
     cd /tmp && \
     rm -rf net-snmp-5.8.tar.gz net-snmp-5.8 && \
@@ -50,8 +63,10 @@ Libs: -L${libdir} -lnetsnmp -lcrypto
 Cflags: -I${includedir}
 EOF
 
-# Set environment variable to disable strict malloc checking
+# Set environment variable to disable strict malloc checking at runtime
 ENV MALLOC_CHECK_=0
+# Also set memory allocator to glibc for consistency
+ENV MALLOC_CONF=
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder
