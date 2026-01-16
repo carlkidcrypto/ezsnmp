@@ -254,57 +254,56 @@ def main():
         "parent_fd_after_no_close": metrics_collections.get("parent_fd_after_no_close", []),
         "parent_fd_after_with_close": metrics_collections.get("parent_fd_after_with_close", []),
     }
-    
-        # Aggregated summary (exclude FD test file)
-        agg_entries = [e for e in entries if e["file"] != "test_file_descriptors.log"]
-        if agg_entries:
-            # Aggregate counters
-            agg_counters = {k: 0 for k in COUNTER_KEYS}
-            for e in agg_entries:
-                for k in COUNTER_KEYS:
-                    agg_counters[k] += int(e.get(k, 0) or 0)
+    # Aggregated summary (exclude FD test file)
+    agg_entries = [e for e in entries if e["file"] != "test_file_descriptors.log"]
+    if agg_entries:
+        # Aggregate counters
+        agg_counters = {k: 0 for k in COUNTER_KEYS}
+        for e in agg_entries:
+            for k in COUNTER_KEYS:
+                agg_counters[k] += int(e.get(k, 0) or 0)
 
-            # Aggregate metric stats
-            agg_metrics = {
-                "total_time_no_close": [],
-                "total_time_with_close": [],
-                "avg_time_no_close": [],
-                "avg_time_with_close": [],
-                "subprocess_fd_after": [],
-                "parent_fd_after_no_close": [],
-                "parent_fd_after_with_close": [],
-            }
-            for e in agg_entries:
-                for m in list(agg_metrics.keys()):
-                    v = e.get(m)
-                    if v is not None:
-                        agg_metrics[m].append(float(v))
+        # Aggregate metric stats
+        agg_metrics = {
+            "total_time_no_close": [],
+            "total_time_with_close": [],
+            "avg_time_no_close": [],
+            "avg_time_with_close": [],
+            "subprocess_fd_after": [],
+            "parent_fd_after_no_close": [],
+            "parent_fd_after_with_close": [],
+        }
+        for e in agg_entries:
+            for m in list(agg_metrics.keys()):
+                v = e.get(m)
+                if v is not None:
+                    agg_metrics[m].append(float(v))
 
-            print("\nAggregated summary (excluding test_file_descriptors.log):")
-            # Print aggregated counters table
-            agg_rows = [[k, agg_counters[k]] for k in agg_counters]
-            print(format_table(agg_rows, ["counter", "total"]))
+        print("\nAggregated summary (excluding test_file_descriptors.log):")
+        # Print aggregated counters table
+        agg_rows = [[k, agg_counters[k]] for k in agg_counters]
+        print(format_table(agg_rows, ["counter", "total"]))
 
-            # Print aggregated metric stats
-            stats_rows = []
-            for name, vals in agg_metrics.items():
-                s = compute_stats(vals) if vals else None
-                if s:
-                    stats_rows.append([
-                        name,
-                        s["n"],
-                        f"{s['mean']:.6f}",
-                        f"{s['sd']:.6f}",
-                        f"{s['min']}",
-                        f"{s['max']}",
-                    ])
-                else:
-                    stats_rows.append([name, 0, "0.000000", "0.000000", 0, 0])
+        # Print aggregated metric stats
+        stats_rows = []
+        for name, vals in agg_metrics.items():
+            s = compute_stats(vals) if vals else None
+            if s:
+                stats_rows.append([
+                    name,
+                    s["n"],
+                    f"{s['mean']:.6f}",
+                    f"{s['sd']:.6f}",
+                    f"{s['min']}",
+                    f"{s['max']}",
+                ])
+            else:
+                stats_rows.append([name, 0, "0.000000", "0.000000", 0, 0])
 
-            print("\nAggregated metrics statistics:")
-            print(format_table(stats_rows, ["metric", "n", "mean", "sd", "min", "max"]))
-        else:
-            print("\nNo entries to aggregate (all files filtered out).")
+        print("\nAggregated metrics statistics:")
+        print(format_table(stats_rows, ["metric", "n", "mean", "sd", "min", "max"]))
+    else:
+        print("\nNo entries to aggregate (all files filtered out).")
 
 
 if __name__ == "__main__":
