@@ -179,53 +179,40 @@ def main():
             }
         )
 
-    # Detailed table
-    headers = [
-        "file",
-        "connection",
-        "usm",
-        "ku",
-        "parse",
-        "oid",
-        "nohost",
-        "gen",
-        "subproc_fd_after",
-        "parent_fd_no_close",
-        "total_time_no_close",
-        "avg_time_no_close",
-        "parent_fd_with_close",
-        "total_time_with_close",
-        "avg_time_with_close",
-    ]
-    rows = []
+    # Per-file tables (simplified): show metrics for one file at a time
+    # If a specific file is requested via CLI, filter to that file (substring match)
+    file_filter = args.results_dir if args.results_dir and args.results_dir.endswith('.log') else None
+    # Note: we added positional arg 'results_dir' earlier; allow user to pass a filename via --file
+    # Re-parse args to check for optional --file
+    # (we keep backward compatibility: if first positional was a file path, it's handled earlier)
+    # Print per-file tables
     for e in entries:
-        rows.append(
-            [
-                e["file"],
-                e.get("connection_error_counter", 0),
-                e.get("usm_unknown_security_name_counter", 0),
-                e.get("err_gen_ku_key_counter", 0),
-                e.get("netsnmp_parse_args_error_counter", 0),
-                e.get("unknown_oid_error_counter", 0),
-                e.get("no_hostname_specified_error_counter", 0),
-                e.get("generic_error_counter", 0),
-                e.get("subprocess_fd_after") or 0,
-                e.get("parent_fd_after_no_close") or 0,
-                e.get("total_time_no_close") or 0,
-                e.get("avg_time_no_close") or 0,
-                e.get("parent_fd_after_with_close") or 0,
-                e.get("total_time_with_close") or 0,
-                e.get("avg_time_with_close") or 0,
-            ]
-        )
-
-    print("Detailed summary:")
-    print(format_table(rows, headers))
-
-    # Compact summary
-    print("\nCompact summary (file | total_time | results):")
-    comp_rows = [[e["file"], f"{e['total_time']:.6f}", e["results"]] for e in entries]
-    print(format_table(comp_rows, ["file", "total_time", "results"]))
+        if file_filter and file_filter not in e["file"]:
+            continue
+        print(f"\nFile: {e['file']}")
+        per_headers = ["metric", "value"]
+        per_rows = []
+        # Counters
+        per_rows.extend([["connection_error_counter", e.get("connection_error_counter", 0)],
+                         ["usm_unknown_security_name_counter", e.get("usm_unknown_security_name_counter", 0)],
+                         ["err_gen_ku_key_counter", e.get("err_gen_ku_key_counter", 0)],
+                         ["netsnmp_parse_args_error_counter", e.get("netsnmp_parse_args_error_counter", 0)],
+                         ["unknown_oid_error_counter", e.get("unknown_oid_error_counter", 0)],
+                         ["no_hostname_specified_error_counter", e.get("no_hostname_specified_error_counter", 0)],
+                         ["generic_error_counter", e.get("generic_error_counter", 0)]])
+        # FD and timing metrics
+        per_rows.extend([
+            ["subprocess_fd_after", e.get("subprocess_fd_after") or 0],
+            ["parent_fd_after_no_close", e.get("parent_fd_after_no_close") or 0],
+            ["total_time_no_close", f"{(e.get('total_time_no_close') or 0):.6f}"],
+            ["avg_time_no_close", f"{(e.get('avg_time_no_close') or 0):.6f}"],
+            ["parent_fd_after_with_close", e.get("parent_fd_after_with_close") or 0],
+            ["total_time_with_close", f"{(e.get('total_time_with_close') or 0):.6f}"],
+            ["avg_time_with_close", f"{(e.get('avg_time_with_close') or 0):.6f}"],
+            ["total_time", f"{e.get('total_time'):.6f}"],
+            ["results", e.get("results")],
+        ])
+        print(format_table(per_rows, per_headers))
 
     # Stats
     print("\nStatistics:")
