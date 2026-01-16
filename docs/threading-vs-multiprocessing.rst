@@ -1,17 +1,17 @@
-Concurrency in EzSnmp: Threading vs Multiprocessing
-====================================================
+Concurrency in EzSnmp: Multiprocessing (Recommended)
+=====================================================
 
 Overview
 --------
 
-EzSnmp supports concurrent SNMP operations through both threading and multiprocessing, but with important limitations due to the underlying Net-SNMP C library.
+**EzSnmp officially supports multiprocessing for concurrent SNMP operations.** Threading is NOT recommended and should NOT be used for production workloads due to fundamental limitations in the underlying Net-SNMP C library.
 
-**TL;DR**: Use **multiprocessing** for production workloads. Threading has significant limitations due to Net-SNMP's architecture.
+**IMPORTANT**: Always start with multiprocessing. Do not use threading unless you have a specific constraint that makes multiprocessing impossible.
 
-Threading Limitations
----------------------
+Threading Limitations (NOT SUPPORTED)
+--------------------------------------
 
-⚠️ **Important**: The underlying Net-SNMP C library has significant threading limitations due to extensive use of global state. While EzSnmp provides thread-safety protections, these cannot fully compensate for Net-SNMP's architecture.
+**WARNING**: Threading is NOT officially supported and is NOT recommended for any use case. The underlying Net-SNMP C library has fundamental architectural limitations that make threading unreliable.
 
 Known Threading Issues
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -58,10 +58,10 @@ If you must use threading:
 - SNMPv3 operations are more likely to fail
 - Not recommended for production use
 
-Multiprocessing (✅ Recommended)
----------------------------------
+Multiprocessing (RECOMMENDED - OFFICIALLY SUPPORTED)
+----------------------------------------------------
 
-✅ **Recommended Approach**: EzSnmp is fully multiprocess-safe and this is the **recommended way** to achieve concurrency.
+**Recommended Approach**: EzSnmp officially supports and recommends multiprocessing for all concurrent SNMP operations.
 
 Each process has its own independent copy of the Net-SNMP library state, eliminating all race conditions and data corruption issues:
 
@@ -105,10 +105,10 @@ Each process has its own independent copy of the Net-SNMP library state, elimina
         print(f"Worker {result['worker_id']} (PID {result['pid']}): {result['value']}")
 
 **Advantages**:
-- ✅ **Reliable**: No race conditions or corruption issues
-- ✅ **Scalable**: Can use many processes without failures
-- ✅ **Production-ready**: Tested and stable
-- ✅ **True Parallelism**: No GIL limitations
+- Reliable: No race conditions or corruption issues
+- Scalable: Can use many processes without failures
+- Production-ready: Tested and stable
+- True Parallelism: No GIL limitations
 
 **Use Cases**:
 - Polling multiple devices
@@ -140,7 +140,7 @@ Why Threading Is Limited
 
 The Net-SNMP C library explicitly documents threading limitations:
 
-1. **Net-SNMP FAQ** (http://www.net-snmp.org/docs/FAQ.html#Is_the_library_thread_safe_):
+1. **Net-SNMP FAQ** (https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_):
    
    *"The Net-SNMP library is not thread-safe... Applications using threads should only call the library from a single thread."*
 
@@ -172,16 +172,16 @@ Performance Considerations
 --------------------------
 
 **Multiprocessing**:
-- ✅ Excellent throughput for I/O-bound SNMP operations
-- ✅ Full CPU utilization across cores
-- ⚠️ Higher memory usage (each process has its own Python interpreter)
-- ⚠️ Process creation overhead (use process pools for many operations)
+- Excellent throughput for I/O-bound SNMP operations
+- Full CPU utilization across cores
+- Higher memory usage (each process has its own Python interpreter)
+- Process creation overhead (use process pools for many operations)
 
-**Threading** (Limited Support):
-- ⚠️ Unreliable under high concurrency
-- ⚠️ Mutex contention reduces parallelism
-- ✅ Lower memory footprint than multiprocessing
-- ❌ Not recommended for production
+**Threading** (NOT SUPPORTED):
+- Unreliable under high concurrency
+- Mutex contention reduces parallelism
+- Lower memory footprint than multiprocessing
+- Not recommended for production
 
 Best Practices
 --------------
@@ -271,7 +271,7 @@ Testing
 
 Multiprocessing is thoroughly tested and reliable:
 
-**Integration Tests** (✅ Passing)
+**Integration Tests (Passing)**
 
 The ``integration_tests/`` directory validates multiprocessing works correctly:
 
@@ -283,7 +283,7 @@ The ``integration_tests/`` directory validates multiprocessing works correctly:
     python3 test_snmp_walk.py 20 process
     python3 test_snmp_bulkwalk.py 20 process
 
-**Threading Tests** (⚠️ Limited)
+**Threading Tests (NOT SUPPORTED)**
 
 Threading tests may fail under high concurrency due to Net-SNMP limitations:
 
@@ -375,7 +375,7 @@ References
 
 **Official Net-SNMP Documentation:**
 
-- Net-SNMP FAQ - Thread Safety: http://www.net-snmp.org/docs/FAQ.html#Is_the_library_thread_safe_
+- Net-SNMP FAQ - Thread Safety: https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_
 - Net-SNMP README.thread: Included in Net-SNMP source distribution (explains session API limitations)
 - Net-SNMP Mailing List Archives: https://sourceforge.net/p/net-snmp/mailman/
 - Net-SNMP Source Code: https://github.com/net-snmp/net-snmp (shows global state usage)
@@ -394,14 +394,14 @@ References
 Summary
 -------
 
-**Use Multiprocessing** ✅
+**Use Multiprocessing (OFFICIALLY SUPPORTED)**
 - Reliable and production-ready
 - High concurrency support  
 - No race conditions or corruption
 - Recommended for all production use cases
 
-**Limit Threading** ⚠️
+**Do NOT Use Threading (NOT SUPPORTED)**
 - Works for simple cases (≤4 threads)
 - May fail under high concurrency
 - Not recommended for production
-- Use only when multiprocessing is not feasible
+- Use only when multiprocessing is absolutely not feasible
