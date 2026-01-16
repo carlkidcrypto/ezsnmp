@@ -98,11 +98,8 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
    
-   // Protect init_snmp call - it initializes MIB tree structures
-   {
-      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
-      init_snmp(init_app_name.c_str());
-   }
+   // Reference-counted initialization: only first thread calls init_snmp
+   netsnmp_thread_init(init_app_name.c_str());
 
    int argc = 0;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
