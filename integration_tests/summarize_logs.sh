@@ -69,6 +69,15 @@ overall_oid=0
 overall_nohost=0
 overall_generic=0
 
+sum_counter() {
+  local name="$1"
+  local file="$2"
+  # Case-insensitive grep for counter lines, extract numbers, sum them
+  grep -i -E "${name}[[:space:]]*:" "$file" \
+    | sed -E "s/.*${name}:[[:space:]]*([0-9]+)/\\1/" \
+    | awk '{s+=$1} END{print s+0}'
+}
+
 for f in "${LOG_FILES[@]}"; do
   # Derive test, workers, mode from filename if possible
   bn=$(basename "$f")
@@ -93,23 +102,14 @@ for f in "${LOG_FILES[@]}"; do
     mode="-"
   fi
 
-  # Parse counters case-insensitively and sum across workers
-  read -r connection usm ku parse oid nohost generic < <(
-    awk '
-      BEGIN { c=0; u=0; k=0; p=0; o=0; h=0; g=0; }
-      {
-        line=tolower($0);
-        if (match(line, /connection_error_counter:[[:space:]]*([0-9]+)/, m)) c+=m[1];
-        else if (match(line, /usm_unknown_security_name_counter:[[:space:]]*([0-9]+)/, m)) u+=m[1];
-        else if (match(line, /err_gen_ku_key_counter:[[:space:]]*([0-9]+)/, m)) k+=m[1];
-        else if (match(line, /netsnmp_parse_args_error_counter:[[:space:]]*([0-9]+)/, m)) p+=m[1];
-        else if (match(line, /unknown_oid_error_counter:[[:space:]]*([0-9]+)/, m)) o+=m[1];
-        else if (match(line, /no_hostname_specified_error_counter:[[:space:]]*([0-9]+)/, m)) h+=m[1];
-        else if (match(line, /generic_error_counter:[[:space:]]*([0-9]+)/, m)) g+=m[1];
-      }
-      END { printf("%d %d %d %d %d %d %d\n", c,u,k,p,o,h,g); }
-    ' "$f"
-  )
+  # Parse counters and sum across workers using grep+sed+awk (mawk-compatible)
+  connection=$(sum_counter "connection_error_counter" "$f")
+  usm=$(sum_counter "usm_unknown_security_name_counter" "$f")
+  ku=$(sum_counter "err_gen_ku_key_counter" "$f")
+  parse=$(sum_counter "netsnmp_parse_args_error_counter" "$f")
+  oid=$(sum_counter "unknown_oid_error_counter" "$f")
+  nohost=$(sum_counter "no_hostname_specified_error_counter" "$f")
+  generic=$(sum_counter "generic_error_counter" "$f")
 
   (( overall_connection += connection ))
   (( overall_usm += usm ))
