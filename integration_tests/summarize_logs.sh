@@ -73,9 +73,13 @@ sum_counter() {
   local name="$1"
   local file="$2"
   # Case-insensitive grep for counter lines, extract numbers, sum them
-  grep -i -E "${name}[[:space:]]*:" "$file" \
-    | sed -E "s/.*${name}:[[:space:]]*([0-9]+)/\\1/" \
-    | awk '{s+=$1} END{print s+0}'
+  local out
+  out=$(grep -i -E "${name}[[:space:]]*:" "$file" || true)
+  if [[ -z "$out" ]]; then
+    echo 0
+    return
+  fi
+  echo "$out" | sed -E "s/.*${name}:[[:space:]]*([0-9]+)/\\1/" | awk '{s+=$1} END{print s+0}'
 }
 
 for f in "${LOG_FILES[@]}"; do

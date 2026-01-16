@@ -5,7 +5,7 @@ import multiprocessing
 from time import time, sleep
 from random import randint, uniform
 from ezsnmp.session import Session
-import sys
+import argparse
 import datetime
 
 SESS_V1_ARGS = {
@@ -154,8 +154,28 @@ def work_get_close(sess_args, sess_name):
 
 if __name__ == "__main__":
     # Open a log file for writing all output
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file_path = f"snmp_fd_test_output_{timestamp}.log"
+    # Optional CLI argument: first positional arg may be a path or a directory.
+    # If it's a directory, write a consolidated 'snmp_fd_test_output.log' inside it.
+    # Usage: python3 test_file_descriptors.py [LOG_PATH_OR_DIR]
+    parser = argparse.ArgumentParser(description="SNMP FD test logger")
+    parser.add_argument(
+        "log",
+        nargs="?",
+        help="Path to log file or directory to place snmp_fd_test_output.log",
+        default=None,
+    )
+    args = parser.parse_args()
+
+    log_file_path = None
+    if args.log:
+        if os.path.isdir(args.log):
+            log_file_path = os.path.join(args.log, "snmp_fd_test_output.log")
+        else:
+            log_file_path = args.log
+
+    if not log_file_path:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_file_path = f"snmp_fd_test_output_{timestamp}.log"
 
     with open(log_file_path, "a+") as log_file:
 

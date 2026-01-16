@@ -93,15 +93,15 @@ echo "=========================================="
 echo ""
 echo "[$(date +%H:%M:%S)] Running file descriptor tests..."
 START_TIME=$(date +%s)
-python3 test_file_descriptors.py 2>&1 | tee "$OUTPUT_DIR/test_file_descriptors.log"
+python3 test_file_descriptors.py "$OUTPUT_DIR" 2>&1 | tee "$OUTPUT_DIR/test_file_descriptors.log"
 TEST_EXIT_CODE=$?
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 
-if [ $TEST_EXIT_CODE -eq 0 ]; then
-	echo "[$(date +%H:%M:%S)] PASS: File descriptor tests completed successfully (${DURATION}s)"
+if [ "$TEST_EXIT_CODE" -eq 0 ]; then
+	printf '[%s] PASS: File descriptor tests completed successfully (%ds)\n' "$(date +%H:%M:%S)" "$DURATION"
 else
-	echo "[$(date +%H:%M:%S)] FAIL: File descriptor tests failed (${DURATION}s)"
+	printf '[%s] FAIL: File descriptor tests failed (%ds)\n' "$(date +%H:%M:%S)" "$DURATION"
 fi
 
 # --- Run SNMP get tests ---
