@@ -69,3 +69,4 @@ _codeql_detected_source_root
 docker/test_outputs_**/
 docker/test_summary_report_*.txt
 docker/previous_results_**/
+integration_tests/previous_results**/
