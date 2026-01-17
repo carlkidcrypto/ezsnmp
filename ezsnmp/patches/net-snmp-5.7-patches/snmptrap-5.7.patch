@@ -411,7 +411,7 @@
          }
      }
      arg++;
-@@ -353,40 +348,47 @@
+@@ -353,40 +348,46 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -474,7 +474,6 @@
 +   snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
 +
 +out:
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
      return exitval;

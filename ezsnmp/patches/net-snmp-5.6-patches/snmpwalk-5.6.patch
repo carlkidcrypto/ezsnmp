@@ -453,7 +453,7 @@
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -391,22 +411,25 @@
+@@ -391,22 +411,24 @@
           * for get measure. 
           */
          if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
@@ -481,7 +481,6 @@
 +              (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
      }
  
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

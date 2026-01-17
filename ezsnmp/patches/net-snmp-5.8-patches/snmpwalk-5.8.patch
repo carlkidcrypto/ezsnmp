@@ -439,7 +439,7 @@
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -413,23 +411,25 @@
+@@ -413,23 +411,24 @@
           * for get measure. 
           */
          if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
@@ -468,7 +468,6 @@
      }
  
 -out:
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

@@ -223,7 +223,7 @@
  
      /*
       * do the request 
-@@ -208,47 +220,49 @@
+@@ -208,47 +220,48 @@
              /*
               * check resulting variables 
               */
@@ -289,7 +289,6 @@
      snmp_close(ss);
  
 -out:
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

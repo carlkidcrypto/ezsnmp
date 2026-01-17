@@ -211,7 +211,7 @@
  
      /*
       * do the request 
-@@ -189,51 +194,55 @@
+@@ -189,51 +194,54 @@
      status = snmp_synch_response(ss, pdu, &response);
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -284,7 +284,6 @@
      snmp_close(ss);
  
  out:
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

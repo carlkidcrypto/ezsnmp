@@ -276,7 +276,7 @@
      }
  
      /*
-@@ -249,36 +254,45 @@
+@@ -249,36 +254,44 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {
@@ -336,7 +336,6 @@
      snmp_close(ss);
 +
 +out:
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

@@ -365,7 +365,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -337,54 +344,56 @@
+@@ -337,54 +344,55 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {
@@ -442,7 +442,6 @@
      }
  
 -out:
-+   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

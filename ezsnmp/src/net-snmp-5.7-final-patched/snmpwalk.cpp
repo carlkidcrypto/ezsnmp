@@ -428,7 +428,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
               (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
     }
 
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
     SOCK_CLEANUP;
    return parse_results(return_vector);
