@@ -65,6 +65,8 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
+#include <mutex>
+
 #include <net-snmp/net-snmp-includes.h>
 
 oid objid_enterprise[] = {1, 3, 6, 1, 4, 1, 3, 1, 1};
@@ -75,6 +77,7 @@ int inform = 0;
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmptrap.h"
+#include "thread_safety.h"
 
 void snmptrap_usage(void) {
    fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
@@ -115,7 +118,8 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
 int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   // Reference-counted initialization: only first thread calls init_snmp
+   netsnmp_thread_init(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);

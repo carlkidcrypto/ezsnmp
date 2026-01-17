@@ -63,6 +63,8 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
+#include <mutex>
+
 #include <net-snmp/net-snmp-includes.h>
 
 #define NETSNMP_DS_WALK_INCLUDE_REQUESTED 1
@@ -80,6 +82,7 @@ char *end_name = NULL;
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
+#include "thread_safety.h"
 
 std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
                                                      oid *theoid,
@@ -157,9 +160,13 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
+std::vector<Result> snmpwalk(std::vector<std::string> const &args,
+                              std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+
+   // Reference-counted initialization: only first thread calls init_snmp
+   netsnmp_thread_init(init_app_name.c_str());
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -226,8 +233,11 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
        * specified on the command line
        */
       rootlen = MAX_OID_LEN;
-      if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
-         snmp_perror_exception(argv[arg]);
+      {
+         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+         if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
+            snmp_perror_exception(argv[arg]);
+         }
       }
    } else {
       /*
@@ -244,8 +254,11 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
     */
    if (end_name) {
       end_len = MAX_OID_LEN;
-      if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
-         snmp_perror_exception(end_name);
+      {
+         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+         if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
+            snmp_perror_exception(end_name);
+         }
       }
    } else {
       memmove(end_oid, root, rootlen * sizeof(oid));
