@@ -121,11 +121,16 @@ analyze_snmpd_logs() {
     local version=$(grep -oP "NET-SNMP version:\s+\K[\d\.]+" "$log_file" 2>/dev/null | head -1)
     echo "  NET-SNMP Version: ${version:-UNKNOWN}"
     
-    # Check for errors
-    local error_section=$(sed -n '/--- SNMPD ERRORS ---/,/---/p' "$log_file" 2>/dev/null)
-    if [[ -n "$error_section" ]] && [[ "$error_section" != *"---"* ]]; then
+    # Check for errors: extract the section and remove the delimiter lines,
+    # then test whether any content remains between the delimiters.
+    local error_section
+    error_section=$(sed -n '/--- SNMPD ERRORS ---/,/---/p' "$log_file" 2>/dev/null)
+    local error_content
+    error_content=$(printf '%s' "$error_section" | sed -e '/--- SNMPD ERRORS ---/d' -e '/---/d')
+
+    if [[ -n "$error_content" ]]; then
         echo -e "  ${RED}[ERRORS FOUND]${NC}"
-        echo "$error_section" | head -10 | sed 's/^/    /'
+        printf '%s' "$error_content" | head -10 | sed 's/^/    /'
     else
         echo -e "  ${GREEN}[NO ERRORS]${NC}"
     fi

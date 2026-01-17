@@ -181,7 +181,8 @@ def worker(request_type: str):
                     are_we_done = True
 
             elif (
-                "error generating a key (ku) from the supplied authentication pass phrase" in msg
+                "error generating a key (ku) from the supplied authentication pass phrase"
+                in msg
             ):
                 err_gen_ku_key_counter += 1
 
@@ -224,5 +225,7 @@ def worker(request_type: str):
     print(f"\t\terr_gen_ku_key_counter: {err_gen_ku_key_counter}")
     print(f"\t\tnetsnmp_parse_args_error_counter: {netsnmp_parse_args_error_counter}")
     print(f"\t\tunknown_oid_error_counter: {unknown_oid_error_counter}")
-    print(f"\t\tno_hostname_specified_error_counter: {no_hostname_specified_error_counter}")
+    print(
+        f"\t\tno_hostname_specified_error_counter: {no_hostname_specified_error_counter}"
+    )
     print(f"\t\tgeneric_error_counter: {generic_error_counter}")

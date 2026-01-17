@@ -135,7 +135,8 @@ SessionBase::~SessionBase() {}
 
 void SessionBase::_close() {
    // Reference-counted cleanup: only last thread calls snmp_shutdown()
-   // snmp_shutdown() is called internally by netsnmp_thread_cleanup() when reference count reaches 0
+   // snmp_shutdown() is called internally by netsnmp_thread_cleanup() when reference count reaches
+   // 0
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
    netsnmp_thread_cleanup();
 }

@@ -1,8 +1,8 @@
 #ifndef THREAD_SAFETY_H
 #define THREAD_SAFETY_H
 
-#include <mutex>
 #include <atomic>
+#include <mutex>
 
 // Global mutex to protect Net-SNMP MIB parsing operations
 // Net-SNMP's MIB tree traversal and shutdown operations are not thread-safe
@@ -19,7 +19,7 @@ extern std::atomic<int> g_netsnmp_init_count;
 extern std::atomic<bool> g_netsnmp_initialized;
 
 // Increment reference count and initialize snmp if needed
-void netsnmp_thread_init(const char* app_name);
+void netsnmp_thread_init(char const* app_name);
 
 // Decrement reference count and cleanup snmp if last thread
 void netsnmp_thread_cleanup();

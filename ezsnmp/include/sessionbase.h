@@ -43,7 +43,8 @@ class SessionBase {
        false; ///< Print timeticks unparsed as numeric integers (-O t).
    std::string m_set_max_repeaters_to_num = ""; ///< Set max-repeaters to <NUM> (-C r<NUM>).
 
-   std::string m_init_name; ///< Application name for net-snmp initialization (shared by all operations).
+   std::string
+       m_init_name; ///< Application name for net-snmp initialization (shared by all operations).
 
    /**
     * @brief Populates the m_args vector with SNMP command arguments.
