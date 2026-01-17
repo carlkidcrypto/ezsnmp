@@ -64,9 +64,9 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
+
+#include <mutex>
 
 oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int max_repetitions = 10;

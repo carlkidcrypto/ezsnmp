@@ -62,9 +62,9 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
+
+#include <mutex>
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 

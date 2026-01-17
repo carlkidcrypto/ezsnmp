@@ -64,9 +64,9 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
+
+#include <mutex>
 
 #define NETSNMP_DS_WALK_INCLUDE_REQUESTED 1
 #define NETSNMP_DS_WALK_PRINT_STATISTICS 2

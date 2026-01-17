@@ -63,9 +63,9 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
+
+#include <mutex>
 
 #define NETSNMP_DS_WALK_INCLUDE_REQUESTED 1
 #define NETSNMP_DS_WALK_PRINT_STATISTICS 2
@@ -161,7 +161,7 @@ void snmpwalk_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpwalk(std::vector<std::string> const &args,
-                              std::string const &init_app_name) {
+                             std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 

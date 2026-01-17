@@ -65,9 +65,9 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
+
+#include <mutex>
 
 oid objid_enterprise[] = {1, 3, 6, 1, 4, 1, 3, 1, 1};
 oid objid_sysuptime[] = {1, 3, 6, 1, 2, 1, 1, 3, 0};

@@ -63,10 +63,10 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/utilities.h>
+
+#include <mutex>
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
@@ -95,7 +95,7 @@ void snmpget_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpget(std::vector<std::string> const &args,
-                             std::string const &init_app_name) {
+                            std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 

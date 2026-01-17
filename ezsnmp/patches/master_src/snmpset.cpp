@@ -63,9 +63,9 @@ SOFTWARE.
 #include <arpa/inet.h>
 #endif
 
-#include <mutex>
-
 #include <net-snmp/net-snmp-includes.h>
+
+#include <mutex>
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -108,7 +108,7 @@ void snmpset_optProc(int argc, char *const *argv, int opt) {
 }
 
 std::vector<Result> snmpset(std::vector<std::string> const &args,
-                             std::string const &init_app_name) {
+                            std::string const &init_app_name) {
    /* completely disable logging otherwise it will default to stderr */
    netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 
