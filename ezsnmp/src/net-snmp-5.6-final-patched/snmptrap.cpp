@@ -257,10 +257,13 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          pdu->enterprise_length = OID_LENGTH(objid_enterprise);
       } else {
          name_length = MAX_OID_LEN;
-         if (!snmp_parse_oid(argv[arg], name, &name_length)) {
-            snmp_perror_exception(argv[arg]);
-            snmptrap_usage();
-            goto out;
+         {
+            std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+            if (!snmp_parse_oid(argv[arg], name, &name_length)) {
+               snmp_perror_exception(argv[arg]);
+               snmptrap_usage();
+               goto out;
+            }
          }
          pdu->enterprise = (oid *)malloc(name_length * sizeof(oid));
          memcpy(pdu->enterprise, name, name_length * sizeof(oid));
@@ -348,9 +351,12 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          goto out;
       }
       name_length = MAX_OID_LEN;
-      if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
-         snmp_perror_exception(argv[arg - 3]);
-         goto out;
+      {
+         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+         if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
+            snmp_perror_exception(argv[arg - 3]);
+            goto out;
+         }
       }
       if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
          snmp_perror_exception(argv[arg - 3]);

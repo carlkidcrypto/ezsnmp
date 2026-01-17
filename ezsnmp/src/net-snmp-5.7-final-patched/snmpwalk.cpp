@@ -251,8 +251,11 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
     */
    if (end_name) {
       end_len = MAX_OID_LEN;
-      if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
-         snmp_perror_exception(end_name);
+      {
+         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+         if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
+            snmp_perror_exception(end_name);
+         }
       }
    } else {
       memmove(end_oid, root, rootlen * sizeof(oid));
