@@ -70,3 +70,4 @@ docker/test_outputs_**/
 docker/test_summary_report_*.txt
 docker/previous_results_**/
 integration_tests/previous_results**/
+integration_tests/test_results**/
