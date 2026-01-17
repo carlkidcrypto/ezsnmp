@@ -1,5 +1,6 @@
 
 #include "helpers.h"
+#include "thread_safety.h"
 
 #include <algorithm>
 #include <cstring>
@@ -314,6 +315,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
 }
 
 void clear_net_snmp_library_data() {
+   std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
    // From:
    // https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
