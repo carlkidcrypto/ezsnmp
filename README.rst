@@ -56,6 +56,9 @@ Getting Started
 Please check out the `EzSnmp documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
 
+.. note::
+   If you are building from source and applying patches, you may need to install `dos2unix` on your system. On Ubuntu/Debian, run `sudo apt install dos2unix`. On macOS, use `brew install dos2unix`.
+
 Code Coverage
 -------------
 
