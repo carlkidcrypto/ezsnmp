@@ -5,7 +5,7 @@
  /*
   * snmpset.c - send snmp SET requests to a network entity.
   *
-@@ -25,73 +26,67 @@
+@@ -25,73 +26,70 @@
  ******************************************************************/
  #include <net-snmp/net-snmp-config.h>
  
@@ -61,9 +61,12 @@
 -void
 -usage(void)
 -{
++#include <mutex>
++
 +#include "exceptionsbase.h"
 +#include "helpers.h"
 +#include "snmpwalk.h"
++#include "thread_safety.h"
 +
 +void snmpset_usage(void) {
      fprintf(stderr, "USAGE: snmpset ");
@@ -99,7 +102,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -101,17 +96,22 @@
+@@ -101,17 +99,26 @@
                  break;
  
              default:
@@ -117,9 +120,13 @@
 -int
 -main(int argc, char *argv[])
 -{
-+std::vector<Result> snmpset(std::vector<std::string> const &args) {
++std::vector<Result> snmpset(std::vector<std::string> const &args,
++                            std::string const &init_app_name) {
 +   /* completely disable logging otherwise it will default to stderr */
 +   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name.c_str());
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -128,7 +135,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,44 +127,46 @@
+@@ -127,44 +134,46 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
@@ -188,7 +195,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -179,6 +181,7 @@
+@@ -179,6 +188,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -196,7 +203,7 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -188,24 +191,21 @@
+@@ -188,24 +198,21 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -227,7 +234,7 @@
      /*
       * open an SNMP session 
       */
-@@ -214,9 +214,8 @@
+@@ -214,32 +221,30 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -239,22 +246,27 @@
      }
  
      /*
-@@ -226,20 +225,16 @@
+      * create PDU for SET request and add object names and values to request 
+      */
+     pdu = snmp_pdu_create(SNMP_MSG_SET);
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
      for (count = 0; count < current_name; count++) {
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 -            snmp_perror(names[count]);
-+         snmp_perror_exception(names[count]);
++            snmp_perror_exception(names[count]);
              failures++;
 -        } else
 -            if (snmp_add_var
 -                (pdu, name, name_length, types[count], values[count])) {
 -            snmp_perror(names[count]);
-+      } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
-+         snmp_perror_exception(names[count]);
++         } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
++            snmp_perror_exception(names[count]);
              failures++;
          }
      }
++   }
  
      if (failures) {
 -        snmp_close(ss);
@@ -264,7 +276,7 @@
      }
  
      /*
-@@ -249,36 +244,45 @@
+@@ -249,36 +254,45 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {
@@ -324,7 +336,7 @@
      snmp_close(ss);
 +
 +out:
-+                                            
++   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

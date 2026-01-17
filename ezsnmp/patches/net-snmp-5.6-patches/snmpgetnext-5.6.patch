@@ -1,6 +1,6 @@
 --- a/net-snmp-5.6/apps/snmpgetnext.c
 +++ b/net-snmp-5.6/apps/snmpgetnext.cpp
-@@ -25,40 +25,40 @@
+@@ -25,50 +25,55 @@
  ******************************************************************/
  #include <net-snmp/net-snmp-config.h>
  
@@ -51,8 +51,10 @@
  #include <arpa/inet.h>
  #endif
  
-@@ -66,9 +66,11 @@
+ #include <net-snmp/net-snmp-includes.h>
  
++#include <mutex>
++
  #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
  
 -static void
@@ -61,12 +63,13 @@
 +#include "exceptionsbase.h"
 +#include "helpers.h"
 +#include "snmpgetnext.h"
++#include "thread_safety.h"
 +
 +void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -78,31 +80,23 @@
+@@ -78,31 +83,27 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -94,22 +97,25 @@
 -    fprintf(stderr,
 -            "\t\t\t  f:  do not fix errors and retry the request\n");
 -}
--
--int
--main(int argc, char *argv[])
--{
-+std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
++std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
++                                std::string const &init_app_name) {
 +   /* completely disable logging otherwise it will default to stderr */
 +   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name.c_str());
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
-+
+ 
+-int
+-main(int argc, char *argv[])
+-{
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -114,42 +108,44 @@
+@@ -114,42 +115,44 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
@@ -170,7 +176,7 @@
  
      /*
       * open an SNMP session 
-@@ -159,9 +155,8 @@
+@@ -159,9 +162,8 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -182,17 +188,23 @@
      }
  
      /*
-@@ -172,15 +167,14 @@
+@@ -169,18 +171,20 @@
+      */
+     pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+ 
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
      for (count = 0; count < current_name; count++) {
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 -            snmp_perror(names[count]);
-+         snmp_perror_exception(names[count]);
++            snmp_perror_exception(names[count]);
              failures++;
 -        } else
-+      } else {
++         } else {
              snmp_add_null_var(pdu, name, name_length);
      }
++      }
 +   }
      if (failures) {
 -        snmp_close(ss);
@@ -202,7 +214,7 @@
      }
  
      /*
-@@ -190,47 +184,55 @@
+@@ -190,47 +194,55 @@
      status = snmp_synch_response(ss, pdu, &response);
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -275,7 +287,7 @@
      snmp_close(ss);
 +
 +out:
-+                                               
++   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

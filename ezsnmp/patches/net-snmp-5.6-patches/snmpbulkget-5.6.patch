@@ -5,7 +5,7 @@
  /*
   * snmpbulkget.c - send SNMPv2 Bulk requests to a network entity.
   *
-@@ -25,47 +26,47 @@
+@@ -25,47 +26,49 @@
  **********************************************************************/
  #include <net-snmp/net-snmp-config.h>
  
@@ -60,11 +60,13 @@
  #include <net-snmp/net-snmp-includes.h>
  
 -oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
++#include <mutex>
++
 +oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
  int             max_repetitions = 10;
  int             non_repeaters = 0;
  struct nameStruct {
-@@ -74,23 +75,21 @@
+@@ -74,23 +77,22 @@
  }              *name, *namep;
  int             names;
  
@@ -74,6 +76,7 @@
 +#include "exceptionsbase.h"
 +#include "helpers.h"
 +#include "snmpbulkget.h"
++#include "thread_safety.h"
 +
 +void snmpbulkget_usage(void) {
      fprintf(stderr, "USAGE: snmpbulkget ");
@@ -95,7 +98,7 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,7 +108,7 @@
+@@ -109,7 +111,7 @@
                      /*
                       * No number given -- error.  
                       */
@@ -104,7 +107,7 @@
                      exit(1);
                  } else {
                      optarg = endptr;
-@@ -120,17 +119,22 @@
+@@ -120,17 +122,26 @@
                  break;
  
              default:
@@ -122,9 +125,13 @@
 -int
 -main(int argc, char *argv[])
 -{
-+std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
++std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
++                                std::string const &init_app_name) {
 +   /* completely disable logging otherwise it will default to stderr */
 +   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name.c_str());
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -133,7 +140,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu;
      netsnmp_pdu    *response;
-@@ -138,19 +142,22 @@
+@@ -138,19 +149,22 @@
      int             arg;
      int             count;
      int             status;
@@ -162,7 +169,7 @@
      default:
          break;
      }
-@@ -158,23 +165,20 @@
+@@ -158,22 +172,22 @@
      names = argc - arg;
      if (names < non_repeaters) {
          fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -171,26 +178,28 @@
      }
  
      namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
      while (arg < argc) {
          namep->name_len = MAX_OID_LEN;
 -        if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) ==
 -            NULL) {
 -            snmp_perror(argv[arg]);
 -            exit(1);
-+      if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
-+         snmp_perror_exception(argv[arg]);
-+         return parse_results(return_vector);
++         if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
++            snmp_perror_exception(argv[arg]);
++            return parse_results(return_vector);
          }
          arg++;
          namep++;
      }
- 
--    SOCK_STARTUP;
 -
+-    SOCK_STARTUP;
++   }
+ 
      /*
       * open an SNMP session 
-      */
-@@ -183,9 +187,8 @@
+@@ -183,9 +197,8 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -202,7 +211,7 @@
      }
  
      /*
-@@ -194,8 +197,9 @@
+@@ -194,8 +207,9 @@
      pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
      pdu->non_repeaters = non_repeaters;
      pdu->max_repetitions = max_repetitions;     /* fill the packet */
@@ -213,7 +222,7 @@
  
      /*
       * do the request 
-@@ -206,45 +210,49 @@
+@@ -206,45 +220,49 @@
              /*
               * check resulting variables 
               */
@@ -278,7 +287,7 @@
  
      snmp_close(ss);
 +
-+                                               
++   netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;
