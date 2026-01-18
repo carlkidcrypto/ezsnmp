@@ -293,7 +293,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    }
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
-      netsnmp_get_monotonic_clock(&tv1);
+      gettimeofday(&tv1, NULL);
    }
 
    while (running) {
@@ -307,13 +307,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * do the request
        */
       if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
-         netsnmp_get_monotonic_clock(&tv_a);
+         gettimeofday(&tv_a, NULL);
       }
       status = snmp_synch_response(ss, pdu, &response);
       if (status == STAT_SUCCESS) {
          if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
-            netsnmp_get_monotonic_clock(&tv_b);
+            gettimeofday(&tv_b, NULL);
          }
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
@@ -398,7 +398,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       }
    }
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
-      netsnmp_get_monotonic_clock(&tv2);
+      gettimeofday(&tv2, NULL);
    }
 
    if (numprinted == 0 && status == STAT_SUCCESS) {

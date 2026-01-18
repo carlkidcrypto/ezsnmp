@@ -54,6 +54,32 @@ Version-Specific Notes
 
 For Net-SNMP versions 5.8 and lower, you must use ``netsnmp_cleanup_session(&session);`` instead of the newer cleanup functions, as it does not exist in these versions.
 
+Automated Script
+----------------
+
+The ``do_all_that_stuff.sh`` script automates the entire process of downloading Net-SNMP versions, generating patches with version-specific modifications, applying patches, and formatting the code. It handles special cases for compatibility, such as removing ``netsnmp_cleanup_session`` calls for versions 5.6-5.8 and using ``gettimeofday`` instead of ``netsnmp_get_monotonic_clock`` for version 5.6.
+
+To run the automated process:
+
+.. code-block:: bash
+
+   ./do_all_that_stuff.sh
+
+This script performs the following steps in order:
+
+1. Downloads Net-SNMP versions 5.6-5.9 in parallel (with ``--no-remove`` to avoid re-downloading if directories exist).
+2. Generates patches for version 5.9 first using the unmodified ``master_src``.
+3. Backs up ``master_src`` and removes ``netsnmp_cleanup_session(&session);`` calls (not available in 5.6-5.8).
+4. Modifies timing calls in ``master_src`` from ``netsnmp_get_monotonic_clock`` to ``gettimeofday`` for 5.6 compatibility.
+5. Generates patches for version 5.6 with the modified ``master_src``.
+6. Reverts timing calls back to ``netsnmp_get_monotonic_clock`` for versions 5.7-5.8.
+7. Generates patches for versions 5.7-5.8 in parallel.
+8. Restores ``master_src`` from backup.
+9. Applies patches to versions 5.6-5.9 in parallel, producing final patched source in ``../src/net-snmp-<version>-final-patched/``.
+10. Runs clang-format on the entire repository to ensure consistent code formatting.
+
+This script is designed for efficiency and reliability, running tasks in parallel where possible to speed up the process. It ensures that each Net-SNMP version receives the appropriate modifications without manual intervention.
+
 .. note::
    If you are building from source and applying patches, you may need to install `dos2unix` on your system. On Ubuntu/Debian, run `sudo apt install dos2unix`. On macOS, use `brew install dos2unix`.
 

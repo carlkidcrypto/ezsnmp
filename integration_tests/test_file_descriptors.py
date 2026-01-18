@@ -102,7 +102,7 @@ def count_open_fds():
         return -1
 
 
-def work_get_no_close(sess_args, sess_name):
+def work_get_no_close(sess_args, sess_name, log_file_path):
     with open(log_file_path, "a+") as log_file:
 
         def log_print(*args, **kwargs):
@@ -126,7 +126,7 @@ def work_get_no_close(sess_args, sess_name):
         log_print(f"Subprocess PID Open FDs after: {count_open_fds()} [{sess_name}]")
 
 
-def work_get_close(sess_args, sess_name):
+def work_get_close(sess_args, sess_name, log_file_path):
     with open(log_file_path, "a+") as log_file:
 
         def log_print(*args, **kwargs):
@@ -193,7 +193,7 @@ if __name__ == "__main__":
             log_print(f"\nRunning work_get_no_close: {sess_name}")
             start_time = time()
             test_proc = multiprocessing.Process(
-                target=work_get_no_close, args=(sess_args, sess_name)
+                target=work_get_no_close, args=(sess_args, sess_name, log_file_path)
             )
             test_proc.start()
             test_proc.join()
@@ -214,7 +214,7 @@ if __name__ == "__main__":
             log_print(f"\nRunning work_get_close: {sess_name}")
             start_time = time()
             test_proc = multiprocessing.Process(
-                target=work_get_close, args=(sess_args, sess_name)
+                target=work_get_close, args=(sess_args, sess_name, log_file_path)
             )
             test_proc.start()
             test_proc.join()

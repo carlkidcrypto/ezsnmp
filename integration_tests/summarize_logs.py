@@ -484,6 +484,71 @@ def main():
         for method, group in sorted(method_groups.items()):
             out_lines.append(f"Method: {method}")
             out_lines.append("")
+            # recompute workers and modes for this group
+            worker_set = set()
+            modes = {"thread": [], "process": []}
+            file_pat = _re.compile(r".*_(\d+)_(process|thread)\.log$")
+            for e in group:
+                m = file_pat.match(e["file"]) or file_pat.match(
+                    e["file"].replace(".log", "")
+                )
+                if m:
+                    worker_set.add(int(m.group(1)))
+                    modes.setdefault(m.group(2), []).append((int(m.group(1)), e))
+            workers_sorted = sorted(worker_set)
+            header = ["counter", "total", "threads"]
+            for w in workers_sorted:
+                header.append(f"{w} threads")
+            header.append("process")
+            for w in workers_sorted:
+                header.append(f"{w} process")
+
+            # compute total per counter for this method
+            total_per_counter = {k: 0 for k in COUNTER_KEYS}
+            for e in group:
+                for k in COUNTER_KEYS:
+                    total_per_counter[k] += int(e.get(k, 0) or 0)
+
+            mode_totals = {
+                "thread": {k: 0 for k in COUNTER_KEYS},
+                "process": {k: 0 for k in COUNTER_KEYS},
+            }
+            per_worker_mode = {
+                "thread": {w: {k: 0 for k in COUNTER_KEYS} for w in workers_sorted},
+                "process": {w: {k: 0 for k in COUNTER_KEYS} for w in workers_sorted},
+            }
+            for e in group:
+                m = file_pat.match(e["file"]) or file_pat.match(
+                    e["file"].replace(".log", "")
+                )
+                mode = None
+                w = None
+                if m:
+                    w = int(m.group(1))
+                    mode = m.group(2)
+                for k in COUNTER_KEYS:
+                    v = int(e.get(k, 0) or 0)
+                    if mode:
+                        mode_totals[mode][k] += v
+                        if w in per_worker_mode[mode]:
+                            per_worker_mode[mode][w][k] += v
+
+            agg_rows = []
+            for k in COUNTER_KEYS:
+                row = [k, total_per_counter[k]]
+                row.append(mode_totals.get("thread", {}).get(k, 0))
+                for w in workers_sorted:
+                    row.append(per_worker_mode.get("thread", {}).get(w, {}).get(k, 0))
+                row.append(mode_totals.get("process", {}).get(k, 0))
+                for w in workers_sorted:
+                    row.append(per_worker_mode.get("process", {}).get(w, {}).get(k, 0))
+                agg_rows.append(row)
+
+            out_lines.append("::")
+            out_lines.append("")
+            for line in format_table(agg_rows, header).splitlines():
+                out_lines.append("    " + line)
+            out_lines.append("")
     # test_file_descriptors.py results: compute FD-specific metrics (and include total_time aggregated across non-FD files)
     fd_entries = [
         e
@@ -641,71 +706,6 @@ def main():
                 mw_rows, ["mode", "workers", "n", "mean", "sd", "min", "max"]
             ).splitlines():
                 out_lines.append("    " + line)
-            # recompute workers and modes for this group
-            worker_set = set()
-            modes = {"thread": [], "process": []}
-            file_pat = _re.compile(r".*_(\d+)_(process|thread)\.log$")
-            for e in group:
-                m = file_pat.match(e["file"]) or file_pat.match(
-                    e["file"].replace(".log", "")
-                )
-                if m:
-                    worker_set.add(int(m.group(1)))
-                    modes.setdefault(m.group(2), []).append((int(m.group(1)), e))
-            workers_sorted = sorted(worker_set)
-            header = ["counter", "total", "threads"]
-            for w in workers_sorted:
-                header.append(f"{w} threads")
-            header.append("process")
-            for w in workers_sorted:
-                header.append(f"{w} process")
-
-            # compute total per counter for this method
-            total_per_counter = {k: 0 for k in COUNTER_KEYS}
-            for e in group:
-                for k in COUNTER_KEYS:
-                    total_per_counter[k] += int(e.get(k, 0) or 0)
-
-            mode_totals = {
-                "thread": {k: 0 for k in COUNTER_KEYS},
-                "process": {k: 0 for k in COUNTER_KEYS},
-            }
-            per_worker_mode = {
-                "thread": {w: {k: 0 for k in COUNTER_KEYS} for w in workers_sorted},
-                "process": {w: {k: 0 for k in COUNTER_KEYS} for w in workers_sorted},
-            }
-            for e in group:
-                m = file_pat.match(e["file"]) or file_pat.match(
-                    e["file"].replace(".log", "")
-                )
-                mode = None
-                w = None
-                if m:
-                    w = int(m.group(1))
-                    mode = m.group(2)
-                for k in COUNTER_KEYS:
-                    v = int(e.get(k, 0) or 0)
-                    if mode:
-                        mode_totals[mode][k] += v
-                        if w in per_worker_mode[mode]:
-                            per_worker_mode[mode][w][k] += v
-
-            agg_rows = []
-            for k in COUNTER_KEYS:
-                row = [k, total_per_counter[k]]
-                row.append(mode_totals.get("thread", {}).get(k, 0))
-                for w in workers_sorted:
-                    row.append(per_worker_mode.get("thread", {}).get(w, {}).get(k, 0))
-                row.append(mode_totals.get("process", {}).get(k, 0))
-                for w in workers_sorted:
-                    row.append(per_worker_mode.get("process", {}).get(w, {}).get(k, 0))
-                agg_rows.append(row)
-
-            out_lines.append("::")
-            out_lines.append("")
-            for line in format_table(agg_rows, header).splitlines():
-                out_lines.append("    " + line)
-            out_lines.append("")
     # write out_lines to the chosen output file
     out_path = (
         Path(args.output) if args.output else (results_dir / "integration_summary.rst")
