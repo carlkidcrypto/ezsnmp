@@ -2,6 +2,8 @@ wget
 unzip
 file
 openssl
+libxcrypt
+libxcrypt-compat
 bzip2
 xz
 zlib
