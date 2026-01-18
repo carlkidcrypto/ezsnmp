@@ -18,10 +18,12 @@ extern std::atomic<int> g_netsnmp_init_count;
 // Flag to track if init_snmp has been called
 extern std::atomic<bool> g_netsnmp_initialized;
 
+#include <string>
+
 // Increment reference count and initialize snmp if needed
-void netsnmp_thread_init(char const* app_name);
+void netsnmp_thread_init(std::string const& app_name);
 
 // Decrement reference count and cleanup snmp if last thread
-void netsnmp_thread_cleanup();
+void netsnmp_thread_cleanup(std::string const& app_name);
 
 #endif // THREAD_SAFETY_H
