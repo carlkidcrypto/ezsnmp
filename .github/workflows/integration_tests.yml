@@ -174,18 +174,56 @@ jobs:
       - name: Prepare PR integration-test summary
         if: ${{ github.event_name == 'pull_request' && matrix.os == 'macos-latest' && matrix.python-version == '3.14' }}
         run: |
-          SUMMARY_FILE=integration_test_summary.md
-          echo "## Integration test results" > $SUMMARY_FILE
-          for fp in "${{ env.artifactPath1 }}" "${{ env.artifactPath2 }}" "${{ env.artifactPath3 }}" "${{ env.artifactPath4 }}"; do
-            if [ -n "$fp" ] && [ -f "$fp" ]; then
-              echo "" >> $SUMMARY_FILE
-              echo "### $(basename "$fp")" >> $SUMMARY_FILE
-              echo '```' >> $SUMMARY_FILE
-              cat "$fp" >> $SUMMARY_FILE
-              echo '```' >> $SUMMARY_FILE
-            fi
-          done
-          echo "Summary prepared: $SUMMARY_FILE"
+          cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests
+          python3 -c "
+          import re
+          import statistics
+          import os
+          
+          log_file = 'integration_tests_full_macos-latest_3.14.log'
+          if not os.path.exists(log_file):
+              print('Log file not found')
+              exit(1)
+          
+          with open(log_file, 'r') as f:
+              lines = f.readlines()
+          
+          data = {}
+          for line in lines:
+              match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
+              if match:
+                  test_type, num, field, value = match.groups()
+                  num = int(num)
+                  try:
+                      val = float(value.split()[0])
+                  except ValueError:
+                      continue
+                  key = (test_type, num, field)
+                  if key not in data:
+                      data[key] = []
+                  data[key].append(val)
+          
+          summary = '<!-- integration-test-summary -->\n## Integration test results\n\n'
+          for key in sorted(data.keys()):
+              test_type, num, field = key
+              values = data[key]
+              if len(values) > 1:
+                  min_v = min(values)
+                  max_v = max(values)
+                  avg_v = statistics.mean(values)
+                  std_v = statistics.stdev(values)
+                  summary += f'### {test_type} - {num} - {field}\n'
+                  summary += f'- Min: {min_v:.6f}\n'
+                  summary += f'- Max: {max_v:.6f}\n'
+                  summary += f'- Avg: {avg_v:.6f}\n'
+                  summary += f'- StdDev: {std_v:.6f}\n\n'
+              elif len(values) == 1:
+                  summary += f'### {test_type} - {num} - {field}: {values[0]:.6f}\n\n'
+          
+          with open('integration_test_summary.md', 'w') as f:
+              f.write(summary)
+          "
+          echo "Summary prepared: integration_test_summary.md"
 
       - name: Post PR comment with integration-test summary
         if: ${{ github.event_name == 'pull_request' && matrix.os == 'macos-latest' && matrix.python-version == '3.14' }}
@@ -195,3 +233,4 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body-file: integration_test_summary.md
           edit-mode: replace
+          comment-tag: integration-test-summary
