@@ -56,9 +56,6 @@ Getting Started
 Please check out the `EzSnmp documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
 
-.. note::
-   If you are building from source and applying patches, you may need to install `dos2unix` on your system. On Ubuntu/Debian, run `sudo apt install dos2unix`. On macOS, use `brew install dos2unix`.
-
 Code Coverage
 -------------
 
@@ -118,7 +115,7 @@ Copyright (c) 2006 SPARTA, Inc. All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
 
-Copyright (c) 2024-2025 carlkidcrypto All Rights Reserved. This program is
+Copyright (c) 2024-2026 carlkidcrypto All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
 
