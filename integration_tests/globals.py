@@ -111,6 +111,9 @@ def worker(request_type: str):
     usm_unknown_security_name_counter = 0
     err_gen_ku_key_counter = 0
     netsnmp_parse_args_error_counter = 0
+    unknown_oid_error_counter = 0
+    no_hostname_specified_error_counter = 0
+    generic_error_counter = 0
 
     while are_we_done != True:
         try:
@@ -159,44 +162,70 @@ def worker(request_type: str):
 
         except Exception as e:
 
+            msg = str(e).lower()
+
             if (
-                "Timeout: No Response from" in str(e)
-                or "Resource temporarily unavailable" in str(e)
-                or "Unknown host" in str(e)
+                "timeout: no response from" in msg
+                or "resource temporarily unavailable" in msg
+                or "unknown host" in msg
             ):
                 connection_error_counter += 1
 
                 if connection_error_counter >= MAX_RETRIES:
                     are_we_done = True
 
-            elif "USM unknown security name (no such user exists)" in str(e):
+            elif "usm unknown security name (no such user exists)" in msg:
                 usm_unknown_security_name_counter += 1
 
                 if usm_unknown_security_name_counter >= MAX_RETRIES:
                     are_we_done = True
 
             elif (
-                "Error generating a key (Ku) from the supplied authentication pass phrase"
-                in str(e)
+                "error generating a key (ku) from the supplied authentication pass phrase"
+                in msg
             ):
                 err_gen_ku_key_counter += 1
 
                 if err_gen_ku_key_counter >= MAX_RETRIES:
                     are_we_done = True
 
-            elif "NETSNMP_PARSE_ARGS_ERROR" in str(e):
+            elif "netsnmp_parse_args_error" in msg:
 
                 netsnmp_parse_args_error_counter += 1
 
                 if netsnmp_parse_args_error_counter >= MAX_RETRIES:
                     are_we_done = True
 
+            elif "unknown object identifier" in msg:
+                unknown_oid_error_counter += 1
+
+                if unknown_oid_error_counter >= MAX_RETRIES:
+                    are_we_done = True
+
+            elif "no hostname specified" in msg:
+                no_hostname_specified_error_counter += 1
+
+                if no_hostname_specified_error_counter >= MAX_RETRIES:
+                    are_we_done = True
+
             else:
-                print(f"sess.args: {sess.args}")
-                raise e
+                # Count any unexpected error without aborting the worker loop
+                generic_error_counter += 1
+                # Helpful context for debugging
+                try:
+                    print(f"sess.args: {sess.args}")
+                except Exception:
+                    pass
+                if generic_error_counter >= MAX_RETRIES:
+                    are_we_done = True
 
     print(f"\tFor a worker with PID: {getpid()} and TID: {get_native_id()}")
     print(f"\t\tconnection_error_counter: {connection_error_counter}")
     print(f"\t\tusm_unknown_security_name_counter: {usm_unknown_security_name_counter}")
     print(f"\t\terr_gen_ku_key_counter: {err_gen_ku_key_counter}")
     print(f"\t\tnetsnmp_parse_args_error_counter: {netsnmp_parse_args_error_counter}")
+    print(f"\t\tunknown_oid_error_counter: {unknown_oid_error_counter}")
+    print(
+        f"\t\tno_hostname_specified_error_counter: {no_hostname_specified_error_counter}"
+    )
+    print(f"\t\tgeneric_error_counter: {generic_error_counter}")

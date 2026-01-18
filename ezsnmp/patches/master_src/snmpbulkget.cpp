@@ -66,6 +66,8 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
+#include <mutex>
+
 oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int max_repetitions = 10;
 int non_repeaters = 0;
@@ -78,6 +80,7 @@ int names;
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkget.h"
+#include "thread_safety.h"
 
 void snmpbulkget_usage(void) {
    fprintf(stderr, "USAGE: snmpbulkget ");
@@ -127,9 +130,10 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
-   /* completely disable logging otherwise it will default to stderr */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
+                                std::string const &init_app_name) {
+   // Reference-counted initialization: only first thread calls init_snmp
+   netsnmp_thread_init(init_app_name);
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -169,14 +173,17 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args) {
    }
 
    namep = name = (struct nameStruct *)calloc(names, sizeof(*name));
-   while (arg < argc) {
-      namep->name_len = MAX_OID_LEN;
-      if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
-         snmp_perror_exception(argv[arg]);
-         return parse_results(return_vector);
+   {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+      while (arg < argc) {
+         namep->name_len = MAX_OID_LEN;
+         if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
+            snmp_perror_exception(argv[arg]);
+            return parse_results(return_vector);
+         }
+         arg++;
+         namep++;
       }
-      arg++;
-      namep++;
    }
 
    /*
