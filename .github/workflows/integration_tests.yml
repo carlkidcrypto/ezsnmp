@@ -140,6 +140,7 @@ jobs:
             echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath4=/home/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath5=/home/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
@@ -160,6 +161,7 @@ jobs:
             echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath5=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
@@ -170,38 +172,45 @@ jobs:
             ${{ env.artifactPath2 }}
             ${{ env.artifactPath3 }}
             ${{ env.artifactPath4 }}
+            ${{ env.artifactPath5 }}
+
+  pr-summary:
+    needs: build-and-integration-test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
       - name: Prepare PR integration-test summary
-        if: ${{ github.event_name == 'pull_request' && matrix.os == 'macos-latest' && matrix.python-version == '3.14' }}
         run: |
-          cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests
           python3 -c "
+          import os
           import re
           import statistics
-          import os
-          
-          log_file = 'integration_tests_full_macos-latest_3.14.log'
-          if not os.path.exists(log_file):
-              print('Log file not found')
-              exit(1)
-          
-          with open(log_file, 'r') as f:
-              lines = f.readlines()
           
           data = {}
-          for line in lines:
-              match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
-              if match:
-                  test_type, num, field, value = match.groups()
-                  num = int(num)
-                  try:
-                      val = float(value.split()[0])
-                  except ValueError:
-                      continue
-                  key = (test_type, num, field)
-                  if key not in data:
-                      data[key] = []
-                  data[key].append(val)
+          for root, dirs, files in os.walk('artifacts'):
+              for file in files:
+                  if file.startswith('integration_tests_full_') and file.endswith('.log'):
+                      log_path = os.path.join(root, file)
+                      with open(log_path, 'r') as f:
+                          lines = f.readlines()
+                      for line in lines:
+                          match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
+                          if match:
+                              test_type, num, field, value = match.groups()
+                              num = int(num)
+                              try:
+                                  val = float(value.split()[0])
+                              except ValueError:
+                                  continue
+                              key = (test_type, num, field)
+                              if key not in data:
+                                  data[key] = []
+                              data[key].append(val)
           
           summary = '<!-- integration-test-summary -->\n## Integration test results\n\n'
           for key in sorted(data.keys()):
@@ -226,7 +235,6 @@ jobs:
           echo "Summary prepared: integration_test_summary.md"
 
       - name: Post PR comment with integration-test summary
-        if: ${{ github.event_name == 'pull_request' && matrix.os == 'macos-latest' && matrix.python-version == '3.14' }}
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
