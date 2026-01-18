@@ -111,7 +111,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -108,19 +106,26 @@
+@@ -108,19 +106,23 @@
                  inform = 1;
                  break;
              default:
@@ -132,11 +132,8 @@
 -{
 -    netsnmp_session session, *ss;
 +int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -145,7 +142,7 @@
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
      size_t          name_length;
-@@ -128,36 +133,41 @@
+@@ -128,36 +130,41 @@
      int             status;
      char           *trap = NULL;
      char           *prognam;
@@ -198,7 +195,7 @@
      session.callback = snmp_input;
      session.callback_magic = NULL;
  
-@@ -169,10 +179,8 @@
+@@ -169,10 +176,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -211,7 +208,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -196,10 +204,8 @@
+@@ -196,10 +201,8 @@
          /*
           * pick our own engineID 
           */
@@ -224,7 +221,7 @@
          }
  
          /*
-@@ -208,58 +214,57 @@
+@@ -208,58 +211,57 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -305,7 +302,7 @@
              }
              pdu->enterprise = (oid *) malloc(name_length * sizeof(oid));
              memcpy(pdu->enterprise, name, name_length * sizeof(oid));
-@@ -267,47 +272,44 @@
+@@ -267,47 +269,44 @@
          }
          if (++arg >= argc) {
              fprintf(stderr, "Missing agent parameter\n");
@@ -365,7 +362,7 @@
      } else
  #endif
      {
-@@ -317,35 +319,28 @@
+@@ -317,35 +316,28 @@
          pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
          if ( !pdu ) {
              fprintf(stderr, "Failed to create notification PDU\n");
@@ -411,7 +408,7 @@
          }
      }
      arg++;
-@@ -353,40 +348,46 @@
+@@ -353,40 +345,46 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -471,7 +468,7 @@
 +close_session:
      snmp_close(ss);
 -    snmp_shutdown("snmpapp");
-+   snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
++   netsnmp_thread_cleanup(init_app_name);
 +
 +out:
 +   clear_net_snmp_library_data();

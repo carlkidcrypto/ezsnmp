@@ -102,7 +102,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -101,17 +99,26 @@
+@@ -101,17 +99,23 @@
                  break;
  
              default:
@@ -122,11 +122,8 @@
 -{
 +std::vector<Result> snmpset(std::vector<std::string> const &args,
 +                            std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -135,7 +132,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,7 +134,6 @@
+@@ -127,7 +131,6 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
@@ -143,7 +140,7 @@
  
      SOCK_STARTUP;
  
-@@ -136,28 +142,29 @@
+@@ -136,28 +139,29 @@
      /*
       * get the common command line arguments 
       */
@@ -181,7 +178,7 @@
          goto out;
      }
  
-@@ -165,9 +172,8 @@
+@@ -165,9 +169,8 @@
       * get object names, types, and values 
       */
      for (; arg < argc; arg++) {
@@ -193,7 +190,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -182,6 +188,7 @@
+@@ -182,6 +185,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -201,7 +198,7 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -191,17 +198,16 @@
+@@ -191,17 +195,16 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -222,7 +219,7 @@
              fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
              goto out;
          }
-@@ -215,7 +221,7 @@
+@@ -215,7 +218,7 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -231,7 +228,7 @@
          goto out;
      }
  
-@@ -223,23 +229,23 @@
+@@ -223,23 +226,23 @@
       * create PDU for SET request and add object names and values to request 
       */
      pdu = snmp_pdu_create(SNMP_MSG_SET);
@@ -263,7 +260,7 @@
  
      /*
       * do the request 
-@@ -248,40 +254,44 @@
+@@ -248,40 +251,44 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {

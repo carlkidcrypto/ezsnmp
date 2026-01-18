@@ -127,7 +127,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -152,19 +145,33 @@
+@@ -152,19 +145,30 @@
                  end_name = argv[optind++];
                  break;
                  
@@ -154,11 +154,8 @@
 -{
 +std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 +                             std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -167,7 +164,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -179,40 +186,41 @@
+@@ -179,40 +183,41 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -226,7 +223,7 @@
      default:
          break;
      }
-@@ -225,16 +233,18 @@
+@@ -225,16 +230,18 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -248,7 +245,7 @@
      }
  
      /*
-@@ -244,9 +254,11 @@
+@@ -244,9 +251,11 @@
       */
      if ( end_name ) {
          end_len = MAX_OID_LEN;
@@ -262,7 +259,7 @@
          }
      } else {
          memmove(end_oid, root, rootlen*sizeof(oid));
-@@ -254,8 +266,6 @@
+@@ -254,8 +263,6 @@
          end_oid[end_len-1]++;
      }
  
@@ -271,7 +268,7 @@
      /*
       * open an SNMP session 
       */
-@@ -264,9 +274,7 @@
+@@ -264,9 +271,7 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -282,7 +279,7 @@
      }
  
      /*
-@@ -278,15 +286,19 @@
+@@ -278,15 +283,19 @@
      running = 1;
  
      check =
@@ -308,7 +305,7 @@
      while (running) {
          /*
           * create PDU for GETNEXT request and add object name to request 
-@@ -297,16 +309,21 @@
+@@ -297,16 +306,21 @@
          /*
           * do the request 
           */
@@ -334,7 +331,7 @@
                          /*
                           * not part of this subtree 
                           */
-@@ -314,75 +331,78 @@
+@@ -314,75 +328,78 @@
                          continue;
                      }
                      numprinted++;
@@ -453,7 +450,7 @@
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -391,22 +411,24 @@
+@@ -391,22 +408,24 @@
           * for get measure. 
           */
          if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {

@@ -76,7 +76,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -80,80 +85,77 @@
+@@ -80,80 +85,74 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -116,11 +116,8 @@
 -    int             count;
 +std::vector<Result> snmpget(std::vector<std::string> const &args,
 +                            std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc = 0;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -198,7 +195,7 @@
  
      /*
       * Open an SNMP session.
-@@ -163,27 +165,30 @@
+@@ -163,27 +162,30 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -238,7 +235,7 @@
  
      /*
       * Perform the request.
-@@ -195,32 +200,29 @@
+@@ -195,32 +197,29 @@
      status = snmp_synch_response(ss, pdu, &response);
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -282,7 +279,7 @@
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
                  snmp_free_pdu(response);
                  response = NULL;
-@@ -228,27 +230,22 @@
+@@ -228,27 +227,22 @@
                      goto retry;
  		}
              }

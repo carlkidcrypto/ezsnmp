@@ -118,7 +118,7 @@
                      exit(1);
                  } else {
                      optarg = endptr;
-@@ -162,18 +166,27 @@
+@@ -162,18 +166,24 @@
                  break;
  
              default:
@@ -139,11 +139,8 @@
 -{
 +std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
 +                                 std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -152,7 +149,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -186,32 +199,29 @@
+@@ -186,32 +196,29 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -195,7 +192,7 @@
      default:
          break;
      }
-@@ -224,16 +234,19 @@
+@@ -224,16 +231,19 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -219,7 +216,7 @@
      }
  
      /*
-@@ -244,8 +257,8 @@
+@@ -244,8 +254,8 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -230,7 +227,7 @@
      }
  
      /*
-@@ -256,22 +269,23 @@
+@@ -256,22 +266,23 @@
  
      running = 1;
  
@@ -263,7 +260,7 @@
          snmp_add_null_var(pdu, name, name_length);
  
          /*
-@@ -283,45 +297,38 @@
+@@ -283,45 +294,38 @@
                  /*
                   * check resulting variables 
                   */
@@ -326,7 +323,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -337,55 +344,56 @@
+@@ -337,55 +341,56 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {

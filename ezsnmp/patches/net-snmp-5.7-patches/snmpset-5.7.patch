@@ -102,7 +102,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -101,17 +99,26 @@
+@@ -101,17 +99,23 @@
                  break;
  
              default:
@@ -122,11 +122,8 @@
 -{
 +std::vector<Result> snmpset(std::vector<std::string> const &args,
 +                            std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -135,7 +132,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,44 +134,46 @@
+@@ -127,44 +131,46 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
@@ -195,7 +192,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -179,6 +188,7 @@
+@@ -179,6 +185,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -203,7 +200,7 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -188,24 +198,21 @@
+@@ -188,24 +195,21 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -234,7 +231,7 @@
      /*
       * open an SNMP session 
       */
-@@ -214,32 +221,30 @@
+@@ -214,32 +218,30 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -276,7 +273,7 @@
      }
  
      /*
-@@ -249,36 +254,44 @@
+@@ -249,36 +251,44 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {

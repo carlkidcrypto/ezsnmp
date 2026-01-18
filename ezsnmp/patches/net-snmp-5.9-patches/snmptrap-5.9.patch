@@ -59,7 +59,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -107,18 +106,25 @@
+@@ -107,18 +106,22 @@
                  inform = 1;
                  break;
              default:
@@ -79,11 +79,8 @@
 -main(int argc, char *argv[])
 -{
 +int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -91,7 +88,7 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -136,26 +142,28 @@
+@@ -136,26 +139,28 @@
      SOCK_STARTUP;
  
      prognam = strrchr(argv[0], '/');
@@ -129,7 +126,7 @@
      default:
          break;
      }
-@@ -171,10 +179,8 @@
+@@ -171,10 +176,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -142,7 +139,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -198,10 +204,8 @@
+@@ -198,10 +201,8 @@
          /*
           * pick our own engineID 
           */
@@ -155,7 +152,7 @@
          }
  
          /*
-@@ -210,24 +214,24 @@
+@@ -210,24 +211,24 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -188,7 +185,7 @@
          goto out;
      }
  
-@@ -245,29 +249,30 @@
+@@ -245,29 +246,30 @@
          pdu_in_addr_t = (in_addr_t *) pdu->agent_addr;
          if (arg == argc) {
              fprintf(stderr, "No enterprise oid\n");
@@ -227,7 +224,7 @@
              goto out;
          }
          agent = argv[arg];
-@@ -282,28 +287,29 @@
+@@ -282,28 +284,29 @@
          }
          if (++arg == argc) {
              fprintf(stderr, "Missing generic-trap parameter\n");
@@ -262,7 +259,7 @@
      } else
  #endif
      {
-@@ -317,26 +323,23 @@
+@@ -317,26 +320,23 @@
          }
          if (arg == argc) {
              fprintf(stderr, "Missing up-time parameter\n");
@@ -295,7 +292,7 @@
              goto out;
          }
      }
-@@ -345,34 +348,37 @@
+@@ -345,44 +345,47 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -345,8 +342,10 @@
  
      exitval = 0;
  
-@@ -381,8 +387,8 @@
-     snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
+ close_session:
+     snmp_close(ss);
+-    snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
++   netsnmp_thread_cleanup(init_app_name);
  
  out:
 -    if (ss == NULL)

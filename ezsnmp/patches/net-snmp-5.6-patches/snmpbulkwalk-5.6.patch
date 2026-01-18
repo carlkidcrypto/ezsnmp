@@ -157,7 +157,7 @@
                      exit(1);
                  } else {
                      optarg = endptr;
-@@ -162,18 +166,27 @@
+@@ -162,18 +166,24 @@
                  break;
  
              default:
@@ -178,11 +178,8 @@
 -{
 +std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
 +                                 std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -191,7 +188,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -186,29 +199,29 @@
+@@ -186,29 +196,29 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -233,7 +230,7 @@
      default:
          break;
      }
-@@ -221,20 +234,21 @@
+@@ -221,20 +231,21 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -261,7 +258,7 @@
      /*
       * open an SNMP session 
       */
-@@ -243,9 +257,8 @@
+@@ -243,9 +254,8 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -273,7 +270,7 @@
      }
  
      /*
-@@ -256,11 +269,14 @@
+@@ -256,11 +266,14 @@
  
      running = 1;
  
@@ -293,7 +290,7 @@
      }
  
      while (running) {
-@@ -268,8 +284,8 @@
+@@ -268,8 +281,8 @@
           * create PDU for GETBULK request and add object name to request 
           */
          pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
@@ -304,7 +301,7 @@
          snmp_add_null_var(pdu, name, name_length);
  
          /*
-@@ -281,44 +297,38 @@
+@@ -281,44 +294,38 @@
                  /*
                   * check resulting variables 
                   */
@@ -366,7 +363,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -334,53 +344,55 @@
+@@ -334,53 +341,55 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {

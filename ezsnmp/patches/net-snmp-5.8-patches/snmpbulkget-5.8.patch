@@ -107,7 +107,7 @@
                      exit(1);
                  } else {
                      optarg = endptr;
-@@ -120,17 +122,26 @@
+@@ -120,17 +122,23 @@
                  break;
  
              default:
@@ -127,11 +127,8 @@
 -{
 +std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 +                                std::string const &init_app_name) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+
 +   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name.c_str());
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -140,7 +137,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu;
      netsnmp_pdu    *response;
-@@ -138,22 +149,22 @@
+@@ -138,22 +146,22 @@
      int             arg;
      int             count;
      int             status;
@@ -170,7 +167,7 @@
      default:
          break;
      }
-@@ -161,20 +172,22 @@
+@@ -161,20 +169,22 @@
      names = argc - arg;
      if (names < non_repeaters) {
          fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -198,7 +195,7 @@
  
      /*
       * open an SNMP session 
-@@ -184,20 +197,19 @@
+@@ -184,20 +194,19 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -223,7 +220,7 @@
  
      /*
       * do the request 
-@@ -208,47 +220,48 @@
+@@ -208,47 +217,48 @@
              /*
               * check resulting variables 
               */
