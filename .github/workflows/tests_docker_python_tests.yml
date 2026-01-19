@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: [ main, copilot/fix-workflow-errors ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: Restore cached Docker image tar
         id: cache-restore
-        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
         with:
           path: .docker-image-cache/${{ matrix.distribution }}.tar
           key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
@@ -191,7 +191,7 @@ jobs:
           merge-multiple: true
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/coverage_*.xml

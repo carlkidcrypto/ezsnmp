@@ -5,7 +5,14 @@
  /*
   * snmptrap.c - send snmp traps to a network entity.
   *
-@@ -71,34 +72,29 @@
+@@ -66,39 +67,37 @@
+ 
+ #include <net-snmp/net-snmp-includes.h>
+ 
++#include <mutex>
++
+ oid             objid_enterprise[] = { 1, 3, 6, 1, 4, 1, 3, 1, 1 };
+ oid             objid_sysuptime[] = { 1, 3, 6, 1, 2, 1, 1, 3, 0 };
  oid             objid_snmptrap[] = { 1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0 };
  int             inform = 0;
  
@@ -15,6 +22,7 @@
 +#include "exceptionsbase.h"
 +#include "helpers.h"
 +#include "snmptrap.h"
++#include "thread_safety.h"
 +
 +void snmptrap_usage(void) {
      fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
@@ -51,7 +59,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -107,18 +103,22 @@
+@@ -107,18 +106,22 @@
                  inform = 1;
                  break;
              default:
@@ -70,9 +78,9 @@
 -int
 -main(int argc, char *argv[])
 -{
-+int snmptrap(std::vector<std::string> const &args) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -80,7 +88,7 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -136,26 +136,28 @@
+@@ -136,26 +139,28 @@
      SOCK_STARTUP;
  
      prognam = strrchr(argv[0], '/');
@@ -118,7 +126,7 @@
      default:
          break;
      }
-@@ -171,10 +173,8 @@
+@@ -171,10 +176,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -131,7 +139,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -198,10 +198,8 @@
+@@ -198,10 +201,8 @@
          /*
           * pick our own engineID 
           */
@@ -144,7 +152,7 @@
          }
  
          /*
-@@ -210,24 +208,24 @@
+@@ -210,24 +211,24 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -177,7 +185,7 @@
          goto out;
      }
  
-@@ -245,20 +243,18 @@
+@@ -245,29 +246,30 @@
          pdu_in_addr_t = (in_addr_t *) pdu->agent_addr;
          if (arg == argc) {
              fprintf(stderr, "No enterprise oid\n");
@@ -195,15 +203,19 @@
 +         pdu->enterprise_length = OID_LENGTH(objid_enterprise);
          } else {
              name_length = MAX_OID_LEN;
++         {
++            std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
              if (!snmp_parse_oid(argv[arg], name, &name_length)) {
 -                snmp_perror(argv[arg]);
 -                usage();
-+            snmp_perror_exception(argv[arg]);
-+            snmptrap_usage();
++               snmp_perror_exception(argv[arg]);
++               snmptrap_usage();
                  goto out;
              }
++         }
              pdu->enterprise = (oid *) malloc(name_length * sizeof(oid));
-@@ -267,7 +263,7 @@
+             memcpy(pdu->enterprise, name, name_length * sizeof(oid));
+             pdu->enterprise_length = name_length;
          }
          if (++arg >= argc) {
              fprintf(stderr, "Missing agent parameter\n");
@@ -212,7 +224,7 @@
              goto out;
          }
          agent = argv[arg];
-@@ -282,28 +278,29 @@
+@@ -282,28 +284,29 @@
          }
          if (++arg == argc) {
              fprintf(stderr, "Missing generic-trap parameter\n");
@@ -247,7 +259,7 @@
      } else
  #endif
      {
-@@ -317,26 +314,23 @@
+@@ -317,26 +320,23 @@
          }
          if (arg == argc) {
              fprintf(stderr, "Missing up-time parameter\n");
@@ -280,7 +292,7 @@
              goto out;
          }
      }
-@@ -345,34 +339,34 @@
+@@ -345,44 +345,47 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -290,15 +302,18 @@
              goto out;
          }
          name_length = MAX_OID_LEN;
++      {
++         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
          if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
 -            snmp_perror(argv[arg - 3]);
-+         snmp_perror_exception(argv[arg - 3]);
++            snmp_perror_exception(argv[arg - 3]);
              goto out;
          }
 -        if (snmp_add_var
 -            (pdu, name, name_length, argv[arg - 2][0],
 -             argv[arg - 1]) != 0) {
 -            snmp_perror(argv[arg - 3]);
++      }
 +      if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
 +         snmp_perror_exception(argv[arg - 3]);
              goto out;
@@ -327,8 +342,10 @@
  
      exitval = 0;
  
-@@ -381,8 +375,8 @@
-     snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
+ close_session:
+     snmp_close(ss);
+-    snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
++   netsnmp_thread_cleanup(init_app_name);
  
  out:
 -    if (ss == NULL)
