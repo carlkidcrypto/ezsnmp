@@ -24,6 +24,11 @@ dist/
 # Documentation builds
 docs/_build/
 doxygen_docs_build/
+# Generated documentation (latest/current build - should not be committed)
+# Note: Versioned documentation folders (html_v*) are kept for historical reference
+docs/html/
+docs/_static/
+docs/doctrees/
 
 # vim stuff
 .ropeproject
