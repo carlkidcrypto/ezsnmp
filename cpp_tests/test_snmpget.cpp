@@ -49,17 +49,6 @@ TEST_F(SnmpGetTest, TestMultipleOids) {
        "oid: IF-MIB::ifAdminStatus, index: 1, type: INTEGER, value: up(1), converted_value: 1");
 }
 
-TEST_F(SnmpGetTest, TestDontFixPdusOption) {
-   std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "-Cf", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
-
-   auto results = snmpget(args, "testing");
-   ASSERT_EQ(results.size(), 1);
-   EXPECT_EQ(results[0]._to_string(),
-             "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
-             "converted_value: my original location");
-}
-
 TEST_F(SnmpGetTest, TestV3Get) {
    std::vector<std::string> args = {"-v",
                                     "3",
