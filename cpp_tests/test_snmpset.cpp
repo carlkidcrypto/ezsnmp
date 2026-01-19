@@ -65,8 +65,9 @@ TEST_F(SnmpSetTest, TestInvalidVersion) {
 
 // Test -Cq option (quiet mode) - This must be last in sequence due to global state
 TEST_F(SnmpSetTest, TestQuietOption) {
-   std::vector<std::string> args = {"-v",   "2c", "-c", "public",  "-Cq", "localhost:11161",
-                                    "SNMPv2-MIB::sysLocation.0", "s", "test quiet"};
+   std::vector<std::string> args = {
+       "-v", "2c",        "-c", "public", "-Cq", "localhost:11161", "SNMPv2-MIB::sysLocation.0",
+       "s",  "test quiet"};
 
    // Quiet mode should return empty results on success
    auto results = snmpset(args, "testing");
