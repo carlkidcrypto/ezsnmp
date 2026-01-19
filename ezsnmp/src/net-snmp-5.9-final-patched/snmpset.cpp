@@ -65,9 +65,12 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
+#include <mutex>
+
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
+#include "thread_safety.h"
 
 void snmpset_usage(void) {
    fprintf(stderr, "USAGE: snmpset ");
@@ -106,9 +109,8 @@ void snmpset_optProc(int argc, char *const *argv, int opt) {
 
 std::vector<Result> snmpset(std::vector<std::string> const &args,
                             std::string const &init_app_name) {
-   /* completely disable logging otherwise it will default to stderr */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   init_snmp(init_app_name.c_str());
+   // Reference-counted initialization: only first thread calls init_snmp
+   netsnmp_thread_init(init_app_name);
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -224,14 +226,17 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
     * create PDU for SET request and add object names and values to request
     */
    pdu = snmp_pdu_create(SNMP_MSG_SET);
-   for (count = 0; count < current_name; count++) {
-      name_length = MAX_OID_LEN;
-      if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror_exception(names[count]);
-         failures++;
-      } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
-         snmp_perror_exception(names[count]);
-         failures++;
+   {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+      for (count = 0; count < current_name; count++) {
+         name_length = MAX_OID_LEN;
+         if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
+            snmp_perror_exception(names[count]);
+            failures++;
+         } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
+            snmp_perror_exception(names[count]);
+            failures++;
+         }
       }
    }
 
@@ -286,6 +291,5 @@ out:
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
-
    return parse_results(return_vector);
 }

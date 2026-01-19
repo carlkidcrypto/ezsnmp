@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "exceptionsbase.h"
+#include "thread_safety.h"
 
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
@@ -314,6 +315,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
 }
 
 void clear_net_snmp_library_data() {
+   std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
    // From:
    // https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,

@@ -4,7 +4,12 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-First run doxygen to generate the XML files needed by Breathe.
+.. note::
+   Documentation is automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
+   Current build outputs are not committed to the repository to avoid bloat and merge conflicts.
+   However, versioned documentation folders (``docs/html_v1.1.0/``, ``docs/html_v2.0.1/``, etc.) are kept in the repository for historical reference.
+
+For local documentation builds, first run doxygen to generate the XML files needed by Breathe.
 
 .. code-block:: bash
 
@@ -21,6 +26,9 @@ Next you may generate the documentation as follows:
     cd sphinx_docs_build
     python3 -m pip install -r requirements.txt
     make html
+
+The generated documentation will be built into the ``docs/`` directory. The current build outputs (``docs/html/``, ``docs/_static/``, etc.) are ignored by git, but versioned documentation folders are kept for historical reference.
+The documentation is automatically deployed to https://carlkidcrypto.github.io/ezsnmp/ via GitHub Actions.
 
 Making The SWIG Interface Files
 -------------------------------
@@ -249,7 +257,7 @@ For c++ code using clang-format 20+:
 
 .. code:: bash
 
-    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
+    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
 For python3 code:
 

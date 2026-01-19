@@ -24,6 +24,11 @@ dist/
 # Documentation builds
 docs/_build/
 doxygen_docs_build/
+# Generated documentation (latest/current build - should not be committed)
+# Note: Versioned documentation folders (html_v*) are kept for historical reference
+docs/html/
+docs/_static/
+docs/doctrees/
 
 # vim stuff
 .ropeproject
@@ -66,4 +71,8 @@ ezsnmp-2.*.*/
 
 # CodeQL temporary files and artifacts
 _codeql_detected_source_root
-docker/test_outputs_*/snmpd_logs_*.txt
+docker/test_outputs_**/
+docker/test_summary_report_*.txt
+docker/previous_results_**/
+integration_tests/previous_results**/
+integration_tests/test_results**/
