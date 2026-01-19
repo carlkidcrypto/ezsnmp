@@ -64,11 +64,14 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
+#include <mutex>
+
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpgetnext.h"
+#include "thread_safety.h"
 
 void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
@@ -89,9 +92,10 @@ void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
    }
 }
 
-std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
-   /* completely disable logging otherwise it will default to stderr */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
+                                std::string const &init_app_name) {
+   // Reference-counted initialization: only first thread calls init_snmp
+   netsnmp_thread_init(init_app_name);
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -164,13 +168,16 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args) {
     */
    pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
 
-   for (count = 0; count < current_name; count++) {
-      name_length = MAX_OID_LEN;
-      if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
-         snmp_perror_exception(names[count]);
-         failures++;
-      } else {
-         snmp_add_null_var(pdu, name, name_length);
+   {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+      for (count = 0; count < current_name; count++) {
+         name_length = MAX_OID_LEN;
+         if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
+            snmp_perror_exception(names[count]);
+            failures++;
+         } else {
+            snmp_add_null_var(pdu, name, name_length);
+         }
       }
    }
    if (failures) {

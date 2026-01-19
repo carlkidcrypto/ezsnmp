@@ -1,0 +1,11 @@
+services:
+  centos8_snmp_container:
+    build:
+      context: ../../
+      dockerfile: docker/centos8_netsnmp_5.8/Dockerfile
+    container_name: centos8_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/usr/local/bin/DockerEntry.sh"]
+

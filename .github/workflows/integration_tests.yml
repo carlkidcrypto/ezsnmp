@@ -1,4 +1,7 @@
 name: Integration Tests
+permissions:
+  pull-requests: write
+  contents: read
 concurrency: integration_tests
 on:
   push:
@@ -78,7 +81,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -114,61 +117,51 @@ jobs:
           fi
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
       
-      - name: Run Integration Tests "Total execution time"
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
-        with:
-          linux: |
-             export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
-             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-             ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-             echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-          macos: |
-             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-             ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-             echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-     
-      - name: Run Integration Tests "usm_unknown_security_name_counter"
+      - name: Run Integration Tests (single)
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: |
             export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+            ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
+            # Extract key metrics into per-file logs
+            grep "Total execution time:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "usm_unknown_security_name_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "connection_error_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            # Try to copy the per-test file descriptor log from the output directory saved by the script
+            OUT_DIR=$(grep -m1 "Results saved to:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log | sed 's/Results saved to: //') || true
+            if [ -n "$OUT_DIR" ] && [ -f "$OUT_DIR/test_file_descriptors.log" ]; then
+              cp "$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            else
+              # Fallback: grep relevant lines
+              grep -A2 "Running file descriptor tests" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            fi
+            echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-          macos: |
-            cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-            echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-      - name: Run Integration Tests "connection_error_counter"
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
-        with:
-          linux: |
-            export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
-            cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
             echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-          macos: |
-            cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-            echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-      - name: Run Integration Tests "test_file_descriptors"
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
-        with:
-          linux: |
-            export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
-            cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
             echo "artifactPath4=/home/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath5=/home/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
+            ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
+            # Extract key metrics into per-file logs
+            grep "Total execution time:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "usm_unknown_security_name_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "connection_error_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            # Try to copy the per-test file descriptor log from the output directory saved by the script
+            OUT_DIR=$(grep -m1 "Results saved to:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log | sed 's/Results saved to: //') || true
+            if [ -n "$OUT_DIR" ] && [ -f "$OUT_DIR/test_file_descriptors.log" ]; then
+              cp "$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            else
+              # Fallback: grep relevant lines
+              grep -A2 "Running file descriptor tests" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            fi
+            echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath5=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
       
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
@@ -179,3 +172,73 @@ jobs:
             ${{ env.artifactPath2 }}
             ${{ env.artifactPath3 }}
             ${{ env.artifactPath4 }}
+            ${{ env.artifactPath5 }}
+
+  pr-summary:
+    needs: build-and-integration-test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare PR integration-test summary
+        run: |
+          python3 -c "
+          import os
+          import re
+          import statistics
+          
+          data = {}
+          for root, dirs, files in os.walk('artifacts'):
+              for file in files:
+                  if file.startswith('integration_tests_full_') and file.endswith('.log'):
+                      log_path = os.path.join(root, file)
+                      with open(log_path, 'r') as f:
+                          lines = f.readlines()
+                      for line in lines:
+                          match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
+                          if match:
+                              test_type, num, field, value = match.groups()
+                              num = int(num)
+                              try:
+                                  val = float(value.split()[0])
+                              except ValueError:
+                                  continue
+                              key = (test_type, num, field)
+                              if key not in data:
+                                  data[key] = []
+                              data[key].append(val)
+          
+          summary = '<!-- integration-test-summary -->\n## Integration test results\n\n'
+          for key in sorted(data.keys()):
+              test_type, num, field = key
+              values = data[key]
+              if len(values) > 1:
+                  min_v = min(values)
+                  max_v = max(values)
+                  avg_v = statistics.mean(values)
+                  std_v = statistics.stdev(values)
+                  summary += f'### {test_type} - {num} - {field}\n'
+                  summary += f'- Min: {min_v:.6f}\n'
+                  summary += f'- Max: {max_v:.6f}\n'
+                  summary += f'- Avg: {avg_v:.6f}\n'
+                  summary += f'- StdDev: {std_v:.6f}\n\n'
+              elif len(values) == 1:
+                  summary += f'### {test_type} - {num} - {field}: {values[0]:.6f}\n\n'
+          
+          with open('integration_test_summary.md', 'w') as f:
+              f.write(summary)
+          "
+          echo "Summary prepared: integration_test_summary.md"
+
+      - name: Post PR comment with integration-test summary
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: integration_test_summary.md
+          edit-mode: replace
+          comment-tag: integration-test-summary
