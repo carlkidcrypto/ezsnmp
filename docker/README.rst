@@ -11,7 +11,9 @@ This project uses pre-built Docker images hosted on Docker Hub for running unit 
 * **archlinux** - Arch Linux (latest) with Python 3.10-3.14, g++ 14.x (3.10-3.12 from source)
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.10-3.12 from source)
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source (OpenSSL 1.1.1w built to enable SSL)
+* **centos8** - CentOS 8 (EOL) with gcc-toolset-11 (g++ 11.x), Python 3.10-3.14 all from source
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14 (3.10, 3.13 from source)
+* **rockylinux9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), Python 3.10-3.14 all from source
 
 All images support:
 
@@ -23,6 +25,39 @@ All images support:
 * **Perl JSON modules** (perl-json-xs, perl-cpanel-json-xs) for improved coverage report handling
 
 The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** https://hub.docker.com/r/carlkidcrypto/ezsnmp_test_images
+
+----------------------------------------------------------------------
+
+Test Report Generation
+======================
+
+A comprehensive test report generation script is available to analyze all test results across containers and Python versions.
+
+**Usage:**
+
+.. code-block:: bash
+
+    cd docker
+    ./generate_test_reports.sh
+
+**Features:**
+
+* Analyzes test results for all container/Python version combinations
+* Detects build failures, crashes, and test failures
+* Checks SNMP daemon logs for errors
+* Generates both console output and timestamped report file
+* Color-coded status indicators (green=pass, red=fail, yellow=warning)
+* Identifies specific issues and provides recommendations
+
+**Output:**
+
+The script generates a comprehensive report saved to ``test_summary_report_YYYYMMDD_HHMMSS.txt`` containing:
+
+* Summary by container and Python version
+* SNMP daemon version and error status
+* Detailed test results (passed/failed/skipped/errors)
+* Overall statistics
+* Known issues and recommendations
 
 ----------------------------------------------------------------------
 

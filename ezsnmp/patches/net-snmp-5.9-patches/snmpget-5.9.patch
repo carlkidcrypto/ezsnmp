@@ -15,14 +15,15 @@
  #ifdef TIME_WITH_SYS_TIME
  # include <sys/time.h>
  # include <time.h>
-@@ -62,15 +63,16 @@
+@@ -62,15 +63,19 @@
  #include <arpa/inet.h>
  #endif
  
--#include <net-snmp/utilities.h>
--
- #include <net-snmp/net-snmp-includes.h>
-+#include <net-snmp/utilities.h>
++#include <net-snmp/net-snmp-includes.h>
+ #include <net-snmp/utilities.h>
+ 
+-#include <net-snmp/net-snmp-includes.h>
++#include <mutex>
  
  #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
  
@@ -32,12 +33,13 @@
 +#include "exceptionsbase.h"
 +#include "helpers.h"
 +#include "snmpget.h"
++#include "thread_safety.h"
 +
 +void snmpget_optProc(int argc, char *const *argv, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -80,80 +82,73 @@
+@@ -80,80 +85,74 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -75,9 +77,10 @@
 -    netsnmp_variable_list *vars;
 -    int             arg;
 -    int             count;
-+std::vector<Result> snmpget(std::vector<std::string> const &args) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++std::vector<Result> snmpget(std::vector<std::string> const &args,
++                            std::string const &init_app_name) {
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc = 0;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -155,7 +158,7 @@
  
      /*
       * Open an SNMP session.
-@@ -163,11 +158,9 @@
+@@ -163,27 +162,30 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -168,21 +171,24 @@
      /*
       * Create PDU for GET request and add object names to request.
       */
-@@ -175,15 +168,17 @@
+     pdu = snmp_pdu_create(SNMP_MSG_GET);
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
      for (count = 0; count < current_name; count++) {
          name_length = MAX_OID_LEN;
          if (!snmp_parse_oid(names[count], name, &name_length)) {
 -            snmp_perror(names[count]);
-+         snmp_perror_exception(names[count]);
++            snmp_perror_exception(names[count]);
              failures++;
 -        } else
-+      } else {
++         } else {
              snmp_add_null_var(pdu, name, name_length);
      }
 -    if (failures)
 -        goto close_session;
 -
 -    exitval = 0;
++      }
 +   }
 +   if (failures) {
 +      snmp_free_pdu(pdu);
@@ -192,7 +198,7 @@
  
      /*
       * Perform the request.
-@@ -195,32 +190,29 @@
+@@ -195,32 +197,29 @@
      status = snmp_synch_response(ss, pdu, &response);
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -236,7 +242,7 @@
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
                  snmp_free_pdu(response);
                  response = NULL;
-@@ -228,28 +220,23 @@
+@@ -228,28 +227,23 @@
                      goto retry;
  		}
              }

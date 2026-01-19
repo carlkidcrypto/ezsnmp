@@ -115,7 +115,7 @@ Copyright (c) 2006 SPARTA, Inc. All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
 
-Copyright (c) 2024-2025 carlkidcrypto All Rights Reserved. This program is
+Copyright (c) 2024-2026 carlkidcrypto All Rights Reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Net-SNMP itself.
 
