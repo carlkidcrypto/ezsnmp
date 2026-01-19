@@ -106,6 +106,12 @@ Build process:
 
 The HTML output will be in ``docs/html/``.
 
+.. note::
+   Current build outputs (``docs/html/``, ``docs/_static/``, ``docs/doctrees/``, etc.) are **not committed** to the repository.
+   They are automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
+   However, versioned documentation folders (``docs/html_v1.1.0/``, ``docs/html_v2.0.1/``, etc.) are kept in the repository
+   for historical reference, allowing users to compare documentation across stable releases.
+
 Documentation Workflow
 ======================
 
@@ -118,7 +124,12 @@ When contributing to EzSnmp:
 2. **Add docstrings** to Python code following existing style
 3. **Add Doxygen comments** to C++ code using standard Doxygen format
 4. **Update .rst files** if you change APIs or add major functionality
-5. **Rebuild documentation** locally to verify your changes
+5. **Rebuild documentation** locally to verify your changes (optional, as CI will build it)
+
+.. note::
+   You do **not** need to commit current build outputs (``docs/html/``, ``docs/_static/``, etc.).
+   The documentation is automatically built and deployed by GitHub Actions when your changes are merged to the main branch.
+   Only commit versioned documentation folders when creating a new stable release.
 
 Adding New Documentation
 ------------------------
@@ -168,7 +179,7 @@ Link Guidelines
 Checking Documentation
 ======================
 
-Before committing documentation changes:
+Before committing documentation changes, you can optionally build locally to verify:
 
 .. code-block:: bash
 
@@ -194,6 +205,10 @@ View the generated HTML in ``docs/html/index.html`` to verify:
 * Code examples display properly
 * Images appear correctly
 * Table of contents is accurate
+
+.. note::
+   Local builds are optional. The GitHub Actions workflow will build the documentation
+   and report any errors when you open a pull request.
 
 Resources
 =========

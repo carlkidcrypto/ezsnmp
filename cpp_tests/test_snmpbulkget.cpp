@@ -61,7 +61,6 @@ TEST_F(SnmpBulkGetTest, TestInvalidVersion) {
 }
 
 // Test -Cn option (non-repeaters)
-// The non_repeaters variable is global and persists between tests
 TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "-Cn2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
