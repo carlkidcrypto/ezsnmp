@@ -157,6 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-test
     permissions:
+      contents: write    # For creating commit comments on push
       pull-requests: write # This is needed to create/update comments
     steps:
       - name: Download Artifacts

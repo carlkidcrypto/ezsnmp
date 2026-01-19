@@ -178,6 +178,7 @@ jobs:
     needs: build-and-test
     if: needs.build-and-test.result != 'skipped'
     permissions:
+      contents: write    # For creating commit comments on push
       pull-requests: write # This is needed to create/update comments
     steps:
       - name: Download Artifacts

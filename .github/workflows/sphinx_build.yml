@@ -4,8 +4,6 @@ on:
   push:
     branches: [ main ]
 
-  pull_request:
-    branches: [ main ]
   release:
     types: [ published ]
   workflow_dispatch:
@@ -17,6 +15,9 @@ jobs:
       contents: write
       pages: write
       id-token: write
+    environment:
+      name: github-pages
+
     steps:
       - name: Check out repository code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5

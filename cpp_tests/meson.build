@@ -55,6 +55,16 @@ test_helpers = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_thread_safety = executable(
+    'test_thread_safety',
+    [
+        'test_thread_safety.cpp',
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_sessionbase = executable(
     'test_sessionbase',
     [
@@ -192,6 +202,7 @@ test_exceptionsbase = executable(
 # Register tests
 test('datatypes_test', test_datatypes)
 test('helpers_test', test_helpers)
+test('thread_safety_test', test_thread_safety)
 test('sessionbase_test', test_sessionbase)
 test('sessionbase_parameters_test', test_sessionbase_parameters)
 test('snmpget_test', test_snmpget)
