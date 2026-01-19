@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: [ main, copilot/fix-workflow-errors ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 

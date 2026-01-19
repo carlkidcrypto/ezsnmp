@@ -48,9 +48,10 @@ RUN pacman -Scc --noconfirm && \
 COPY docker/cache/Python-3.10.16.tgz /tmp/
 COPY docker/cache/Python-3.11.11.tgz /tmp/
 COPY docker/cache/Python-3.12.8.tgz /tmp/
+COPY docker/cache/Python-3.13.7.tgz /tmp/
 COPY docker/cache/Python-3.14.2.tgz /tmp/
 
-# Build Python 3.10, 3.11, 3.12, 3.14 from source (system has 3.13 already)
+# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source
 # This is faster and more reliable than AUR packages
 # altinstall puts binaries as python3.X in /usr/local/bin
 # Split into separate layers for better Docker caching - only rebuilds on version changes
@@ -81,6 +82,15 @@ RUN cd /tmp && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MIN_1_VERSION}.tgz Python-${PYTHON_MIN_1_VERSION}
+
+# Build Python ${PYTHON_MIN_2_VERSION}
+RUN cd /tmp && \
+    tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_2_VERSION} && \
+    ./configure --enable-shared && \
+    make -j$(nproc) altinstall && \
+    cd /tmp && \
+    rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
 
 # Build Python ${PYTHON_MAX_VERSION} (latest stable release)
 RUN cd /tmp && \

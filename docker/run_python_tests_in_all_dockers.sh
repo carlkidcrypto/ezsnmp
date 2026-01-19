@@ -50,12 +50,48 @@ TOX_PYTHON_VERSION=("py310" "py311" "py312" "py313" "py314")
 
 # --- Script Usage and Input Validation ---
 
+show_help() {
+	cat << EOF
+Usage: $0 [OPTIONS] [IMAGE_NAME]
+
+Run Python tests in Docker containers for ezsnmp project.
+
+Options:
+  -h, --help            Show this help message and exit
+  --preserve-logs       Preserve previous test logs in a timestamped folder
+                        instead of deleting them
+
+Arguments:
+  IMAGE_NAME           Optional. Specify a single image tag to test only that
+                       distribution (e.g., 'almalinux10_netsnmp_5.9', 
+                       'archlinux_netsnmp_5.7', 'centos7_netsnmp_5.7').
+                       If omitted, all distribution directories will be tested.
+
+Examples:
+  $0                                           # Test all distributions
+  $0 --preserve-logs                           # Test all, preserve old logs
+  $0 almalinux10_netsnmp_5.9                   # Test only AlmaLinux 10
+  $0 archlinux_netsnmp_5.7 --preserve-logs     # Test Arch Linux 5.7, preserve logs
+
+Available Distributions:
+EOF
+	# List available distributions by finding Dockerfiles
+	while IFS= read -r DOCKERFILE_PATH; do
+		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
+		echo "  - $DIR_NAME"
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n' 2>/dev/null | sort)
+	exit 0
+}
+
 TARGET_IMAGE=""
 PRESERVE_LOGS=0
 
 # Parse arguments
 while [ $# -gt 0 ]; do
 	case $1 in
+		-h|--help)
+			show_help
+			;;
 		--preserve-logs)
 			PRESERVE_LOGS=1
 			shift
@@ -65,11 +101,9 @@ while [ $# -gt 0 ]; do
 				TARGET_IMAGE=$1
 				shift
 			else
-				echo "Usage: $0 [IMAGE_NAME] [--preserve-logs]"
+				echo "ERROR: Unknown argument or multiple image names specified: $1"
 				echo ""
-				echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
-				echo "                If omitted, all distribution directories will be tested."
-				echo "  [--preserve-logs]: Optional. Preserve previous test logs in a timestamped folder instead of deleting them."
+				echo "Run '$0 --help' for usage information."
 				exit 1
 			fi
 			;;
@@ -98,6 +132,15 @@ else
 fi
 
 echo "Images to test: ${DISTROS_TO_TEST[*]}"
+
+# --- Logging: tee all output to a timestamped logfile (also prints to screen)
+LOG_DIR="logs"
+mkdir -p "${LOG_DIR}"
+LOGFILE="${LOG_DIR}/run_python_tests_in_all_dockers_$(date +%Y%m%d_%H%M%S).log"
+echo "Logging to: ${LOGFILE}"
+# Redirect stdout and stderr to tee so output goes to both screen and logfile
+exec > >(tee -a "${LOGFILE}") 2>&1
+
 echo "--------------------------------------------------"
 
 # --- Handle Previous Logs ---
@@ -229,3 +272,41 @@ wait
 echo "--------------------------------------------------"
 
 echo "All specified images tested."
+
+# --- Post-processing: extract container total durations and write CSV + summary
+TS=$(date +%Y%m%d_%H%M%S)
+RAW_TIMES_FILE="${LOG_DIR}/container_times_raw_${TS}.csv"
+CSV_FILE="${LOG_DIR}/container_times_${TS}.csv"
+STATS_FILE="${LOG_DIR}/container_stats_${TS}.txt"
+
+# Extract lines with COMPLETED (Total time: N s) and capture container name and seconds
+awk '/COMPLETED \(Total time:/ { if (match($0, /\[([^]]+)\].*Total time: *([0-9]+)s/, a)) print a[1] "," a[2] }' "${LOGFILE}" > "${RAW_TIMES_FILE}"
+
+if [ ! -s "${RAW_TIMES_FILE}" ]; then
+	echo "No completed-container timing lines found in ${LOGFILE}; skipping metrics generation."
+else
+	echo "container,seconds,hh:mm:ss" > "${CSV_FILE}"
+	while IFS=, read -r cname secs; do
+		h=$((secs/3600)); m=$(((secs%3600)/60)); s=$((secs%60))
+		printf "%s,%s,%02d:%02d:%02d\n" "$cname" "$secs" "$h" "$m" "$s"
+	done < "${RAW_TIMES_FILE}" >> "${CSV_FILE}"
+
+	# Compute simple stats: count, total, min, max, avg
+	cnt=$(wc -l < "${RAW_TIMES_FILE}" | tr -d ' ')
+	sum=$(awk -F, '{sum+=$2} END{print sum+0}' "${RAW_TIMES_FILE}")
+	min=$(awk -F, 'NR==1 || $2<min {min=$2} END{print min+0}' "${RAW_TIMES_FILE}")
+	max=$(awk -F, 'NR==1 || $2>max {max=$2} END{print max+0}' "${RAW_TIMES_FILE}")
+	avg=0
+	if [ "$cnt" -gt 0 ]; then avg=$((sum / cnt)); fi
+
+	# Helper to format seconds into HH:MM:SS
+	fmt() { sec=$1; printf "%02d:%02d:%02d" $((sec/3600)) $(((sec%3600)/60)) $((sec%60)); }
+
+	echo "containers,${cnt}" > "${STATS_FILE}"
+	echo "total_seconds,${sum}" >> "${STATS_FILE}"
+	echo "avg_seconds,${avg},avg_hms,$(fmt ${avg})" >> "${STATS_FILE}"
+	echo "min_seconds,${min},min_hms,$(fmt ${min})" >> "${STATS_FILE}"
+	echo "max_seconds,${max},max_hms,$(fmt ${max})" >> "${STATS_FILE}"
+
+	echo "\nTiming summary written to: ${CSV_FILE} and ${STATS_FILE}"
+fi

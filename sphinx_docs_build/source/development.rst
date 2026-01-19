@@ -249,7 +249,7 @@ For c++ code using clang-format 20+:
 
 .. code:: bash
 
-    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
+    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
 For python3 code:
 
