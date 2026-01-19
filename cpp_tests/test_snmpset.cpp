@@ -63,7 +63,7 @@ TEST_F(SnmpSetTest, TestInvalidVersion) {
        ParseErrorBase);
 }
 
-// Test -Cq option (quiet mode) - This must be last in sequence due to global state
+// Test -Cq option (quiet mode)
 TEST_F(SnmpSetTest, TestQuietOption) {
    std::vector<std::string> args = {
        "-v", "2c",        "-c", "public", "-Cq", "localhost:11161", "SNMPv2-MIB::sysLocation.0",
