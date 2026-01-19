@@ -5,7 +5,7 @@
  /*
   * snmpwalk.c - send snmp GETNEXT requests to a network entity, walking a
   * subtree.
-@@ -26,39 +27,39 @@
+@@ -26,77 +27,68 @@
  ******************************************************************/
  #include <net-snmp/net-snmp-config.h>
  
@@ -54,7 +54,12 @@
  #include <arpa/inet.h>
  #endif
  
-@@ -69,34 +70,22 @@
+ #include <net-snmp/net-snmp-includes.h>
+ 
++#include <mutex>
++
+ #define NETSNMP_DS_WALK_INCLUDE_REQUESTED	        1
+ #define NETSNMP_DS_WALK_PRINT_STATISTICS	        2
  #define NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC	3
  #define NETSNMP_DS_WALK_TIME_RESULTS     	        4
  #define NETSNMP_DS_WALK_DONT_GET_REQUESTED	        5
@@ -83,23 +88,23 @@
 -            "\t\t\t  t:  Display wall-clock time to complete the request\n");
 -    fprintf(stderr, "\t\t\t  E {OID}:  End the walk at the specified OID\n");
 -}
--
--void
--snmp_get_and_print(netsnmp_session * ss, oid * theoid, size_t theoid_len)
--{
 +#include "exceptionsbase.h"
 +#include "helpers.h"
 +#include "snmpwalk.h"
++#include "thread_safety.h"
 +
 +std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
 +                                                     oid *theoid,
 +                                                     size_t theoid_len) {
 +   std::vector<std::string> str_values;
-+
+ 
+-void
+-snmp_get_and_print(netsnmp_session * ss, oid * theoid, size_t theoid_len)
+-{
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             status;
-@@ -108,17 +97,18 @@
+@@ -108,17 +100,18 @@
      if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
              numprinted++;
@@ -122,7 +127,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -152,19 +142,29 @@
+@@ -152,19 +145,30 @@
                  end_name = argv[optind++];
                  break;
                  
@@ -147,9 +152,10 @@
 -int
 -main(int argc, char *argv[])
 -{
-+std::vector<Result> snmpwalk(std::vector<std::string> const &args) {
-+   /* completely disable logging otherwise it will default to stderr */
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++std::vector<Result> snmpwalk(std::vector<std::string> const &args,
++                             std::string const &init_app_name) {
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name);
 +
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -158,7 +164,7 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -179,40 +179,41 @@
+@@ -179,40 +183,41 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -217,13 +223,17 @@
      default:
          break;
      }
-@@ -226,15 +227,14 @@
+@@ -225,16 +230,18 @@
+          * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
++      {
++         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
          if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
 -            snmp_perror(argv[arg]);
 -            exit(1);
-+         snmp_perror_exception(argv[arg]);
++            snmp_perror_exception(argv[arg]);
++         }
          }
      } else {
          /*
@@ -235,17 +245,21 @@
      }
  
      /*
-@@ -245,8 +245,7 @@
+@@ -244,9 +251,11 @@
+      */
      if ( end_name ) {
          end_len = MAX_OID_LEN;
++      {
++         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
          if (snmp_parse_oid(end_name, end_oid, &end_len) == NULL) {
 -            snmp_perror(end_name);
 -            exit(1);
-+         snmp_perror_exception(end_name);
++            snmp_perror_exception(end_name);
++         }
          }
      } else {
          memmove(end_oid, root, rootlen*sizeof(oid));
-@@ -254,8 +253,6 @@
+@@ -254,8 +263,6 @@
          end_oid[end_len-1]++;
      }
  
@@ -254,7 +268,7 @@
      /*
       * open an SNMP session 
       */
-@@ -264,9 +261,7 @@
+@@ -264,9 +271,7 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -265,7 +279,7 @@
      }
  
      /*
-@@ -278,15 +273,19 @@
+@@ -278,15 +283,19 @@
      running = 1;
  
      check =
@@ -279,19 +293,18 @@
 +      for (auto const &item : retval) {
 +         return_vector.push_back(item);
 +      }
-+   }
-+
-+   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
-+      gettimeofday(&tv1, NULL);
      }
  
 -    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
 -                               NETSNMP_DS_WALK_TIME_RESULTS))
--        gettimeofday(&tv1, NULL);
++   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
+         gettimeofday(&tv1, NULL);
++   }
++
      while (running) {
          /*
           * create PDU for GETNEXT request and add object name to request 
-@@ -297,16 +296,21 @@
+@@ -297,16 +306,21 @@
          /*
           * do the request 
           */
@@ -317,7 +330,7 @@
                          /*
                           * not part of this subtree 
                           */
-@@ -314,75 +318,78 @@
+@@ -314,75 +328,78 @@
                          continue;
                      }
                      numprinted++;
@@ -428,15 +441,14 @@
      }
 -    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
 -                               NETSNMP_DS_WALK_TIME_RESULTS))
--        gettimeofday(&tv2, NULL);
 +   }
 +   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
-+      gettimeofday(&tv2, NULL);
+         gettimeofday(&tv2, NULL);
 +   }
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -391,22 +398,25 @@
+@@ -391,22 +408,24 @@
           * for get measure. 
           */
          if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
@@ -464,7 +476,6 @@
 +              (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
      }
  
-+                                               
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;
