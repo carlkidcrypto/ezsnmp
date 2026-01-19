@@ -1,7 +1,120 @@
-Last Updated: 2025-12-31 15:50:42 UTC
+Last Updated: 2026-01-19 02:35:59 UTC
 
 # Changelog
 
+
+<a name="v2.2.0a0"></a>
+## [v2.2.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0...v2.2.0a0) (2026-01-18)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix MacPorts cache corruption, missing LD_LIBRARY_PATH, cibuildwheel dependency, and Sphinx Python version issues in CI workflows ([#621](https://github.com/carlkidcrypto/ezsnmp/issues/621))
+
+- Fix duplicate step IDs in tests_homebrew.yml workflow ([#620](https://github.com/carlkidcrypto/ezsnmp/issues/620))
+
+
+#### Code Refactoring
+
+- Refactor: Extract docker exec logic into separate script ([#586](https://github.com/carlkidcrypto/ezsnmp/issues/586))
+
+
+#### Dependency Updates
+
+- Bump peter-evans/create-pull-request from 7.0.8 to 8.0.0 ([#560](https://github.com/carlkidcrypto/ezsnmp/issues/560))
+
+- Bump actions/upload-artifact from 5.0.0 to 6.0.0 ([#567](https://github.com/carlkidcrypto/ezsnmp/issues/567))
+
+- Bump urllib3 from 2.6.0 to 2.6.2 ([#563](https://github.com/carlkidcrypto/ezsnmp/issues/563))
+
+- Bump tj-actions/changed-files from 47.0.0 to 47.0.1 ([#564](https://github.com/carlkidcrypto/ezsnmp/issues/564))
+
+- Bump psf/black from 25.9.0 to 25.12.0 ([#550](https://github.com/carlkidcrypto/ezsnmp/issues/550))
+
+- Bump black from 25.9.0 to 25.12.0 ([#555](https://github.com/carlkidcrypto/ezsnmp/issues/555))
+
+- Bump actions/checkout from 5.0.0 to 6.0.1 ([#556](https://github.com/carlkidcrypto/ezsnmp/issues/556))
+
+- Bump actions/download-artifact from 6.0.0 to 7.0.0 ([#568](https://github.com/carlkidcrypto/ezsnmp/issues/568))
+
+- Bump actions/cache from 4.3.0 to 5.0.1 ([#569](https://github.com/carlkidcrypto/ezsnmp/issues/569))
+
+- Bump github/codeql-action from 4.31.3 to 4.31.8 ([#566](https://github.com/carlkidcrypto/ezsnmp/issues/566))
+
+
+#### Features
+
+- Feature/docker builds py14 2 ([#629](https://github.com/carlkidcrypto/ezsnmp/issues/629))
+
+- Feature/docker builds py14 ([#608](https://github.com/carlkidcrypto/ezsnmp/issues/608))
+
+- Feature 2.2.0 ([#597](https://github.com/carlkidcrypto/ezsnmp/issues/597))
+
+
+#### Features
+
+- Add CodeCov integration for Python and C++ coverage reporting ([#618](https://github.com/carlkidcrypto/ezsnmp/issues/618))
+
+- Add Python 3.14 and drop Python 3.9 from CentOS 7 Docker image ([#600](https://github.com/carlkidcrypto/ezsnmp/issues/600))
+
+
+#### Maintenance
+
+- chore: bump pytest from 8.4.2 to 9.0.2 ([#575](https://github.com/carlkidcrypto/ezsnmp/issues/575))
+
+- chore: bump furo from 2025.9.25 to 2025.12.19 ([#577](https://github.com/carlkidcrypto/ezsnmp/issues/577))
+
+- chore: bump coverage from 7.10.7 to 7.13.1 ([#588](https://github.com/carlkidcrypto/ezsnmp/issues/588))
+
+- chore: bump swig from 4.3.1 to 4.4.1 ([#589](https://github.com/carlkidcrypto/ezsnmp/issues/589))
+
+- chore: bump sphinx from 8.2.3 to 9.1.0 ([#596](https://github.com/carlkidcrypto/ezsnmp/issues/596))
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into update-changelog-20622364436
+
+
+#### Remove
+
+- Remove redundant manual coverage flags when b_coverage=true is set ([#580](https://github.com/carlkidcrypto/ezsnmp/issues/580))
+
+
+#### Sync
+
+- Sync Docker images with documentation: drop Python 3.9, add Python 3.14 ([#599](https://github.com/carlkidcrypto/ezsnmp/issues/599))
+
+
+#### Updates & Improvements
+
+- Update Docker images to support Python 3.10-3.14 ([#601](https://github.com/carlkidcrypto/ezsnmp/issues/601))
+
+- Update docs for v2.2.0a0 and Python 3.10+ support ([#603](https://github.com/carlkidcrypto/ezsnmp/issues/603))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#595](https://github.com/carlkidcrypto/ezsnmp/issues/595) from carlkidcrypto/update-changelog-20622364436
+
+- Merge pull request [#594](https://github.com/carlkidcrypto/ezsnmp/issues/594) from carlkidcrypto/update-changelog-20622364424
+
+
+
+
+
+---
 
 <a name="v2.1.0"></a>
 ## [v2.1.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0b2...v2.1.0) (2025-12-30)
