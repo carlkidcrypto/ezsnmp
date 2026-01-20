@@ -186,7 +186,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithSameFlag) {
 
    for (int i = 0; i < 5; ++i) {
       auto results = snmpget(args, "testing");
-      EXPECT_EQ(results.size(), 1);
+      EXPECT_EQ(results.size(), 1u);
       EXPECT_EQ(results[0]._to_string(), expected_result);
    }
 }
@@ -209,7 +209,7 @@ TEST_F(SnmpGetTest, TestRepeatedOidGetWithEnumsAndWithout) {
       }
 
       auto results = snmpget(args, "testing");
-      EXPECT_EQ(results.size(), 1);
+      EXPECT_EQ(results.size(), 1u);
 
       if (i % 2 == 0) {
          EXPECT_EQ(results[0]._to_string(), expected_result_enum);
@@ -225,7 +225,7 @@ TEST_F(SnmpGetTest, TestDontFixPDUsOption) {
        "-v", "2c", "-c", "public", "-Cf", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
 
    auto results = snmpget(args, "testing");
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
              "converted_value: my original location");
