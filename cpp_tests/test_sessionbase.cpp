@@ -636,7 +636,7 @@ TEST_F(SessionBaseTest, TestGetMultipleMibs) {
                                     "SNMPv2-MIB::sysORDescr.3"};
 
    auto results = session.get(mibs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
 // Verify individual results
 #ifdef __APPLE__
@@ -690,7 +690,7 @@ TEST_F(SessionBaseTest, TestGetNext) {
                                     "SNMPv2-MIB::sysORDescr.3"};
 
    auto results = session.get_next(mibs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
 // Verify individual results
 #ifdef __APPLE__
@@ -759,7 +759,7 @@ TEST_F(SessionBaseTest, TestBulkGet) {
    std::vector<std::string> mibs = {"SNMPv2-MIB::sysORDescr", "sysORDescr", ".1.3.6.1.2.1.1.9.1.3"};
 
    auto results = session.bulk_get(mibs);
-   ASSERT_EQ(results.size(), 30);
+   ASSERT_EQ(results.size(), 30u);
 
 // Verify first set of results
 #ifdef __APPLE__

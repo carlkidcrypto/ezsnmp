@@ -24,7 +24,7 @@ TEST_F(SnmpGetTest, TestBasicGet) {
        "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
 
    auto results = snmpget(args, "testing");
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
              "converted_value: my original location");
@@ -40,7 +40,7 @@ TEST_F(SnmpGetTest, TestMultipleOids) {
                                     "ifAdminStatus.1"};
 
    auto results = snmpget(args, "testing");
-   ASSERT_EQ(results.size(), 2);
+   ASSERT_EQ(results.size(), 2u);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
              "converted_value: my original location");
@@ -54,7 +54,7 @@ TEST_F(SnmpGetTest, TestDontFixPdusOption) {
        "-v", "2c", "-c", "public", "-Cf", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
 
    auto results = snmpget(args, "testing");
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
              "converted_value: my original location");
@@ -79,7 +79,7 @@ TEST_F(SnmpGetTest, TestV3Get) {
                                     "SNMPv2-MIB::sysLocation.0"};
 
    auto results = snmpget(args, "testing");
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0]._to_string(),
              "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
              "converted_value: my original location");
