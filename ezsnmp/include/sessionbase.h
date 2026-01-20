@@ -331,54 +331,54 @@ class SessionBase {
     */
    std::string const& _get_timeout() const;
 
-    /**
-     * @brief Returns the list of MIBs to load.
-     *
-     * @return A constant reference to the MIB list string.
-     */
-    std::string const& _get_load_mibs() const;
+   /**
+    * @brief Returns the list of MIBs to load.
+    *
+    * @return A constant reference to the MIB list string.
+    */
+   std::string const& _get_load_mibs() const;
 
-    /**
-     * @brief Returns the directories to search for MIBs.
-     *
-     * @return A constant reference to the MIB directories string.
-     */
-    std::string const& _get_mib_directories() const;
+   /**
+    * @brief Returns the directories to search for MIBs.
+    *
+    * @return A constant reference to the MIB directories string.
+    */
+   std::string const& _get_mib_directories() const;
 
-    /**
-     * @brief Returns whether enums are printed numerically.
-     *
-     * @return True if enums are printed numerically, false otherwise.
-     */
-    bool _get_print_enums_numerically() const;
+   /**
+    * @brief Returns whether enums are printed numerically.
+    *
+    * @return True if enums are printed numerically, false otherwise.
+    */
+   bool _get_print_enums_numerically() const;
 
-    /**
-     * @brief Returns whether full OIDs are printed.
-     *
-     * @return True if full OIDs are printed, false otherwise.
-     */
-    bool _get_print_full_oids() const;
+   /**
+    * @brief Returns whether full OIDs are printed.
+    *
+    * @return True if full OIDs are printed, false otherwise.
+    */
+   bool _get_print_full_oids() const;
 
-    /**
-     * @brief Returns whether OIDs are printed numerically.
-     *
-     * @return True if OIDs are printed numerically, false otherwise.
-     */
-    bool _get_print_oids_numerically() const;
+   /**
+    * @brief Returns whether OIDs are printed numerically.
+    *
+    * @return True if OIDs are printed numerically, false otherwise.
+    */
+   bool _get_print_oids_numerically() const;
 
-    /**
-     * @brief Returns whether timeticks are printed numerically.
-     *
-     * @return True if timeticks are printed numerically, false otherwise.
-     */
-    bool _get_print_timeticks_numerically() const;
+   /**
+    * @brief Returns whether timeticks are printed numerically.
+    *
+    * @return True if timeticks are printed numerically, false otherwise.
+    */
+   bool _get_print_timeticks_numerically() const;
 
-    /**
-     * @brief Returns the configured max-repeaters value as a string.
-     *
-     * @return A constant reference to the max-repeaters string.
-     */
-    std::string const& _get_set_max_repeaters_to_num() const;
+   /**
+    * @brief Returns the configured max-repeaters value as a string.
+    *
+    * @return A constant reference to the max-repeaters string.
+    */
+   std::string const& _get_set_max_repeaters_to_num() const;
 
    // Setters
 
