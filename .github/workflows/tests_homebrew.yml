@@ -273,7 +273,7 @@ jobs:
           body-includes: '<!-- ezsnmp-homebrew-valgrind -->'
 
       - name: Create A Comment For PR
-        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
+        uses: peter-evans/create-or-update-comment@2b6bdb56ad3073fa0e4beef00447158f55a18414 # v5
         if: github.event_name == 'pull_request'
         with:
           issue-number: ${{ github.event.pull_request.number }}
