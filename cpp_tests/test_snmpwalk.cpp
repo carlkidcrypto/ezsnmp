@@ -10,7 +10,7 @@ class SnmpWalkTest : public ::testing::Test {
 };
 
 TEST_F(SnmpWalkTest, TestMissingOid) {
-   std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "-t", "1", "localhost:11161"};
 
    // snmpwalk without OID defaults to root walk starting at .1
    // With a running SNMP server, this succeeds and returns results
@@ -22,7 +22,7 @@ TEST_F(SnmpWalkTest, TestMissingOid) {
 
 TEST_F(SnmpWalkTest, TestInvalidOid) {
    std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "localhost:11161", "INVALID-MIB::nonexistent"};
+       "-v", "2c", "-c", "public", "-t", "1", "localhost:11161", "INVALID-MIB::nonexistent"};
 
    EXPECT_THROW(
        {
@@ -37,7 +37,7 @@ TEST_F(SnmpWalkTest, TestInvalidOid) {
 }
 
 TEST_F(SnmpWalkTest, TestUnknownHost) {
-   std::vector<std::string> args = {"-v",           "2c", "-c", "public", "nonexistenthost:11161",
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "-t", "1", "nonexistenthost:11161",
                                     "1.3.6.1.2.1.1"};
 
    EXPECT_THROW(
