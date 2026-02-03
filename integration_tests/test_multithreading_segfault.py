@@ -64,6 +64,8 @@ def test_multithreading_concurrent_snmp_operations():
     # Wait for all threads to complete
     for t in threads:
         t.join(timeout=60)  # 60 second timeout per thread
+        if t.is_alive():
+            raise RuntimeError(f"Thread {t.name} did not complete within timeout")
         
     print(f"Successfully completed {num_threads} threads with {iterations_per_thread} iterations each")
 
@@ -98,6 +100,8 @@ def test_multithreading_rapid_session_creation():
     # Wait for all threads to complete
     for t in threads:
         t.join(timeout=30)
+        if t.is_alive():
+            raise RuntimeError(f"Thread {t.name} did not complete within timeout")
         
     print(f"Successfully completed {num_threads} threads with rapid session creation")
 
@@ -141,6 +145,8 @@ def test_multithreading_mixed_operations():
     # Wait for all threads to complete
     for t in threads:
         t.join(timeout=45)
+        if t.is_alive():
+            raise RuntimeError(f"Thread {t.name} did not complete within timeout")
         
     print(f"Successfully completed {num_threads} threads with mixed operations")
 
