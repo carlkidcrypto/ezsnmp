@@ -32,8 +32,8 @@ jobs:
           files: |
             .github/workflows/tests_cpp_native.yml
             cpp_tests/**
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
             python_tests/*.conf
             python_tests/*.py
             setup.cfg

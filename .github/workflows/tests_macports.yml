@@ -27,8 +27,8 @@ jobs:
         with:
           files: |
             .github/workflows/tests_macports.yml
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt

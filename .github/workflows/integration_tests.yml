@@ -25,8 +25,8 @@ jobs:
         with:
           files: |
             .github/workflows/integration_tests.yml
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
