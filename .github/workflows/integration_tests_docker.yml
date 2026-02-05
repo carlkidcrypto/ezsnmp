@@ -239,8 +239,8 @@ jobs:
                               data[key] = []
                           data[key].append(val)
           
-          # Generate summary
-          summary = '## Integration Tests (Docker) Results ⏱️\n\n'
+          # Generate summary with comment marker for PR comments
+          summary = '<!-- integration-test-docker-summary -->\n## Integration Tests (Docker) Results ⏱️\n\n'
           
           if not data:
               summary += 'No test results found.\n'
@@ -277,6 +277,20 @@ jobs:
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
               f.write(summary)
           
+          # Also save to file for PR comment
+          with open('integration_test_docker_summary.md', 'w') as f:
+              f.write(summary)
+          
           print('Summary generated successfully')
           "
           echo "Test summary generated"
+
+      - name: Post PR comment with integration-test summary
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: integration_test_docker_summary.md
+          edit-mode: replace
+          comment-tag: integration-test-docker-summary
