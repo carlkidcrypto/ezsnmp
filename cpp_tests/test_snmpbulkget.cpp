@@ -63,7 +63,7 @@ TEST_F(SnmpBulkGetTest, TestInvalidVersion) {
 // Test -Cn option (non-repeaters)
 TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
    std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "-Cn2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+       "-v", "2c", "-c", "public", "-Cn1", "localhost:11161", "SNMPv2-MIB::sysDescr.0", "SNMPv2-MIB::sysORDescr"};
 
    auto results = snmpbulkget(args, "testing");
    EXPECT_FALSE(results.empty());
