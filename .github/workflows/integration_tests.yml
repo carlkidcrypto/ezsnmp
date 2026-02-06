@@ -17,7 +17,7 @@ jobs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout Sourcecode
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Check for changes in source code
         id: changed-files
@@ -25,8 +25,8 @@ jobs:
         with:
           files: |
             .github/workflows/integration_tests.yml
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
@@ -72,16 +72,16 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -180,7 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
@@ -212,22 +212,26 @@ jobs:
                                   data[key] = []
                               data[key].append(val)
           
-          summary = '<!-- integration-test-summary -->\n## Integration test results\n\n'
+          # Start building the summary with a table
+          summary = '<!-- integration-test-summary -->\\n## Integration Test Results \\u23f1\\ufe0f\\n\\n'
+          summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
+          summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
+          
           for key in sorted(data.keys()):
               test_type, num, field = key
               values = data[key]
+              
+              # Format test type to be more readable
+              test_name = test_type.replace('_', ' ').title()
+              
               if len(values) > 1:
                   min_v = min(values)
                   max_v = max(values)
                   avg_v = statistics.mean(values)
                   std_v = statistics.stdev(values)
-                  summary += f'### {test_type} - {num} - {field}\n'
-                  summary += f'- Min: {min_v:.6f}\n'
-                  summary += f'- Max: {max_v:.6f}\n'
-                  summary += f'- Avg: {avg_v:.6f}\n'
-                  summary += f'- StdDev: {std_v:.6f}\n\n'
+                  summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
               elif len(values) == 1:
-                  summary += f'### {test_type} - {num} - {field}: {values[0]:.6f}\n\n'
+                  summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
           
           with open('integration_test_summary.md', 'w') as f:
               f.write(summary)
@@ -235,7 +239,7 @@ jobs:
           echo "Summary prepared: integration_test_summary.md"
 
       - name: Post PR comment with integration-test summary
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}

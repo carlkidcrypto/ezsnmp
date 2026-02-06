@@ -60,15 +60,14 @@ TEST_F(SnmpBulkGetTest, TestInvalidVersion) {
        ParseErrorBase);
 }
 
-// Test -Cn option (non-repeaters) - commented out due to global state issues
-// The non_repeaters variable is global and persists between tests
-// TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
-//    std::vector<std::string> args = {
-//        "-v", "2c", "-c", "public", "-Cn2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
-//
-//    auto results = snmpbulkget(args, "testing");
-//    EXPECT_FALSE(results.empty());
-// }
+// Test -Cn option (non-repeaters)
+TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cn2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpbulkget(args, "testing");
+   EXPECT_FALSE(results.empty());
+}
 
 // Test -Cr option (max-repeaters)
 TEST_F(SnmpBulkGetTest, TestMaxRepeatersOption) {
