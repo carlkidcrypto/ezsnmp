@@ -261,6 +261,7 @@ Documentation Structure
 This documentation is organized into the following sections:
 
 * **API Reference** - Detailed documentation of Python and C++ classes
+* **Concurrency Guide** - Information about threading and multiprocessing support
 * **Migration Guide** - Instructions for migrating from v1.x to v2.x
 * **Development Guide** - Information for contributors and developers
 * **Interface Documentation** - SWIG interface file documentation
@@ -273,6 +274,7 @@ of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
    :maxdepth: 2
    :caption: Contents:
 
+   threading-vs-multiprocessing
    modules
 
 Indices and tables
