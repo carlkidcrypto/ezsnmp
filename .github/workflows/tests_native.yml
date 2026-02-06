@@ -98,9 +98,12 @@ jobs:
       
       - name: Run Tests
         run: |
+          set -euo pipefail
           python3 -m pip install . --verbose
           rm -drf build/ ezsnmp.egg-info/ .tox/
-          tox -e py${{ matrix.python-version }} | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          TOX_ENV="py${{ matrix.python-version }}"
+          TOX_ENV="${TOX_ENV/./}"
+          tox -e "$TOX_ENV" | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
           mv test-results.xml test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
           # Generate coverage summary file (pytest-cov already collected data)
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi
