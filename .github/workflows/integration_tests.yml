@@ -25,8 +25,8 @@ jobs:
         with:
           files: |
             .github/workflows/integration_tests.yml
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
@@ -212,22 +212,26 @@ jobs:
                                   data[key] = []
                               data[key].append(val)
           
-          summary = '<!-- integration-test-summary -->\n## Integration test results\n\n'
+          # Start building the summary with a table
+          summary = '<!-- integration-test-summary -->\\n## Integration Test Results \\u23f1\\ufe0f\\n\\n'
+          summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
+          summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
+          
           for key in sorted(data.keys()):
               test_type, num, field = key
               values = data[key]
+              
+              # Format test type to be more readable
+              test_name = test_type.replace('_', ' ').title()
+              
               if len(values) > 1:
                   min_v = min(values)
                   max_v = max(values)
                   avg_v = statistics.mean(values)
                   std_v = statistics.stdev(values)
-                  summary += f'### {test_type} - {num} - {field}\n'
-                  summary += f'- Min: {min_v:.6f}\n'
-                  summary += f'- Max: {max_v:.6f}\n'
-                  summary += f'- Avg: {avg_v:.6f}\n'
-                  summary += f'- StdDev: {std_v:.6f}\n\n'
+                  summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
               elif len(values) == 1:
-                  summary += f'### {test_type} - {num} - {field}: {values[0]:.6f}\n\n'
+                  summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
           
           with open('integration_test_summary.md', 'w') as f:
               f.write(summary)
