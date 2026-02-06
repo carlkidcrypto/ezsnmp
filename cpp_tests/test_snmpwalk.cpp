@@ -9,6 +9,22 @@ class SnmpWalkTest : public ::testing::Test {
    void TearDown() override {}
 };
 
+// Test walking a valid MIB - MUST RUN FIRST to avoid global state corruption
+// from -CE flag in other tests which sets a global variable in net-snmp
+// Named AAA_BasicWalk to ensure it runs before all other tests alphabetically
+TEST_F(SnmpWalkTest, AAA_BasicWalk) {
+   // Use a fresh instance with simple args, no -C options
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpwalk(args, "testing_basic");
+   EXPECT_FALSE(results.empty());
+   // Verify we got some sysOR entries
+   for (auto const& result : results) {
+      EXPECT_TRUE(result.oid.find("sysOR") != std::string::npos);
+   }
+}
+
 TEST_F(SnmpWalkTest, TestMissingOid) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public", "-t", "1", "localhost:11161"};
 
@@ -158,19 +174,4 @@ TEST_F(SnmpWalkTest, TestUnknownCOption) {
           }
        },
        ParseErrorBase);
-}
-
-// Test walking a valid MIB - MUST RUN FIRST to avoid global state corruption
-// from -CE flag in other tests which sets a global variable in net-snmp
-TEST_F(SnmpWalkTest, Test0BasicWalk) {
-   // Use a fresh instance with simple args, no -C options
-   std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
-
-   auto results = snmpwalk(args, "testing_basic");
-   EXPECT_FALSE(results.empty());
-   // Verify we got some sysOR entries
-   for (auto const& result : results) {
-      EXPECT_TRUE(result.oid.find("sysOR") != std::string::npos);
-   }
 }
