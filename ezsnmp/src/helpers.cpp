@@ -25,6 +25,7 @@ std::string print_variable_to_string(oid const *objid,
    if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
       return "[TRUNCATED]";
    } else {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       if (sprint_realloc_variable(&buf, &buf_len, &out_len, 1, objid, objidlen, variable)) {
          // Construct the formatted string
          std::string result(reinterpret_cast<char *>(buf), out_len);
@@ -302,6 +303,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
       ss << "[TRUNCATED]\n";
       return ss.str();
    } else {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid,
                                         objidlen);
       if (buf_overflow) {
