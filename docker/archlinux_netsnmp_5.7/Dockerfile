@@ -11,7 +11,7 @@ ARG PYTHON_MIN_VERSION=3.10.16
 # Update system and install core packages in one layer
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm findutils base-devel python python-pip python-setuptools \
-    pacman-contrib git go sudo gcc
+    pacman-contrib git go sudo gcc jemalloc
 
 # Install official repository dependencies
 COPY docker/archlinux_netsnmp_5.7/pacman-requirements.txt /tmp/pacman-requirements.txt
@@ -145,6 +145,7 @@ RUN cd /tmp && \
 # Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
 ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
+ENV EZSNMP_LD_PRELOAD="/usr/lib/libjemalloc.so.2"
 
 # Virtual Environment Setup using latest Python (3.14)
 ENV VENV_PATH=/opt/venv
