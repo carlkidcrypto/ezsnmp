@@ -533,7 +533,8 @@ TEST_F(SessionBaseTest, TestGetSingleMib) {
    ASSERT_FALSE(final_result.empty());
    // Some SNMP daemons may have read-only sysLocation or delayed persistence
    // Check if the SET was accepted by verifying the value changed OR stayed the same
-   // On some systems (e.g., CentOS 8), sysLocation might be read-only despite SET appearing to succeed
+   // On some systems (e.g., CentOS 8), sysLocation might be read-only despite SET appearing to
+   // succeed
    std::string final_value = final_result[0].value;
    bool set_persisted = (final_value == "my newer location");
    bool set_ignored = (final_value == initial_result[0].value);
@@ -556,9 +557,10 @@ TEST_F(SessionBaseTest, TestGetSingleMib) {
       set_mibs = {"SNMPv2-MIB::sysLocation.0", "s", "my original location"};
       set_result = session.set(set_mibs);
       ASSERT_FALSE(set_result.empty());
-      EXPECT_EQ(set_result[0]._to_string(),
-                "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
-                "converted_value: my original location");
+      EXPECT_EQ(
+          set_result[0]._to_string(),
+          "oid: SNMPv2-MIB::sysLocation, index: 0, type: STRING, value: my original location, "
+          "converted_value: my original location");
 
       set_args = session._get_args();
       expected_set_args = {"-c",
@@ -601,8 +603,8 @@ TEST_F(SessionBaseTest, TestGetV3MD5DES) {
               std::string::npos || // net-snmp 5.9+ with deprecated algorithms
           error_msg.find("PARSE_ARGS_ERROR") !=
               std::string::npos || // Alternative error code format
-          error_msg.find("unknown auth protocol") != std::string::npos || // MD5 not recognized
-          error_msg.find("unknown priv protocol") != std::string::npos || // DES not recognized
+          error_msg.find("unknown auth protocol") != std::string::npos ||    // MD5 not recognized
+          error_msg.find("unknown priv protocol") != std::string::npos ||    // DES not recognized
           error_msg.find("Invalid privacy protocol") != std::string::npos || // DES not supported
           error_msg.find("Unknown security model") !=
               std::string::npos; // Security model not available
@@ -757,11 +759,11 @@ TEST_F(SessionBaseTest, TestBulkGet) {
 
    auto results = session.bulk_get(mibs);
    // Expect 30 results but allow some variance based on net-snmp version
-   EXPECT_GE(results.size(), 15u);  // At least 15 results
-   EXPECT_LE(results.size(), 40u);  // At most 40 results
-   
+   EXPECT_GE(results.size(), 15u); // At least 15 results
+   EXPECT_LE(results.size(), 40u); // At most 40 results
+
    // Verify structure: all results should be sysOR* OIDs with valid types
-   for (const auto& result : results) {
+   for (auto const& result : results) {
       EXPECT_TRUE(result.oid.find("sysOR") != std::string::npos);
       EXPECT_FALSE(result.type.empty());
       EXPECT_FALSE(result.index.empty());

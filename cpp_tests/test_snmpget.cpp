@@ -146,12 +146,11 @@ TEST_F(SnmpGetTest, TestUknownHost) {
              std::string error_msg(e.what());
              EXPECT_TRUE(error_msg.find("snmpget") != std::string::npos);
              // Accept either "Unknown host", "Invalid address", "Name or service not known", etc.
-             bool is_host_error = 
-                 error_msg.find("Unknown host") != std::string::npos ||
-                 error_msg.find("Invalid address") != std::string::npos ||
-                 error_msg.find("Name or service") != std::string::npos ||
-                 error_msg.find("No address associated") != std::string::npos ||
-                 error_msg.find("Name resolution") != std::string::npos;
+             bool is_host_error = error_msg.find("Unknown host") != std::string::npos ||
+                                  error_msg.find("Invalid address") != std::string::npos ||
+                                  error_msg.find("Name or service") != std::string::npos ||
+                                  error_msg.find("No address associated") != std::string::npos ||
+                                  error_msg.find("Name resolution") != std::string::npos;
              EXPECT_TRUE(is_host_error);
              EXPECT_TRUE(error_msg.find("nonexistenthost") != std::string::npos);
              throw;

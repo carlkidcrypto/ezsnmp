@@ -98,7 +98,6 @@ jobs:
       
       - name: Run Tests
         run: |
-          set -euo pipefail
           python3 -m pip install . --verbose
           rm -drf build/ ezsnmp.egg-info/ .tox/
           TOX_ENV="py${{ matrix.python-version }}"

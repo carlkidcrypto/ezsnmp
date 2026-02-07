@@ -152,13 +152,35 @@ jobs:
           set -euo pipefail
           CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
           mkdir -p integration_results
-          
+
           # Copy the main log file
           if docker exec "$CONTAINER_NAME" test -f /ezsnmp/integration_tests_full.log; then
             docker cp "$CONTAINER_NAME:/ezsnmp/integration_tests_full.log" \
               integration_results/integration_tests_${{ matrix.distribution }}.log
+
+            # Extract key metrics into per-file logs (matching native workflow behavior)
+            cd integration_results
+            LOG_FILE="integration_tests_${{ matrix.distribution }}.log"
+
+            grep "Total execution time:" "$LOG_FILE" > total_execution_time_${{ matrix.distribution }}.log || true
+            grep "usm_unknown_security_name_counter:" "$LOG_FILE" > usm_unknown_security_name_counter_${{ matrix.distribution }}.log || true
+            grep "connection_error_counter:" "$LOG_FILE" > connection_error_counter_${{ matrix.distribution }}.log || true
+
+            # Try to extract test_file_descriptors from the results directory
+            OUT_DIR=$(grep -m1 "Results saved to:" "$LOG_FILE" | sed 's/Results saved to: //' | tr -d '\r') || true
+            if [ -n "$OUT_DIR" ]; then
+              # OUT_DIR is a path inside the container, try to copy from container
+              docker cp "$CONTAINER_NAME:$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{ matrix.distribution }}.log 2>/dev/null || true
+            fi
+
+            # Fallback: grep relevant lines if file wasn't copied
+            if [ ! -f "test_file_descriptors_${{ matrix.distribution }}.log" ]; then
+              grep -A2 "Running file descriptor tests" "$LOG_FILE" > test_file_descriptors_${{ matrix.distribution }}.log || true
+            fi
+
+            cd ..
           fi
-          
+
           # Find and copy the test_results directory
           RESULTS_DIR=$(docker exec "$CONTAINER_NAME" bash -c 'ls -dt /ezsnmp/integration_tests/test_results_* 2>/dev/null | head -1' || echo "")
           if [ -n "$RESULTS_DIR" ] && [ "$RESULTS_DIR" != "" ]; then
@@ -272,15 +294,113 @@ jobs:
                           summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
                   
                   summary += '\\n'
-          
+
+          # Add file descriptor test results
+          summary += '### File Descriptor Tests \\U0001f4c1\\n\\n'
+          fd_data = {}
+          for filename in os.listdir('.'):
+              if filename.startswith('test_file_descriptors_') and filename.endswith('.log'):
+                  with open(filename, 'r') as f:
+                      content = f.read()
+
+                  distro = filename.replace('test_file_descriptors_', '').replace('.log', '')
+
+                  # Extract session type results
+                  for line in content.split('\\n'):
+                      # Parse FD counts: "Subprocess PID: Open FDs before: 5 [SESS_V1_ARGS]"
+                      fd_before_match = re.search(r'Subprocess PID: Open FDs before: (\\d+) \\[(.+?)\\]', line)
+                      fd_after_match = re.search(r'Subprocess PID Open FDs after: (\\d+) \\[(.+?)\\]', line)
+                      # Parse execution times: "work_get_close [SESS_V1_ARGS]: Total execution time: 1.234 seconds"
+                      time_match = re.search(r'work_(\\w+) \\[(.+?)\\]: Total execution time: ([\\d.]+)', line)
+                      # Parse average times: "Average time per SNMP get call (with close) [SESS_V1_ARGS]: 0.01234 seconds"
+                      avg_match = re.search(r'Average time per SNMP get call \\((.+?)\\) \\[(.+?)\\]: ([\\d.]+)', line)
+
+                      if fd_before_match:
+                          count, sess = fd_before_match.groups()
+                          key = (distro, sess)
+                          if key not in fd_data:
+                              fd_data[key] = {}
+                          if 'fd_before' not in fd_data[key]:
+                              fd_data[key]['fd_before'] = []
+                          fd_data[key]['fd_before'].append(int(count))
+
+                      if fd_after_match:
+                          count, sess = fd_after_match.groups()
+                          key = (distro, sess)
+                          if key not in fd_data:
+                              fd_data[key] = {}
+                          if 'fd_after' not in fd_data[key]:
+                              fd_data[key]['fd_after'] = []
+                          fd_data[key]['fd_after'].append(int(count))
+
+                      if time_match:
+                          mode, sess, time_val = time_match.groups()
+                          key = (distro, sess, mode)
+                          if key not in fd_data:
+                              fd_data[key] = {}
+                          if 'exec_time' not in fd_data[key]:
+                              fd_data[key]['exec_time'] = []
+                          fd_data[key]['exec_time'].append(float(time_val))
+
+                      if avg_match:
+                          mode, sess, avg_val = avg_match.groups()
+                          key = (distro, sess, mode.replace(' ', '_'))
+                          if key not in fd_data:
+                              fd_data[key] = {}
+                          if 'avg_time' not in fd_data[key]:
+                              fd_data[key]['avg_time'] = []
+                          fd_data[key]['avg_time'].append(float(avg_val))
+
+          if fd_data:
+              # Group by distribution
+              for distro in sorted(set(k[0] for k in fd_data.keys() if isinstance(k, tuple) and len(k) >= 1)):
+                  summary += f'#### {distro.replace(\"_\", \" \").title()}\\n\\n'
+                  summary += '| Session Type | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+                  summary += '|--------------|------|-----------|----------|---------|---------------|--------------|\\n'
+
+                  # Get all keys for this distribution
+                  distro_keys = [k for k in fd_data.keys() if isinstance(k, tuple) and len(k) >= 3 and k[0] == distro]
+
+                  for key in sorted(distro_keys):
+                      d, sess, mode = key[:3]
+
+                      # Find corresponding FD data
+                      fd_key = (d, sess)
+                      fd_before = fd_data.get(fd_key, {}).get('fd_before', [])
+                      fd_after = fd_data.get(fd_key, {}).get('fd_after', [])
+                      exec_times = fd_data[key].get('exec_time', [])
+                      avg_times = fd_data[key].get('avg_time', [])
+
+                      if exec_times or avg_times:
+                          mode_display = 'no close' if mode == 'get_no_close' or mode == 'no_close' else 'close'
+                          sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
+
+                          avg_exec = statistics.mean(exec_times) if exec_times else 0
+                          avg_avg = statistics.mean(avg_times) if avg_times else 0
+
+                          # Calculate FD leak (after - before)
+                          if fd_before and fd_after:
+                              avg_before = statistics.mean(fd_before)
+                              avg_after = statistics.mean(fd_after)
+                              fd_leak = avg_after - avg_before
+                              summary += f'| {sess_display} | {mode_display} | {avg_before:.0f} | {avg_after:.0f} | {fd_leak:+.0f} | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+                          else:
+                              summary += f'| {sess_display} | {mode_display} | - | - | - | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+
+                  summary += '\\n'
+
+              summary += '\\u2705 File descriptor tests completed successfully\\n'
+          else:
+              summary += '\\u274c No file descriptor test results found\\n'
+
           # Write to GitHub Step Summary
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
               f.write(summary)
-          
+
           # Also save to file for PR comment
           with open('integration_test_docker_summary.md', 'w') as f:
               f.write(summary)
-          
+
           print('Summary generated successfully')
           "
           echo "Test summary generated"
