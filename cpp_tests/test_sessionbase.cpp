@@ -274,7 +274,14 @@ TEST_F(SessionBaseTest, TestGetters) {
        /* privacy_passphrase */ "priv_pass",
        /* boots_time */ "1,2",
        /* retries */ "5",
-       /* timeout */ "10");
+       /* timeout */ "10",
+       /* load_mibs */ "ALL",
+       /* mib_directories */ "/usr/share/snmp/mibs",
+       /* print_enums_numerically */ true,
+       /* print_full_oids */ true,
+       /* print_oids_numerically */ true,
+       /* print_timeticks_numerically */ true,
+       /* set_max_repeaters_to_num */ "25");
 
    EXPECT_EQ(session._get_hostname(), "localhost");
    EXPECT_EQ(session._get_port_number(), "161");
@@ -292,6 +299,13 @@ TEST_F(SessionBaseTest, TestGetters) {
    EXPECT_EQ(session._get_boots_time(), "1,2");
    EXPECT_EQ(session._get_retries(), "5");
    EXPECT_EQ(session._get_timeout(), "10");
+   EXPECT_EQ(session._get_load_mibs(), "ALL");
+   EXPECT_EQ(session._get_mib_directories(), "/usr/share/snmp/mibs");
+   EXPECT_TRUE(session._get_print_enums_numerically());
+   EXPECT_TRUE(session._get_print_full_oids());
+   EXPECT_TRUE(session._get_print_oids_numerically());
+   EXPECT_TRUE(session._get_print_timeticks_numerically());
+   EXPECT_EQ(session._get_set_max_repeaters_to_num(), "25");
 }
 TEST_F(SessionBaseTest, TestSetters) {
    SessionBase session(
