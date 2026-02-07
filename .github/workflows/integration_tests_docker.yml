@@ -307,12 +307,12 @@ jobs:
 
                   # Extract session type results
                   for line in content.split('\\n'):
-                      # Parse FD counts: "Subprocess PID: Open FDs before: 5 [SESS_V1_ARGS]"
+                      # Parse FD counts: Subprocess PID Open FDs before/after
                       fd_before_match = re.search(r'Subprocess PID: Open FDs before: (\\d+) \\[(.+?)\\]', line)
                       fd_after_match = re.search(r'Subprocess PID Open FDs after: (\\d+) \\[(.+?)\\]', line)
-                      # Parse execution times: "work_get_close [SESS_V1_ARGS]: Total execution time: 1.234 seconds"
+                      # Parse execution times
                       time_match = re.search(r'work_(\\w+) \\[(.+?)\\]: Total execution time: ([\\d.]+)', line)
-                      # Parse average times: "Average time per SNMP get call (with close) [SESS_V1_ARGS]: 0.01234 seconds"
+                      # Parse average times per call
                       avg_match = re.search(r'Average time per SNMP get call \\((.+?)\\) \\[(.+?)\\]: ([\\d.]+)', line)
 
                       if fd_before_match:
