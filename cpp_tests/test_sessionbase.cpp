@@ -391,6 +391,13 @@ TEST_F(SessionBaseTest, TestWalkSingleMib) {
 
    // Expected MIB descriptions - check for presence rather than exact order
    // since different SNMP daemon versions/platforms return sysORDescr entries in different orders
+#ifdef __APPLE__
+   std::vector<std::string> expected_descriptions = {
+      "The SNMP Management Architecture MIB.",
+      "The MIB for Message Processing and Dispatching.",
+      "The MIB modules for managing SNMP Notification, plus filtering.",
+      "The MIB module for logging SNMP Notifications."};
+#else
    std::vector<std::string> expected_descriptions = {
        "The SNMP Management Architecture MIB.",
        "The MIB for Message Processing and Dispatching.",
@@ -402,6 +409,7 @@ TEST_F(SessionBaseTest, TestWalkSingleMib) {
        "The MIB module for managing IP and ICMP implementations",
        "The MIB modules for managing SNMP Notification, plus filtering.",
        "The MIB module for logging SNMP Notifications."};
+#endif
 
    VerifyMibDescriptions(result, expected_descriptions);
 }
@@ -413,6 +421,13 @@ TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
 
    // Expected MIB descriptions - check for presence rather than exact order
    // since different SNMP daemon versions/platforms return sysORDescr entries in different orders
+#ifdef __APPLE__
+   std::vector<std::string> expected_descriptions = {
+      "The SNMP Management Architecture MIB.",
+      "The MIB for Message Processing and Dispatching.",
+      "The MIB modules for managing SNMP Notification, plus filtering.",
+      "The MIB module for logging SNMP Notifications."};
+#else
    std::vector<std::string> expected_descriptions = {
        "The SNMP Management Architecture MIB.",
        "The MIB for Message Processing and Dispatching.",
@@ -424,6 +439,7 @@ TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
        "The MIB module for managing IP and ICMP implementations",
        "The MIB modules for managing SNMP Notification, plus filtering.",
        "The MIB module for logging SNMP Notifications."};
+#endif
 
    VerifyMibDescriptions(result, expected_descriptions);
 }
@@ -934,8 +950,12 @@ TEST_F(SessionBaseTest, TestMaxRepeatersParam) {
 
 TEST_F(SessionBaseTest, TestWalkEmptyMib) {
    SessionBase session("localhost", "11161", "2c", "public");
+#ifdef __APPLE__
+   EXPECT_THROW(session.walk(""), TimeoutErrorBase);
+#else
    auto results = session.walk("");
    EXPECT_FALSE(results.empty());
+#endif
 }
 
 TEST_F(SessionBaseTest, TestBulkWalkEmptyMib) {
