@@ -1,0 +1,111 @@
+name: Build and Publish Docker Images
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Optional single image directory name (e.g., almalinux10_netsnmp_5.9)
+        required: false
+        type: string
+  push:
+    branches: [ main ]
+    paths:
+      - docker/**
+      - .github/workflows/build_and_publish_docker_images.yml
+
+env:
+  DOCKER_REPO: carlkidcrypto/ezsnmp_test_images
+
+jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      distributions: ${{ steps.matrix.outputs.distributions }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Build matrix from docker folders
+        id: matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          INPUT_IMAGE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.image || '' }}"
+          DISTROS=$(find docker -mindepth 2 -maxdepth 2 -name Dockerfile -printf '%h\n' | awk -F/ '{print $2}' | sort -u)
+          if [ -n "$INPUT_IMAGE" ]; then
+            if echo "$DISTROS" | tr ' ' '\n' | grep -qx "$INPUT_IMAGE"; then
+              DISTROS="$INPUT_IMAGE"
+            else
+              echo "ERROR: Requested image '$INPUT_IMAGE' not found under docker/" >&2
+              echo "Available images:" >&2
+              echo "$DISTROS" >&2
+              exit 1
+            fi
+          fi
+          JSON=$(printf '%s\n' $DISTROS | jq -R -s -c 'split("\n") | map(select(length>0))')
+          echo "distributions=$JSON" >> "$GITHUB_OUTPUT"
+
+  build-and-push:
+    needs: set-matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution: ${{ fromJson(needs.set-matrix.outputs.distributions) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Restore Python tarball cache
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: docker/cache
+          key: python-tarballs-${{ hashFiles('docker/cache/download_build_cache.sh') }}
+          restore-keys: |
+            python-tarballs-
+
+      - name: Populate Python tarball cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash docker/cache/download_build_cache.sh
+
+      - name: Compute tags
+        id: tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATE_TAG=$(date -u +"%m-%d-%Y")
+          UNIQUE_TAG="${DATE_TAG}.${GITHUB_RUN_NUMBER}"
+          IMAGE="${DOCKER_REPO}:${{ matrix.distribution }}"
+          echo "dated=${IMAGE}-${UNIQUE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "latest=${IMAGE}-latest" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6
+        with:
+          context: .
+          file: docker/${{ matrix.distribution }}/Dockerfile
+          push: true
+          pull: true
+          tags: |
+            ${{ steps.tags.outputs.dated }}
+            ${{ steps.tags.outputs.latest }}
+          cache-from: type=gha,scope=${{ matrix.distribution }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.distribution }}
