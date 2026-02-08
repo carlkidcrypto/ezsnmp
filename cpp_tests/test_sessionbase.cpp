@@ -393,10 +393,9 @@ TEST_F(SessionBaseTest, TestWalkSingleMib) {
    // since different SNMP daemon versions/platforms return sysORDescr entries in different orders
 #ifdef __APPLE__
    std::vector<std::string> expected_descriptions = {
-      "The SNMP Management Architecture MIB.",
-      "The MIB for Message Processing and Dispatching.",
-      "The MIB modules for managing SNMP Notification, plus filtering.",
-      "The MIB module for logging SNMP Notifications."};
+       "The SNMP Management Architecture MIB.", "The MIB for Message Processing and Dispatching.",
+       "The MIB modules for managing SNMP Notification, plus filtering.",
+       "The MIB module for logging SNMP Notifications."};
 #else
    std::vector<std::string> expected_descriptions = {
        "The SNMP Management Architecture MIB.",
@@ -423,10 +422,9 @@ TEST_F(SessionBaseTest, TestBulkWalkSingleMib) {
    // since different SNMP daemon versions/platforms return sysORDescr entries in different orders
 #ifdef __APPLE__
    std::vector<std::string> expected_descriptions = {
-      "The SNMP Management Architecture MIB.",
-      "The MIB for Message Processing and Dispatching.",
-      "The MIB modules for managing SNMP Notification, plus filtering.",
-      "The MIB module for logging SNMP Notifications."};
+       "The SNMP Management Architecture MIB.", "The MIB for Message Processing and Dispatching.",
+       "The MIB modules for managing SNMP Notification, plus filtering.",
+       "The MIB module for logging SNMP Notifications."};
 #else
    std::vector<std::string> expected_descriptions = {
        "The SNMP Management Architecture MIB.",

@@ -133,6 +133,23 @@ TEST_F(SnmpGetTest, TestInvalidOid) {
        GenericErrorBase);
 }
 
+TEST_F(SnmpGetTest, TestV1NoSuchName) {
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "localhost:11161", "1.3.6.1.2.1.1.999"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpget(args, "testing_v1_nosuchname");
+          } catch (PacketErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("Error in packet") != std::string::npos);
+             throw;
+          }
+       },
+       PacketErrorBase);
+}
+
 TEST_F(SnmpGetTest, TestUknownHost) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "nonexistenthost:11161", "SNMPv2-MIB::sysLocation.0"};
@@ -245,4 +262,30 @@ TEST_F(SnmpGetTest, TestUnknownCOption) {
           }
        },
        ParseErrorBase);
+}
+
+TEST_F(SnmpGetTest, TestTimeout) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-t",
+                                    "1",
+                                    "-r",
+                                    "0",
+                                    "127.0.0.1:11162",
+                                    "SNMPv2-MIB::sysLocation.0"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpget(args, "testing_timeout");
+          } catch (TimeoutErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("Timeout") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("127.0.0.1") != std::string::npos);
+             throw;
+          }
+       },
+       TimeoutErrorBase);
 }

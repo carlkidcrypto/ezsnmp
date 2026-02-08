@@ -143,16 +143,9 @@ TEST_F(SnmpGetNextTest, TestBasicGetNext) {
 }
 
 TEST_F(SnmpGetNextTest, TestTimeout) {
-   std::vector<std::string> args = {"-v",
-                                    "2c",
-                                    "-c",
-                                    "public",
-                                    "-t",
-                                    "1",
-                                    "-r",
-                                    "0",
-                                    "127.0.0.1:11162",
-                                    "SNMPv2-MIB::sysLocation.0"};
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public",          "-t",
+       "1",  "-r", "0",  "127.0.0.1:11162", "SNMPv2-MIB::sysLocation.0"};
 
    EXPECT_THROW(
        {

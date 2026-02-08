@@ -161,6 +161,20 @@ test_snmpwalk = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_snmpwalk_shim = executable(
+    'test_snmpwalk_shim',
+    [
+        'test_snmpwalk_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpbulkget = executable(
     'test_snmpbulkget',
     [
@@ -217,6 +231,7 @@ test('snmpget_test', test_snmpget, env: test_env)
 test('snmpgetnext_test', test_snmpgetnext, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env)
+test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
 test('snmpbulkget_test', test_snmpbulkget, env: test_env)
 test('snmpbulkwalk_test', test_snmpbulkwalk, env: test_env)
 test('exceptionsbase_test', test_exceptionsbase, env: test_env)

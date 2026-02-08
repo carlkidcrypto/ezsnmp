@@ -517,7 +517,8 @@ TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv4) {
 
 TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv6) {
    std::vector<std::string> inputs = {
-       "IP-MIB::ipNetToPhysicalPhysAddress.16.ipv6.\"fe:80:00:00:00:00:00:00:18:a0:b8:b3:90:15:bf:3e\" = STRING: ca:fe:fe:b0:c4:80"};
+       "IP-MIB::ipNetToPhysicalPhysAddress.16.ipv6.\"fe:80:00:00:00:00:00:00:18:a0:b8:b3:90:15:bf:"
+       "3e\" = STRING: ca:fe:fe:b0:c4:80"};
 
    auto results = parse_results(inputs);
    ASSERT_EQ(results.size(), 1u);
