@@ -131,6 +131,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    size_t name_length;
    int status;
    int failures = 0;
+   /* Reset application-local quiet flag so subsequent calls behave normally. */
+   quiet = 0;
 
    SOCK_STARTUP;
 

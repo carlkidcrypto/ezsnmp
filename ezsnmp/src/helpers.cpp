@@ -65,7 +65,8 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
              haystack.find("name or service not known") != std::string::npos ||
              haystack.find("temporary failure in name resolution") != std::string::npos ||
              haystack.find("could not translate host name") != std::string::npos ||
-             haystack.find("no address associated with hostname") != std::string::npos;
+             haystack.find("no address associated with hostname") != std::string::npos ||
+             haystack.find("invalid address") != std::string::npos;
    };
 
    auto const is_timeout_error = [](std::string const &haystack) {

@@ -135,7 +135,7 @@ TEST(ResultTest, VectorOfResultsTest) {
    results.push_back(r1);
    results.push_back(r2);
 
-   EXPECT_EQ(results.size(), 2);
+   EXPECT_EQ(results.size(), 2u);
    EXPECT_EQ(results[0]._to_string(),
              "oid: oid1, index: 1, type: STRING, value: value1, converted_value: value1");
    EXPECT_EQ(results[1]._to_string(),
@@ -568,7 +568,7 @@ TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
    }
    auto converted = result_obj._make_converted_value("Hex-STRING", large_hex);
    std::vector<unsigned char> vec = std::get<std::vector<unsigned char>>(converted);
-   EXPECT_EQ(vec.size(), 40);
+   EXPECT_EQ(vec.size(), 40u);
 
    Result r;
    r.converted_value = vec;
@@ -662,7 +662,7 @@ TEST_F(ResultConvertedValueTest, HandlesEmptyHexString) {
 TEST_F(ResultConvertedValueTest, HandlesOctetStrType) {
    auto converted = result_obj._make_converted_value("OctetStr", "test");
    auto bytes = std::get<std::vector<unsigned char>>(converted);
-   EXPECT_EQ(bytes.size(), 4);
+   EXPECT_EQ(bytes.size(), 4u);
    EXPECT_EQ(bytes[0], 't');
    EXPECT_EQ(bytes[1], 'e');
    EXPECT_EQ(bytes[2], 's');
