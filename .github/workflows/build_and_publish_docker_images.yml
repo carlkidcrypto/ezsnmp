@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          INPUT_IMAGE="${{ inputs.image }}"
+          INPUT_IMAGE="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.image || '' }}"
           DISTROS=$(find docker -mindepth 2 -maxdepth 2 -name Dockerfile -printf '%h\n' | awk -F/ '{print $2}' | sort -u)
           if [ -n "$INPUT_IMAGE" ]; then
             if echo "$DISTROS" | tr ' ' '\n' | grep -qx "$INPUT_IMAGE"; then
