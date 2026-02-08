@@ -498,6 +498,59 @@ TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
    EXPECT_EQ(results[2].value, "NET-SNMP-TC::linux");
 }
 
+// Test for Issue #428: bulk_walk returns malformed OID/Index for ipNetToPhysicalPhysAddress
+// RFC 4293 ipNetToPhysicalTable entries are indexed by [ifIndex, addressType, networkAddress]
+// where networkAddress can be an IPv4 or IPv6 address in quoted string format
+TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv4) {
+   std::vector<std::string> inputs = {
+       "IP-MIB::ipNetToPhysicalPhysAddress.16.ipv4.\"192.168.1.181\" = STRING: de:ad:be:ef:4f:c8"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+
+   // Test that OID and index are correctly split
+   EXPECT_EQ(results[0].oid, "IP-MIB::ipNetToPhysicalPhysAddress");
+   EXPECT_EQ(results[0].index, "16.ipv4.\"192.168.1.181\"");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "de:ad:be:ef:4f:c8");
+}
+
+TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv6) {
+   std::vector<std::string> inputs = {
+       "IP-MIB::ipNetToPhysicalPhysAddress.16.ipv6.\"fe:80:00:00:00:00:00:00:18:a0:b8:b3:90:15:bf:3e\" = STRING: ca:fe:fe:b0:c4:80"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+
+   // Test that OID and index are correctly split
+   EXPECT_EQ(results[0].oid, "IP-MIB::ipNetToPhysicalPhysAddress");
+   EXPECT_EQ(results[0].index, "16.ipv6.\"fe:80:00:00:00:00:00:00:18:a0:b8:b3:90:15:bf:3e\"");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "ca:fe:fe:b0:c4:80");
+}
+
+// Test similar cases with other OIDs that have quoted strings in their index
+TEST_F(ParseResultsTest, TestQuotedStringInIndex) {
+   std::vector<std::string> inputs = {
+       "SOME-MIB::someTable.1.2.\"test.value.with.dots\" = STRING: test data",
+       "OTHER-MIB::otherTable.5.\"simple\" = INTEGER: 42"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 2u);
+
+   // First result with quoted string containing dots
+   EXPECT_EQ(results[0].oid, "SOME-MIB::someTable");
+   EXPECT_EQ(results[0].index, "1.2.\"test.value.with.dots\"");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "test data");
+
+   // Second result with simple quoted string
+   EXPECT_EQ(results[1].oid, "OTHER-MIB::otherTable");
+   EXPECT_EQ(results[1].index, "5.\"simple\"");
+   EXPECT_EQ(results[1].type, "INTEGER");
+   EXPECT_EQ(results[1].value, "42");
+}
+
 TEST_F(ParseResultsTest, TestOIDWithEmptyTypeField) {
    // Test case where getline for type results in empty string after trimming
    // This happens when input has "= :" pattern (space then immediate colon)
