@@ -18,6 +18,15 @@ fi
 
 # --- 2. Python Code Block (Conditional) ---
 
+# Optional allocator preload (useful for unstable libc allocators)
+if [ -n "$EZSNMP_LD_PRELOAD" ]; then
+    if [ -n "$LD_PRELOAD" ]; then
+        export LD_PRELOAD="$EZSNMP_LD_PRELOAD:$LD_PRELOAD"
+    else
+        export LD_PRELOAD="$EZSNMP_LD_PRELOAD"
+    fi
+fi
+
 if [ "$RUN_PYTHON_CODE" = "true" ]; then
     echo "Starting Python setup (RUN_PYTHON_CODE=true)..."
     

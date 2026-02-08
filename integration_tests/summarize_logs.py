@@ -7,6 +7,7 @@ If RESULTS_DIR is omitted the latest test_results_* directory is used.
 Produces a detailed table, a compact summary (file | total_time | results),
 and basic statistics (n, mean, stddev, min, max) for timing and FD metrics.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -16,7 +17,6 @@ from datetime import datetime, timezone
 from statistics import mean, pstdev
 from pathlib import Path
 from typing import Dict, List, Optional
-
 
 COUNTER_KEYS = [
     "connection_error_counter",
@@ -712,15 +712,12 @@ def main():
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as fh:
-        fh.write(
-            """Integration tests summary
+        fh.write("""Integration tests summary
 ===========================
 
 Generated: %s
 
-"""
-            % datetime.now(timezone.utc).isoformat()
-        )
+""" % datetime.now(timezone.utc).isoformat())
         fh.write("\n".join(out_lines))
     print(f"Summary written to {out_path}")
 

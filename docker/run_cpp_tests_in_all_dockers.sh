@@ -12,28 +12,38 @@ CONTAINER_WORK_DIR="/ezsnmp"
 
 # --- Script Usage and Input Validation ---
 
-# The script now only accepts 0 or 1 argument (the optional image name).
-if [ $# -gt 1 ]; then
-	echo "Usage: $0 [IMAGE_NAME]"
+# The script now accepts 0 or more arguments (optional image names).
+# No arguments = test all, one or more arguments = test only those specified
+if [ $# -eq 1 ] && [ "$1" == "--help" ]; then
+	echo "Usage: $0 [IMAGE_NAME1] [IMAGE_NAME2] ..."
 	echo ""
-	echo "  [IMAGE_NAME]: Optional. Specify a single image tag (e.g., 'almalinux10') to test only that distribution."
-	echo "                If omitted, all distribution directories will be tested."
-	exit 1
+	echo "  [IMAGE_NAMEx]: Optional. Specify one or more image tags (e.g., 'centos7_netsnmp_5.7 archlinux_netsnmp_5.7')"
+	echo "                 to test only those distributions."
+	echo "                 If omitted, all distribution directories will be tested."
+	echo ""
+	echo "Examples:"
+	echo "  $0                                    # Test all distributions"
+	echo "  $0 centos7_netsnmp_5.7                # Test only CentOS 7"
+	echo "  $0 centos7_netsnmp_5.7 archlinux_netsnmp_5.7  # Test only net-snmp 5.7 containers"
+	exit 0
 fi
-
-TARGET_IMAGE=${1:-} # Optional 1st argument
 
 # --- Determine Images to Test ---
 
 # We assume the images are tagged the same as the folder names in the current directory.
-if [ -n "${TARGET_IMAGE}" ]; then
-	# Test only the specified image. Use the current directory for path validation.
-	if [ ! -d "${TARGET_IMAGE}" ]; then
-		echo "ERROR: Specified image directory '${TARGET_IMAGE}' does not exist in the current folder. Cannot determine DockerEntry.sh path."
-		exit 1
-	fi
-	DISTROS_TO_TEST=("${TARGET_IMAGE}")
-	echo "Mode: Testing only the single image: ${TARGET_IMAGE}"
+if [ $# -gt 0 ]; then
+	# Test only the specified images
+	DISTROS_TO_TEST=()
+	for TARGET_IMAGE in "$@"; do
+		if [ ! -d "${TARGET_IMAGE}" ]; then
+			echo "ERROR: Specified image directory '${TARGET_IMAGE}' does not exist in the current folder."
+			echo "Available directories:"
+			ls -d */ 2>/dev/null | grep -v "^cache/" | sed 's|/||' || echo "  (none found)"
+			exit 1
+		fi
+		DISTROS_TO_TEST+=("${TARGET_IMAGE}")
+	done
+	echo "Mode: Testing specified images: ${DISTROS_TO_TEST[*]}"
 else
 	# Test all images by finding directories in the current folder that contain a Dockerfile.
 	DISTROS_TO_TEST=()
