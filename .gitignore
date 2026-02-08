@@ -9,6 +9,7 @@
 
 # Nosetests and coverage information
 .coverage
+.coverage.*
 nosetests.xml
 coverage.xml
 
@@ -23,6 +24,11 @@ dist/
 # Documentation builds
 docs/_build/
 doxygen_docs_build/
+# Generated documentation (latest/current build - should not be committed)
+# Note: Versioned documentation folders (html_v*) are kept for historical reference
+docs/html/
+docs/_static/
+docs/doctrees/
 
 # vim stuff
 .ropeproject
@@ -62,3 +68,13 @@ ezsnmp-2.*.*/
 **test-outputs*.txt
 **test-results*.xml
 **lcov**.info
+
+# CodeQL temporary files and artifacts
+_codeql_detected_source_root
+docker/test_outputs_**/
+docker/test_summary_report_*.txt
+docker/previous_results_**/
+integration_tests/previous_results**/
+integration_tests/test_results**/
+.claude/settings.local.json
+docker/TEST_SUMMARY*.md

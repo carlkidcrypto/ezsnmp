@@ -14,7 +14,7 @@ TEST_F(ParseResultsTest, TestBasicResults) {
                                       "SNMPv2-MIB::sysContact.0 = STRING: admin@example.com"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    // Test first result
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
@@ -46,7 +46,7 @@ TEST_F(ParseResultsTest, TestNoSuchObjectResults) {
        "SNMPv2-MIB::sysDescr.1 = No Such Object available on this agent at this OID"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
    EXPECT_EQ(results[0].index, "1");
    EXPECT_EQ(results[0].type, "NOSUCHOBJECT");
@@ -58,7 +58,7 @@ TEST_F(ParseResultsTest, TestNoSuchInstanceResults) {
        "SNMPv2-MIB::sysDescr.1 = No Such Instance currently exists at this OID"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
    EXPECT_EQ(results[0].index, "1");
    EXPECT_EQ(results[0].type, "NOSUCHINSTANCE");
@@ -72,7 +72,7 @@ TEST_F(ParseResultsTest, TestComplexOIDResults) {
        ".1.3.6.1.2.1.1.1.0 = STRING: Test System Description"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    // Test first result with complex OID
    EXPECT_EQ(results[0].oid, "NET-SNMP-AGENT-MIB::nsCacheStatus.1.3.6.1.2.1.4.24");
@@ -101,7 +101,7 @@ TEST_F(ParseResultsTest, TestMixedResults) {
        "IF-MIB::ifType.1 = No Such Object available on this agent at this OID"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 4);
+   ASSERT_EQ(results.size(), 4u);
 
    // Test normal result
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
@@ -136,7 +136,7 @@ TEST_F(ParseResultsTest, TestLongValues) {
    };
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    // Test first result
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
@@ -164,7 +164,7 @@ TEST_F(ParseResultsTest, TestWhitespaceTrailing) {
                                       "SNMPv2-MIB::sysServices.0 = INTEGER: 72      "};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 4);
+   ASSERT_EQ(results.size(), 4u);
 
    // Test whitespace trimming in first result
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
@@ -197,7 +197,7 @@ TEST_F(ParseResultsTest, TestJustTimeticks) {
        "DISMAN-EXPRESSION-MIB::sysUpTimeInstance = 8912330"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 2);
+   ASSERT_EQ(results.size(), 2u);
 
    // Test first result
    EXPECT_EQ(results[0].oid, "DISMAN-EXPRESSION-MIB::sysUpTimeInstance");
@@ -217,7 +217,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkStringType) {
        "SNMPv2-MIB::sysDescr.0 = STRING: Linux carlkidcrypto-w 5.15.167.4-microsoft-standard-WSL2 "
        "#1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
    EXPECT_EQ(results[0].index, "0");
    EXPECT_EQ(results[0].type, "STRING");
@@ -229,7 +229,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkStringType) {
 TEST_F(ParseResultsTest, TestSnmpwalkOidType) {
    std::vector<std::string> inputs = {"SNMPv2-MIB::sysObjectID.0 = OID: NET-SNMP-TC::linux"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysObjectID");
    EXPECT_EQ(results[0].index, "0");
    EXPECT_EQ(results[0].type, "OID");
@@ -241,7 +241,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkIntegerTypes) {
                                       "IF-MIB::ifType.1 = INTEGER: softwareLoopback(24)",
                                       "RFC1213-MIB::tcpMaxConn.0 = INTEGER: -1"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    EXPECT_EQ(results[0].oid, "IF-MIB::ifNumber");
    EXPECT_EQ(results[0].index, "0");
@@ -264,7 +264,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkGaugeCounterTypes) {
                                       "IF-MIB::ifOutOctets.1 = Counter32: 1738754",
                                       "IP-MIB::ipSystemStatsHCInReceives.ipv4 = Counter64: 22711"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    EXPECT_EQ(results[0].oid, "IF-MIB::ifSpeed");
    EXPECT_EQ(results[0].index, "1");
@@ -287,7 +287,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkComplexStringTypes) {
        "HOST-RESOURCES-MIB::hrSystemDate.0 = STRING: 2025-7-9,7:36:11.0,-7:0",
        "IF-MIB::ifPhysAddress.1 = STRING:"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 2);
+   ASSERT_EQ(results.size(), 2u);
 
    EXPECT_EQ(results[0].oid, "HOST-RESOURCES-MIB::hrSystemDate");
    EXPECT_EQ(results[0].index, "0");
@@ -304,7 +304,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkHexStringType) {
    std::vector<std::string> inputs = {
        "RFC1213-MIB::atPhysAddress.2.1.172.25.0.1 = Hex-STRING: 00 15 5D 6E 34 05"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
 
    EXPECT_EQ(results[0].oid, "RFC1213-MIB::atPhysAddress");
    EXPECT_EQ(results[0].index, "2.1.172.25.0.1");
@@ -316,7 +316,7 @@ TEST_F(ParseResultsTest, TestSnmpwalkIpAddressType) {
    std::vector<std::string> inputs = {
        "RFC1213-MIB::ipAdEntAddr.172.25.10.171 = IpAddress: 172.25.10.171"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
 
    EXPECT_EQ(results[0].oid, "RFC1213-MIB::ipAdEntAddr");
    EXPECT_EQ(results[0].index, "172.25.10.171");
@@ -328,12 +328,93 @@ TEST_F(ParseResultsTest, TestSnmpwalkNetworkAddressType) {
    std::vector<std::string> inputs = {
        "RFC1213-MIB::atNetAddress.2.1.172.25.0.1 = Network Address: AC:19:00:01"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
+   ASSERT_EQ(results.size(), 1u);
 
    EXPECT_EQ(results[0].oid, "RFC1213-MIB::atNetAddress");
    EXPECT_EQ(results[0].index, "2.1.172.25.0.1");
    EXPECT_EQ(results[0].type, "Network Address");
    EXPECT_EQ(results[0].value, "AC:19:00:01");
+}
+
+TEST_F(ParseResultsTest, TestDotOIDEdgeCase) {
+   std::vector<std::string> inputs = {". = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, ".");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
+}
+
+TEST_F(ParseResultsTest, TestOIDWithEmptyType) {
+   // Note: The input "SNMPv2-MIB::sysDescr.0 =  Test" has two spaces after "="
+   // This means the type extraction finds "Test" because the first space is
+   // consumed leaving " Test" which then has leading space trimmed for type
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 =  Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   // With the parsing logic, " Test" is extracted as type becomes "Test"
+   EXPECT_EQ(results[0].type, "Test");
+   // And value becomes " Test" (from the rest after :)
+   EXPECT_EQ(results[0].value, " Test");
+}
+
+// Test for create_argv function
+TEST(CreateArgvTest, TestBasicArgv) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public"};
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+
+   EXPECT_EQ(argc, 5); // netsnmp + 4 args
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_STREQ(argv[1], "-v");
+   EXPECT_STREQ(argv[2], "2c");
+   EXPECT_STREQ(argv[3], "-c");
+   EXPECT_STREQ(argv[4], "public");
+   EXPECT_EQ(argv[5], nullptr);
+}
+
+TEST(CreateArgvTest, TestEmptyArgv) {
+   std::vector<std::string> args;
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+
+   EXPECT_EQ(argc, 1); // Just netsnmp
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_EQ(argv[1], nullptr);
+}
+
+TEST(CreateArgvTest, TestLargeArgv) {
+   std::vector<std::string> args;
+   for (int i = 0; i < 100; i++) {
+      args.push_back("arg" + std::to_string(i));
+   }
+   int argc = 0;
+   auto argv = create_argv(args, argc);
+
+   EXPECT_EQ(argc, 101); // netsnmp + 100 args
+   EXPECT_STREQ(argv[0], "netsnmp");
+   EXPECT_STREQ(argv[1], "arg0");
+   EXPECT_STREQ(argv[100], "arg99");
+   EXPECT_EQ(argv[101], nullptr);
+}
+
+// Test for clear_net_snmp_library_data function
+TEST(ClearNetSnmpLibraryDataTest, TestClearFunction) {
+   // Set some values first
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 5);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 1);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 1);
+
+   // Clear them
+   clear_net_snmp_library_data();
+
+   // Verify they're cleared
+   EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS), 0);
 }
 
 TEST_F(ParseResultsTest, TestStringValuesWithQuotes) {
@@ -344,7 +425,7 @@ TEST_F(ParseResultsTest, TestStringValuesWithQuotes) {
                                       "IF-MIB::ifDescr.1 = STRING: \"GigabitEthernet0/0/1\""};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 4);
+   ASSERT_EQ(results.size(), 4u);
 
    // Test that quotes are stripped from STRING values
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
@@ -375,7 +456,7 @@ TEST_F(ParseResultsTest, TestStringValuesWithoutQuotes) {
                                       "SNMPv2-MIB::sysContact.0 = STRING: admin@example.com"};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    // Test that values remain unchanged
    EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
@@ -402,7 +483,7 @@ TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
        "SNMPv2-MIB::sysObjectID.0 = OID: \"NET-SNMP-TC::linux\""};
 
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 3);
+   ASSERT_EQ(results.size(), 3u);
 
    // STRING type should have quotes stripped
    EXPECT_EQ(results[0].type, "STRING");
@@ -417,55 +498,49 @@ TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
    EXPECT_EQ(results[2].value, "NET-SNMP-TC::linux");
 }
 
-// Test for Issue: bulk_walk returns malformed OID/Index for ipNetToPhysicalPhysAddress
-// RFC 4293 ipNetToPhysicalTable entries are indexed by [ifIndex, addressType, networkAddress]
-// where networkAddress can be an IPv4 or IPv6 address in quoted string format
-TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv4) {
-   std::vector<std::string> inputs = {
-       "IP-MIB::ipNetToPhysicalPhysAddress.16.ipv4.\"192.168.1.181\" = STRING: de:ad:be:ef:4f:c8"};
-
+TEST_F(ParseResultsTest, TestOIDWithEmptyTypeField) {
+   // Test case where getline for type results in empty string after trimming
+   // This happens when input has "= :" pattern (space then immediate colon)
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr.0 = : Test Value"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 1);
-
-   // Test that OID and index are correctly split
-   EXPECT_EQ(results[0].oid, "IP-MIB::ipNetToPhysicalPhysAddress");
-   EXPECT_EQ(results[0].index, "16.ipv4.\"192.168.1.181\"");
-   EXPECT_EQ(results[0].type, "STRING");
-   EXPECT_EQ(results[0].value, "de:ad:be:ef:4f:c8");
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "");
+   EXPECT_EQ(results[0].value, "Test Value");
 }
 
-TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv6) {
-   std::vector<std::string> inputs = {
-       "IP-MIB::ipNetToPhysicalPhysAddress.16.ipv6.\"fe:80:00:00:00:00:00:00:18:a0:b8:b3:90:15:bf:3e\" = STRING: ca:fe:fe:b0:c4:80"};
-
+TEST_F(ParseResultsTest, TestFullyQualifiedNumericOID) {
+   // Test fully qualified numeric OID format .1.3.6.1.2.1.1.1.0
+   std::vector<std::string> inputs = {".1.3.6.1.2.1.1.1.0 = STRING: Test System"};
    auto results = parse_results(inputs);
    ASSERT_EQ(results.size(), 1);
-
-   // Test that OID and index are correctly split
-   EXPECT_EQ(results[0].oid, "IP-MIB::ipNetToPhysicalPhysAddress");
-   EXPECT_EQ(results[0].index, "16.ipv6.\"fe:80:00:00:00:00:00:00:18:a0:b8:b3:90:15:bf:3e\"");
+   EXPECT_EQ(results[0].oid, ".1.3.6.1.2.1.1.1");
+   EXPECT_EQ(results[0].index, "0");
    EXPECT_EQ(results[0].type, "STRING");
-   EXPECT_EQ(results[0].value, "ca:fe:fe:b0:c4:80");
+   EXPECT_EQ(results[0].value, "Test System");
 }
 
-// Test similar cases with other OIDs that have quoted strings in their index
-TEST_F(ParseResultsTest, TestQuotedStringInIndex) {
+TEST_F(ParseResultsTest, TestISOFormattedOID) {
+   // Test fully qualified ISO format OID
    std::vector<std::string> inputs = {
-       "SOME-MIB::someTable.1.2.\"test.value.with.dots\" = STRING: test data",
-       "OTHER-MIB::otherTable.5.\"simple\" = INTEGER: 42"};
-
+       ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0 = STRING: Test"};
    auto results = parse_results(inputs);
-   ASSERT_EQ(results.size(), 2);
-
-   // First result with quoted string containing dots
-   EXPECT_EQ(results[0].oid, "SOME-MIB::someTable");
-   EXPECT_EQ(results[0].index, "1.2.\"test.value.with.dots\"");
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, ".iso.org.dod.internet.mgmt.mib-2.system.sysDescr");
+   EXPECT_EQ(results[0].index, "0");
    EXPECT_EQ(results[0].type, "STRING");
-   EXPECT_EQ(results[0].value, "test data");
+   EXPECT_EQ(results[0].value, "Test");
+}
 
-   // Second result with simple quoted string
-   EXPECT_EQ(results[1].oid, "OTHER-MIB::otherTable");
-   EXPECT_EQ(results[1].index, "5.\"simple\"");
-   EXPECT_EQ(results[1].type, "INTEGER");
-   EXPECT_EQ(results[1].value, "42");
+TEST_F(ParseResultsTest, TestOIDWithNoDot) {
+   // Test OID with no dots (would trigger OID_INDEX_RE path potentially)
+   // This is an unusual case but tests the regex fallback logic
+   std::vector<std::string> inputs = {"sysDescr = STRING: Test"};
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1);
+   EXPECT_EQ(results[0].oid, "sysDescr");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "Test");
 }

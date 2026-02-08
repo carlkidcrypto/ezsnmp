@@ -1,4 +1,7 @@
 name: Integration Tests
+permissions:
+  pull-requests: write
+  contents: read
 concurrency: integration_tests
 on:
   push:
@@ -14,16 +17,16 @@ jobs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout Sourcecode
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47.0.0
+        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
         with:
           files: |
             .github/workflows/integration_tests.yml
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
@@ -38,7 +41,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
   
     steps:
       - name: Set up Homebrew
@@ -69,16 +72,16 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -87,10 +90,14 @@ jobs:
 
       - name: Install pip dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Integration tests don't need cibuildwheel, skip requirements.txt
+          echo "Integration tests don't require additional pip dependencies"
 
       - name: Build source
         run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
+          fi
           python3 -m pip install . --verbose;
           rm -drf build/ ezsnmp.egg-info/;
       
@@ -110,60 +117,54 @@ jobs:
           fi
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
       
-      - name: Run Integration Tests "Total execution time"
+      - name: Run Integration Tests (single)
         uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
         with:
           linux: |
-             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-             ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-             echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-          macos: |
-             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-             ./run_integration_tests.sh | grep "Total execution time:" > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log;
-             echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-     
-      - name: Run Integration Tests "usm_unknown_security_name_counter"
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
-        with:
-          linux: |
+            export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
+            ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
+            # Extract key metrics into per-file logs
+            grep "Total execution time:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "usm_unknown_security_name_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "connection_error_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            # Try to copy the per-test file descriptor log from the output directory saved by the script
+            OUT_DIR=$(grep -m1 "Results saved to:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log | sed 's/Results saved to: //') || true
+            if [ -n "$OUT_DIR" ] && [ -f "$OUT_DIR/test_file_descriptors.log" ]; then
+              cp "$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            else
+              # Fallback: grep relevant lines
+              grep -A2 "Running file descriptor tests" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            fi
+            echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-          macos: |
-            cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "usm_unknown_security_name_counter:" > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-            echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-      - name: Run Integration Tests "connection_error_counter"
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
             echo "artifactPath3=/home/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-          macos: |
-            cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh | grep "connection_error_counter:" > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log;
-            echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-
-      - name: Run Integration Tests "test_file_descriptors"
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
             echo "artifactPath4=/home/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath5=/home/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            python3 test_file_descriptors.py > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log;
+            ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
+            # Extract key metrics into per-file logs
+            grep "Total execution time:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "usm_unknown_security_name_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "connection_error_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            # Try to copy the per-test file descriptor log from the output directory saved by the script
+            OUT_DIR=$(grep -m1 "Results saved to:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log | sed 's/Results saved to: //') || true
+            if [ -n "$OUT_DIR" ] && [ -f "$OUT_DIR/test_file_descriptors.log" ]; then
+              cp "$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            else
+              # Fallback: grep relevant lines
+              grep -A2 "Running file descriptor tests" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+            fi
+            echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
+            echo "artifactPath5=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
       
       - name: Upload Integration Test Results
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: integration-test-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -171,3 +172,171 @@ jobs:
             ${{ env.artifactPath2 }}
             ${{ env.artifactPath3 }}
             ${{ env.artifactPath4 }}
+            ${{ env.artifactPath5 }}
+
+  pr-summary:
+    needs: build-and-integration-test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+
+      - name: Prepare PR integration-test summary
+        run: |
+          python3 -c "
+          import os
+          import re
+          import statistics
+          
+          data = {}
+          for root, dirs, files in os.walk('artifacts'):
+              for file in files:
+                  if file.startswith('integration_tests_full_') and file.endswith('.log'):
+                      log_path = os.path.join(root, file)
+                      with open(log_path, 'r') as f:
+                          lines = f.readlines()
+                      for line in lines:
+                          match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
+                          if match:
+                              test_type, num, field, value = match.groups()
+                              num = int(num)
+                              try:
+                                  val = float(value.split()[0])
+                              except ValueError:
+                                  continue
+                              key = (test_type, num, field)
+                              if key not in data:
+                                  data[key] = []
+                              data[key].append(val)
+          
+          # Start building the summary with a table
+          summary = '<!-- integration-test-summary -->\\n## Integration Test Results \\u23f1\\ufe0f\\n\\n'
+          summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
+          summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
+
+          for key in sorted(data.keys()):
+              test_type, num, field = key
+              values = data[key]
+
+              # Format test type to be more readable
+              test_name = test_type.replace('_', ' ').title()
+
+              if len(values) > 1:
+                  min_v = min(values)
+                  max_v = max(values)
+                  avg_v = statistics.mean(values)
+                  std_v = statistics.stdev(values)
+                  summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
+              elif len(values) == 1:
+                  summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
+
+          # Add file descriptor test results
+          summary += '\\n### File Descriptor Tests \\U0001f4c1\\n\\n'
+          fd_data = {}
+          for root, dirs, files in os.walk('artifacts'):
+              for file in files:
+                  if file.startswith('test_file_descriptors_') and file.endswith('.log'):
+                      log_path = os.path.join(root, file)
+                      with open(log_path, 'r') as f:
+                          content = f.read()
+
+                      # Extract session type results
+                      for line in content.split('\\n'):
+                          # Parse FD counts: Subprocess PID Open FDs before/after
+                          fd_before_match = re.search(r'Subprocess PID: Open FDs before: (\\d+) \\[(.+?)\\]', line)
+                          fd_after_match = re.search(r'Subprocess PID Open FDs after: (\\d+) \\[(.+?)\\]', line)
+                          # Parse execution times
+                          time_match = re.search(r'work_(\\w+) \\[(.+?)\\]: Total execution time: ([\\d.]+)', line)
+                          # Parse average times per call
+                          avg_match = re.search(r'Average time per SNMP get call \\((.+?)\\) \\[(.+?)\\]: ([\\d.]+)', line)
+
+                          if fd_before_match:
+                              count, sess = fd_before_match.groups()
+                              key = sess
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'fd_before' not in fd_data[key]:
+                                  fd_data[key]['fd_before'] = []
+                              fd_data[key]['fd_before'].append(int(count))
+
+                          if fd_after_match:
+                              count, sess = fd_after_match.groups()
+                              key = sess
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'fd_after' not in fd_data[key]:
+                                  fd_data[key]['fd_after'] = []
+                              fd_data[key]['fd_after'].append(int(count))
+
+                          if time_match:
+                              mode, sess, time_val = time_match.groups()
+                              key = f'{sess}_{mode}'
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'exec_time' not in fd_data[key]:
+                                  fd_data[key]['exec_time'] = []
+                              fd_data[key]['exec_time'].append(float(time_val))
+
+                          if avg_match:
+                              mode, sess, avg_val = avg_match.groups()
+                              key = f'{sess}_{mode.replace(\" \", \"_\")}'
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'avg_time' not in fd_data[key]:
+                                  fd_data[key]['avg_time'] = []
+                              fd_data[key]['avg_time'].append(float(avg_val))
+
+          if fd_data:
+              summary += '| Session Type | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+              summary += '|--------------|------|-----------|----------|---------|---------------|--------------|\\n'
+
+              for key in sorted(fd_data.keys()):
+                  parts = key.split('_')
+                  if 'get' in key:
+                      # This is a mode entry (get_no_close or get_close)
+                      sess = '_'.join(parts[:-2])
+                      mode = parts[-2] + '_' + parts[-1]
+
+                      # Find corresponding FD data
+                      fd_key = sess
+                      fd_before = fd_data.get(fd_key, {}).get('fd_before', [])
+                      fd_after = fd_data.get(fd_key, {}).get('fd_after', [])
+                      exec_times = fd_data[key].get('exec_time', [])
+                      avg_times = fd_data[key].get('avg_time', [])
+
+                      if exec_times:
+                          mode_display = 'no close' if mode == 'get_no_close' else 'close'
+                          sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
+
+                          avg_exec = statistics.mean(exec_times) if exec_times else 0
+                          avg_avg = statistics.mean(avg_times) if avg_times else 0
+
+                          # Calculate FD leak (after - before)
+                          if fd_before and fd_after:
+                              avg_before = statistics.mean(fd_before)
+                              avg_after = statistics.mean(fd_after)
+                              fd_leak = avg_after - avg_before
+                              summary += f'| {sess_display} | {mode_display} | {avg_before:.0f} | {avg_after:.0f} | {fd_leak:+.0f} | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+                          else:
+                              summary += f'| {sess_display} | {mode_display} | - | - | - | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+
+              summary += '\\n\\u2705 File descriptor tests completed successfully\\n'
+          else:
+              summary += '\\u274c No file descriptor test results found\\n'
+
+          with open('integration_test_summary.md', 'w') as f:
+              f.write(summary)
+          "
+          echo "Summary prepared: integration_test_summary.md"
+
+      - name: Post PR comment with integration-test summary
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: integration_test_summary.md
+          edit-mode: replace
+          comment-tag: integration-test-summary

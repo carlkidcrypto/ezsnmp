@@ -1,6 +1,7 @@
 
 #include "helpers.h"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <regex>
@@ -9,6 +10,7 @@
 #include <utility>
 
 #include "exceptionsbase.h"
+#include "thread_safety.h"
 
 /* straight copy from
  * https://github.com/net-snmp/net-snmp/blob/d5afe2e9e02def1c2d663828cd1e18108183d95e/snmplib/mib.c#L3456
@@ -23,6 +25,7 @@ std::string print_variable_to_string(oid const *objid,
    if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
       return "[TRUNCATED]";
    } else {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       if (sprint_realloc_variable(&buf, &buf_len, &out_len, 1, objid, objidlen, variable)) {
          // Construct the formatted string
          std::string result(reinterpret_cast<char *>(buf), out_len);
@@ -53,15 +56,31 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    // Construct the error message
    std::string message = std::string(prog_string) + ": " + err;
 
-   if (message.find("Unknown host") != std::string::npos) {
-      message = message.substr(0, message.find_last_not_of(' ') + 1);
+   // Perform case-insensitive matching for common connection failures across platforms
+   std::string message_lower = message;
+   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
 
+   auto const is_connection_error = [](std::string const &haystack) {
+      return haystack.find("unknown host") != std::string::npos ||
+             haystack.find("name or service not known") != std::string::npos ||
+             haystack.find("temporary failure in name resolution") != std::string::npos ||
+             haystack.find("could not translate host name") != std::string::npos ||
+             haystack.find("no address associated with hostname") != std::string::npos ||
+             haystack.find("invalid address") != std::string::npos;
+   };
+
+   auto const is_timeout_error = [](std::string const &haystack) {
+      return haystack.find("timeout") != std::string::npos ||
+             haystack.find("timed out") != std::string::npos;
+   };
+
+   if (is_connection_error(message_lower)) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
       throw ConnectionErrorBase(message);
    }
 
-   if (message.find("Timeout") != std::string::npos) {
+   if (is_timeout_error(message_lower)) {
       message = message.substr(0, message.find_last_not_of(' ') + 1);
-
       throw TimeoutErrorBase(message);
    }
 
@@ -302,6 +321,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
       ss << "[TRUNCATED]\n";
       return ss.str();
    } else {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid,
                                         objidlen);
       if (buf_overflow) {
@@ -316,6 +336,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
 }
 
 void clear_net_snmp_library_data() {
+   std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
    // From:
    // https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,

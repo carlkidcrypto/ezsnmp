@@ -4,7 +4,12 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-First run doxygen to generate the XML files needed by Breathe.
+.. note::
+   Documentation is automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
+   Current build outputs are not committed to the repository to avoid bloat and merge conflicts.
+   However, versioned documentation folders (``docs/html_v1.1.0/``, ``docs/html_v2.0.1/``, etc.) are kept in the repository for historical reference.
+
+For local documentation builds, first run doxygen to generate the XML files needed by Breathe.
 
 .. code-block:: bash
 
@@ -21,6 +26,9 @@ Next you may generate the documentation as follows:
     cd sphinx_docs_build
     python3 -m pip install -r requirements.txt
     make html
+
+The generated documentation will be built into the ``docs/`` directory. The current build outputs (``docs/html/``, ``docs/_static/``, etc.) are ignored by git, but versioned documentation folders are kept for historical reference.
+The documentation is automatically deployed to https://carlkidcrypto.github.io/ezsnmp/ via GitHub Actions.
 
 Making The SWIG Interface Files
 -------------------------------
@@ -75,6 +83,9 @@ Within the patches directory run the following command.
 Running Tests
 -------------
 
+Python Tests
+~~~~~~~~~~~~
+
 Tests use `Pytest <https://github.com/pytest-dev/pytest>`_. You can run
 them with the following on Linux:
 
@@ -102,43 +113,113 @@ them with the following on Linux:
     # Bottom one for valgrind using helgrind. Replace the top one with it if needed.
     # python3 -m pip install . && valgrind --tool=helgrind --free-is-write=yes python3 -m pytest .
 
+C++ Tests
+~~~~~~~~~
+
+C++ tests use Google Test and Meson/Ninja build system. To run C++ tests:
+
+.. code:: bash
+
+    # Install prerequisites (on Ubuntu/Debian)
+    sudo apt install -y meson ninja-build libgtest-dev lcov
+
+    # Build and run C++ tests
+    cd cpp_tests
+    meson setup build
+    ninja -C build
+    meson test -C build --verbose
+
+    # Generate coverage report
+    ./get_test_coverage.sh
+
+The C++ tests include a compatibility macro ``EZSNMP_SKIP_TEST_AND_RETURN_IF_NO_DATA`` that works with both older and newer versions of Google Test. This macro gracefully skips tests when SNMP data is unavailable.
+
+For more details on C++ tests, see the `C++ Tests README <../../cpp_tests/README.rst>`_.
+
 
 Running Tests with Docker
 --------------------------
 
 EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
 
-* **almalinux10** - AlmaLinux 10 Kitten with Python 3.9-3.13, g++ 14.x
-* **archlinux** - Arch Linux with Python 3.9-3.13, g++ 14.x
+* **almalinux10** - AlmaLinux 10 Kitten with Python 3.10-3.14, g++ 14.x
+* **archlinux** - Arch Linux with Python 3.10-3.14, g++ 14.x
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.9-3.13
-* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.9-3.13
+* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14
+* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14
 
-To run tests in Docker:
+Docker Python Tests
+~~~~~~~~~~~~~~~~~~~
+
+To run Python tests in Docker:
 
 .. code:: bash
 
-    # Run all Python tests across all distributions
+    # Run all Python tests across all distributions (parallel)
     cd docker/
     chmod +x run_python_tests_in_all_dockers.sh
     ./run_python_tests_in_all_dockers.sh
 
-    # Run a specific distribution image
-    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10
+    # Run tests in a specific distribution only
+    ./run_python_tests_in_all_dockers.sh almalinux10
+
+    # Run a specific distribution image manually for Python tests
+    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
     sudo docker run -d \
       --name "almalinux10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
-      -p 161/udp \
-      carlkidcrypto/ezsnmp_test_images:almalinux10 \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh"
+      carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
+      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
 
-    # Execute tests inside the container
-    sudo docker exec -t almalinux10_snmp_container /bin/bash -c 'tox'
+    # Execute Python tests inside the container using tox
+    sudo docker exec -t almalinux10_snmp_container bash -c '
+      export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
+      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
+      export WORK_DIR=/tmp/ezsnmp_test;
+      export TOX_WORK_DIR=/tmp/tox_test;
+      rm -rf $WORK_DIR $TOX_WORK_DIR;
+      mkdir -p $WORK_DIR;
+      cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -);
+      cd $WORK_DIR;
+      python3 -m pip install tox > /dev/null 2>&1;
+      tox --workdir $TOX_WORK_DIR;
+    '
+
+Docker C++ Tests
+~~~~~~~~~~~~~~~~
+
+To run C++ tests in Docker:
+
+.. code:: bash
+
+    # Run C++ tests across all distributions
+    cd docker/
+    chmod +x run_cpp_tests_in_all_dockers.sh
+    ./run_cpp_tests_in_all_dockers.sh
+
+    # Run C++ tests in a specific distribution
+    ./run_cpp_tests_in_all_dockers.sh rockylinux8
+
+    # Run C++ tests in multiple specific distributions
+    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+
+    # Test only net-snmp 5.7 containers (useful for iterative debugging)
+    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+
+    # Show help and usage examples
+    ./run_cpp_tests_in_all_dockers.sh --help
+
+The script now accepts zero or more distribution names:
+
+* **No arguments**: Tests all distributions
+* **One or more names**: Tests only the specified distributions
+* **--help**: Shows detailed usage information
 
 For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
 
 
-On MacOS
+Python Tests on MacOS
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
@@ -191,7 +272,7 @@ For c++ code using clang-format 20+:
 
 .. code:: bash
 
-    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i --style=file:.clang-format
+    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
 For python3 code:
 

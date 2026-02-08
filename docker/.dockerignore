@@ -1,0 +1,81 @@
+# Docker ignore file for efficient builds
+# This prevents copying unnecessary files to the build context while allowing essential ones
+
+# Python cache and compiled files
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+*.egg-info/
+.Python
+*.so
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments (except the one used for building)
+python3.*.venv/
+venv/
+env/
+ENV/
+
+# Test outputs (these are generated during testing, not needed for builds)
+docker/test_outputs*/
+docker/test-results*/
+docker/previous_results*/
+
+# Documentation
+docs/
+doxygen_docs_build/
+sphinx_docs_build/
+html/
+latex/
+*.html
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Development files
+*.md
+!docker/cache/README.md
+CHANGELOG.md
+README.rst
+HOWTOAI.rst
+LICENSE
+
+# Test files (integration tests not needed in container)
+integration_tests/
+cml_tests/
+
+# C++ test build artifacts
+cpp_tests/build/
+cpp_tests/coverage_html/
+cpp_tests/coverage.info
+
+# Patch files
+ezsnmp/patches/
+ezsnmp/patch-rejects/
+
+# Keep these essential files/directories:
+# - requirements.txt (needed)
+# - python_tests/ (needed)
+# - cpp_tests/ source files (needed)
+# - ezsnmp/ source (needed)
+# - docker/ (needed for context)
+# - docker/cache/*.tgz (needed for Python builds)

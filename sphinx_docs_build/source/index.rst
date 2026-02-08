@@ -4,7 +4,7 @@ Welcome to EzSnmp's documentation!
 Introduction
 ------------
 EzSnmp has been tested and is supported on systems running net-snmp
-5.9.x and newer. All Python versions 3.9 and above are fully supported.
+5.9.x and newer. All Python versions 3.10 and above are fully supported.
 
 Installation via Package Manager
 --------------------------------
@@ -261,19 +261,34 @@ Documentation Structure
 This documentation is organized into the following sections:
 
 * **API Reference** - Detailed documentation of Python and C++ classes
+* **Concurrency Guide** - Information about threading and multiprocessing support
 * **Migration Guide** - Instructions for migrating from v1.x to v2.x
 * **Development Guide** - Information for contributors and developers
 * **Interface Documentation** - SWIG interface file documentation
 
-For general project information, installation instructions for specific platforms, 
-and Docker configurations, please see the README files in the respective directories 
+For general project information, installation instructions for specific platforms,
+and Docker configurations, please see the README files in the respective directories
 of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User Guide:
+
+   threading-vs-multiprocessing
+   migration_guide
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference:
 
    modules
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Documentation:
+
+   development
+   documentation_guide
 
 Indices and tables
 ==================

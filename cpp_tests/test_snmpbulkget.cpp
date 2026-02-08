@@ -59,3 +59,54 @@ TEST_F(SnmpBulkGetTest, TestInvalidVersion) {
        },
        ParseErrorBase);
 }
+
+// Test -Cn option (non-repeaters)
+TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-Cn1",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpbulkget(args, "testing");
+   EXPECT_FALSE(results.empty());
+}
+
+// Test -Cr option (max-repeaters)
+TEST_F(SnmpBulkGetTest, TestMaxRepeatersOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cr5", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpbulkget(args, "testing_cr");
+   EXPECT_FALSE(results.empty());
+}
+
+// Test unknown -C option
+TEST_F(SnmpBulkGetTest, TestUnknownCOption) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cz", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkget(args, "testing");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
+                         std::string::npos);
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+// Test valid bulkget - This should be first test that runs
+TEST_F(SnmpBulkGetTest, TestBasicBulkGet) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpbulkget(args, "testing_basic");
+   EXPECT_FALSE(results.empty());
+}

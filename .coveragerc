@@ -1,0 +1,7 @@
+[run]
+source = ezsnmp
+relative_files = True
+omit = */python_tests/*,*/tests/*,*/test_*
+
+[report]
+omit = */python_tests/*,*/tests/*,*/test_*
