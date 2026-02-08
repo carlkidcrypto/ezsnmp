@@ -132,15 +132,17 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,7 +131,6 @@
+@@ -127,7 +131,8 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
 -    int             exitval = 1;
++   /* Reset application-local quiet flag so subsequent calls behave normally. */
++   quiet = 0;
  
      SOCK_STARTUP;
  
-@@ -136,28 +139,29 @@
+@@ -136,28 +141,29 @@
      /*
       * get the common command line arguments 
       */
@@ -178,7 +180,7 @@
          goto out;
      }
  
-@@ -165,9 +169,8 @@
+@@ -165,9 +171,8 @@
       * get object names, types, and values 
       */
      for (; arg < argc; arg++) {
@@ -190,7 +192,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -182,6 +185,7 @@
+@@ -182,6 +187,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -198,7 +200,7 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -191,17 +195,16 @@
+@@ -191,17 +197,16 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -219,7 +221,7 @@
              fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
              goto out;
          }
-@@ -215,7 +218,7 @@
+@@ -215,7 +220,7 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -228,7 +230,7 @@
          goto out;
      }
  
-@@ -223,23 +226,23 @@
+@@ -223,23 +228,23 @@
       * create PDU for SET request and add object names and values to request 
       */
      pdu = snmp_pdu_create(SNMP_MSG_SET);
@@ -260,7 +262,7 @@
  
      /*
       * do the request 
-@@ -248,40 +251,44 @@
+@@ -248,40 +253,44 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {

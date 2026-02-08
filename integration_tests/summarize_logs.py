@@ -7,6 +7,7 @@ If RESULTS_DIR is omitted the latest test_results_* directory is used.
 Produces a detailed table, a compact summary (file | total_time | results),
 and basic statistics (n, mean, stddev, min, max) for timing and FD metrics.
 """
+
 from __future__ import annotations
 
 import argparse

@@ -248,14 +248,24 @@ Runs C++ tests using Meson/Ninja and generates coverage reports.
   # Run C++ tests in all distributions
   ./run_cpp_tests_in_all_dockers.sh
 
-  # Run C++ tests in a specific distribution
-  ./run_cpp_tests_in_all_dockers.sh rockylinux8
+  # Test only net-snmp 5.7 containers (useful for iterative debugging)
+  ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
 
-Generates:
+  # Show help
+  ./run_cpp_tests_in_all_dockers.sh --help
 
-- ``test-results_<distribution>_test_container.xml`` - Test results in JUnit format
-- ``test-outputs_<distribution>_test_container.txt`` - Test execution logs
-- ``lcov_coverage_<distribution>_test_container.info`` - Code coverage data
+**Usage Modes:**
+
+- **No arguments**: Tests all distributions (finds all directories with Dockerfiles)
+- **One or more image names**: Tests only the specified distributions
+- **--help**: Shows usage information and examples
+
+Generates per-distribution output directories (``test_outputs_<distribution>/``):
+
+- ``test-results.xml`` - Test results in JUnit format
+- ``test-outputs.txt`` - Test execution logs and meson output
+- ``lcov_coverage.info`` - Code coverage data (filtered to exclude system files)
+- ``snmpd_logs.txt`` - SNMP daemon logs for debugging
 
 **Coverage Collection Strategy**:
 

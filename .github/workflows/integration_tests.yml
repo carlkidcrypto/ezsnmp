@@ -216,14 +216,14 @@ jobs:
           summary = '<!-- integration-test-summary -->\\n## Integration Test Results \\u23f1\\ufe0f\\n\\n'
           summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
           summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
-          
+
           for key in sorted(data.keys()):
               test_type, num, field = key
               values = data[key]
-              
+
               # Format test type to be more readable
               test_name = test_type.replace('_', ' ').title()
-              
+
               if len(values) > 1:
                   min_v = min(values)
                   max_v = max(values)
@@ -232,7 +232,101 @@ jobs:
                   summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
               elif len(values) == 1:
                   summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
-          
+
+          # Add file descriptor test results
+          summary += '\\n### File Descriptor Tests \\U0001f4c1\\n\\n'
+          fd_data = {}
+          for root, dirs, files in os.walk('artifacts'):
+              for file in files:
+                  if file.startswith('test_file_descriptors_') and file.endswith('.log'):
+                      log_path = os.path.join(root, file)
+                      with open(log_path, 'r') as f:
+                          content = f.read()
+
+                      # Extract session type results
+                      for line in content.split('\\n'):
+                          # Parse FD counts: Subprocess PID Open FDs before/after
+                          fd_before_match = re.search(r'Subprocess PID: Open FDs before: (\\d+) \\[(.+?)\\]', line)
+                          fd_after_match = re.search(r'Subprocess PID Open FDs after: (\\d+) \\[(.+?)\\]', line)
+                          # Parse execution times
+                          time_match = re.search(r'work_(\\w+) \\[(.+?)\\]: Total execution time: ([\\d.]+)', line)
+                          # Parse average times per call
+                          avg_match = re.search(r'Average time per SNMP get call \\((.+?)\\) \\[(.+?)\\]: ([\\d.]+)', line)
+
+                          if fd_before_match:
+                              count, sess = fd_before_match.groups()
+                              key = sess
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'fd_before' not in fd_data[key]:
+                                  fd_data[key]['fd_before'] = []
+                              fd_data[key]['fd_before'].append(int(count))
+
+                          if fd_after_match:
+                              count, sess = fd_after_match.groups()
+                              key = sess
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'fd_after' not in fd_data[key]:
+                                  fd_data[key]['fd_after'] = []
+                              fd_data[key]['fd_after'].append(int(count))
+
+                          if time_match:
+                              mode, sess, time_val = time_match.groups()
+                              key = f'{sess}_{mode}'
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'exec_time' not in fd_data[key]:
+                                  fd_data[key]['exec_time'] = []
+                              fd_data[key]['exec_time'].append(float(time_val))
+
+                          if avg_match:
+                              mode, sess, avg_val = avg_match.groups()
+                              key = f'{sess}_{mode.replace(\" \", \"_\")}'
+                              if key not in fd_data:
+                                  fd_data[key] = {}
+                              if 'avg_time' not in fd_data[key]:
+                                  fd_data[key]['avg_time'] = []
+                              fd_data[key]['avg_time'].append(float(avg_val))
+
+          if fd_data:
+              summary += '| Session Type | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+              summary += '|--------------|------|-----------|----------|---------|---------------|--------------|\\n'
+
+              for key in sorted(fd_data.keys()):
+                  parts = key.split('_')
+                  if 'get' in key:
+                      # This is a mode entry (get_no_close or get_close)
+                      sess = '_'.join(parts[:-2])
+                      mode = parts[-2] + '_' + parts[-1]
+
+                      # Find corresponding FD data
+                      fd_key = sess
+                      fd_before = fd_data.get(fd_key, {}).get('fd_before', [])
+                      fd_after = fd_data.get(fd_key, {}).get('fd_after', [])
+                      exec_times = fd_data[key].get('exec_time', [])
+                      avg_times = fd_data[key].get('avg_time', [])
+
+                      if exec_times:
+                          mode_display = 'no close' if mode == 'get_no_close' else 'close'
+                          sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
+
+                          avg_exec = statistics.mean(exec_times) if exec_times else 0
+                          avg_avg = statistics.mean(avg_times) if avg_times else 0
+
+                          # Calculate FD leak (after - before)
+                          if fd_before and fd_after:
+                              avg_before = statistics.mean(fd_before)
+                              avg_after = statistics.mean(fd_after)
+                              fd_leak = avg_after - avg_before
+                              summary += f'| {sess_display} | {mode_display} | {avg_before:.0f} | {avg_after:.0f} | {fd_leak:+.0f} | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+                          else:
+                              summary += f'| {sess_display} | {mode_display} | - | - | - | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+
+              summary += '\\n\\u2705 File descriptor tests completed successfully\\n'
+          else:
+              summary += '\\u274c No file descriptor test results found\\n'
+
           with open('integration_test_summary.md', 'w') as f:
               f.write(summary)
           "

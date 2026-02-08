@@ -132,11 +132,13 @@
      netsnmp_session session, *ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,44 +131,46 @@
+@@ -127,44 +131,48 @@
      size_t          name_length;
      int             status;
      int             failures = 0;
 -    int             exitval = 0;
++   /* Reset application-local quiet flag so subsequent calls behave normally. */
++   quiet = 0;
 +
 +   SOCK_STARTUP;
  
@@ -192,7 +194,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -179,6 +185,7 @@
+@@ -179,6 +187,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -200,7 +202,7 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -188,24 +195,21 @@
+@@ -188,24 +197,21 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -231,7 +233,7 @@
      /*
       * open an SNMP session 
       */
-@@ -214,32 +218,30 @@
+@@ -214,32 +220,30 @@
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -273,7 +275,7 @@
      }
  
      /*
-@@ -249,36 +251,44 @@
+@@ -249,36 +253,44 @@
      if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {
