@@ -266,16 +266,29 @@ This documentation is organized into the following sections:
 * **Development Guide** - Information for contributors and developers
 * **Interface Documentation** - SWIG interface file documentation
 
-For general project information, installation instructions for specific platforms, 
-and Docker configurations, please see the README files in the respective directories 
+For general project information, installation instructions for specific platforms,
+and Docker configurations, please see the README files in the respective directories
 of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User Guide:
 
    threading-vs-multiprocessing
+   migration_guide
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference:
+
    modules
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Documentation:
+
+   development
+   documentation_guide
 
 Indices and tables
 ==================

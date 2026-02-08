@@ -1,12 +1,87 @@
 Concurrency in EzSnmp: Multiprocessing (Recommended)
 =====================================================
 
+.. important::
+   **READ THIS FIRST if you're planning to use EzSnmp with concurrency!**
+
+   - **USE MULTIPROCESSING** - Officially supported and production-ready
+   - **DO NOT USE THREADING** - Not recommended for production due to Net-SNMP limitations
+   - High concurrency threading (>4 threads) will experience failures
+   - This is a limitation of Net-SNMP, not EzSnmp
+
 Overview
 --------
 
 **EzSnmp officially supports multiprocessing for concurrent SNMP operations.** Threading is NOT recommended and should NOT be used for production workloads due to fundamental limitations in the underlying Net-SNMP C library.
 
 **IMPORTANT**: Always start with multiprocessing. Do not use threading unless you have a specific constraint that makes multiprocessing impossible.
+
+Architecture Comparison
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The following diagrams illustrate why multiprocessing is recommended over threading:
+
+**Threading Architecture (NOT RECOMMENDED)**::
+
+    ┌─────────────────────────────────────────────────────────┐
+    │                   Python Process                         │
+    │                                                          │
+    │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+    │  │ Thread 1 │  │ Thread 2 │  │ Thread 3 │  ...         │
+    │  └─────┬────┘  └─────┬────┘  └─────┬────┘              │
+    │        │             │             │                     │
+    │        └─────────────┼─────────────┘                     │
+    │                      │                                   │
+    │         ┌────────────▼──────────────┐                    │
+    │         │  SHARED Net-SNMP State    │ ◄── PROBLEM!      │
+    │         │  ┌──────────────────────┐ │     Race          │
+    │         │  │ Global MIB Tree      │ │     Conditions    │
+    │         │  │ OID Cache            │ │     & Data        │
+    │         │  │ Config State         │ │     Corruption    │
+    │         │  │ File Descriptors     │ │                   │
+    │         │  └──────────────────────┘ │                   │
+    │         └───────────────────────────┘                    │
+    └─────────────────────────────────────────────────────────┘
+
+    Result: Threads compete for shared Net-SNMP resources
+            causing corruption and failures
+
+
+**Multiprocessing Architecture (RECOMMENDED)**::
+
+    ┌────────────────────────┐  ┌────────────────────────┐
+    │   Process 1            │  │   Process 2            │
+    │                        │  │                        │
+    │  ┌──────────────────┐  │  │  ┌──────────────────┐  │
+    │  │ Isolated         │  │  │  │ Isolated         │  │
+    │  │ Net-SNMP State   │  │  │  │ Net-SNMP State   │  │
+    │  │ ┌──────────────┐ │  │  │  │ ┌──────────────┐ │  │
+    │  │ │ MIB Tree     │ │  │  │  │ │ MIB Tree     │ │  │
+    │  │ │ OID Cache    │ │  │  │  │ │ OID Cache    │ │  │
+    │  │ │ Config       │ │  │  │  │ │ Config       │ │  │
+    │  │ └──────────────┘ │  │  │  │ └──────────────┘ │  │
+    │  └──────────────────┘  │  │  └──────────────────┘  │
+    │                        │  │                        │
+    └────────────────────────┘  └────────────────────────┘
+           │                           │
+           │                           │
+    ┌────────────────────────┐  ┌────────────────────────┐
+    │   Process 3            │  │   Process 4            │
+    │                        │  │                        │
+    │  ┌──────────────────┐  │  │  ┌──────────────────┐  │
+    │  │ Isolated         │  │  │  │ Isolated         │  │
+    │  │ Net-SNMP State   │  │  │  │ Net-SNMP State   │  │
+    │  │ ┌──────────────┐ │  │  │  │ ┌──────────────┐ │  │
+    │  │ │ MIB Tree     │ │  │  │  │ │ MIB Tree     │ │  │
+    │  │ │ OID Cache    │ │  │  │  │ │ OID Cache    │ │  │
+    │  │ │ Config       │ │  │  │  │ │ Config       │ │  │
+    │  │ └──────────────┘ │  │  │  │ └──────────────┘ │  │
+    │  └──────────────────┘  │  │  └──────────────────┘  │
+    │                        │  │                        │
+    └────────────────────────┘  └────────────────────────┘
+
+    Result: Each process has isolated Net-SNMP state
+            eliminating all race conditions ✓
 
 Threading Limitations (NOT SUPPORTED)
 --------------------------------------
@@ -121,17 +196,27 @@ Implementation Details
 
 EzSnmp provides thread-safety protections, but these are limited by Net-SNMP's architecture:
 
-1. **Per-Instance Mutexes**: Each ``SessionBase`` object has its own mutex protecting instance state
+1. **Global Net-SNMP Mutex**: A global mutex (``g_netsnmp_mib_mutex``) serializes critical Net-SNMP operations:
+   - Library initialization (``init_snmp``)
+   - Library cleanup (``snmp_shutdown``)
+   - MIB parsing and tree traversal
+   - OID resolution and caching
+   - All SNMP operations (GET, WALK, SET, etc.)
 
-2. **Global Net-SNMP Mutex**: A global mutex serializes critical Net-SNMP operations:
-   - Library initialization
-   - MIB parsing
-   - Session creation/destruction
-   - SNMPv3 user cache access
+2. **Reference Counting**: Atomic reference counting (``g_netsnmp_init_count``) ensures:
+   - Only the first session initializes Net-SNMP
+   - Only the last session cleans up Net-SNMP
+   - Prevents premature shutdown with active sessions
 
-3. **GIL Release**: SWIG bindings release the Python GIL during C++ calls for parallelism
+3. **GIL Release**: SWIG bindings release the Python GIL during C++ calls for I/O parallelism
 
-**Limitations**: Despite these protections, Net-SNMP's internal code paths access shared global state without locks, causing the threading issues described above. Multiprocessing avoids these issues entirely by giving each process its own Net-SNMP state.
+**Limitations**: Despite these protections, Net-SNMP's internal code paths access shared global state without synchronization, causing the threading issues described above. The global mutex helps but cannot fully protect against Net-SNMP's thread-unsafe internals. Multiprocessing avoids these issues entirely by giving each process its own isolated Net-SNMP state.
+
+**Implementation Files**:
+
+- Thread safety implementation: ``ezsnmp/src/thread_safety.cpp`` and ``ezsnmp/include/thread_safety.h``
+- SessionBase implementation: ``ezsnmp/src/sessionbase.cpp`` and ``ezsnmp/include/sessionbase.h``
+- Python Session wrapper: ``ezsnmp/session.py``
 
 Why Threading Is Limited
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -382,8 +467,11 @@ References
 
 **EzSnmp Documentation:**
 
-- Issue #45: v3 multi threading fails due to user cache
+- GitHub Repository: https://github.com/carlkidcrypto/ezsnmp
+- Issue #45: v3 multi threading fails due to user cache (https://github.com/carlkidcrypto/ezsnmp/issues/45)
 - Integration Tests: https://github.com/carlkidcrypto/ezsnmp/tree/main/integration_tests
+- Thread Safety Implementation: ``ezsnmp/src/thread_safety.cpp``
+- C++ Tests: ``cpp_tests/test_thread_safety.cpp``
 
 **Python Documentation:**
 
@@ -405,3 +493,18 @@ Summary
 - May fail under high concurrency
 - Not recommended for production
 - Use only when multiprocessing is absolutely not feasible
+
+See Also
+--------
+
+Related Documentation:
+
+- :doc:`migration_guide` - Migrating from older versions of EzSnmp
+- :doc:`development` - Contributing to EzSnmp development
+- :doc:`modules` - Complete API reference
+
+External Resources:
+
+- `Python multiprocessing documentation <https://docs.python.org/3/library/multiprocessing.html>`_
+- `Python threading documentation <https://docs.python.org/3/library/threading.html>`_
+- `Net-SNMP FAQ on thread safety <https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_>`_
