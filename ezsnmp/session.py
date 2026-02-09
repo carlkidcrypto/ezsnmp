@@ -97,7 +97,10 @@ class Session(SessionBase):
             else:
                 temp_version = str(version)
 
-            self._session_base = SessionBase(
+            # Initialize the SWIG-wrapped C++ SessionBase via super().__init__().
+            # This ensures that calling inherited methods like _get_context() directly
+            # on the Session object works correctly (fixes GitHub issue #656).
+            super().__init__(
                 hostname,
                 str(port_number),
                 temp_version,
@@ -120,7 +123,7 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
-                "",  # Set to emtpy string here. We will set it in the bulk methods.
+                "",  # Set to empty string here. We will set it in the bulk methods.
             )
 
             # Track the closed state for __del__ and multiple closes
@@ -158,7 +161,7 @@ class Session(SessionBase):
 
         :type: tuple
         """
-        result = self._session_base._get_args()
+        result = super()._get_args()
         return result
 
     @property
@@ -167,7 +170,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_hostname()
+        result = super()._get_hostname()
         return result
 
     @hostname.setter
@@ -177,7 +180,7 @@ class Session(SessionBase):
         :param value: The hostname or IP address to set.
         :type value: str
         """
-        self._session_base._set_hostname(value)
+        super()._set_hostname(value)
 
     @property
     def port_number(self):
@@ -185,7 +188,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_port_number()
+        result = super()._get_port_number()
         return result
 
     @port_number.setter
@@ -195,7 +198,7 @@ class Session(SessionBase):
         :param value: The port number to set.
         :type value: str
         """
-        self._session_base._set_port_number(value)
+        super()._set_port_number(value)
 
     @property
     def version(self):
@@ -203,7 +206,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_version()
+        result = super()._get_version()
         return result
 
     @version.setter
@@ -213,7 +216,7 @@ class Session(SessionBase):
         :param value: The SNMP version to set (1, 2c, or 3).
         :type value: str
         """
-        self._session_base._set_version(value)
+        super()._set_version(value)
 
     @property
     def community(self):
@@ -221,7 +224,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_community()
+        result = super()._get_community()
         return result
 
     @community.setter
@@ -231,7 +234,7 @@ class Session(SessionBase):
         :param value: The community string to set.
         :type value: str
         """
-        self._session_base._set_community(value)
+        super()._set_community(value)
 
     @property
     def auth_protocol(self):
@@ -239,7 +242,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_auth_protocol()
+        result = super()._get_auth_protocol()
         return result
 
     @auth_protocol.setter
@@ -249,7 +252,7 @@ class Session(SessionBase):
         :param value: The authentication protocol to set (e.g., "MD5", "SHA").
         :type value: str
         """
-        self._session_base._set_auth_protocol(value)
+        super()._set_auth_protocol(value)
 
     @property
     def auth_passphrase(self):
@@ -257,7 +260,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_auth_passphrase()
+        result = super()._get_auth_passphrase()
         return result
 
     @auth_passphrase.setter
@@ -267,7 +270,7 @@ class Session(SessionBase):
         :param value: The authentication passphrase to set.
         :type value: str
         """
-        self._session_base._set_auth_passphrase(value)
+        super()._set_auth_passphrase(value)
 
     @property
     def security_engine_id(self):
@@ -275,7 +278,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_security_engine_id()
+        result = super()._get_security_engine_id()
         return result
 
     @security_engine_id.setter
@@ -285,7 +288,7 @@ class Session(SessionBase):
         :param value: The security engine ID to set.
         :type value: str
         """
-        self._session_base._set_security_engine_id(value)
+        super()._set_security_engine_id(value)
 
     @property
     def context_engine_id(self):
@@ -293,7 +296,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_context_engine_id()
+        result = super()._get_context_engine_id()
         return result
 
     @context_engine_id.setter
@@ -303,7 +306,7 @@ class Session(SessionBase):
         :param value: The context engine ID to set.
         :type value: str
         """
-        self._session_base._set_context_engine_id(value)
+        super()._set_context_engine_id(value)
 
     @property
     def security_level(self):
@@ -311,7 +314,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_security_level()
+        result = super()._get_security_level()
         return result
 
     @security_level.setter
@@ -321,7 +324,7 @@ class Session(SessionBase):
         :param value: The security level to set (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
         :type value: str
         """
-        self._session_base._set_security_level(value)
+        super()._set_security_level(value)
 
     @property
     def context(self):
@@ -329,7 +332,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_context()
+        result = super()._get_context()
         return result
 
     @context.setter
@@ -339,7 +342,7 @@ class Session(SessionBase):
         :param value: The context to set.
         :type value: str
         """
-        self._session_base._set_context(value)
+        super()._set_context(value)
 
     @property
     def security_username(self):
@@ -347,7 +350,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_security_username()
+        result = super()._get_security_username()
         return result
 
     @security_username.setter
@@ -357,7 +360,7 @@ class Session(SessionBase):
         :param value: The security username to set.
         :type value: str
         """
-        self._session_base._set_security_username(value)
+        super()._set_security_username(value)
 
     @property
     def privacy_protocol(self):
@@ -365,7 +368,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_privacy_protocol()
+        result = super()._get_privacy_protocol()
         return result
 
     @privacy_protocol.setter
@@ -375,7 +378,7 @@ class Session(SessionBase):
         :param value: The privacy protocol to set (e.g., "DES", "AES").
         :type value: str
         """
-        self._session_base._set_privacy_protocol(value)
+        super()._set_privacy_protocol(value)
 
     @property
     def privacy_passphrase(self):
@@ -383,7 +386,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_privacy_passphrase()
+        result = super()._get_privacy_passphrase()
         return result
 
     @privacy_passphrase.setter
@@ -393,7 +396,7 @@ class Session(SessionBase):
         :param value: The privacy passphrase to set.
         :type value: str
         """
-        self._session_base._set_privacy_passphrase(value)
+        super()._set_privacy_passphrase(value)
 
     @property
     def boots_time(self):
@@ -401,7 +404,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = self._session_base._get_boots_time()
+        result = super()._get_boots_time()
         return result
 
     @boots_time.setter
@@ -411,7 +414,7 @@ class Session(SessionBase):
         :param value: The boots time to set.
         :type value: str
         """
-        self._session_base._set_boots_time(value)
+        super()._set_boots_time(value)
 
     @property
     def retries(self):
@@ -419,7 +422,7 @@ class Session(SessionBase):
 
         :type: int
         """
-        result = self._session_base._get_retries()
+        result = super()._get_retries()
         return result
 
     @retries.setter
@@ -429,7 +432,7 @@ class Session(SessionBase):
         :param value: The number of retries to set.
         :type value: int
         """
-        self._session_base._set_retries(value)
+        super()._set_retries(value)
 
     @property
     def timeout(self):
@@ -437,7 +440,7 @@ class Session(SessionBase):
 
         :type: int
         """
-        result = self._session_base._get_timeout()
+        result = super()._get_timeout()
         return result
 
     @timeout.setter
@@ -447,7 +450,7 @@ class Session(SessionBase):
         :param value: The timeout value to set in seconds.
         :type value: int
         """
-        self._session_base._set_timeout(value)
+        super()._set_timeout(value)
 
     @property
     def load_mibs(self):
@@ -455,7 +458,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_load_mibs()
+        return super()._get_load_mibs()
 
     @load_mibs.setter
     def load_mibs(self, value):
@@ -464,7 +467,7 @@ class Session(SessionBase):
         :param value: The new list of MIBs to load.
         :type value: str
         """
-        self._session_base._set_load_mibs(value)
+        super()._set_load_mibs(value)
 
     @property
     def mib_directories(self):
@@ -472,7 +475,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_mib_directories()
+        return super()._get_mib_directories()
 
     @mib_directories.setter
     def mib_directories(self, value):
@@ -481,7 +484,7 @@ class Session(SessionBase):
         :param value: The new directories to search for MIBs.
         :type value: str
         """
-        self._session_base._set_mib_directories(value)
+        super()._set_mib_directories(value)
 
     @property
     def print_enums_numerically(self):
@@ -489,7 +492,7 @@ class Session(SessionBase):
 
         :type: bool
         """
-        return self._session_base._get_print_enums_numerically()
+        return super()._get_print_enums_numerically()
 
     @print_enums_numerically.setter
     def print_enums_numerically(self, value):
@@ -498,7 +501,7 @@ class Session(SessionBase):
         :param value: The new value for printing enums numerically.
         :type value: bool
         """
-        self._session_base._set_print_enums_numerically(value)
+        super()._set_print_enums_numerically(value)
 
     @property
     def print_full_oids(self):
@@ -506,7 +509,7 @@ class Session(SessionBase):
 
         :type: bool
         """
-        return self._session_base._get_print_full_oids()
+        return super()._get_print_full_oids()
 
     @print_full_oids.setter
     def print_full_oids(self, value):
@@ -515,7 +518,7 @@ class Session(SessionBase):
         :param value: The new value for printing full OIDs.
         :type value: bool
         """
-        self._session_base._set_print_full_oids(value)
+        super()._set_print_full_oids(value)
 
     @property
     def print_oids_numerically(self):
@@ -523,7 +526,7 @@ class Session(SessionBase):
 
         :type: bool
         """
-        return self._session_base._get_print_oids_numerically()
+        return super()._get_print_oids_numerically()
 
     @print_oids_numerically.setter
     def print_oids_numerically(self, value):
@@ -532,7 +535,7 @@ class Session(SessionBase):
         :param value: The new value for printing OIDs numerically.
         :type value: bool
         """
-        self._session_base._set_print_oids_numerically(value)
+        super()._set_print_oids_numerically(value)
 
     @property
     def print_timeticks_numerically(self):
@@ -540,7 +543,7 @@ class Session(SessionBase):
 
         :type: bool
         """
-        return self._session_base._get_print_timeticks_numerically()
+        return super()._get_print_timeticks_numerically()
 
     @print_timeticks_numerically.setter
     def print_timeticks_numerically(self, value):
@@ -549,7 +552,7 @@ class Session(SessionBase):
         :param value: The new value for printing timeticks numerically.
         :type value: bool
         """
-        self._session_base._set_print_timeticks_numerically(value)
+        super()._set_print_timeticks_numerically(value)
 
     @property
     def set_max_repeaters_to_num(self):
@@ -557,7 +560,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        return self._session_base._get_set_max_repeaters_to_num()
+        return super()._get_set_max_repeaters_to_num()
 
     @set_max_repeaters_to_num.setter
     def set_max_repeaters_to_num(self, value):
@@ -566,14 +569,14 @@ class Session(SessionBase):
         :param value: The new value for max-repeaters.
         :type value: str
         """
-        self._session_base._set_max_repeaters_to_num(value)
+        super()._set_max_repeaters_to_num(value)
 
     def close(self):
         """Close the SNMP session and release resources."""
         if not self._closed:
             self._closed = True
             try:
-                self._session_base._close()
+                super()._close()
             except Exception as e:
                 _handle_error(e)
 
@@ -678,7 +681,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.walk(oid)
+            result = super().walk(oid)
             return result
         except Exception as e:
             _handle_error(e)
@@ -722,7 +725,7 @@ class Session(SessionBase):
 
         try:
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            result = self._session_base.bulk_walk(oid)
+            result = super().bulk_walk(oid)
             return result
         except Exception as e:
             _handle_error(e)
@@ -750,7 +753,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
+                exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -766,7 +769,7 @@ class Session(SessionBase):
 
         try:
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            result = self._session_base.bulk_walk(oids)
+            result = super().bulk_walk(oids)
             self.set_max_repeaters_to_num = ""
             return result
         except Exception as e:
@@ -793,7 +796,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
+                exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -808,7 +811,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.get(oid)
+            result = super().get(oid)
             return result
         except Exception as e:
             _handle_error(e)
@@ -834,7 +837,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
+                exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -849,7 +852,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.get(oids)
+            result = super().get(oids)
             return result
         except Exception as e:
             _handle_error(e)
@@ -875,7 +878,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
+                exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -890,7 +893,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.get_next(oids)
+            result = super().get_next(oids)
             return result
         except Exception as e:
             _handle_error(e)
@@ -916,7 +919,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
+                exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -932,7 +935,7 @@ class Session(SessionBase):
 
         try:
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            result = self._session_base.bulk_get(oids)
+            result = super().bulk_get(oids)
             self.set_max_repeaters_to_num = ""
             return result
         except Exception as e:
@@ -961,7 +964,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
+                exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -980,7 +983,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = self._session_base.set(oids)
+            result = super().set(oids)
             return result
         except Exception as e:
             _handle_error(e)
