@@ -530,6 +530,34 @@ TEST_F(ParseResultsTest, TestIpNetToPhysicalPhysAddressIPv6) {
    EXPECT_EQ(results[0].value, "ca:fe:fe:b0:c4:80");
 }
 
+TEST_F(ParseResultsTest, TestNumericConversionErrors) {
+   Result result;
+
+   auto converted = result._make_converted_value("INTEGER", "not-a-number");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   EXPECT_TRUE(std::get<std::string>(converted).find("Conversion Error") != std::string::npos);
+
+   converted = result._make_converted_value("Counter32", "");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   EXPECT_TRUE(std::get<std::string>(converted).find("Conversion Error") != std::string::npos);
+}
+
+TEST_F(ParseResultsTest, TestHexStringConversionErrors) {
+   Result result;
+
+   auto converted = result._make_converted_value("Hex-STRING", "GG");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   EXPECT_TRUE(std::get<std::string>(converted).find("Malformed hex") != std::string::npos);
+}
+
+TEST_F(ParseResultsTest, TestUnknownTypeConversion) {
+   Result result;
+
+   auto converted = result._make_converted_value("MysteryType", "value");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   EXPECT_EQ(std::get<std::string>(converted), "Unknown Type Conversion");
+}
+
 // Test similar cases with other OIDs that have quoted strings in their index
 TEST_F(ParseResultsTest, TestQuotedStringInIndex) {
    std::vector<std::string> inputs = {
