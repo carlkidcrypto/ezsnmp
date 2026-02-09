@@ -84,6 +84,54 @@ To generate coverage reports, run::
 
 The coverage report will be generated in ``coverage_html/index.html``.
 
+Shimmed Net-SNMP Error Tests
+============================
+Some error-handling branches in the vendored Net-SNMP sources are extremely hard to hit with a
+real agent (for example, crafted error PDUs that return ``SNMP_ERR_GENERR`` with a valid
+``errindex``). To cover those branches deterministically, we add shim tests that interpose
+``snmp_synch_response`` and return a fabricated response.
+
+Why these shims exist
+=====================
+* They exercise packet error paths that otherwise require a misbehaving agent.
+* They raise coverage for vendored Net-SNMP files without modifying the Net-SNMP code itself.
+* They are isolated in dedicated test binaries so normal tests still use the real library calls.
+
+How the shims work
+==================
+Each shim test defines a C symbol named ``snmp_synch_response``. During linking, this symbol is
+preferred over the Net-SNMP library version for that test binary only. The shim constructs a
+``netsnmp_pdu`` with ``SNMP_ERR_GENERR`` and a minimal variable list, then returns ``STAT_SUCCESS``.
+The production code under test reads the fake response and raises ``PacketErrorBase``.
+
+Shim test files
+==============
+* ``test_snmpwalk_shim.cpp``
+* ``test_snmpbulkget_shim.cpp``
+* ``test_snmpget_shim.cpp``
+* ``test_snmpgetnext_shim.cpp``
+
+Diagram: Shimmed Packet Error Flow
+==================================
+.. code-block:: text
+
+    [test_snmp*_shim.cpp]
+        |
+        | defines snmp_synch_response()
+        v
+    +---------------------------+
+    | fake netsnmp_pdu response |
+    | errstat = SNMP_ERR_GENERR |
+    | errindex = 1              |
+    +---------------------------+
+        |
+        v
+    [snmpget/snmpgetnext/snmpwalk/snmpbulkget]
+        |
+        | detects error in packet
+        v
+      PacketErrorBase thrown
+
 ----
 
 .. note::
