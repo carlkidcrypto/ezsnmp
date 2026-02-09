@@ -70,6 +70,19 @@ TEST_F(SnmpWalkTest, TestUnknownHost) {
        GenericErrorBase);
 }
 
+TEST_F(SnmpWalkTest, TestV1NoSuchName) {
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "-t", "1", "localhost:11161", "1.3.6.1.2.1.1.999"};
+
+   try {
+      auto results = snmpwalk(args, "testing_v1_nosuchname");
+      SUCCEED();
+   } catch (PacketErrorBase const& e) {
+      std::string error_msg(e.what());
+      EXPECT_TRUE(error_msg.find("Error in packet") != std::string::npos);
+   }
+}
+
 TEST_F(SnmpWalkTest, TestInvalidVersion) {
    std::vector<std::string> args = {
        "-v", "999", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
@@ -174,4 +187,45 @@ TEST_F(SnmpWalkTest, TestUnknownCOption) {
           }
        },
        ParseErrorBase);
+}
+
+TEST_F(SnmpWalkTest, TestTimeout) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public",          "-t",
+                                    "1",  "-r", "0",  "127.0.0.1:11162", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpwalk(args, "testing_timeout");
+          } catch (TimeoutErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("Timeout") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("127.0.0.1") != std::string::npos);
+             throw;
+          }
+       },
+       TimeoutErrorBase);
+}
+
+TEST_F(SnmpWalkTest, ZZZ_InvalidEndOidOption) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-CE",
+                                    "INVALID-MIB::nonexistent",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpwalk(args, "testing_bad_end_oid");
+          } catch (GenericErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("INVALID-MIB::nonexistent") != std::string::npos);
+             throw;
+          }
+       },
+       GenericErrorBase);
 }

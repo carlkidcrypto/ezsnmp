@@ -332,11 +332,21 @@ jobs:
           "
           echo "Summary prepared: integration_test_summary.md"
 
-      - name: Post PR comment with integration-test summary
+      - name: Find existing integration-test summary comment
+        id: find-integration-comment
+        uses: peter-evans/find-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- integration-test-summary -->'
+
+      - name: Update PR comment with integration-test summary
         uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-integration-comment.outputs.comment-id }}
           body-file: integration_test_summary.md
           edit-mode: replace
           comment-tag: integration-test-summary
