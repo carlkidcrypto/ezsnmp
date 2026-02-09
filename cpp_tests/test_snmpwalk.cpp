@@ -190,16 +190,8 @@ TEST_F(SnmpWalkTest, TestUnknownCOption) {
 }
 
 TEST_F(SnmpWalkTest, TestTimeout) {
-   std::vector<std::string> args = {"-v",
-                                    "2c",
-                                    "-c",
-                                    "public",
-                                    "-t",
-                                    "1",
-                                    "-r",
-                                    "0",
-                                    "127.0.0.1:11162",
-                                    "SNMPv2-MIB::sysORDescr"};
+   std::vector<std::string> args = {"-v", "2c", "-c", "public",          "-t",
+                                    "1",  "-r", "0",  "127.0.0.1:11162", "SNMPv2-MIB::sysORDescr"};
 
    EXPECT_THROW(
        {

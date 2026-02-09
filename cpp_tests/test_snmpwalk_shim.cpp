@@ -1,14 +1,11 @@
 #include <gtest/gtest.h>
-
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
 #include "exceptionsbase.h"
 #include "snmpwalk.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss,
-                                    netsnmp_pdu *pdu,
-                                    netsnmp_pdu **response) {
+extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
 
@@ -18,12 +15,8 @@ extern "C" int snmp_synch_response(netsnmp_session *ss,
 
    oid name[] = {1, 3, 6, 1, 2, 1, 1, 1, 0};
    long value = 1;
-   snmp_varlist_add_variable(&fake_response->variables,
-                             name,
-                             OID_LENGTH(name),
-                             ASN_INTEGER,
-                             reinterpret_cast<u_char *>(&value),
-                             sizeof(value));
+   snmp_varlist_add_variable(&fake_response->variables, name, OID_LENGTH(name), ASN_INTEGER,
+                             reinterpret_cast<u_char *>(&value), sizeof(value));
 
    *response = fake_response;
    return STAT_SUCCESS;
