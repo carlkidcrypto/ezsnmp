@@ -46,12 +46,13 @@ echo "Ensuring SNMP configuration directory exists..."
 mkdir -p /etc/snmp
 
 echo "Copying SNMP configuration..."
-cp /ezsnmp/python_tests/snmpd.conf /etc/snmp/snmpd.conf
+cp /ezsnmp/configs/snmpd.conf /etc/snmp/snmpd.conf
 
 echo "Starting SNMP daemon..."
 
-# Disable glibc malloc checking to avoid false positives with Net-SNMP 5.8
+# Disable glibc malloc checking to avoid false positives with Net-SNMP
 export MALLOC_CHECK_=0
+export MALLOC_PERTURB_=0
 
 # Setup logging directory
 LOG_DIR="/var/log/ezsnmp"

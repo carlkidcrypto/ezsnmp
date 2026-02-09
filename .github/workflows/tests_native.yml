@@ -94,7 +94,7 @@ jobs:
             mibdir=""
             SNMPD=$(which.exe snmpd)
           fi
-          $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
+          $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
       
       - name: Run Tests
         run: |

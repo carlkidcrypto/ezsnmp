@@ -85,8 +85,8 @@ For more details, see the `Docker README <../docker/README.rst>`_.
 
 SNMP Daemon Configuration
 ==========================
-The tests require a properly configured SNMP daemon. A sample configuration file 
-``snmpd.conf`` is provided in this directory.
+The tests require a properly configured SNMP daemon. The shared configuration file
+is located at ``configs/snmpd.conf``.
 
 To set up the SNMP daemon for testing on Linux:
 
@@ -94,7 +94,7 @@ To set up the SNMP daemon for testing on Linux:
 
     sudo systemctl stop snmpd
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig
-    sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf
+    sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf
     sudo systemctl start snmpd
 
 On macOS:
@@ -102,7 +102,7 @@ On macOS:
 .. code-block:: bash
 
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig
-    sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf
+    sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist
 
