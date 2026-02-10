@@ -150,8 +150,9 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
                      /*
                       * No number given -- error.
                       */
-                     snmpbulkwalk_usage();
-                     exit(1);
+                     throw ParseErrorBase(
+                         "No number given for -C" +
+                         std::string(1, *(optarg - 1)) + " option\n");
                   } else {
                      optarg = endptr;
                      if (isspace((unsigned char)(*optarg))) {
