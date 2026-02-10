@@ -19,7 +19,13 @@ void netsnmp_thread_init(std::string const& app_name) {
       std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       /* completely disable logging otherwise it will default to stderr */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      /* suppress MIB parse warnings (e.g. "Cannot find module", "Did not find")
+         that net-snmp emits when system MIBs reference missing IANA/IEEE modules */
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
       init_snmp(app_name.c_str());
+      /* Re-apply after init_snmp() in case it re-reads config or resets logging */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
       g_netsnmp_initialized.store(true);
    }
 }
