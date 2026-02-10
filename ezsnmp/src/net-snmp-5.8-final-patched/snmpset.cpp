@@ -113,6 +113,10 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
 
+   // Reset thread-local quiet flag to ensure clean state for each call
+   // This prevents state leakage between concurrent calls
+   quiet = 0;
+
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
@@ -132,8 +136,6 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    size_t name_length;
    int status;
    int failures = 0;
-   /* Reset application-local quiet flag so subsequent calls behave normally. */
-   quiet = 0;
 
    SOCK_STARTUP;
 
