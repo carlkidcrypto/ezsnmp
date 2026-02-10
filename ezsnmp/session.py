@@ -161,8 +161,7 @@ class Session(SessionBase):
 
         :type: tuple
         """
-        result = super()._get_args()
-        return result
+        return super()._get_args()
 
     @property
     def hostname(self):
@@ -170,8 +169,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_hostname()
-        return result
+        return super()._get_hostname()
 
     @hostname.setter
     def hostname(self, value):
@@ -188,8 +186,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_port_number()
-        return result
+        return super()._get_port_number()
 
     @port_number.setter
     def port_number(self, value):
@@ -206,8 +203,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_version()
-        return result
+        return super()._get_version()
 
     @version.setter
     def version(self, value):
@@ -224,8 +220,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_community()
-        return result
+        return super()._get_community()
 
     @community.setter
     def community(self, value):
@@ -242,8 +237,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_auth_protocol()
-        return result
+        return super()._get_auth_protocol()
 
     @auth_protocol.setter
     def auth_protocol(self, value):
@@ -260,8 +254,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_auth_passphrase()
-        return result
+        return super()._get_auth_passphrase()
 
     @auth_passphrase.setter
     def auth_passphrase(self, value):
@@ -278,8 +271,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_security_engine_id()
-        return result
+        return super()._get_security_engine_id()
 
     @security_engine_id.setter
     def security_engine_id(self, value):
@@ -296,8 +288,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_context_engine_id()
-        return result
+        return super()._get_context_engine_id()
 
     @context_engine_id.setter
     def context_engine_id(self, value):
@@ -314,8 +305,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_security_level()
-        return result
+        return super()._get_security_level()
 
     @security_level.setter
     def security_level(self, value):
@@ -332,8 +322,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_context()
-        return result
+        return super()._get_context()
 
     @context.setter
     def context(self, value):
@@ -350,8 +339,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_security_username()
-        return result
+        return super()._get_security_username()
 
     @security_username.setter
     def security_username(self, value):
@@ -368,8 +356,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_privacy_protocol()
-        return result
+        return super()._get_privacy_protocol()
 
     @privacy_protocol.setter
     def privacy_protocol(self, value):
@@ -386,8 +373,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_privacy_passphrase()
-        return result
+        return super()._get_privacy_passphrase()
 
     @privacy_passphrase.setter
     def privacy_passphrase(self, value):
@@ -404,8 +390,7 @@ class Session(SessionBase):
 
         :type: str
         """
-        result = super()._get_boots_time()
-        return result
+        return super()._get_boots_time()
 
     @boots_time.setter
     def boots_time(self, value):
@@ -422,8 +407,7 @@ class Session(SessionBase):
 
         :type: int
         """
-        result = super()._get_retries()
-        return result
+        return super()._get_retries()
 
     @retries.setter
     def retries(self, value):
@@ -440,8 +424,7 @@ class Session(SessionBase):
 
         :type: int
         """
-        result = super()._get_timeout()
-        return result
+        return super()._get_timeout()
 
     @timeout.setter
     def timeout(self, value):
@@ -666,7 +649,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -681,8 +664,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = super().walk(oid)
-            return result
+            return super().walk(oid)
         except Exception as e:
             _handle_error(e)
 
@@ -709,7 +691,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -725,8 +707,7 @@ class Session(SessionBase):
 
         try:
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            result = super().bulk_walk(oid)
-            return result
+            return super().bulk_walk(oid)
         except Exception as e:
             _handle_error(e)
 
@@ -753,7 +734,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -796,7 +777,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -811,8 +792,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = super().get(oid)
-            return result
+            return super().get(oid)
         except Exception as e:
             _handle_error(e)
 
@@ -837,7 +817,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -852,8 +832,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = super().get(oids)
-            return result
+            return super().get(oids)
         except Exception as e:
             _handle_error(e)
 
@@ -878,7 +857,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -893,8 +872,7 @@ class Session(SessionBase):
         """
 
         try:
-            result = super().get_next(oids)
-            return result
+            return super().get_next(oids)
         except Exception as e:
             _handle_error(e)
 
@@ -919,7 +897,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -964,7 +942,7 @@ class Session(SessionBase):
         :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
         :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
         :raises Exception: If the exception type does not match any of the above, the original
-                exception `e` is raised.
+            exception `e` is raised.
 
         Example:
             >>> from ezsnmp import Session
@@ -983,7 +961,6 @@ class Session(SessionBase):
         """
 
         try:
-            result = super().set(oids)
-            return result
+            return super().set(oids)
         except Exception as e:
             _handle_error(e)
