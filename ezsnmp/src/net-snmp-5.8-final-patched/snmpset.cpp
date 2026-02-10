@@ -87,7 +87,8 @@ void snmpset_usage(void) {
 #endif /* NETSNMP_WITH_OPAQUE_SPECIAL_TYPES */
 }
 
-static int quiet = 0;
+// Thread-local storage for snmpset quiet flag to prevent race conditions
+thread_local int quiet = 0;
 
 void snmpset_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
@@ -290,7 +291,12 @@ close_session:
    snmp_close(ss);
 
 out:
+   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
+   
+   // Reset thread-local quiet flag after use
+   quiet = 0;
+   
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }

@@ -75,9 +75,15 @@ SOFTWARE.
 #define NETSNMP_DS_WALK_TIME_RESULTS_SINGLE 6
 
 oid objid_mib[] = {1, 3, 6, 1, 2, 1};
-int numprinted = 0;
 
-char *end_name = NULL;
+// Thread-local storage for snmpwalk variables to prevent race conditions
+// These are set during option processing and used during walk execution
+thread_local char *end_name = nullptr;
+thread_local int numprinted = 0;
+
+// One-time initialization flag for netsnmp_ds config registration
+static std::atomic<bool> g_snmpwalk_ds_registered(false);
+static std::mutex g_snmpwalk_ds_register_mutex;
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -165,6 +171,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
 
+   // Reset thread-local variables to ensure clean state for each call
+   end_name = nullptr;
+   numprinted = 0;
+
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
@@ -187,23 +197,32 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+   // Register netsnmp_ds config only once to avoid conflicts
+   // These registrations are global and should only be done once per process
+   if (!g_snmpwalk_ds_registered.load(std::memory_order_acquire)) {
+      std::lock_guard<std::mutex> lock(g_snmpwalk_ds_register_mutex);
+      if (!g_snmpwalk_ds_registered.load(std::memory_order_relaxed)) {
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
+                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
+                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_PRINT_STATISTICS);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
+                                    NETSNMP_DS_WALK_PRINT_STATISTICS);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
+                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_TIME_RESULTS);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
+                                    NETSNMP_DS_WALK_TIME_RESULTS);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
+                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
+
+         g_snmpwalk_ds_registered.store(true, std::memory_order_release);
+      }
+   }
 
    /*
     * get the common command line arguments
@@ -425,7 +444,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
               (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
    }
 
+   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
+   
+   // Reset thread-local variables after use to ensure clean state
+   end_name = nullptr;
+   numprinted = 0;
+   
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }
