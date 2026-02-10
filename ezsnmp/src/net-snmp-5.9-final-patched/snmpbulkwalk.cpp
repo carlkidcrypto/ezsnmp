@@ -73,8 +73,15 @@ SOFTWARE.
 #define NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC 3
 
 oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
-int snmpbulkwalk_numprinted = 0;
-int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
+
+// Thread-local storage for snmpbulkwalk variables to prevent race conditions
+thread_local int snmpbulkwalk_numprinted = 0;
+thread_local int snmpbulkwalk_reps = 10;
+thread_local int snmpbulkwalk_non_reps = 0;
+
+// One-time initialization flag for netsnmp_ds config registration
+static std::atomic<bool> g_snmpbulkwalk_ds_registered(false);
+static std::mutex g_snmpbulkwalk_ds_register_mutex;
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -180,6 +187,11 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
 
+   // Reset thread-local variables to ensure clean state for each call
+   snmpbulkwalk_numprinted = 0;
+   snmpbulkwalk_reps = 10;
+   snmpbulkwalk_non_reps = 0;
+
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
@@ -199,12 +211,21 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_PRINT_STATISTICS);
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+   // Register netsnmp_ds config only once to avoid conflicts
+   // These registrations are global and should only be done once per process
+   if (!g_snmpbulkwalk_ds_registered.load(std::memory_order_acquire)) {
+      std::lock_guard<std::mutex> lock(g_snmpbulkwalk_ds_register_mutex);
+      if (!g_snmpbulkwalk_ds_registered.load(std::memory_order_relaxed)) {
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
+                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
+                                    NETSNMP_DS_WALK_PRINT_STATISTICS);
+         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
+                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+
+         g_snmpbulkwalk_ds_registered.store(true, std::memory_order_release);
+      }
+   }
 
    /*
     * get the common command line arguments

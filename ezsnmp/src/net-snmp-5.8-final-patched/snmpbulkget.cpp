@@ -69,8 +69,11 @@ SOFTWARE.
 #include <mutex>
 
 oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
-int max_repetitions = 10;
-int non_repeaters = 0;
+
+// Thread-local storage for snmpbulkget variables to prevent race conditions
+thread_local int max_repetitions = 10;
+thread_local int non_repeaters = 0;
+
 struct nameStruct {
    oid name[MAX_OID_LEN];
    size_t name_len;
@@ -134,6 +137,10 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
                                 std::string const &init_app_name) {
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
+
+   // Reset thread-local variables to ensure clean state for each call
+   max_repetitions = 10;
+   non_repeaters = 0;
 
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
@@ -258,6 +265,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    snmp_close(ss);
 
+   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
