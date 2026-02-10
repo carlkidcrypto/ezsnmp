@@ -295,10 +295,6 @@ close_session:
 out:
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
-   
-   // Reset thread-local quiet flag after use
-   quiet = 0;
-   
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }

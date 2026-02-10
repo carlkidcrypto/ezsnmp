@@ -446,11 +446,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
-   
-   // Reset thread-local variables after use to ensure clean state
-   end_name = nullptr;
-   numprinted = 0;
-   
    SOCK_CLEANUP;
    return parse_results(return_vector);
 }
