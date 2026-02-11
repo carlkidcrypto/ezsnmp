@@ -29,7 +29,8 @@ jobs:
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
             integration_tests/**
-            python_tests/snmpd.conf
+            python_tests/*.conf
+            python_tests/*.py
             setup.cfg
             setup.py
 
