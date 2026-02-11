@@ -19,7 +19,7 @@ coverage:
         threshold: 1%
         informational: false
 
-# Ignore paths - exclude test files from coverage reports
+# Ignore paths - exclude test files and vendored patched copies from coverage reports
 ignore:
   - "python_tests/**"
   - "cpp_tests/**"
@@ -35,6 +35,9 @@ ignore:
   - "conftest.py"
   - "setup.py"
   - "setup.cfg"
+  # Versioned patched copies are generated from ezsnmp/patches/master_src;
+  # master_src is the canonical source and is tested by C++ unit tests.
+  - "ezsnmp/src/net-snmp-*-final-patched/**"
 
 # Flag management for different test environments
 flags:
