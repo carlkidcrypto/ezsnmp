@@ -27,6 +27,7 @@ jobs:
             .github/workflows/integration_tests.yml
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            integration_tests/**
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
@@ -235,7 +236,7 @@ jobs:
 
           # Add file descriptor test results
           summary += '\\n### File Descriptor Tests \\U0001f4c1\\n\\n'
-          fd_data = {}
+          fd_records = []
           for root, dirs, files in os.walk('artifacts'):
               for file in files:
                   if file.startswith('test_file_descriptors_') and file.endswith('.log'):
@@ -243,85 +244,76 @@ jobs:
                       with open(log_path, 'r') as f:
                           content = f.read()
 
-                      # Extract session type results
+                      # State-based parser: track current (session, mode) block
+                      current_record = None
                       for line in content.split('\\n'):
-                          # Parse FD counts: Subprocess PID Open FDs before/after
-                          fd_before_match = re.search(r'Subprocess PID: Open FDs before: (\\d+) \\[(.+?)\\]', line)
-                          fd_after_match = re.search(r'Subprocess PID Open FDs after: (\\d+) \\[(.+?)\\]', line)
-                          # Parse execution times
-                          time_match = re.search(r'work_(\\w+) \\[(.+?)\\]: Total execution time: ([\\d.]+)', line)
-                          # Parse average times per call
-                          avg_match = re.search(r'Average time per SNMP get call \\((.+?)\\) \\[(.+?)\\]: ([\\d.]+)', line)
+                          # Detect block start: 'Running work_get_no_close: SESS_V1_ARGS'
+                          running_match = re.search(r'Running (work_get_no_close|work_get_close):\\s*(\\S+)', line)
+                          if running_match:
+                              if current_record and 'session' in current_record:
+                                  fd_records.append(current_record)
+                              mode_raw, sess = running_match.groups()
+                              current_record = {
+                                  'session': sess,
+                                  'mode': 'no close' if 'no_close' in mode_raw else 'close'
+                              }
+                              continue
 
-                          if fd_before_match:
-                              count, sess = fd_before_match.groups()
-                              key = sess
-                              if key not in fd_data:
-                                  fd_data[key] = {}
-                              if 'fd_before' not in fd_data[key]:
-                                  fd_data[key]['fd_before'] = []
-                              fd_data[key]['fd_before'].append(int(count))
+                          if current_record is None:
+                              continue
 
-                          if fd_after_match:
-                              count, sess = fd_after_match.groups()
-                              key = sess
-                              if key not in fd_data:
-                                  fd_data[key] = {}
-                              if 'fd_after' not in fd_data[key]:
-                                  fd_data[key]['fd_after'] = []
-                              fd_data[key]['fd_after'].append(int(count))
+                          m = re.search(r'Subprocess PID:? Open FDs before:\\s*(\\d+)', line)
+                          if m:
+                              current_record['fd_before'] = int(m.group(1))
 
-                          if time_match:
-                              mode, sess, time_val = time_match.groups()
-                              key = f'{sess}_{mode}'
-                              if key not in fd_data:
-                                  fd_data[key] = {}
-                              if 'exec_time' not in fd_data[key]:
-                                  fd_data[key]['exec_time'] = []
-                              fd_data[key]['exec_time'].append(float(time_val))
+                          m = re.search(r'Subprocess PID\\s*Open FDs after:\\s*(\\d+)', line)
+                          if m:
+                              current_record['fd_after'] = int(m.group(1))
 
-                          if avg_match:
-                              mode, sess, avg_val = avg_match.groups()
-                              key = f'{sess}_{mode.replace(\" \", \"_\")}'
-                              if key not in fd_data:
-                                  fd_data[key] = {}
-                              if 'avg_time' not in fd_data[key]:
-                                  fd_data[key]['avg_time'] = []
-                              fd_data[key]['avg_time'].append(float(avg_val))
+                          m = re.search(r'Total execution time:\\s*([\\d.]+)', line)
+                          if m:
+                              current_record['exec_time'] = float(m.group(1))
 
-          if fd_data:
+                          m = re.search(r'Average time per SNMP get call.*?:\\s*([\\d.]+)', line)
+                          if m:
+                              current_record['avg_time'] = float(m.group(1))
+
+                      if current_record and 'session' in current_record:
+                          fd_records.append(current_record)
+
+          if fd_records:
+              # Group by (session, mode) and aggregate across matrix combos
+              grouped = {}
+              for rec in fd_records:
+                  key = (rec['session'], rec['mode'])
+                  if key not in grouped:
+                      grouped[key] = {'fd_before': [], 'fd_after': [], 'exec_time': [], 'avg_time': []}
+                  for field in ['fd_before', 'fd_after', 'exec_time', 'avg_time']:
+                      if field in rec:
+                          grouped[key][field].append(rec[field])
+
               summary += '| Session Type | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
               summary += '|--------------|------|-----------|----------|---------|---------------|--------------|\\n'
 
-              for key in sorted(fd_data.keys()):
-                  parts = key.split('_')
-                  if 'get' in key:
-                      # This is a mode entry (get_no_close or get_close)
-                      sess = '_'.join(parts[:-2])
-                      mode = parts[-2] + '_' + parts[-1]
-
-                      # Find corresponding FD data
-                      fd_key = sess
-                      fd_before = fd_data.get(fd_key, {}).get('fd_before', [])
-                      fd_after = fd_data.get(fd_key, {}).get('fd_after', [])
-                      exec_times = fd_data[key].get('exec_time', [])
-                      avg_times = fd_data[key].get('avg_time', [])
-
-                      if exec_times:
-                          mode_display = 'no close' if mode == 'get_no_close' else 'close'
-                          sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
-
-                          avg_exec = statistics.mean(exec_times) if exec_times else 0
-                          avg_avg = statistics.mean(avg_times) if avg_times else 0
-
-                          # Calculate FD leak (after - before)
-                          if fd_before and fd_after:
-                              avg_before = statistics.mean(fd_before)
-                              avg_after = statistics.mean(fd_after)
-                              fd_leak = avg_after - avg_before
-                              summary += f'| {sess_display} | {mode_display} | {avg_before:.0f} | {avg_after:.0f} | {fd_leak:+.0f} | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
-                          else:
-                              summary += f'| {sess_display} | {mode_display} | - | - | - | {avg_exec:.3f} | {avg_avg:.6f} |\\n'
+              for (sess, mode) in sorted(grouped.keys()):
+                  g = grouped[(sess, mode)]
+                  sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
+                  fb_vals = g['fd_before']
+                  fa_vals = g['fd_after']
+                  exec_vals = g['exec_time']
+                  avg_vals = g['avg_time']
+                  if fb_vals and fa_vals:
+                      fb = statistics.mean(fb_vals)
+                      fa = statistics.mean(fa_vals)
+                      leak = fa - fb
+                      fb_str = f'{fb:.0f}'
+                      fa_str = f'{fa:.0f}'
+                      leak_str = f'{leak:+.0f}'
+                  else:
+                      fb_str = fa_str = leak_str = '-'
+                  et = f'{statistics.mean(exec_vals):.3f}' if exec_vals else '-'
+                  at = f'{statistics.mean(avg_vals):.6f}' if avg_vals else '-'
+                  summary += f'| {sess_display} | {mode} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
 
               summary += '\\n\\u2705 File descriptor tests completed successfully\\n'
           else:

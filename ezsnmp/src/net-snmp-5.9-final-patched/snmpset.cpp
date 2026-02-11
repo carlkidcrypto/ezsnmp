@@ -144,6 +144,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /*
     * get the common command line arguments
     */
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
