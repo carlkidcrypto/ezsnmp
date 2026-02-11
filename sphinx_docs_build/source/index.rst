@@ -234,6 +234,28 @@ Example Session Kargs
     print(res)
 
 
+Low-Level Net-SNMP Interface Notes
+----------------------------------
+
+When using the low-level ``snmpbulkget`` or ``snmpbulkwalk`` functions directly
+(via ``from ezsnmp.netsnmp import snmpbulkget, snmpbulkwalk``), the ``-C``
+sub-options (such as ``-Cr`` for max-repeaters and ``-Cn`` for non-repeaters)
+**must** have their numeric value combined in the same string element as the flag.
+
+.. code-block:: python
+
+    from ezsnmp.netsnmp import snmpbulkget
+
+    # Correct - flag and value combined:
+    snmpbulkget(["-v", "2c", "-c", "public", "-Cr10", "localhost", "sysORDescr"], "myapp")
+
+    # Wrong - flag and value separated (raises ParseError):
+    snmpbulkget(["-v", "2c", "-c", "public", "-Cr", "10", "localhost", "sysORDescr"], "myapp")
+
+When using the ``Session`` class, this is handled automatically via the
+``set_max_repeaters_to_num`` constructor parameter, so no special formatting is
+needed.
+
 EzSnmp Exception Handling
 -------------------------
 
