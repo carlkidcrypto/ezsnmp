@@ -298,8 +298,15 @@ def test_snmpbulkget_separated_cn_raises_parse_error():
     """When -Cn and its number are separate args, ParseError should be raised
     instead of the process being killed by exit(1)."""
     args = [
-        "-v", "2c", "-c", "public", "-Cn", "1", "localhost:11161",
-        "sysDescr.0", "sysORDescr",
+        "-v",
+        "2c",
+        "-c",
+        "public",
+        "-Cn",
+        "1",
+        "localhost:11161",
+        "sysDescr.0",
+        "sysORDescr",
     ]
     with pytest.raises(ParseError, match="No number given for -Cn option"):
         snmpbulkget(args, "testing_separated_cn")
