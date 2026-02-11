@@ -290,7 +290,7 @@ def test_snmpbulkget_separated_cr_raises_parse_error():
     """When -Cr and its number are separate args, ParseError should be raised
     instead of the process being killed by exit(1)."""
     args = ["-v", "2c", "-c", "public", "-Cr", "1", "localhost:11161", "sysORDescr"]
-    with pytest.raises(ParseError):
+    with pytest.raises(ParseError, match="No number given for -Cr option"):
         snmpbulkget(args, "testing_separated_cr")
 
 
@@ -301,7 +301,7 @@ def test_snmpbulkget_separated_cn_raises_parse_error():
         "-v", "2c", "-c", "public", "-Cn", "1", "localhost:11161",
         "sysDescr.0", "sysORDescr",
     ]
-    with pytest.raises(ParseError):
+    with pytest.raises(ParseError, match="No number given for -Cn option"):
         snmpbulkget(args, "testing_separated_cn")
 
 
@@ -309,7 +309,7 @@ def test_snmpbulkwalk_separated_cr_raises_parse_error():
     """When -Cr and its number are separate args, ParseError should be raised
     instead of the process being killed by exit(1)."""
     args = ["-v", "2c", "-c", "public", "-Cr", "5", "localhost:11161", "sysORDescr"]
-    with pytest.raises(ParseError):
+    with pytest.raises(ParseError, match="No number given for -Cr option"):
         snmpbulkwalk(args, "testing_separated_cr")
 
 
@@ -317,5 +317,5 @@ def test_snmpbulkwalk_separated_cn_raises_parse_error():
     """When -Cn and its number are separate args, ParseError should be raised
     instead of the process being killed by exit(1)."""
     args = ["-v", "2c", "-c", "public", "-Cn", "2", "localhost:11161", "sysORDescr"]
-    with pytest.raises(ParseError):
+    with pytest.raises(ParseError, match="No number given for -Cn option"):
         snmpbulkwalk(args, "testing_separated_cn")

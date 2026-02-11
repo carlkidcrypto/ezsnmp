@@ -135,8 +135,7 @@ TEST_F(SnmpBulkWalkTest, TestMaxRepeatersSeparatedArgsThrows) {
           try {
              auto results = snmpbulkwalk(args, "testing_cr_separated");
           } catch (ParseErrorBase const& e) {
-             std::string error_msg(e.what());
-             EXPECT_FALSE(error_msg.empty());
+             EXPECT_STREQ(e.what(), "No number given for -Cr option\n");
              throw;
           }
        },
@@ -153,8 +152,7 @@ TEST_F(SnmpBulkWalkTest, TestNonRepeatersSeparatedArgsThrows) {
           try {
              auto results = snmpbulkwalk(args, "testing_cn_separated");
           } catch (ParseErrorBase const& e) {
-             std::string error_msg(e.what());
-             EXPECT_FALSE(error_msg.empty());
+             EXPECT_STREQ(e.what(), "No number given for -Cn option\n");
              throw;
           }
        },
