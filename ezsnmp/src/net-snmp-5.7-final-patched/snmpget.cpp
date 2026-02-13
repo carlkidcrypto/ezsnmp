@@ -70,6 +70,14 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
+struct SnmpSessionCloser {
+   void operator()(netsnmp_session *session) const {
+      if (session) {
+         snmp_close(session);
+      }
+   }
+};
+
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpget.h"
@@ -103,7 +111,8 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss = NULL;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu = NULL;
    netsnmp_pdu *response = NULL;
    netsnmp_variable_list *vars = NULL;
@@ -159,8 +168,8 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    /*
     * Open an SNMP session.
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -185,7 +194,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    }
    if (failures) {
       snmp_free_pdu(pdu);
-      snmp_close(ss);
+      ss.reset();
       return parse_results(return_vector);
    }
 
@@ -196,7 +205,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
     * "fix" the PDU (removing the error-prone OID) and retry.
     */
 retry:
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
@@ -236,7 +245,7 @@ retry:
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
       throw TimeoutErrorBase(err_msg);
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpget", ss);
+      snmp_sess_perror_exception("snmpget", ss.get());
 
    } /* endif -- STAT_SUCCESS */
 

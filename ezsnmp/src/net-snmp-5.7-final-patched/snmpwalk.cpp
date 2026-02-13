@@ -79,6 +79,14 @@ int numprinted = 0;
 
 char *end_name = NULL;
 
+struct SnmpSessionCloser {
+   void operator()(netsnmp_session *session) const {
+      if (session) {
+         snmp_close(session);
+      }
+   }
+};
+
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
@@ -169,7 +177,8 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -268,8 +277,8 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -311,7 +320,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
          netsnmp_get_monotonic_clock(&tv_a);
       }
-      status = snmp_synch_response(ss, pdu, &response);
+      status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
          if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
@@ -393,7 +402,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
          std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
          throw TimeoutErrorBase(err_msg);
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror_exception("snmpwalk", ss);
+         snmp_sess_perror_exception("snmpwalk", ss.get());
       }
       if (response) {
          snmp_free_pdu(response);
@@ -410,14 +419,14 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * for get measure.
        */
       if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
-         auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
+         auto retval = snmpwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
          for (auto const &item : retval) {
             return_vector.push_back(item);
          }
       }
    }
-   snmp_close(ss);
+   ss.reset();
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", numprinted);

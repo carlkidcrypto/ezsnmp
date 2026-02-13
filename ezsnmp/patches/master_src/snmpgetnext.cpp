@@ -68,6 +68,14 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
+struct SnmpSessionCloser {
+   void operator()(netsnmp_session *session) const {
+      if (session) {
+         snmp_close(session);
+      }
+   }
+};
+
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpgetnext.h"
@@ -101,7 +109,8 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -156,8 +165,8 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -183,14 +192,14 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
       }
    }
    if (failures) {
-      goto close_session;
+      goto out;
    }
 
    /*
     * do the request
     */
 retry:
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
@@ -229,17 +238,15 @@ retry:
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
       throw TimeoutErrorBase(err_msg);
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpgetnext", ss);
+      snmp_sess_perror_exception("snmpgetnext", ss.get());
    }
 
    if (response) {
       snmp_free_pdu(response);
    }
 
-close_session:
-   snmp_close(ss);
-
 out:
+   ss.reset();
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;

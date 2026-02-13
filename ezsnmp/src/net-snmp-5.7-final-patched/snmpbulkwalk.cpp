@@ -76,6 +76,14 @@ oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int snmpbulkwalk_numprinted = 0;
 int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
+struct SnmpSessionCloser {
+   void operator()(netsnmp_session *session) const {
+      if (session) {
+         snmp_close(session);
+      }
+   }
+};
+
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkwalk.h"
@@ -184,7 +192,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -251,8 +260,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -290,7 +299,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       /*
        * do the request
        */
-      status = snmp_synch_response(ss, pdu, &response);
+      status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
@@ -366,7 +375,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
          throw TimeoutErrorBase(err_msg);
 
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror_exception("snmpbulkwalk", ss);
+         snmp_sess_perror_exception("snmpbulkwalk", ss.get());
       }
       if (response) {
          snmp_free_pdu(response);
@@ -385,7 +394,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
          return_vector.push_back(item);
       }
    }
-   snmp_close(ss);
+   ss.reset();
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", snmpbulkwalk_numprinted);
