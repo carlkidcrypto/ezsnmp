@@ -76,14 +76,6 @@ oid snmpbulkwalk_objid_mib[] = {1, 3, 6, 1, 2, 1};
 int snmpbulkwalk_numprinted = 0;
 int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 
-struct SnmpSessionCloser {
-   void operator()(netsnmp_session *session) const {
-      if (session) {
-         snmp_close(session);
-      }
-   }
-};
-
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpbulkwalk.h"

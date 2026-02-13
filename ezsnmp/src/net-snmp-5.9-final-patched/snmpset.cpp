@@ -67,14 +67,6 @@ SOFTWARE.
 
 #include <mutex>
 
-struct SnmpSessionCloser {
-   void operator()(netsnmp_session *session) const {
-      if (session) {
-         snmp_close(session);
-      }
-   }
-};
-
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"

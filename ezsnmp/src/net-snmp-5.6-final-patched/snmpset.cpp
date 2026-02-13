@@ -67,14 +67,6 @@ SOFTWARE.
 
 #include <mutex>
 
-struct SnmpSessionCloser {
-   void operator()(netsnmp_session *session) const {
-      if (session) {
-         snmp_close(session);
-      }
-   }
-};
-
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpwalk.h"
@@ -124,7 +116,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response = NULL;
    netsnmp_variable_list *vars;
    int arg;

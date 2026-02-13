@@ -70,14 +70,6 @@ SOFTWARE.
 
 #define NETSNMP_DS_APP_DONT_FIX_PDUS 0
 
-struct SnmpSessionCloser {
-   void operator()(netsnmp_session *session) const {
-      if (session) {
-         snmp_close(session);
-      }
-   }
-};
-
 #include "exceptionsbase.h"
 #include "helpers.h"
 #include "snmpget.h"
