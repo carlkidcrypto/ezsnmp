@@ -244,6 +244,7 @@ retry:
       snmp_free_pdu(response);
    }
 
+   snmp_close(ss);
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;

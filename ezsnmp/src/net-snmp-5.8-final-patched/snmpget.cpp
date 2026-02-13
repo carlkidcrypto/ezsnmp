@@ -244,6 +244,7 @@ retry:
       snmp_free_pdu(response);
    }
 
+   snmp_close(ss);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
