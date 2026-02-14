@@ -295,7 +295,6 @@ close_session:
    snmp_close(ss);
 
 out:
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
