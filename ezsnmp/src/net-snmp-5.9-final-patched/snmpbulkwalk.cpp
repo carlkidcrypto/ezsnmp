@@ -66,6 +66,7 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
+#include <atomic>
 #include <mutex>
 
 #define NETSNMP_DS_WALK_INCLUDE_REQUESTED 1
