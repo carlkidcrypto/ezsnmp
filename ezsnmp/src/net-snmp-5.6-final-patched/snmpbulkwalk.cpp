@@ -272,7 +272,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    check =
        !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
-      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpbulkwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
          return_vector.push_back(item);
@@ -380,7 +380,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        * pointed at an only existing instance.  Attempt a GET, just
        * for get measure.
        */
-      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpbulkwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
          return_vector.push_back(item);
