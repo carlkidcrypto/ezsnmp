@@ -13,11 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
@@ -101,7 +96,7 @@ jobs:
             TAG_NAME="${{ github.event_name == 'release' && github.event.release.tag_name || steps.get_tag.outputs.tag }}"
             ASSET_PATH="/home/runner/work/ezsnmp/ezsnmp/sphinx_documentation.zip"
             ASSET_NAME="sphinx_documentation.zip"
-            
+
             # Check if the asset already exists in the release
             if gh release view "$TAG_NAME" --json assets -q '.assets[].name' | grep -q "^${ASSET_NAME}$"; then
               echo "Asset ${ASSET_NAME} already exists in release ${TAG_NAME}"
@@ -110,7 +105,7 @@ jobs:
                 echo "Warning: Failed to delete asset ${ASSET_NAME} from release ${TAG_NAME}, but continuing..."
               fi
             fi
-            
+
             # Upload the asset
             echo "Uploading ${ASSET_NAME} to release ${TAG_NAME}..."
             gh release upload "$TAG_NAME" "$ASSET_PATH"
@@ -123,7 +118,16 @@ jobs:
         with:
           path: docs/
 
+  deploy_pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: sphinx_docs_build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    steps:
       - name: Deploy to GitHub Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
