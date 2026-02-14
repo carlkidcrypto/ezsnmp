@@ -288,7 +288,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    check =
        !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
-      auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
          return_vector.push_back(item);
