@@ -289,10 +289,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
       snmp_free_pdu(response);
    }
 
-out:
-   {
-      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
-   }
+out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

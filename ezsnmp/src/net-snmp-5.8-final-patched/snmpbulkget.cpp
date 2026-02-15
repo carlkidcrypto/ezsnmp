@@ -259,7 +259,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
       snmp_free_pdu(response);
    }
 
-
    {
       std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
