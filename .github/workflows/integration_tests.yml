@@ -244,17 +244,27 @@ jobs:
                       with open(log_path, 'r') as f:
                           content = f.read()
 
-                      # State-based parser: track current (session, mode) block
+                        # State-based parser: track current (session, operation, mode) block
                       current_record = None
                       for line in content.split('\\n'):
-                          # Detect block start: 'Running work_get_no_close: SESS_V1_ARGS'
-                          running_match = re.search(r'Running (work_get_no_close|work_get_close):\\s*(\\S+)', line)
+                          # Detect block start: 'Running work_op_no_close: get SESS_V1_ARGS'
+                          running_match = re.search(
+                            r'Running (work_(?:get|op)_no_close|work_(?:get|op)_close):\\s*(\\S+)(?:\\s+(\\S+))?',
+                            line,
+                          )
                           if running_match:
                               if current_record and 'session' in current_record:
                                   fd_records.append(current_record)
-                              mode_raw, sess = running_match.groups()
+                            mode_raw, op_or_sess, sess_opt = running_match.groups()
+                            if sess_opt:
+                              operation = op_or_sess
+                              sess = sess_opt
+                            else:
+                              operation = 'unknown'
+                              sess = op_or_sess
                               current_record = {
                                   'session': sess,
+                              'operation': operation,
                                   'mode': 'no close' if 'no_close' in mode_raw else 'close'
                               }
                               continue
@@ -274,7 +284,7 @@ jobs:
                           if m:
                               current_record['exec_time'] = float(m.group(1))
 
-                          m = re.search(r'Average time per SNMP get call.*?:\\s*([\\d.]+)', line)
+                            m = re.search(r'Average time per SNMP call.*?:\\s*([\\d.]+)', line)
                           if m:
                               current_record['avg_time'] = float(m.group(1))
 
@@ -282,22 +292,23 @@ jobs:
                           fd_records.append(current_record)
 
           if fd_records:
-              # Group by (session, mode) and aggregate across matrix combos
+                # Group by (session, operation, mode) and aggregate across matrix combos
               grouped = {}
               for rec in fd_records:
-                  key = (rec['session'], rec['mode'])
+                  key = (rec['session'], rec.get('operation', 'unknown'), rec['mode'])
                   if key not in grouped:
                       grouped[key] = {'fd_before': [], 'fd_after': [], 'exec_time': [], 'avg_time': []}
                   for field in ['fd_before', 'fd_after', 'exec_time', 'avg_time']:
                       if field in rec:
                           grouped[key][field].append(rec[field])
 
-              summary += '| Session Type | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
-              summary += '|--------------|------|-----------|----------|---------|---------------|--------------|\\n'
+                summary += '| Session Type | Operation | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+                summary += '|--------------|-----------|------|-----------|----------|---------|---------------|--------------|\\n'
 
-              for (sess, mode) in sorted(grouped.keys()):
-                  g = grouped[(sess, mode)]
+                for (sess, operation, mode) in sorted(grouped.keys()):
+                  g = grouped[(sess, operation, mode)]
                   sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
+                  op_display = operation
                   fb_vals = g['fd_before']
                   fa_vals = g['fd_after']
                   exec_vals = g['exec_time']
@@ -313,7 +324,7 @@ jobs:
                       fb_str = fa_str = leak_str = '-'
                   et = f'{statistics.mean(exec_vals):.3f}' if exec_vals else '-'
                   at = f'{statistics.mean(avg_vals):.6f}' if avg_vals else '-'
-                  summary += f'| {sess_display} | {mode} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
+                    summary += f'| {sess_display} | {op_display} | {mode} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
 
               summary += '\\n\\u2705 File descriptor tests completed successfully\\n'
           else:
