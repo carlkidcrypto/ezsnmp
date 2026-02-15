@@ -186,7 +186,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    }
    if (failures) {
       snmp_free_pdu(pdu);
-      ss.reset();
       return parse_results(return_vector);
    }
 
@@ -245,7 +244,10 @@ retry:
       snmp_free_pdu(response);
    }
 
-   ss.reset();
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
+
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

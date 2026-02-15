@@ -290,7 +290,9 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    }
 
 out:
-   ss.reset();
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;

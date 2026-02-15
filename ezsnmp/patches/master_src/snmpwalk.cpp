@@ -418,7 +418,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
          }
       }
    }
-   ss.reset();
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", numprinted);
@@ -426,6 +425,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
       fprintf(stderr, "Total traversal time = %f seconds\n",
               (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+   }
+
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
 
    netsnmp_cleanup_session(&session);

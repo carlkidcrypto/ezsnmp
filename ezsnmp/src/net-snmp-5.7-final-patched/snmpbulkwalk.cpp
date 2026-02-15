@@ -386,10 +386,13 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
          return_vector.push_back(item);
       }
    }
-   ss.reset();
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", snmpbulkwalk_numprinted);
+   }
+
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
 
    clear_net_snmp_library_data();
