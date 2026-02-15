@@ -193,7 +193,7 @@ def aggregate_fd_records(records: List[Dict[str, object]]) -> List[List[str]]:
                 grouped[key][field].append(float(rec[field]))
 
     rows: List[List[str]] = []
-    for (sess, operation, mode) in sorted(grouped.keys()):
+    for sess, operation, mode in sorted(grouped.keys()):
         g = grouped[(sess, operation, mode)]
         fb_vals = g["fd_before"]
         fa_vals = g["fd_after"]
@@ -213,7 +213,9 @@ def aggregate_fd_records(records: List[Dict[str, object]]) -> List[List[str]]:
         et = f"{mean(exec_vals):.3f}" if exec_vals else "-"
         at = f"{mean(avg_vals):.6f}" if avg_vals else "-"
         count = max(len(exec_vals), len(avg_vals), len(fb_vals), len(fa_vals))
-        rows.append([sess, operation, mode, str(count), fb_str, fa_str, leak_str, et, at])
+        rows.append(
+            [sess, operation, mode, str(count), fb_str, fa_str, leak_str, et, at]
+        )
 
     return rows
 
