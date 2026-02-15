@@ -81,7 +81,24 @@ Usage:
 
     python3 test_file_descriptors.py
 
-This test runs automatically without additional parameters.
+By default, the script exercises multiple session operations in subprocesses
+with and without explicit session.close():
+
+- get
+- get_next
+- walk
+- bulk_get (skipped for v1)
+- bulk_walk (skipped for v1)
+- set (writes back the current sysLocation value to avoid changes)
+
+Optional log destination:
+
+.. code:: bash
+
+    python3 test_file_descriptors.py /path/to/log_dir
+    python3 test_file_descriptors.py /path/to/custom_log.log
+
+If a directory is provided, the log file is named snmp_fd_test_output.log.
 
 All Tests
 ---------

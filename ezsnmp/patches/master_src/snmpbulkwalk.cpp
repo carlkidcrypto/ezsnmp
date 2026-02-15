@@ -184,7 +184,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -251,8 +252,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -271,7 +272,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    check =
        !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
-      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpbulkwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
          return_vector.push_back(item);
@@ -290,7 +291,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       /*
        * do the request
        */
-      status = snmp_synch_response(ss, pdu, &response);
+      status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
@@ -366,7 +367,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
          throw TimeoutErrorBase(err_msg);
 
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror_exception("snmpbulkwalk", ss);
+         snmp_sess_perror_exception("snmpbulkwalk", ss.get());
       }
       if (response) {
          snmp_free_pdu(response);
@@ -379,16 +380,19 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        * pointed at an only existing instance.  Attempt a GET, just
        * for get measure.
        */
-      auto retval = snmpbulkwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpbulkwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
          return_vector.push_back(item);
       }
    }
-   snmp_close(ss);
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", snmpbulkwalk_numprinted);
+   }
+
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
 
    netsnmp_cleanup_session(&session);
