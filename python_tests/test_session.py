@@ -335,7 +335,7 @@ def test_session_get_invalid_instance(sess):
             sess.get("sysDescr.100")
     else:
         res = sess.get("sysDescr.100")
-        assert res[0].type in ["NOSUCHINSTANCE", "NOSUCHOBJECT"]
+        assert res[0].type == "NOSUCHINSTANCE"
 
 
 def test_session_get_invalid_object(sess):

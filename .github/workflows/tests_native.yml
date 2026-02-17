@@ -88,14 +88,7 @@ jobs:
             SNMPD=$(which snmpd)
           elif [ "$RUNNER_OS" == "macOS" ]
           then
-            # On macOS, check for Homebrew MIB directories (both Intel and Apple Silicon)
-            if [ -d "/opt/homebrew/share/snmp/mibs" ]; then
-              mibdir="-M +/opt/homebrew/share/snmp/mibs"
-            elif [ -d "/usr/local/share/snmp/mibs" ]; then
-              mibdir="-M +/usr/local/share/snmp/mibs"
-            else
-              mibdir=""
-            fi
+            mibdir=""
             SNMPD=$(which snmpd)
           else
             mibdir=""

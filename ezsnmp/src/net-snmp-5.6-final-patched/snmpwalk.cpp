@@ -65,7 +65,6 @@ SOFTWARE.
 
 #include <net-snmp/net-snmp-includes.h>
 
-#include <atomic>
 #include <mutex>
 
 #define NETSNMP_DS_WALK_INCLUDE_REQUESTED 1
@@ -76,15 +75,9 @@ SOFTWARE.
 #define NETSNMP_DS_WALK_TIME_RESULTS_SINGLE 6
 
 oid objid_mib[] = {1, 3, 6, 1, 2, 1};
+int numprinted = 0;
 
-// Thread-local storage for snmpwalk variables to prevent race conditions
-// These are set during option processing and used during walk execution
-thread_local char *end_name = nullptr;
-thread_local int numprinted = 0;
-
-// One-time initialization flag for netsnmp_ds config registration
-static std::atomic<bool> g_snmpwalk_ds_registered(false);
-static std::mutex g_snmpwalk_ds_register_mutex;
+char *end_name = NULL;
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -172,15 +165,12 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
 
-   // Reset thread-local variables to ensure clean state for each call
-   end_name = nullptr;
-   numprinted = 0;
-
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -198,32 +188,23 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
-   // Register netsnmp_ds config only once to avoid conflicts
-   // These registrations are global and should only be done once per process
-   if (!g_snmpwalk_ds_registered.load(std::memory_order_acquire)) {
-      std::lock_guard<std::mutex> lock(g_snmpwalk_ds_register_mutex);
-      if (!g_snmpwalk_ds_registered.load(std::memory_order_relaxed)) {
-         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
 
-         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
-                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
 
-         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
-                                    NETSNMP_DS_WALK_PRINT_STATISTICS);
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
+                              NETSNMP_DS_WALK_PRINT_STATISTICS);
 
-         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
-         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
-                                    NETSNMP_DS_WALK_TIME_RESULTS);
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
+                              NETSNMP_DS_WALK_TIME_RESULTS);
 
-         netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
-                                    NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
-
-         g_snmpwalk_ds_registered.store(true, std::memory_order_release);
-      }
-   }
+   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
+                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
 
    /*
     * get the common command line arguments
@@ -288,8 +269,8 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -307,7 +288,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    check =
        !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
-      auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
+      auto retval = snmpwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
          return_vector.push_back(item);
@@ -331,7 +312,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
          gettimeofday(&tv_a, NULL);
       }
-      status = snmp_synch_response(ss, pdu, &response);
+      status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
          if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
@@ -413,7 +394,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
          std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
          throw TimeoutErrorBase(err_msg);
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror_exception("snmpwalk", ss);
+         snmp_sess_perror_exception("snmpwalk", ss.get());
       }
       if (response) {
          snmp_free_pdu(response);
@@ -430,14 +411,13 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * for get measure.
        */
       if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
-         auto retval = snmpwalk_snmp_get_and_print(ss, root, rootlen);
+         auto retval = snmpwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
          for (auto const &item : retval) {
             return_vector.push_back(item);
          }
       }
    }
-   snmp_close(ss);
 
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
       printf("Variables found: %d\n", numprinted);
@@ -445,6 +425,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
       fprintf(stderr, "Total traversal time = %f seconds\n",
               (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+   }
+
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
 
    clear_net_snmp_library_data();

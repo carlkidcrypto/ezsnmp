@@ -386,6 +386,7 @@ close_session:
    netsnmp_thread_cleanup(init_app_name);
 
 out:
+   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return exitval;

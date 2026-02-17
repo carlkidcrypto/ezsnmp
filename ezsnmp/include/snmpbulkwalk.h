@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-#include "datatypes.h"
-
 /**
  * @brief Prints the usage information for the snmpbulkwalk command.
  *

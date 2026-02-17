@@ -87,8 +87,7 @@ void snmpset_usage(void) {
 #endif /* NETSNMP_WITH_OPAQUE_SPECIAL_TYPES */
 }
 
-// Thread-local storage for snmpset quiet flag to prevent race conditions
-thread_local int quiet = 0;
+static int quiet = 0;
 
 void snmpset_optProc(int argc, char *const *argv, int opt) {
    switch (opt) {
@@ -113,15 +112,12 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
 
-   // Reset thread-local quiet flag to ensure clean state for each call
-   // This prevents state leakage between concurrent calls
-   quiet = 0;
-
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu, *response = NULL;
    netsnmp_variable_list *vars;
    int arg;
@@ -136,6 +132,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    size_t name_length;
    int status;
    int failures = 0;
+   /* Reset application-local quiet flag so subsequent calls behave normally. */
+   quiet = 0;
 
    SOCK_STARTUP;
 
@@ -220,8 +218,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -248,13 +246,13 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    }
 
    if (failures) {
-      goto close_session;
+      goto out;
    }
 
    /*
     * do the request
     */
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          if (!quiet) {
@@ -284,17 +282,15 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
       throw TimeoutErrorBase(err_msg);
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpset", ss);
+      snmp_sess_perror_exception("snmpset", ss.get());
    }
 
    if (response) {
       snmp_free_pdu(response);
    }
 
-close_session:
-   snmp_close(ss);
-
-out:
+out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
+   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

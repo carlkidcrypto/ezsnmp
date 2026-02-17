@@ -69,11 +69,8 @@ SOFTWARE.
 #include <mutex>
 
 oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
-
-// Thread-local storage for snmpbulkget variables to prevent race conditions
-thread_local int max_repetitions = 10;
-thread_local int non_repeaters = 0;
-
+int max_repetitions = 10;
+int non_repeaters = 0;
 struct nameStruct {
    oid name[MAX_OID_LEN];
    size_t name_len;
@@ -138,15 +135,12 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    // Reference-counted initialization: only first thread calls init_snmp
    netsnmp_thread_init(init_app_name);
 
-   // Reset thread-local variables to ensure clean state for each call
-   max_repetitions = 10;
-   non_repeaters = 0;
-
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu;
    netsnmp_pdu *response;
    netsnmp_variable_list *vars;
@@ -198,8 +192,8 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -220,7 +214,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * do the request
     */
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          /*
@@ -258,15 +252,18 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
       throw TimeoutErrorBase(err_msg);
 
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpbulkget", ss);
+      snmp_sess_perror_exception("snmpbulkget", ss.get());
    }
 
    if (response) {
       snmp_free_pdu(response);
    }
 
-   snmp_close(ss);
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
 
+   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
