@@ -21,7 +21,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
+        uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a # v47.0.4
         with:
           files: |
             .github/workflows/integration_tests_docker.yml
@@ -297,54 +297,64 @@ jobs:
                   summary += '\\n'
 
           # Add file descriptor test results
-          summary += '### File Descriptor Tests \\U0001f4c1\\n\\n'
+          summary += '### File Descriptor Tests \U0001f4c1\n\n'
           fd_records = []
           for root, dirs, files in os.walk('.'):
-              for file in files:
-                  if file.startswith('test_file_descriptors_') and file.endswith('.log'):
-                      log_path = os.path.join(root, file)
-                      with open(log_path, 'r') as f:
-                          content = f.read()
+            for file in files:
+              if file.startswith('test_file_descriptors_') and file.endswith('.log'):
+                log_path = os.path.join(root, file)
+                with open(log_path, 'r') as f:
+                  content = f.read()
 
-                      distro = file.replace('test_file_descriptors_', '').replace('.log', '')
+                distro = file.replace('test_file_descriptors_', '').replace('.log', '')
 
-                      # State-based parser: track current (session, mode) block
-                      current_record = None
-                      for line in content.split('\\n'):
-                          # Detect block start: 'Running work_get_no_close: SESS_V1_ARGS'
-                          running_match = re.search(r'Running (work_get_no_close|work_get_close):\\s*(\\S+)', line)
-                          if running_match:
-                              if current_record and 'session' in current_record:
-                                  fd_records.append(current_record)
-                              mode_raw, sess = running_match.groups()
-                              current_record = {
-                                  'distro': distro,
-                                  'session': sess,
-                                  'mode': 'no close' if 'no_close' in mode_raw else 'close'
-                              }
-                              continue
+                # State-based parser: track current (session, operation, mode) block
+                current_record = None
+                for line in content.split('\\n'):
+                  # Detect block start: 'Running work_op_no_close: get SESS_V1_ARGS'
+                  running_match = re.search(
+                    r'Running (work_(?:get|op)_no_close|work_(?:get|op)_close):\\s*(\\S+)(?:\\s+(\\S+))?',
+                    line,
+                  )
+                  if running_match:
+                    if current_record and 'session' in current_record:
+                      fd_records.append(current_record)
+                    mode_raw, op_or_sess, sess_opt = running_match.groups()
+                    if sess_opt:
+                      operation = op_or_sess
+                      sess = sess_opt
+                    else:
+                      operation = 'unknown'
+                      sess = op_or_sess
+                    current_record = {
+                      'distro': distro,
+                      'session': sess,
+                      'operation': operation,
+                      'mode': 'no close' if 'no_close' in mode_raw else 'close'
+                    }
+                    continue
 
-                          if current_record is None:
-                              continue
+                  if current_record is None:
+                    continue
 
-                          m = re.search(r'Subprocess PID:? Open FDs before:\\s*(\\d+)', line)
-                          if m:
-                              current_record['fd_before'] = int(m.group(1))
+                  m = re.search(r'Subprocess PID:? Open FDs before:\\s*(\\d+)', line)
+                  if m:
+                    current_record['fd_before'] = int(m.group(1))
 
-                          m = re.search(r'Subprocess PID\\s*Open FDs after:\\s*(\\d+)', line)
-                          if m:
-                              current_record['fd_after'] = int(m.group(1))
+                  m = re.search(r'Subprocess PID\\s*Open FDs after:\\s*(\\d+)', line)
+                  if m:
+                    current_record['fd_after'] = int(m.group(1))
 
-                          m = re.search(r'Total execution time:\\s*([\\d.]+)', line)
-                          if m:
-                              current_record['exec_time'] = float(m.group(1))
+                  m = re.search(r'Total execution time:\\s*([\\d.]+)', line)
+                  if m:
+                    current_record['exec_time'] = float(m.group(1))
 
-                          m = re.search(r'Average time per SNMP get call.*?:\\s*([\\d.]+)', line)
-                          if m:
-                              current_record['avg_time'] = float(m.group(1))
+                  m = re.search(r'Average time per SNMP call.*?:\\s*([\\d.]+)', line)
+                  if m:
+                    current_record['avg_time'] = float(m.group(1))
 
-                      if current_record and 'session' in current_record:
-                          fd_records.append(current_record)
+                if current_record and 'session' in current_record:
+                  fd_records.append(current_record)
 
           if fd_records:
               # Group by distribution
@@ -353,11 +363,12 @@ jobs:
                   distro_recs = [r for r in fd_records if r['distro'] == distro]
                   distro_title = distro.replace('_', ' ').title()
                   summary += f'#### {distro_title}\\n\\n'
-                  summary += '| Session Type | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
-                  summary += '|--------------|------|-----------|----------|---------|---------------|--------------|\\n'
+                  summary += '| Session Type | Operation | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+                  summary += '|--------------|-----------|------|-----------|----------|---------|---------------|--------------|\\n'
 
                   for rec in distro_recs:
                       sess_display = rec['session'].replace('SESS_', '').replace('_ARGS', '')
+                      op_display = rec.get('operation', 'unknown')
                       mode_display = rec['mode']
                       fd_before = rec.get('fd_before')
                       fd_after = rec.get('fd_after')
@@ -372,7 +383,7 @@ jobs:
                       avg_time = rec.get('avg_time')
                       et = f'{exec_time:.3f}' if exec_time is not None else '-'
                       at = f'{avg_time:.6f}' if avg_time is not None else '-'
-                      summary += f'| {sess_display} | {mode_display} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
+                      summary += f'| {sess_display} | {op_display} | {mode_display} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
 
                   summary += '\\n'
 

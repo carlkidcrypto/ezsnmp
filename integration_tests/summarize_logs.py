@@ -58,22 +58,22 @@ def parse_log_file(path: Path) -> Dict[str, object]:
     # FD and timing patterns
     re_subproc_fd = re.compile(r"Subprocess PID Open FDs after:\s*(\d+)", re.I)
     re_parent_fd_no = re.compile(
-        r"Parent PID Open FDs after work_get_no_close.*:\s*(\d+)", re.I
+        r"Parent PID Open FDs after work_(get|op)_no_close.*:\s*(\d+)", re.I
     )
     re_total_no = re.compile(
-        r"work_get_no_close .*Total execution time:\s*([0-9.]+)", re.I
+        r"work_(get|op)_no_close .*Total execution time:\s*([0-9.]+)", re.I
     )
     re_avg_no = re.compile(
-        r"Average time per SNMP get call \(no close\).*:\s*([0-9.]+)", re.I
+        r"Average time per SNMP (get )?call \(no close\).*:\s*([0-9.]+)", re.I
     )
     re_parent_fd_with = re.compile(
-        r"Parent PID Open FDs after work_get_close.*:\s*(\d+)", re.I
+        r"Parent PID Open FDs after work_(get|op)_close.*:\s*(\d+)", re.I
     )
     re_total_with = re.compile(
-        r"work_get_close .*Total execution time:\s*([0-9.]+)", re.I
+        r"work_(get|op)_close .*Total execution time:\s*([0-9.]+)", re.I
     )
     re_avg_with = re.compile(
-        r"Average time per SNMP get call \(with close\).*:\s*([0-9.]+)", re.I
+        r"Average time per SNMP (get )?call \(with close\).*:\s*([0-9.]+)", re.I
     )
     # Generic total execution time (any test harness)
     re_total_generic = re.compile(r"Total execution time:\s*([0-9.]+)\s*seconds", re.I)
@@ -94,27 +94,27 @@ def parse_log_file(path: Path) -> Dict[str, object]:
 
             m = re_parent_fd_no.search(line)
             if m:
-                last_values["parent_fd_after_no_close"] = float(m.group(1))
+                last_values["parent_fd_after_no_close"] = float(m.group(2))
 
             m = re_total_no.search(line)
             if m:
-                last_values["total_time_no_close"] = float(m.group(1))
+                last_values["total_time_no_close"] = float(m.group(2))
 
             m = re_avg_no.search(line)
             if m:
-                last_values["avg_time_no_close"] = float(m.group(1))
+                last_values["avg_time_no_close"] = float(m.group(2))
 
             m = re_parent_fd_with.search(line)
             if m:
-                last_values["parent_fd_after_with_close"] = float(m.group(1))
+                last_values["parent_fd_after_with_close"] = float(m.group(2))
 
             m = re_total_with.search(line)
             if m:
-                last_values["total_time_with_close"] = float(m.group(1))
+                last_values["total_time_with_close"] = float(m.group(2))
 
             m = re_avg_with.search(line)
             if m:
-                last_values["avg_time_with_close"] = float(m.group(1))
+                last_values["avg_time_with_close"] = float(m.group(2))
 
             m = re_total_generic.search(line)
             if m:
@@ -124,6 +124,100 @@ def parse_log_file(path: Path) -> Dict[str, object]:
     # Merge into result
     result = {**data, **last_values}
     return result
+
+
+def parse_fd_operation_records(path: Path) -> List[Dict[str, object]]:
+    records: List[Dict[str, object]] = []
+    running_re = re.compile(
+        r"Running (work_op_no_close|work_op_close):\s*(\S+)\s+(\S+)", re.I
+    )
+    fd_before_re = re.compile(r"Subprocess PID:? Open FDs before:\s*(\d+)", re.I)
+    fd_after_re = re.compile(r"Subprocess PID\s*Open FDs after:\s*(\d+)", re.I)
+    exec_re = re.compile(r"Total execution time:\s*([0-9.]+)", re.I)
+    avg_re = re.compile(r"Average time per SNMP call.*?:\s*([0-9.]+)", re.I)
+
+    current_record: Optional[Dict[str, object]] = None
+    with path.open("r", errors="ignore") as fh:
+        for line in fh:
+            line = line.rstrip("\n")
+            running_match = running_re.search(line)
+            if running_match:
+                if current_record and "session" in current_record:
+                    records.append(current_record)
+                mode_raw, operation, sess = running_match.groups()
+                current_record = {
+                    "session": sess,
+                    "operation": operation,
+                    "mode": "no close" if "no_close" in mode_raw else "close",
+                }
+                continue
+
+            if current_record is None:
+                continue
+
+            m = fd_before_re.search(line)
+            if m:
+                current_record["fd_before"] = int(m.group(1))
+
+            m = fd_after_re.search(line)
+            if m:
+                current_record["fd_after"] = int(m.group(1))
+
+            m = exec_re.search(line)
+            if m:
+                current_record["exec_time"] = float(m.group(1))
+
+            m = avg_re.search(line)
+            if m:
+                current_record["avg_time"] = float(m.group(1))
+
+    if current_record and "session" in current_record:
+        records.append(current_record)
+
+    return records
+
+
+def aggregate_fd_records(records: List[Dict[str, object]]) -> List[List[str]]:
+    grouped: Dict[tuple, Dict[str, List[float]]] = {}
+    for rec in records:
+        key = (rec.get("session", "-"), rec.get("operation", "-"), rec.get("mode", "-"))
+        if key not in grouped:
+            grouped[key] = {
+                "fd_before": [],
+                "fd_after": [],
+                "exec_time": [],
+                "avg_time": [],
+            }
+        for field in ["fd_before", "fd_after", "exec_time", "avg_time"]:
+            if field in rec:
+                grouped[key][field].append(float(rec[field]))
+
+    rows: List[List[str]] = []
+    for sess, operation, mode in sorted(grouped.keys()):
+        g = grouped[(sess, operation, mode)]
+        fb_vals = g["fd_before"]
+        fa_vals = g["fd_after"]
+        exec_vals = g["exec_time"]
+        avg_vals = g["avg_time"]
+
+        if fb_vals and fa_vals:
+            fb = mean(fb_vals)
+            fa = mean(fa_vals)
+            leak = fa - fb
+            fb_str = f"{fb:.0f}"
+            fa_str = f"{fa:.0f}"
+            leak_str = f"{leak:+.0f}"
+        else:
+            fb_str = fa_str = leak_str = "-"
+
+        et = f"{mean(exec_vals):.3f}" if exec_vals else "-"
+        at = f"{mean(avg_vals):.6f}" if avg_vals else "-"
+        count = max(len(exec_vals), len(avg_vals), len(fb_vals), len(fa_vals))
+        rows.append(
+            [sess, operation, mode, str(count), fb_str, fa_str, leak_str, et, at]
+        )
+
+    return rows
 
 
 def format_table(rows: List[List[str]], headers: List[str]) -> str:
@@ -175,9 +269,15 @@ def main():
     entries = []
     totals = defaultdict(int)
     metrics_collections: Dict[str, List[float]] = defaultdict(list)
+    fd_op_records_all: List[Dict[str, object]] = []
+    fd_op_records_by_file: Dict[str, List[Dict[str, object]]] = {}
 
     for lf in log_files:
         parsed = parse_log_file(lf)
+        if lf.name.startswith("test_file_descriptors"):
+            fd_records = parse_fd_operation_records(lf)
+            fd_op_records_by_file[lf.name] = fd_records
+            fd_op_records_all.extend(fd_records)
         # collect totals for counters
         for k in COUNTER_KEYS:
             totals[k] += int(parsed.get(k, 0))
@@ -349,6 +449,32 @@ def main():
             out_lines.append("")
             out_lines.append("No per-file statistics available.")
 
+        if is_fd_file:
+            fd_records = fd_op_records_by_file.get(e["file"], [])
+            fd_rows = aggregate_fd_records(fd_records)
+            if fd_rows:
+                out_lines.append("")
+                out_lines.append("Per-operation FD summary:")
+                out_lines.append("")
+                out_lines.append("::")
+                out_lines.append("")
+                fd_headers = [
+                    "session",
+                    "operation",
+                    "mode",
+                    "count",
+                    "fd_before",
+                    "fd_after",
+                    "fd_leak",
+                    "exec_time",
+                    "avg_time",
+                ]
+                for line in format_table(fd_rows, fd_headers).splitlines():
+                    out_lines.append("    " + line)
+            else:
+                out_lines.append("")
+                out_lines.append("No per-operation FD data available.")
+
     # End per-file loop
     stats_targets = {
         "total_time_no_close": metrics_collections.get("total_time_no_close", []),
@@ -450,6 +576,27 @@ def main():
     else:
         out_lines.append("")
         out_lines.append("No entries to aggregate (all files filtered out).")
+
+    if fd_op_records_all:
+        out_lines.append("")
+        out_lines.append("Aggregated FD summary (all FD logs):")
+        out_lines.append("")
+        out_lines.append("::")
+        out_lines.append("")
+        fd_headers = [
+            "session",
+            "operation",
+            "mode",
+            "count",
+            "fd_before",
+            "fd_after",
+            "fd_leak",
+            "exec_time",
+            "avg_time",
+        ]
+        fd_rows = aggregate_fd_records(fd_op_records_all)
+        for line in format_table(fd_rows, fd_headers).splitlines():
+            out_lines.append("    " + line)
 
     # Additionally produce aggregated summaries per method (get, walk, bulkwalk, etc.)
     def extract_method(fname: str) -> str:
