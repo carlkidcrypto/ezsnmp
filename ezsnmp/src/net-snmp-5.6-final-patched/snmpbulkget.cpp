@@ -111,8 +111,8 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
                      /*
                       * No number given -- error.
                       */
-                     snmpbulkget_usage();
-                     exit(1);
+                     throw ParseErrorBase("No number given for -C" + std::string(1, *(optarg - 1)) +
+                                          " option\n");
                   } else {
                      optarg = endptr;
                      if (isspace((unsigned char)(*optarg))) {
@@ -139,7 +139,8 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
    std::vector<std::string> return_vector;
-   netsnmp_session session, *ss;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu;
    netsnmp_pdu *response;
    netsnmp_variable_list *vars;
@@ -152,6 +153,8 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * get the common command line arguments
     */
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -189,8 +192,8 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -211,7 +214,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * do the request
     */
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          /*
@@ -249,14 +252,16 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
       throw TimeoutErrorBase(err_msg);
 
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpbulkget", ss);
+      snmp_sess_perror_exception("snmpbulkget", ss.get());
    }
 
    if (response) {
       snmp_free_pdu(response);
    }
 
-   snmp_close(ss);
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
 
    clear_net_snmp_library_data();
    SOCK_CLEANUP;

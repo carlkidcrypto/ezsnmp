@@ -123,6 +123,42 @@ TEST_F(SnmpBulkWalkTest, TestUnknownCOption) {
        ParseErrorBase);
 }
 
+// Test -Cr option with separated args (issue #655)
+// When -Cr and the number are separate args, it should throw ParseErrorBase
+// instead of calling exit(1) which kills the process.
+TEST_F(SnmpBulkWalkTest, TestMaxRepeatersSeparatedArgsThrows) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cr", "5", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkwalk(args, "testing_cr_separated");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "No number given for -Cr option\n");
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+// Test -Cn option with separated args (same issue as #655)
+TEST_F(SnmpBulkWalkTest, TestNonRepeatersSeparatedArgsThrows) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cn", "2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkwalk(args, "testing_cn_separated");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "No number given for -Cn option\n");
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
 // Test basic bulkwalk
 TEST_F(SnmpBulkWalkTest, TestBasicBulkWalk) {
    std::vector<std::string> args = {
