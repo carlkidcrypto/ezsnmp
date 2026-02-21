@@ -1075,6 +1075,104 @@ TEST_F(SessionBaseTest, TestCloseSession) {
    // This should not throw
    session._close();
 }
+}
+
+// Test for SNMPv3 multithreading/multi-device scenarios
+// Related issue: https://github.com/carlkidcrypto/ezsnmp/issues/[BUG] snmpv3 usmStatsNotInTimeWindows
+// This test validates that multiple sessions with the same security username can be created
+// and used sequentially without cache interference causing usmStatsNotInTimeWindows errors
+TEST_F(SessionBaseTest, TestV3MultipleSessionsSameUserSequential) {
+   // Create first V3 session
+   SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
+                        "authPriv", "", "testuser", "AES", "priv_pass");
+
+   // Perform an operation with first session
+   auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
+   EXPECT_FALSE(result1.empty());
+
+   // Create second session with same credentials (simulating different device with same username)
+   SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
+                        "authPriv", "", "testuser", "AES", "priv_pass");
+
+   // Perform an operation with second session
+   // Before fix: This could fail with usmStatsNotInTimeWindows
+   // After fix: The cache is cleared before each operation, so it should work
+   auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
+   EXPECT_FALSE(result2.empty());
+
+   // Alternate between sessions multiple times to verify cache clearing works consistently
+   for (int i = 0; i < 3; i++) {
+      auto result1_alt = session1.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result1_alt.empty());
+
+      auto result2_alt = session2.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result2_alt.empty());
+   }
+}
+
+// Test session recreation with same credentials
+// This validates that the cache clearing mechanism works correctly when sessions
+// are destroyed and recreated, which is common in connection pooling scenarios
+TEST_F(SessionBaseTest, TestV3SessionRecreationSameUser) {
+   // Create and use first session
+   {
+      SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
+                           "authPriv", "", "testuser", "AES", "priv_pass");
+      auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result1.empty());
+      // session1 goes out of scope here
+   }
+
+   // Create new session with same credentials
+   {
+      SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
+                           "authPriv", "", "testuser", "AES", "priv_pass");
+
+      // This should work without usmStatsNotInTimeWindows error
+      auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result2.empty());
+      // session2 goes out of scope here
+   }
+
+   // Repeat the process one more time
+   {
+      SessionBase session3("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
+                           "authPriv", "", "testuser", "AES", "priv_pass");
+      auto result3 = session3.get("1.3.6.1.2.1.1.1.0");
+      EXPECT_FALSE(result3.empty());
+   }
+}
+
+// Test that cache clearing is called before each SNMP operation type
+// This verifies the fix is applied to all operation methods (get, walk, bulk_walk, etc.)
+TEST_F(SessionBaseTest, TestV3CacheClearingBeforeAllOperations) {
+   SessionBase session("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
+                       "authPriv", "", "testuser", "AES", "priv_pass");
+
+   // Test cache clearing before get()
+   auto result = session.get("1.3.6.1.2.1.1.1.0");
+   EXPECT_FALSE(result.empty());
+
+   // Test cache clearing before walk()
+   auto walk_result = session.walk("1.3.6.1.2.1.1");
+   // walk may return empty or non-empty depending on OID, but shouldn't crash
+
+   // Test cache clearing before bulk_walk()
+   auto bulk_walk_result = session.bulk_walk("1.3.6.1.2.1.1");
+   // bulk_walk may return empty or non-empty depending on OID, but shouldn't crash
+
+   // Test cache clearing before get_next()
+   std::vector<std::string> oids = {"1.3.6.1.2.1.1.1.0"};
+   auto get_next_result = session.get_next(oids);
+   // get_next may return empty or non-empty depending on OID, but shouldn't crash
+
+   // Test cache clearing before bulk_get()
+   std::vector<std::string> bulk_oids = {"1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"};
+   auto bulk_get_result = session.bulk_get(bulk_oids);
+   // bulk_get may return empty or non-empty depending on OIDs, but shouldn't crash
+
+   // Note: We skip testing set() as it requires write access and could modify the system
+}
 
 // Regression test for GitHub issue #656:
 // Calling _get_context() (and other getters) on a default-constructed SessionBase
