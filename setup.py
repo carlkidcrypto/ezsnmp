@@ -22,15 +22,16 @@ Requirements:
 """
 
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from subprocess import check_output, CalledProcessError, run
-from sys import argv, platform
-from shlex import split as s_split
-from setuptools import setup, Extension
-from setuptools.command.build_py import build_py as _build_py
-from re import search
-from setuptools.command.build_ext import build_ext
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from re import search
+from shlex import split as s_split
+from subprocess import CalledProcessError, check_output, run
+from sys import argv, platform
+
+from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext
+from setuptools.command.build_py import build_py as _build_py
 
 
 def is_macports_installed():
@@ -109,7 +110,7 @@ def get_homebrew_net_snmp_info():
             return None
 
         # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
-        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)?)/"
+        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)*)/"
         match = search(pattern, lines[0])
         if not match:
             return None
@@ -132,38 +133,28 @@ def get_homebrew_net_snmp_info():
             libdirs.append(os.path.dirname(lib_file_path))
 
         # Get OpenSSL dependency information
-        # Look for any OpenSSL version (e.g., openssl@3, openssl@1.1, etc.)
-        brew_info_output = check_output("brew info net-snmp", shell=True).decode()
+        # Use `brew deps` to find the openssl formula name (e.g., openssl@3)
+        # and `brew --prefix` to resolve its install path. These are stable
+        # CLI interfaces that work across Homebrew versions and platforms.
+        deps_output = check_output("brew deps net-snmp", shell=True).decode()
         openssl_version = next(
             (
-                line.split()[0]
-                for line in brew_info_output.splitlines()
-                if "/openssl@" in line
+                line.strip()
+                for line in deps_output.splitlines()
+                if line.strip().startswith("openssl@")
             ),
             None,
         )
         if not openssl_version:
             return None
 
-        openssl_info_output = check_output(
-            f"brew info {openssl_version}", shell=True
-        ).decode()
-        openssl_lines = openssl_info_output.splitlines()
+        openssl_path = (
+            check_output(f"brew --prefix {openssl_version}", shell=True)
+            .decode()
+            .strip()
+        )
 
-        # Find the installation path by looking for lines containing /Cellar/
-        # This is more robust than using a magic index
-        openssl_path = None
-        for line in openssl_lines:
-            if "/Cellar/" in line and openssl_version in line:
-                # Extract the path before any parentheses or additional info
-                openssl_path = line.split("(")[0].strip()
-                break
-
-        # Fallback to line 4 (index 4) if pattern not found (backward compatibility)
-        if not openssl_path and len(openssl_lines) > 4:
-            openssl_path = openssl_lines[4].split("(")[0].strip()
-
-        if openssl_path:
+        if openssl_path and os.path.isdir(openssl_path):
             libdirs.append(openssl_path + "/lib")
             incdirs.append(openssl_path + "/include")
         else:
