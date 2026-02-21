@@ -37,4 +37,4 @@ fi
 
 # Run pytest, passing the absolute path to the test directory and forwarding
 # any extra arguments the caller supplied.
-exec python3 -m pytest "${TEST_DIR}" -v -s "$@"
+exec python3 -u -m pytest "${TEST_DIR}" -v -s "$@"
