@@ -12,6 +12,17 @@ if ! command -v lcov &> /dev/null; then
   exit 1
 fi
 
+# Determine number of cores
+if command -v nproc &> /dev/null; then
+  NPROC=$(nproc)
+elif command -v sysctl &> /dev/null; then
+  # MacOS
+  NPROC=$(sysctl -n hw.ncpu)
+else
+  echo "Unable to determine number of cores. Using default of 4."
+  NPROC=4
+fi
+
 # Clean up previous build and coverage data
 echo "Cleaning up previous build and coverage data..."
 rm -rf "$BUILD_DIR"
@@ -21,11 +32,11 @@ rm -rf coverage.info
 echo "Compiling the project..."
 mkdir -p $BUILD_DIR
 meson setup $BUILD_DIR
-ninja -C "$BUILD_DIR" -j $(nproc)
+ninja -C "$BUILD_DIR" -j $NPROC
 
 # Generate coverage data
 echo "Generating coverage data..."
-ninja -C "$BUILD_DIR" test -j $(nproc)
+ninja -C "$BUILD_DIR" test -j $NPROC
 
 # Capture coverage data with lcov
 echo "Capturing coverage data with lcov..."
