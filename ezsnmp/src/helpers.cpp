@@ -25,6 +25,7 @@ std::string print_variable_to_string(oid const *objid,
    if ((buf = static_cast<u_char *>(calloc(buf_len, 1))) == nullptr) {
       return "[TRUNCATED]";
    } else {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       if (sprint_realloc_variable(&buf, &buf_len, &out_len, 1, objid, objidlen, variable)) {
          // Construct the formatted string
          std::string result(reinterpret_cast<char *>(buf), out_len);
@@ -64,7 +65,8 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
              haystack.find("name or service not known") != std::string::npos ||
              haystack.find("temporary failure in name resolution") != std::string::npos ||
              haystack.find("could not translate host name") != std::string::npos ||
-             haystack.find("no address associated with hostname") != std::string::npos;
+             haystack.find("no address associated with hostname") != std::string::npos ||
+             haystack.find("invalid address") != std::string::npos;
    };
 
    auto const is_timeout_error = [](std::string const &haystack) {
@@ -150,6 +152,14 @@ std::regex const OID_INDEX_RE2(R"(^(.+)\.([^.]+)$)");
 // the RFC1213-MIB), preventing it from incorrectly matching the complex OID.
 std::regex const OID_INDEX_RE3(R"(^(RFC1213-MIB::[\w-]+)\.([\d\.]+)$)");
 
+// Matches MIB-style OIDs (e.g., IP-MIB::ipNetToPhysicalPhysAddress) and captures
+// the base OID and index separately. This handles cases with quoted strings in the index.
+// Format: MIB-NAME::object-name.index-components
+// This regex only matches when the index contains properly quoted string literals
+// to avoid interfering with OIDs that have numeric sub-OIDs (like nsCacheStatus.1.3.6.1...)
+// The pattern specifically looks for quoted strings as index components: \"[^\"]*\"
+std::regex const OID_INDEX_RE4(R"(^([\w-]+::[\w-]+)\.(.+\"[^\"]*\".*)$)");
+
 // This is a helper to turn OID results into a Result type
 Result parse_result(std::string const &input) {
    Result result;
@@ -164,8 +174,18 @@ Result parse_result(std::string const &input) {
    std::smatch first_match;
    std::smatch second_match;
    std::smatch third_match;
+   std::smatch fourth_match;
 
-   if (std::regex_match(result.oid, third_match, OID_INDEX_RE3)) {
+   // Try OID_INDEX_RE4 first (MIB-style OIDs with potential quoted strings)
+   // This handles cases like IP-MIB::ipNetToPhysicalPhysAddress.16.ipv4."192.168.1.181"
+   // IMPORTANT: Must be checked before OID_INDEX_RE2, which would incorrectly split
+   // inside quoted strings (e.g., splitting "192.168.1.181" at the last dot)
+   if (std::regex_match(result.oid, fourth_match, OID_INDEX_RE4)) {
+      std::string temp_oid = fourth_match[1].str();
+      std::string temp_index = fourth_match[2].str();
+      result.oid = std::move(temp_oid);
+      result.index = std::move(temp_index);
+   } else if (std::regex_match(result.oid, third_match, OID_INDEX_RE3)) {
       std::string temp_oid = third_match[1].str();
       std::string temp_index = third_match[2].str();
       result.oid = std::move(temp_oid);
@@ -301,6 +321,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
       ss << "[TRUNCATED]\n";
       return ss.str();
    } else {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid,
                                         objidlen);
       if (buf_overflow) {

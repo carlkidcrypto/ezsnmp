@@ -9,8 +9,24 @@ class SnmpWalkTest : public ::testing::Test {
    void TearDown() override {}
 };
 
+// Test walking a valid MIB - MUST RUN FIRST to avoid global state corruption
+// from -CE flag in other tests which sets a global variable in net-snmp
+// Named AAA_BasicWalk to ensure it runs before all other tests alphabetically
+TEST_F(SnmpWalkTest, AAA_BasicWalk) {
+   // Use a fresh instance with simple args, no -C options
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpwalk(args, "testing_basic");
+   EXPECT_FALSE(results.empty());
+   // Verify we got some sysOR entries
+   for (auto const& result : results) {
+      EXPECT_TRUE(result.oid.find("sysOR") != std::string::npos);
+   }
+}
+
 TEST_F(SnmpWalkTest, TestMissingOid) {
-   std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "-t", "1", "localhost:11161"};
 
    // snmpwalk without OID defaults to root walk starting at .1
    // With a running SNMP server, this succeeds and returns results
@@ -22,7 +38,7 @@ TEST_F(SnmpWalkTest, TestMissingOid) {
 
 TEST_F(SnmpWalkTest, TestInvalidOid) {
    std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "localhost:11161", "INVALID-MIB::nonexistent"};
+       "-v", "2c", "-c", "public", "-t", "1", "localhost:11161", "INVALID-MIB::nonexistent"};
 
    EXPECT_THROW(
        {
@@ -37,8 +53,8 @@ TEST_F(SnmpWalkTest, TestInvalidOid) {
 }
 
 TEST_F(SnmpWalkTest, TestUnknownHost) {
-   std::vector<std::string> args = {"-v",           "2c", "-c", "public", "nonexistenthost:11161",
-                                    "1.3.6.1.2.1.1"};
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-t", "1", "nonexistenthost:11161", "1.3.6.1.2.1.1"};
 
    EXPECT_THROW(
        {
@@ -52,6 +68,19 @@ TEST_F(SnmpWalkTest, TestUnknownHost) {
           }
        },
        GenericErrorBase);
+}
+
+TEST_F(SnmpWalkTest, TestV1NoSuchName) {
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "-t", "1", "localhost:11161", "1.3.6.1.2.1.1.999"};
+
+   try {
+      auto results = snmpwalk(args, "testing_v1_nosuchname");
+      SUCCEED();
+   } catch (PacketErrorBase const& e) {
+      std::string error_msg(e.what());
+      EXPECT_TRUE(error_msg.find("Error in packet") != std::string::npos);
+   }
 }
 
 TEST_F(SnmpWalkTest, TestInvalidVersion) {
@@ -127,15 +156,20 @@ TEST_F(SnmpWalkTest, TestTimeResultsSingleOption) {
    EXPECT_FALSE(results.empty());
 }
 
-// Test -CE option (end OID) - commented out because end_name is a global that pollutes other tests
-// TEST_F(SnmpWalkTest, TestEndOidOption) {
-//    std::vector<std::string> args = {
-//        "-v", "2c", "-c", "public", "-CE", "SNMPv2-MIB::sysORDescr.5", "localhost:11161",
-//        "SNMPv2-MIB::sysORDescr"};
-//
-//    auto results = snmpwalk(args, "testing");
-//    EXPECT_FALSE(results.empty());
-// }
+// Test -CE option (end OID)
+TEST_F(SnmpWalkTest, TestEndOidOption) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-CE",
+                                    "SNMPv2-MIB::sysORDescr.5",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpwalk(args, "testing");
+   EXPECT_FALSE(results.empty());
+}
 
 // Test unknown -C option
 TEST_F(SnmpWalkTest, TestUnknownCOption) {
@@ -155,17 +189,43 @@ TEST_F(SnmpWalkTest, TestUnknownCOption) {
        ParseErrorBase);
 }
 
-// Test walking a valid MIB - note: this test must run early to avoid state pollution
-// from -CE flag which sets a global variable
-TEST_F(SnmpWalkTest, TestBasicWalk) {
-   // Use a fresh instance with simple args, no -C options
-   std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORID"};
+TEST_F(SnmpWalkTest, TestTimeout) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public",          "-t",
+                                    "1",  "-r", "0",  "127.0.0.1:11162", "SNMPv2-MIB::sysORDescr"};
 
-   auto results = snmpwalk(args, "testing_basic");
-   EXPECT_FALSE(results.empty());
-   // Verify we got some sysORID entries
-   for (auto const& result : results) {
-      EXPECT_TRUE(result.oid.find("sysORID") != std::string::npos);
-   }
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpwalk(args, "testing_timeout");
+          } catch (TimeoutErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("Timeout") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("127.0.0.1") != std::string::npos);
+             throw;
+          }
+       },
+       TimeoutErrorBase);
+}
+
+TEST_F(SnmpWalkTest, ZZZ_InvalidEndOidOption) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-CE",
+                                    "INVALID-MIB::nonexistent",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpwalk(args, "testing_bad_end_oid");
+          } catch (GenericErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("INVALID-MIB::nonexistent") != std::string::npos);
+             throw;
+          }
+       },
+       GenericErrorBase);
 }

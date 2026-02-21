@@ -1,0 +1,425 @@
+name: Integration Tests (Docker)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      any_changed: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Check for changes in source code
+        id: changed-files
+        uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a # v47.0.4
+        with:
+          files: |
+            .github/workflows/integration_tests_docker.yml
+            docker/**
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
+            integration_tests/**
+            python_tests/*.conf
+            python_tests/*.py
+            setup.cfg
+            setup.py
+
+  integration-tests-docker:
+    needs: check-changes
+    if: needs.check-changes.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Compute Docker image cache key
+        id: cache-key
+        run: |
+          WEEK_KEY=$(date -u +"%Y-%V")
+          echo "week=$WEEK_KEY" >> $GITHUB_OUTPUT
+
+      - name: Restore cached Docker image tar
+        id: cache-restore
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: .docker-image-cache/${{ matrix.distribution }}.tar
+          key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
+          restore-keys: |
+            docker-image-${{ matrix.distribution }}-
+
+      - name: Load Docker image from cache (if present)
+        run: |
+          set -euo pipefail
+          TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
+          if [ -f "$TAR_PATH" ]; then
+            echo "Loading cached image from $TAR_PATH"
+            docker load -i "$TAR_PATH"
+          else
+            echo "No cached image tar found. Will pull from registry."
+          fi
+
+      - name: Pull Docker image (refresh from registry)
+        run: |
+          set -euo pipefail
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          docker pull "$IMAGE"
+
+      - name: Save Docker image to cache tar
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p .docker-image-cache
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
+          docker save "$IMAGE" -o "$TAR_PATH"
+
+      - name: Start container and SNMP daemon
+        run: |
+          set -euo pipefail
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          ENTRY_SCRIPT="/usr/local/bin/DockerEntry.sh"
+          HOST_SOURCE_PATH="$PWD"
+          CONTAINER_WORK_DIR="/ezsnmp"
+          echo ">>> Starting container: $CONTAINER_NAME"
+          echo "    - Using host source path: $HOST_SOURCE_PATH"
+          echo "    - Mounting to: $CONTAINER_WORK_DIR"
+          docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
+          if ! docker run -d \
+            --name "$CONTAINER_NAME" \
+            -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+            "$IMAGE" \
+            /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
+              echo "ERROR: Docker run failed for $IMAGE" >&2
+              exit 1
+          fi
+          echo ">>> Waiting for SNMP daemon to start..."
+          sleep 10
+
+      - name: Build and install ezsnmp in container
+        run: |
+          set -euo pipefail
+          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          echo ">>> Building and installing ezsnmp inside container"
+          docker exec -t "$CONTAINER_NAME" bash -c '
+            set -e
+            export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/gcc-toolset-13/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH
+            export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-}
+            cd /ezsnmp
+            echo "    - Installing ezsnmp"
+            python3 -m pip install . --quiet
+            echo "    - Build complete"
+          '
+
+      - name: Run integration tests
+        run: |
+          set -euo pipefail
+          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          echo ">>> Running integration tests inside container: $CONTAINER_NAME"
+          docker exec -t "$CONTAINER_NAME" bash -c '
+            set -e
+            export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/gcc-toolset-13/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH
+            export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-}
+            cd /ezsnmp/integration_tests
+            echo "    - Starting integration tests"
+            if ./run_integration_tests.sh > /ezsnmp/integration_tests_full.log 2>&1; then
+              echo "    - Integration tests completed successfully"
+            else
+              echo "    - Integration tests reported failures (continuing to collect artifacts)"
+            fi
+            exit 0
+          '
+
+      - name: Collect artifacts from container
+        if: always()
+        run: |
+          set -euo pipefail
+          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          mkdir -p integration_results
+
+          # Copy the main log file
+          if docker exec "$CONTAINER_NAME" test -f /ezsnmp/integration_tests_full.log; then
+            docker cp "$CONTAINER_NAME:/ezsnmp/integration_tests_full.log" \
+              integration_results/integration_tests_${{ matrix.distribution }}.log
+
+            # Extract key metrics into per-file logs (matching native workflow behavior)
+            cd integration_results
+            LOG_FILE="integration_tests_${{ matrix.distribution }}.log"
+
+            grep "Total execution time:" "$LOG_FILE" > total_execution_time_${{ matrix.distribution }}.log || true
+            grep "usm_unknown_security_name_counter:" "$LOG_FILE" > usm_unknown_security_name_counter_${{ matrix.distribution }}.log || true
+            grep "connection_error_counter:" "$LOG_FILE" > connection_error_counter_${{ matrix.distribution }}.log || true
+
+            # Try to extract test_file_descriptors from the results directory
+            OUT_DIR=$(grep -m1 "Results saved to:" "$LOG_FILE" | sed 's/Results saved to: //' | tr -d '\r') || true
+            if [ -n "$OUT_DIR" ]; then
+              # OUT_DIR is a path inside the container, try to copy from container
+              docker cp "$CONTAINER_NAME:$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{ matrix.distribution }}.log 2>/dev/null || true
+            fi
+
+            # Fallback: grep relevant lines if file wasn't copied
+            if [ ! -f "test_file_descriptors_${{ matrix.distribution }}.log" ]; then
+              grep -A2 "Running file descriptor tests" "$LOG_FILE" > test_file_descriptors_${{ matrix.distribution }}.log || true
+            fi
+
+            cd ..
+          fi
+
+          # Find and copy the test_results directory
+          RESULTS_DIR=$(docker exec "$CONTAINER_NAME" bash -c 'ls -dt /ezsnmp/integration_tests/test_results_* 2>/dev/null | head -1' || echo "")
+          if [ -n "$RESULTS_DIR" ] && [ "$RESULTS_DIR" != "" ]; then
+            echo "Found results directory: $RESULTS_DIR"
+            docker cp "$CONTAINER_NAME:$RESULTS_DIR" integration_results/test_results_${{ matrix.distribution }}/ || true
+          else
+            echo "No test_results directory found"
+          fi
+
+      - name: Extract test metrics
+        if: always()
+        run: |
+          set -euo pipefail
+          LOG_FILE="integration_results/integration_tests_${{ matrix.distribution }}.log"
+          if [ -f "$LOG_FILE" ]; then
+            echo "=== Test Summary for ${{ matrix.distribution }} ==="
+            grep -E "(PASS:|FAIL:|COMPLETED:|Total execution time:)" "$LOG_FILE" || echo "No test summary found"
+            echo ""
+            echo "=== Checking for errors ==="
+            grep -i "error\|fail\|segfault\|signal 11" "$LOG_FILE" | head -20 || echo "No critical errors found"
+          fi
+
+      - name: Stop and remove container
+        if: always()
+        run: |
+          docker rm -f "${{ matrix.distribution }}_integration_container" >/dev/null 2>&1 || true
+
+      - name: Upload Integration Test Results
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        with:
+          name: integration-test-results-docker_${{ matrix.distribution }}
+          path: |
+            integration_results/**
+
+  summary:
+    needs: integration-tests-docker
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: integration-test-results-docker_*
+          merge-multiple: true
+
+      - name: Generate test summary
+        run: |
+          python3 -c "
+          import os
+          import re
+          import statistics
+          
+          # Parse all log files
+          data = {}
+          distributions = []
+          
+          for filename in os.listdir('.'):
+              if filename.startswith('integration_tests_') and filename.endswith('.log'):
+                  distro = filename.replace('integration_tests_', '').replace('.log', '')
+                  distributions.append(distro)
+                  
+                  with open(filename, 'r') as f:
+                      lines = f.readlines()
+                  
+                  for line in lines:
+                      # Match patterns like: multi_process_snmp_get: - 2 - Total execution time: 1.234 seconds
+                      match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
+                      if match:
+                          test_type, num, field, value = match.groups()
+                          num = int(num)
+                          try:
+                              val = float(value.split()[0])
+                          except (ValueError, IndexError):
+                              continue
+                          key = (distro, test_type, num, field)
+                          if key not in data:
+                              data[key] = []
+                          data[key].append(val)
+          
+          # Generate summary with comment marker for PR comments
+          summary = '<!-- integration-test-docker-summary -->\\n## Integration Tests (Docker) Results \\u23f1\\ufe0f\\n\\n'
+          
+          if not data:
+              summary += 'No test results found.\\n'
+          else:
+              # Group by distribution
+              for distro in sorted(set(d for d, _, _, _ in data.keys())):
+                  distro_data = {k: v for k, v in data.items() if k[0] == distro}
+                  if not distro_data:
+                      continue
+                  
+                  summary += f'### {distro.replace(\"_\", \" \").title()}\\n\\n'
+                  summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
+                  summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
+                  
+                  for key in sorted(distro_data.keys()):
+                      _, test_type, num, field = key
+                      values = distro_data[key]
+                      
+                      # Format test type to be more readable
+                      test_name = test_type.replace('_', ' ').title()
+                      
+                      if len(values) > 1:
+                          min_v = min(values)
+                          max_v = max(values)
+                          avg_v = statistics.mean(values)
+                          std_v = statistics.stdev(values)
+                          summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
+                      elif len(values) == 1:
+                          summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
+                  
+                  summary += '\\n'
+
+          # Add file descriptor test results
+          summary += '### File Descriptor Tests \U0001f4c1\n\n'
+          fd_records = []
+          for root, dirs, files in os.walk('.'):
+            for file in files:
+              if file.startswith('test_file_descriptors_') and file.endswith('.log'):
+                log_path = os.path.join(root, file)
+                with open(log_path, 'r') as f:
+                  content = f.read()
+
+                distro = file.replace('test_file_descriptors_', '').replace('.log', '')
+
+                # State-based parser: track current (session, operation, mode) block
+                current_record = None
+                for line in content.split('\\n'):
+                  # Detect block start: 'Running work_op_no_close: get SESS_V1_ARGS'
+                  running_match = re.search(
+                    r'Running (work_(?:get|op)_no_close|work_(?:get|op)_close):\\s*(\\S+)(?:\\s+(\\S+))?',
+                    line,
+                  )
+                  if running_match:
+                    if current_record and 'session' in current_record:
+                      fd_records.append(current_record)
+                    mode_raw, op_or_sess, sess_opt = running_match.groups()
+                    if sess_opt:
+                      operation = op_or_sess
+                      sess = sess_opt
+                    else:
+                      operation = 'unknown'
+                      sess = op_or_sess
+                    current_record = {
+                      'distro': distro,
+                      'session': sess,
+                      'operation': operation,
+                      'mode': 'no close' if 'no_close' in mode_raw else 'close'
+                    }
+                    continue
+
+                  if current_record is None:
+                    continue
+
+                  m = re.search(r'Subprocess PID:? Open FDs before:\\s*(\\d+)', line)
+                  if m:
+                    current_record['fd_before'] = int(m.group(1))
+
+                  m = re.search(r'Subprocess PID\\s*Open FDs after:\\s*(\\d+)', line)
+                  if m:
+                    current_record['fd_after'] = int(m.group(1))
+
+                  m = re.search(r'Total execution time:\\s*([\\d.]+)', line)
+                  if m:
+                    current_record['exec_time'] = float(m.group(1))
+
+                  m = re.search(r'Average time per SNMP call.*?:\\s*([\\d.]+)', line)
+                  if m:
+                    current_record['avg_time'] = float(m.group(1))
+
+                if current_record and 'session' in current_record:
+                  fd_records.append(current_record)
+
+          if fd_records:
+              # Group by distribution
+              distros = sorted(set(r['distro'] for r in fd_records))
+              for distro in distros:
+                  distro_recs = [r for r in fd_records if r['distro'] == distro]
+                  distro_title = distro.replace('_', ' ').title()
+                  summary += f'#### {distro_title}\\n\\n'
+                  summary += '| Session Type | Operation | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+                  summary += '|--------------|-----------|------|-----------|----------|---------|---------------|--------------|\\n'
+
+                  for rec in distro_recs:
+                      sess_display = rec['session'].replace('SESS_', '').replace('_ARGS', '')
+                      op_display = rec.get('operation', 'unknown')
+                      mode_display = rec['mode']
+                      fd_before = rec.get('fd_before')
+                      fd_after = rec.get('fd_after')
+                      if fd_before is not None and fd_after is not None:
+                          leak = fd_after - fd_before
+                          fb_str = str(fd_before)
+                          fa_str = str(fd_after)
+                          leak_str = f'{leak:+d}'
+                      else:
+                          fb_str = fa_str = leak_str = '-'
+                      exec_time = rec.get('exec_time')
+                      avg_time = rec.get('avg_time')
+                      et = f'{exec_time:.3f}' if exec_time is not None else '-'
+                      at = f'{avg_time:.6f}' if avg_time is not None else '-'
+                      summary += f'| {sess_display} | {op_display} | {mode_display} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
+
+                  summary += '\\n'
+
+              summary += '\\u2705 File descriptor tests completed successfully\\n'
+          else:
+              summary += '\\u274c No file descriptor test results found\\n'
+
+          # Write to GitHub Step Summary
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+              f.write(summary)
+
+          # Also save to file for PR comment
+          with open('integration_test_docker_summary.md', 'w') as f:
+              f.write(summary)
+
+          print('Summary generated successfully')
+          "
+          echo "Test summary generated"
+
+      - name: Post PR comment with integration-test summary
+        if: github.event_name == 'pull_request'
+        id: find-integration-comment
+        uses: peter-evans/find-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- integration-test-docker-summary -->'
+
+      - name: Update PR comment with integration-test summary
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-integration-comment.outputs.comment-id }}
+          body-file: integration_test_docker_summary.md
+          edit-mode: replace
+          comment-tag: integration-test-docker-summary

@@ -17,16 +17,17 @@ jobs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout Sourcecode
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
+        uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a # v47.0.4
         with:
           files: |
             .github/workflows/integration_tests.yml
-            ezsnmp/*.cpp
-            ezsnmp/*.h
+            ezsnmp/**/*.cpp
+            ezsnmp/**/*.h
+            integration_tests/**
             python_tests/*.conf
             python_tests/*.py
             setup.cfg
@@ -72,16 +73,16 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -180,7 +181,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
@@ -212,33 +213,143 @@ jobs:
                                   data[key] = []
                               data[key].append(val)
           
-          summary = '<!-- integration-test-summary -->\n## Integration test results\n\n'
+          # Start building the summary with a table
+          summary = '<!-- integration-test-summary -->\\n## Integration Test Results \\u23f1\\ufe0f\\n\\n'
+          summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
+          summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
+
           for key in sorted(data.keys()):
               test_type, num, field = key
               values = data[key]
+
+              # Format test type to be more readable
+              test_name = test_type.replace('_', ' ').title()
+
               if len(values) > 1:
                   min_v = min(values)
                   max_v = max(values)
                   avg_v = statistics.mean(values)
                   std_v = statistics.stdev(values)
-                  summary += f'### {test_type} - {num} - {field}\n'
-                  summary += f'- Min: {min_v:.6f}\n'
-                  summary += f'- Max: {max_v:.6f}\n'
-                  summary += f'- Avg: {avg_v:.6f}\n'
-                  summary += f'- StdDev: {std_v:.6f}\n\n'
+                  summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
               elif len(values) == 1:
-                  summary += f'### {test_type} - {num} - {field}: {values[0]:.6f}\n\n'
-          
+                  summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
+
+          # Add file descriptor test results
+          summary += '\n### File Descriptor Tests \U0001f4c1\n\n'
+          fd_records = []
+          for root, dirs, files in os.walk('artifacts'):
+            for file in files:
+              if file.startswith('test_file_descriptors_') and file.endswith('.log'):
+                log_path = os.path.join(root, file)
+                with open(log_path, 'r') as f:
+                  content = f.read()
+
+                # State-based parser: track current (session, operation, mode) block
+                current_record = None
+                for line in content.split('\n'):
+                  # Detect block start: 'Running work_op_no_close: get SESS_V1_ARGS'
+                  running_match = re.search(
+                    r'Running (work_(?:get|op)_no_close|work_(?:get|op)_close):\s*(\S+)(?:\s+(\S+))?',
+                    line,
+                  )
+                  if running_match:
+                    if current_record and 'session' in current_record:
+                      fd_records.append(current_record)
+                    mode_raw, op_or_sess, sess_opt = running_match.groups()
+                    if sess_opt:
+                      operation = op_or_sess
+                      sess = sess_opt
+                    else:
+                      operation = 'unknown'
+                      sess = op_or_sess
+                    current_record = {
+                      'session': sess,
+                      'operation': operation,
+                      'mode': 'no close' if 'no_close' in mode_raw else 'close'
+                    }
+                    continue
+
+                  if current_record is None:
+                    continue
+
+                  m = re.search(r'Subprocess PID:? Open FDs before:\s*(\d+)', line)
+                  if m:
+                    current_record['fd_before'] = int(m.group(1))
+
+                  m = re.search(r'Subprocess PID\s*Open FDs after:\s*(\d+)', line)
+                  if m:
+                    current_record['fd_after'] = int(m.group(1))
+
+                  m = re.search(r'Total execution time:\s*([\d.]+)', line)
+                  if m:
+                    current_record['exec_time'] = float(m.group(1))
+
+                  m = re.search(r'Average time per SNMP call.*?:\s*([\d.]+)', line)
+                  if m:
+                    current_record['avg_time'] = float(m.group(1))
+
+                if current_record and 'session' in current_record:
+                  fd_records.append(current_record)
+
+            if fd_records:
+              # Group by (session, operation, mode) and aggregate across matrix combos
+              grouped = {}
+              for rec in fd_records:
+                key = (rec['session'], rec.get('operation', 'unknown'), rec['mode'])
+                if key not in grouped:
+                  grouped[key] = {'fd_before': [], 'fd_after': [], 'exec_time': [], 'avg_time': []}
+                for field in ['fd_before', 'fd_after', 'exec_time', 'avg_time']:
+                  if field in rec:
+                    grouped[key][field].append(rec[field])
+
+              summary += '| Session Type | Operation | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
+              summary += '|--------------|-----------|------|-----------|----------|---------|---------------|--------------|\\n'
+
+              for (sess, operation, mode) in sorted(grouped.keys()):
+                g = grouped[(sess, operation, mode)]
+                sess_display = sess.replace('SESS_', '').replace('_ARGS', '')
+                op_display = operation
+                fb_vals = g['fd_before']
+                fa_vals = g['fd_after']
+                exec_vals = g['exec_time']
+                avg_vals = g['avg_time']
+                if fb_vals and fa_vals:
+                  fb = statistics.mean(fb_vals)
+                  fa = statistics.mean(fa_vals)
+                  leak = fa - fb
+                  fb_str = f'{fb:.0f}'
+                  fa_str = f'{fa:.0f}'
+                  leak_str = f'{leak:+.0f}'
+                else:
+                  fb_str = fa_str = leak_str = '-'
+                et = f'{statistics.mean(exec_vals):.3f}' if exec_vals else '-'
+                at = f'{statistics.mean(avg_vals):.6f}' if avg_vals else '-'
+                summary += f'| {sess_display} | {op_display} | {mode} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
+
+              summary += '\\n\\u2705 File descriptor tests completed successfully\\n'
+            else:
+              summary += '\\u274c No file descriptor test results found\\n'
+
           with open('integration_test_summary.md', 'w') as f:
               f.write(summary)
           "
           echo "Summary prepared: integration_test_summary.md"
 
-      - name: Post PR comment with integration-test summary
-        uses: peter-evans/create-or-update-comment@v4
+      - name: Find existing integration-test summary comment
+        id: find-integration-comment
+        uses: peter-evans/find-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- integration-test-summary -->'
+
+      - name: Update PR comment with integration-test summary
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-integration-comment.outputs.comment-id }}
           body-file: integration_test_summary.md
           edit-mode: replace
           comment-tag: integration-test-summary

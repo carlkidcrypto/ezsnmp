@@ -66,6 +66,18 @@ struct Deleter {
 };
 
 /**
+ * @struct SnmpSessionCloser
+ * @brief RAII deleter for netsnmp_session pointers.
+ */
+struct SnmpSessionCloser {
+   void operator()(netsnmp_session *session) const {
+      if (session) {
+         snmp_close(session);
+      }
+   }
+};
+
+/**
  * @brief Creates an array of C-style strings from a vector of strings.
  *
  * This function takes a vector of strings and creates an array of C-style strings

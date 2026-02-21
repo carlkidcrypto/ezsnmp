@@ -60,15 +60,20 @@ TEST_F(SnmpBulkGetTest, TestInvalidVersion) {
        ParseErrorBase);
 }
 
-// Test -Cn option (non-repeaters) - commented out due to global state issues
-// The non_repeaters variable is global and persists between tests
-// TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
-//    std::vector<std::string> args = {
-//        "-v", "2c", "-c", "public", "-Cn2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
-//
-//    auto results = snmpbulkget(args, "testing");
-//    EXPECT_FALSE(results.empty());
-// }
+// Test -Cn option (non-repeaters)
+TEST_F(SnmpBulkGetTest, TestNonRepeatersOption) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-Cn1",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   auto results = snmpbulkget(args, "testing");
+   EXPECT_FALSE(results.empty());
+}
 
 // Test -Cr option (max-repeaters)
 TEST_F(SnmpBulkGetTest, TestMaxRepeatersOption) {
@@ -91,6 +96,49 @@ TEST_F(SnmpBulkGetTest, TestUnknownCOption) {
           } catch (ParseErrorBase const& e) {
              EXPECT_TRUE(std::string(e.what()).find("Unknown flag passed to -C: z") !=
                          std::string::npos);
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+// Test -Cr option with separated args (issue #655)
+// When -Cr and the number are separate args, it should throw ParseErrorBase
+// instead of calling exit(1) which kills the process.
+TEST_F(SnmpBulkGetTest, TestMaxRepeatersSeparatedArgsThrows) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cr", "1", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkget(args, "testing_cr_separated");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "No number given for -Cr option\n");
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+// Test -Cn option with separated args (same issue as #655)
+TEST_F(SnmpBulkGetTest, TestNonRepeatersSeparatedArgsThrows) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-Cn",
+                                    "1",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkget(args, "testing_cn_separated");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "No number given for -Cn option\n");
              throw;
           }
        },

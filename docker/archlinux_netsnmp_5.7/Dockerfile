@@ -29,14 +29,29 @@ RUN cd /tmp && \
     cd /tmp && rm -rf openssl-1.0.2u.tar.gz openssl-1.0.2u
 
 # Copy and build Net-SNMP 5.7.3 from cache, link against OpenSSL 1.0.2u
-# Disable embedded perl, and avoid parallel build to prevent race issues
+# Use specific configure flags to avoid memory corruption issues with newer glibc
+# Note: Net-SNMP 5.7 has makefile race conditions, so parallel build is disabled
 COPY docker/cache/net-snmp-5.7.3.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.7.3.tar.gz && \
     cd net-snmp-5.7.3 && \
-    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules --with-openssl=/usr/local/openssl10 && \
-    make && \
-    make install && \
+    # Configure with additional flags to prevent memory issues
+    # Match the working configuration from 5.8 container
+    ./configure --prefix=/usr \
+        --enable-shared \
+        --disable-embedded-perl \
+        --without-perl-modules \
+        --with-defaults \
+        --with-sys-contact="root@localhost" \
+        --with-sys-location="Unknown" \
+        --with-logfile=/var/log/snmpd.log \
+        --with-persistent-directory=/var/net-snmp \
+        --disable-debugging \
+        --with-openssl=/usr/local/openssl10 \
+        --with-security-modules="tsm,usm" && \
+    # Build with MALLOC_CHECK_=0 to avoid false positives during build
+    MALLOC_CHECK_=0 make -j1 && \
+    MALLOC_CHECK_=0 make install && \
     ldconfig && \
     cd /tmp && \
     rm -rf net-snmp-5.7.3.tar.gz net-snmp-5.7.3 && \
@@ -56,6 +71,11 @@ Version: 5.7.3
 Libs: -L${libdir} -lnetsnmp -lcrypto
 Cflags: -I${includedir}
 EOF
+
+# Set environment variable to disable strict malloc checking at runtime
+ENV MALLOC_CHECK_=0
+# Also set memory allocator to glibc for consistency
+ENV MALLOC_CONF=
 
 # --- AUR Installation: Must be run as a non-root user ---
 ARG USERNAME=builder

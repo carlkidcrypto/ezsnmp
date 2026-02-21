@@ -234,6 +234,28 @@ Example Session Kargs
     print(res)
 
 
+Low-Level Net-SNMP Interface Notes
+----------------------------------
+
+When using the low-level ``snmpbulkget`` or ``snmpbulkwalk`` functions directly
+(via ``from ezsnmp.netsnmp import snmpbulkget, snmpbulkwalk``), the ``-C``
+sub-options (such as ``-Cr`` for max-repeaters and ``-Cn`` for non-repeaters)
+**must** have their numeric value combined in the same string element as the flag.
+
+.. code-block:: python
+
+    from ezsnmp.netsnmp import snmpbulkget
+
+    # Correct - flag and value combined:
+    snmpbulkget(["-v", "2c", "-c", "public", "-Cr10", "localhost", "sysORDescr"], "myapp")
+
+    # Wrong - flag and value separated (raises ParseError):
+    snmpbulkget(["-v", "2c", "-c", "public", "-Cr", "10", "localhost", "sysORDescr"], "myapp")
+
+When using the ``Session`` class, this is handled automatically via the
+``set_max_repeaters_to_num`` constructor parameter, so no special formatting is
+needed.
+
 EzSnmp Exception Handling
 -------------------------
 
@@ -261,19 +283,34 @@ Documentation Structure
 This documentation is organized into the following sections:
 
 * **API Reference** - Detailed documentation of Python and C++ classes
+* **Concurrency Guide** - Information about threading and multiprocessing support
 * **Migration Guide** - Instructions for migrating from v1.x to v2.x
 * **Development Guide** - Information for contributors and developers
 * **Interface Documentation** - SWIG interface file documentation
 
-For general project information, installation instructions for specific platforms, 
-and Docker configurations, please see the README files in the respective directories 
+For general project information, installation instructions for specific platforms,
+and Docker configurations, please see the README files in the respective directories
 of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User Guide:
+
+   threading-vs-multiprocessing
+   migration_guide
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference:
 
    modules
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Documentation:
+
+   development
+   documentation_guide
 
 Indices and tables
 ==================

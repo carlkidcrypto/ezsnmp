@@ -72,11 +72,16 @@ TEST_F(SnmpGetNextTest, TestUnknownHost) {
           try {
              auto results = snmpgetnext(args, "testing");
           } catch (ConnectionErrorBase const& e) {
-             // Check that error message contains key parts (may vary by platform)
+             // Check for host-related errors - message varies by platform
              std::string error_msg(e.what());
              EXPECT_TRUE(error_msg.find("snmpgetnext") != std::string::npos);
-             EXPECT_TRUE(error_msg.find("Unknown host") != std::string::npos);
-             EXPECT_TRUE(error_msg.find("nonexistenthost:11161") != std::string::npos);
+             bool is_host_error = error_msg.find("Unknown host") != std::string::npos ||
+                                  error_msg.find("Invalid address") != std::string::npos ||
+                                  error_msg.find("Name or service") != std::string::npos ||
+                                  error_msg.find("No address associated") != std::string::npos ||
+                                  error_msg.find("Name resolution") != std::string::npos;
+             EXPECT_TRUE(is_host_error);
+             EXPECT_TRUE(error_msg.find("nonexistenthost") != std::string::npos);
              throw;
           }
        },
@@ -135,4 +140,23 @@ TEST_F(SnmpGetNextTest, TestBasicGetNext) {
    EXPECT_FALSE(results.empty());
    // getnext of sysLocation should return sysLocation.0
    EXPECT_TRUE(results[0].oid.find("sysLocation") != std::string::npos);
+}
+
+TEST_F(SnmpGetNextTest, TestTimeout) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public",          "-t",
+       "1",  "-r", "0",  "127.0.0.1:11162", "SNMPv2-MIB::sysLocation.0"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpgetnext(args, "testing_timeout");
+          } catch (TimeoutErrorBase const& e) {
+             std::string error_msg(e.what());
+             EXPECT_TRUE(error_msg.find("Timeout") != std::string::npos);
+             EXPECT_TRUE(error_msg.find("127.0.0.1") != std::string::npos);
+             throw;
+          }
+       },
+       TimeoutErrorBase);
 }

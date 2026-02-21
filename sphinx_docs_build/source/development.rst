@@ -4,7 +4,12 @@ Development Guide
 How to Generate the Sphinx Documentation
 ----------------------------------------
 
-First run doxygen to generate the XML files needed by Breathe.
+.. note::
+   Documentation is automatically built and deployed to GitHub Pages when changes are pushed to the main branch.
+   Current build outputs are not committed to the repository to avoid bloat and merge conflicts.
+   However, versioned documentation folders (``docs/html_v1.1.0/``, ``docs/html_v2.0.1/``, etc.) are kept in the repository for historical reference.
+
+For local documentation builds, first run doxygen to generate the XML files needed by Breathe.
 
 .. code-block:: bash
 
@@ -21,6 +26,9 @@ Next you may generate the documentation as follows:
     cd sphinx_docs_build
     python3 -m pip install -r requirements.txt
     make html
+
+The generated documentation will be built into the ``docs/`` directory. The current build outputs (``docs/html/``, ``docs/_static/``, etc.) are ignored by git, but versioned documentation folders are kept for historical reference.
+The documentation is automatically deployed to https://carlkidcrypto.github.io/ezsnmp/ via GitHub Actions.
 
 Making The SWIG Interface Files
 -------------------------------
@@ -191,6 +199,21 @@ To run C++ tests in Docker:
 
     # Run C++ tests in a specific distribution
     ./run_cpp_tests_in_all_dockers.sh rockylinux8
+
+    # Run C++ tests in multiple specific distributions
+    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+
+    # Test only net-snmp 5.7 containers (useful for iterative debugging)
+    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+
+    # Show help and usage examples
+    ./run_cpp_tests_in_all_dockers.sh --help
+
+The script now accepts zero or more distribution names:
+
+* **No arguments**: Tests all distributions
+* **One or more names**: Tests only the specified distributions
+* **--help**: Shows detailed usage information
 
 For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
 

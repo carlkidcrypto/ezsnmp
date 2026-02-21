@@ -427,6 +427,15 @@ std::string const& SessionBase::_get_privacy_passphrase() const { return m_priva
 std::string const& SessionBase::_get_boots_time() const { return m_boots_time; }
 std::string const& SessionBase::_get_retries() const { return m_retries; }
 std::string const& SessionBase::_get_timeout() const { return m_timeout; }
+std::string const& SessionBase::_get_load_mibs() const { return m_load_mibs; }
+std::string const& SessionBase::_get_mib_directories() const { return m_mib_directories; }
+bool SessionBase::_get_print_enums_numerically() const { return m_print_enums_numerically; }
+bool SessionBase::_get_print_full_oids() const { return m_print_full_oids; }
+bool SessionBase::_get_print_oids_numerically() const { return m_print_oids_numerically; }
+bool SessionBase::_get_print_timeticks_numerically() const { return m_print_timeticks_numerically; }
+std::string const& SessionBase::_get_set_max_repeaters_to_num() const {
+   return m_set_max_repeaters_to_num;
+}
 void SessionBase::_set_hostname(std::string const& hostname) {
    m_hostname = hostname;
    populate_args();
