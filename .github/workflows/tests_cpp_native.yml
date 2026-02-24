@@ -173,7 +173,7 @@ jobs:
           merge-multiple: true
 
       - name: Publish C++ Test Results
-        uses: EnricoMi/publish-unit-test-result-action@27d65e188ec43221b20d26de30f4892fad91df2f # v2
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
         with:
           files: test-results/**/*.xml
           check_name: C++ Test Results - Native

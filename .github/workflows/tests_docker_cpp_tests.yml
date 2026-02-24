@@ -108,7 +108,7 @@ jobs:
         run: ls -Rlah
 
       - name: Publish C++ Test Results (Dockerized Tests)
-        uses: EnricoMi/publish-unit-test-result-action@27d65e188ec43221b20d26de30f4892fad91df2f # v2
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
         if: always()
         with:
           files: "test_outputs_*/test-results.xml"
