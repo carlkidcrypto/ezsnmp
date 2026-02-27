@@ -72,7 +72,10 @@ jobs:
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           if [ -f "$TAR_PATH" ]; then
             echo "Loading cached image from $TAR_PATH"
-            docker load -i "$TAR_PATH"
+            if ! docker load -i "$TAR_PATH"; then
+              echo "WARNING: docker load failed (corrupt/stale tar). Removing and falling through to pull."
+              rm -f "$TAR_PATH"
+            fi
           else
             echo "No cached image tar found. Will pull from registry."
           fi
