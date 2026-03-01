@@ -244,7 +244,7 @@ jobs:
                   if file.startswith('integration_tests_') and file.endswith('.log'):
                       with open(os.path.join(root, file)) as f:
                           for line in f:
-                              m = re.search(r'(\w+): - (\d+) - .+: (.+)', line.strip())
+                              m = re.search(r'(\w+): - (\d+) - (?:.+): (.+)', line.strip())
                               if m:
                                   test_type, num, value = m.groups()
                                   try:
