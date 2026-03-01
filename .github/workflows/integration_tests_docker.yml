@@ -70,7 +70,10 @@ jobs:
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           if [ -f "$TAR_PATH" ]; then
             echo "Loading cached image from $TAR_PATH"
-            docker load -i "$TAR_PATH"
+            if ! docker load -i "$TAR_PATH"; then
+              echo "WARNING: docker load failed (corrupt/stale tar). Removing and falling through to pull."
+              rm -f "$TAR_PATH"
+            fi
           else
             echo "No cached image tar found. Will pull from registry."
           fi
@@ -211,7 +214,7 @@ jobs:
 
       - name: Upload Integration Test Results
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         with:
           name: integration-test-results-docker_${{ matrix.distribution }}
           path: |
@@ -223,7 +226,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: integration-test-results-docker_*
           merge-multiple: true
@@ -403,9 +406,9 @@ jobs:
           "
           echo "Test summary generated"
 
-      - name: Post PR comment with integration-test summary
+      - name: Find existing integration-test-docker summary comment
         if: github.event_name == 'pull_request'
-        id: find-integration-comment
+        id: find-integration-docker-comment
         uses: peter-evans/find-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -413,13 +416,13 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: '<!-- integration-test-docker-summary -->'
 
-      - name: Update PR comment with integration-test summary
+      - name: Update PR comment with integration-test-docker summary
         if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
-          comment-id: ${{ steps.find-integration-comment.outputs.comment-id }}
+          comment-id: ${{ steps.find-integration-docker-comment.outputs.comment-id }}
           body-file: integration_test_docker_summary.md
           edit-mode: replace
           comment-tag: integration-test-docker-summary
