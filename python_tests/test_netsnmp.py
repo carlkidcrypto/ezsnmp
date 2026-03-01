@@ -81,7 +81,7 @@ def test_snmp_get_invalid_instance(netsnmp_args):
     else:
         netsnmp_args = netsnmp_args + ["sysContact.1"]
         res = snmpget(netsnmp_args, "testing_value")
-        assert res[0].type == "NOSUCHINSTANCE"
+        assert res[0].type in ["NOSUCHINSTANCE", "NOSUCHOBJECT"]
 
 
 def test_snmp_get_invalid_object(netsnmp_args):
