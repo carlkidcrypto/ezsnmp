@@ -21,7 +21,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
+        uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a # v47.0.4
         with:
           files: |
             .github/workflows/tests_docker_python_tests.yml
@@ -72,7 +72,10 @@ jobs:
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           if [ -f "$TAR_PATH" ]; then
             echo "Loading cached image from $TAR_PATH"
-            docker load -i "$TAR_PATH"
+            if ! docker load -i "$TAR_PATH"; then
+              echo "WARNING: docker load failed (corrupt/stale tar). Removing and falling through to pull."
+              rm -f "$TAR_PATH"
+            fi
           else
             echo "No cached image tar found. Will pull from registry."
           fi
@@ -166,7 +169,7 @@ jobs:
           docker rm -f "${{ matrix.distribution }}_test_container" >/dev/null 2>&1 || true
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         with:
           name: pytest-results_${{ matrix.distribution }}_${{ matrix.python }}
           path: |
@@ -185,7 +188,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
 
       - name: Download coverage artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: pytest-results_*
           merge-multiple: true
@@ -208,7 +211,7 @@ jobs:
     if: always() 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: pytest-results_*
           merge-multiple: true 
@@ -217,7 +220,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@ae0e8a539a3f310aefb3bfb6a2209778a21fa42b # v1.2.0
+        uses: MishaKav/pytest-coverage-comment@46a1348587126fb199084ee9024ce511cb3abbdb # v1.4.0
         continue-on-error: true
         with:
           pytest-coverage-path: ""

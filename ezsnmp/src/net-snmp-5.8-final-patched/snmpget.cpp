@@ -103,7 +103,8 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session, *ss = NULL;
+   netsnmp_session session;
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
    netsnmp_pdu *pdu = NULL;
    netsnmp_pdu *response = NULL;
    netsnmp_variable_list *vars = NULL;
@@ -121,6 +122,8 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    /*
     * get the common command line arguments
     */
+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
    switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
       case NETSNMP_PARSE_ARGS_ERROR:
          throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -157,8 +160,8 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    /*
     * Open an SNMP session.
     */
-   ss = snmp_open(&session);
-   if (ss == NULL) {
+   ss.reset(snmp_open(&session));
+   if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
@@ -183,7 +186,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    }
    if (failures) {
       snmp_free_pdu(pdu);
-      snmp_close(ss);
       return parse_results(return_vector);
    }
 
@@ -194,7 +196,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
     * "fix" the PDU (removing the error-prone OID) and retry.
     */
 retry:
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
@@ -234,12 +236,16 @@ retry:
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
       throw TimeoutErrorBase(err_msg);
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpget", ss);
+      snmp_sess_perror_exception("snmpget", ss.get());
 
    } /* endif -- STAT_SUCCESS */
 
    if (response) {
       snmp_free_pdu(response);
+   }
+
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
 
    clear_net_snmp_library_data();

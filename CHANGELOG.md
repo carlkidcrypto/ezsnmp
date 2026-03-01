@@ -1,7 +1,83 @@
-Last Updated: 2026-01-19 02:36:00 UTC
+Last Updated: 2026-02-12 15:03:10 UTC
 
 # Changelog
 
+
+<a name="v2.2.0a1"></a>
+## [v2.2.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0a0...v2.2.0a1) (2026-02-11)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix/issue 655 exit in optproc ([#667](https://github.com/carlkidcrypto/ezsnmp/issues/667))
+
+- Fix OID/Index parsing for tables with quoted strings in indexes ([#525](https://github.com/carlkidcrypto/ezsnmp/issues/525))
+
+- Fix workflow decode errors and black formatting violations ([#649](https://github.com/carlkidcrypto/ezsnmp/issues/649))
+
+
+#### Bugfix
+
+- Bugfix/fix broken gh workflows ([#632](https://github.com/carlkidcrypto/ezsnmp/issues/632))
+
+
+#### Code Refactoring
+
+- Use super() for SessionBase methods ([#664](https://github.com/carlkidcrypto/ezsnmp/issues/664))
+
+
+#### Create
+
+- Create build_and_publish_docker_images.yml ([#657](https://github.com/carlkidcrypto/ezsnmp/issues/657))
+
+
+#### Delete
+
+- Delete _codeql_detected_source_root ([#660](https://github.com/carlkidcrypto/ezsnmp/issues/660))
+
+
+#### Features
+
+- Feature/docker builds py14 3 ([#652](https://github.com/carlkidcrypto/ezsnmp/issues/652))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+
+#### Merged Pull Requests
+
+- Merge main and integrate threading-vs-multiprocessing docs into Sphinx ([#619](https://github.com/carlkidcrypto/ezsnmp/issues/619))
+
+- Merge branch 'main' into update-changelog-21123398480
+
+
+#### Remove
+
+- Remove generated documentation from repository and automate deployment ([#622](https://github.com/carlkidcrypto/ezsnmp/issues/622))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#631](https://github.com/carlkidcrypto/ezsnmp/issues/631) from carlkidcrypto/update-changelog-21123398480
+
+- Merge pull request [#630](https://github.com/carlkidcrypto/ezsnmp/issues/630) from carlkidcrypto/update-changelog-21123398484
+
+
+
+
+
+---
 
 <a name="v2.2.0a0"></a>
 ## [v2.2.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.1.0...v2.2.0a0) (2026-01-18)

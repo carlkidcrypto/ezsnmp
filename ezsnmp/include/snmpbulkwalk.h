@@ -52,6 +52,16 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt);
  *             the snmpbulkwalk command.
  * @param init_app_name A string representing the initial application name.
  * @return A vector of Result objects containing the retrieved data.
+ *
+ * @note The -C sub-options (e.g. -Cr, -Cn) must have their value concatenated
+ *       with the flag in the same string element. For example, use "-Cr10" not
+ *       "-Cr", "10" as separate elements. Passing them as separate elements will
+ *       raise a ParseErrorBase exception.
+ *
+ * @throws ParseErrorBase if command-line argument parsing fails (e.g. missing
+ *         number for -Cr or -Cn options, or unknown -C flag).
+ * @throws TimeoutErrorBase if the SNMP agent does not respond.
+ * @throws PacketErrorBase if the SNMP response contains an error.
  */
 std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
                                  std::string const &init_app_name);
