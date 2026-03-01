@@ -188,7 +188,9 @@ jobs:
       - name: Prepare PR integration-test summary
         run: |
           python3 -c "
-          import os, re, statistics
+          import os
+          import re
+          import statistics
 
           data = {}
           for root, dirs, files in os.walk('artifacts'):
@@ -244,21 +246,25 @@ jobs:
                           if rm:
                               if cur and 'session' in cur:
                                   fd_records.append(cur)
-                              mode_raw, a, b = rm.groups()
-                              cur = {'session': b if b else a,
-                                     'operation': a if b else 'unknown',
+                              mode_raw, op_or_sess, sess_opt = rm.groups()
+                              cur = {'session': sess_opt if sess_opt else op_or_sess,
+                                     'operation': op_or_sess if sess_opt else 'unknown',
                                      'mode': 'no close' if 'no_close' in mode_raw else 'close'}
                               continue
                           if cur is None:
                               continue
                           m = re.search(r'Subprocess PID:? Open FDs before:\s*(\d+)', line)
-                          if m: cur['fd_before'] = int(m.group(1))
+                          if m:
+                              cur['fd_before'] = int(m.group(1))
                           m = re.search(r'Subprocess PID\s*Open FDs after:\s*(\d+)', line)
-                          if m: cur['fd_after'] = int(m.group(1))
+                          if m:
+                              cur['fd_after'] = int(m.group(1))
                           m = re.search(r'Total execution time:\s*([\d.]+)', line)
-                          if m: cur['exec_time'] = float(m.group(1))
+                          if m:
+                              cur['exec_time'] = float(m.group(1))
                           m = re.search(r'Average time per SNMP call.*?:\s*([\d.]+)', line)
-                          if m: cur['avg_time'] = float(m.group(1))
+                          if m:
+                              cur['avg_time'] = float(m.group(1))
                       if cur and 'session' in cur:
                           fd_records.append(cur)
 
