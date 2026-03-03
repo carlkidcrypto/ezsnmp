@@ -220,7 +220,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@46a1348587126fb199084ee9024ce511cb3abbdb # v1.4.0
+        uses: MishaKav/pytest-coverage-comment@25a4660954f81456fdfca755d569ed6e18f9423c # v1.5.0
         continue-on-error: true
         with:
           pytest-coverage-path: ""

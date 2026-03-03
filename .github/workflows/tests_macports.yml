@@ -188,7 +188,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@46a1348587126fb199084ee9024ce511cb3abbdb # v1.4.0
+        uses: MishaKav/pytest-coverage-comment@25a4660954f81456fdfca755d569ed6e18f9423c # v1.5.0
         with:
           title: Pytest Coverage Report - MacPorts
           unique-id-for-comment: macports
