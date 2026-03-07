@@ -168,7 +168,7 @@ jobs:
         run: ls -R pytest-results_*
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@46a1348587126fb199084ee9024ce511cb3abbdb # v1.4.0
+        uses: MishaKav/pytest-coverage-comment@26f986d2599c288bb62f623d29c2da98609e9cd4 # v1.6.0
         with:
           title: Pytest Coverage Report - Native
           unique-id-for-comment: native-tests
