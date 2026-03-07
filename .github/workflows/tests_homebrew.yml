@@ -51,7 +51,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@e58f0b60d43355cab9d13c7ecf58a4fbfced93c2 # master
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
+        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
@@ -119,7 +119,7 @@ jobs:
           $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Run Tests
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
+        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
         with:
           linux: |
                  export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/lib:${LD_LIBRARY_PATH:-}
@@ -174,7 +174,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@46a1348587126fb199084ee9024ce511cb3abbdb # v1.4.0
+        uses: MishaKav/pytest-coverage-comment@26f986d2599c288bb62f623d29c2da98609e9cd4 # v1.6.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
