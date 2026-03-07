@@ -21,7 +21,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a # v47.0.4
+        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
         with:
           files: |
             .github/workflows/integration_tests_docker.yml
@@ -237,168 +237,124 @@ jobs:
           import os
           import re
           import statistics
-          
-          # Parse all log files
-          data = {}
-          distributions = []
-          
-          for filename in os.listdir('.'):
-              if filename.startswith('integration_tests_') and filename.endswith('.log'):
-                  distro = filename.replace('integration_tests_', '').replace('.log', '')
-                  distributions.append(distro)
-                  
-                  with open(filename, 'r') as f:
-                      lines = f.readlines()
-                  
-                  for line in lines:
-                      # Match patterns like: multi_process_snmp_get: - 2 - Total execution time: 1.234 seconds
-                      match = re.search(r'(\w+): - (\d+) - (.+): (.+)', line.strip())
-                      if match:
-                          test_type, num, field, value = match.groups()
-                          num = int(num)
-                          try:
-                              val = float(value.split()[0])
-                          except (ValueError, IndexError):
-                              continue
-                          key = (distro, test_type, num, field)
-                          if key not in data:
-                              data[key] = []
-                          data[key].append(val)
-          
-          # Generate summary with comment marker for PR comments
-          summary = '<!-- integration-test-docker-summary -->\\n## Integration Tests (Docker) Results \\u23f1\\ufe0f\\n\\n'
-          
-          if not data:
-              summary += 'No test results found.\\n'
-          else:
-              # Group by distribution
-              for distro in sorted(set(d for d, _, _, _ in data.keys())):
-                  distro_data = {k: v for k, v in data.items() if k[0] == distro}
-                  if not distro_data:
-                      continue
-                  
-                  summary += f'### {distro.replace(\"_\", \" \").title()}\\n\\n'
-                  summary += '| Test Type | Workers | Field | Min (s) | Max (s) | Avg (s) | StdDev \\U0001f4ca |\\n'
-                  summary += '|-----------|---------|-------|---------|---------|---------|----------|\\n'
-                  
-                  for key in sorted(distro_data.keys()):
-                      _, test_type, num, field = key
-                      values = distro_data[key]
-                      
-                      # Format test type to be more readable
-                      test_name = test_type.replace('_', ' ').title()
-                      
-                      if len(values) > 1:
-                          min_v = min(values)
-                          max_v = max(values)
-                          avg_v = statistics.mean(values)
-                          std_v = statistics.stdev(values)
-                          summary += f'| {test_name} | {num} | {field} | {min_v:.3f} | {max_v:.3f} | {avg_v:.3f} | {std_v:.3f} |\\n'
-                      elif len(values) == 1:
-                          summary += f'| {test_name} | {num} | {field} | {values[0]:.3f} | {values[0]:.3f} | {values[0]:.3f} | N/A |\\n'
-                  
-                  summary += '\\n'
 
-          # Add file descriptor test results
-          summary += '### File Descriptor Tests \U0001f4c1\n\n'
+          data = {}
+          for root, dirs, files in os.walk('.'):
+              for file in files:
+                  if file.startswith('integration_tests_') and file.endswith('.log'):
+                      with open(os.path.join(root, file)) as f:
+                          for line in f:
+                              m = re.search(r'(\w+): - (\d+) - (?:.+): (.+)', line.strip())
+                              if m:
+                                  test_type, num, value = m.groups()
+                                  try:
+                                      val = float(value.split()[0])
+                                  except (ValueError, IndexError):
+                                      continue
+                                  data.setdefault((test_type, int(num)), []).append(val)
+
+          summary = '<!-- integration-test-docker-summary -->\n## Integration Tests (Docker) Results \u23f1\ufe0f\n\n'
+
+          if not data:
+              summary += 'No test results found.\n'
+          else:
+              summary += '<details>\n<summary>\U0001f680 Performance Details (aggregated across all distributions)</summary>\n\n'
+              categories = {}
+              for (test_type, num) in sorted(data):
+                  parts = test_type.split('_')
+                  try:
+                      idx = parts.index('snmp')
+                      cat = ' '.join(p.title() for p in parts[:idx])
+                      op  = ' '.join(p.title() for p in parts[idx+1:])
+                  except ValueError:
+                      cat = parts[0].title()
+                      op  = ' '.join(p.title() for p in parts[1:])
+                  categories.setdefault(cat, []).append((op, num, data[(test_type, num)]))
+              for cat in sorted(categories):
+                  summary += f'#### {cat} Tests\n\n'
+                  summary += '| Operation | Workers | Min (s) | Max (s) | Avg (s) | StdDev \U0001f4ca |\n'
+                  summary += '|-----------|---------|---------|---------|---------|----------|\n'
+                  for op, num, vals in sorted(categories[cat], key=lambda x: (x[0], x[1])):
+                      if len(vals) > 1:
+                          summary += f'| {op} | {num} | {min(vals):.3f} | {max(vals):.3f} | {statistics.mean(vals):.3f} | {statistics.stdev(vals):.3f} |\n'
+                      else:
+                          summary += f'| {op} | {num} | {vals[0]:.3f} | {vals[0]:.3f} | {vals[0]:.3f} | N/A |\n'
+                  summary += '\n'
+              summary += '</details>\n\n'
+
           fd_records = []
           for root, dirs, files in os.walk('.'):
-            for file in files:
-              if file.startswith('test_file_descriptors_') and file.endswith('.log'):
-                log_path = os.path.join(root, file)
-                with open(log_path, 'r') as f:
-                  content = f.read()
-
-                distro = file.replace('test_file_descriptors_', '').replace('.log', '')
-
-                # State-based parser: track current (session, operation, mode) block
-                current_record = None
-                for line in content.split('\\n'):
-                  # Detect block start: 'Running work_op_no_close: get SESS_V1_ARGS'
-                  running_match = re.search(
-                    r'Running (work_(?:get|op)_no_close|work_(?:get|op)_close):\\s*(\\S+)(?:\\s+(\\S+))?',
-                    line,
-                  )
-                  if running_match:
-                    if current_record and 'session' in current_record:
-                      fd_records.append(current_record)
-                    mode_raw, op_or_sess, sess_opt = running_match.groups()
-                    if sess_opt:
-                      operation = op_or_sess
-                      sess = sess_opt
-                    else:
-                      operation = 'unknown'
-                      sess = op_or_sess
-                    current_record = {
-                      'distro': distro,
-                      'session': sess,
-                      'operation': operation,
-                      'mode': 'no close' if 'no_close' in mode_raw else 'close'
-                    }
-                    continue
-
-                  if current_record is None:
-                    continue
-
-                  m = re.search(r'Subprocess PID:? Open FDs before:\\s*(\\d+)', line)
-                  if m:
-                    current_record['fd_before'] = int(m.group(1))
-
-                  m = re.search(r'Subprocess PID\\s*Open FDs after:\\s*(\\d+)', line)
-                  if m:
-                    current_record['fd_after'] = int(m.group(1))
-
-                  m = re.search(r'Total execution time:\\s*([\\d.]+)', line)
-                  if m:
-                    current_record['exec_time'] = float(m.group(1))
-
-                  m = re.search(r'Average time per SNMP call.*?:\\s*([\\d.]+)', line)
-                  if m:
-                    current_record['avg_time'] = float(m.group(1))
-
-                if current_record and 'session' in current_record:
-                  fd_records.append(current_record)
+              for file in files:
+                  if file.startswith('test_file_descriptors_') and file.endswith('.log'):
+                      with open(os.path.join(root, file)) as f:
+                          content = f.read()
+                      cur = None
+                      for line in content.split('\n'):
+                          rm = re.search(r'Running (work_(?:get|op)_(?:no_close|close)):\s*(\S+)(?:\s+(\S+))?', line)
+                          if rm:
+                              if cur and 'session' in cur:
+                                  fd_records.append(cur)
+                              mode_raw, op_or_sess, sess_opt = rm.groups()
+                              cur = {'session': sess_opt if sess_opt else op_or_sess,
+                                     'operation': op_or_sess if sess_opt else 'unknown',
+                                     'mode': 'no close' if 'no_close' in mode_raw else 'close'}
+                              continue
+                          if cur is None:
+                              continue
+                          m = re.search(r'Subprocess PID:? Open FDs before:\s*(\d+)', line)
+                          if m:
+                              cur['fd_before'] = int(m.group(1))
+                          m = re.search(r'Subprocess PID\s*Open FDs after:\s*(\d+)', line)
+                          if m:
+                              cur['fd_after'] = int(m.group(1))
+                          m = re.search(r'Total execution time:\s*([\d.]+)', line)
+                          if m:
+                              cur['exec_time'] = float(m.group(1))
+                          m = re.search(r'Average time per SNMP call.*?:\s*([\d.]+)', line)
+                          if m:
+                              cur['avg_time'] = float(m.group(1))
+                      if cur and 'session' in cur:
+                          fd_records.append(cur)
 
           if fd_records:
-              # Group by distribution
-              distros = sorted(set(r['distro'] for r in fd_records))
-              for distro in distros:
-                  distro_recs = [r for r in fd_records if r['distro'] == distro]
-                  distro_title = distro.replace('_', ' ').title()
-                  summary += f'#### {distro_title}\\n\\n'
-                  summary += '| Session Type | Operation | Mode | FD Before | FD After | FD Leak | Exec Time (s) | Avg/Call (s) |\\n'
-                  summary += '|--------------|-----------|------|-----------|----------|---------|---------------|--------------|\\n'
-
-                  for rec in distro_recs:
-                      sess_display = rec['session'].replace('SESS_', '').replace('_ARGS', '')
-                      op_display = rec.get('operation', 'unknown')
-                      mode_display = rec['mode']
-                      fd_before = rec.get('fd_before')
-                      fd_after = rec.get('fd_after')
-                      if fd_before is not None and fd_after is not None:
-                          leak = fd_after - fd_before
-                          fb_str = str(fd_before)
-                          fa_str = str(fd_after)
-                          leak_str = f'{leak:+d}'
-                      else:
-                          fb_str = fa_str = leak_str = '-'
-                      exec_time = rec.get('exec_time')
-                      avg_time = rec.get('avg_time')
-                      et = f'{exec_time:.3f}' if exec_time is not None else '-'
-                      at = f'{avg_time:.6f}' if avg_time is not None else '-'
-                      summary += f'| {sess_display} | {op_display} | {mode_display} | {fb_str} | {fa_str} | {leak_str} | {et} | {at} |\\n'
-
-                  summary += '\\n'
-
-              summary += '\\u2705 File descriptor tests completed successfully\\n'
+              grouped = {}
+              for rec in fd_records:
+                  key = (rec['session'], rec.get('operation', 'unknown'), rec['mode'])
+                  g = grouped.setdefault(key, {'fd_before': [], 'fd_after': [], 'exec_time': [], 'avg_time': []})
+                  for fld in ('fd_before', 'fd_after', 'exec_time', 'avg_time'):
+                      if fld in rec:
+                          g[fld].append(rec[fld])
+              leaks = sum(
+                  1 for g in grouped.values()
+                  if g['fd_before'] and g['fd_after']
+                  and statistics.mean(g['fd_after']) > statistics.mean(g['fd_before'])
+              )
+              status = f'\u26a0\ufe0f {leaks} potential leak(s) detected' if leaks else '\u2705 No leaks detected'
+              summary += f'### \U0001f4c1 File Descriptor Tests: {status}\n\n'
+              summary += '<details>\n<summary>\U0001f4cb FD Test Details (click to expand)</summary>\n\n'
+              summary += '| Session | Operation | Mode | FD Leak | Exec (s) | Avg/Call (s) |\n'
+              summary += '|---------|-----------|------|---------|----------|-------------|\n'
+              for (sess, op, mode) in sorted(grouped):
+                  g = grouped[(sess, op, mode)]
+                  sd = sess.replace('SESS_', '').replace('_ARGS', '')
+                  if g['fd_before'] and g['fd_after']:
+                      lk = statistics.mean(g['fd_after']) - statistics.mean(g['fd_before'])
+                      lk_icon = '\u26a0\ufe0f' if lk > 0 else '\u2705'
+                      lk_str = f'{lk_icon} {lk:+.0f}'
+                  else:
+                      lk_str = 'N/A'
+                  exec_list = g['exec_time']
+                  avg_list = g['avg_time']
+                  et = f'{statistics.mean(exec_list):.3f}' if exec_list else '-'
+                  at = f'{statistics.mean(avg_list):.6f}' if avg_list else '-'
+                  summary += f'| {sd} | {op} | {mode} | {lk_str} | {et} | {at} |\n'
+              summary += '\n</details>\n\n\u2705 File descriptor tests completed successfully\n'
           else:
-              summary += '\\u274c No file descriptor test results found\\n'
+              summary += '### \U0001f4c1 File Descriptor Tests: \u274c No results found\n'
 
-          # Write to GitHub Step Summary
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
               f.write(summary)
 
-          # Also save to file for PR comment
           with open('integration_test_docker_summary.md', 'w') as f:
               f.write(summary)
 
