@@ -1,4 +1,4 @@
-Last Updated: 2026-03-07 21:38:12 UTC
+Last Updated: 2026-03-08 17:47:42 UTC
 
 # Changelog
 
@@ -9,10 +9,66 @@ Last Updated: 2026-03-07 21:38:12 UTC
 
 ### Changes
 
+#### Bug Fixes
+
+- Fix MacOS native/Homebrew test failures and thread safety issues ([#666](https://github.com/carlkidcrypto/ezsnmp/issues/666))
+
+
+#### Bug Fixes
+
+- fix: recover from corrupt cached Docker image tar instead of failing CI job ([#687](https://github.com/carlkidcrypto/ezsnmp/issues/687))
+
+
+#### Close
+
+- Close SNMP session before cleanup ([#674](https://github.com/carlkidcrypto/ezsnmp/issues/674))
+
+
+#### Compact
+
+- Compact integration-test PR comment summaries ([#689](https://github.com/carlkidcrypto/ezsnmp/issues/689))
+
+
+#### Features
+
+- Add deploy_pages job for GitHub Pages ([#673](https://github.com/carlkidcrypto/ezsnmp/issues/673))
+
+
 #### Maintenance
 
-- chore: bump version to v2.2.0a2
+- chore: bump alpha version to v2.2.0a2 ([#707](https://github.com/carlkidcrypto/ezsnmp/issues/707))
 
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into update-changelog-21951921360
+
+
+#### Remove
+
+- Remove release asset upload from sphinx_build workflow ([#680](https://github.com/carlkidcrypto/ezsnmp/issues/680))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#670](https://github.com/carlkidcrypto/ezsnmp/issues/670) from carlkidcrypto/update-changelog-21951921360
+
+- Merge pull request [#669](https://github.com/carlkidcrypto/ezsnmp/issues/669) from carlkidcrypto/update-changelog-21951920671
+
+
+
+
+
+---
 
 <a name="v2.2.0a1"></a>
 ## [v2.2.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0a0...v2.2.0a1) (2026-02-11)
