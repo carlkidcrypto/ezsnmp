@@ -1,6 +1,7 @@
 [run]
 source = ezsnmp
 relative_files = True
+parallel = True
 omit = */python_tests/*,*/tests/*,*/test_*
 
 [report]

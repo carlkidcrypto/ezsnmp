@@ -102,6 +102,49 @@ TEST_F(SnmpBulkGetTest, TestUnknownCOption) {
        ParseErrorBase);
 }
 
+// Test -Cr option with separated args (issue #655)
+// When -Cr and the number are separate args, it should throw ParseErrorBase
+// instead of calling exit(1) which kills the process.
+TEST_F(SnmpBulkGetTest, TestMaxRepeatersSeparatedArgsThrows) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Cr", "1", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkget(args, "testing_cr_separated");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "No number given for -Cr option\n");
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+// Test -Cn option with separated args (same issue as #655)
+TEST_F(SnmpBulkGetTest, TestNonRepeatersSeparatedArgsThrows) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-Cn",
+                                    "1",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkget(args, "testing_cn_separated");
+          } catch (ParseErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "No number given for -Cn option\n");
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
 // Test valid bulkget - This should be first test that runs
 TEST_F(SnmpBulkGetTest, TestBasicBulkGet) {
    std::vector<std::string> args = {

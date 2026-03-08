@@ -22,7 +22,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@e0021407031f5be11a464abee9a0776171c79891 # v47.0.1
+        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
         with:
           files: |
             .github/workflows/tests_homebrew.yml
@@ -51,7 +51,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@e58f0b60d43355cab9d13c7ecf58a4fbfced93c2 # master
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
+        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
@@ -103,7 +103,14 @@ jobs:
             SNMPD=$(which snmpd)
           elif [ "$RUNNER_OS" == "macOS" ]
           then
-            mibdir=""
+            # On macOS, check for Homebrew MIB directories (both Intel and Apple Silicon)
+            if [ -d "/opt/homebrew/share/snmp/mibs" ]; then
+              mibdir="-M +/opt/homebrew/share/snmp/mibs"
+            elif [ -d "/usr/local/share/snmp/mibs" ]; then
+              mibdir="-M +/usr/local/share/snmp/mibs"
+            else
+              mibdir=""
+            fi
             SNMPD=$(which snmpd)
           else
             mibdir=""
@@ -112,7 +119,7 @@ jobs:
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Run Tests
-        uses: carlkidcrypto/os-specific-runner@39336e3ec1a53bcdce44b9e9388da204f79203d9 # v2.1.3
+        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
         with:
           linux: |
                  export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/lib:${LD_LIBRARY_PATH:-}
@@ -139,7 +146,7 @@ jobs:
             pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -147,7 +154,7 @@ jobs:
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Valgrind Reports
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
@@ -161,13 +168,13 @@ jobs:
       pull-requests: write # This is needed to create/update comments
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: pytest-results_*
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@ae0e8a539a3f310aefb3bfb6a2209778a21fa42b # v1.2.0
+        uses: MishaKav/pytest-coverage-comment@26f986d2599c288bb62f623d29c2da98609e9cd4 # v1.6.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
@@ -199,7 +206,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: valgrind-report_*
           merge-multiple: false
@@ -217,7 +224,7 @@ jobs:
           EOF
 
       - name: Upload Stripped Valgrind Reports
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         with:
           name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -229,7 +236,7 @@ jobs:
   
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: valgrind-stripped_*
           merge-multiple: false

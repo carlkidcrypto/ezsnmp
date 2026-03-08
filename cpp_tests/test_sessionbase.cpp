@@ -1075,3 +1075,45 @@ TEST_F(SessionBaseTest, TestCloseSession) {
    // This should not throw
    session._close();
 }
+
+// Regression test for GitHub issue #656:
+// Calling _get_context() (and other getters) on a default-constructed SessionBase
+// must not crash. This validates the C++ layer works correctly with default parameters,
+// which is the same construction path used by Python's Session() with no arguments.
+TEST_F(SessionBaseTest, TestDefaultConstructedGettersDoNotCrash) {
+   // Default construction matches what Python's Session() does:
+   // SessionBase("localhost", "", "3", "public", ...) with all defaults
+   SessionBase session;
+
+   // All getters must return valid default values without crashing
+   EXPECT_EQ(session._get_hostname(), "localhost");
+   EXPECT_EQ(session._get_port_number(), "");
+   EXPECT_EQ(session._get_version(), "3");
+   EXPECT_EQ(session._get_community(), "public");
+   EXPECT_EQ(session._get_auth_protocol(), "");
+   EXPECT_EQ(session._get_auth_passphrase(), "");
+   EXPECT_EQ(session._get_security_engine_id(), "");
+   EXPECT_EQ(session._get_context_engine_id(), "");
+   EXPECT_EQ(session._get_security_level(), "");
+   EXPECT_EQ(session._get_context(), "");
+   EXPECT_EQ(session._get_security_username(), "");
+   EXPECT_EQ(session._get_privacy_protocol(), "");
+   EXPECT_EQ(session._get_privacy_passphrase(), "");
+   EXPECT_EQ(session._get_boots_time(), "");
+   EXPECT_EQ(session._get_retries(), "3");
+   EXPECT_EQ(session._get_timeout(), "1");
+   EXPECT_EQ(session._get_load_mibs(), "");
+   EXPECT_EQ(session._get_mib_directories(), "");
+   EXPECT_FALSE(session._get_print_enums_numerically());
+   EXPECT_FALSE(session._get_print_full_oids());
+   EXPECT_FALSE(session._get_print_oids_numerically());
+   EXPECT_FALSE(session._get_print_timeticks_numerically());
+   EXPECT_EQ(session._get_set_max_repeaters_to_num(), "");
+
+   // Verify args are constructed correctly for default session
+   auto args = session._get_args();
+   EXPECT_FALSE(args.empty());
+   // Should contain version 3 and hostname "localhost"
+   EXPECT_NE(std::find(args.begin(), args.end(), "-v"), args.end());
+   EXPECT_EQ(args.back(), "localhost");
+}
