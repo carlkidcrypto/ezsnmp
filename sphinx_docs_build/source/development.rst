@@ -98,7 +98,7 @@ them with the following on Linux:
     sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
     sudo systemctl stop snmpd;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf;
     sudo download-mibs;
     mkdir -p -m 0755 ~/.snmp;
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
@@ -226,7 +226,7 @@ Python Tests on MacOS
     git clone https://github.com/carlkidcrypto/ezsnmp.git;
     cd ezsnmp;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
-    sudo cp python_tests/snmpd.conf /etc/snmp/snmpd.conf;
+    sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf;
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
