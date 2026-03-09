@@ -216,6 +216,9 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
     */
    status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
+      if (response == NULL) {
+         throw GenericErrorBase("snmpbulkget: received NULL response from snmp_synch_response");
+      }
       if (response->errstat == SNMP_ERR_NOERROR) {
          /*
           * check resulting variables
