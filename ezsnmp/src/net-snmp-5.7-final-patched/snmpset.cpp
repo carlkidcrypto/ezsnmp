@@ -254,9 +254,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
     */
    status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
-      if (response == NULL) {
-         throw GenericErrorBase("snmpset: received NULL response from snmp_synch_response");
-      }
+      snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
          if (!quiet) {
             for (vars = response->variables; vars; vars = vars->next_variable) {

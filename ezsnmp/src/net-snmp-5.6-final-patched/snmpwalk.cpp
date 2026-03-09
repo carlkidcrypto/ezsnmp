@@ -318,10 +318,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
             gettimeofday(&tv_b, NULL);
          }
-         if (response == NULL) {
-            running = 0;
-            throw GenericErrorBase("snmpwalk: received NULL response from snmp_synch_response");
-         }
+         snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
              * check resulting variables

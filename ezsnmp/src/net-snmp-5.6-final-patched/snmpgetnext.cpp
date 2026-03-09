@@ -193,9 +193,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
 retry:
    status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
-      if (response == NULL) {
-         throw GenericErrorBase("snmpgetnext: received NULL response from snmp_synch_response");
-      }
+      snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
             auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);

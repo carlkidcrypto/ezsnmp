@@ -345,3 +345,9 @@ void clear_net_snmp_library_data() {
                           0);                                                          // Clear -O e
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
 }
+
+void snmp_check_null_response(netsnmp_pdu const *response) {
+   if (response == NULL) {
+      throw PacketErrorBase("received NULL response from snmp_synch_response");
+   }
+}
