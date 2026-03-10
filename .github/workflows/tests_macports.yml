@@ -146,12 +146,15 @@ jobs:
             echo "# persistent config store" | sudo tee /opt/local/var/net-snmp/snmpd.conf >/dev/null
           fi
           # Remove or comment unsupported directives (e.g., smuxsocket) from test config for MacPorts net-snmp 5.9.4
-          if grep -q '^smuxsocket' python_tests/snmpd.conf; then
-            cp python_tests/snmpd.conf python_tests/snmpd.conf.orig
-            sed '/^smuxsocket/ s/^/# disabled on macports: /' python_tests/snmpd.conf.orig > python_tests/snmpd.conf
+          CONFIG_SRC="configs/snmpd.conf"
+          CONFIG_TMP="${RUNNER_TEMP}/snmpd.conf.macports"
+          if grep -q '^smuxsocket' "$CONFIG_SRC"; then
+            sed '/^smuxsocket/ s/^/# disabled on macports: /' "$CONFIG_SRC" > "$CONFIG_TMP"
+          else
+            cp "$CONFIG_SRC" "$CONFIG_TMP"
           fi
-          echo "Launching snmpd with config: python_tests/snmpd.conf"
-          $SNMPD -C -c python_tests/snmpd.conf -r -Le $mibdir -m ALL || {
+          echo "Launching snmpd with config: $CONFIG_TMP"
+          $SNMPD -C -c "$CONFIG_TMP" -r -Le $mibdir -m ALL || {
             echo "snmpd failed to start" >&2; exit 1; }
 
       - name: Run Tests
