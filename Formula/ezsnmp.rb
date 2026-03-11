@@ -1,4 +1,4 @@
-class NetSnmp < Formula
+class Ezsnmp < Formula
   desc "Custom Net-SNMP build for EzSnmp testing/development"
   homepage "http://www.net-snmp.org/"
   url "https://downloads.sourceforge.net/project/net-snmp/net-snmp/5.9.5.2/net-snmp-5.9.5.2.tar.gz"
