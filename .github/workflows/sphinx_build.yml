@@ -192,6 +192,7 @@ jobs:
             python3 << 'EOF'
             import os
             import re
+            import sys
 
             docs_dir = "${{ github.workspace }}/docs"
             index_rst = "${{ github.workspace }}/sphinx_docs_build/landing/source/index.rst"
@@ -202,10 +203,13 @@ jobs:
                 reverse=True,
             )
 
-            # Build the RST version list lines
+            # Build the RST version list lines.
+            # Three-space indentation matches the bullet list block inside the
+            # RST directive that surrounds the VERSION_LIST_START/END sentinels.
             lines = []
             for v in versions:
                 version_name = v[len("html_"):]  # strip "html_" prefix -> "vX.Y.Z"
+                # URL is relative to docs/ root; directory is named html_vX.Y.Z/
                 lines.append(f"   * `{version_name} <html_{version_name}/index.html>`_")
 
             version_block = "\n".join(lines)
@@ -214,12 +218,16 @@ jobs:
             with open(index_rst, "r") as f:
                 content = f.read()
 
-            new_content = re.sub(
+            new_content, sub_count = re.subn(
                 r"(\.\. VERSION_LIST_START\n).*?(\.\. VERSION_LIST_END)",
                 rf"\1{version_block}\n\2",
                 content,
                 flags=re.DOTALL,
             )
+
+            if sub_count == 0:
+                print("ERROR: VERSION_LIST_START/VERSION_LIST_END sentinels not found in index.rst", file=sys.stderr)
+                sys.exit(1)
 
             with open(index_rst, "w") as f:
                 f.write(new_content)
