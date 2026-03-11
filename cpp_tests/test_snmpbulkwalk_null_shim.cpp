@@ -2,6 +2,7 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
+#include "datatypes.h"
 #include "exceptionsbase.h"
 #include "snmpbulkwalk.h"
 
