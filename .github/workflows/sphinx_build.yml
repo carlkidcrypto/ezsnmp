@@ -203,24 +203,20 @@ jobs:
                 reverse=True,
             )
 
-            # Build the RST version list lines.
-            # Three-space indentation matches the bullet list block inside the
-            # RST directive that surrounds the VERSION_LIST_START/END sentinels.
-            lines = []
+            # Build RST list entries (always include Latest Alpha/Beta first)
+            rst_items = ["* `Latest Alpha/Beta Version <./html/index.html>`_"]
             for v in versions:
-                version_name = v[len("html_"):]  # strip "html_" prefix -> "vX.Y.Z"
-                # URL is relative to docs/ root; directory is named html_vX.Y.Z/
-                lines.append(f"   * `{version_name} <html_{version_name}/index.html>`_")
-
-            version_block = "\n".join(lines)
+                ver = v.replace("html_", "")  # e.g. "v2.3.0"
+                rst_items.append(f"* `{ver} <./{v}/index.html>`_")
+            versions_rst = "\n".join(rst_items)
 
             # Read and rewrite the index.rst between the sentinel comments
             with open(index_rst, "r") as f:
                 content = f.read()
 
             new_content, sub_count = re.subn(
-                r"(\.\. VERSION_LIST_START\n).*?(\.\. VERSION_LIST_END)",
-                rf"\1{version_block}\n\2",
+                r"\.\. VERSION_LIST_START\n.*?\.\. VERSION_LIST_END",
+                f".. VERSION_LIST_START\n\n{versions_rst}\n\n.. VERSION_LIST_END",
                 content,
                 flags=re.DOTALL,
             )
