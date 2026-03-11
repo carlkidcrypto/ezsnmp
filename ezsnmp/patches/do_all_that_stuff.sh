@@ -2,9 +2,9 @@
 set -e
 
 # Versions to process
-versions=("5.6" "5.7" "5.8" "5.9")
+versions=("5.6" "5.7" "5.8" "5.9" "5.10")
 
-# Step 1: Download all net-snmp versions 5.6 - 5.9 in parallel
+# Step 1: Download all net-snmp versions 5.6 - 5.10 in parallel
 echo "##### Downloading net-snmp versions... #####"
 for version in "${versions[@]}"; do
     echo "Fetching version $version..."
@@ -12,9 +12,10 @@ for version in "${versions[@]}"; do
 done
 wait  # Wait for all background jobs to finish
 
-# Step 2: Call make_patches.sh on 5.9 first
-echo "##### Making patches for version 5.9... #####"
+# Step 2: Call make_patches.sh on 5.9 and 5.10 first (both use unmodified master_src)
+echo "##### Making patches for versions 5.9, 5.10... #####"
 ./make_patches.sh 5.9
+./make_patches.sh 5.10
 
 # Step 3: Backup master_src and remove all instances of netsnmp_cleanup_session(&session);
 echo "##### Backing up master_src... #####"
@@ -53,9 +54,9 @@ echo "##### Restoring master_src from backup... #####"
 rm -rf master_src
 mv master_src_backup master_src
 
-# Step 9: Apply patches on 5.6-5.9 in parallel
-echo "##### Applying patches for versions 5.6, 5.7, 5.8, 5.9... #####"
-for version in 5.6 5.7 5.8 5.9; do
+# Step 9: Apply patches on 5.6-5.10 in parallel
+echo "##### Applying patches for versions 5.6, 5.7, 5.8, 5.9, 5.10... #####"
+for version in 5.6 5.7 5.8 5.9 5.10; do
     ./apply_patches.sh "$version" &
 done
 wait  # Wait for all apply_patches jobs to finish
