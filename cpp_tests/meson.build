@@ -325,6 +325,20 @@ test_snmpwalk_null_shim = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_snmpbulkwalk_shim = executable(
+    'test_snmpbulkwalk_shim',
+    [
+        'test_snmpbulkwalk_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpbulkwalk_null_shim = executable(
     'test_snmpbulkwalk_null_shim',
     [
@@ -348,6 +362,11 @@ if netsnmp_version.startswith('5.7')
   test_env.set('MALLOC_CHECK_', '0')
 endif
 
+# Ensure SNMP MIBs are loaded during tests so that symbolic OID names
+# (e.g. SNMPv2-MIB::sysORDescr) resolve correctly on all platforms.
+test_env.set('MIBS', 'ALL')
+test_env.set('MIBDIRS', '/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf')
+
 test('datatypes_test', test_datatypes, env: test_env)
 test('helpers_test', test_helpers, env: test_env)
 test('thread_safety_test', test_thread_safety, env: test_env)
@@ -368,5 +387,6 @@ test('snmpbulkget_test', test_snmpbulkget, env: test_env)
 test('snmpbulkget_shim_test', test_snmpbulkget_shim, env: test_env)
 test('snmpbulkget_null_shim_test', test_snmpbulkget_null_shim, env: test_env)
 test('snmpbulkwalk_test', test_snmpbulkwalk, env: test_env)
+test('snmpbulkwalk_shim_test', test_snmpbulkwalk_shim, env: test_env)
 test('snmpbulkwalk_null_shim_test', test_snmpbulkwalk_null_shim, env: test_env)
 test('exceptionsbase_test', test_exceptionsbase, env: test_env)
