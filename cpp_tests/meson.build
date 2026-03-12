@@ -19,8 +19,6 @@ elif netsnmp_version.startswith('5.8')
   snmp_source_dir = '../ezsnmp/src/net-snmp-5.8-final-patched'
 elif netsnmp_version.startswith('5.7')
   snmp_source_dir = '../ezsnmp/src/net-snmp-5.7-final-patched'
-elif netsnmp_version.startswith('5.6')
-  snmp_source_dir = '../ezsnmp/src/net-snmp-5.6-final-patched'
 else
   # Fallback for any other version (e.g., newer or unhandled older versions)
   snmp_source_dir = '../ezsnmp/src'

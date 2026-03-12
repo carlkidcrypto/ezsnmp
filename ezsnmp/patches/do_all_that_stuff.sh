@@ -2,9 +2,9 @@
 set -e
 
 # Versions to process
-versions=("5.6" "5.7" "5.8" "5.9")
+versions=("5.7" "5.8" "5.9")
 
-# Step 1: Download all net-snmp versions 5.6 - 5.9 in parallel
+# Step 1: Download all net-snmp versions 5.7 - 5.9 in parallel
 echo "##### Downloading net-snmp versions... #####"
 for version in "${versions[@]}"; do
     echo "Fetching version $version..."
@@ -25,42 +25,26 @@ for file in master_src/*.cpp; do
     sed -i '/netsnmp_cleanup_session(&session);/d' "$file"
 done
 
-# Step 4: Change monotonic clock calls to gettimeofday for 5.6 compatibility
-echo "##### Changing monotonic clock calls to gettimeofday in master_src for 5.6... #####"
-for file in master_src/*.cpp; do
-    sed -i 's/netsnmp_get_monotonic_clock(\([^)]*\))/gettimeofday(\1, NULL)/g' "$file"
-done
-
-# Step 5: Run make_patches on 5.6
-echo "##### Making patches for version 5.6... #####"
-./make_patches.sh 5.6
-
-# Step 6: Revert monotonic clock calls back to netsnmp_get_monotonic_clock for 5.7-5.8
-echo "##### Reverting monotonic clock calls in master_src for 5.7-5.8... #####"
-for file in master_src/*.cpp; do
-    sed -i 's/gettimeofday(\([^,]*\), NULL)/netsnmp_get_monotonic_clock(\1)/g' "$file"
-done
-
-# Step 7: Run make_patches on 5.7-5.8 in parallel
+# Step 4: Run make_patches on 5.7-5.8 in parallel
 echo "##### Making patches for versions 5.7, 5.8... #####"
 for version in 5.7 5.8; do
     ./make_patches.sh "$version" &
 done
 wait  # Wait for all make_patches jobs to finish
 
-# Step 8: Revert removal of netsnmp_cleanup_session(&session);
+# Step 5: Revert removal of netsnmp_cleanup_session(&session);
 echo "##### Restoring master_src from backup... #####"
 rm -rf master_src
 mv master_src_backup master_src
 
-# Step 9: Apply patches on 5.6-5.9 in parallel
-echo "##### Applying patches for versions 5.6, 5.7, 5.8, 5.9... #####"
-for version in 5.6 5.7 5.8 5.9; do
+# Step 6: Apply patches on 5.7-5.9 in parallel
+echo "##### Applying patches for versions 5.7, 5.8, 5.9... #####"
+for version in 5.7 5.8 5.9; do
     ./apply_patches.sh "$version" &
 done
 wait  # Wait for all apply_patches jobs to finish
 
-# Step 10: Run clang-format
+# Step 7: Run clang-format
 echo "##### Running clang-format on entire repository... #####"
 cd ../../
 find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
