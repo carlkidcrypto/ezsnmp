@@ -253,6 +253,90 @@ test_exceptionsbase = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_snmpget_null_shim = executable(
+    'test_snmpget_null_shim',
+    [
+        'test_snmpget_null_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpget.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpgetnext_null_shim = executable(
+    'test_snmpgetnext_null_shim',
+    [
+        'test_snmpgetnext_null_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpgetnext.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpset_null_shim = executable(
+    'test_snmpset_null_shim',
+    [
+        'test_snmpset_null_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpset.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkget_null_shim = executable(
+    'test_snmpbulkget_null_shim',
+    [
+        'test_snmpbulkget_null_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkget.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpwalk_null_shim = executable(
+    'test_snmpwalk_null_shim',
+    [
+        'test_snmpwalk_null_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkwalk_null_shim = executable(
+    'test_snmpbulkwalk_null_shim',
+    [
+        'test_snmpbulkwalk_null_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 # Register tests
 # For net-snmp 5.7, disable malloc perturbation to avoid false positives
 # with glibc's strict malloc checking (incompatible with net-snmp 5.7's memory patterns)
@@ -269,12 +353,18 @@ test('sessionbase_test', test_sessionbase, env: test_env)
 test('sessionbase_parameters_test', test_sessionbase_parameters, env: test_env)
 test('snmpget_test', test_snmpget, env: test_env)
 test('snmpget_shim_test', test_snmpget_shim, env: test_env)
+test('snmpget_null_shim_test', test_snmpget_null_shim, env: test_env)
 test('snmpgetnext_test', test_snmpgetnext, env: test_env)
 test('snmpgetnext_shim_test', test_snmpgetnext_shim, env: test_env)
+test('snmpgetnext_null_shim_test', test_snmpgetnext_null_shim, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
+test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
+test('snmpwalk_null_shim_test', test_snmpwalk_null_shim, env: test_env)
 test('snmpbulkget_test', test_snmpbulkget, env: test_env)
 test('snmpbulkget_shim_test', test_snmpbulkget_shim, env: test_env)
+test('snmpbulkget_null_shim_test', test_snmpbulkget_null_shim, env: test_env)
 test('snmpbulkwalk_test', test_snmpbulkwalk, env: test_env)
+test('snmpbulkwalk_null_shim_test', test_snmpbulkwalk_null_shim, env: test_env)
 test('exceptionsbase_test', test_exceptionsbase, env: test_env)

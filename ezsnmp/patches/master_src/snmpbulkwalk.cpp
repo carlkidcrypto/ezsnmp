@@ -293,6 +293,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        */
       status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
+         snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
              * check resulting variables
