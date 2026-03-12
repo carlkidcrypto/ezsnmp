@@ -146,6 +146,10 @@ jobs:
             else
               echo "    - Tox reported failures for $TOX_ENV (continuing to collect artifacts)";
             fi;
+            echo "    - Copying coverage.xml to /ezsnmp/ if not already present";
+            if [ -f "$WORK_DIR/coverage.xml" ] && [ ! -f /ezsnmp/coverage.xml ]; then
+              cp "$WORK_DIR/coverage.xml" /ezsnmp/coverage.xml;
+            fi;
             exit 0;
           '
 
