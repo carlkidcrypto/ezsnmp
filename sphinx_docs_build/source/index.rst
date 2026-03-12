@@ -6,8 +6,25 @@ Introduction
 EzSnmp has been tested and is supported on systems running net-snmp
 5.9.x and newer. All Python versions 3.10 and above are fully supported.
 
+Installation via Homebrew (macOS)
+---------------------------------
+On macOS, the recommended way to install ezsnmp is via the Homebrew tap.
+This installs the Python package and all its C library dependencies in one step:
+
+.. code-block:: bash
+
+    brew tap carlkidcrypto/ezsnmp
+    brew install carlkidcrypto/ezsnmp/ezsnmp
+
+If ``import ezsnmp`` fails after installation, add the formula's site-packages
+to ``PYTHONPATH`` in your shell profile (``~/.zshrc`` or ``~/.bash_profile``):
+
+.. code-block:: bash
+
+    export PYTHONPATH="$(brew --prefix ezsnmp)/lib/python3.12/site-packages:$PYTHONPATH"
+
 Installation via Package Manager
---------------------------------
+---------------------------------
 If your OS ships with a supported version of net-snmp, then you can install it
 without compiling it via your package manager:
 
@@ -24,13 +41,11 @@ On Debian / Ubuntu systems:
     sudo apt update && sudo apt upgrade -y;
     sudo apt install -y libsnmp-dev g++ python3-dev;
 
-On macOS systems:
+On macOS systems (alternative, using homebrew-core net-snmp):
 
 .. code-block:: bash
 
-    brew tap carlkidcrypto/ezsnmp
-    brew install carlkidcrypto/ezsnmp/ezsnmp
-    export PATH="$(brew --prefix ezsnmp)/bin:$PATH"
+    brew install net-snmp
 
 Installation via Building net-snmp from Source
 ----------------------------------------------

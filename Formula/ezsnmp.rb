@@ -1,83 +1,54 @@
 class Ezsnmp < Formula
-  desc "Net-SNMP build providing C libraries and headers for the ezsnmp Python package"
+  desc "Blazingly fast Python SNMP library based on Net-SNMP"
   homepage "https://github.com/carlkidcrypto/ezsnmp"
-  url "https://downloads.sourceforge.net/project/net-snmp/net-snmp/5.9.5.2/net-snmp-5.9.5.2.tar.gz"
-  sha256 "16707719f833184a4b72835dac359ae188123b06b5e42817c00790d7dc1384bf"
-  license all_of: ["MIT-CMU", "MIT", "BSD-3-Clause"]
-  head "https://github.com/net-snmp/net-snmp.git", branch: "master"
+  url "https://github.com/carlkidcrypto/ezsnmp/archive/refs/tags/v2.1.0.tar.gz"
+  sha256 "de78a2a1c47722ab165a36d29e849075e7920e925194eb8ee25f0dafab3cd01c"
+  license "BSD-3-Clause"
+  head "https://github.com/carlkidcrypto/ezsnmp.git", branch: "main"
 
-  livecheck do
-    url :stable
-    regex(%r{url=.*?/net-snmp[._-]v?(\d+(?:\.\d+)+)\.t}i)
-  end
-
-  keg_only :provided_by_macos
-
+  depends_on "net-snmp"
   depends_on "openssl@3"
-
-  on_arm do
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
-    depends_on "libtool" => :build
-  end
-
-  # Fix -flat_namespace being used on x86_64 Big Sur and later.
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/homebrew-core/1cf441a0/Patches/libtool/configure-big_sur.diff"
-    sha256 "35acd6aebc19843f1a2b3a63e880baceb0f5278ab1ace661e57a502d9d78c93c"
-  end
+  depends_on "python@3.12"
 
   def install
-    args = [
-      "--disable-debugging",
-      "--enable-ipv6",
-      "--with-defaults",
-      "--with-persistent-directory=#{var}/db/net-snmp",
-      "--with-logfile=#{var}/log/snmpd.log",
-      "--with-mib-modules=host ucd-snmp/diskio",
-      "--without-rpm",
-      "--without-kmem-usage",
-      "--disable-embedded-perl",
-      "--without-perl-modules",
-      "--with-openssl=#{Formula["openssl@3"].opt_prefix}",
-    ]
+    python3 = Formula["python@3.12"].opt_bin/"python3"
 
-    on_arm do
-      system "autoreconf", "--force", "--install", "--verbose"
-    end
+    # net-snmp is keg-only; put net-snmp-config on PATH so setup.py can find it
+    ENV.prepend_path "PATH", Formula["net-snmp"].opt_bin
 
-    # Work around snmptrapd.c:(.text+0x1e0): undefined reference to `dropauth' on Linux
-    ENV.deparallelize if OS.linux?
+    # Point compiler and linker at net-snmp and openssl headers/libs
+    ENV.append "LDFLAGS",  "-L#{Formula["net-snmp"].opt_lib}"
+    ENV.append "LDFLAGS",  "-L#{Formula["openssl@3"].opt_lib}"
+    ENV.append "CPPFLAGS", "-I#{Formula["net-snmp"].opt_include}"
+    ENV.append "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include}"
 
-    system "./configure", *args, *std_configure_args
-    system "make"
-    system "make", "install"
-
-    (var/"db/net-snmp").mkpath
-    (var/"log").mkpath
+    # Build and install the Python package into this formula's prefix.
+    # pip's build-system isolation installs swig/setuptools/wheel automatically
+    # via pyproject.toml [build-system].requires before compiling the extension.
+    system python3, "-m", "pip", "install",
+      "--prefix=#{prefix}",
+      "--no-deps",
+      "--no-binary=:all:",
+      buildpath
   end
 
   def caveats
+    python_version = Formula["python@3.12"].version.major_minor
+    site_packages = opt_prefix/"lib/python#{python_version}/site-packages"
     <<~EOS
-      This formula installs the Net-SNMP C libraries and headers required to
-      build and use the ezsnmp Python package.
+      ezsnmp has been installed for Homebrew Python #{python_version}.
 
-      Because this formula is keg-only, you must add its bin directory to your
-      PATH before installing the Python package so that net-snmp-config is found:
+      If `import ezsnmp` fails, add the following to your shell profile
+      (~/.zshrc or ~/.bash_profile) and restart your terminal:
 
-        export PATH="$(brew --prefix ezsnmp)/bin:$PATH"
-        export PATH="$(brew --prefix ezsnmp)/sbin:$PATH"
-
-      Then install the ezsnmp Python package with pip:
-
-        pip install ezsnmp
-
-      You may want to add the PATH export to your shell profile (~/.zshrc or
-      ~/.bash_profile) so it persists across sessions.
+        export PYTHONPATH="#{site_packages}:$PYTHONPATH"
     EOS
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/snmpwalk -V 2>&1")
+    python_version = Formula["python@3.12"].version.major_minor
+    python3 = Formula["python@3.12"].opt_bin/"python3"
+    ENV["PYTHONPATH"] = "#{opt_prefix}/lib/python#{python_version}/site-packages"
+    system python3, "-c", "import ezsnmp"
   end
 end
