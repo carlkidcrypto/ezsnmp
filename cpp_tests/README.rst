@@ -88,8 +88,9 @@ Shimmed Net-SNMP Error Tests
 ============================
 Some error-handling branches in the vendored Net-SNMP sources are extremely hard to hit with a
 real agent (for example, crafted error PDUs that return ``SNMP_ERR_GENERR`` with a valid
-``errindex``). To cover those branches deterministically, we add shim tests that interpose
-``snmp_synch_response`` and return a fabricated response.
+``errindex``, or a ``STAT_SUCCESS`` return with a NULL response pointer). To cover those branches
+deterministically, we add shim tests that interpose ``snmp_synch_response`` and return a
+fabricated response.
 
 Why these shims exist
 =====================
@@ -100,16 +101,33 @@ Why these shims exist
 How the shims work
 ==================
 Each shim test defines a C symbol named ``snmp_synch_response``. During linking, this symbol is
-preferred over the Net-SNMP library version for that test binary only. The shim constructs a
-``netsnmp_pdu`` with ``SNMP_ERR_GENERR`` and a minimal variable list, then returns ``STAT_SUCCESS``.
-The production code under test reads the fake response and raises ``PacketErrorBase``.
+preferred over the Net-SNMP library version for that test binary only.
+
+**Packet error shims** (``test_snmp*_shim.cpp``): The shim constructs a ``netsnmp_pdu`` with
+``SNMP_ERR_GENERR`` and a minimal variable list, then returns ``STAT_SUCCESS``. The production
+code under test reads the fake response and raises ``PacketErrorBase``.
+
+**NULL response shims** (``test_snmp*_null_shim.cpp``): The shim sets ``*response = NULL`` and
+returns ``STAT_SUCCESS``. The production code calls ``snmp_check_null_response()`` which raises
+``PacketErrorBase`` with the message "received NULL response from snmp_synch_response".
 
 Shim test files
 ==============
+Packet error shims:
+
 * ``test_snmpwalk_shim.cpp``
 * ``test_snmpbulkget_shim.cpp``
 * ``test_snmpget_shim.cpp``
 * ``test_snmpgetnext_shim.cpp``
+
+NULL response shims:
+
+* ``test_snmpget_null_shim.cpp``
+* ``test_snmpgetnext_null_shim.cpp``
+* ``test_snmpset_null_shim.cpp``
+* ``test_snmpbulkget_null_shim.cpp``
+* ``test_snmpwalk_null_shim.cpp``
+* ``test_snmpbulkwalk_null_shim.cpp``
 
 Diagram: Shimmed Packet Error Flow
 ==================================
@@ -131,6 +149,21 @@ Diagram: Shimmed Packet Error Flow
         | detects error in packet
         v
       PacketErrorBase thrown
+
+Diagram: NULL Response Shim Flow
+=================================
+.. code-block:: text
+
+    [test_snmp*_null_shim.cpp]
+        |
+        | defines snmp_synch_response()
+        | sets *response = NULL, returns STAT_SUCCESS
+        v
+    [snmpget/snmpgetnext/snmpset/snmpbulkget/snmpwalk/snmpbulkwalk]
+        |
+        | calls snmp_check_null_response(response)
+        v
+      PacketErrorBase thrown ("received NULL response from snmp_synch_response")
 
 ----
 

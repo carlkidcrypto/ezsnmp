@@ -90,3 +90,17 @@ def test_unknown_object_id_error():
     with pytest.raises(UnknownObjectIDError) as exc_info:
         raise UnknownObjectIDError("Test unknown object ID error")
     assert "Test unknown object ID error" in str(exc_info.value)
+
+
+def test_packet_error_null_response_message():
+    """Test PacketError with the specific NULL response message from snmp_check_null_response."""
+    msg = "received NULL response from snmp_synch_response"
+    with pytest.raises(PacketError) as exc_info:
+        raise PacketError(msg)
+    assert msg in str(exc_info.value)
+
+
+def test_packet_error_is_subclass_of_generic_error():
+    """Test PacketError is a subclass of GenericError."""
+    with pytest.raises(GenericError):
+        raise PacketError("received NULL response from snmp_synch_response")

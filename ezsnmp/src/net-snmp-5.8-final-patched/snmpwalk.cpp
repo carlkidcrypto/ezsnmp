@@ -318,6 +318,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
             netsnmp_get_monotonic_clock(&tv_b);
          }
+         snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
              * check resulting variables
