@@ -146,4 +146,16 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen);
  */
 void clear_net_snmp_library_data();
 
+/**
+ * @brief Validates that an SNMP response PDU is not NULL after a successful sync response.
+ *
+ * Even when snmp_synch_response() returns STAT_SUCCESS, the response pointer can be NULL
+ * in certain error conditions (e.g., in multi-threaded environments). Dereferencing a NULL
+ * response causes a SIGSEGV. This function throws PacketErrorBase if response is NULL.
+ *
+ * @param response Pointer to the netsnmp_pdu response to validate.
+ * @throws PacketErrorBase if response is NULL.
+ */
+void snmp_check_null_response(netsnmp_pdu const *response);
+
 #endif // HELPERS_H
