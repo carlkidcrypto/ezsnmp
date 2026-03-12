@@ -107,7 +107,7 @@ def get_homebrew_net_snmp_info():
     # Try both the 'net-snmp' formula (homebrew-core) and the 'ezsnmp' formula
     # (carlkidcrypto/ezsnmp tap), which also provides a net-snmp build.
     formula_name = None
-    brew_output_lines = None
+    brew_output_lines = []
     for candidate in ("net-snmp", "ezsnmp"):
         try:
             brew_output = check_output(
@@ -168,7 +168,7 @@ def get_homebrew_net_snmp_info():
             return None
 
         openssl_info_output = check_output(
-            f"brew info {openssl_version}", shell=True
+            ["brew", "info", openssl_version]
         ).decode()
         openssl_lines = openssl_info_output.splitlines()
 
