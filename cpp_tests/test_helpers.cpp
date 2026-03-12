@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "exceptionsbase.h"
 #include "helpers.h"
 
 class ParseResultsTest : public ::testing::Test {
@@ -625,4 +626,29 @@ TEST_F(ParseResultsTest, TestOIDWithNoDot) {
    EXPECT_EQ(results[0].index, "");
    EXPECT_EQ(results[0].type, "STRING");
    EXPECT_EQ(results[0].value, "Test");
+}
+
+// Tests for snmp_check_null_response
+class SnmpCheckNullResponseTest : public ::testing::Test {};
+
+TEST_F(SnmpCheckNullResponseTest, ThrowsPacketErrorBaseOnNullResponse) {
+   EXPECT_THROW(
+       {
+          try {
+             snmp_check_null_response(nullptr);
+          } catch (PacketErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             throw;
+          }
+       },
+       PacketErrorBase);
+}
+
+TEST_F(SnmpCheckNullResponseTest, NullResponseIsSubclassOfGenericErrorBase) {
+   EXPECT_THROW({ snmp_check_null_response(nullptr); }, GenericErrorBase);
+}
+
+TEST_F(SnmpCheckNullResponseTest, NoThrowOnValidResponse) {
+   netsnmp_pdu pdu{};
+   EXPECT_NO_THROW(snmp_check_null_response(&pdu));
 }
