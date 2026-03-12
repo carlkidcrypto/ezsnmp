@@ -28,7 +28,9 @@ On macOS systems:
 
 .. code-block:: bash
 
-    brew install net-snmp
+    brew tap carlkidcrypto/ezsnmp
+    brew install carlkidcrypto/ezsnmp/ezsnmp
+    export PATH="$(brew --prefix ezsnmp)/bin:$PATH"
 
 Installation via Building net-snmp from Source
 ----------------------------------------------

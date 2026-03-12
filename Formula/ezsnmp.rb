@@ -1,6 +1,6 @@
 class Ezsnmp < Formula
-  desc "Custom Net-SNMP build for EzSnmp testing/development"
-  homepage "http://www.net-snmp.org/"
+  desc "Net-SNMP build providing C libraries and headers for the ezsnmp Python package"
+  homepage "https://github.com/carlkidcrypto/ezsnmp"
   url "https://downloads.sourceforge.net/project/net-snmp/net-snmp/5.9.5.2/net-snmp-5.9.5.2.tar.gz"
   sha256 "16707719f833184a4b72835dac359ae188123b06b5e42817c00790d7dc1384bf"
   license all_of: ["MIT-CMU", "MIT", "BSD-3-Clause"]
@@ -55,6 +55,26 @@ class Ezsnmp < Formula
 
     (var/"db/net-snmp").mkpath
     (var/"log").mkpath
+  end
+
+  def caveats
+    <<~EOS
+      This formula installs the Net-SNMP C libraries and headers required to
+      build and use the ezsnmp Python package.
+
+      Because this formula is keg-only, you must add its bin directory to your
+      PATH before installing the Python package so that net-snmp-config is found:
+
+        export PATH="$(brew --prefix ezsnmp)/bin:$PATH"
+        export PATH="$(brew --prefix ezsnmp)/sbin:$PATH"
+
+      Then install the ezsnmp Python package with pip:
+
+        pip install ezsnmp
+
+      You may want to add the PATH export to your shell profile (~/.zshrc or
+      ~/.bash_profile) so it persists across sessions.
+    EOS
   end
 
   test do

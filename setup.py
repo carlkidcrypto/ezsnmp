@@ -92,6 +92,9 @@ def get_homebrew_net_snmp_info():
     """
     Retrieves net-snmp and its OpenSSL dependency information from Homebrew.
 
+    Checks for net-snmp installed under either the 'net-snmp' formula name (from
+    homebrew-core) or the 'ezsnmp' formula name (from the carlkidcrypto/ezsnmp tap).
+
     Returns:
       tuple or None: A 5-tuple (homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs)
                      if net-snmp is installed via Homebrew, None otherwise (including when Homebrew
@@ -101,15 +104,32 @@ def get_homebrew_net_snmp_info():
     if not homebrew_version:
         return None
 
+    # Try both the 'net-snmp' formula (homebrew-core) and the 'ezsnmp' formula
+    # (carlkidcrypto/ezsnmp tap), which also provides a net-snmp build.
+    formula_name = None
+    brew_output_lines = None
+    for candidate in ("net-snmp", "ezsnmp"):
+        try:
+            brew_output = check_output(
+                ["brew", "list", candidate]
+            ).decode()
+            lines = brew_output.splitlines()
+            if lines:
+                formula_name = candidate
+                brew_output_lines = lines
+                break
+        except CalledProcessError:
+            continue
+
+    if not formula_name or not brew_output_lines:
+        return None
+
     try:
-        brew_output = check_output("brew list net-snmp", shell=True).decode()
-        lines = brew_output.splitlines()
+        lines = brew_output_lines
 
-        if not lines:
-            return None
-
-        # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
-        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)?)/"
+        # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths,
+        # and both 'net-snmp' and 'ezsnmp' formula names in the Cellar)
+        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/(?:net-snmp|ezsnmp)/(\d+\.\d+(?:\.\d+)?)/"
         match = search(pattern, lines[0])
         if not match:
             return None
@@ -131,9 +151,11 @@ def get_homebrew_net_snmp_info():
         if lib_file_path:
             libdirs.append(os.path.dirname(lib_file_path))
 
-        # Get OpenSSL dependency information
+        # Get OpenSSL dependency information using the detected formula name
         # Look for any OpenSSL version (e.g., openssl@3, openssl@1.1, etc.)
-        brew_info_output = check_output("brew info net-snmp", shell=True).decode()
+        brew_info_output = check_output(
+            ["brew", "info", formula_name]
+        ).decode()
         openssl_version = next(
             (
                 line.split()[0]
