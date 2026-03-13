@@ -97,11 +97,14 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
    snmp_add_null_var(pdu, theoid, theoid_len);
 
    status = snmp_synch_response(ss, pdu, &response);
-   if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
-      for (vars = response->variables; vars; vars = vars->next_variable) {
-         numprinted++;
-         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-         str_values.push_back(str_value);
+   if (status == STAT_SUCCESS) {
+      snmp_check_null_response(response);
+      if (response->errstat == SNMP_ERR_NOERROR) {
+         for (vars = response->variables; vars; vars = vars->next_variable) {
+            numprinted++;
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            str_values.push_back(str_value);
+         }
       }
    }
    if (response) {

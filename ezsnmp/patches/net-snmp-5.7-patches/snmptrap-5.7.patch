@@ -142,7 +142,7 @@
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
      size_t          name_length;
-@@ -128,36 +130,41 @@
+@@ -128,36 +130,43 @@
      int             status;
      char           *trap = NULL;
      char           *prognam;
@@ -173,6 +173,8 @@
 +   }
 +
 +   /** parse args (also initializes session) */
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        exit(1);
@@ -195,7 +197,7 @@
      session.callback = snmp_input;
      session.callback_magic = NULL;
  
-@@ -169,10 +176,8 @@
+@@ -169,10 +178,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -208,7 +210,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -196,10 +201,8 @@
+@@ -196,10 +203,8 @@
          /*
           * pick our own engineID 
           */
@@ -221,7 +223,7 @@
          }
  
          /*
-@@ -208,58 +211,57 @@
+@@ -208,58 +213,57 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -302,7 +304,7 @@
              }
              pdu->enterprise = (oid *) malloc(name_length * sizeof(oid));
              memcpy(pdu->enterprise, name, name_length * sizeof(oid));
-@@ -267,47 +269,44 @@
+@@ -267,47 +271,44 @@
          }
          if (++arg >= argc) {
              fprintf(stderr, "Missing agent parameter\n");
@@ -362,7 +364,7 @@
      } else
  #endif
      {
-@@ -317,35 +316,28 @@
+@@ -317,35 +318,28 @@
          pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
          if ( !pdu ) {
              fprintf(stderr, "Failed to create notification PDU\n");
@@ -408,7 +410,7 @@
          }
      }
      arg++;
-@@ -353,40 +345,46 @@
+@@ -353,40 +347,46 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {

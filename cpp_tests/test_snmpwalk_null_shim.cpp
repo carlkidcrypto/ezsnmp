@@ -29,3 +29,19 @@ TEST_F(SnmpWalkNullShimTest, TestNullResponseThrowsPacketError) {
        },
        PacketErrorBase);
 }
+
+TEST_F(SnmpWalkNullShimTest, TestNullResponseWithCiFlagThrowsPacketError) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Ci", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpwalk(args, "testing_walk_null_shim_ci");
+          } catch (PacketErrorBase const &e) {
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             throw;
+          }
+       },
+       PacketErrorBase);
+}
