@@ -174,7 +174,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@26f986d2599c288bb62f623d29c2da98609e9cd4 # v1.6.0
+        uses: MishaKav/pytest-coverage-comment@6b219eafc7094a43abafd1fbd0c6c48de8cc2141 # v1.7.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
