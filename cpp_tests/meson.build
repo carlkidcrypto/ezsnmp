@@ -365,7 +365,12 @@ endif
 # Ensure SNMP MIBs are loaded during tests so that symbolic OID names
 # (e.g. SNMPv2-MIB::sysORDescr) resolve correctly on all platforms.
 test_env.set('MIBS', 'ALL')
-test_env.set('MIBDIRS', '/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf')
+mibdirs_cmd = run_command('net-snmp-config', '--default-mibdirs', check: false)
+if mibdirs_cmd.returncode() == 0 and mibdirs_cmd.stdout().strip() != ''
+  test_env.set('MIBDIRS', mibdirs_cmd.stdout().strip())
+else
+  test_env.set('MIBDIRS', '/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf')
+endif
 
 test('datatypes_test', test_datatypes, env: test_env)
 test('helpers_test', test_helpers, env: test_env)
