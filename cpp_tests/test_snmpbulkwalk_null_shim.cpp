@@ -30,3 +30,19 @@ TEST_F(SnmpBulkWalkNullShimTest, TestNullResponseThrowsPacketError) {
        },
        PacketErrorBase);
 }
+
+TEST_F(SnmpBulkWalkNullShimTest, TestNullResponseWithCiFlagThrowsPacketError) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Ci", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkwalk(args, "testing_bulkwalk_null_shim_ci");
+          } catch (PacketErrorBase const &e) {
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             throw;
+          }
+       },
+       PacketErrorBase);
+}
