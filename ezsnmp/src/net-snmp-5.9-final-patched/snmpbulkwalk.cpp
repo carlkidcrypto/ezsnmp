@@ -203,6 +203,11 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
+   // Reset file-scope defaults for each invocation.
+   snmpbulkwalk_numprinted = 0;
+   snmpbulkwalk_reps = 10;
+   snmpbulkwalk_non_reps = 0;
+
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
                               NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,

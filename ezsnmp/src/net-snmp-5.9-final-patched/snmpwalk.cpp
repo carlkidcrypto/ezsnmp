@@ -191,6 +191,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
+   // Reset file-scope defaults for each invocation.
+   numprinted = 0;
+   end_name = NULL;
+
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
                               NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
 

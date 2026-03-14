@@ -31,3 +31,32 @@ TEST_F(SnmpSetNullShimTest, TestNullResponseThrowsPacketError) {
        },
        PacketErrorBase);
 }
+
+/* -h triggers NETSNMP_PARSE_ARGS_SUCCESS_EXIT path in snmpset(). */
+TEST_F(SnmpSetNullShimTest, TestHelpFlagThrowsParseErrorForSuccessExit) {
+   std::vector<std::string> args = {"-h"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpset(args, "testing_set_null_shim_help");
+          } catch (ParseErrorBase const &e) {
+             std::string msg(e.what());
+             EXPECT_TRUE(msg.find("NETSNMP_PARSE_ARGS_SUCCESS_EXIT") != std::string::npos ||
+                         msg.find("PARSE_ARGS") != std::string::npos ||
+                         msg.find("USAGE") != std::string::npos);
+             throw;
+          }
+       },
+       ParseErrorBase);
+}
+
+/* Missing object name path: arg >= argc should return empty result set. */
+TEST_F(SnmpSetNullShimTest, TestMissingObjectNameReturnsEmptyResults) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
+
+   EXPECT_NO_THROW({
+      auto results = snmpset(args, "testing_set_null_shim_missing_obj");
+      EXPECT_TRUE(results.empty());
+   });
+}
