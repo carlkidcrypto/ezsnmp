@@ -8,17 +8,16 @@
 #include "exceptionsbase.h"
 #include "snmpset.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
-                                   netsnmp_pdu **response) {
+extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
 
    netsnmp_pdu *fake_response = snmp_pdu_create(SNMP_MSG_RESPONSE);
-   fake_response->errstat  = SNMP_ERR_GENERR;
+   fake_response->errstat = SNMP_ERR_GENERR;
    fake_response->errindex = 1;
 
-   oid  name[]  = {1, 3, 6, 1, 2, 1, 1, 6, 0};
-   long value   = 1;
+   oid name[] = {1, 3, 6, 1, 2, 1, 1, 6, 0};
+   long value = 1;
    snmp_varlist_add_variable(&fake_response->variables, name, OID_LENGTH(name), ASN_INTEGER,
                              reinterpret_cast<u_char *>(&value), sizeof(value));
 
@@ -29,14 +28,9 @@ extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
 class SnmpSetShimTest : public ::testing::Test {};
 
 TEST_F(SnmpSetShimTest, TestPacketErrorFromShim) {
-   std::vector<std::string> args = {"-v",
-                                    "2c",
-                                    "-c",
-                                    "public",
-                                    "localhost:11161",
-                                    "SNMPv2-MIB::sysLocation.0",
-                                    "s",
-                                    "test_location"};
+   std::vector<std::string> args = {
+       "-v", "2c",           "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0",
+       "s",  "test_location"};
 
    EXPECT_THROW(
        {

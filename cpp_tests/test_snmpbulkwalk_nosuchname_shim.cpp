@@ -9,13 +9,12 @@
 #include "exceptionsbase.h"
 #include "snmpbulkwalk.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
-                                   netsnmp_pdu **response) {
+extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
 
    netsnmp_pdu *fake_response = snmp_pdu_create(SNMP_MSG_RESPONSE);
-   fake_response->errstat  = SNMP_ERR_NOSUCHNAME;
+   fake_response->errstat = SNMP_ERR_NOSUCHNAME;
    fake_response->errindex = 0;
 
    *response = fake_response;

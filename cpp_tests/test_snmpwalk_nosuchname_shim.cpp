@@ -17,13 +17,12 @@
 #include "exceptionsbase.h"
 #include "snmpwalk.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
-                                   netsnmp_pdu **response) {
+extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
 
    netsnmp_pdu *fake_response = snmp_pdu_create(SNMP_MSG_RESPONSE);
-   fake_response->errstat  = SNMP_ERR_NOSUCHNAME;
+   fake_response->errstat = SNMP_ERR_NOSUCHNAME;
    fake_response->errindex = 0;
 
    *response = fake_response;
@@ -90,9 +89,14 @@ TEST_F(SnmpWalkNoSuchNameShimTest, TestDefaultOidPathWhenNoOidGiven) {
 
 /* -CE end_name: covers the snmp_parse_oid(end_name) block (lines ~259-265). */
 TEST_F(SnmpWalkNoSuchNameShimTest, TestEndNameFlagCoversEndOidParsing) {
-   std::vector<std::string> args = {"-v",           "2c",      "-c",       "public",
-                                    "-CE",           "1.3.6.1.2.1.10",
-                                    "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-CE",
+                                    "1.3.6.1.2.1.10",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysORDescr"};
 
    EXPECT_NO_THROW({
       auto results = snmpwalk(args, "testing_walk_nosuchname_end_name");

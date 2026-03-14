@@ -14,8 +14,7 @@
 
 static int snmpwalk_call_count = 0;
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
-                                   netsnmp_pdu **response) {
+extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
 
@@ -25,19 +24,18 @@ extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
 
    if (snmpwalk_call_count == 1) {
       /* Main walk loop: NOSUCHNAME stops the loop cleanly with numprinted==0. */
-      fake_response->errstat  = SNMP_ERR_NOSUCHNAME;
+      fake_response->errstat = SNMP_ERR_NOSUCHNAME;
       fake_response->errindex = 0;
    } else {
       /* snmpwalk_snmp_get_and_print fallback GET: NOERROR with a single variable so
        * the for-loop body (numprinted++, print_variable_to_string) executes. */
-      fake_response->errstat  = SNMP_ERR_NOERROR;
+      fake_response->errstat = SNMP_ERR_NOERROR;
       fake_response->errindex = 0;
 
-      oid  dummy_name[] = {1, 3, 6, 1, 2, 1, 1, 1, 0};
-      long dummy_value  = 42;
-      snmp_varlist_add_variable(&fake_response->variables, dummy_name,
-                                OID_LENGTH(dummy_name), ASN_INTEGER,
-                                reinterpret_cast<u_char *>(&dummy_value),
+      oid dummy_name[] = {1, 3, 6, 1, 2, 1, 1, 1, 0};
+      long dummy_value = 42;
+      snmp_varlist_add_variable(&fake_response->variables, dummy_name, OID_LENGTH(dummy_name),
+                                ASN_INTEGER, reinterpret_cast<u_char *>(&dummy_value),
                                 sizeof(dummy_value));
    }
 

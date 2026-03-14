@@ -7,8 +7,7 @@
 #include "exceptionsbase.h"
 #include "snmpset.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
-                                   netsnmp_pdu **response) {
+extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
    *response = NULL;
@@ -18,14 +17,9 @@ extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu,
 class SnmpSetTimeoutShimTest : public ::testing::Test {};
 
 TEST_F(SnmpSetTimeoutShimTest, TestTimeoutThrowsTimeoutError) {
-   std::vector<std::string> args = {"-v",
-                                    "2c",
-                                    "-c",
-                                    "public",
-                                    "localhost:11161",
-                                    "SNMPv2-MIB::sysLocation.0",
-                                    "s",
-                                    "test_location"};
+   std::vector<std::string> args = {
+       "-v", "2c",           "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0",
+       "s",  "test_location"};
 
    EXPECT_THROW(
        {
