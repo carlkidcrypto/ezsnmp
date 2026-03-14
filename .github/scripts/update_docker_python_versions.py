@@ -9,10 +9,11 @@ import sys
 from pathlib import Path
 from urllib.request import urlopen
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PYTHON_FTP_INDEX = "https://www.python.org/ftp/python/"
-ARG_VERSION_PATTERN = re.compile(r"^(ARG\s+PYTHON_[A-Z0-9_]+_VERSION=)(\d+\.\d+\.\d+)(\s*(?:#.*)?)$", re.MULTILINE)
+ARG_VERSION_PATTERN = re.compile(
+    r"^(ARG\s+PYTHON_[A-Z0-9_]+_VERSION=)(\d+\.\d+\.\d+)(\s*(?:#.*)?)$", re.MULTILINE
+)
 FTP_VERSION_PATTERN = re.compile(r'href="(\d+\.\d+\.\d+)/"')
 
 
@@ -39,7 +40,9 @@ def fetch_available_versions() -> list[str]:
 
     versions = {match.group(1) for match in FTP_VERSION_PATTERN.finditer(html)}
     if not versions:
-        raise RuntimeError("No CPython versions were discovered from the python.org FTP index")
+        raise RuntimeError(
+            "No CPython versions were discovered from the python.org FTP index"
+        )
     return sorted(versions, key=version_key)
 
 
@@ -55,7 +58,9 @@ def discover_tracked_versions(dockerfiles: list[Path]) -> list[str]:
     tracked_versions: set[str] = set()
     for dockerfile in dockerfiles:
         content = dockerfile.read_text(encoding="utf-8")
-        tracked_versions.update(match.group(2) for match in ARG_VERSION_PATTERN.finditer(content))
+        tracked_versions.update(
+            match.group(2) for match in ARG_VERSION_PATTERN.finditer(content)
+        )
 
     if not tracked_versions:
         raise RuntimeError("No Dockerfile Python ARG versions were found")
@@ -63,7 +68,9 @@ def discover_tracked_versions(dockerfiles: list[Path]) -> list[str]:
     return sorted(tracked_versions, key=version_key)
 
 
-def build_replacement_map(current_versions: list[str], available_versions: list[str]) -> dict[str, str]:
+def build_replacement_map(
+    current_versions: list[str], available_versions: list[str]
+) -> dict[str, str]:
     """Map each tracked Python patch version to the latest published patch for its minor line.
 
     :param current_versions: The currently pinned Docker Python patch versions.
@@ -77,7 +84,9 @@ def build_replacement_map(current_versions: list[str], available_versions: list[
     replacements: dict[str, str] = {}
     for current_version in current_versions:
         minor = ".".join(current_version.split(".")[:2])
-        candidates = [version for version in available_versions if version.startswith(f"{minor}.")]
+        candidates = [
+            version for version in available_versions if version.startswith(f"{minor}.")
+        ]
         if not candidates:
             raise RuntimeError(f"No published CPython releases found for {minor}")
 
@@ -87,13 +96,14 @@ def build_replacement_map(current_versions: list[str], available_versions: list[
     return replacements
 
 
-def target_files() -> list[Path]:
+def target_files(dockerfiles: list[Path]) -> list[Path]:
     """Return every tracked file that should change when Docker Python patch versions change.
 
+    :param dockerfiles: A list of Dockerfiles to include.
+    :type dockerfiles: list[pathlib.Path]
     :return: Dockerfiles, Docker READMEs, and the cache download script.
     :rtype: list[pathlib.Path]
     """
-    dockerfiles = sorted(REPO_ROOT.glob("docker/**/Dockerfile"))
     readmes = sorted(REPO_ROOT.glob("docker/**/README.rst"))
     cache_script = REPO_ROOT / "docker/cache/download_build_cache.sh"
     return dockerfiles + readmes + [cache_script]
@@ -114,7 +124,9 @@ def apply_replacements(path: Path, replacements: dict[str, str], write: bool) ->
     original = path.read_text(encoding="utf-8")
     updated = original
 
-    for old_version, new_version in replacements.items():
+    for old_version, new_version in sorted(
+        replacements.items(), key=lambda item: len(item[0]), reverse=True
+    ):
         if old_version == new_version:
             continue
         updated = updated.replace(old_version, new_version)
@@ -148,13 +160,17 @@ def main() -> int:
     replacements = build_replacement_map(current_versions, available_versions)
 
     changed_files: list[Path] = []
-    for path in target_files():
+    for path in target_files(dockerfiles):
         if apply_replacements(path, replacements, write=args.write):
             changed_files.append(path)
 
     print("Tracked Python patch versions:")
     for old_version, new_version in replacements.items():
-        status = "up-to-date" if old_version == new_version else f"update available -> {new_version}"
+        status = (
+            "up-to-date"
+            if old_version == new_version
+            else f"update available -> {new_version}"
+        )
         print(f"  {old_version}: {status}")
 
     if changed_files:
