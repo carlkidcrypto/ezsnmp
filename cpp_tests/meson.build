@@ -353,6 +353,176 @@ test_snmpbulkwalk_null_shim = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+# ----- New shim executables for coverage improvement -----
+
+test_snmpwalk_timeout_shim = executable(
+    'test_snmpwalk_timeout_shim',
+    [
+        'test_snmpwalk_timeout_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpwalk_nosuchname_shim = executable(
+    'test_snmpwalk_nosuchname_shim',
+    [
+        'test_snmpwalk_nosuchname_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpwalk_get_and_print_shim = executable(
+    'test_snmpwalk_get_and_print_shim',
+    [
+        'test_snmpwalk_get_and_print_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpwalk_with_data_shim = executable(
+    'test_snmpwalk_with_data_shim',
+    [
+        'test_snmpwalk_with_data_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkwalk_timeout_shim = executable(
+    'test_snmpbulkwalk_timeout_shim',
+    [
+        'test_snmpbulkwalk_timeout_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkwalk_nosuchname_shim = executable(
+    'test_snmpbulkwalk_nosuchname_shim',
+    [
+        'test_snmpbulkwalk_nosuchname_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkwalk_get_and_print_shim = executable(
+    'test_snmpbulkwalk_get_and_print_shim',
+    [
+        'test_snmpbulkwalk_get_and_print_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkwalk.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpbulkget_timeout_shim = executable(
+    'test_snmpbulkget_timeout_shim',
+    [
+        'test_snmpbulkget_timeout_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpbulkget.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpget_timeout_shim = executable(
+    'test_snmpget_timeout_shim',
+    [
+        'test_snmpget_timeout_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpget.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpgetnext_timeout_shim = executable(
+    'test_snmpgetnext_timeout_shim',
+    [
+        'test_snmpgetnext_timeout_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpgetnext.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpset_shim = executable(
+    'test_snmpset_shim',
+    [
+        'test_snmpset_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpset.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_snmpset_timeout_shim = executable(
+    'test_snmpset_timeout_shim',
+    [
+        'test_snmpset_timeout_shim.cpp',
+        join_paths(snmp_source_dir, 'snmpset.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 # Register tests
 # For net-snmp 5.7, disable malloc perturbation to avoid false positives
 # with glibc's strict malloc checking (incompatible with net-snmp 5.7's memory patterns)
@@ -395,3 +565,17 @@ test('snmpbulkwalk_test', test_snmpbulkwalk, env: test_env)
 test('snmpbulkwalk_shim_test', test_snmpbulkwalk_shim, env: test_env)
 test('snmpbulkwalk_null_shim_test', test_snmpbulkwalk_null_shim, env: test_env)
 test('exceptionsbase_test', test_exceptionsbase, env: test_env)
+
+# New shim tests for coverage improvement
+test('snmpwalk_timeout_shim_test', test_snmpwalk_timeout_shim, env: test_env)
+test('snmpwalk_nosuchname_shim_test', test_snmpwalk_nosuchname_shim, env: test_env)
+test('snmpwalk_get_and_print_shim_test', test_snmpwalk_get_and_print_shim, env: test_env)
+test('snmpwalk_with_data_shim_test', test_snmpwalk_with_data_shim, env: test_env)
+test('snmpbulkwalk_timeout_shim_test', test_snmpbulkwalk_timeout_shim, env: test_env)
+test('snmpbulkwalk_nosuchname_shim_test', test_snmpbulkwalk_nosuchname_shim, env: test_env)
+test('snmpbulkwalk_get_and_print_shim_test', test_snmpbulkwalk_get_and_print_shim, env: test_env)
+test('snmpbulkget_timeout_shim_test', test_snmpbulkget_timeout_shim, env: test_env)
+test('snmpget_timeout_shim_test', test_snmpget_timeout_shim, env: test_env)
+test('snmpgetnext_timeout_shim_test', test_snmpgetnext_timeout_shim, env: test_env)
+test('snmpset_shim_test', test_snmpset_shim, env: test_env)
+test('snmpset_timeout_shim_test', test_snmpset_timeout_shim, env: test_env)
