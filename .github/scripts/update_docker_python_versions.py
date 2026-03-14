@@ -17,10 +17,23 @@ FTP_VERSION_PATTERN = re.compile(r'href="(\d+\.\d+\.\d+)/"')
 
 
 def version_key(version: str) -> tuple[int, int, int]:
+    """Convert a dotted Python version into a sortable integer tuple.
+
+    :param version: The dotted CPython version string.
+    :type version: str
+    :return: A tuple suitable for semantic version ordering.
+    :rtype: tuple[int, int, int]
+    """
     return tuple(int(part) for part in version.split("."))
 
 
 def fetch_available_versions() -> list[str]:
+    """Fetch all published CPython patch releases from the python.org FTP index.
+
+    :return: All discovered CPython release directories, sorted by version.
+    :rtype: list[str]
+    :raises RuntimeError: If no version directories are discovered.
+    """
     with urlopen(PYTHON_FTP_INDEX, timeout=30) as response:
         html = response.read().decode("utf-8")
 
@@ -31,6 +44,14 @@ def fetch_available_versions() -> list[str]:
 
 
 def discover_tracked_versions(dockerfiles: list[Path]) -> list[str]:
+    """Collect the Python patch versions currently tracked by Dockerfile ARGs.
+
+    :param dockerfiles: Dockerfiles that define `PYTHON_*_VERSION` build arguments.
+    :type dockerfiles: list[pathlib.Path]
+    :return: The unique tracked patch versions sorted in ascending order.
+    :rtype: list[str]
+    :raises RuntimeError: If no Dockerfile Python ARG versions are found.
+    """
     tracked_versions: set[str] = set()
     for dockerfile in dockerfiles:
         content = dockerfile.read_text(encoding="utf-8")
@@ -43,6 +64,16 @@ def discover_tracked_versions(dockerfiles: list[Path]) -> list[str]:
 
 
 def build_replacement_map(current_versions: list[str], available_versions: list[str]) -> dict[str, str]:
+    """Map each tracked Python patch version to the latest published patch for its minor line.
+
+    :param current_versions: The currently pinned Docker Python patch versions.
+    :type current_versions: list[str]
+    :param available_versions: All published CPython patch versions discovered upstream.
+    :type available_versions: list[str]
+    :return: A mapping from the current patch version to the latest available patch version.
+    :rtype: dict[str, str]
+    :raises RuntimeError: If an expected minor version line is missing upstream.
+    """
     replacements: dict[str, str] = {}
     for current_version in current_versions:
         minor = ".".join(current_version.split(".")[:2])
@@ -57,6 +88,11 @@ def build_replacement_map(current_versions: list[str], available_versions: list[
 
 
 def target_files() -> list[Path]:
+    """Return every tracked file that should change when Docker Python patch versions change.
+
+    :return: Dockerfiles, Docker READMEs, and the cache download script.
+    :rtype: list[pathlib.Path]
+    """
     dockerfiles = sorted(REPO_ROOT.glob("docker/**/Dockerfile"))
     readmes = sorted(REPO_ROOT.glob("docker/**/README.rst"))
     cache_script = REPO_ROOT / "docker/cache/download_build_cache.sh"
@@ -64,6 +100,17 @@ def target_files() -> list[Path]:
 
 
 def apply_replacements(path: Path, replacements: dict[str, str], write: bool) -> bool:
+    """Apply version substitutions to a single tracked file.
+
+    :param path: The file to inspect and optionally update.
+    :type path: pathlib.Path
+    :param replacements: Mapping of existing patch versions to replacement versions.
+    :type replacements: dict[str, str]
+    :param write: Whether to persist the updated content to disk.
+    :type write: bool
+    :return: `True` if the file content changed, otherwise `False`.
+    :rtype: bool
+    """
     original = path.read_text(encoding="utf-8")
     updated = original
 
@@ -82,6 +129,11 @@ def apply_replacements(path: Path, replacements: dict[str, str], write: bool) ->
 
 
 def main() -> int:
+    """Run the Docker Python patch version updater CLI.
+
+    :return: Process exit status code.
+    :rtype: int
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--write",
