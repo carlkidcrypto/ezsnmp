@@ -1,6 +1,16 @@
-Last Updated: 2026-03-08 17:47:39 UTC
+Last Updated: 2026-03-12 03:20:00 UTC
 
 # Changelog
+
+
+<a name="v2.2.0b0"></a>
+## [v2.2.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0a2...v2.2.0b0) (2026-03-12)
+
+
+### Bug Fixes
+
+- Fix NULL pointer dereference in `snmpwalk`/`snmpbulkwalk` early-call helper functions missing `snmp_check_null_response()` (#710 follow-up)
+- Add missing `test_snmpbulkwalk_shim.cpp` and `-Ci` null-shim test cases for 100% C++ branch coverage
 
 
 <a name="v2.2.0a2"></a>
