@@ -208,6 +208,12 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    snmpbulkwalk_reps = 10;
    snmpbulkwalk_non_reps = 0;
 
+   // Reset application-level walk flags for each invocation.
+   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);
+   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS, 0);
+   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC,
+                          0);
+
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
                               NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,

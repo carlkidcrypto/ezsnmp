@@ -6,6 +6,8 @@
 #include "exceptionsbase.h"
 #include "snmpbulkwalk.h"
 
+void snmpbulkwalk_usage(void);
+
 extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
    (void)ss;
    (void)pdu;
@@ -100,4 +102,9 @@ TEST_F(SnmpBulkWalkNullShimTest, TestHelpFlagThrowsParseErrorForSuccessExit) {
           }
        },
        ParseErrorBase);
+}
+
+/* Direct usage call covers snmpbulkwalk_usage() function body lines. */
+TEST_F(SnmpBulkWalkNullShimTest, TestUsageFunctionDirectCallNoThrow) {
+   EXPECT_NO_THROW({ snmpbulkwalk_usage(); });
 }

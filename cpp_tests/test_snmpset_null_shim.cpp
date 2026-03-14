@@ -60,3 +60,17 @@ TEST_F(SnmpSetNullShimTest, TestMissingObjectNameReturnsEmptyResults) {
       EXPECT_TRUE(results.empty());
    });
 }
+
+/* Too-many-assignments path: (argc-arg) > 3*SNMP_MAX_CMDLINE_OIDS should return empty results. */
+TEST_F(SnmpSetNullShimTest, TestTooManyAssignmentsReturnsEmptyResults) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
+
+   for (int i = 0; i < (3 * SNMP_MAX_CMDLINE_OIDS) + 1; ++i) {
+      args.push_back("dummy");
+   }
+
+   EXPECT_NO_THROW({
+      auto results = snmpset(args, "testing_set_null_shim_too_many_assignments");
+      EXPECT_TRUE(results.empty());
+   });
+}
