@@ -4,5 +4,11 @@ relative_files = True
 parallel = True
 omit = */python_tests/*,*/tests/*,*/test_*
 
+[paths]
+source =
+    ezsnmp/
+    */site-packages/ezsnmp/
+    */dist-packages/ezsnmp/
+
 [report]
 omit = */python_tests/*,*/tests/*,*/test_*
