@@ -363,12 +363,12 @@ common_shim_sources = [
 ]
 
 new_shim_tests_map = {
-    'snmpwalk': ['_timeout', '_nosuchname', '_get_and_print', '_with_data', '_parse_args'],
-    'snmpbulkwalk': ['_timeout', '_nosuchname', '_get_and_print', '_with_data', '_parse_args'],
-    'snmpbulkget': ['_timeout', '_parse_args'],
-    'snmpget': ['_timeout', '_parse_args'],
-    'snmpgetnext': ['_timeout', '_parse_args'],
-    'snmpset': ['', '_timeout', '_parse_args'],
+    'snmpwalk': ['_timeout', '_nosuchname', '_get_and_print', '_with_data', '_parse_args', '_stat_error'],
+    'snmpbulkwalk': ['_timeout', '_nosuchname', '_get_and_print', '_with_data', '_parse_args', '_stat_error'],
+    'snmpbulkget': ['_timeout', '_parse_args', '_stat_error'],
+    'snmpget': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
+    'snmpgetnext': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
+    'snmpset': ['', '_timeout', '_parse_args', '_stat_error'],
 }
 
 new_shim_executables = {}
