@@ -141,7 +141,7 @@
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
      size_t          name_length;
-@@ -136,26 +139,28 @@
+@@ -136,26 +139,30 @@
      SOCK_STARTUP;
  
      prognam = strrchr(argv[0], '/');
@@ -162,6 +162,8 @@
  
      /** parse args (also initializes session) */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
@@ -179,7 +181,7 @@
      default:
          break;
      }
-@@ -171,10 +176,8 @@
+@@ -171,10 +178,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -192,7 +194,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -198,10 +201,8 @@
+@@ -198,10 +203,8 @@
          /*
           * pick our own engineID 
           */
@@ -205,7 +207,7 @@
          }
  
          /*
-@@ -210,24 +211,24 @@
+@@ -210,24 +213,24 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -238,7 +240,7 @@
          goto out;
      }
  
-@@ -245,29 +246,30 @@
+@@ -245,29 +248,30 @@
          pdu_in_addr_t = (in_addr_t *) pdu->agent_addr;
          if (arg == argc) {
              fprintf(stderr, "No enterprise oid\n");
@@ -277,7 +279,7 @@
              goto out;
          }
          agent = argv[arg];
-@@ -282,28 +284,29 @@
+@@ -282,28 +286,29 @@
          }
          if (++arg == argc) {
              fprintf(stderr, "Missing generic-trap parameter\n");
@@ -312,7 +314,7 @@
      } else
  #endif
      {
-@@ -317,26 +320,23 @@
+@@ -317,26 +322,23 @@
          }
          if (arg == argc) {
              fprintf(stderr, "Missing up-time parameter\n");
@@ -345,7 +347,7 @@
              goto out;
          }
      }
-@@ -345,42 +345,46 @@
+@@ -345,42 +347,46 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
