@@ -134,6 +134,13 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /* Reset application-local quiet flag so subsequent calls behave normally. */
    quiet = 0;
 
+   auto cleanup_and_return_empty = [&]() {
+      netsnmp_cleanup_session(&session);
+      clear_net_snmp_library_data();
+      SOCK_CLEANUP;
+      return parse_results(return_vector);
+   };
+
    SOCK_STARTUP;
 
    putenv(strdup("POSIXLY_CORRECT=1"));
@@ -160,19 +167,13 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    if (arg >= argc) {
       fprintf(stderr, "Missing object name\n");
       snmpset_usage();
-      netsnmp_cleanup_session(&session);
-      clear_net_snmp_library_data();
-      SOCK_CLEANUP;
-      return parse_results(return_vector);
+      return cleanup_and_return_empty();
    }
    if ((argc - arg) > 3 * SNMP_MAX_CMDLINE_OIDS) {
       fprintf(stderr, "Too many assignments specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
       snmpset_usage();
-      netsnmp_cleanup_session(&session);
-      clear_net_snmp_library_data();
-      SOCK_CLEANUP;
-      return parse_results(return_vector);
+      return cleanup_and_return_empty();
    }
 
    /*
@@ -206,26 +207,17 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                break;
             default:
                fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-               netsnmp_cleanup_session(&session);
-               clear_net_snmp_library_data();
-               SOCK_CLEANUP;
-               return parse_results(return_vector);
+               return cleanup_and_return_empty();
          }
       } else {
          fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
-         netsnmp_cleanup_session(&session);
-         clear_net_snmp_library_data();
-         SOCK_CLEANUP;
-         return parse_results(return_vector);
+         return cleanup_and_return_empty();
       }
       if (arg < argc) {
          values[current_value++] = argv[arg];
       } else {
          fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
-         netsnmp_cleanup_session(&session);
-         clear_net_snmp_library_data();
-         SOCK_CLEANUP;
-         return parse_results(return_vector);
+         return cleanup_and_return_empty();
       }
    }
 
