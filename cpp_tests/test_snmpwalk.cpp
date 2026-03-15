@@ -32,8 +32,8 @@ TEST_F(SnmpWalkTest, TestMissingOid) {
    // With a running SNMP server, this succeeds and returns results
    // The behavior is valid - just verify it completes
    auto results = snmpwalk(args, "testing");
-   // Results should contain data from the SNMP server
-   EXPECT_TRUE(results.size() >= 0);
+   (void)results;
+   SUCCEED();
 }
 
 TEST_F(SnmpWalkTest, TestInvalidOid) {

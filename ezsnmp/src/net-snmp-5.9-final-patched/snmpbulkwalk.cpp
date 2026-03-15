@@ -124,7 +124,7 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
    return str_values;
 }
 
-void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
+void snmpbulkwalk_optProc(int, char *const *, int opt) {
    char *endptr = NULL;
 
    switch (opt) {
@@ -157,9 +157,6 @@ void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
                                           " option\n");
                   } else {
                      optarg = endptr;
-                     if (isspace((unsigned char)(*optarg))) {
-                        return;
-                     }
                   }
                   break;
 
@@ -252,7 +249,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
          std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
          if (snmp_parse_oid(argv[arg], root, &rootlen) == NULL) {
             snmp_perror_exception(argv[arg]);
-            return parse_results(return_vector);
          }
       }
    } else {
@@ -272,7 +268,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpbulkwalk", &session);
-      return parse_results(return_vector);
    }
 
    /*

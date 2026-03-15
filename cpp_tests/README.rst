@@ -47,6 +47,19 @@ Usage
 For detailed instructions on building and running C++ tests, please refer to the 
 `Development Guide <../sphinx_docs_build/source/development.rst>`_.
 
+Build Flags for Strict CI
+=========================
+The Meson project in this directory supports two optional build flags:
+
+* ``-Dstrict_warnings=true``: enables strict warning levels and treats warnings as errors.
+* ``-Dcheck_unreachable_code=true``: enables compiler diagnostics for unreachable/unhittable code
+    paths when supported by the active compiler.
+
+Example::
+
+        meson setup build --reconfigure -Dstrict_warnings=true -Dcheck_unreachable_code=true
+        ninja -C build
+
 Prerequisites
 =============
 To run these tests, you need:

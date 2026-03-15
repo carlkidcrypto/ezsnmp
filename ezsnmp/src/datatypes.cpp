@@ -35,8 +35,6 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
          if (value.empty()) {
             return type + " Conversion Error: Empty value for numeric type";
          }
-         // Fallback to direct value if no specific pattern matched and it's not empty
-         numeric_str = value;
       }
       try {
          return stox_func(numeric_str);
@@ -72,10 +70,7 @@ Result::ConvertedValue Result::_make_converted_value(std::string const& type,
          unsigned int byte_value;
          std::stringstream converter;
          converter << std::hex << byte_str;
-         if (!(converter >> byte_value)) {
-            // This should not be reached given the validation above, but is a safeguard.
-            return type + " Conversion Error: Unexpected conversion failure for '" + byte_str + "'";
-         }
+         converter >> byte_value;
          byte_vector.push_back(static_cast<unsigned char>(byte_value));
       }
       return byte_vector;

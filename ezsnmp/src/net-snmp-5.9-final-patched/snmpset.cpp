@@ -89,7 +89,7 @@ void snmpset_usage(void) {
 
 static int quiet = 0;
 
-void snmpset_optProc(int argc, char *const *argv, int opt) {
+void snmpset_optProc(int, char *const *, int opt) {
    switch (opt) {
       case 'C':
          while (*optarg) {
@@ -131,7 +131,6 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    oid name[MAX_OID_LEN];
    size_t name_length;
    int status;
-   int failures = 0;
    /* Reset application-local quiet flag so subsequent calls behave normally. */
    quiet = 0;
 
@@ -224,7 +223,6 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpset", &session);
-      goto out;
    }
 
    /*
@@ -237,16 +235,10 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
             snmp_perror_exception(names[count]);
-            failures++;
          } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
             snmp_perror_exception(names[count]);
-            failures++;
          }
       }
-   }
-
-   if (failures) {
-      goto out;
    }
 
    /*

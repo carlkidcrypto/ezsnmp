@@ -1,5 +1,31 @@
 project('ezsnmp_tests', 'cpp', version: '2.2.0b0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
+cpp_compiler = meson.get_compiler('cpp')
+cpp_warning_args = []
+
+if get_option('strict_warnings')
+    cpp_warning_args += ['-Wall', '-Wextra', '-Wpedantic', '-Werror']
+endif
+
+if get_option('check_unreachable_code')
+    foreach arg : [
+        '-Wunreachable-code',
+        '-Wunreachable-code-return',
+        '-Wunreachable-code-break',
+        '-Wunreachable-code-aggressive',
+        '-Wswitch-unreachable',
+    ]
+        if cpp_compiler.has_argument(arg)
+            cpp_warning_args += [arg]
+        endif
+    endforeach
+endif
+
+if cpp_warning_args.length() > 0
+    message('Applying extra C++ warning flags: @0@'.format(' '.join(cpp_warning_args)))
+    add_project_arguments(cpp_warning_args, language: 'cpp')
+endif
+
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
@@ -255,6 +281,32 @@ test_exceptionsbase = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_helpers_session_perror_shim = executable(
+    'test_helpers_session_perror_shim',
+    [
+        'test_helpers_session_perror_shim.cpp',
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_helpers_branches_shim = executable(
+    'test_helpers_branches_shim',
+    [
+        'test_helpers_branches_shim.cpp',
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpget_null_shim = executable(
     'test_snmpget_null_shim',
     [
@@ -429,6 +481,8 @@ test('snmpbulkwalk_test', test_snmpbulkwalk, env: test_env)
 test('snmpbulkwalk_shim_test', test_snmpbulkwalk_shim, env: test_env)
 test('snmpbulkwalk_null_shim_test', test_snmpbulkwalk_null_shim, env: test_env)
 test('exceptionsbase_test', test_exceptionsbase, env: test_env)
+test('helpers_session_perror_shim_test', test_helpers_session_perror_shim, env: test_env)
+test('helpers_branches_shim_test', test_helpers_branches_shim, env: test_env)
 
 # New shim tests for coverage improvement
 foreach test_name, exe : new_shim_executables

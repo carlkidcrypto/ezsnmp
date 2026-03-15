@@ -114,7 +114,7 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
    return str_values;
 }
 
-void snmpwalk_optProc(int argc, char *const *argv, int opt) {
+void snmpwalk_optProc(int, char *const *argv, int opt) {
    switch (opt) {
       case 'C':
          while (*optarg) {

@@ -969,6 +969,13 @@ TEST_F(SessionBaseTest, TestBulkWalkVectorOverloadEmptyMibs) {
    EXPECT_FALSE(results.empty());
 }
 
+TEST_F(SessionBaseTest, TestBulkWalkVectorOverloadSingleMib) {
+   SessionBase session("localhost", "11161", "2c", "public");
+   std::vector<std::string> mibs = {"SNMPv2-MIB::sysORDescr"};
+   auto results = session.bulk_walk(mibs);
+   EXPECT_FALSE(results.empty());
+}
+
 TEST_F(SessionBaseTest, TestGetEmptyMib) {
    SessionBase session("localhost", "11161", "2c", "public");
    // Getting an empty MIB now throws an exception as expected
