@@ -51,13 +51,13 @@ Build Flags for Strict CI
 =========================
 The Meson project in this directory supports two optional build flags:
 
-* ``-Dstrict_warnings=true``: enables strict warning levels and treats warnings as errors.
+* ``-Dstrict_warnings=true``: requires Meson's native strict warning settings.
 * ``-Dcheck_unreachable_code=true``: enables compiler diagnostics for unreachable/unhittable code
     paths when supported by the active compiler.
 
 Example::
 
-        meson setup build --reconfigure -Dstrict_warnings=true -Dcheck_unreachable_code=true
+    meson setup build --reconfigure -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true
         ninja -C build
 
 Prerequisites

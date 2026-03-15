@@ -2,7 +2,7 @@ option(
   'strict_warnings',
   type: 'boolean',
   value: false,
-  description: 'Enable strict warnings and treat all warnings as errors'
+  description: 'Require Meson native strict warning settings (-Dwarning_level=3 and -Dwerror=true)'
 )
 
 option(

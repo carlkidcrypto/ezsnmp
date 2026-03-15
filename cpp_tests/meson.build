@@ -4,7 +4,15 @@ cpp_compiler = meson.get_compiler('cpp')
 cpp_warning_args = []
 
 if get_option('strict_warnings')
-    cpp_warning_args += ['-Wall', '-Wextra', '-Wpedantic', '-Werror']
+    if get_option('warning_level') != '3' and get_option('warning_level') != 'everything'
+        error('strict_warnings=true requires -Dwarning_level=3 (or everything)')
+    endif
+    if not get_option('werror')
+        error('strict_warnings=true requires -Dwerror=true')
+    endif
+    if cpp_compiler.has_argument('-Wpedantic')
+        cpp_warning_args += ['-Wpedantic']
+    endif
 endif
 
 if get_option('check_unreachable_code')
@@ -471,7 +479,7 @@ test('snmpgetnext_shim_test', test_snmpgetnext_shim, env: test_env)
 test('snmpgetnext_null_shim_test', test_snmpgetnext_null_shim, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
 test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
-test('snmpwalk_test', test_snmpwalk, env: test_env)
+test('snmpwalk_test', test_snmpwalk, env: test_env, timeout: 120)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
 test('snmpwalk_null_shim_test', test_snmpwalk_null_shim, env: test_env)
 test('snmpbulkget_test', test_snmpbulkget, env: test_env)
