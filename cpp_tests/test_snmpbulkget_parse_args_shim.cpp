@@ -8,10 +8,10 @@
 static int g_parse_args_result = NETSNMP_PARSE_ARGS_ERROR;
 
 extern "C" int snmp_parse_args(int argc,
-                                char **argv,
-                                netsnmp_session *session,
-                                const char *localOpts,
-                                void (*proc)(int, char *const *, int)) {
+                               char **argv,
+                               netsnmp_session *session,
+                               char const *localOpts,
+                               void (*proc)(int, char *const *, int)) {
    (void)argc;
    (void)argv;
    (void)session;

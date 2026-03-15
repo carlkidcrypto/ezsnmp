@@ -34,9 +34,16 @@ TEST_F(SnmpBulkGetNullShimTest, TestNullResponseThrowsPacketError) {
 
 /* -Cn2: covers the non-repeaters numeric parsing branch in snmpbulkget_optProc. */
 TEST_F(SnmpBulkGetNullShimTest, TestNonRepeatersFlagCoversNumericParsing) {
-   std::vector<std::string> args = {
-   "-v", "2c", "-c", "public", "-C", "n2", "localhost:11161", "SNMPv2-MIB::sysORDescr",
-   "SNMPv2-MIB::sysDescr.0", "SNMPv2-MIB::sysName.0"};
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-C",
+                                    "n2",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysORDescr",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "SNMPv2-MIB::sysName.0"};
 
    EXPECT_THROW(
        {
@@ -52,9 +59,16 @@ TEST_F(SnmpBulkGetNullShimTest, TestNonRepeatersFlagCoversNumericParsing) {
 
 /* -Cr5: covers the max-repeaters numeric parsing branch in snmpbulkget_optProc. */
 TEST_F(SnmpBulkGetNullShimTest, TestMaxRepeatersFlagCoversNumericParsing) {
-   std::vector<std::string> args = {
-   "-v", "2c", "-c", "public", "-C", "r5", "localhost:11161", "SNMPv2-MIB::sysORDescr",
-   "SNMPv2-MIB::sysDescr.0", "SNMPv2-MIB::sysName.0"};
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-C",
+                                    "r5",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysORDescr",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "SNMPv2-MIB::sysName.0"};
 
    EXPECT_THROW(
        {
@@ -68,10 +82,21 @@ TEST_F(SnmpBulkGetNullShimTest, TestMaxRepeatersFlagCoversNumericParsing) {
        PacketErrorBase);
 }
 
+/* Covers names < non_repeaters early return branch in snmpbulkget(). */
+TEST_F(SnmpBulkGetNullShimTest, TestNonRepeatersGreaterThanNamesReturnsEmpty) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-C", "n2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+
+   EXPECT_NO_THROW({
+      auto results = snmpbulkget(args, "testing_bulkget_null_shim_nonrep_too_high");
+      EXPECT_TRUE(results.empty());
+   });
+}
+
 /* Unknown -C sub-flag: snmpbulkget_optProc default case throws ParseErrorBase. */
 TEST_F(SnmpBulkGetNullShimTest, TestUnknownCFlagThrowsParseError) {
    std::vector<std::string> args = {
-   "-v", "2c", "-c", "public", "-C", "Z", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
+       "-v", "2c", "-c", "public", "-C", "Z", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
 
    EXPECT_THROW(
        {

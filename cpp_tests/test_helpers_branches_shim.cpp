@@ -62,16 +62,17 @@ extern "C" char *strdup(char const *src) {
 }
 
 extern "C" int sprint_realloc_variable(u_char **buf,
-                                         size_t *buf_len,
-                                         size_t *out_len,
-                                         int,
-                                         oid const *,
-                                         size_t,
-                                         netsnmp_variable_list const *) {
+                                       size_t *buf_len,
+                                       size_t *out_len,
+                                       int,
+                                       oid const *,
+                                       size_t,
+                                       netsnmp_variable_list const *) {
    char const *text = g_force_sprint_variable_fail ? "partial" : "ok";
    size_t const need = std::strlen(text);
 
-   if (buf == nullptr || *buf == nullptr || buf_len == nullptr || *buf_len <= need || out_len == nullptr) {
+   if (buf == nullptr || *buf == nullptr || buf_len == nullptr || *buf_len <= need ||
+       out_len == nullptr) {
       return 0;
    }
 
@@ -82,17 +83,13 @@ extern "C" int sprint_realloc_variable(u_char **buf,
    return g_force_sprint_variable_fail ? 0 : 1;
 }
 
-extern "C" struct tree *netsnmp_sprint_realloc_objid_tree(u_char **buf,
-                                                            size_t *buf_len,
-                                                            size_t *out_len,
-                                                            int,
-                                                            int *buf_overflow,
-                                                            oid const *,
-                                                            size_t) {
+extern "C" struct tree *netsnmp_sprint_realloc_objid_tree(
+    u_char **buf, size_t *buf_len, size_t *out_len, int, int *buf_overflow, oid const *, size_t) {
    char const *text = "obj";
    size_t const need = std::strlen(text);
 
-   if (buf != nullptr && *buf != nullptr && buf_len != nullptr && *buf_len > need && out_len != nullptr) {
+   if (buf != nullptr && *buf != nullptr && buf_len != nullptr && *buf_len > need &&
+       out_len != nullptr) {
       std::memcpy(*buf, text, need);
       (*buf)[need] = '\0';
       *out_len = need;
@@ -105,9 +102,7 @@ extern "C" struct tree *netsnmp_sprint_realloc_objid_tree(u_char **buf,
    return nullptr;
 }
 
-extern "C" usmUser *usm_get_userList(void) {
-   return g_user_list;
-}
+extern "C" usmUser *usm_get_userList(void) { return g_user_list; }
 
 extern "C" usmUser *usm_remove_user(usmUser *user) {
    ++g_usm_remove_calls;
@@ -121,13 +116,9 @@ extern "C" usmUser *usm_free_user(usmUser *user) {
 
 class HelpersBranchesShimTest : public ::testing::Test {
   protected:
-   void SetUp() override {
-      reset_shim_state();
-   }
+   void SetUp() override { reset_shim_state(); }
 
-   void TearDown() override {
-      reset_shim_state();
-   }
+   void TearDown() override { reset_shim_state(); }
 };
 
 TEST_F(HelpersBranchesShimTest, PrintVariableToStringCoversTruncatedAndAllocFail) {
@@ -154,6 +145,14 @@ TEST_F(HelpersBranchesShimTest, ParseResultRegexFallbackBranch) {
    EXPECT_EQ(result.index, "");
    EXPECT_EQ(result.type, "STRING");
    EXPECT_EQ(result.value, "value");
+}
+
+TEST_F(HelpersBranchesShimTest, ParseResultCoversOidIndexReBranch) {
+   auto result = parse_result(".1.3.6.1.2.1. = INTEGER: 7");
+   EXPECT_EQ(result.oid, ".1.3.6.1.2.1.");
+   EXPECT_EQ(result.index, "");
+   EXPECT_EQ(result.type, "INTEGER");
+   EXPECT_EQ(result.value, "7");
 }
 
 TEST_F(HelpersBranchesShimTest, RemoveV3UserFromCacheCoversBothRemovalBranches) {

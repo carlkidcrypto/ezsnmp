@@ -8,9 +8,9 @@
 static std::string g_error_message = "generic error";
 
 extern "C" void snmp_error(netsnmp_session *session,
-                            int *p_errno,
-                            int *p_snmp_errno,
-                            char **p_str) {
+                           int *p_errno,
+                           int *p_snmp_errno,
+                           char **p_str) {
    (void)session;
    if (p_errno) {
       *p_errno = 0;
