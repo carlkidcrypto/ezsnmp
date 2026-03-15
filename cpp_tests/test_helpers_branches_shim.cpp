@@ -155,11 +155,11 @@ TEST_F(HelpersBranchesShimTest, ParseResultCoversOidIndexReBranch) {
    EXPECT_EQ(result.value, "7");
 }
 
-TEST_F(HelpersBranchesShimTest, ParseResultWithoutTypeDelimiterSetsEmptyType) {
+TEST_F(HelpersBranchesShimTest, ParseResultWithoutTypeDelimiterPreservesLegacyBehavior) {
    auto result = parse_result("SNMPv2-MIB::sysDescr.0 = value_without_colon");
    EXPECT_EQ(result.oid, "SNMPv2-MIB::sysDescr");
    EXPECT_EQ(result.index, "0");
-   EXPECT_EQ(result.type, "");
+   EXPECT_EQ(result.type, "value_without_colon");
    EXPECT_EQ(result.value, "value_without_colon");
 }
 
