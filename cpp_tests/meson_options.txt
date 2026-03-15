@@ -1,0 +1,13 @@
+option(
+  'strict_warnings',
+  type: 'boolean',
+  value: false,
+  description: 'Require Meson native strict warning settings (-Dwarning_level=3 and -Dwerror=true)'
+)
+
+option(
+  'check_unreachable_code',
+  type: 'boolean',
+  value: false,
+  description: 'Enable compiler diagnostics for unreachable/unhittable code paths (when supported)'
+)

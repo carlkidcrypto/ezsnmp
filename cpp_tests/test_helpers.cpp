@@ -301,6 +301,28 @@ TEST_F(ParseResultsTest, TestSnmpwalkComplexStringTypes) {
    EXPECT_EQ(results[1].value, "");
 }
 
+TEST_F(ParseResultsTest, TestOidWithoutIndexUsesFallbackRegex) {
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr = STRING: edge"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "edge");
+}
+
+TEST_F(ParseResultsTest, TestNumericOidTrailingDotUsesFallbackRegex) {
+   std::vector<std::string> inputs = {".1.3.6.1.2.1. = INTEGER: 7"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, ".1.3.6.1.2.1.");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "INTEGER");
+   EXPECT_EQ(results[0].value, "7");
+}
+
 TEST_F(ParseResultsTest, TestSnmpwalkHexStringType) {
    std::vector<std::string> inputs = {
        "RFC1213-MIB::atPhysAddress.2.1.172.25.0.1 = Hex-STRING: 00 15 5D 6E 34 05"};
