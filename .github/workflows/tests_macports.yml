@@ -76,13 +76,13 @@ jobs:
           MACOS_MAJOR=$(sw_vers -productVersion | awk -F'.' '{print $1}')
           case "$MACOS_MAJOR" in
             15)
-              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.11.6/MacPorts-2.11.6-15-Sequoia.pkg";;
+              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.12.3/MacPorts-2.12.3-15-Sequoia.pkg";;
             14)
-              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.11.6/MacPorts-2.11.6-14-Sonoma.pkg";;
+              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.12.3/MacPorts-2.12.3-14-Sonoma.pkg";;
             26)
-              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.11.6/MacPorts-2.11.6-26-Tahoe.pkg";;
+              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.12.3/MacPorts-2.12.3-26-Tahoe.pkg";;
             *)
-              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.11.6/MacPorts-2.11.6-14-Sonoma.pkg";;
+              PKG_URL="https://github.com/macports/macports-base/releases/download/v2.12.3/MacPorts-2.12.3-14-Sonoma.pkg";;
           esac
           echo "Using MacPorts package: $PKG_URL"
           curl -L -o macports.pkg "$PKG_URL"

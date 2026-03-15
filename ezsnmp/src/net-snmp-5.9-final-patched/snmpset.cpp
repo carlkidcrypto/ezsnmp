@@ -160,13 +160,19 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    if (arg >= argc) {
       fprintf(stderr, "Missing object name\n");
       snmpset_usage();
-      goto out;
+      netsnmp_cleanup_session(&session);
+      clear_net_snmp_library_data();
+      SOCK_CLEANUP;
+      return parse_results(return_vector);
    }
    if ((argc - arg) > 3 * SNMP_MAX_CMDLINE_OIDS) {
       fprintf(stderr, "Too many assignments specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
       snmpset_usage();
-      goto out;
+      netsnmp_cleanup_session(&session);
+      clear_net_snmp_library_data();
+      SOCK_CLEANUP;
+      return parse_results(return_vector);
    }
 
    /*
@@ -200,17 +206,26 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                break;
             default:
                fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-               goto out;
+               netsnmp_cleanup_session(&session);
+               clear_net_snmp_library_data();
+               SOCK_CLEANUP;
+               return parse_results(return_vector);
          }
       } else {
          fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
-         goto out;
+         netsnmp_cleanup_session(&session);
+         clear_net_snmp_library_data();
+         SOCK_CLEANUP;
+         return parse_results(return_vector);
       }
       if (arg < argc) {
          values[current_value++] = argv[arg];
       } else {
          fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
-         goto out;
+         netsnmp_cleanup_session(&session);
+         clear_net_snmp_library_data();
+         SOCK_CLEANUP;
+         return parse_results(return_vector);
       }
    }
 
@@ -282,7 +297,9 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
       snmp_free_pdu(response);
    }
 
-out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;

@@ -155,6 +155,14 @@ TEST_F(HelpersBranchesShimTest, ParseResultCoversOidIndexReBranch) {
    EXPECT_EQ(result.value, "7");
 }
 
+TEST_F(HelpersBranchesShimTest, ParseResultWithoutTypeDelimiterSetsEmptyType) {
+   auto result = parse_result("SNMPv2-MIB::sysDescr.0 = value_without_colon");
+   EXPECT_EQ(result.oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(result.index, "0");
+   EXPECT_EQ(result.type, "");
+   EXPECT_EQ(result.value, "value_without_colon");
+}
+
 TEST_F(HelpersBranchesShimTest, RemoveV3UserFromCacheCoversBothRemovalBranches) {
    static char sec_name[] = "alice";
    static unsigned char engine_id[] = "engine1";
@@ -177,6 +185,28 @@ TEST_F(HelpersBranchesShimTest, RemoveV3UserFromCacheCoversBothRemovalBranches) 
    remove_v3_user_from_cache("alice", "different_engine");
    EXPECT_EQ(g_usm_remove_calls, 1);
    EXPECT_EQ(g_usm_free_calls, 1);
+}
+
+TEST_F(HelpersBranchesShimTest, RemoveV3UserFromCacheNoMatchWalksListWithoutRemoval) {
+   static char sec_name_1[] = "alice";
+   static unsigned char engine_id_1[] = "engine1";
+   static char sec_name_2[] = "bob";
+   static unsigned char engine_id_2[] = "engine2";
+
+   g_user1.secName = sec_name_1;
+   g_user1.engineID = engine_id_1;
+   g_user1.next = &g_user2;
+   g_user1.prev = nullptr;
+
+   g_user2.secName = sec_name_2;
+   g_user2.engineID = engine_id_2;
+   g_user2.next = nullptr;
+   g_user2.prev = &g_user1;
+
+   g_user_list = &g_user1;
+   remove_v3_user_from_cache("charlie", "engine3");
+   EXPECT_EQ(g_usm_remove_calls, 0);
+   EXPECT_EQ(g_usm_free_calls, 0);
 }
 
 TEST_F(HelpersBranchesShimTest, PrintObjidToStringCoversAllocFailAndOverflow) {

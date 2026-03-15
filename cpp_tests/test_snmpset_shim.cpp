@@ -14,12 +14,17 @@ extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnm
 
    netsnmp_pdu *fake_response = snmp_pdu_create(SNMP_MSG_RESPONSE);
    fake_response->errstat = SNMP_ERR_GENERR;
-   fake_response->errindex = 1;
+   fake_response->errindex = 2;
 
-   oid name[] = {1, 3, 6, 1, 2, 1, 1, 6, 0};
-   long value = 1;
-   snmp_varlist_add_variable(&fake_response->variables, name, OID_LENGTH(name), ASN_INTEGER,
-                             reinterpret_cast<u_char *>(&value), sizeof(value));
+   oid name1[] = {1, 3, 6, 1, 2, 1, 1, 5, 0};
+   long value1 = 1;
+   snmp_varlist_add_variable(&fake_response->variables, name1, OID_LENGTH(name1), ASN_INTEGER,
+                             reinterpret_cast<u_char *>(&value1), sizeof(value1));
+
+   oid name2[] = {1, 3, 6, 1, 2, 1, 1, 6, 0};
+   long value2 = 2;
+   snmp_varlist_add_variable(&fake_response->variables, name2, OID_LENGTH(name2), ASN_INTEGER,
+                             reinterpret_cast<u_char *>(&value2), sizeof(value2));
 
    *response = fake_response;
    return STAT_SUCCESS;
