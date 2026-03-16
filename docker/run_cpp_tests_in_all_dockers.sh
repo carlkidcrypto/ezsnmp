@@ -104,7 +104,13 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		rm -drf build/ *.info *.txt *.xml;
 		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
-		meson setup build/ -Db_coverage=true; 
+		# Ensure a known-good meson (from PyPI) is used instead of the system-installed one.
+		# On Arch Linux the pacman meson uses '#!/usr/bin/env python3' which resolves to the
+		# venv Python 3.14 (injected via ENV PATH in the Dockerfile). That custom-built Python
+		# cannot find the pacman meson site-packages and segfaults. Installing meson via pip
+		# puts /opt/venv/bin/meson first on PATH, which runs cleanly under the venv Python.
+		pip install --quiet --upgrade 'meson>=1.3,<2' 2>&1 || true;
+		meson setup build/; 
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
