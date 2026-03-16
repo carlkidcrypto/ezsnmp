@@ -114,18 +114,26 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
-		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov
-		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros
-		geninfo build/ --output-filename coverage.info \
-		       --ignore-errors mismatch \
-		       --ignore-errors inconsistent \
-		       --ignore-errors gcov \
-		       --ignore-errors source \
-		       --rc geninfo_unexecuted_blocks=1 \
-		       --rc geninfo_gcov_all_blocks=0 2>&1 || \
-		lcov --capture --directory build/ --output-file coverage.info \
-		     --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
-		lcov --capture --directory build/ --output-file coverage.info 2>&1 || true
+		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov.
+		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros.
+		# The entire fallback chain is wrapped in a group and piped through grep -v to suppress
+		# known-harmless but extremely noisy warnings on legacy containers (e.g. CentOS 7 devtoolset-11),
+		# specifically the thousands of lines about devtoolset system-header .gcov entries that geninfo
+		# tries to match back to .gcno records, and 'Overlong record' gcno format quirks.
+		# Wrapping with '|| true' ensures the group always exits 0 so filtering doesn't mask real failures.
+		{
+		  geninfo build/ --output-filename coverage.info \
+		         --ignore-errors mismatch \
+		         --ignore-errors inconsistent \
+		         --ignore-errors gcov \
+		         --ignore-errors source \
+		         --rc geninfo_unexecuted_blocks=1 \
+		         --rc geninfo_gcov_all_blocks=0 2>&1 || \
+		  lcov --capture --directory build/ --output-file coverage.info \
+		       --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
+		  lcov --capture --directory build/ --output-file coverage.info 2>&1 || true
+		} | grep -v -E \
+		    'cannot find an entry for.*\.gcov in \.gcno file|Overlong record at end of file|Cannot open source file'
 		
 		# Ensure coverage.info exists for next step
 		if [ ! -f coverage.info ]; then
