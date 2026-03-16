@@ -20,7 +20,7 @@ rm -rf coverage.info
 # Compile the project
 echo "Compiling the project..."
 mkdir -p $BUILD_DIR
-meson setup $BUILD_DIR
+meson setup $BUILD_DIR -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true
 ninja -C "$BUILD_DIR" -j $(nproc)
 
 # Generate coverage data

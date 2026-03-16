@@ -107,11 +107,14 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
    snmp_add_null_var(pdu, theoid, theoid_len);
 
    status = snmp_synch_response(ss, pdu, &response);
-   if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
-      for (vars = response->variables; vars; vars = vars->next_variable) {
-         snmpbulkwalk_numprinted++;
-         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-         str_values.push_back(str_value);
+   if (status == STAT_SUCCESS) {
+      snmp_check_null_response(response);
+      if (response->errstat == SNMP_ERR_NOERROR) {
+         for (vars = response->variables; vars; vars = vars->next_variable) {
+            snmpbulkwalk_numprinted++;
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            str_values.push_back(str_value);
+         }
       }
    }
    if (response) {
@@ -199,6 +202,11 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    int check;
 
    SOCK_STARTUP;
+
+   // Reset file-scope defaults for each invocation.
+   snmpbulkwalk_numprinted = 0;
+   snmpbulkwalk_reps = 10;
+   snmpbulkwalk_non_reps = 0;
 
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
                               NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
@@ -293,6 +301,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        */
       status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
+         snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
              * check resulting variables

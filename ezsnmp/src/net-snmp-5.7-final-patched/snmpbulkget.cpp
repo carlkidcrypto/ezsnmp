@@ -150,6 +150,10 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
+   // Reset file-scope defaults for each invocation.
+   max_repetitions = 10;
+   non_repeaters = 0;
+
    /*
     * get the common command line arguments
     */
@@ -216,6 +220,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
     */
    status = snmp_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
+      snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
          /*
           * check resulting variables

@@ -97,11 +97,14 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
    snmp_add_null_var(pdu, theoid, theoid_len);
 
    status = snmp_synch_response(ss, pdu, &response);
-   if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
-      for (vars = response->variables; vars; vars = vars->next_variable) {
-         numprinted++;
-         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
-         str_values.push_back(str_value);
+   if (status == STAT_SUCCESS) {
+      snmp_check_null_response(response);
+      if (response->errstat == SNMP_ERR_NOERROR) {
+         for (vars = response->variables; vars; vars = vars->next_variable) {
+            numprinted++;
+            auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
+            str_values.push_back(str_value);
+         }
       }
    }
    if (response) {
@@ -187,6 +190,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    struct timeval tv1, tv2, tv_a, tv_b;
 
    SOCK_STARTUP;
+
+   // Reset file-scope defaults for each invocation.
+   numprinted = 0;
+   end_name = NULL;
 
    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
                               NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
@@ -318,6 +325,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
                                     NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
             netsnmp_get_monotonic_clock(&tv_b);
          }
+         snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
             /*
              * check resulting variables

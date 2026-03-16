@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "exceptionsbase.h"
 #include "helpers.h"
 
 class ParseResultsTest : public ::testing::Test {
@@ -298,6 +299,28 @@ TEST_F(ParseResultsTest, TestSnmpwalkComplexStringTypes) {
    EXPECT_EQ(results[1].index, "1");
    EXPECT_EQ(results[1].type, "STRING");
    EXPECT_EQ(results[1].value, "");
+}
+
+TEST_F(ParseResultsTest, TestOidWithoutIndexUsesFallbackRegex) {
+   std::vector<std::string> inputs = {"SNMPv2-MIB::sysDescr = STRING: edge"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "STRING");
+   EXPECT_EQ(results[0].value, "edge");
+}
+
+TEST_F(ParseResultsTest, TestNumericOidTrailingDotUsesFallbackRegex) {
+   std::vector<std::string> inputs = {".1.3.6.1.2.1. = INTEGER: 7"};
+
+   auto results = parse_results(inputs);
+   ASSERT_EQ(results.size(), 1u);
+   EXPECT_EQ(results[0].oid, ".1.3.6.1.2.1.");
+   EXPECT_EQ(results[0].index, "");
+   EXPECT_EQ(results[0].type, "INTEGER");
+   EXPECT_EQ(results[0].value, "7");
 }
 
 TEST_F(ParseResultsTest, TestSnmpwalkHexStringType) {
@@ -625,4 +648,29 @@ TEST_F(ParseResultsTest, TestOIDWithNoDot) {
    EXPECT_EQ(results[0].index, "");
    EXPECT_EQ(results[0].type, "STRING");
    EXPECT_EQ(results[0].value, "Test");
+}
+
+// Tests for snmp_check_null_response
+class SnmpCheckNullResponseTest : public ::testing::Test {};
+
+TEST_F(SnmpCheckNullResponseTest, ThrowsPacketErrorBaseOnNullResponse) {
+   EXPECT_THROW(
+       {
+          try {
+             snmp_check_null_response(nullptr);
+          } catch (PacketErrorBase const& e) {
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             throw;
+          }
+       },
+       PacketErrorBase);
+}
+
+TEST_F(SnmpCheckNullResponseTest, NullResponseIsSubclassOfGenericErrorBase) {
+   EXPECT_THROW({ snmp_check_null_response(nullptr); }, GenericErrorBase);
+}
+
+TEST_F(SnmpCheckNullResponseTest, NoThrowOnValidResponse) {
+   netsnmp_pdu pdu{};
+   EXPECT_NO_THROW(snmp_check_null_response(&pdu));
 }
