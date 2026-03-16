@@ -91,13 +91,13 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: cpp-test-results-dockerized-*
-          merge-multiple: true
+          path: artifacts/
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./docker/test_outputs_*/lcov_coverage.info
+          files: ./artifacts/**/lcov_coverage.info
           flags: cpp,docker
           fail_ci_if_error: false
           verbose: true
@@ -115,15 +115,15 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: cpp-test-results-dockerized-*
-          merge-multiple: true
+          path: artifacts/
 
       - name: List files
-        run: ls -Rlah
+        run: ls -Rlah artifacts/
 
       - name: Publish C++ Test Results (Dockerized Tests)
         uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
         if: always()
         with:
-          files: "docker/test_outputs_*/test-results.xml"
+          files: "artifacts/**/test-results.xml"
           check_name: C++ Test Results - Dockerized
           comment_title: C++ Test Results - Dockerized
