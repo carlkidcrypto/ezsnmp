@@ -91,6 +91,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	if ! docker run -d \
 		--name "${CONTAINER_NAME}" \
 		-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+		-v "$HOST_SOURCE_PATH/ezsnmp/src:/ezsnmp/src:ro" \
+		-v "$HOST_SOURCE_PATH/ezsnmp/include:/ezsnmp/include:ro" \
 		"${FULL_IMAGE_TAG}" \
 		/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null"; then
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
@@ -110,7 +112,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		# cannot find the pacman meson site-packages and segfaults. Installing meson via pip
 		# puts /opt/venv/bin/meson first on PATH, which runs cleanly under the venv Python.
 		pip install --quiet --upgrade 'meson>=1.3,<2' 2>&1 || true;
-		meson setup build/; 
+		if ! meson setup build/ -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true; then
+		  echo 'Meson strict options not supported in this container; retrying with portable warning flags only.';
+		  rm -rf build/;
+		  meson setup build/ -Dwarning_level=3 -Dwerror=true;
+		fi;
 		ninja -C build/ -j \$(nproc); 
 		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		
@@ -120,22 +126,23 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		# known-harmless but extremely noisy warnings on legacy containers (e.g. CentOS 7 devtoolset-11),
 		# specifically the thousands of lines about devtoolset system-header .gcov entries that geninfo
 		# tries to match back to .gcno records, and 'Overlong record' gcno format quirks.
-		# Set an explicit base directory so older toolchains resolve relative source paths consistently.
+		# Run collection from build/ so relative source paths like ../../ezsnmp/src/... resolve correctly
+		# on older lcov/geninfo versions that do not support extra path remap options.
 		# Wrapping with '|| true' ensures the group always exits 0 so filtering doesn't mask real failures.
 		{
-		  geninfo build/ --output-filename coverage.info \
-		         --base-directory /ezsnmp \
+		  (cd build && geninfo . --output-filename ../coverage.info \
+		         --base-directory /ezsnmp/cpp_tests/build \
 		         --ignore-errors mismatch \
 		         --ignore-errors inconsistent \
 		         --ignore-errors gcov \
 		         --ignore-errors source \
 		         --rc geninfo_unexecuted_blocks=1 \
-		         --rc geninfo_gcov_all_blocks=0 2>&1 || \
-		  lcov --capture --directory build/ --output-file coverage.info \
-		       --base-directory /ezsnmp \
-		       --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
-		  lcov --capture --directory build/ --output-file coverage.info \
-		       --base-directory /ezsnmp 2>&1 || true
+		         --rc geninfo_gcov_all_blocks=0) 2>&1 || \
+		  (cd build && lcov --capture --directory . --output-file ../coverage.info \
+		       --base-directory /ezsnmp/cpp_tests/build \
+		       --ignore-errors mismatch,inconsistent,gcov,usage) 2>&1 || \
+		  (cd build && lcov --capture --directory . --output-file ../coverage.info \
+		       --base-directory /ezsnmp/cpp_tests/build) 2>&1 || true
 		} | grep -v -E \
 		    'cannot find an entry for.*\.gcov in \.gcno file|Overlong record at end of file'
 		
