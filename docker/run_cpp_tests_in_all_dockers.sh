@@ -120,9 +120,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		# known-harmless but extremely noisy warnings on legacy containers (e.g. CentOS 7 devtoolset-11),
 		# specifically the thousands of lines about devtoolset system-header .gcov entries that geninfo
 		# tries to match back to .gcno records, and 'Overlong record' gcno format quirks.
+		# Set an explicit base directory so older toolchains resolve relative source paths consistently.
 		# Wrapping with '|| true' ensures the group always exits 0 so filtering doesn't mask real failures.
 		{
 		  geninfo build/ --output-filename coverage.info \
+		         --base-directory /ezsnmp \
 		         --ignore-errors mismatch \
 		         --ignore-errors inconsistent \
 		         --ignore-errors gcov \
@@ -130,15 +132,21 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		         --rc geninfo_unexecuted_blocks=1 \
 		         --rc geninfo_gcov_all_blocks=0 2>&1 || \
 		  lcov --capture --directory build/ --output-file coverage.info \
+		       --base-directory /ezsnmp \
 		       --ignore-errors mismatch,inconsistent,gcov,usage 2>&1 || \
-		  lcov --capture --directory build/ --output-file coverage.info 2>&1 || true
+		  lcov --capture --directory build/ --output-file coverage.info \
+		       --base-directory /ezsnmp 2>&1 || true
 		} | grep -v -E \
-		    'cannot find an entry for.*\.gcov in \.gcno file|Overlong record at end of file|Cannot open source file'
+		    'cannot find an entry for.*\.gcov in \.gcno file|Overlong record at end of file'
 		
 		# Ensure coverage.info exists for next step
 		if [ ! -f coverage.info ]; then
 		  touch coverage.info
 		fi
+
+		# Some older gcov/lcov combinations emit relative SF paths; normalize them for Codecov.
+		sed -i 's#^SF:\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
+		sed -i 's#^SF:\./\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
 		
 		# Strip system/third-party paths if coverage exists and has content
 		if [ -f coverage.info ] && [ -s coverage.info ]; then
@@ -146,6 +154,9 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		else
 		  touch updated_coverage.info
 		fi
+
+		sed -i 's#^SF:\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' updated_coverage.info 2>/dev/null || true
+		sed -i 's#^SF:\./\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' updated_coverage.info 2>/dev/null || true
 		exit 0;
 	"
 
