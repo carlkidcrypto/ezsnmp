@@ -54,20 +54,24 @@
 -    void
 -optProc(int argc, char *const *argv, int opt)
 -{
-+void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
++void snmpbulkget_optProc(int, char *const *, int opt) {
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,7 +111,7 @@
+@@ -109,51 +111,61 @@
                      /*
                       * No number given -- error.  
                       */
 -                    usage();
-+                     snmpbulkget_usage();
-                     exit(1);
+-                    exit(1);
++                     throw ParseErrorBase("No number given for -C" + std::string(1, *(optarg - 1)) +
++                                          " option\n");
                  } else {
                      optarg = endptr;
-@@ -120,17 +122,23 @@
+-                    if (isspace((unsigned char)(*optarg))) {
+-                        return;
+-                    }
+                 }
                  break;
  
              default:
@@ -85,6 +89,7 @@
 -int
 -main(int argc, char *argv[])
 -{
+-    netsnmp_session session, *ss;
 +std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 +                                std::string const &init_app_name) {
 +   // Reference-counted initialization: only first thread calls init_snmp
@@ -94,10 +99,11 @@
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +
 +   std::vector<std::string> return_vector;
-     netsnmp_session session, *ss;
++   netsnmp_session session;
++   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
      netsnmp_pdu    *pdu;
      netsnmp_pdu    *response;
-@@ -138,22 +146,22 @@
+     netsnmp_variable_list *vars;
      int             arg;
      int             count;
      int             status;
@@ -105,10 +111,16 @@
  
      SOCK_STARTUP;
  
++   // Reset file-scope defaults for each invocation.
++   max_repetitions = 10;
++   non_repeaters = 0;
++
      /*
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
@@ -127,7 +139,7 @@
      default:
          break;
      }
-@@ -161,20 +169,22 @@
+@@ -161,95 +173,98 @@
      names = argc - arg;
      if (names < non_repeaters) {
          fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -146,7 +158,6 @@
 -            goto out;
 +         if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
 +            snmp_perror_exception(argv[arg]);
-+            return parse_results(return_vector);
          }
          arg++;
          namep++;
@@ -155,14 +166,17 @@
  
      /*
       * open an SNMP session 
-@@ -184,20 +194,19 @@
+      */
+-    ss = snmp_open(&session);
+-    if (ss == NULL) {
++   ss.reset(snmp_open(&session));
++   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
 -        snmp_sess_perror("snmpbulkget", &session);
 -        goto out;
 +      snmp_sess_perror_exception("snmpbulkget", &session);
-+      return parse_results(return_vector);
      }
  
 -    exitval = 0;
@@ -180,7 +194,12 @@
  
      /*
       * do the request 
-@@ -208,48 +217,49 @@
+      */
+-    status = snmp_synch_response(ss, pdu, &response);
++   status = snmp_synch_response(ss.get(), pdu, &response);
+     if (status == STAT_SUCCESS) {
++      snmp_check_null_response(response);
+         if (response->errstat == SNMP_ERR_NOERROR) {
              /*
               * check resulting variables 
               */
@@ -235,7 +254,7 @@
      } else {                    /* status == STAT_ERROR */
 -        snmp_sess_perror("snmpbulkget", ss);
 -        exitval = 1;
-+      snmp_sess_perror_exception("snmpbulkget", ss);
++      snmp_sess_perror_exception("snmpbulkget", ss.get());
      }
  
 -    if (response)
@@ -243,7 +262,10 @@
          snmp_free_pdu(response);
 +   }
  
-     snmp_close(ss);
+-    snmp_close(ss);
++   {
++      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++   }
  
 -out:
      netsnmp_cleanup_session(&session);

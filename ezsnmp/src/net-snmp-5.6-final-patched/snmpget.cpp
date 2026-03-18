@@ -75,7 +75,7 @@ SOFTWARE.
 #include "snmpget.h"
 #include "thread_safety.h"
 
-void snmpget_optProc(int argc, char *const *argv, int opt) {
+void snmpget_optProc(int, char *const *, int opt) {
    switch (opt) {
       case 'C':
          while (*optarg) {
@@ -115,8 +115,6 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    oid name[MAX_OID_LEN] = {0};
    size_t name_length = 0;
    int status = -1;
-   int failures = 0;
-
    SOCK_STARTUP;
 
    /*
@@ -178,17 +176,11 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
          name_length = MAX_OID_LEN;
          if (!snmp_parse_oid(names[count], name, &name_length)) {
             snmp_perror_exception(names[count]);
-            failures++;
          } else {
             snmp_add_null_var(pdu, name, name_length);
          }
       }
    }
-   if (failures) {
-      snmp_free_pdu(pdu);
-      return parse_results(return_vector);
-   }
-
    /*
     * Perform the request.
     *

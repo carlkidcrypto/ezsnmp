@@ -73,7 +73,7 @@ SOFTWARE.
 #include "snmpgetnext.h"
 #include "thread_safety.h"
 
-void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
+void snmpgetnext_optProc(int, char *const *, int opt) {
    switch (opt) {
       case 'C':
          while (*optarg) {
@@ -112,8 +112,6 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    oid name[MAX_OID_LEN];
    size_t name_length;
    int status;
-   int failures = 0;
-
    SOCK_STARTUP;
 
    /*
@@ -163,7 +161,6 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpgetnext", &session);
-      goto out;
    }
 
    /*
@@ -177,16 +174,11 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
             snmp_perror_exception(names[count]);
-            failures++;
          } else {
             snmp_add_null_var(pdu, name, name_length);
          }
       }
    }
-   if (failures) {
-      goto out;
-   }
-
    /*
     * do the request
     */
@@ -238,7 +230,9 @@ retry:
       snmp_free_pdu(response);
    }
 
-out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

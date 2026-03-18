@@ -20,7 +20,7 @@ rm -rf coverage.info
 # Compile the project
 echo "Compiling the project..."
 mkdir -p $BUILD_DIR
-meson setup $BUILD_DIR
+meson setup $BUILD_DIR -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true
 ninja -C "$BUILD_DIR" -j $(nproc)
 
 # Generate coverage data
@@ -29,7 +29,10 @@ ninja -C "$BUILD_DIR" test -j $(nproc)
 
 # Capture coverage data with lcov
 echo "Capturing coverage data with lcov..."
-lcov --capture --directory "$BUILD_DIR" --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
+lcov --capture --directory "$BUILD_DIR" --base-directory .. --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
+
+# Normalize relative SF paths that some toolchains produce.
+sed -i -E 's#^SF:(\./)?\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
 
 # Remove unwanted coverage data
 echo "Removing unwanted coverage data..."

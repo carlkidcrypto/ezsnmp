@@ -5,6 +5,8 @@ on:
         types: [published]
     workflow_dispatch:
     push:
+        branches:
+            - main
         paths:
             - '.github/workflows/auto_change_log.yml'
             - '.chglog/**'

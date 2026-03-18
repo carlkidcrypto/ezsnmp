@@ -64,6 +64,30 @@ TEST(ResultTest, EmptyValueTest) {
              "Conversion Error: Empty value for numeric type");
 }
 
+TEST(ResultTest, IntegerEmptyValueConversionErrorBranch) {
+   Result result;
+   result.type = "INTEGER";
+   result.value = "";
+
+   result.update_converted_value();
+
+   ASSERT_TRUE(std::holds_alternative<std::string>(result.converted_value));
+   std::string error = std::get<std::string>(result.converted_value);
+   EXPECT_NE(error.find("Empty value for numeric type"), std::string::npos);
+}
+
+TEST(ResultTest, HexStringMalformedPartConversionErrorBranch) {
+   Result result;
+   result.type = "Hex-STRING";
+   result.value = "GG";
+
+   result.update_converted_value();
+
+   ASSERT_TRUE(std::holds_alternative<std::string>(result.converted_value));
+   std::string error = std::get<std::string>(result.converted_value);
+   EXPECT_NE(error.find("Malformed hex part"), std::string::npos);
+}
+
 TEST(ResultTest, AssignmentOperatorTest) {
    Result r1;
    r1.oid = "test::oid";
