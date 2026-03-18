@@ -32,8 +32,7 @@ echo "Capturing coverage data with lcov..."
 lcov --capture --directory "$BUILD_DIR" --base-directory .. --output-file coverage.info --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
 
 # Normalize relative SF paths that some toolchains produce.
-sed -i 's#^SF:\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
-sed -i 's#^SF:\./\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
+sed -i -E 's#^SF:(\./)?\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
 
 # Remove unwanted coverage data
 echo "Removing unwanted coverage data..."

@@ -151,9 +151,12 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  touch coverage.info
 		fi
 
+		normalize_coverage_paths() {
+		  sed -i -E 's#^SF:(\./)?\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' "$1" 2>/dev/null || true
+		}
+
 		# Some older gcov/lcov combinations emit relative SF paths; normalize them for Codecov.
-		sed -i 's#^SF:\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
-		sed -i 's#^SF:\./\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' coverage.info 2>/dev/null || true
+		normalize_coverage_paths coverage.info
 		
 		# Strip system/third-party paths if coverage exists and has content
 		if [ -f coverage.info ] && [ -s coverage.info ]; then
@@ -162,8 +165,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  touch updated_coverage.info
 		fi
 
-		sed -i 's#^SF:\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' updated_coverage.info 2>/dev/null || true
-		sed -i 's#^SF:\./\.\./ezsnmp/src/#SF:/ezsnmp/ezsnmp/src/#' updated_coverage.info 2>/dev/null || true
+		normalize_coverage_paths updated_coverage.info
 		exit 0;
 	"
 
