@@ -51,10 +51,14 @@ echo "Cache directory: ${CACHE_DIR}"
 echo ""
 
 # Portable download function: prefers wget, falls back to curl (macOS default)
+# Always downloads to a .part file first, then validates and renames on success.
 download() {
     local url="$1"
     local output="$2"
     local partial="${output}.part"
+
+    # Remove any leftover .part file from a previous interrupted run
+    rm -f "${partial}"
 
     if command -v wget &>/dev/null; then
         wget \
@@ -66,7 +70,6 @@ download() {
             --connect-timeout=20 \
             --read-timeout=30 \
             --timeout=30 \
-            -c \
             "${url}" -O "${partial}"
     elif command -v curl &>/dev/null; then
         curl \
@@ -78,7 +81,6 @@ download() {
             --max-time 1800 \
             --speed-time 30 \
             --speed-limit 1024 \
-            -C - \
             -o "${partial}" "${url}"
     else
         echo "ERROR: Neither wget nor curl is available. Please install one of them."
@@ -86,6 +88,46 @@ download() {
     fi
 
     mv -f "${partial}" "${output}"
+}
+
+# Validate that a .tar.gz / .tgz file can be read by gzip.
+# Returns 0 (true) if the file is a valid gzip archive, 1 otherwise.
+is_valid_tarball() {
+    local file="$1"
+    gzip -t "${file}" 2>/dev/null
+}
+
+# Return 0 (true) if a file exists AND passes tarball validation.
+is_cached_and_valid() {
+    local file="$1"
+    [ -f "${file}" ] && is_valid_tarball "${file}"
+}
+
+# Download a tarball only if it is missing or corrupt.
+# Usage: fetch_tarball <url> <output_path>
+fetch_tarball() {
+    local url="$1"
+    local output="$2"
+    local filename
+    filename=$(basename "${output}")
+
+    if is_cached_and_valid "${output}"; then
+        echo "✓ ${filename} already cached"
+    else
+        if [ -f "${output}" ]; then
+            echo "⚠ ${filename} exists but is corrupt — re-downloading..."
+            rm -f "${output}"
+        else
+            echo "⬇ Downloading ${filename}..."
+        fi
+        download "${url}" "${output}"
+        if ! is_valid_tarball "${output}"; then
+            echo "ERROR: Downloaded ${filename} failed integrity check (corrupt gzip)."
+            rm -f "${output}"
+            exit 1
+        fi
+        echo "✓ Downloaded ${filename}"
+    fi
 }
 
 # Create cache directory if it doesn't exist
@@ -96,88 +138,39 @@ echo "--- Python Source Tarballs ---"
 for version in "${PYTHON_VERSIONS[@]}"; do
     tarball="Python-${version}.tgz"
     url="https://www.python.org/ftp/python/${version}/${tarball}"
-    output="${CACHE_DIR}/${tarball}"
-    
-    if [ -f "${output}" ]; then
-        echo "✓ ${tarball} already cached"
-    else
-        echo "⬇ Downloading ${tarball}..."
-        download "${url}" "${output}"
-        echo "✓ Downloaded ${tarball}"
-    fi
+    fetch_tarball "${url}" "${CACHE_DIR}/${tarball}"
 done
 
 echo ""
 echo "--- OpenSSL and SQLite ---"
 # Download OpenSSL 1.1.1w (for CentOS7)
-openssl_1_1_file="openssl-${OPENSSL_1_1_VERSION}.tar.gz"
-openssl_1_1_output="${CACHE_DIR}/${openssl_1_1_file}"
-if [ -f "${openssl_1_1_output}" ]; then
-    echo "✓ ${openssl_1_1_file} already cached"
-else
-    echo "⬇ Downloading ${openssl_1_1_file}..."
-    download "${OPENSSL_1_1_URL}" "${openssl_1_1_output}"
-    echo "✓ Downloaded ${openssl_1_1_file}"
-fi
+fetch_tarball "${OPENSSL_1_1_URL}" "${CACHE_DIR}/openssl-${OPENSSL_1_1_VERSION}.tar.gz"
 
 # Download OpenSSL 1.0.2u (for Archlinux Net-SNMP 5.7.3)
-openssl_1_0_file="openssl-${OPENSSL_1_0_VERSION}.tar.gz"
-openssl_1_0_output="${CACHE_DIR}/${openssl_1_0_file}"
-if [ -f "${openssl_1_0_output}" ]; then
-    echo "✓ ${openssl_1_0_file} already cached"
-else
-    echo "⬇ Downloading ${openssl_1_0_file}..."
-    download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"
-    echo "✓ Downloaded ${openssl_1_0_file}"
-fi
+fetch_tarball "${OPENSSL_1_0_URL}" "${CACHE_DIR}/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
 
 # Download SQLite
-sqlite_file="sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
-sqlite_output="${CACHE_DIR}/${sqlite_file}"
-if [ -f "${sqlite_output}" ]; then
-    echo "✓ ${sqlite_file} already cached"
-else
-    echo "⬇ Downloading ${sqlite_file}..."
-    download "${SQLITE_URL}" "${sqlite_output}"
-    echo "✓ Downloaded ${sqlite_file}"
-fi
+fetch_tarball "${SQLITE_URL}" "${CACHE_DIR}/sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
 
 echo ""
 echo "--- Net-SNMP Source Tarballs ---"
 for entry in "${NETSNMP_VERSIONS[@]}"; do
-    version="${entry%%:*}"
     url="${entry#*:}"
     filename=$(basename "${url}")
-    output="${CACHE_DIR}/${filename}"
-    
-    if [ -f "${output}" ]; then
-        echo "✓ ${filename} already cached"
-    else
-        echo "⬇ Downloading ${filename}..."
-        download "${url}" "${output}"
-        echo "✓ Downloaded ${filename}"
-    fi
+    fetch_tarball "${url}" "${CACHE_DIR}/${filename}"
 done
 
 echo ""
 echo "--- GoogleTest (for CentOS8) ---"
-gtest_file="v${GTEST_VERSION}.tar.gz"
-gtest_output="${CACHE_DIR}/${gtest_file}"
-if [ -f "${gtest_output}" ]; then
-    echo "✓ ${gtest_file} already cached"
-else
-    echo "⬇ Downloading ${gtest_file}..."
-    download "${GTEST_URL}" "${gtest_output}"
-    echo "✓ Downloaded ${gtest_file}"
-fi
+fetch_tarball "${GTEST_URL}" "${CACHE_DIR}/v${GTEST_VERSION}.tar.gz"
 
 echo ""
 echo "--- Archlinux Packages (for net-snmp 5.7/5.8 compatibility) ---"
-# Download Archlinux packages
+# Download Archlinux packages (these are .pkg.tar.xz/.pkg.tar.zst, not gzip; skip tarball validation)
 for pkg_url in "${ARCHLINUX_PACKAGES[@]}"; do
     pkg_file=$(basename "${pkg_url}")
     pkg_output="${CACHE_DIR}/${pkg_file}"
-    
+
     if [ -f "${pkg_output}" ]; then
         echo "✓ ${pkg_file} already cached"
     else
