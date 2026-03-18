@@ -39,7 +39,7 @@ get_next_version() {
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache] [--prune]"
+  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache] [--prune] [--ghcr-user <GHCR_USERNAME>] [--ghcr-token <GHCR_TOKEN>]"
   echo ""
   echo "  <DOCKER_USERNAME>: Your Docker Hub username."
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
@@ -47,6 +47,9 @@ if [ $# -lt 2 ]; then
   echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
   echo "  [--no-cache]: Optional. Add this flag to force rebuild without using Docker cache."
   echo "  [--prune]: Optional. Add this flag to run 'docker system prune -af' before building (removes dangling images/containers)."
+  echo "  [--ghcr-user <GHCR_USERNAME>]: Optional. GitHub username for GitHub Container Registry (ghcr.io)."
+  echo "  [--ghcr-token <GHCR_TOKEN>]: Optional. GitHub Personal Access Token (PAT) with 'write:packages' scope for ghcr.io."
+  echo "                               Both --ghcr-user and --ghcr-token must be provided to enable GHCR publishing."
   echo ""
   echo "Images will be tagged with format: MM-DD-YYYY.N (e.g., 12-24-2025.1)"
   echo "The .N version increments per day for each image."
@@ -58,6 +61,8 @@ ACCESS_TOKEN=$2
 TARGET_IMAGE=""
 NO_CACHE=""
 PRUNE_DOCKER=""
+GHCR_USERNAME=""
+GHCR_TOKEN=""
 
 # Parse optional arguments
 shift 2
@@ -72,6 +77,22 @@ while [ $# -gt 0 ]; do
       PRUNE_DOCKER=1
       echo "Docker prune mode: --prune enabled (will clean Docker before building)"
       shift
+      ;;
+    --ghcr-user)
+      if [ -z "${2:-}" ] || [[ "$2" == --* ]]; then
+        echo "ERROR: --ghcr-user requires a non-empty username argument."
+        exit 1
+      fi
+      GHCR_USERNAME=$2
+      shift 2
+      ;;
+    --ghcr-token)
+      if [ -z "${2:-}" ] || [[ "$2" == --* ]]; then
+        echo "ERROR: --ghcr-token requires a non-empty token argument."
+        exit 1
+      fi
+      GHCR_TOKEN=$2
+      shift 2
       ;;
     *)
       TARGET_IMAGE=$1
@@ -98,6 +119,24 @@ if ! echo "${ACCESS_TOKEN}" | docker login -u "${USERNAME}" --password-stdin; th
 fi
 
 echo "Successfully logged in to Docker Hub."
+echo "--------------------------------------------------"
+
+# --- GitHub Container Registry Login (optional) ---
+
+GHCR_REPO_PATH=""
+if [ -n "${GHCR_USERNAME}" ] && [ -n "${GHCR_TOKEN}" ]; then
+  echo "Attempting to log in to GitHub Container Registry (ghcr.io)..."
+  if ! echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin; then
+    echo "ERROR: GHCR login failed. Please check your GitHub username and token."
+    docker logout
+    exit 1
+  fi
+  GHCR_REPO_PATH="ghcr.io/${GHCR_USERNAME}/ezsnmp_test_images"
+  echo "Successfully logged in to GitHub Container Registry."
+  echo "GHCR images will be published to: ${GHCR_REPO_PATH}"
+else
+  echo "GHCR credentials not provided. Skipping GitHub Container Registry publishing."
+fi
 echo "--------------------------------------------------"
 
 # --- Populate Python Tarball Cache ---
@@ -165,15 +204,28 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
   echo "    - Latest Tag: ${LATEST_TAG}"
   echo "    - Build Options: ${NO_CACHE}"
 
+  # Compute GHCR tags if GHCR publishing is enabled
+  GHCR_DATED_TAG=""
+  GHCR_LATEST_TAG=""
+  BUILD_TAGS="-t ${DATED_TAG} -t ${LATEST_TAG}"
+  if [ -n "${GHCR_REPO_PATH}" ]; then
+    VERSION_SUFFIX="${DATED_TAG#${DOCKER_REPO_PATH}:${DISTRO_NAME}-}"
+    GHCR_DATED_TAG="${GHCR_REPO_PATH}:${DISTRO_NAME}-${VERSION_SUFFIX}"
+    GHCR_LATEST_TAG="${GHCR_REPO_PATH}:${DISTRO_NAME}-latest"
+    BUILD_TAGS="${BUILD_TAGS} -t ${GHCR_DATED_TAG} -t ${GHCR_LATEST_TAG}"
+    echo "    - GHCR Dated Tag: ${GHCR_DATED_TAG}"
+    echo "    - GHCR Latest Tag: ${GHCR_LATEST_TAG}"
+  fi
+
   # 1. Build the image using the distro-specific Dockerfile with repo-root context
-  if docker build ${NO_CACHE} -f "${DOCKERFILE_PATH}" -t "${DATED_TAG}" -t "${LATEST_TAG}" "${CONTEXT_PATH}"; then
+  if docker build ${NO_CACHE} -f "${DOCKERFILE_PATH}" ${BUILD_TAGS} "${CONTEXT_PATH}"; then
     echo "    - Build successful."
   else
     echo "ERROR: Docker build failed for ${DISTRO_NAME}."
     continue # Skip pushing if the build failed
   fi
 
-    # 2. Push both the dated and latest tags
+    # 2. Push both the dated and latest tags to Docker Hub
     if docker push "${DATED_TAG}"; then
         echo "    - Pushed dated tag: ${DATED_TAG}"
     else
@@ -185,7 +237,22 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
     else
         echo "ERROR: Docker push failed for latest tag ${LATEST_TAG}."
     fi
-    
+
+    # 3. Push to GitHub Container Registry if enabled
+    if [ -n "${GHCR_REPO_PATH}" ]; then
+        if docker push "${GHCR_DATED_TAG}"; then
+            echo "    - Pushed GHCR dated tag: ${GHCR_DATED_TAG}"
+        else
+            echo "ERROR: Docker push failed for GHCR dated tag ${GHCR_DATED_TAG}."
+        fi
+
+        if docker push "${GHCR_LATEST_TAG}"; then
+            echo "    - Pushed GHCR latest tag: ${GHCR_LATEST_TAG}"
+        else
+            echo "ERROR: Docker push failed for GHCR latest tag ${GHCR_LATEST_TAG}."
+        fi
+    fi
+
     echo "--------------------------------------------------"
 
 done
@@ -195,5 +262,10 @@ done
 echo "All specified images processed."
 echo "Logging out of Docker Hub..."
 docker logout
+
+if [ -n "${GHCR_REPO_PATH}" ]; then
+  echo "Logging out of GitHub Container Registry..."
+  docker logout ghcr.io
+fi
 
 echo "Script finished."
