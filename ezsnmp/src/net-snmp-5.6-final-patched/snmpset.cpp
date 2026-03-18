@@ -89,7 +89,7 @@ void snmpset_usage(void) {
 
 static int quiet = 0;
 
-void snmpset_optProc(int argc, char *const *argv, int opt) {
+void snmpset_optProc(int, char *const *, int opt) {
    switch (opt) {
       case 'C':
          while (*optarg) {
@@ -131,9 +131,14 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    oid name[MAX_OID_LEN];
    size_t name_length;
    int status;
-   int failures = 0;
    /* Reset application-local quiet flag so subsequent calls behave normally. */
    quiet = 0;
+
+   auto cleanup_and_return_empty = [&]() {
+      clear_net_snmp_library_data();
+      SOCK_CLEANUP;
+      return parse_results(return_vector);
+   };
 
    SOCK_STARTUP;
 
@@ -161,13 +166,13 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    if (arg >= argc) {
       fprintf(stderr, "Missing object name\n");
       snmpset_usage();
-      goto out;
+      return cleanup_and_return_empty();
    }
    if ((argc - arg) > 3 * SNMP_MAX_CMDLINE_OIDS) {
       fprintf(stderr, "Too many assignments specified. ");
       fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
       snmpset_usage();
-      goto out;
+      return cleanup_and_return_empty();
    }
 
    /*
@@ -201,17 +206,17 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                break;
             default:
                fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-               goto out;
+               return cleanup_and_return_empty();
          }
       } else {
          fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
-         goto out;
+         return cleanup_and_return_empty();
       }
       if (arg < argc) {
          values[current_value++] = argv[arg];
       } else {
          fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
-         goto out;
+         return cleanup_and_return_empty();
       }
    }
 
@@ -224,7 +229,6 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpset", &session);
-      goto out;
    }
 
    /*
@@ -237,16 +241,10 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
             snmp_perror_exception(names[count]);
-            failures++;
          } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
             snmp_perror_exception(names[count]);
-            failures++;
          }
       }
-   }
-
-   if (failures) {
-      goto out;
    }
 
    /*
@@ -290,7 +288,9 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
       snmp_free_pdu(response);
    }
 
-out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

@@ -65,7 +65,7 @@
 +#include "snmpgetnext.h"
 +#include "thread_safety.h"
 +
-+void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
++void snmpgetnext_optProc(int, char *const *, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
@@ -115,12 +115,13 @@
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -114,53 +113,56 @@
+@@ -113,55 +112,55 @@
+     oid             name[MAX_OID_LEN];
      size_t          name_length;
      int             status;
-     int             failures = 0;
+-    int             failures = 0;
 -    int             exitval = 1;
- 
+-
      SOCK_STARTUP;
  
      /*
@@ -186,11 +187,12 @@
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
 -        snmp_sess_perror("snmpgetnext", &session);
+-        goto out;
 +      snmp_sess_perror_exception("snmpgetnext", &session);
-         goto out;
      }
  
-@@ -169,71 +171,75 @@
+     /*
+@@ -169,71 +168,72 @@
       */
      pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
  
@@ -200,9 +202,9 @@
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 -            snmp_perror(names[count]);
-+            snmp_perror_exception(names[count]);
-             failures++;
+-            failures++;
 -        } else
++            snmp_perror_exception(names[count]);
 +         } else {
              snmp_add_null_var(pdu, name, name_length);
      }
@@ -210,12 +212,9 @@
 -        goto close_session;
 -
 -    exitval = 0;
+-
 +      }
 +   }
-+   if (failures) {
-+      goto out;
-+   }
- 
      /*
       * do the request 
       */
@@ -294,7 +293,9 @@
 -    snmp_close(ss);
 -
 -out:
-+out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
++   {
++      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++   }
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

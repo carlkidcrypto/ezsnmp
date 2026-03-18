@@ -54,11 +54,11 @@
 -    void
 -optProc(int argc, char *const *argv, int opt)
 -{
-+void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
++void snmpbulkget_optProc(int, char *const *, int opt) {
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,8 +111,8 @@
+@@ -109,51 +111,61 @@
                      /*
                       * No number given -- error.  
                       */
@@ -68,8 +68,10 @@
 +                                          " option\n");
                  } else {
                      optarg = endptr;
-                     if (isspace((unsigned char)(*optarg))) {
-@@ -120,40 +122,49 @@
+-                    if (isspace((unsigned char)(*optarg))) {
+-                        return;
+-                    }
+                 }
                  break;
  
              default:
@@ -109,6 +111,10 @@
  
      SOCK_STARTUP;
  
++   // Reset file-scope defaults for each invocation.
++   max_repetitions = 10;
++   non_repeaters = 0;
++
      /*
       * get the common command line arguments 
       */
@@ -133,7 +139,7 @@
      default:
          break;
      }
-@@ -161,95 +172,100 @@
+@@ -161,95 +173,98 @@
      names = argc - arg;
      if (names < non_repeaters) {
          fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -152,7 +158,6 @@
 -            goto out;
 +         if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
 +            snmp_perror_exception(argv[arg]);
-+            return parse_results(return_vector);
          }
          arg++;
          namep++;
@@ -172,7 +177,6 @@
 -        snmp_sess_perror("snmpbulkget", &session);
 -        goto out;
 +      snmp_sess_perror_exception("snmpbulkget", &session);
-+      return parse_results(return_vector);
      }
  
 -    exitval = 0;
