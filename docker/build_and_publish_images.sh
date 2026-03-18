@@ -134,8 +134,10 @@ if [ -n "${GHCR_USERNAME}" ] && [ -n "${GHCR_TOKEN}" ]; then
   GHCR_REPO_PATH="ghcr.io/${GHCR_USERNAME}/ezsnmp_test_images"
   echo "Successfully logged in to GitHub Container Registry."
   echo "GHCR images will be published to: ${GHCR_REPO_PATH}"
+elif [ -n "${GHCR_USERNAME}" ] || [ -n "${GHCR_TOKEN}" ]; then
+  echo "WARNING: Both --ghcr-user and --ghcr-token must be provided to publish to GHCR. Skipping."
 else
-  echo "GHCR credentials not provided. Skipping GitHub Container Registry publishing."
+  echo "INFO: GHCR credentials not provided. Skipping GitHub Container Registry publishing."
 fi
 echo "--------------------------------------------------"
 
@@ -240,17 +242,13 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
 
     # 3. Push to GitHub Container Registry if enabled
     if [ -n "${GHCR_REPO_PATH}" ]; then
-        if docker push "${GHCR_DATED_TAG}"; then
-            echo "    - Pushed GHCR dated tag: ${GHCR_DATED_TAG}"
-        else
-            echo "ERROR: Docker push failed for GHCR dated tag ${GHCR_DATED_TAG}."
-        fi
-
-        if docker push "${GHCR_LATEST_TAG}"; then
-            echo "    - Pushed GHCR latest tag: ${GHCR_LATEST_TAG}"
-        else
-            echo "ERROR: Docker push failed for GHCR latest tag ${GHCR_LATEST_TAG}."
-        fi
+        for tag in "${GHCR_DATED_TAG}" "${GHCR_LATEST_TAG}"; do
+            if docker push "${tag}"; then
+                echo "    - Pushed GHCR tag: ${tag}"
+            else
+                echo "ERROR: Docker push failed for GHCR tag ${tag}."
+            fi
+        done
     fi
 
     echo "--------------------------------------------------"
