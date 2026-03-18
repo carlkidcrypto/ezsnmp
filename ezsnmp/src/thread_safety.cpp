@@ -29,6 +29,7 @@ void netsnmp_thread_init(std::string const& app_name) {
 
    // Only the first thread (count == 0 before increment) calls init_snmp
    if (count == 0) {
+      std::lock_guard<std::mutex> mib_lock(g_netsnmp_mib_mutex);
       /* completely disable logging otherwise it will default to stderr */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       init_snmp(app_name.c_str());
@@ -46,6 +47,7 @@ void netsnmp_thread_cleanup(std::string const& app_name) {
 
    // Only the last thread (count == 1 before decrement, 0 after) calls snmp_shutdown
    if (count == 1) {
+      std::lock_guard<std::mutex> mib_lock(g_netsnmp_mib_mutex);
       /* completely disable logging otherwise it will default to stderr */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       snmp_shutdown(app_name.c_str());

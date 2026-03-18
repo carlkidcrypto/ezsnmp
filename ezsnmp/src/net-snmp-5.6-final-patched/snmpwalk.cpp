@@ -318,7 +318,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    }
 
    if (time_results) {
-      gettimeofday(&tv1, NULL);
+      netsnmp_get_monotonic_clock(&tv1);
    }
 
    while (running) {
@@ -332,12 +332,12 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * do the request
        */
       if (time_results_single) {
-         gettimeofday(&tv_a, NULL);
+         netsnmp_get_monotonic_clock(&tv_a);
       }
       status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
          if (time_results_single) {
-            gettimeofday(&tv_b, NULL);
+            netsnmp_get_monotonic_clock(&tv_b);
          }
          snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -422,7 +422,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       }
    }
    if (time_results) {
-      gettimeofday(&tv2, NULL);
+      netsnmp_get_monotonic_clock(&tv2);
    }
 
    if (numprinted == 0 && status == STAT_SUCCESS) {
