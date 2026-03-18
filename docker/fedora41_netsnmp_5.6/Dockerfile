@@ -33,13 +33,16 @@ ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
 
 # Copy and build NetSNMP 5.6.4 from cache
 # Uses OpenSSL 1.0.2u built above, -j1 and MALLOC_CHECK_=0 for stability
-# GCC compatibility flags needed: net-snmp 5.6.4 has implicit function declarations
-# that modern GCC 14 treats as errors without these flags
+# net-snmp 5.6.4 (2015-era C code) has many incompatibilities with GCC 14's stricter
+# defaults. We use -Wno-error to convert all warning-to-error promotions back to
+# warnings, and -fno-strict-aliasing for old aliasing patterns. CFLAGS are passed
+# both to configure (stored in Makefile) and to make (ensures they are used).
 COPY docker/cache/net-snmp-5.6.4.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.6.4.tar.gz && \
     cd net-snmp-5.6.4 && \
-    CFLAGS="-Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types -Wno-error=int-conversion" \
+    COMPAT_CFLAGS="-Wno-error -fno-strict-aliasing -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-int-conversion -Wno-discarded-qualifiers -Wno-return-mismatch" && \
+    CFLAGS="${COMPAT_CFLAGS}" \
     ./configure --prefix=/usr \
         --enable-shared \
         --disable-embedded-perl \
@@ -52,7 +55,7 @@ RUN cd /tmp && \
         --disable-debugging \
         --with-openssl=/usr/local/openssl10 \
         --with-security-modules="tsm,usm" && \
-    MALLOC_CHECK_=0 make -j1 && \
+    MALLOC_CHECK_=0 make -j1 CFLAGS="${COMPAT_CFLAGS}" && \
     MALLOC_CHECK_=0 make install && \
     ldconfig && \
     cd /tmp && \

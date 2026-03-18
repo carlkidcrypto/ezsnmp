@@ -33,10 +33,14 @@ ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
 
 # Copy and build NetSNMP 5.7.3 from cache
 # Uses OpenSSL 1.0.2u built above, -j1 and MALLOC_CHECK_=0 for stability
+# net-snmp 5.7.3 is old C code; pass -Wno-error and -fno-strict-aliasing to
+# prevent GCC 14's stricter default error promotions from blocking the build.
 COPY docker/cache/net-snmp-5.7.3.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.7.3.tar.gz && \
     cd net-snmp-5.7.3 && \
+    COMPAT_CFLAGS="-Wno-error -fno-strict-aliasing" && \
+    CFLAGS="${COMPAT_CFLAGS}" \
     ./configure --prefix=/usr \
         --enable-shared \
         --disable-embedded-perl \
@@ -49,7 +53,7 @@ RUN cd /tmp && \
         --disable-debugging \
         --with-openssl=/usr/local/openssl10 \
         --with-security-modules="tsm,usm" && \
-    MALLOC_CHECK_=0 make -j1 && \
+    MALLOC_CHECK_=0 make -j1 CFLAGS="${COMPAT_CFLAGS}" && \
     MALLOC_CHECK_=0 make install && \
     ldconfig && \
     cd /tmp && \
