@@ -208,8 +208,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    // Captured application-level flags (set under setup mutex, used after)
    int include_requested, print_statistics, dont_check_lexicographic;
 
-   // Serialize Net-SNMP global setup: resetting DS flags, registering config
-   // handlers, and parsing arguments all modify shared Net-SNMP global state.
+   // Serialize Net-SNMP global setup: resetting DS flags and parsing arguments
+   // both modify shared Net-SNMP global state.
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
@@ -218,14 +218,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS, 0);
       netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC,
                              0);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics",
-                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS);
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                                 NETSNMP_DS_APPLICATION_ID,
-                                 NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
       /*
        * get the common command line arguments

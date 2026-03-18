@@ -117,6 +117,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    int status = -1;
    SOCK_STARTUP;
 
+   int dont_fix_pdus = 0;
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
    // global state (option parsing, DS library settings).
    {
@@ -140,9 +141,12 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
          default:
             break;
       }
+
+      // Capture DONT_FIX_PDUS while still holding the setup mutex so no other
+      // thread can reset it before we read its value for this invocation.
+      dont_fix_pdus =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
    }
-   int dont_fix_pdus =
-       netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
 
    if (arg >= argc) {
       std::string err_msg = "Missing object name\n";

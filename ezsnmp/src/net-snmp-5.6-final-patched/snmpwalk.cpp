@@ -199,8 +199,8 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    int include_requested, print_statistics, dont_check_lexicographic;
    int time_results, dont_get_requested, time_results_single;
 
-   // Serialize Net-SNMP global setup: resetting DS flags, registering config
-   // handlers, and parsing arguments all modify shared Net-SNMP global state.
+   // Serialize Net-SNMP global setup: resetting DS flags and parsing arguments
+   // both modify shared Net-SNMP global state.
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
@@ -212,25 +212,6 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS, 0);
       netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED, 0);
       netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE, 0);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
-                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics",
-                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                                 NETSNMP_DS_APPLICATION_ID,
-                                 NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
-                                 NETSNMP_DS_WALK_TIME_RESULTS);
-
-      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
-                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
 
       /*
        * get the common command line arguments
