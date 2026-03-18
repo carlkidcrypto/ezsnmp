@@ -50,15 +50,17 @@ echo "=== Docker Build Cache Downloader ==="
 echo "Cache directory: ${CACHE_DIR}"
 echo ""
 
-# Portable download function: prefers wget, falls back to curl (macOS default)
-# Always downloads to a .part file first, then validates and renames on success.
+# Portable download function: prefers wget, falls back to curl (macOS default).
+# Downloads to a .part file first, supporting resume of interrupted downloads.
+# Resume flags (-c / -C -) allow wget/curl to continue a partial .part file,
+# which avoids re-downloading already-transferred data and helps with slow CDNs
+# (e.g. SourceForge mirrors that stall mid-transfer).
+# The caller is responsible for removing a corrupt output file before calling
+# this function; fetch_tarball() does that automatically.
 download() {
     local url="$1"
     local output="$2"
     local partial="${output}.part"
-
-    # Remove any leftover .part file from a previous interrupted run
-    rm -f "${partial}"
 
     if command -v wget &>/dev/null; then
         wget \
@@ -70,6 +72,7 @@ download() {
             --connect-timeout=20 \
             --read-timeout=30 \
             --timeout=30 \
+            -c \
             "${url}" -O "${partial}"
     elif command -v curl &>/dev/null; then
         curl \
@@ -81,6 +84,7 @@ download() {
             --max-time 1800 \
             --speed-time 30 \
             --speed-limit 1024 \
+            -C - \
             -o "${partial}" "${url}"
     else
         echo "ERROR: Neither wget nor curl is available. Please install one of them."
@@ -116,7 +120,9 @@ fetch_tarball() {
     else
         if [ -f "${output}" ]; then
             echo "⚠ ${filename} exists but is corrupt — re-downloading..."
-            rm -f "${output}"
+            # Remove both the corrupt output and any stale .part file so that
+            # the resume flags start clean instead of appending to garbage.
+            rm -f "${output}" "${output}.part"
         else
             echo "⬇ Downloading ${filename}..."
         fi
