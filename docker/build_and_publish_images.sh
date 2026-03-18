@@ -138,7 +138,7 @@ else
     ! -name "test-results*" \
     ! -name "cache" \
     ! -name "__pycache__" \
-    -printf "%f\n"))
+    -exec basename {} \;))
   echo "Mode: Building all found images (excluding test_outputs*, test-results*, previous_results*, and cache directories)."
 fi
 

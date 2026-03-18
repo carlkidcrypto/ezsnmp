@@ -32,7 +32,7 @@ cleanup() {
 		DISTRO=$(basename "$(dirname "$DOCKERFILE_PATH")")
 		docker kill "${DISTRO}_test_container" 2>/dev/null || true
 		docker rm -f "${DISTRO}_test_container" 2>/dev/null || true
-	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n' 2>/dev/null || true)
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -print 2>/dev/null || true)
 	
 	echo "Cleanup complete. Exiting."
 	exit 130
@@ -79,7 +79,7 @@ EOF
 	while IFS= read -r DOCKERFILE_PATH; do
 		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
 		echo "  - $DIR_NAME"
-	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n' 2>/dev/null | sort)
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -print 2>/dev/null | sort)
 	exit 0
 }
 
@@ -127,7 +127,7 @@ else
 	while IFS= read -r DOCKERFILE_PATH; do
 		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
 		DISTROS_TO_TEST+=("$DIR_NAME")
-	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n')
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -print)
 	echo "Mode: Testing all found images."
 fi
 

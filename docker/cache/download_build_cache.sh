@@ -50,6 +50,44 @@ echo "=== Docker Build Cache Downloader ==="
 echo "Cache directory: ${CACHE_DIR}"
 echo ""
 
+# Portable download function: prefers wget, falls back to curl (macOS default)
+download() {
+    local url="$1"
+    local output="$2"
+    local partial="${output}.part"
+
+    if command -v wget &>/dev/null; then
+        wget \
+            -q --show-progress \
+            --tries=8 \
+            --retry-connrefused \
+            --waitretry=2 \
+            --dns-timeout=15 \
+            --connect-timeout=20 \
+            --read-timeout=30 \
+            --timeout=30 \
+            -c \
+            "${url}" -O "${partial}"
+    elif command -v curl &>/dev/null; then
+        curl \
+            -L --progress-bar \
+            --retry 8 \
+            --retry-delay 2 \
+            --retry-connrefused \
+            --connect-timeout 20 \
+            --max-time 1800 \
+            --speed-time 30 \
+            --speed-limit 1024 \
+            -C - \
+            -o "${partial}" "${url}"
+    else
+        echo "ERROR: Neither wget nor curl is available. Please install one of them."
+        exit 1
+    fi
+
+    mv -f "${partial}" "${output}"
+}
+
 # Create cache directory if it doesn't exist
 mkdir -p "${CACHE_DIR}"
 
@@ -64,7 +102,7 @@ for version in "${PYTHON_VERSIONS[@]}"; do
         echo "✓ ${tarball} already cached"
     else
         echo "⬇ Downloading ${tarball}..."
-        wget -q --show-progress "${url}" -O "${output}"
+        download "${url}" "${output}"
         echo "✓ Downloaded ${tarball}"
     fi
 done
@@ -78,7 +116,7 @@ if [ -f "${openssl_1_1_output}" ]; then
     echo "✓ ${openssl_1_1_file} already cached"
 else
     echo "⬇ Downloading ${openssl_1_1_file}..."
-    wget -q --show-progress "${OPENSSL_1_1_URL}" -O "${openssl_1_1_output}"
+    download "${OPENSSL_1_1_URL}" "${openssl_1_1_output}"
     echo "✓ Downloaded ${openssl_1_1_file}"
 fi
 
@@ -89,7 +127,7 @@ if [ -f "${openssl_1_0_output}" ]; then
     echo "✓ ${openssl_1_0_file} already cached"
 else
     echo "⬇ Downloading ${openssl_1_0_file}..."
-    wget -q --show-progress "${OPENSSL_1_0_URL}" -O "${openssl_1_0_output}"
+    download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"
     echo "✓ Downloaded ${openssl_1_0_file}"
 fi
 
@@ -100,7 +138,7 @@ if [ -f "${sqlite_output}" ]; then
     echo "✓ ${sqlite_file} already cached"
 else
     echo "⬇ Downloading ${sqlite_file}..."
-    wget -q --show-progress "${SQLITE_URL}" -O "${sqlite_output}"
+    download "${SQLITE_URL}" "${sqlite_output}"
     echo "✓ Downloaded ${sqlite_file}"
 fi
 
@@ -116,7 +154,7 @@ for entry in "${NETSNMP_VERSIONS[@]}"; do
         echo "✓ ${filename} already cached"
     else
         echo "⬇ Downloading ${filename}..."
-        wget -q --show-progress "${url}" -O "${output}"
+        download "${url}" "${output}"
         echo "✓ Downloaded ${filename}"
     fi
 done
@@ -129,7 +167,7 @@ if [ -f "${gtest_output}" ]; then
     echo "✓ ${gtest_file} already cached"
 else
     echo "⬇ Downloading ${gtest_file}..."
-    wget -q --show-progress "${GTEST_URL}" -O "${gtest_output}"
+    download "${GTEST_URL}" "${gtest_output}"
     echo "✓ Downloaded ${gtest_file}"
 fi
 
@@ -144,7 +182,7 @@ for pkg_url in "${ARCHLINUX_PACKAGES[@]}"; do
         echo "✓ ${pkg_file} already cached"
     else
         echo "⬇ Downloading ${pkg_file}..."
-        wget -q --show-progress "${pkg_url}" -O "${pkg_output}"
+        download "${pkg_url}" "${pkg_output}"
         echo "✓ Downloaded ${pkg_file}"
     fi
 done
