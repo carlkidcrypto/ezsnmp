@@ -75,9 +75,9 @@ SOFTWARE.
 #define NETSNMP_DS_WALK_TIME_RESULTS_SINGLE 6
 
 oid objid_mib[] = {1, 3, 6, 1, 2, 1};
-int numprinted = 0;
+thread_local int numprinted = 0;
 
-char *end_name = NULL;
+thread_local char *end_name = NULL;
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -191,53 +191,80 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
-   // Reset file-scope defaults for each invocation.
+   // Reset thread-local defaults for each invocation.
    numprinted = 0;
    end_name = NULL;
 
-   // Reset application-level walk flags for each invocation.
-   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);
-   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS, 0);
-   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC, 0);
-   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS, 0);
-   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED, 0);
-   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE, 0);
+   // Captured application-level flags (set under setup mutex, used after)
+   int include_requested, print_statistics, dont_check_lexicographic;
+   int time_results, dont_get_requested, time_results_single;
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+   // Serialize Net-SNMP global setup: resetting DS flags, registering config
+   // handlers, and parsing arguments all modify shared Net-SNMP global state.
+   {
+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
+      // Reset application-level walk flags for each invocation.
+      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS, 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC,
+                             0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS, 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED, 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE, 0);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics", NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_PRINT_STATISTICS);
+      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
+                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "excludeRequested",
+                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
-                              NETSNMP_DS_WALK_TIME_RESULTS);
+      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "printStatistics",
+                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS);
 
-   netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
-                              NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
+      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "dontCheckOrdering",
+                                 NETSNMP_DS_APPLICATION_ID,
+                                 NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
 
-   /*
-    * get the common command line arguments
-    */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults", NETSNMP_DS_APPLICATION_ID,
+                                 NETSNMP_DS_WALK_TIME_RESULTS);
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResultsSingle",
+                                 NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+      /*
+       * get the common command line arguments
+       */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc)) {
+         case NETSNMP_PARSE_ARGS_ERROR:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      default:
-         break;
+         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
+         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
+         default:
+            break;
+      }
+
+      // Capture flags while still holding the setup mutex so no other thread
+      // can reset them before we read their values for this invocation.
+      include_requested =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED);
+      print_statistics =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS);
+      dont_check_lexicographic = netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
+                                                        NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
+      time_results =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS);
+      dont_get_requested =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED);
+      time_results_single =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE);
    }
 
    /*
@@ -300,9 +327,8 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
 
    running = 1;
 
-   check =
-       !netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED)) {
+   check = !dont_check_lexicographic;
+   if (include_requested) {
       auto retval = snmpwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
       for (auto const &item : retval) {
@@ -310,7 +336,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       }
    }
 
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
+   if (time_results) {
       netsnmp_get_monotonic_clock(&tv1);
    }
 
@@ -324,13 +350,12 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       /*
        * do the request
        */
-      if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
+      if (time_results_single) {
          netsnmp_get_monotonic_clock(&tv_a);
       }
       status = snmp_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
-         if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                                    NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
+         if (time_results_single) {
             netsnmp_get_monotonic_clock(&tv_b);
          }
          snmp_check_null_response(response);
@@ -347,8 +372,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
                   continue;
                }
                numprinted++;
-               if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
-                                          NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
+               if (time_results_single) {
                   fprintf(stdout, "%f s: ",
                           (double)(tv_b.tv_usec - tv_a.tv_usec) / 1000000 +
                               (double)(tv_b.tv_sec - tv_a.tv_sec));
@@ -416,7 +440,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
          snmp_free_pdu(response);
       }
    }
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
+   if (time_results) {
       netsnmp_get_monotonic_clock(&tv2);
    }
 
@@ -426,7 +450,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        * pointed at an only existing instance.  Attempt a GET, just
        * for get measure.
        */
-      if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {
+      if (!dont_get_requested) {
          auto retval = snmpwalk_snmp_get_and_print(ss.get(), root, rootlen);
 
          for (auto const &item : retval) {
@@ -435,10 +459,10 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       }
    }
 
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS)) {
+   if (print_statistics) {
       printf("Variables found: %d\n", numprinted);
    }
-   if (netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS)) {
+   if (time_results) {
       fprintf(stderr, "Total traversal time = %f seconds\n",
               (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
    }
