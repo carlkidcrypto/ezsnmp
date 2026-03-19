@@ -51,18 +51,24 @@ echo "Cache directory: ${CACHE_DIR}"
 echo ""
 
 # Portable download function: prefers wget, falls back to curl (macOS default).
-# Downloads to a .part file first, supporting resume of interrupted downloads.
-# Resume flags (-c / -C -) allow wget/curl to continue a partial .part file,
-# which avoids re-downloading already-transferred data and helps with slow CDNs
-# (e.g. SourceForge mirrors that stall mid-transfer).
-# The caller is responsible for removing a corrupt output file before calling
-# this function; fetch_tarball() does that automatically.
+# Downloads to a .part file first.  If a .part file already exists from a
+# previously interrupted run the resume flag (-c / -C -) is added so that
+# already-transferred bytes are not re-downloaded.  For a brand-new download
+# the resume flag is intentionally omitted: sending Range: bytes=0- to some
+# CDNs (notably SourceForge mirrors) can cause them to return an HTML error
+# page instead of the binary, which would corrupt the download silently.
+# The caller is responsible for removing a corrupt output file *and* its
+# matching .part file before calling this function; fetch_tarball() does that.
 download() {
     local url="$1"
     local output="$2"
     local partial="${output}.part"
 
     if command -v wget &>/dev/null; then
+        # Only pass -c (continue) when a partial file exists; otherwise wget
+        # starts clean and avoids sending Range headers to picky CDNs.
+        local wget_resume=()
+        [ -f "${partial}" ] && wget_resume=(-c)
         wget \
             -q --show-progress \
             --tries=8 \
@@ -72,9 +78,14 @@ download() {
             --connect-timeout=20 \
             --read-timeout=30 \
             --timeout=30 \
-            -c \
+            "${wget_resume[@]}" \
             "${url}" -O "${partial}"
     elif command -v curl &>/dev/null; then
+        # Only pass -C - (resume) when a partial file exists; otherwise curl
+        # sends Range: bytes=0- which SourceForge mirrors can mishandle by
+        # returning an HTML redirect page instead of the actual binary.
+        local curl_resume=()
+        [ -f "${partial}" ] && curl_resume=(-C -)
         curl \
             -L --progress-bar \
             --retry 8 \
@@ -84,7 +95,7 @@ download() {
             --max-time 1800 \
             --speed-time 30 \
             --speed-limit 1024 \
-            -C - \
+            "${curl_resume[@]}" \
             -o "${partial}" "${url}"
     else
         echo "ERROR: Neither wget nor curl is available. Please install one of them."
