@@ -92,7 +92,7 @@ void snmpbulkget_usage(void) {
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
+void snmpbulkget_optProc(int, char *const *, int opt) {
    char *endptr = NULL;
 
    switch (opt) {
@@ -115,9 +115,6 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
                                           " option\n");
                   } else {
                      optarg = endptr;
-                     if (isspace((unsigned char)(*optarg))) {
-                        return;
-                     }
                   }
                   break;
 
@@ -186,7 +183,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
          namep->name_len = MAX_OID_LEN;
          if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
             snmp_perror_exception(argv[arg]);
-            return parse_results(return_vector);
          }
          arg++;
          namep++;
@@ -202,7 +198,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpbulkget", &session);
-      return parse_results(return_vector);
    }
 
    /*

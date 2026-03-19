@@ -127,7 +127,7 @@
 -static void
 -optProc(int argc, char *const *argv, int opt)
 -{
-+void snmpwalk_optProc(int argc, char *const *argv, int opt) {
++void snmpwalk_optProc(int, char *const *argv, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
@@ -165,7 +165,7 @@
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -187,44 +187,43 @@
+@@ -187,44 +187,55 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -173,6 +173,18 @@
      struct timeval  tv1, tv2, tv_a, tv_b;
  
 +   SOCK_STARTUP;
++
++   // Reset file-scope defaults for each invocation.
++   numprinted = 0;
++   end_name = NULL;
++
++   // Reset application-level walk flags for each invocation.
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_TIME_RESULTS_SINGLE, 0);
 +
      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
 -			       NETSNMP_DS_APPLICATION_ID, 
@@ -227,7 +239,7 @@
      default:
          break;
      }
-@@ -237,16 +236,18 @@
+@@ -237,16 +248,18 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -249,7 +261,7 @@
      }
  
      /*
-@@ -256,9 +257,11 @@
+@@ -256,9 +269,11 @@
       */
      if ( end_name ) {
          end_len = MAX_OID_LEN;
@@ -263,7 +275,7 @@
          }
      } else {
          memmove(end_oid, root, rootlen*sizeof(oid));
-@@ -266,19 +269,15 @@
+@@ -266,19 +281,15 @@
          end_oid[end_len-1]++;
      }
  
@@ -286,7 +298,7 @@
      }
  
      /*
-@@ -290,15 +289,19 @@
+@@ -290,15 +301,19 @@
      running = 1;
  
      check =
@@ -311,7 +323,7 @@
      while (running) {
          /*
           * create PDU for GETNEXT request and add object name to request 
-@@ -309,20 +312,22 @@
+@@ -309,20 +324,22 @@
          /*
           * do the request 
           */
@@ -341,7 +353,7 @@
                          /*
                           * not part of this subtree 
                           */
-@@ -330,79 +335,78 @@
+@@ -330,79 +347,78 @@
                          continue;
                      }
                      numprinted++;
@@ -460,7 +472,7 @@
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -411,22 +415,27 @@
+@@ -411,22 +427,27 @@
           * for get measure. 
           */
          if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_GET_REQUESTED)) {

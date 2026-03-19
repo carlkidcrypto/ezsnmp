@@ -139,11 +139,11 @@
 -    void
 -optProc(int argc, char *const *argv, int opt)
 -{
-+void snmpbulkwalk_optProc(int argc, char *const *argv, int opt) {
++void snmpbulkwalk_optProc(int, char *const *, int opt) {
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -137,17 +144,17 @@
+@@ -137,22 +144,19 @@
              case 'n':
              case 'r':
                  if (*(optarg - 1) == 'r') {
@@ -164,8 +164,13 @@
 +                                          " option\n");
                  } else {
                      optarg = endptr;
-                     if (isspace((unsigned char)(*optarg))) {
-@@ -162,19 +169,26 @@
+-                    if (isspace((unsigned char)(*optarg))) {
+-                        return;
+-                    }
+                 }
+                 break;
+ 
+@@ -162,19 +166,26 @@
                  break;
  
              default:
@@ -199,13 +204,23 @@
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -186,29 +200,31 @@
+@@ -186,29 +197,41 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
 -    int             exitval = 0;
 +
 +   SOCK_STARTUP;
++
++   // Reset file-scope defaults for each invocation.
++   snmpbulkwalk_numprinted = 0;
++   snmpbulkwalk_reps = 10;
++   snmpbulkwalk_non_reps = 0;
++
++   // Reset application-level walk flags for each invocation.
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS, 0);
++   netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC, 0);
  
      netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "includeRequested",
 -			       NETSNMP_DS_APPLICATION_ID, 
@@ -243,7 +258,7 @@
      default:
          break;
      }
-@@ -221,31 +237,31 @@
+@@ -221,31 +244,29 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -253,7 +268,6 @@
 -            snmp_perror(argv[arg]);
 -            exit(1);
 +            snmp_perror_exception(argv[arg]);
-+            return parse_results(return_vector);
 +         }
          }
      } else {
@@ -282,11 +296,10 @@
 -        SOCK_CLEANUP;
 -        exit(1);
 +      snmp_sess_perror_exception("snmpbulkwalk", &session);
-+      return parse_results(return_vector);
      }
  
      /*
-@@ -256,11 +272,14 @@
+@@ -256,11 +277,14 @@
  
      running = 1;
  
@@ -306,7 +319,7 @@
      }
  
      while (running) {
-@@ -268,57 +287,52 @@
+@@ -268,57 +292,52 @@
           * create PDU for GETBULK request and add object name to request 
           */
          pdu = snmp_pdu_create(SNMP_MSG_GETBULK);
@@ -385,7 +398,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -334,53 +348,58 @@
+@@ -334,53 +353,58 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {

@@ -1,38 +1,4 @@
-project('ezsnmp_tests', 'cpp', version: '2.2.0b0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
-
-cpp_compiler = meson.get_compiler('cpp')
-cpp_warning_args = []
-
-if get_option('strict_warnings')
-    if get_option('warning_level') != '3' and get_option('warning_level') != 'everything'
-        error('strict_warnings=true requires -Dwarning_level=3 (or everything)')
-    endif
-    if not get_option('werror')
-        error('strict_warnings=true requires -Dwerror=true')
-    endif
-    if cpp_compiler.has_argument('-Wpedantic')
-        cpp_warning_args += ['-Wpedantic']
-    endif
-endif
-
-if get_option('check_unreachable_code')
-    foreach arg : [
-        '-Wunreachable-code',
-        '-Wunreachable-code-return',
-        '-Wunreachable-code-break',
-        '-Wunreachable-code-aggressive',
-        '-Wswitch-unreachable',
-    ]
-        if cpp_compiler.has_argument(arg)
-            cpp_warning_args += [arg]
-        endif
-    endforeach
-endif
-
-if cpp_warning_args.length() > 0
-    message('Applying extra C++ warning flags: @0@'.format(' '.join(cpp_warning_args)))
-    add_project_arguments(cpp_warning_args, language: 'cpp')
-endif
+project('ezsnmp_tests', 'cpp', version: '2.2.0b1', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
