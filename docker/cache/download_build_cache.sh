@@ -27,7 +27,6 @@ SQLITE_URL="https://www.sqlite.org/2024/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
 
 # Net-SNMP versions
 NETSNMP_VERSIONS=(
-    "5.6.4:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.6.4/net-snmp-5.6.4.tar.gz"
     "5.7.3:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.3/net-snmp-5.7.3.tar.gz"
     "5.8:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.8/net-snmp-5.8.tar.gz"
     "5.9.4:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.tar.gz"
@@ -50,125 +49,18 @@ echo "=== Docker Build Cache Downloader ==="
 echo "Cache directory: ${CACHE_DIR}"
 echo ""
 
-# Portable download function: prefers wget, falls back to curl (macOS default).
-# Downloads to a .part file first.  If a .part file already exists from a
-# previously interrupted run the resume flag (-c / -C -) is added so that
-# already-transferred bytes are not re-downloaded.  For a brand-new download
-# the resume flag is intentionally omitted: sending Range: bytes=0- to some
-# CDNs (notably SourceForge mirrors) can cause them to return an HTML error
-# page instead of the binary, which would corrupt the download silently.
-# The caller is responsible for removing a corrupt output file *and* its
-# matching .part file before calling this function; fetch_tarball() does that.
-#
-# NOTE: bash 3.x (macOS default) crashes on "${empty_array[@]}" under set -u,
-# so the resume flag is controlled with plain if/else instead of an array.
+# Download helper: use wget when available, otherwise fall back to curl (macOS default)
 download() {
     local url="$1"
     local output="$2"
-    local partial="${output}.part"
 
-    if command -v wget &>/dev/null; then
-        # Only pass -c (continue) when a partial file exists; otherwise wget
-        # starts clean and avoids sending Range headers to picky CDNs.
-        if [ -f "${partial}" ]; then
-            wget \
-                -q --show-progress \
-                --tries=8 \
-                --retry-connrefused \
-                --waitretry=2 \
-                --dns-timeout=15 \
-                --connect-timeout=20 \
-                --read-timeout=30 \
-                --timeout=30 \
-                -c \
-                "${url}" -O "${partial}"
-        else
-            wget \
-                -q --show-progress \
-                --tries=8 \
-                --retry-connrefused \
-                --waitretry=2 \
-                --dns-timeout=15 \
-                --connect-timeout=20 \
-                --read-timeout=30 \
-                --timeout=30 \
-                "${url}" -O "${partial}"
-        fi
-    elif command -v curl &>/dev/null; then
-        # Only pass -C - (resume) when a partial file exists; otherwise curl
-        # sends Range: bytes=0- which SourceForge mirrors can mishandle by
-        # returning an HTML redirect page instead of the actual binary.
-        if [ -f "${partial}" ]; then
-            curl \
-                -L --progress-bar \
-                --retry 8 \
-                --retry-delay 2 \
-                --retry-connrefused \
-                --connect-timeout 20 \
-                --max-time 1800 \
-                --speed-time 30 \
-                --speed-limit 1024 \
-                -C - \
-                -o "${partial}" "${url}"
-        else
-            curl \
-                -L --progress-bar \
-                --retry 8 \
-                --retry-delay 2 \
-                --retry-connrefused \
-                --connect-timeout 20 \
-                --max-time 1800 \
-                --speed-time 30 \
-                --speed-limit 1024 \
-                -o "${partial}" "${url}"
-        fi
+    if command -v wget >/dev/null 2>&1; then
+        wget -q --show-progress "${url}" -O "${output}"
+    elif command -v curl >/dev/null 2>&1; then
+        curl -L --progress-bar -o "${output}" "${url}"
     else
-        echo "ERROR: Neither wget nor curl is available. Please install one of them."
+        echo "ERROR: Neither wget nor curl is available."
         exit 1
-    fi
-
-    mv -f "${partial}" "${output}"
-}
-
-# Validate that a .tar.gz / .tgz file can be read by gzip.
-# Returns 0 (true) if the file is a valid gzip archive, 1 otherwise.
-is_valid_tarball() {
-    local file="$1"
-    gzip -t "${file}" 2>/dev/null
-}
-
-# Return 0 (true) if a file exists AND passes tarball validation.
-is_cached_and_valid() {
-    local file="$1"
-    [ -f "${file}" ] && is_valid_tarball "${file}"
-}
-
-# Download a tarball only if it is missing or corrupt.
-# Usage: fetch_tarball <url> <output_path>
-fetch_tarball() {
-    local url="$1"
-    local output="$2"
-    local filename
-    filename=$(basename "${output}")
-
-    if is_cached_and_valid "${output}"; then
-        echo "✓ ${filename} already cached"
-    else
-        if [ -f "${output}" ]; then
-            echo "⚠ ${filename} exists but is corrupt — re-downloading..."
-            # Remove both the corrupt output and any stale .part file so that
-            # the resume flags start clean instead of appending to garbage.
-            rm -f "${output}" "${output}.part"
-        else
-            echo "⬇ Downloading ${filename}..."
-        fi
-        download "${url}" "${output}"
-        if ! is_valid_tarball "${output}"; then
-            echo "ERROR: Downloaded ${filename} failed integrity check (corrupt gzip)."
-            rm -f "${output}"
-            exit 1
-        fi
-        echo "✓ Downloaded ${filename}"
     fi
 }
 
@@ -180,39 +72,88 @@ echo "--- Python Source Tarballs ---"
 for version in "${PYTHON_VERSIONS[@]}"; do
     tarball="Python-${version}.tgz"
     url="https://www.python.org/ftp/python/${version}/${tarball}"
-    fetch_tarball "${url}" "${CACHE_DIR}/${tarball}"
+    output="${CACHE_DIR}/${tarball}"
+    
+    if [ -f "${output}" ]; then
+        echo "✓ ${tarball} already cached"
+    else
+        echo "⬇ Downloading ${tarball}..."
+        download "${url}" "${output}"
+        echo "✓ Downloaded ${tarball}"
+    fi
 done
 
 echo ""
 echo "--- OpenSSL and SQLite ---"
 # Download OpenSSL 1.1.1w (for CentOS7)
-fetch_tarball "${OPENSSL_1_1_URL}" "${CACHE_DIR}/openssl-${OPENSSL_1_1_VERSION}.tar.gz"
+openssl_1_1_file="openssl-${OPENSSL_1_1_VERSION}.tar.gz"
+openssl_1_1_output="${CACHE_DIR}/${openssl_1_1_file}"
+if [ -f "${openssl_1_1_output}" ]; then
+    echo "✓ ${openssl_1_1_file} already cached"
+else
+    echo "⬇ Downloading ${openssl_1_1_file}..."
+    download "${OPENSSL_1_1_URL}" "${openssl_1_1_output}"
+    echo "✓ Downloaded ${openssl_1_1_file}"
+fi
 
 # Download OpenSSL 1.0.2u (for Archlinux Net-SNMP 5.7.3)
-fetch_tarball "${OPENSSL_1_0_URL}" "${CACHE_DIR}/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
+openssl_1_0_file="openssl-${OPENSSL_1_0_VERSION}.tar.gz"
+openssl_1_0_output="${CACHE_DIR}/${openssl_1_0_file}"
+if [ -f "${openssl_1_0_output}" ]; then
+    echo "✓ ${openssl_1_0_file} already cached"
+else
+    echo "⬇ Downloading ${openssl_1_0_file}..."
+    download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"
+    echo "✓ Downloaded ${openssl_1_0_file}"
+fi
 
 # Download SQLite
-fetch_tarball "${SQLITE_URL}" "${CACHE_DIR}/sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
+sqlite_file="sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
+sqlite_output="${CACHE_DIR}/${sqlite_file}"
+if [ -f "${sqlite_output}" ]; then
+    echo "✓ ${sqlite_file} already cached"
+else
+    echo "⬇ Downloading ${sqlite_file}..."
+    download "${SQLITE_URL}" "${sqlite_output}"
+    echo "✓ Downloaded ${sqlite_file}"
+fi
 
 echo ""
 echo "--- Net-SNMP Source Tarballs ---"
 for entry in "${NETSNMP_VERSIONS[@]}"; do
+    version="${entry%%:*}"
     url="${entry#*:}"
     filename=$(basename "${url}")
-    fetch_tarball "${url}" "${CACHE_DIR}/${filename}"
+    output="${CACHE_DIR}/${filename}"
+    
+    if [ -f "${output}" ]; then
+        echo "✓ ${filename} already cached"
+    else
+        echo "⬇ Downloading ${filename}..."
+        download "${url}" "${output}"
+        echo "✓ Downloaded ${filename}"
+    fi
 done
 
 echo ""
 echo "--- GoogleTest (for CentOS8) ---"
-fetch_tarball "${GTEST_URL}" "${CACHE_DIR}/v${GTEST_VERSION}.tar.gz"
+gtest_file="v${GTEST_VERSION}.tar.gz"
+gtest_output="${CACHE_DIR}/${gtest_file}"
+if [ -f "${gtest_output}" ]; then
+    echo "✓ ${gtest_file} already cached"
+else
+    echo "⬇ Downloading ${gtest_file}..."
+    download "${GTEST_URL}" "${gtest_output}"
+    echo "✓ Downloaded ${gtest_file}"
+fi
 
 echo ""
 echo "--- Archlinux Packages (for net-snmp 5.7/5.8 compatibility) ---"
-# Download Archlinux packages (these are .pkg.tar.xz/.pkg.tar.zst, not gzip; skip tarball validation)
+# Download Archlinux packages
 for pkg_url in "${ARCHLINUX_PACKAGES[@]}"; do
     pkg_file=$(basename "${pkg_url}")
     pkg_output="${CACHE_DIR}/${pkg_file}"
-
+    
     if [ -f "${pkg_output}" ]; then
         echo "✓ ${pkg_file} already cached"
     else
