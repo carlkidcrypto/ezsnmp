@@ -59,6 +59,9 @@ echo ""
 # page instead of the binary, which would corrupt the download silently.
 # The caller is responsible for removing a corrupt output file *and* its
 # matching .part file before calling this function; fetch_tarball() does that.
+#
+# NOTE: bash 3.x (macOS default) crashes on "${empty_array[@]}" under set -u,
+# so the resume flag is controlled with plain if/else instead of an array.
 download() {
     local url="$1"
     local output="$2"
@@ -67,36 +70,58 @@ download() {
     if command -v wget &>/dev/null; then
         # Only pass -c (continue) when a partial file exists; otherwise wget
         # starts clean and avoids sending Range headers to picky CDNs.
-        local wget_resume=()
-        [ -f "${partial}" ] && wget_resume=(-c)
-        wget \
-            -q --show-progress \
-            --tries=8 \
-            --retry-connrefused \
-            --waitretry=2 \
-            --dns-timeout=15 \
-            --connect-timeout=20 \
-            --read-timeout=30 \
-            --timeout=30 \
-            "${wget_resume[@]}" \
-            "${url}" -O "${partial}"
+        if [ -f "${partial}" ]; then
+            wget \
+                -q --show-progress \
+                --tries=8 \
+                --retry-connrefused \
+                --waitretry=2 \
+                --dns-timeout=15 \
+                --connect-timeout=20 \
+                --read-timeout=30 \
+                --timeout=30 \
+                -c \
+                "${url}" -O "${partial}"
+        else
+            wget \
+                -q --show-progress \
+                --tries=8 \
+                --retry-connrefused \
+                --waitretry=2 \
+                --dns-timeout=15 \
+                --connect-timeout=20 \
+                --read-timeout=30 \
+                --timeout=30 \
+                "${url}" -O "${partial}"
+        fi
     elif command -v curl &>/dev/null; then
         # Only pass -C - (resume) when a partial file exists; otherwise curl
         # sends Range: bytes=0- which SourceForge mirrors can mishandle by
         # returning an HTML redirect page instead of the actual binary.
-        local curl_resume=()
-        [ -f "${partial}" ] && curl_resume=(-C -)
-        curl \
-            -L --progress-bar \
-            --retry 8 \
-            --retry-delay 2 \
-            --retry-connrefused \
-            --connect-timeout 20 \
-            --max-time 1800 \
-            --speed-time 30 \
-            --speed-limit 1024 \
-            "${curl_resume[@]}" \
-            -o "${partial}" "${url}"
+        if [ -f "${partial}" ]; then
+            curl \
+                -L --progress-bar \
+                --retry 8 \
+                --retry-delay 2 \
+                --retry-connrefused \
+                --connect-timeout 20 \
+                --max-time 1800 \
+                --speed-time 30 \
+                --speed-limit 1024 \
+                -C - \
+                -o "${partial}" "${url}"
+        else
+            curl \
+                -L --progress-bar \
+                --retry 8 \
+                --retry-delay 2 \
+                --retry-connrefused \
+                --connect-timeout 20 \
+                --max-time 1800 \
+                --speed-time 30 \
+                --speed-limit 1024 \
+                -o "${partial}" "${url}"
+        fi
     else
         echo "ERROR: Neither wget nor curl is available. Please install one of them."
         exit 1
