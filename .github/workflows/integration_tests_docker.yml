@@ -44,7 +44,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
+        distro:
+          - almalinux10_netsnmp_5.9
+          - archlinux_netsnmp_5.7
+          - archlinux_netsnmp_5.8
+          - archlinux_netsnmp_5.9
+          - centos7_netsnmp_5.7
+          - centos8_netsnmp_5.8
+          - fedora41_netsnmp_5.6
+          - fedora41_netsnmp_5.7
+          - fedora41_netsnmp_5.8
+          - fedora41_netsnmp_5.9
+          - rockylinux8_netsnmp_5.8
+          - rockylinux9_netsnmp_5.9
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
@@ -59,15 +71,15 @@ jobs:
         id: cache-restore
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
-          path: .docker-image-cache/${{ matrix.distribution }}.tar
-          key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
+          path: .docker-image-cache/${{ matrix.distro }}.tar
+          key: docker-image-${{ matrix.distro }}-${{ steps.cache-key.outputs.week }}-v1
           restore-keys: |
-            docker-image-${{ matrix.distribution }}-
+            docker-image-${{ matrix.distro }}-
 
       - name: Load Docker image from cache (if present)
         run: |
           set -euo pipefail
-          TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
+          TAR_PATH=".docker-image-cache/${{ matrix.distro }}.tar"
           if [ -f "$TAR_PATH" ]; then
             echo "Loading cached image from $TAR_PATH"
             if ! docker load -i "$TAR_PATH"; then
@@ -81,7 +93,7 @@ jobs:
       - name: Pull Docker image (refresh from registry)
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distro }}-latest"
           docker pull "$IMAGE"
 
       - name: Save Docker image to cache tar
@@ -89,15 +101,15 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .docker-image-cache
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
-          TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distro }}-latest"
+          TAR_PATH=".docker-image-cache/${{ matrix.distro }}.tar"
           docker save "$IMAGE" -o "$TAR_PATH"
 
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
-          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distro }}-latest"
+          CONTAINER_NAME="${{ matrix.distro }}_integration_container"
           ENTRY_SCRIPT="/usr/local/bin/DockerEntry.sh"
           HOST_SOURCE_PATH="$PWD"
           CONTAINER_WORK_DIR="/ezsnmp"
@@ -119,7 +131,7 @@ jobs:
       - name: Build and install ezsnmp in container
         run: |
           set -euo pipefail
-          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          CONTAINER_NAME="${{ matrix.distro }}_integration_container"
           echo ">>> Building and installing ezsnmp inside container"
           docker exec -t "$CONTAINER_NAME" bash -c '
             set -e
@@ -134,7 +146,7 @@ jobs:
       - name: Run integration tests
         run: |
           set -euo pipefail
-          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          CONTAINER_NAME="${{ matrix.distro }}_integration_container"
           echo ">>> Running integration tests inside container: $CONTAINER_NAME"
           docker exec -t "$CONTAINER_NAME" bash -c '
             set -e
@@ -154,32 +166,32 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
-          CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
+          CONTAINER_NAME="${{ matrix.distro }}_integration_container"
           mkdir -p integration_results
 
           # Copy the main log file
           if docker exec "$CONTAINER_NAME" test -f /ezsnmp/integration_tests_full.log; then
             docker cp "$CONTAINER_NAME:/ezsnmp/integration_tests_full.log" \
-              integration_results/integration_tests_${{ matrix.distribution }}.log
+              integration_results/integration_tests_${{ matrix.distro }}.log
 
             # Extract key metrics into per-file logs (matching native workflow behavior)
             cd integration_results
-            LOG_FILE="integration_tests_${{ matrix.distribution }}.log"
+            LOG_FILE="integration_tests_${{ matrix.distro }}.log"
 
-            grep "Total execution time:" "$LOG_FILE" > total_execution_time_${{ matrix.distribution }}.log || true
-            grep "usm_unknown_security_name_counter:" "$LOG_FILE" > usm_unknown_security_name_counter_${{ matrix.distribution }}.log || true
-            grep "connection_error_counter:" "$LOG_FILE" > connection_error_counter_${{ matrix.distribution }}.log || true
+            grep "Total execution time:" "$LOG_FILE" > total_execution_time_${{ matrix.distro }}.log || true
+            grep "usm_unknown_security_name_counter:" "$LOG_FILE" > usm_unknown_security_name_counter_${{ matrix.distro }}.log || true
+            grep "connection_error_counter:" "$LOG_FILE" > connection_error_counter_${{ matrix.distro }}.log || true
 
             # Try to extract test_file_descriptors from the results directory
             OUT_DIR=$(grep -m1 "Results saved to:" "$LOG_FILE" | sed 's/Results saved to: //' | tr -d '\r') || true
             if [ -n "$OUT_DIR" ]; then
               # OUT_DIR is a path inside the container, try to copy from container
-              docker cp "$CONTAINER_NAME:$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{ matrix.distribution }}.log 2>/dev/null || true
+              docker cp "$CONTAINER_NAME:$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{ matrix.distro }}.log 2>/dev/null || true
             fi
 
             # Fallback: grep relevant lines if file wasn't copied
-            if [ ! -f "test_file_descriptors_${{ matrix.distribution }}.log" ]; then
-              grep -A2 "Running file descriptor tests" "$LOG_FILE" > test_file_descriptors_${{ matrix.distribution }}.log || true
+            if [ ! -f "test_file_descriptors_${{ matrix.distro }}.log" ]; then
+              grep -A2 "Running file descriptor tests" "$LOG_FILE" > test_file_descriptors_${{ matrix.distro }}.log || true
             fi
 
             cd ..
@@ -189,7 +201,7 @@ jobs:
           RESULTS_DIR=$(docker exec "$CONTAINER_NAME" bash -c 'ls -dt /ezsnmp/integration_tests/test_results_* 2>/dev/null | head -1' || echo "")
           if [ -n "$RESULTS_DIR" ] && [ "$RESULTS_DIR" != "" ]; then
             echo "Found results directory: $RESULTS_DIR"
-            docker cp "$CONTAINER_NAME:$RESULTS_DIR" integration_results/test_results_${{ matrix.distribution }}/ || true
+            docker cp "$CONTAINER_NAME:$RESULTS_DIR" integration_results/test_results_${{ matrix.distro }}/ || true
           else
             echo "No test_results directory found"
           fi
@@ -198,9 +210,9 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
-          LOG_FILE="integration_results/integration_tests_${{ matrix.distribution }}.log"
+          LOG_FILE="integration_results/integration_tests_${{ matrix.distro }}.log"
           if [ -f "$LOG_FILE" ]; then
-            echo "=== Test Summary for ${{ matrix.distribution }} ==="
+            echo "=== Test Summary for ${{ matrix.distro }} ==="
             grep -E "(PASS:|FAIL:|COMPLETED:|Total execution time:)" "$LOG_FILE" || echo "No test summary found"
             echo ""
             echo "=== Checking for errors ==="
@@ -210,13 +222,13 @@ jobs:
       - name: Stop and remove container
         if: always()
         run: |
-          docker rm -f "${{ matrix.distribution }}_integration_container" >/dev/null 2>&1 || true
+          docker rm -f "${{ matrix.distro }}_integration_container" >/dev/null 2>&1 || true
 
       - name: Upload Integration Test Results
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
         with:
-          name: integration-test-results-docker_${{ matrix.distribution }}
+          name: integration-test-results-docker_${{ matrix.distro }}
           path: |
             integration_results/**
 
