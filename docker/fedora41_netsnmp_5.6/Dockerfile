@@ -18,7 +18,7 @@ RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Build OpenSSL 1.0.2u from cache (required for net-snmp 5.6.4)
+# Build OpenSSL 1.0.2u from cache (required for net-snmp 5.6.2.1)
 # Installed to /usr/local/openssl10 to avoid conflicting with system OpenSSL 3.x
 COPY docker/cache/openssl-1.0.2u.tar.gz /tmp/
 RUN cd /tmp && \
@@ -31,16 +31,16 @@ RUN cd /tmp && \
 
 ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
 
-# Copy and build NetSNMP 5.6.4 from cache
+# Copy and build NetSNMP 5.6.2.1 from cache
 # Uses OpenSSL 1.0.2u built above, -j1 and MALLOC_CHECK_=0 for stability
-# net-snmp 5.6.4 (2015-era C code) has many incompatibilities with GCC 14's stricter
+# net-snmp 5.6.2.1 (2014-era C code) has many incompatibilities with GCC 14's stricter
 # defaults. We use -Wno-error to convert all warning-to-error promotions back to
 # warnings, and -fno-strict-aliasing for old aliasing patterns. CFLAGS are passed
 # both to configure (stored in Makefile) and to make (ensures they are used).
-COPY docker/cache/net-snmp-5.6.4.tar.gz /tmp/
+COPY docker/cache/net-snmp-5.6.2.1.tar.gz /tmp/
 RUN cd /tmp && \
-    tar -xzf net-snmp-5.6.4.tar.gz && \
-    cd net-snmp-5.6.4 && \
+    tar -xzf net-snmp-5.6.2.1.tar.gz && \
+    cd net-snmp-5.6.2.1 && \
     COMPAT_CFLAGS="-Wno-error -fno-strict-aliasing -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-int-conversion -Wno-discarded-qualifiers -Wno-return-mismatch" && \
     CFLAGS="${COMPAT_CFLAGS}" \
     ./configure --prefix=/usr \
@@ -59,7 +59,7 @@ RUN cd /tmp && \
     MALLOC_CHECK_=0 make install && \
     ldconfig && \
     cd /tmp && \
-    rm -rf net-snmp-5.6.4.tar.gz net-snmp-5.6.4 && \
+    rm -rf net-snmp-5.6.2.1.tar.gz net-snmp-5.6.2.1 && \
     if ! snmpd -v 2>&1 | grep -q "5.6"; then echo "ERROR: Net-SNMP 5.6 not installed correctly"; exit 1; fi
 
 ENV MALLOC_CHECK_=0

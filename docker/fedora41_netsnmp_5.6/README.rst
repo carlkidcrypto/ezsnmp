@@ -11,7 +11,7 @@ This Docker image provides a testing environment based on Fedora 41 (latest stab
 * **GCC**: Native GCC 14.x (g++ 14.x, exceeds g++ 9.5 minimum — no toolset wrapper needed)
 * **Python Versions**: 3.10, 3.11, 3.12, 3.13, 3.14 (all from source builds)
 * **Virtual Environment**: /opt/venv (Python 3.14 with all project dependencies pre-installed)
-* **net-snmp**: 5.6.4 (built from source against OpenSSL 1.0.2u)
+* **net-snmp**: 5.6.2.1 (built from source against OpenSSL 1.0.2u)
 * **OpenSSL**: 1.0.2u (built from source, installed to /usr/local/openssl10)
 * **C++ Testing**: Full g++ 14 support for cpp_tests with coverage reporting
 * **Python Testing**: Full support for python_tests with coverage reporting
@@ -81,15 +81,15 @@ Fedora 41 ships with native GCC 14.x which provides:
 
 The compiler is available system-wide without any PATH modifications.
 
-net-snmp 5.6.4
+net-snmp 5.6.2.1
 ==============
 
-net-snmp 5.6.4 requires OpenSSL 1.0.x — it is not compatible with the system
+net-snmp 5.6.2.1 requires OpenSSL 1.0.x — it is not compatible with the system
 OpenSSL 3.x shipped by Fedora 41. OpenSSL 1.0.2u is therefore built from source
 and installed into ``/usr/local/openssl10``. net-snmp is then configured to use
 that private OpenSSL installation via ``--with-openssl=/usr/local/openssl10``.
 
-net-snmp 5.6.4 is older code that contains implicit function declarations which
+net-snmp 5.6.2.1 is older code that contains implicit function declarations which
 modern GCC 14 would reject as errors. The Dockerfile passes the following
 compatibility flags to the configure step to allow compilation to succeed:
 
