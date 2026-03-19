@@ -56,9 +56,32 @@ download() {
     local output="$2"
 
     if command -v wget >/dev/null 2>&1; then
-        wget -q --show-progress "${url}" -O "${output}"
+        if ! wget -q --show-progress \
+            --tries=3 \
+            --retry-connrefused \
+            --waitretry=2 \
+            --dns-timeout=15 \
+            --connect-timeout=20 \
+            --read-timeout=60 \
+            --timeout=60 \
+            "${url}" -O "${output}"; then
+            rm -f "${output}"
+            return 1
+        fi
     elif command -v curl >/dev/null 2>&1; then
-        curl -L --progress-bar -o "${output}" "${url}"
+        if ! curl -L --progress-bar \
+            --fail \
+            --retry 3 \
+            --retry-delay 2 \
+            --retry-connrefused \
+            --connect-timeout 20 \
+            --max-time 600 \
+            --speed-time 30 \
+            --speed-limit 1024 \
+            -o "${output}" "${url}"; then
+            rm -f "${output}"
+            return 1
+        fi
     else
         echo "ERROR: Neither wget nor curl is available."
         exit 1
@@ -126,12 +149,21 @@ for entry in "${NETSNMP_VERSIONS[@]}"; do
     url="${entry#*:}"
     filename=$(basename "${url}")
     output="${CACHE_DIR}/${filename}"
+    github_fallback_url="https://github.com/net-snmp/net-snmp/archive/refs/tags/v${version}.tar.gz"
     
     if [ -f "${output}" ]; then
         echo "✓ ${filename} already cached"
     else
         echo "⬇ Downloading ${filename}..."
-        download "${url}" "${output}"
+        if ! download "${url}" "${output}"; then
+            echo "WARN: Primary download failed for ${filename}. Trying GitHub tag fallback..."
+            rm -f "${output}"
+            if ! download "${github_fallback_url}" "${output}"; then
+                rm -f "${output}"
+                echo "ERROR: Failed to download ${filename} from both SourceForge and GitHub fallback."
+                exit 1
+            fi
+        fi
         echo "✓ Downloaded ${filename}"
     fi
 done
