@@ -37,6 +37,8 @@ ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
 # defaults. We use -Wno-error to convert all warning-to-error promotions back to
 # warnings, and -fno-strict-aliasing for old aliasing patterns. CFLAGS are passed
 # both to configure (stored in Makefile) and to make (ensures they are used).
+# Keep security modules to usm for 5.6.x: forcing tsm,usm together can trigger
+# duplicate symbol linkage failures (e.g. usm_set_user_password) on newer toolchains.
 COPY docker/cache/net-snmp-5.6.2.1.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.6.2.1.tar.gz && \
@@ -54,7 +56,7 @@ RUN cd /tmp && \
         --with-persistent-directory=/var/net-snmp \
         --disable-debugging \
         --with-openssl=/usr/local/openssl10 \
-        --with-security-modules="tsm,usm" && \
+        --with-security-modules="usm" && \
     MALLOC_CHECK_=0 make -j1 CFLAGS="${COMPAT_CFLAGS}" && \
     MALLOC_CHECK_=0 make install && \
     ldconfig && \
