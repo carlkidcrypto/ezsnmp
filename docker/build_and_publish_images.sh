@@ -39,7 +39,7 @@ get_next_version() {
 # --- Script Usage and Input Validation ---
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache] [--prune] [--ghcr-user <GHCR_USERNAME>] [--ghcr-token <GHCR_TOKEN>]"
+  echo "Usage: $0 <DOCKER_USERNAME> <DOCKER_ACCESS_TOKEN> [IMAGE_NAME] [--no-cache] [--prune] [--platform <TARGET_PLATFORM>] [--progress <PROGRESS_MODE>] [--ghcr-user <GHCR_USERNAME>] [--ghcr-token <GHCR_TOKEN>]"
   echo ""
   echo "  <DOCKER_USERNAME>: Your Docker Hub username."
   echo "  <DOCKER_ACCESS_TOKEN>: Your Docker Hub Personal Access Token (PAT)."
@@ -47,6 +47,9 @@ if [ $# -lt 2 ]; then
   echo "                If omitted, all images in '${DOCKER_DIR}' will be built."
   echo "  [--no-cache]: Optional. Add this flag to force rebuild without using Docker cache."
   echo "  [--prune]: Optional. Add this flag to run 'docker system prune -af' before building (removes dangling images/containers)."
+  echo "  [--platform <TARGET_PLATFORM>]: Optional. Build target platform (e.g., linux/amd64, linux/arm64)."
+  echo "                                On Apple Silicon macOS, defaults to linux/amd64 for compatibility with legacy images."
+  echo "  [--progress <PROGRESS_MODE>]: Optional. Docker build progress mode (auto, plain, tty). Default: plain."
   echo "  [--ghcr-user <GHCR_USERNAME>]: Optional. GitHub username for GitHub Container Registry (ghcr.io)."
   echo "  [--ghcr-token <GHCR_TOKEN>]: Optional. GitHub Personal Access Token (PAT) with 'write:packages' scope for ghcr.io."
   echo "                               Both --ghcr-user and --ghcr-token must be provided to enable GHCR publishing."
@@ -63,6 +66,8 @@ NO_CACHE=""
 PRUNE_DOCKER=""
 GHCR_USERNAME=""
 GHCR_TOKEN=""
+TARGET_PLATFORM=""
+PROGRESS_MODE="plain"
 
 # Parse optional arguments
 shift 2
@@ -77,6 +82,22 @@ while [ $# -gt 0 ]; do
       PRUNE_DOCKER=1
       echo "Docker prune mode: --prune enabled (will clean Docker before building)"
       shift
+      ;;
+    --platform)
+      if [ -z "${2:-}" ] || [[ "$2" == --* ]]; then
+        echo "ERROR: --platform requires a non-empty argument (e.g., linux/amd64)."
+        exit 1
+      fi
+      TARGET_PLATFORM=$2
+      shift 2
+      ;;
+    --progress)
+      if [ -z "${2:-}" ] || [[ "$2" == --* ]]; then
+        echo "ERROR: --progress requires a non-empty argument (auto, plain, tty)."
+        exit 1
+      fi
+      PROGRESS_MODE=$2
+      shift 2
       ;;
     --ghcr-user)
       if [ -z "${2:-}" ] || [[ "$2" == --* ]]; then
@@ -100,6 +121,20 @@ while [ $# -gt 0 ]; do
       ;;
   esac
 done
+
+if [ -z "${TARGET_PLATFORM}" ]; then
+  HOST_OS="$(uname -s 2>/dev/null || true)"
+  HOST_ARCH="$(uname -m 2>/dev/null || true)"
+  if [ "${HOST_OS}" = "Darwin" ] && [ "${HOST_ARCH}" = "arm64" ]; then
+    TARGET_PLATFORM="linux/amd64"
+    echo "Platform mode: Apple Silicon detected; defaulting to --platform ${TARGET_PLATFORM} for maximum image compatibility"
+  fi
+fi
+
+if [ -n "${TARGET_PLATFORM}" ]; then
+  echo "Build platform: ${TARGET_PLATFORM}"
+fi
+echo "Build progress mode: ${PROGRESS_MODE}"
 
 # --- Docker Cleanup (if requested) ---
 
@@ -205,6 +240,10 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
   echo "    - Dated Tag: ${DATED_TAG}"
   echo "    - Latest Tag: ${LATEST_TAG}"
   echo "    - Build Options: ${NO_CACHE}"
+  if [ -n "${TARGET_PLATFORM}" ]; then
+    echo "    - Platform: ${TARGET_PLATFORM}"
+  fi
+  echo "    - Progress: ${PROGRESS_MODE}"
 
   # Compute GHCR tags if GHCR publishing is enabled
   GHCR_DATED_TAG=""
@@ -220,7 +259,18 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
   fi
 
   # 1. Build the image using the distro-specific Dockerfile with repo-root context
-  if docker build ${NO_CACHE} -f "${DOCKERFILE_PATH}" ${BUILD_TAGS} "${CONTEXT_PATH}"; then
+  BUILD_CMD=(docker build --progress "${PROGRESS_MODE}")
+  if [ -n "${NO_CACHE}" ]; then
+    BUILD_CMD+=("${NO_CACHE}")
+  fi
+  if [ -n "${TARGET_PLATFORM}" ]; then
+    BUILD_CMD+=(--platform "${TARGET_PLATFORM}")
+  fi
+  BUILD_CMD+=(-f "${DOCKERFILE_PATH}")
+  read -r -a TAG_ARGS <<< "${BUILD_TAGS}"
+  BUILD_CMD+=("${TAG_ARGS[@]}" "${CONTEXT_PATH}")
+
+  if "${BUILD_CMD[@]}"; then
     echo "    - Build successful."
   else
     echo "ERROR: Docker build failed for ${DISTRO_NAME}."
