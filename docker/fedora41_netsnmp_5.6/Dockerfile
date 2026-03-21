@@ -29,7 +29,7 @@ RUN cd /tmp && \
     echo "/usr/local/openssl10/lib" > /etc/ld.so.conf.d/openssl10.conf && ldconfig && \
     cd /tmp && rm -rf openssl-1.0.2u.tar.gz openssl-1.0.2u
 
-ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
+ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib"
 
 # Copy and build NetSNMP 5.6.2.1 from cache
 # Uses OpenSSL 1.0.2u built above, -j1 and MALLOC_CHECK_=0 for stability
@@ -37,16 +37,19 @@ ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
 # defaults. We use -Wno-error to convert all warning-to-error promotions back to
 # warnings, and -fno-strict-aliasing for old aliasing patterns. CFLAGS are passed
 # both to configure (stored in Makefile) and to make (ensures they are used).
-# Keep security modules to usm for 5.6.x: forcing tsm,usm together can trigger
-# duplicate symbol linkage failures (e.g. usm_set_user_password) on newer toolchains.
+# Build only snmplib + client apps for 5.6.x: full `make all` on modern Fedora
+# fails in legacy agent/app link paths (snmpd/snmptrapd). ezsnmp uses client
+# library and client tools, so install those selectively.
 COPY docker/cache/net-snmp-5.6.2.1.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.6.2.1.tar.gz && \
     cd net-snmp-5.6.2.1 && \
     COMPAT_CFLAGS="-Wno-error -fno-strict-aliasing -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-int-conversion -Wno-discarded-qualifiers -Wno-return-mismatch" && \
-    CFLAGS="${COMPAT_CFLAGS}" \
+    COMPAT_LDFLAGS="-Wl,--copy-dt-needed-entries -Wl,--no-as-needed" && \
+    CFLAGS="${COMPAT_CFLAGS}" LDFLAGS="${COMPAT_LDFLAGS}" \
     ./configure --prefix=/usr \
         --enable-shared \
+        --disable-agent \
         --disable-embedded-perl \
         --without-perl-modules \
         --with-defaults \
@@ -55,14 +58,22 @@ RUN cd /tmp && \
         --with-logfile=/var/log/snmpd.log \
         --with-persistent-directory=/var/net-snmp \
         --disable-debugging \
-        --with-openssl=/usr/local/openssl10 \
-        --with-security-modules="usm" && \
-    MALLOC_CHECK_=0 make -j1 CFLAGS="${COMPAT_CFLAGS}" && \
-    MALLOC_CHECK_=0 make install && \
+        --with-openssl=/usr/local/openssl10 && \
+    MALLOC_CHECK_=0 make -j1 -C snmplib CFLAGS="${COMPAT_CFLAGS}" && \
+    MALLOC_CHECK_=0 make -j1 CFLAGS="${COMPAT_CFLAGS}" \
+        snmpget snmpgetnext snmpwalk snmpbulkwalk snmpbulkget snmpset snmptranslate snmpstatus snmpusm snmpvacm snmptrap && \
+    MALLOC_CHECK_=0 make -C snmplib installlibs && \
+    install -m 755 net-snmp-config /usr/bin/net-snmp-config && \
+    install -m 755 net-snmp-create-v3-user /usr/bin/net-snmp-create-v3-user && \
+    install -m 755 apps/snmpget apps/snmpgetnext apps/snmpwalk apps/snmpbulkwalk apps/snmpbulkget apps/snmpset apps/snmptranslate apps/snmpstatus apps/snmpusm apps/snmpvacm apps/snmptrap /usr/bin/ && \
+    mkdir -p /usr/include/net-snmp && \
+    cp -a include/net-snmp/. /usr/include/net-snmp/ && \
+    cp -a include/ucd-snmp /usr/include/ && \
+    cp -a include/net-snmp-config.h /usr/include/net-snmp/ && \
     ldconfig && \
     cd /tmp && \
     rm -rf net-snmp-5.6.2.1.tar.gz net-snmp-5.6.2.1 && \
-    if ! snmpd -v 2>&1 | grep -q "5.6"; then echo "ERROR: Net-SNMP 5.6 not installed correctly"; exit 1; fi
+    if ! net-snmp-config --version 2>&1 | grep -q "5.6"; then echo "ERROR: Net-SNMP 5.6 client/libs not installed correctly"; exit 1; fi
 
 ENV MALLOC_CHECK_=0
 

@@ -4,6 +4,8 @@ file
 make
 openssl
 openssl-devel
+net-snmp
+net-snmp-utils
 bzip2-devel
 libffi-devel
 zlib-devel
