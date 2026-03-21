@@ -5,35 +5,62 @@ set -euo pipefail
 DOCKER_DIR="."
 DOCKER_REPO_PATH="carlkidcrypto/ezsnmp_test_images"
 
-# --- Helper Function to Generate Dated Tags ---
-# Generates tags in format: MM-DD-YYYY.N where N increments per day
+# --- Tag Helper Functions ---
+
+# Returns 0 when a tag exists locally or in the remote registry.
+tag_exists_anywhere() {
+  local tag=$1
+
+  if docker image inspect "${tag}" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if docker manifest inspect "${tag}" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  return 1
+}
+
+# Given a tag base (without .N), return the next available incremented tag.
+# Example base: repo/image:centos8_netsnmp_5.8-latest -> repo/image:centos8_netsnmp_5.8-latest.3
+get_next_incremented_tag() {
+  local base_tag=$1
+  local version=1
+
+  while tag_exists_anywhere "${base_tag}.${version}"; do
+    version=$((version + 1))
+  done
+
+  echo "${base_tag}.${version}"
+}
+
+# Generates dated tags in format: MM-DD-YYYY.N where N increments per day
+# using both local and remote tag existence checks.
 get_next_version() {
   local image_name=$1
-  local today=$(date +%m-%d-%Y)
+  local today
+  today=$(date +%m-%d-%Y)
   local base_tag="${DOCKER_REPO_PATH}:${image_name}-${today}"
-  
-  # Get the highest version number for today from local Docker image cache
-  local highest_version=0
-  
-  # Check locally cached images to find the highest existing version for today
-  # Note: This only checks local Docker cache, not Docker Hub
-  # If local cache is out of sync with remote registry, versioning may be incorrect
-  # For a more robust solution, we could query the Docker Hub registry API
-  
-  # Check if any today's tags exist locally by trying to inspect them
-  for version in {1..100}; do
-    local tag="${base_tag}.${version}"
-    if docker inspect "${tag}" &>/dev/null 2>&1; then
-      highest_version=$version
-    else
-      # Stop checking after we find a gap
-      break
-    fi
-  done
-  
-  # Increment for next version
-  local next_version=$((highest_version + 1))
-  echo "${base_tag}.${next_version}"
+
+  get_next_incremented_tag "${base_tag}"
+}
+
+# Returns a publish-safe latest tag for immutable registries.
+# If <repo>:<image>-latest already exists, use <repo>:<image>-latest.N.
+get_latest_publish_tag() {
+  local repo_path=$1
+  local image_name=$2
+  local base_latest_tag="${repo_path}:${image_name}-latest"
+
+  if tag_exists_anywhere "${base_latest_tag}"; then
+    local incremented_latest_tag
+    incremented_latest_tag=$(get_next_incremented_tag "${base_latest_tag}")
+    echo "INFO: Tag immutability fallback for ${image_name}: '${base_latest_tag}' already exists; using '${incremented_latest_tag}' instead." >&2
+    echo "${incremented_latest_tag}"
+  else
+    echo "${base_latest_tag}"
+  fi
 }
 
 # --- Script Usage and Input Validation ---
@@ -231,8 +258,8 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
   # Generate the dated version tag
   DATED_TAG=$(get_next_version "${DISTRO_NAME}")
   
-  # Also tag with 'latest' for convenience
-  LATEST_TAG="${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
+  # Use a latest tag that is safe for immutable registries.
+  LATEST_TAG=$(get_latest_publish_tag "${DOCKER_REPO_PATH}" "${DISTRO_NAME}")
 
   echo ">>> Processing image: ${DISTRO_NAME}"
   echo "    - Context Path: ${CONTEXT_PATH}"
@@ -252,7 +279,7 @@ for DISTRO_NAME in "${DISTROS_TO_BUILD[@]}"; do
   if [ -n "${GHCR_REPO_PATH}" ]; then
     VERSION_SUFFIX="${DATED_TAG#${DOCKER_REPO_PATH}:${DISTRO_NAME}-}"
     GHCR_DATED_TAG="${GHCR_REPO_PATH}:${DISTRO_NAME}-${VERSION_SUFFIX}"
-    GHCR_LATEST_TAG="${GHCR_REPO_PATH}:${DISTRO_NAME}-latest"
+    GHCR_LATEST_TAG=$(get_latest_publish_tag "${GHCR_REPO_PATH}" "${DISTRO_NAME}")
     BUILD_TAGS="${BUILD_TAGS} -t ${GHCR_DATED_TAG} -t ${GHCR_LATEST_TAG}"
     echo "    - GHCR Dated Tag: ${GHCR_DATED_TAG}"
     echo "    - GHCR Latest Tag: ${GHCR_LATEST_TAG}"
