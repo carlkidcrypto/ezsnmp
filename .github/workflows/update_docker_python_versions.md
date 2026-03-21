@@ -5,9 +5,7 @@ concurrency:
   cancel-in-progress: false
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 7 * * 6"
-    - cron: "0 8 * * 6"
+  schedule: weekly on saturday
 permissions:
   actions: read
   contents: read
@@ -33,15 +31,11 @@ tools:
 Update Docker Python patch versions by running the repository updater script, then
 open a PR if and only if docker-related files changed.
 
-## Schedule Guard
-
-Preserve the same local-time behavior as the previous workflow.
+## Schedule Behavior
 
 - If triggered by `workflow_dispatch`, run immediately.
-- If triggered by `schedule`, only proceed when local time in
-  `America/Los_Angeles` is exactly Saturday 00:00.
-- If outside that schedule window, make no file edits and finish with a clear
-  no-op message.
+- If triggered by `schedule`, run once per Saturday using gh-aw fuzzy
+  scheduling.
 
 ## Steps
 

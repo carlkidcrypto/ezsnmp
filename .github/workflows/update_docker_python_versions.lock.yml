@@ -21,13 +21,13 @@
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"5ff06e65e5f5e75fb9991a5006a884c9cbaabc29d824b8c69ec9c5b54533a075","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot","agent_model":"auto"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"0654bf4283d09a7480dd42fcfadb42d1b80c3088ac79857359e315362896c340","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot","agent_model":"auto"}
 
 name: "Update Docker Python Versions"
 "on":
   schedule:
-  - cron: "0 7 * * 6"
-  - cron: "0 8 * * 6"
+  - cron: "24 4 * * 6"
+    # Friendly format: weekly on saturday (scattered)
   workflow_dispatch:
 
 permissions: {}
