@@ -81,7 +81,7 @@ The following table maps EzSnmp parameter names to their corresponding net-snmp 
        - ``-X PASSPHRASE``
      * - ``security_username``
        - ``-u USERNAME``
-     * - ``context_name``
+     * - ``context``
        - ``-n CONTEXT``
      * - ``security_engine_id``
        - ``-e ENGINE-ID``

@@ -66,7 +66,7 @@ Install EzSnmp via pip as follows:
 Installation Troubleshooting
 ----------------------------
 
-Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSnmp compatiabile
+Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSnmp compatible
 with as many as possible linux distros. Occasionally it isn't perfect. If you have issues try
 something like this:
 
@@ -75,7 +75,7 @@ something like this:
     pip install --force-reinstall --no-binary :all: ezsnmp
 
 
-If you have import issues like whats below, try reinstalling the package forcing a build from source.
+If you have import issues like what's below, try reinstalling the package forcing a build from source.
 First remove any lingering folders like `build/` or `ezsnmp.egg-info/`.
 Then run the same command that is shown above `pip install --force-reinstall --no-binary :all: ezsnmp`.
 
@@ -135,19 +135,18 @@ one-off operations where you wish to specify all details in the request:
 
 .. code-block:: python
 
-    from ezsnmp import snmp_get, snmp_set, snmp_walk
+    from ezsnmp import snmpget, snmpset, snmpwalk
+
+    SNMP_ARGS = ["-v", "2c", "-c", "public", "localhost"]
 
     # Grab a single piece of information using an SNMP GET
-    snmp_get('sysDescr.0', hostname='localhost', community='public', version=1)
+    snmpget(SNMP_ARGS + ["sysDescr.0"])
 
     # Perform an SNMP SET to update data
-    snmp_set(
-        'sysLocation.0', 'My Cool Place',
-        hostname='localhost', community='public', version=1
-    )
+    snmpset(SNMP_ARGS + ["sysLocation.0", "s", "My Cool Place"])
 
     # Perform an SNMP walk
-    snmp_walk('system', hostname='localhost', community='public', version=1)
+    snmpwalk(SNMP_ARGS + ["system"])
 
 Example Session Kargs
 ---------------------
@@ -262,7 +261,7 @@ EzSnmp Exception Handling
 EzSnmp provides custom exception classes contained in `exceptions` to handle errors that may occur during SNMP operations.
 This allows you to catch and manage exceptions specific to EzSnmp more effectively.
 
-Here's an example of how to use one of the exceptions classes.:
+Here's an example of how to use one of the exception classes:
 
 .. code-block:: python
 

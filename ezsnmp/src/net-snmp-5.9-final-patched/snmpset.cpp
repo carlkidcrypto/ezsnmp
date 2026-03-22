@@ -87,7 +87,7 @@ void snmpset_usage(void) {
 #endif /* NETSNMP_WITH_OPAQUE_SPECIAL_TYPES */
 }
 
-static int quiet = 0;
+thread_local int quiet = 0;
 
 void snmpset_optProc(int, char *const *, int opt) {
    switch (opt) {
@@ -145,23 +145,29 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
 
    putenv(strdup("POSIXLY_CORRECT=1"));
 
-   /*
-    * get the common command line arguments
-    */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
+   // global state (option parsing, DS library settings).
+   {
+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+      /*
+       * get the common command line arguments
+       */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
+         case NETSNMP_PARSE_ARGS_ERROR:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
-      default:
-         break;
+         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
+         default:
+            break;
+      }
    }
 
    if (arg >= argc) {
