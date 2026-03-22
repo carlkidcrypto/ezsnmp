@@ -114,23 +114,35 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    int status;
    SOCK_STARTUP;
 
-   /*
-    * get the common command line arguments
-    */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+   int dont_fix_pdus = 0;
+   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
+   // global state (option parsing, DS library settings).
+   {
+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+      /*
+       * get the common command line arguments
+       */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
+         case NETSNMP_PARSE_ARGS_ERROR:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
-      default:
-         break;
+         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
+         default:
+            break;
+      }
+
+      // Capture DONT_FIX_PDUS while still holding the setup mutex so no other
+      // thread can reset it before we read its value for this invocation.
+      dont_fix_pdus =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
    }
 
    if (arg >= argc) {
@@ -209,7 +221,7 @@ retry:
          /*
           * retry if the errored variable was successfully removed
           */
-         if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS)) {
+         if (!dont_fix_pdus) {
             pdu = snmp_fix_pdu(response, SNMP_MSG_GETNEXT);
             snmp_free_pdu(response);
             response = NULL;
