@@ -35,11 +35,11 @@ Making The SWIG Interface Files
 
 First look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
 
-Two copy the c file over, for example `snmpwalk.c`. Then rename to change the extension to `.cpp`.
+Two: copy the c file over, for example `snmpwalk.c`. Then rename to change the extension to `.cpp`.
 
-Three make a header file for it `snmpwalk.h` and extract methods/functions from the source code.
+Three: make a header file for it `snmpwalk.h` and extract methods/functions from the source code.
 
-Four run the command below to generate the wrap file.
+Four: run the command below to generate the wrap file.
 
 .. code-block:: bash
 
@@ -55,13 +55,13 @@ Four run the command below to generate the wrap file.
 * `-doxygen` Convert C++ doxygen comments to pydoc comments in proxy classes `Python_commandline <https://swig.org/Doc4.0/Python.html#Python_commandline>`_
 * `-threads` adds thread support for all modules. `Support for Multithreaded Applications <https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications>`_
 
-Five run
+Five: run
 
 .. code-block:: bash
 
     clear && rm -drf build ezsnmp.egg-info && python3 -m pip install .
 
-Six run it in python3
+Six: run it in python3
 
 .. code-block:: bash
 
