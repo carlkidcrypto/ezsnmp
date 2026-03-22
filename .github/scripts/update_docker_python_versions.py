@@ -4,17 +4,22 @@
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import re
 import sys
 from pathlib import Path
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PYTHON_FTP_INDEX = "https://www.python.org/ftp/python/"
+GITHUB_CPYTHON_TAGS_URL = (
+    "https://api.github.com/repos/python/cpython/git/refs/tags?per_page=100"
+)
 ARG_VERSION_PATTERN = re.compile(
     r"^(ARG\s+PYTHON_[A-Z0-9_]+_VERSION=)(\d+\.\d+\.\d+)(\s*(?:#.*)?)$", re.MULTILINE
 )
-FTP_VERSION_PATTERN = re.compile(r'href="(\d+\.\d+\.\d+)/"')
+TAG_VERSION_PATTERN = re.compile(r"refs/tags/v(\d+\.\d+\.\d+)$")
+LINK_NEXT_PATTERN = re.compile(r'<([^>]+)>;\s*rel="next"')
 
 
 def version_key(version: str) -> tuple[int, int, int]:
@@ -29,19 +34,43 @@ def version_key(version: str) -> tuple[int, int, int]:
 
 
 def fetch_available_versions() -> list[str]:
-    """Fetch all published CPython patch releases from the python.org FTP index.
+    """Fetch all published CPython final releases from the GitHub CPython repository.
 
-    :return: All discovered CPython release directories, sorted by version.
+    Uses the GitHub API tags endpoint (api.github.com) to enumerate all CPython
+    release tags of the form ``vX.Y.Z`` (pre-release suffixes such as ``a``, ``b``,
+    and ``rc`` are excluded).
+
+    :return: All discovered CPython release versions, sorted by version.
     :rtype: list[str]
-    :raises RuntimeError: If no version directories are discovered.
+    :raises RuntimeError: If no version tags are discovered.
     """
-    with urlopen(PYTHON_FTP_INDEX, timeout=30) as response:
-        html = response.read().decode("utf-8")
+    versions: set[str] = set()
+    url: str | None = GITHUB_CPYTHON_TAGS_URL
+    headers: dict[str, str] = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "ezsnmp-update-docker-python-versions/1.0",
+    }
+    if token := os.environ.get("GITHUB_TOKEN"):
+        headers["Authorization"] = f"Bearer {token}"
 
-    versions = {match.group(1) for match in FTP_VERSION_PATTERN.finditer(html)}
+    while url:
+        req = Request(url, headers=headers)
+        with urlopen(req, timeout=30) as response:
+            tags = json.loads(response.read().decode("utf-8"))
+            link_header = response.headers.get("Link", "")
+
+        for tag in tags:
+            ref = tag.get("ref", "")
+            match = TAG_VERSION_PATTERN.match(ref)
+            if match:
+                versions.add(match.group(1))
+
+        next_match = LINK_NEXT_PATTERN.search(link_header)
+        url = next_match.group(1) if next_match else None
+
     if not versions:
         raise RuntimeError(
-            "No CPython versions were discovered from the python.org FTP index"
+            "No CPython versions were discovered from the GitHub CPython repository"
         )
     return sorted(versions, key=version_key)
 
