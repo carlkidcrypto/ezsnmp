@@ -1,7 +1,29 @@
-Last Updated: 2026-03-22 18:22:33 UTC
+Last Updated: 2026-03-22 21:54:42 UTC
 
 # Changelog
 
+<a name="unreleased"></a>
+## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b1...HEAD)
+
+### Changes
+
+#### Features
+- Feature/gh aw 3 ([#763](https://github.com/carlkidcrypto/ezsnmp/issues/763))
+
+
+#### Bug Fixes
+- fix: sphinx_build workflow to create PR instead of pushing directly to main ([#762](https://github.com/carlkidcrypto/ezsnmp/issues/762))
+
+
+#### Maintenance
+- chore: update CHANGELOG.md
+
+
+### Merged Pull Requests
+- Merge pull request [#759](https://github.com/carlkidcrypto/ezsnmp/issues/759) from carlkidcrypto/update-changelog-23409474942
+
+
+---
 
 <a name="v2.2.0b1"></a>
 ## [v2.2.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b0...v2.2.0b1) (2026-03-22)
