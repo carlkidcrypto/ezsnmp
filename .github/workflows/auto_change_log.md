@@ -6,13 +6,6 @@ concurrency:
 on:
   release:
     types: [published]
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/auto_change_log.md
-      - .chglog/**
   skip-if-match:
     query: 'is:pr is:open head:automation/update-changelog label:documentation label:automated-pr'
 permissions:
