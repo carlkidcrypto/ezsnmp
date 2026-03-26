@@ -8,6 +8,8 @@ permissions:
   contents: read
   pull-requests: read
 safe-outputs:
+  create-issue:
+    labels: [auto-sync]
   push-to-pull-request-branch:
     target: "*"
     labels: [auto-sync]
