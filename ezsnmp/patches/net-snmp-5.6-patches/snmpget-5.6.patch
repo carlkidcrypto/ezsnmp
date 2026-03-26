@@ -72,11 +72,11 @@
 +#include "snmpget.h"
 +#include "thread_safety.h"
 +
-+void snmpget_optProc(int argc, char *const *argv, int opt) {
++void snmpget_optProc(int, char *const *, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -80,115 +85,110 @@
+@@ -80,115 +85,102 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -135,13 +135,13 @@
 -    oid             name[MAX_OID_LEN];
 -    size_t          name_length;
 -    int             status;
+-    int             failures = 0;
+-    int             exitval = 0;
+-
 +   char *names[SNMP_MAX_CMDLINE_OIDS] = {0};
 +   oid name[MAX_OID_LEN] = {0};
 +   size_t name_length = 0;
 +   int status = -1;
-     int             failures = 0;
--    int             exitval = 0;
- 
 +   SOCK_STARTUP;
  
      /*
@@ -225,27 +225,24 @@
          name_length = MAX_OID_LEN;
          if (!snmp_parse_oid(names[count], name, &name_length)) {
 -            snmp_perror(names[count]);
-+            snmp_perror_exception(names[count]);
-             failures++;
+-            failures++;
 -        } else
++            snmp_perror_exception(names[count]);
 +         } else {
              snmp_add_null_var(pdu, name, name_length);
      }
-+      }
-+   }
-     if (failures) {
+-    if (failures) {
 -        snmp_close(ss);
 -        SOCK_CLEANUP;
 -        exit(1);
-+      snmp_free_pdu(pdu);
-+      return parse_results(return_vector);
      }
- 
 -
+-
++   }
      /*
       * Perform the request.
       *
-@@ -196,35 +196,33 @@
+@@ -196,35 +188,33 @@
       * "fix" the PDU (removing the error-prone OID) and retry.
       */
    retry:
@@ -294,7 +291,7 @@
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
                  snmp_free_pdu(response);
                  response = NULL;
-@@ -232,24 +230,26 @@
+@@ -232,24 +222,26 @@
                      goto retry;
  		}
              }

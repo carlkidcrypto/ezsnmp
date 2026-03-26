@@ -201,11 +201,11 @@ This script:
 
 **build_and_publish_images.sh**
 
-Builds and publishes Docker images to Docker Hub.
+Builds and publishes Docker images to Docker Hub and optionally to GitHub Container Registry (ghcr.io).
 
 .. code-block:: bash
 
-  # Build and publish all distribution images
+  # Build and publish all distribution images to Docker Hub
   ./build_and_publish_images.sh <docker_user> <docker_pat>
 
   # Build and publish a single distribution
@@ -213,6 +213,16 @@ Builds and publishes Docker images to Docker Hub.
 
   # Build from scratch without using cache
   ./build_and_publish_images.sh <docker_user> <docker_pat> centos7 --no-cache
+
+  # Build and publish to both Docker Hub and GitHub Container Registry
+  ./build_and_publish_images.sh <docker_user> <docker_pat> --ghcr-user <github_user> --ghcr-token <github_pat>
+
+  # Build a single image and publish to both registries
+  ./build_and_publish_images.sh <docker_user> <docker_pat> centos7 --ghcr-user <github_user> --ghcr-token <github_pat>
+
+To publish to GitHub Container Registry, provide a GitHub Personal Access Token (PAT) with
+the ``write:packages`` scope via ``--ghcr-user`` and ``--ghcr-token``. Images will be pushed
+to ``ghcr.io/<github_user>/ezsnmp_test_images``.
 
 **run_python_tests_in_all_dockers.sh**
 

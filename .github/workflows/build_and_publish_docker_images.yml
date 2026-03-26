@@ -19,6 +19,7 @@ on:
 
 env:
   DOCKER_REPO: carlkidcrypto/ezsnmp_test_images
+  GHCR_REPO: ghcr.io/carlkidcrypto/ezsnmp_test_images
 
 jobs:
   set-matrix:
@@ -55,6 +56,7 @@ jobs:
     timeout-minutes: 120
     permissions:
       contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -72,8 +74,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Restore Python tarball cache
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: docker/cache
           key: python-tarballs-${{ hashFiles('docker/cache/download_build_cache.sh') }}
@@ -94,8 +103,11 @@ jobs:
           DATE_TAG=$(date -u +"%m-%d-%Y")
           UNIQUE_TAG="${DATE_TAG}.${GITHUB_RUN_NUMBER}"
           IMAGE="${DOCKER_REPO}:${{ matrix.distribution }}"
+          GHCR_IMAGE="${GHCR_REPO}:${{ matrix.distribution }}"
           echo "dated=${IMAGE}-${UNIQUE_TAG}" >> "$GITHUB_OUTPUT"
           echo "latest=${IMAGE}-latest" >> "$GITHUB_OUTPUT"
+          echo "ghcr_dated=${GHCR_IMAGE}-${UNIQUE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "ghcr_latest=${GHCR_IMAGE}-latest" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
@@ -107,5 +119,7 @@ jobs:
           tags: |
             ${{ steps.tags.outputs.dated }}
             ${{ steps.tags.outputs.latest }}
+            ${{ steps.tags.outputs.ghcr_dated }}
+            ${{ steps.tags.outputs.ghcr_latest }}
           cache-from: type=gha,scope=${{ matrix.distribution }}
           cache-to: type=gha,mode=max,scope=${{ matrix.distribution }}
