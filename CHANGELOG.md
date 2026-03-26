@@ -1,7 +1,107 @@
-Last Updated: 2026-03-13 20:46:56 UTC
+Last Updated: 2026-03-22 21:54:42 UTC
 
 # Changelog
 
+<a name="unreleased"></a>
+## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b1...HEAD)
+
+### Changes
+
+#### Features
+- Feature/gh aw 3 ([#763](https://github.com/carlkidcrypto/ezsnmp/issues/763))
+
+
+#### Bug Fixes
+- fix: sphinx_build workflow to create PR instead of pushing directly to main ([#762](https://github.com/carlkidcrypto/ezsnmp/issues/762))
+
+
+#### Maintenance
+- chore: update CHANGELOG.md
+
+
+### Merged Pull Requests
+- Merge pull request [#759](https://github.com/carlkidcrypto/ezsnmp/issues/759) from carlkidcrypto/update-changelog-23409474942
+
+
+---
+
+<a name="v2.2.0b1"></a>
+## [v2.2.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b0...v2.2.0b1) (2026-03-22)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix 3 concurrency bugs causing CI timeouts: spin-wait livelock, O(N²) mutex contention, flag read race ([#740](https://github.com/carlkidcrypto/ezsnmp/issues/740))
+
+
+#### Bug Fixes
+
+- fix: use GitHub API (api.github.com) instead of www.python.org for CPython version lookup ([#753](https://github.com/carlkidcrypto/ezsnmp/issues/753))
+
+
+#### Docker
+
+- Docker: Fix Cpp Tests in Workflow ([#732](https://github.com/carlkidcrypto/ezsnmp/issues/732))
+
+
+#### Documentation Updates
+
+- docs: fix typos, grammar, incorrect API examples, and vague docstrings ([#756](https://github.com/carlkidcrypto/ezsnmp/issues/756))
+
+
+#### Features
+
+- Add docs CI workflows and update bug template ([#755](https://github.com/carlkidcrypto/ezsnmp/issues/755))
+
+- Add Docker Hub → GHCR fallback in workflows and shell scripts ([#749](https://github.com/carlkidcrypto/ezsnmp/issues/749))
+
+
+#### Features
+
+- Feature/gh aw ([#750](https://github.com/carlkidcrypto/ezsnmp/issues/750))
+
+- Feature/v2.2.0b1 release prep ([#737](https://github.com/carlkidcrypto/ezsnmp/issues/737))
+
+- Feature/docker auto update py vers ([#729](https://github.com/carlkidcrypto/ezsnmp/issues/729))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
+
+- chore: update CHANGELOG.md
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into update-changelog-23069856902
+
+- Merge branch 'main' into update-changelog-23069856913
+
+
+#### Rewrite
+
+- Rewrite sphinx_build.yml to match os-specific-runner reference workflow ([#744](https://github.com/carlkidcrypto/ezsnmp/issues/744))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#727](https://github.com/carlkidcrypto/ezsnmp/issues/727) from carlkidcrypto/update-changelog-23069856902
+
+- Merge pull request [#726](https://github.com/carlkidcrypto/ezsnmp/issues/726) from carlkidcrypto/update-changelog-23069856913
+
+
+
+
+
+---
 
 <a name="v2.2.0b0"></a>
 ## [v2.2.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0a2...v2.2.0b0) (2026-03-13)
