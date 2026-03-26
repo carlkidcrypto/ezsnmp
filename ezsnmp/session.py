@@ -55,7 +55,7 @@ class Session(SessionBase):
         :type context_engine_id: str
         :param security_level: The security level (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
         :type security_level: str
-        :param context: The context.
+        :param context: The SNMPv3 context name used to identify a collection of management information (SNMPv3 only).
         :type context: str
         :param security_username: The security username.
         :type security_username: str
@@ -82,11 +82,11 @@ class Session(SessionBase):
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
         :param set_max_repeaters_to_num: Set the maximum number of repeaters to num. Default is 10. Only applies to GETBULK PDUs.
-        :type set_max_repeaters_to_num: Union[str, int].
+        :type set_max_repeaters_to_num: Union[str, int]
 
         """
 
-        # Note that underlying SesssionBase object depends on all parameters to be strings.
+        # Note that underlying SessionBase object depends on all parameters to be strings.
         # This is the case, since at the end of the day we are building a command line string
         # to pass to the NetSNMP command line tool.
         try:
@@ -783,7 +783,7 @@ class Session(SessionBase):
             >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> result = session.get("1.3.6.1.2.1.1.1.0")
-            >>> for item in results:
+            >>> for item in result:
             ...     print("OID:", item.oid)
             ...     print("Index:", item.index)
             ...     print("Value:", item.value)

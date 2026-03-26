@@ -69,13 +69,12 @@ SOFTWARE.
 #include <mutex>
 
 oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
-int max_repetitions = 10;
-int non_repeaters = 0;
+thread_local int max_repetitions = 10;
+thread_local int non_repeaters = 0;
 struct nameStruct {
    oid name[MAX_OID_LEN];
    size_t name_len;
-} *name, *namep;
-int names;
+};
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -92,7 +91,7 @@ void snmpbulkget_usage(void) {
    fprintf(stderr, "\t\t\t  r<NUM>:  set max-repeaters to <NUM>\n");
 }
 
-void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
+void snmpbulkget_optProc(int, char *const *, int opt) {
    char *endptr = NULL;
 
    switch (opt) {
@@ -115,9 +114,6 @@ void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
                                           " option\n");
                   } else {
                      optarg = endptr;
-                     if (isspace((unsigned char)(*optarg))) {
-                        return;
-                     }
                   }
                   break;
 
@@ -150,24 +146,38 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
-   /*
-    * get the common command line arguments
-    */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+   // Reset thread-local defaults for each invocation.
+   max_repetitions = 10;
+   non_repeaters = 0;
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
+   // global state (option parsing, DS library settings).
+   {
+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+      /*
+       * get the common command line arguments
+       */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
+         case NETSNMP_PARSE_ARGS_ERROR:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      default:
-         break;
+         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
+         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
+         default:
+            break;
+      }
    }
+
+   // Declare name/namep/names as local variables to avoid data races.
+   int names;
+   struct nameStruct *name, *namep;
 
    names = argc - arg;
    if (names < non_repeaters) {
@@ -182,7 +192,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
          namep->name_len = MAX_OID_LEN;
          if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
             snmp_perror_exception(argv[arg]);
-            return parse_results(return_vector);
          }
          arg++;
          namep++;
@@ -198,7 +207,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpbulkget", &session);
-      return parse_results(return_vector);
    }
 
    /*
