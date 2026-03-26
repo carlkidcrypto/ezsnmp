@@ -783,7 +783,7 @@ class Session(SessionBase):
             >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> result = session.get("1.3.6.1.2.1.1.1.0")
-            >>> for item in results:
+            >>> for item in result:
             ...     print("OID:", item.oid)
             ...     print("Index:", item.index)
             ...     print("Value:", item.value)
