@@ -42,10 +42,10 @@ def snmpget(netsnmp_args=[], init_app_name="ezsnmp_snmpget"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
         >>> result = snmpget(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmpget(netsnmp_args, init_app_name)
@@ -86,10 +86,10 @@ def snmpgetnext(netsnmp_args=[], init_app_name="ezsnmp_snmpgetnext"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
         >>> result = snmpgetnext(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmpgetnext(netsnmp_args, init_app_name)
@@ -130,10 +130,10 @@ def snmpwalk(netsnmp_args=[], init_app_name="ezsnmp_snmpwalk"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr"]
         >>> result = snmpwalk(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmpwalk(netsnmp_args, init_app_name)
@@ -174,10 +174,10 @@ def snmpbulkget(netsnmp_args=[], init_app_name="ezsnmp_snmpbulkget"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0"]
         >>> result = snmpbulkget(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmpbulkget(netsnmp_args, init_app_name)
@@ -218,10 +218,10 @@ def snmpbulkwalk(netsnmp_args=[], init_app_name="ezsnmp_snmpbulkwalk"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysDescr"]
         >>> result = snmpbulkwalk(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmpbulkwalk(netsnmp_args, init_app_name)
@@ -262,10 +262,10 @@ def snmpset(netsnmp_args=[], init_app_name="ezsnmp_snmpset"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11161"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + [".iso.org.dod.internet.mgmt.mib-2.system.sysContact.0", "s", "admin@example.com"]
         >>> result = snmpset(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmpset(netsnmp_args, init_app_name)
@@ -306,10 +306,10 @@ def snmptrap(netsnmp_args=[], init_app_name="ezsnmp_snmptrap"):
         >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11162"]
         >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + ["'' .1.3.6.1.6.3.1.1.5.1 0"]
         >>> result = snmptrap(netsnmp_args)
-        >>> print("OID:", result.oid)
-        >>> print("Index:", result.index)
-        >>> print("Value:", result.value)
-        >>> print("Type:", result.type)
+        >>> print("OID:", result[0].oid)
+        >>> print("Index:", result[0].index)
+        >>> print("Value:", result[0].value)
+        >>> print("Type:", result[0].type)
     """
     try:
         result = netsnmp_snmptrap(netsnmp_args, init_app_name)

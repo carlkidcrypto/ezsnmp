@@ -21,22 +21,15 @@
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
 #
-# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"fcf98548dd6d085dfdf1c528f9d8f532db8590b301e9ecf3f5d715d1e65fe123","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot","agent_model":"auto"}
+# gh-aw-metadata: {"schema_version":"v3","frontmatter_hash":"f08a1549eaf140af6c25ef24276a69cd88b682dbe37525bd28fdc70f71bbb1c1","compiler_version":"v0.62.5","strict":true,"agent_id":"copilot","agent_model":"auto"}
 
 name: "Update Changelog"
 "on":
-  push:
-    branches:
-    - main
-    paths:
-    - .github/workflows/auto_change_log.md
-    - .chglog/**
   release:
     types:
     - published
   # skip-if-match: # Skip-if-match processed as search check in pre-activation job
     # query: is:pr is:open head:automation/update-changelog label:documentation label:automated-pr
-  workflow_dispatch:
 
 permissions: {}
 
@@ -61,7 +54,7 @@ jobs:
       secret_verification_result: ${{ steps.validate-secret.outputs.verification_result }}
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@v0.62.5
+        uses: github/gh-aw-actions/setup@v0.64.0
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
       - name: Generate agentic run info
@@ -249,6 +242,8 @@ jobs:
     permissions:
       actions: read
       contents: read
+    concurrency:
+      group: "gh-aw-copilot-${{ github.workflow }}"
     env:
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       GH_AW_ASSETS_ALLOWED_EXTS: ""
@@ -267,7 +262,7 @@ jobs:
       output_types: ${{ steps.collect_output.outputs.output_types }}
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@v0.62.5
+        uses: github/gh-aw-actions/setup@v0.64.0
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
       - name: Set runtime paths
@@ -873,7 +868,7 @@ jobs:
       total_count: ${{ steps.missing_tool.outputs.total_count }}
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@v0.62.5
+        uses: github/gh-aw-actions/setup@v0.64.0
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
       - name: Download agent output artifact
@@ -981,7 +976,7 @@ jobs:
       matched_command: ''
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@v0.62.5
+        uses: github/gh-aw-actions/setup@v0.64.0
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
       - name: Check team membership for workflow
@@ -1038,7 +1033,7 @@ jobs:
       process_safe_outputs_temporary_id_map: ${{ steps.process_safe_outputs.outputs.temporary_id_map }}
     steps:
       - name: Setup Scripts
-        uses: github/gh-aw-actions/setup@v0.62.5
+        uses: github/gh-aw-actions/setup@v0.64.0
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
       - name: Download agent output artifact
