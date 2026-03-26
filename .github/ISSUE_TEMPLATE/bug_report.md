@@ -41,7 +41,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Additional context**
-Add any other context about the problem here.
+Add any other contextual information about the problem here, such as stack traces, debugger output, or log files.
 
 **Do you have a fix already with working code**
 Consider opening a PR with your fix. Ensure test coverage has been

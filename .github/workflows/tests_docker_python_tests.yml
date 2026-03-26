@@ -80,12 +80,20 @@ jobs:
             echo "No cached image tar found. Will pull from registry."
           fi
 
-      - name: Pull Docker image (refresh from registry)
+      - name: Pull Docker image (with registry fallback)
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
-          # Always pull to pick up upstream changes; this is fast if up-to-date
-          docker pull "$IMAGE"
+          DHUB_IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          GHCR_IMAGE="ghcr.io/carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          if docker pull "$DHUB_IMAGE"; then
+            echo "Pulled from Docker Hub: $DHUB_IMAGE"
+          elif docker pull "$GHCR_IMAGE"; then
+            echo "Docker Hub unavailable; pulled from GHCR: $GHCR_IMAGE"
+            docker tag "$GHCR_IMAGE" "$DHUB_IMAGE"
+          else
+            echo "ERROR: Failed to pull image from both Docker Hub and GHCR." >&2
+            exit 1
+          fi
 
       - name: Save Docker image to cache tar
         if: always()

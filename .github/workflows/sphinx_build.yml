@@ -1,4 +1,4 @@
-name: "Pull Request Sphinx Docs Check"
+name: "Sphinx Docs Build"
 
 on:
   push:
@@ -9,9 +9,8 @@ on:
 
   workflow_dispatch:
 
-  workflow_call:
-
 jobs:
+  # ── Build latest docs on push to main ─────────────────────────────────────
   sphinx_docs_build:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -19,18 +18,18 @@ jobs:
       contents: write
     steps:
       - name: Check out repository code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           fetch-tags: true
 
       - name: Set up Python 3.12 env for sphinx...
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
 
       - name: Cache pip dependencies
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt') }}
@@ -39,228 +38,48 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install Build Requirements
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            sudo apt update;
-            sudo apt install -y libsnmp-dev g++ python3-dev doxygen;
+        run: |
+          sudo apt update
+          sudo apt install -y libsnmp-dev g++ python3-dev doxygen
 
       - name: Install Pip Requirements
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            # Try to install requirements, if it fails then purge cache and retry
-            if ! pip install -r requirements.txt; then
-              echo "Installation failed, purging pip cache and retrying..."
-              pip install --upgrade pip || true;
-              pip cache purge || true;
-              pip install -r requirements.txt;
-            fi
+        run: |
+          cd ${{ github.workspace }}/sphinx_docs_build
+          # Try to install requirements, if it fails then purge cache and retry
+          if ! pip install -r requirements.txt; then
+            echo "Installation failed, purging pip cache and retrying..."
+            pip install --upgrade pip || true
+            pip cache purge || true
+            pip install -r requirements.txt
+          fi
+          pip install -r ${{ github.workspace }}/sphinx_docs_build/landing/requirements.txt
 
-      - name: Run sphinx...
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/;
-            rm -drf build ezsnmp.egg-info;
-            python3 -m pip install . --verbose;
-            mkdir -p doxygen_docs_build;
-            doxygen .doxygen;
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            mkdir -p source/_static;
-            mkdir -p source/_templates;
-            make clean && make html SPHINXOPTS="-W";
-
-      - name: Install Landing Pip Requirements
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build/landing;
-            # Try to install requirements, if it fails then purge cache and retry
-            if ! pip install -r requirements.txt; then
-              echo "Installation failed, purging pip cache and retrying..."
-              pip install --upgrade pip || true;
-              pip cache purge || true;
-              pip install -r requirements.txt;
-            fi
+      - name: Run sphinx (latest)
+        run: |
+          cd ${{ github.workspace }}
+          rm -drf build ezsnmp.egg-info
+          python3 -m pip install . --verbose
+          mkdir -p doxygen_docs_build
+          doxygen .doxygen
+          cd ${{ github.workspace }}/sphinx_docs_build
+          mkdir -p source/_static
+          mkdir -p source/_templates
+          make clean && make html SPHINXOPTS="-W"
 
       - name: Build landing page
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build/landing;
-            mkdir -p source/_static;
-            mkdir -p source/_templates;
-            make html;
+        run: |
+          cd ${{ github.workspace }}/sphinx_docs_build/landing
+          mkdir -p source/_static
+          mkdir -p source/_templates
+          make html SPHINXOPTS="-W"
 
       - name: Upload artifact for GitHub Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
           path: docs/
 
-  sphinx_docs_build_release:
-    if: github.event_name == 'release'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out repository code at release tag
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-          ref: ${{ github.ref }}
-
-      - name: Set up Python 3.12 env for sphinx...
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
-        with:
-          python-version: "3.12"
-
-      - name: Cache pip dependencies
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-sphinx-
-            ${{ runner.os }}-pip-
-
-      - name: Install Build Requirements
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            sudo apt update;
-            sudo apt install -y libsnmp-dev g++ python3-dev doxygen;
-
-      - name: Install Pip Requirements
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            # Try to install requirements, if it fails then purge cache and retry
-            if ! pip install -r requirements.txt; then
-              echo "Installation failed, purging pip cache and retrying..."
-              pip install --upgrade pip || true;
-              pip cache purge || true;
-              pip install -r requirements.txt;
-            fi
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build/landing;
-            if ! pip install -r requirements.txt; then
-              echo "Installation failed, purging pip cache and retrying..."
-              pip install --upgrade pip || true;
-              pip cache purge || true;
-              pip install -r requirements.txt;
-            fi
-
-      - name: Build versioned docs
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            VERSION="${{ github.ref_name }}";
-            cd /home/runner/work/ezsnmp/ezsnmp/;
-            rm -drf build ezsnmp.egg-info;
-            python3 -m pip install . --verbose;
-            mkdir -p doxygen_docs_build;
-            doxygen .doxygen;
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build;
-            mkdir -p source/_static;
-            mkdir -p source/_templates;
-            sphinx-build -b html -W source/ "/tmp/html_${VERSION}/";
-
-      - name: Switch to main branch
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/;
-            git fetch origin main;
-            git checkout main;
-            git pull origin main;
-
-      - name: Copy versioned docs to workspace
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            VERSION="${{ github.ref_name }}";
-            cp -r "/tmp/html_${VERSION}/" "${{ github.workspace }}/docs/html_${VERSION}/";
-
-      - name: Update landing page version list
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            python3 << 'EOF'
-            import os
-            import re
-            import sys
-
-            docs_dir = "${{ github.workspace }}/docs"
-            index_rst = "${{ github.workspace }}/sphinx_docs_build/landing/source/index.rst"
-
-            # Scan docs/ for all dirs starting with html_v, sort newest first
-            versions = sorted(
-                [d for d in os.listdir(docs_dir) if d.startswith("html_v") and os.path.isdir(os.path.join(docs_dir, d))],
-                reverse=True,
-            )
-
-            # Build RST list entries (always include Latest Alpha/Beta first)
-            rst_items = ["* `Latest Alpha/Beta Version <./html/index.html>`_"]
-            for v in versions:
-                ver = v.replace("html_", "")  # e.g. "v2.3.0"
-                rst_items.append(f"* `{ver} <./{v}/index.html>`_")
-            versions_rst = "\n".join(rst_items)
-
-            # Read and rewrite the index.rst between the sentinel comments
-            with open(index_rst, "r") as f:
-                content = f.read()
-
-            new_content, sub_count = re.subn(
-                r"\.\. VERSION_LIST_START\n.*?\.\. VERSION_LIST_END",
-                f".. VERSION_LIST_START\n\n{versions_rst}\n\n.. VERSION_LIST_END",
-                content,
-                flags=re.DOTALL,
-            )
-
-            if sub_count == 0:
-                print("ERROR: VERSION_LIST_START/VERSION_LIST_END sentinels not found in index.rst", file=sys.stderr)
-                sys.exit(1)
-
-            with open(index_rst, "w") as f:
-                f.write(new_content)
-
-            print("Updated version list:")
-            for v in versions:
-                print(f"  {v}")
-            EOF
-
-      - name: Build landing page
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            cd /home/runner/work/ezsnmp/ezsnmp/sphinx_docs_build/landing;
-            mkdir -p source/_static;
-            mkdir -p source/_templates;
-            make html;
-
-      - name: Commit and push docs to main
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
-        with:
-          linux: |
-            VERSION="${{ github.ref_name }}";
-            cd /home/runner/work/ezsnmp/ezsnmp/;
-            git config user.name "github-actions[bot]";
-            git config user.email "github-actions[bot]@users.noreply.github.com";
-            git add "docs/html_${VERSION}/";
-            git add "sphinx_docs_build/landing/source/index.rst";
-            git add "docs/";
-            # Exclude pre-existing versioned dirs (already committed in main; not modified)
-            git reset -- docs/html_v*/;
-            git add "docs/html_${VERSION}/";
-            git commit -m "chore: add docs for ${VERSION} and update landing page";
-            git push origin main;
-
   deploy_pages:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: sphinx_docs_build
     runs-on: ubuntu-latest
     permissions:
@@ -271,4 +90,154 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  # ── Build versioned docs on release and commit back to main ───────────────
+  sphinx_docs_build_release:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out repository code at release tag
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Set up Python 3.12 env for sphinx...
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-sphinx-
+            ${{ runner.os }}-pip-
+
+      - name: Install Build Requirements
+        run: |
+          sudo apt update
+          sudo apt install -y libsnmp-dev g++ python3-dev doxygen
+
+      - name: Install Pip Requirements
+        run: |
+          cd ${{ github.workspace }}/sphinx_docs_build
+          if ! pip install -r requirements.txt; then
+            echo "Installation failed, purging pip cache and retrying..."
+            pip install --upgrade pip || true
+            pip cache purge || true
+            pip install -r requirements.txt
+          fi
+          pip install -r ${{ github.workspace }}/sphinx_docs_build/landing/requirements.txt
+
+      - name: Build versioned docs
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          cd ${{ github.workspace }}
+          rm -drf build ezsnmp.egg-info
+          python3 -m pip install . --verbose
+          mkdir -p doxygen_docs_build
+          doxygen .doxygen
+          cd ${{ github.workspace }}/sphinx_docs_build
+          mkdir -p source/_static source/_templates
+          sphinx-build -b html -W source/ "/tmp/html_${VERSION}/"
+
+      - name: Switch to main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      - name: Copy versioned docs into docs/
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          cp -r "/tmp/html_${VERSION}/" "${{ github.workspace }}/docs/html_${VERSION}/"
+
+      - name: Update landing page version list
+        run: |
+          python3 - <<'EOF'
+          import re, pathlib, sys
+
+          docs_dir = pathlib.Path("${{ github.workspace }}/docs")
+          index_rst = pathlib.Path("${{ github.workspace }}/sphinx_docs_build/landing/source/index.rst")
+
+          # Collect all versioned dirs, newest first
+          versions = sorted(
+              [d.name for d in docs_dir.iterdir()
+               if d.is_dir() and d.name.startswith("html_v")],
+              reverse=True,
+          )
+
+          # Build RST list entries (always include Latest Alpha/Beta first)
+          rst_items = ["* `Latest Alpha/Beta Version <./html/index.html>`_"]
+          for v in versions:
+              ver = v.replace("html_", "")  # e.g. "v2.3.0"
+              rst_items.append(f"* `{ver} <./{v}/index.html>`_")
+          versions_rst = "\n".join(rst_items)
+
+          content = index_rst.read_text()
+          new_content, sub_count = re.subn(
+              r'\.\. VERSION_LIST_START\n.*?\.\. VERSION_LIST_END',
+              f'.. VERSION_LIST_START\n\n{versions_rst}\n\n.. VERSION_LIST_END',
+              content,
+              flags=re.DOTALL,
+          )
+
+          if sub_count == 0:
+              print("ERROR: VERSION_LIST_START/VERSION_LIST_END sentinels not found in index.rst", file=sys.stderr)
+              sys.exit(1)
+
+          index_rst.write_text(new_content)
+          print("Updated landing/source/index.rst with versions:", versions)
+          EOF
+
+      - name: Build landing page with updated version list
+        run: |
+          cd ${{ github.workspace }}/sphinx_docs_build/landing
+          mkdir -p source/_static
+          mkdir -p source/_templates
+          make html
+
+      - name: Create Pull Request with versioned docs
+        id: create-pr
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: add versioned documentation for ${{ github.event.release.tag_name }}"
+          title: "📚 Add versioned docs for ${{ github.event.release.tag_name }}"
+          body: |
+            This PR adds the versioned Sphinx documentation for release `${{ github.event.release.tag_name }}`.
+            - Built from release tag: `${{ github.event.release.tag_name }}`
+            - Run ID: ${{ github.run_id }}
+            - Auto-merge enabled
+          branch: docs/add-versioned-docs-${{ github.event.release.tag_name }}
+          base: main
+          delete-branch: true
+          labels: documentation, automated-pr
+          add-paths: |
+            docs/html_${{ github.event.release.tag_name }}/
+            sphinx_docs_build/landing/source/index.rst
+            docs/index.html
+            docs/.buildinfo
+            docs/_static
+            docs/_sources
+            docs/genindex.html
+            docs/search.html
+            docs/searchindex.js
+            docs/objects.inv
+
+      - name: Enable Auto-merge
+        if: steps.create-pr.outputs.pull-request-number != ''
+        run: |
+          PR_NUMBER="${{ steps.create-pr.outputs.pull-request-number }}"
+          echo "Attempting to auto-merge PR #$PR_NUMBER"
+          gh pr merge --auto --merge "$PR_NUMBER"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
