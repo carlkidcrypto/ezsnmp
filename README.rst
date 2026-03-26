@@ -39,7 +39,7 @@ EzSnmp
 .. |CodeCov| image:: https://codecov.io/gh/carlkidcrypto/ezsnmp/branch/main/graph/badge.svg
     :target: https://codecov.io/gh/carlkidcrypto/ezsnmp
 .. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
-    :target: https://github.com/carlkidcrypto/ezsnmp/blob/master/LICENSE
+    :target: https://github.com/carlkidcrypto/ezsnmp/blob/main/LICENSE
 
 .. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp_logo.jpeg
     :alt: EzSnmp Logo
@@ -67,7 +67,7 @@ How to Support This Project?
 
 Getting Started
 ---------------
-Please check out the `EzSnmp documentation at <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
+Please check out the `EzSnmp documentation <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
 
 Code Coverage
