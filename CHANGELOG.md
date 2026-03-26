@@ -1,29 +1,61 @@
-Last Updated: 2026-03-22 21:54:42 UTC
+Last Updated: 2026-03-26 13:57:40 UTC
 
 # Changelog
 
 <a name="unreleased"></a>
-## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b1...HEAD)
+## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0...HEAD)
+
 
 ### Changes
 
-#### Features
-- Feature/gh aw 3 ([#763](https://github.com/carlkidcrypto/ezsnmp/issues/763))
+#### Dependency Updates
 
+- chore(deps): bump github/codeql-action from 4.32.6 to 4.34.1 ([#747](https://github.com/carlkidcrypto/ezsnmp/issues/747))
 
-#### Bug Fixes
-- fix: sphinx_build workflow to create PR instead of pushing directly to main ([#762](https://github.com/carlkidcrypto/ezsnmp/issues/762))
+- chore(deps): bump pytest-cov from 7.0.0 to 7.1.0 ([#765](https://github.com/carlkidcrypto/ezsnmp/issues/765))
 
+- chore(deps): bump github/gh-aw-actions from 0.62.5 to 0.64.0 ([#772](https://github.com/carlkidcrypto/ezsnmp/issues/772))
 
-#### Maintenance
-- chore: update CHANGELOG.md
+- chore(deps): bump tomli from 2.4.0 to 2.4.1 ([#773](https://github.com/carlkidcrypto/ezsnmp/issues/773))
 
+- chore(deps): bump actions/deploy-pages from 4.0.5 to 5.0.0 ([#774](https://github.com/carlkidcrypto/ezsnmp/issues/774))
 
-### Merged Pull Requests
-- Merge pull request [#759](https://github.com/carlkidcrypto/ezsnmp/issues/759) from carlkidcrypto/update-changelog-23409474942
+- chore(deps): bump build from 1.4.0 to 1.4.2 ([#775](https://github.com/carlkidcrypto/ezsnmp/issues/775))
 
 
 ---
+
+<a name="v2.2.0"></a>
+## [v2.2.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b1...v2.2.0) (2026-03-26)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: sphinx_build workflow to create PR instead of pushing directly to main ([#762](https://github.com/carlkidcrypto/ezsnmp/issues/762))
+
+
+#### Features
+
+- Feature/gh aw 3 ([#763](https://github.com/carlkidcrypto/ezsnmp/issues/763))
+
+- Add Auto Release Notes workflow; update changelog ([#766](https://github.com/carlkidcrypto/ezsnmp/issues/766))
+
+
+#### Maintenance
+
+- chore: update CHANGELOG.md
+
+- chore(docs): update changelog ([#764](https://github.com/carlkidcrypto/ezsnmp/issues/764))
+
+
+### Merged Pull Requests
+
+- Merge pull request [#759](https://github.com/carlkidcrypto/ezsnmp/issues/759) from carlkidcrypto/update-changelog-23409474942
+
+- Release/prep for v2.2.0 ([#767](https://github.com/carlkidcrypto/ezsnmp/issues/767))
+
 
 <a name="v2.2.0b1"></a>
 ## [v2.2.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b0...v2.2.0b1) (2026-03-22)
