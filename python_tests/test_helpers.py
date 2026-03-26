@@ -19,3 +19,21 @@ def test_normalize_oid_full_qualified(sess):
     res = sess.get(".iso.org.dod.internet.mgmt.mib-2.system.sysDescr.0")
     assert res[0].oid == "SNMPv2-MIB::sysDescr"
     assert res[0].index == "0"
+
+
+def test_multiline_string_value(sess, reset_values):
+    """Test that multi-line string values are fully returned, not truncated at the first newline.
+
+    Regression test for the bug where parse_result used std::getline without a delimiter,
+    causing only the first line of a multi-line SNMP string response to be captured.
+    """
+    multiline_value = "ezsnmp line one\nezsnmp line two\nezsnmp line three"
+
+    success = sess.set(["sysLocation.0", "s", multiline_value])
+    assert success
+
+    res = sess.get("sysLocation.0")
+    # All three lines must be present (value must not be truncated at the first newline)
+    assert "ezsnmp line one" in res[0].value
+    assert "ezsnmp line two" in res[0].value
+    assert "ezsnmp line three" in res[0].value
