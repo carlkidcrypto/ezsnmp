@@ -227,9 +227,7 @@ Result parse_result(std::string const &input) {
    if (ss.eof()) {
       value_str = temp;
    } else {
-      std::ostringstream value_oss;
-      value_oss << ss.rdbuf();
-      value_str = value_oss.str();
+      value_str = std::string(std::istreambuf_iterator<char>(ss), {});
    }
    if (!value_str.empty() && value_str[0] == ' ') {
       value_str.erase(0, 1);
