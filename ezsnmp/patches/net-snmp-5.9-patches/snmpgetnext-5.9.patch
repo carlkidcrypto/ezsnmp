@@ -26,11 +26,11 @@
 +#include "snmpgetnext.h"
 +#include "thread_safety.h"
 +
-+void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
++void snmpgetnext_optProc(int, char *const *, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -78,31 +83,24 @@
+@@ -78,32 +83,26 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -70,21 +70,27 @@
 -int
 -main(int argc, char *argv[])
 -{
-     netsnmp_session session, *ss;
+-    netsnmp_session session, *ss;
++   netsnmp_session session;
++   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
-@@ -114,43 +112,44 @@
+     int             arg;
+@@ -113,55 +112,55 @@
+     oid             name[MAX_OID_LEN];
      size_t          name_length;
      int             status;
-     int             failures = 0;
+-    int             failures = 0;
 -    int             exitval = 1;
- 
+-
      SOCK_STARTUP;
  
      /*
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", &optProc)) {
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
@@ -133,16 +139,21 @@
  
      /*
       * open an SNMP session 
-@@ -160,7 +159,7 @@
+      */
+-    ss = snmp_open(&session);
+-    if (ss == NULL) {
++   ss.reset(snmp_open(&session));
++   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
 -        snmp_sess_perror("snmpgetnext", &session);
+-        goto out;
 +      snmp_sess_perror_exception("snmpgetnext", &session);
-         goto out;
      }
  
-@@ -169,18 +168,21 @@
+     /*
+@@ -169,72 +168,73 @@
       */
      pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
  
@@ -152,26 +163,27 @@
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 -            snmp_perror(names[count]);
-+            snmp_perror_exception(names[count]);
-             failures++;
+-            failures++;
 -        } else
++            snmp_perror_exception(names[count]);
 +         } else {
              snmp_add_null_var(pdu, name, name_length);
      }
 -    if (failures)
-+      }
-+   }
-+   if (failures) {
-         goto close_session;
+-        goto close_session;
 -
 -    exitval = 0;
+-
++      }
 +   }
- 
      /*
       * do the request 
-@@ -189,52 +191,55 @@
-     status = snmp_synch_response(ss, pdu, &response);
+      */
+   retry:
+-    status = snmp_synch_response(ss, pdu, &response);
++   status = snmp_synch_response(ss.get(), pdu, &response);
      if (status == STAT_SUCCESS) {
++      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
 -            for (vars = response->variables; vars;
 -                 vars = vars->next_variable)
@@ -230,7 +242,7 @@
      } else {                    /* status == STAT_ERROR */
 -        snmp_sess_perror("snmpgetnext", ss);
 -        exitval = 1;
-+      snmp_sess_perror_exception("snmpgetnext", ss);
++      snmp_sess_perror_exception("snmpgetnext", ss.get());
      }
  
 -    if (response)
@@ -238,10 +250,13 @@
          snmp_free_pdu(response);
 +   }
  
- close_session:
-     snmp_close(ss);
- 
- out:
+-close_session:
+-    snmp_close(ss);
+-
+-out:
++   {
++      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++   }
      netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;

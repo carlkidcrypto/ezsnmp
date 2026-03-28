@@ -73,7 +73,7 @@ SOFTWARE.
 #include "snmpgetnext.h"
 #include "thread_safety.h"
 
-void snmpgetnext_optProc(int argc, char *const *argv, int opt) {
+void snmpgetnext_optProc(int, char *const *, int opt) {
    switch (opt) {
       case 'C':
          while (*optarg) {
@@ -112,27 +112,37 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    oid name[MAX_OID_LEN];
    size_t name_length;
    int status;
-   int failures = 0;
-
    SOCK_STARTUP;
 
-   /*
-    * get the common command line arguments
-    */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+   int dont_fix_pdus = 0;
+   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
+   // global state (option parsing, DS library settings).
+   {
+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+      /*
+       * get the common command line arguments
+       */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
+         case NETSNMP_PARSE_ARGS_ERROR:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 
-      default:
-         break;
+         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+
+         default:
+            break;
+      }
+
+      // Capture DONT_FIX_PDUS while still holding the setup mutex so no other
+      // thread can reset it before we read its value for this invocation.
+      dont_fix_pdus =
+          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
    }
 
    if (arg >= argc) {
@@ -163,7 +173,6 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
        * diagnose snmp_open errors with the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmpgetnext", &session);
-      goto out;
    }
 
    /*
@@ -177,16 +186,11 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
             snmp_perror_exception(names[count]);
-            failures++;
          } else {
             snmp_add_null_var(pdu, name, name_length);
          }
       }
    }
-   if (failures) {
-      goto out;
-   }
-
    /*
     * do the request
     */
@@ -217,7 +221,7 @@ retry:
          /*
           * retry if the errored variable was successfully removed
           */
-         if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS)) {
+         if (!dont_fix_pdus) {
             pdu = snmp_fix_pdu(response, SNMP_MSG_GETNEXT);
             snmp_free_pdu(response);
             response = NULL;
@@ -238,7 +242,9 @@ retry:
       snmp_free_pdu(response);
    }
 
-out: { std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release()); }
+   {
+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+   }
    netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
