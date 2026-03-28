@@ -446,6 +446,190 @@ def test_session_update():
     del s
 
 
+def test_session_repr_masks_community():
+    """Test __repr__ includes hostname/version but masks non-empty community."""
+    s = Session(hostname="testhost", port_number="161", version="2c", community="public")
+    r = repr(s)
+    assert "testhost" in r
+    assert "2c" in r
+    assert "public" not in r
+    assert "***" in r
+    del s
+
+
+def test_session_repr_empty_community():
+    """Test __repr__ shows empty string when community is not set."""
+    s = Session(hostname="testhost", version="3")
+    r = repr(s)
+    assert "testhost" in r
+    assert "***" not in r
+    del s
+
+
+def test_session_str():
+    """Test __str__ returns a human-readable representation with host and version."""
+    s = Session(hostname="testhost", port_number="161", version="2c")
+    text = str(s)
+    assert "testhost" in text
+    assert "2c" in text
+    del s
+
+
+def test_session_str_default_port():
+    """Test __str__ shows 'default' when no port is specified."""
+    s = Session(hostname="testhost", version="1")
+    text = str(s)
+    assert "default" in text
+    del s
+
+
+def test_session_to_dict_required_keys():
+    """Test to_dict() contains all required keys."""
+    s = Session(version="2c", community="public")
+    d = s.to_dict()
+    for key in [
+        "hostname", "port_number", "version", "community",
+        "auth_protocol", "auth_passphrase", "security_engine_id",
+        "context_engine_id", "security_level", "context",
+        "security_username", "privacy_protocol", "privacy_passphrase",
+        "boots_time", "retries", "timeout",
+    ]:
+        assert key in d, f"Missing key: {key}"
+    del s
+
+
+def test_session_to_dict_community_masked():
+    """Test to_dict() masks a non-empty community string with '***'."""
+    s = Session(version="2c", community="public")
+    d = s.to_dict()
+    assert d["community"] == "***"
+    del s
+
+
+def test_session_to_dict_empty_community():
+    """Test to_dict() returns empty string for an empty community."""
+    s = Session(version="3")
+    d = s.to_dict()
+    assert d["community"] == ""
+    del s
+
+
+def test_session_to_dict_passphrases_masked():
+    """Test to_dict() masks non-empty auth and privacy passphrases."""
+    s = Session(
+        version="3",
+        auth_protocol="MD5",
+        auth_passphrase="secret_auth",
+        privacy_protocol="AES",
+        privacy_passphrase="secret_priv",
+        security_level="authPriv",
+        security_username="testuser",
+    )
+    d = s.to_dict()
+    assert d["auth_passphrase"] == "***"
+    assert d["privacy_passphrase"] == "***"
+    del s
+
+
+def test_session_to_dict_empty_passphrases():
+    """Test to_dict() returns empty string when passphrases are not set."""
+    s = Session(version="3")
+    d = s.to_dict()
+    assert d["auth_passphrase"] == ""
+    assert d["privacy_passphrase"] == ""
+    del s
+
+
+def test_session_close_marks_closed():
+    """Test that explicit close() marks the session as closed."""
+    s = Session(version="3")
+    assert not s._closed
+    s.close()
+    assert s._closed
+    del s
+
+
+def test_session_close_idempotent():
+    """Test that calling close() multiple times does not raise an error."""
+    s = Session(version="3")
+    s.close()
+    s.close()
+    del s
+
+
+def test_session_context_manager_returns_self():
+    """Test that the context manager returns the session itself."""
+    with Session(version="3") as s:
+        assert isinstance(s, Session)
+        assert not s._closed
+    assert s._closed
+
+
+def test_session_context_manager_closes_on_exception():
+    """Test that the context manager closes the session even when an exception is raised."""
+    s_ref = None
+    try:
+        with Session(version="3") as s:
+            s_ref = s
+            raise ValueError("deliberate error")
+    except ValueError:
+        pass
+    assert s_ref is not None
+    assert s_ref._closed
+
+
+def test_session_del_safe_when_closed():
+    """Test that __del__ does not raise when session is already closed."""
+    s = Session(version="3")
+    s.close()
+    s.__del__()
+    del s
+
+
+def test_session_del_safe_when_not_closed():
+    """Test that __del__ closes the session if not already closed."""
+    s = Session(version="3")
+    assert not s._closed
+    s.__del__()
+
+
+def test_session_version_2_converts_to_2c():
+    """Test that integer version 2 is converted to string '2c'."""
+    s = Session(version=2)
+    assert s.version == "2c"
+    del s
+
+
+def test_session_property_setters():
+    """Test that key property setters update the underlying session state."""
+    s = Session(version="3")
+    s.retries = "5"
+    assert s.retries == "5"
+    s.timeout = "10"
+    assert s.timeout == "10"
+    s.community = "private"
+    assert s.community == "private"
+    s.auth_protocol = "SHA"
+    assert s.auth_protocol == "SHA"
+    s.security_username = "newuser"
+    assert s.security_username == "newuser"
+    del s
+
+
+def test_session_set_max_repeaters_default():
+    """Test that set_max_repeaters_to_num defaults to '10'."""
+    s = Session(version="3")
+    assert s.set_max_repeaters_to_num == "10"
+    del s
+
+
+def test_session_set_max_repeaters_custom():
+    """Test that set_max_repeaters_to_num can be overridden at init time."""
+    s = Session(version="3", set_max_repeaters_to_num=25)
+    assert s.set_max_repeaters_to_num == "25"
+    del s
+
+
 def test_string_values_no_surrounding_quotes(sess):
     """
     Test for issue #355: String values should not be enclosed in quotes.

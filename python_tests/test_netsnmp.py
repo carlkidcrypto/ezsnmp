@@ -3,10 +3,12 @@ import platform
 import pytest
 from ezsnmp.netsnmp import (
     snmpget,
+    snmpgetnext,
     snmpset,
     snmpbulkget,
     snmpwalk,
     snmpbulkwalk,
+    snmptrap,
 )
 
 from ezsnmp.exceptions import GenericError, PacketError, ParseError
@@ -326,3 +328,37 @@ def test_snmpbulkwalk_separated_cn_raises_parse_error():
     args = ["-v", "2c", "-c", "public", "-Cn", "2", "localhost:11161", "sysORDescr"]
     with pytest.raises(ParseError, match="No number given for -Cn option"):
         snmpbulkwalk(args, "testing_separated_cn")
+
+
+def test_snmptrap_parse_error_from_carriage_return():
+    """Test that snmptrap with CR embedded in community raises ParseError."""
+    args = ["-v", "2c", "-c", "public\r", "localhost:11162",
+            "", ".1.3.6.1.6.3.1.1.5.1", "0"]
+    with pytest.raises(ParseError):
+        snmptrap(args)
+
+
+def test_snmptrap_parse_error_carriage_return_cn():
+    """Test that snmptrap with CR+LF in community string raises ParseError."""
+    args = ["-v", "2c", "-c", "public\r\n", "localhost:11162",
+            "", ".1.3.6.1.6.3.1.1.5.1", "0"]
+    with pytest.raises(ParseError):
+        snmptrap(args)
+
+
+def test_snmptrap_parse_error_unknown_flag():
+    """Test that snmptrap with an unknown -C flag raises ParseError."""
+    args = ["-v", "2c", "-c", "public", "-Cz", "localhost:11162",
+            "", ".1.3.6.1.6.3.1.1.5.1", "0"]
+    with pytest.raises(ParseError):
+        snmptrap(args)
+
+
+def test_snmpgetnext_regular(netsnmp_args):
+    """Test snmpgetnext returns the next OID after sysDescr.0."""
+    netsnmp_args = netsnmp_args + ["sysDescr.0"]
+    res = snmpgetnext(netsnmp_args, "testing_getnext")
+    assert res is not None
+    assert len(res) > 0
+    assert res[0].oid != ""
+
