@@ -1,0 +1,55 @@
+name: Valgrind PR History Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: "How many days of PR history to analyze"
+        required: false
+        default: "0"
+      max_prs:
+        description: "Max number of recently updated PRs to scan"
+        required: false
+        default: "1000"
+  schedule:
+    - cron: "30 6 */3 * *"
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  analyze-valgrind-history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Sourcecode
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Analyze Valgrind PR comment history
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days || '0' }}
+          MAX_PRS: ${{ github.event.inputs.max_prs || '1000' }}
+        run: |
+          python .github/scripts/analyze_valgrind_pr_history.py | tee valgrind-pr-history-console.log
+
+      - name: Publish workflow summary
+        run: cat valgrind-pr-history-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report artifacts
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        with:
+          name: valgrind-pr-history-report
+          path: |
+            valgrind-pr-history-report.md
+            valgrind-pr-history-report.json
+            valgrind-pr-history-console.log

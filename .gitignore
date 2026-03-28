@@ -27,8 +27,8 @@ doxygen_docs_build/
 # Generated documentation (latest/current build - should not be committed)
 # Note: Versioned documentation folders (html_v*) are kept for historical reference
 docs/html/
-docs/_static/
 docs/doctrees/
+sphinx_docs_build/landing/.doctrees/
 
 # vim stuff
 .ropeproject

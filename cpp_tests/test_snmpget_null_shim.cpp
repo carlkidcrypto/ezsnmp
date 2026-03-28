@@ -29,3 +29,22 @@ TEST_F(SnmpGetNullShimTest, TestNullResponseThrowsPacketError) {
        },
        PacketErrorBase);
 }
+
+/* -h triggers NETSNMP_PARSE_ARGS_SUCCESS_EXIT path in snmpget(). */
+TEST_F(SnmpGetNullShimTest, TestHelpFlagThrowsParseErrorForSuccessExit) {
+   std::vector<std::string> args = {"-h"};
+
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpget(args, "testing_get_null_shim_help");
+          } catch (ParseErrorBase const &e) {
+             std::string msg(e.what());
+             EXPECT_TRUE(msg.find("NETSNMP_PARSE_ARGS_SUCCESS_EXIT") != std::string::npos ||
+                         msg.find("PARSE_ARGS") != std::string::npos ||
+                         msg.find("USAGE") != std::string::npos);
+             throw;
+          }
+       },
+       ParseErrorBase);
+}

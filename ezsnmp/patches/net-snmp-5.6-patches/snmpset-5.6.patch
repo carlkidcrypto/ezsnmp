@@ -98,11 +98,11 @@
 -    void
 -optProc(int argc, char *const *argv, int opt)
 -{
-+void snmpset_optProc(int argc, char *const *argv, int opt) {
++void snmpset_optProc(int, char *const *, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -101,17 +99,23 @@
+@@ -101,18 +99,25 @@
                  break;
  
              default:
@@ -120,6 +120,7 @@
 -int
 -main(int argc, char *argv[])
 -{
+-    netsnmp_session session, *ss;
 +std::vector<Result> snmpset(std::vector<std::string> const &args,
 +                            std::string const &init_app_name) {
 +   // Reference-counted initialization: only first thread calls init_snmp
@@ -129,16 +130,25 @@
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
 +
-     netsnmp_session session, *ss;
++   netsnmp_session session;
++   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
-@@ -127,44 +131,48 @@
+     int             arg;
+@@ -126,45 +131,56 @@
+     oid             name[MAX_OID_LEN];
      size_t          name_length;
      int             status;
-     int             failures = 0;
+-    int             failures = 0;
 -    int             exitval = 0;
 +   /* Reset application-local quiet flag so subsequent calls behave normally. */
 +   quiet = 0;
++
++   auto cleanup_and_return_empty = [&]() {
++      clear_net_snmp_library_data();
++      SOCK_CLEANUP;
++      return parse_results(return_vector);
++   };
 +
 +   SOCK_STARTUP;
  
@@ -148,6 +158,8 @@
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
++   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        exit(1);
@@ -171,7 +183,7 @@
 -        usage();
 -        exit(1);
 +      snmpset_usage();
-+      goto out;
++      return cleanup_and_return_empty();
      }
      if ((argc - arg) > 3*SNMP_MAX_CMDLINE_OIDS) {
          fprintf(stderr, "Too many assignments specified. ");
@@ -179,7 +191,7 @@
 -        usage();
 -        exit(1);
 +      snmpset_usage();
-+      goto out;
++      return cleanup_and_return_empty();
      }
  
      /*
@@ -194,7 +206,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -179,6 +187,7 @@
+@@ -179,6 +195,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -202,7 +214,7 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -188,24 +197,21 @@
+@@ -188,97 +205,93 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -210,12 +222,12 @@
 -                        *argv[arg]);
 -                exit(1);
 +               fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-+               goto out;
++               return cleanup_and_return_empty();
              }
          } else {
              fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
 -            exit(1);
-+         goto out;
++         return cleanup_and_return_empty();
          }
 -        if (arg < argc)
 +      if (arg < argc) {
@@ -224,7 +236,7 @@
 +      } else {
              fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
 -            exit(1);
-+         goto out;
++         return cleanup_and_return_empty();
          }
      }
  
@@ -233,7 +245,10 @@
      /*
       * open an SNMP session 
       */
-@@ -214,32 +220,30 @@
+-    ss = snmp_open(&session);
+-    if (ss == NULL) {
++   ss.reset(snmp_open(&session));
++   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
           */
@@ -241,7 +256,6 @@
 -        SOCK_CLEANUP;
 -        exit(1);
 +      snmp_sess_perror_exception("snmpset", &session);
-+      goto out;
      }
  
      /*
@@ -254,29 +268,31 @@
          name_length = MAX_OID_LEN;
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 -            snmp_perror(names[count]);
-+            snmp_perror_exception(names[count]);
-             failures++;
+-            failures++;
 -        } else
 -            if (snmp_add_var
 -                (pdu, name, name_length, types[count], values[count])) {
 -            snmp_perror(names[count]);
+-            failures++;
++            snmp_perror_exception(names[count]);
 +         } else if (snmp_add_var(pdu, name, name_length, types[count], values[count])) {
 +            snmp_perror_exception(names[count]);
-             failures++;
          }
      }
-+   }
- 
-     if (failures) {
+-
+-    if (failures) {
 -        snmp_close(ss);
 -        SOCK_CLEANUP;
 -        exit(1);
-+      goto close_session;
      }
  
      /*
-@@ -249,36 +253,44 @@
+      * do the request 
+      */
+-    status = snmp_synch_response(ss, pdu, &response);
++   status = snmp_synch_response(ss.get(), pdu, &response);
      if (status == STAT_SUCCESS) {
++      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {
 -                for (vars = response->variables; vars;
@@ -323,18 +339,18 @@
      } else {                    /* status == STAT_ERROR */
 -        snmp_sess_perror("snmpset", ss);
 -        exitval = 1;
-+      snmp_sess_perror_exception("snmpset", ss);
++      snmp_sess_perror_exception("snmpset", ss.get());
      }
  
 -    if (response)
 +   if (response) {
          snmp_free_pdu(response);
+-    snmp_close(ss);
 +   }
 +
-+close_session:
-     snmp_close(ss);
-+
-+out:
++   {
++      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++   }
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

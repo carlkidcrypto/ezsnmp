@@ -236,6 +236,7 @@
 -    status = snmp_synch_response(ss, pdu, &response);
 +   status = snmp_synch_response(ss.get(), pdu, &response);
      if (status == STAT_SUCCESS) {
++      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
              if (!quiet) {
 -                for (vars = response->variables; vars;

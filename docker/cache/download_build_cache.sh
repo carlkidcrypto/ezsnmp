@@ -8,11 +8,11 @@ CACHE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Python versions to download
 PYTHON_VERSIONS=(
-    "3.10.16"
-    "3.11.11"
-    "3.12.8"
-    "3.13.7"
-    "3.14.2"
+    "3.10.20"
+    "3.11.15"
+    "3.12.13"
+    "3.13.12"
+    "3.14.3"
 )
 
 # OpenSSL versions

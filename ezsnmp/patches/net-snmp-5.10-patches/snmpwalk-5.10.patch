@@ -55,13 +55,16 @@
      netsnmp_variable_list *vars;
      int             status;
 @@ -111,17 +100,18 @@
-     if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
+     if (status == STAT_SUCCESS) {
++      snmp_check_null_response(response);
++      if (response->errstat == SNMP_ERR_NOERROR) {
          for (vars = response->variables; vars; vars = vars->next_variable) {
              numprinted++;
 -            print_variable(vars->name, vars->name_length, vars);
 +         auto const &str_value = print_variable_to_string(vars->name, vars->name_length, vars);
 +         str_values.push_back(str_value);
          }
++      }
      }
      if (response) {
          snmp_free_pdu(response);
@@ -261,6 +264,7 @@
 +                                    NETSNMP_DS_WALK_TIME_RESULTS_SINGLE)) {
                  netsnmp_get_monotonic_clock(&tv_b);
 +         }
++         snmp_check_null_response(response);
              if (response->errstat == SNMP_ERR_NOERROR) {
                  /*
                   * check resulting variables 
