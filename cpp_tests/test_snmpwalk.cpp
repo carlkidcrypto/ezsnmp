@@ -32,8 +32,8 @@ TEST_F(SnmpWalkTest, TestMissingOid) {
    // With a running SNMP server, this succeeds and returns results
    // The behavior is valid - just verify it completes
    auto results = snmpwalk(args, "testing");
-   // Results should contain data from the SNMP server
-   EXPECT_TRUE(results.size() >= 0);
+   (void)results;
+   SUCCEED();
 }
 
 TEST_F(SnmpWalkTest, TestInvalidOid) {
@@ -54,7 +54,7 @@ TEST_F(SnmpWalkTest, TestInvalidOid) {
 
 TEST_F(SnmpWalkTest, TestUnknownHost) {
    std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "-t", "1", "nonexistenthost:11161", "1.3.6.1.2.1.1"};
+       "-v", "2c", "-c", "public", "-t", "1", "-r", "0", "nonexistenthost:11161", "1.3.6.1.2.1.1"};
 
    EXPECT_THROW(
        {
