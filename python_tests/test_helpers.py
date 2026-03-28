@@ -33,7 +33,4 @@ def test_multiline_string_value(sess, reset_values):
     assert success
 
     res = sess.get("sysLocation.0")
-    # All three lines must be present (value must not be truncated at the first newline)
-    assert "ezsnmp line one" in res[0].value
-    assert "ezsnmp line two" in res[0].value
-    assert "ezsnmp line three" in res[0].value
+    assert res[0].value == multiline_value
