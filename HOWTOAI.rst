@@ -62,7 +62,7 @@ Security Considerations
 Testing & Review
 ================
 
-Before submitting AI assisted code, confirm that:
+Before submitting AI-assisted code, confirm that:
 
 - You understand every line (both Python and C++ if applicable)
 - All tests pass locally: ``pytest python_tests/``, C++ tests in ``cpp_tests/``
