@@ -59,7 +59,7 @@ jobs:
 
       - name: Restore cached Docker image tar
         id: cache-restore
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: .docker-image-cache/${{ matrix.distribution }}.tar
           key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
@@ -80,12 +80,20 @@ jobs:
             echo "No cached image tar found. Will pull from registry."
           fi
 
-      - name: Pull Docker image (refresh from registry)
+      - name: Pull Docker image (with registry fallback)
         run: |
           set -euo pipefail
-          IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
-          # Always pull to pick up upstream changes; this is fast if up-to-date
-          docker pull "$IMAGE"
+          DHUB_IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          GHCR_IMAGE="ghcr.io/carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
+          if docker pull "$DHUB_IMAGE"; then
+            echo "Pulled from Docker Hub: $DHUB_IMAGE"
+          elif docker pull "$GHCR_IMAGE"; then
+            echo "Docker Hub unavailable; pulled from GHCR: $GHCR_IMAGE"
+            docker tag "$GHCR_IMAGE" "$DHUB_IMAGE"
+          else
+            echo "ERROR: Failed to pull image from both Docker Hub and GHCR." >&2
+            exit 1
+          fi
 
       - name: Save Docker image to cache tar
         if: always()
@@ -198,7 +206,7 @@ jobs:
           merge-multiple: true
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/coverage_*.xml
@@ -224,7 +232,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
-        uses: MishaKav/pytest-coverage-comment@6b219eafc7094a43abafd1fbd0c6c48de8cc2141 # v1.7.0
+        uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
         continue-on-error: true
         with:
           pytest-coverage-path: ""
