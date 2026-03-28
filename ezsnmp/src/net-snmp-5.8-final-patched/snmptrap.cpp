@@ -72,7 +72,7 @@ SOFTWARE.
 oid objid_enterprise[] = {1, 3, 6, 1, 4, 1, 3, 1, 1};
 oid objid_sysuptime[] = {1, 3, 6, 1, 2, 1, 1, 3, 0};
 oid objid_snmptrap[] = {1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0};
-int inform = 0;
+thread_local int inform = 0;
 
 #include "exceptionsbase.h"
 #include "helpers.h"
@@ -138,6 +138,9 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
 
    SOCK_STARTUP;
 
+   // Reset thread-local inform flag for each invocation.
+   inform = 0;
+
    prognam = strrchr(argv[0], '/');
    if (prognam) {
       prognam++;
@@ -151,20 +154,26 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       inform = 1;
    }
 
-   /** parse args (also initializes session) */
-   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
-      case NETSNMP_PARSE_ARGS_ERROR:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
+   // global state (option parsing, DS library settings).
+   {
+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 
-      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+      /** parse args (also initializes session) */
+      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
+      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
+         case NETSNMP_PARSE_ARGS_ERROR:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
-      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-      default:
-         break;
+         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+
+         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+         default:
+            break;
+      }
    }
 
    session.callback = snmp_input;

@@ -10,6 +10,16 @@
 // and by snmp_shutdown to prevent concurrent access to global MIB structures
 extern std::mutex g_netsnmp_mib_mutex;
 
+// Mutex to serialize Net-SNMP global setup operations per invocation.
+// Protects resetting and reading NETSNMP_DS_APPLICATION_ID flags as well as
+// calling snmp_parse_args, which modifies global Net-SNMP option state.
+extern std::mutex g_netsnmp_setup_mutex;
+
+// Mutex to serialize init_snmp / snmp_shutdown lifecycle transitions.
+// Held for the full duration of init_snmp (first call) and snmp_shutdown
+// (last call) so that concurrent threads block instead of spin-waiting.
+extern std::mutex g_netsnmp_lifecycle_mutex;
+
 // Reference counter to track how many sessions are active
 // Only the first thread to use snmp will call init_snmp
 // Only the last thread to finish will call snmp_shutdown

@@ -83,10 +83,10 @@ jobs:
 
   upload-cpp-coverage-dockerized:
     runs-on: ubuntu-latest
-    needs: test-cpp-tests
+    needs: [check-changes, test-cpp-tests]
     permissions:
       contents: read
-    if: always()
+    if: needs.check-changes.outputs.any_changed == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
@@ -98,7 +98,7 @@ jobs:
           path: artifacts/
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/lcov_coverage.info
@@ -108,12 +108,12 @@ jobs:
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
-    needs: test-cpp-tests
+    needs: [check-changes, test-cpp-tests]
     permissions:
       pull-requests: write # Needed to create/update PR comments
       contents: write      # Needed to read artifacts/content for check run
       checks: write        # Needed to create/update check runs
-    if: always()
+    if: needs.check-changes.outputs.any_changed == 'true'
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -126,7 +126,7 @@ jobs:
 
       - name: Publish C++ Test Results (Dockerized Tests)
         uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
-        if: always()
+        if: needs.check-changes.outputs.any_changed == 'true'
         with:
           files: "artifacts/**/test-results.xml"
           check_name: C++ Test Results - Dockerized

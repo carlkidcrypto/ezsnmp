@@ -199,11 +199,16 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 		# 1. Pull the image
 		echo "    - [${DISTRO_NAME}] Pulling image..."
-		if ! docker pull "${FULL_IMAGE_TAG}" >/dev/null 2>&1; then
-			echo "ERROR: [${DISTRO_NAME}] Docker pull failed. Skipping tests."
+		GHCR_IMAGE_TAG="ghcr.io/${DOCKER_REPO_PATH}:${DISTRO_NAME}-latest"
+		if docker pull "${FULL_IMAGE_TAG}" >/dev/null 2>&1; then
+			echo "    - [${DISTRO_NAME}] Image pulled from Docker Hub"
+		elif docker pull "${GHCR_IMAGE_TAG}" >/dev/null 2>&1; then
+			echo "    - [${DISTRO_NAME}] Docker Hub unavailable; pulled from GHCR: ${GHCR_IMAGE_TAG}"
+			docker tag "${GHCR_IMAGE_TAG}" "${FULL_IMAGE_TAG}"
+		else
+			echo "ERROR: [${DISTRO_NAME}] Docker pull failed from both Docker Hub and GHCR. Skipping tests."
 			exit 1
 		fi
-		echo "    - [${DISTRO_NAME}] Image pulled successfully"
 
 		# 2. Start the container
 		echo "    - [${DISTRO_NAME}] Starting container and daemon..."
