@@ -15,11 +15,10 @@ import sys
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-
 
 API_BASE = "https://api.github.com"
 COMMENT_MARKER = "<!-- ezsnmp-homebrew-valgrind -->"
@@ -31,8 +30,8 @@ LEAK_PATTERNS = {
 }
 
 ROW_PATTERN = re.compile(
-    r"^\|\s*(3\.(?:10|11|12|13|14))\s*\|\s*(.*?)\s*\|\s*ubuntu-latest\s*\|$",
-    re.MULTILINE | re.DOTALL,
+    r"^\|\s*(3\.\d{2,})\s*\|\s*([^\n]*?)\s*\|\s*ubuntu-latest\s*\|$",
+    re.MULTILINE,
 )
 
 
@@ -70,7 +69,7 @@ def _to_int(raw: str | None) -> int:
     return int(raw.replace(",", ""))
 
 
-def _api_get(token: str, url: str) -> object:
+def _api_get(token: str, url: str) -> Any:
     request = Request(
         url,
         headers={
@@ -85,14 +84,24 @@ def _api_get(token: str, url: str) -> object:
             return json.loads(response.read().decode("utf-8"))
     except HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub API call failed ({exc.code}) for {url}\n{body}") from exc
+        raise RuntimeError(
+            f"GitHub API call failed ({exc.code}) for {url}\n{body}"
+        ) from exc
 
 
 def _iter_pull_requests(token: str, repository: str, max_prs: int) -> Iterable[dict]:
     fetched = 0
     page = 1
     while fetched < max_prs:
-        params = urlencode({"state": "all", "sort": "updated", "direction": "desc", "per_page": 100, "page": page})
+        params = urlencode(
+            {
+                "state": "all",
+                "sort": "updated",
+                "direction": "desc",
+                "per_page": 100,
+                "page": page,
+            }
+        )
         url = f"{API_BASE}/repos/{repository}/pulls?{params}"
         prs = _api_get(token, url)
         if not isinstance(prs, list) or not prs:
@@ -105,7 +114,9 @@ def _iter_pull_requests(token: str, repository: str, max_prs: int) -> Iterable[d
         page += 1
 
 
-def _iter_issue_comments(token: str, repository: str, issue_number: int) -> Iterable[dict]:
+def _iter_issue_comments(
+    token: str, repository: str, issue_number: int
+) -> Iterable[dict]:
     page = 1
     while True:
         params = urlencode({"per_page": 100, "page": page})
@@ -201,7 +212,9 @@ def _build_markdown(
     if leak_records:
         lines.append("## Result")
         lines.append("")
-        lines.append("Potential memory leaks were detected in historical PR Valgrind comments.")
+        lines.append(
+            "Potential memory leaks were detected in historical PR Valgrind comments."
+        )
         lines.append("")
 
         lines.append("## Leaks Found")
@@ -227,13 +240,19 @@ def _build_markdown(
     else:
         lines.append("## Result")
         lines.append("")
-        lines.append("No leak signatures were found in the analyzed historical Valgrind PR comments.")
+        lines.append(
+            "No leak signatures were found in the analyzed historical Valgrind PR comments."
+        )
 
     lines.append("")
     lines.append("## Notes")
     lines.append("")
-    lines.append("- This report only analyzes `github-actions[bot]` comments containing the Homebrew Valgrind marker.")
-    lines.append("- Leak detection is based on non-zero `definitely lost`, `indirectly lost`, or `possibly lost` bytes.")
+    lines.append(
+        "- This report only analyzes `github-actions[bot]` comments containing the Homebrew Valgrind marker."
+    )
+    lines.append(
+        "- Leak detection is based on non-zero `definitely lost`, `indirectly lost`, or `possibly lost` bytes."
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -250,7 +269,11 @@ def main() -> int:
         print("Missing GITHUB_REPOSITORY", file=sys.stderr)
         return 2
 
-    since = datetime.now(timezone.utc) - timedelta(days=lookback_days) if lookback_days > 0 else datetime.min.replace(tzinfo=timezone.utc)
+    since = (
+        datetime.now(timezone.utc) - timedelta(days=lookback_days)
+        if lookback_days > 0
+        else datetime.min.replace(tzinfo=timezone.utc)
+    )
 
     analyzed_prs = 0
     analyzed_comments = 0
@@ -264,7 +287,9 @@ def main() -> int:
         analyzed_prs += 1
         issue_number = pr["number"]
 
-        for comment in _iter_issue_comments(token, repository, issue_number=issue_number):
+        for comment in _iter_issue_comments(
+            token, repository, issue_number=issue_number
+        ):
             author = ((comment.get("user") or {}).get("login") or "").strip()
             body = comment.get("body", "") or ""
             if author != "github-actions[bot]":
