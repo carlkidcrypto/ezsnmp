@@ -12,10 +12,14 @@ permissions:
 safe-outputs:
   create-pull-request:
     title-prefix: "[coverage-autofix] "
-    labels: [automated-pr, coverage, tests, cpp, python]
+    labels: [automated-pr]
     draft: true
     preserve-branch-name: true
     if-no-changes: "ignore"
+  add-labels:
+    target: "*"
+    allowed: [coverage, tests, cpp, python]
+    max: 4
 timeout-minutes: 45
 engine:
   id: copilot
@@ -105,6 +109,13 @@ When changes exist, create exactly one PR using this fixed branch name:
   - Dockerized C++ coverage before/after by distro (if measurable)
   - Summary of tests added/updated
   - Any limitations or follow-up recommendations
+
+After creating the PR, attempt a best-effort follow-up label step:
+
+- Add supplemental labels to the created PR when possible: `coverage`, `tests`,
+  `cpp`, `python`.
+- Treat this as non-critical metadata enrichment. If supplemental labeling fails,
+  do not treat the run as a primary failure and do not abandon the created PR.
 
 If no changes are required, report that coverage checks passed without actionable
 improvements.
