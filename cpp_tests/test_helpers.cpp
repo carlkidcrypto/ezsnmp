@@ -498,6 +498,42 @@ TEST_F(ParseResultsTest, TestStringValuesWithoutQuotes) {
    EXPECT_EQ(results[2].value, "admin@example.com");
 }
 
+// Test for multi-line string values (issue: value parsing truncates at first newline)
+TEST_F(ParseResultsTest, TestMultiLineStringValue) {
+   // Simulate the HPE switch sysDescr response: a quoted multi-line STRING
+   std::string multi_line_quoted =
+       "SNMPv2-MIB::sysDescr.0 = STRING: \"HPE Comware Platform Software, Software Version "
+       "7.1.070, Release 6616\nHPE FF 5945 48SFP28 8QSFP28 Switch\nCopyright (c) 2010-2021 "
+       "Hewlett Packard Enterprise Development LP\"";
+
+   auto results = parse_results({multi_line_quoted});
+   ASSERT_EQ(results.size(), 1u);
+
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   // Outer quotes should be stripped and all three lines preserved
+   EXPECT_EQ(results[0].value,
+             "HPE Comware Platform Software, Software Version 7.1.070, Release 6616\nHPE FF 5945 "
+             "48SFP28 8QSFP28 Switch\nCopyright (c) 2010-2021 Hewlett Packard Enterprise "
+             "Development LP");
+}
+
+TEST_F(ParseResultsTest, TestMultiLineStringValueWithoutQuotes) {
+   // Simulate a multi-line STRING response without surrounding quotes
+   std::string multi_line_unquoted =
+       "SNMPv2-MIB::sysDescr.0 = STRING: Line one\nLine two\nLine three";
+
+   auto results = parse_results({multi_line_unquoted});
+   ASSERT_EQ(results.size(), 1u);
+
+   EXPECT_EQ(results[0].oid, "SNMPv2-MIB::sysDescr");
+   EXPECT_EQ(results[0].index, "0");
+   EXPECT_EQ(results[0].type, "STRING");
+   // All lines must be preserved
+   EXPECT_EQ(results[0].value, "Line one\nLine two\nLine three");
+}
+
 TEST_F(ParseResultsTest, TestQuotesStrippedFromAllTypes) {
    // Test that quotes are stripped from all types (STRING, INTEGER, OID)
    std::vector<std::string> inputs = {
