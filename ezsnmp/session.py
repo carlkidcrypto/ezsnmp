@@ -35,7 +35,7 @@ class Session(SessionBase):
         print_timeticks_numerically: bool = False,
         set_max_repeaters_to_num: Union[str, int] = "10",
     ):
-        """Initialize the SessionBase object with NetSNMP session parameters.
+        """Initialize the Session object with NetSNMP session parameters.
 
         :param hostname: The hostname or IP address of the SNMP agent.
         :type hostname: str
@@ -318,7 +318,7 @@ class Session(SessionBase):
 
     @property
     def context(self):
-        """Get the context.
+        """Get the SNMPv3 context name.
 
         :type: str
         """
@@ -326,9 +326,9 @@ class Session(SessionBase):
 
     @context.setter
     def context(self, value):
-        """Set the context.
+        """Set the SNMPv3 context name.
 
-        :param value: The context to set.
+        :param value: The SNMPv3 context name to set.
         :type value: str
         """
         super()._set_context(value)
