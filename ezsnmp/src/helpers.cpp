@@ -216,12 +216,23 @@ Result parse_result(std::string const &input) {
       result.type = "";
    }
 
-   // Extract value and trim leading/trailing whitespace
-   std::getline(ss, temp);
-   if (!temp.empty() && temp[0] == ' ') {
-      temp.erase(0, 1);
+   // Extract value: preserve multi-line content by reading the entire remaining stream.
+   // If the stream is already at EOF (no ':' separator was found), the type getline
+   // consumed the full remaining content into 'temp', so reuse it as the value.
+   // This handles bare values like "No Such Object...", "No Such Instance...", and
+   // numeric-only responses (e.g., sysUpTime without the "Timeticks:" prefix).
+   // When a ':' was found, read the full remaining stream to capture any newlines
+   // present in multi-line string responses.
+   std::string value_str;
+   if (ss.eof()) {
+      value_str = temp;
+   } else {
+      value_str = std::string(std::istreambuf_iterator<char>(ss), {});
    }
-   result.value = temp.substr(0, temp.find_last_not_of(" \t\n\r") + 1);
+   if (!value_str.empty() && value_str[0] == ' ') {
+      value_str.erase(0, 1);
+   }
+   result.value = value_str.substr(0, value_str.find_last_not_of(" \t\n\r") + 1);
 
    // Strip surrounding quotes from values (fix for issue #355)
    // Some net-snmp versions/configurations return string values enclosed in quotes

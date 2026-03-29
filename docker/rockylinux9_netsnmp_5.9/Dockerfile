@@ -24,19 +24,19 @@ RUN dnf install -y gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ gcc-toolset-13-binu
 # Set gcc-toolset-13 PATH persistently for non-login shells
 ENV PATH="/opt/rh/gcc-toolset-13/root/usr/bin:$PATH"
 
-# Copy and build NetSNMP 5.9.4 from cache to ensure complete headers are available
+# Copy and build NetSNMP 5.9.5.2 from cache to ensure complete headers are available
 # (RockyLinux 9's net-snmp-devel package 5.9.1 is missing netsnmp_cleanup_session declaration)
 # Disable all Perl support to minimize image size and avoid perl-ExtUtils-MakeMaker dependency
-COPY docker/cache/net-snmp-5.9.4.tar.gz /tmp/
+COPY docker/cache/net-snmp-5.9.5.2.tar.gz /tmp/
 RUN cd /tmp && \
-    tar -xzf net-snmp-5.9.4.tar.gz && \
-    cd net-snmp-5.9.4 && \
+    tar -xzf net-snmp-5.9.5.2.tar.gz && \
+    cd net-snmp-5.9.5.2 && \
     ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
     make -j$(nproc) && \
     make install && \
     ldconfig && \
     cd /tmp && \
-    rm -rf net-snmp-5.9.4.tar.gz net-snmp-5.9.4 && \
+    rm -rf net-snmp-5.9.5.2.tar.gz net-snmp-5.9.5.2 && \
     net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
