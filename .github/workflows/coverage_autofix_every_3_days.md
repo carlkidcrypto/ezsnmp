@@ -45,7 +45,8 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Dockerized checks must cover this distro set used by the repo workflows:
   almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8,
   archlinux_netsnmp_5.9, centos7_netsnmp_5.7, centos8_netsnmp_5.8,
-  rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9.
+  fedora41_netsnmp_5.6, fedora41_netsnmp_5.7, fedora41_netsnmp_5.8,
+  fedora41_netsnmp_5.9, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-every-3-days`.
 - If no meaningful change is needed, make no file edits and end cleanly.
