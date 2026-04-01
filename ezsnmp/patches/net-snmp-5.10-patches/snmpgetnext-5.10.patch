@@ -79,18 +79,24 @@
 @@ -114,53 +113,56 @@
      size_t          name_length;
      int             status;
-     int             failures = 0;
+-    int             failures = 0;
 -    int             exitval = 1;
  
      SOCK_STARTUP;
  
++   int dont_fix_pdus = 0;
++   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
++   // global state (option parsing, DS library settings).
++   {
++      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
++
      /*
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", &optProc)) {
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
++      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
++      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
 +         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -108,6 +114,12 @@
      default:
          break;
      }
++
++      // Capture DONT_FIX_PDUS while still holding the setup mutex so no other
++      // thread can reset it before we read its value for this invocation.
++      dont_fix_pdus =
++          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
++   }
  
      if (arg >= argc) {
 -        fprintf(stderr, "Missing object name\n");
@@ -162,7 +174,7 @@
          if (snmp_parse_oid(names[count], name, &name_length) == NULL) {
 -            snmp_perror(names[count]);
 +            snmp_perror_exception(names[count]);
-             failures++;
+-            failures++;
 -        } else
 +         } else {
              snmp_add_null_var(pdu, name, name_length);
@@ -172,9 +184,6 @@
 -
 -    exitval = 0;
 +      }
-+   }
-+   if (failures) {
-+      goto out;
 +   }
  
      /*
@@ -223,7 +232,7 @@
               */
 -            if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, 
 -					NETSNMP_DS_APP_DONT_FIX_PDUS)) {
-+         if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS)) {
++         if (!dont_fix_pdus) {
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GETNEXT);
                  snmp_free_pdu(response);
                  response = NULL;

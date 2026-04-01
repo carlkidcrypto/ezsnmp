@@ -1,3 +1,4 @@
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/v5.10.pre2/apps */
 /*
  * snmpgetnext.c - send snmp GETNEXT requests to a network entity.
  *
