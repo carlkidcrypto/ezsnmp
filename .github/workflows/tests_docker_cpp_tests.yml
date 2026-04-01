@@ -56,7 +56,6 @@ jobs:
           - archlinux_netsnmp_5.9
           - centos7_netsnmp_5.7
           - centos8_netsnmp_5.8
-          - fedora41_netsnmp_5.6
           - fedora41_netsnmp_5.7
           - fedora41_netsnmp_5.8
           - fedora41_netsnmp_5.9
