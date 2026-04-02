@@ -272,8 +272,11 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
 // This is a helper to remove V3 users from the cache when V3 information changes
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
-   // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
-   // std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
+   // The USM user list is a global Net-SNMP data structure that is not thread-safe.
+   // We must hold the MIB mutex to protect concurrent access from multiple threads
+   // that may be calling SNMP operations or modifying the cache simultaneously.
+   std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
@@ -288,29 +291,15 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
          act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));
       }
 
-      // if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
-      //     security_name_str == act_user_sec_name_str &&
-      //     context_engine_id_str == act_user_engine_id_str) {
-      //    std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
-      //    usm_remove_user(actUser);
-      //    actUser->next = NULL;
-      //    actUser->prev = NULL;
-      //    usm_free_user(actUser);
-      //    break;
-      // }
-
-      // This works for now, but it may change when threads/muli-procs are involved.
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
-         // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
          break;
       } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
-         // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;

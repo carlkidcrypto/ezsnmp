@@ -1089,12 +1089,12 @@ TEST_F(SessionBaseTest, TestCloseSession) {
    // This should not throw
    session._close();
 }
-}
 
 // Test for SNMPv3 multithreading/multi-device scenarios
-// Related issue: https://github.com/carlkidcrypto/ezsnmp/issues/[BUG] snmpv3 usmStatsNotInTimeWindows
-// This test validates that multiple sessions with the same security username can be created
-// and used sequentially without cache interference causing usmStatsNotInTimeWindows errors
+// Related issue: https://github.com/carlkidcrypto/ezsnmp/issues/[BUG] snmpv3
+// usmStatsNotInTimeWindows This test validates that multiple sessions with the same security
+// username can be created and used sequentially without cache interference causing
+// usmStatsNotInTimeWindows errors
 TEST_F(SessionBaseTest, TestV3MultipleSessionsSameUserSequential) {
    // Create first V3 session
    SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
