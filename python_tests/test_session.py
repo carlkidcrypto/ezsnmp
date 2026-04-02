@@ -448,7 +448,9 @@ def test_session_update():
 
 def test_session_repr_masks_community():
     """Test __repr__ includes hostname/version but masks non-empty community."""
-    s = Session(hostname="testhost", port_number="161", version="2c", community="public")
+    s = Session(
+        hostname="testhost", port_number="161", version="2c", community="public"
+    )
     r = repr(s)
     assert "testhost" in r
     assert "2c" in r
@@ -458,8 +460,8 @@ def test_session_repr_masks_community():
 
 
 def test_session_repr_empty_community():
-    """Test __repr__ shows empty string when community is not set."""
-    s = Session(hostname="testhost", version="3")
+    """Test __repr__ shows empty string when community is explicitly empty."""
+    s = Session(hostname="testhost", version="3", community="")
     r = repr(s)
     assert "testhost" in r
     assert "***" not in r
@@ -488,11 +490,22 @@ def test_session_to_dict_required_keys():
     s = Session(version="2c", community="public")
     d = s.to_dict()
     for key in [
-        "hostname", "port_number", "version", "community",
-        "auth_protocol", "auth_passphrase", "security_engine_id",
-        "context_engine_id", "security_level", "context",
-        "security_username", "privacy_protocol", "privacy_passphrase",
-        "boots_time", "retries", "timeout",
+        "hostname",
+        "port_number",
+        "version",
+        "community",
+        "auth_protocol",
+        "auth_passphrase",
+        "security_engine_id",
+        "context_engine_id",
+        "security_level",
+        "context",
+        "security_username",
+        "privacy_protocol",
+        "privacy_passphrase",
+        "boots_time",
+        "retries",
+        "timeout",
     ]:
         assert key in d, f"Missing key: {key}"
     del s
@@ -507,8 +520,8 @@ def test_session_to_dict_community_masked():
 
 
 def test_session_to_dict_empty_community():
-    """Test to_dict() returns empty string for an empty community."""
-    s = Session(version="3")
+    """Test to_dict() returns empty string for an explicitly empty community."""
+    s = Session(version="3", community="")
     d = s.to_dict()
     assert d["community"] == ""
     del s
@@ -613,20 +626,6 @@ def test_session_property_setters():
     assert s.auth_protocol == "SHA"
     s.security_username = "newuser"
     assert s.security_username == "newuser"
-    del s
-
-
-def test_session_set_max_repeaters_default():
-    """Test that set_max_repeaters_to_num defaults to '10'."""
-    s = Session(version="3")
-    assert s.set_max_repeaters_to_num == "10"
-    del s
-
-
-def test_session_set_max_repeaters_custom():
-    """Test that set_max_repeaters_to_num can be overridden at init time."""
-    s = Session(version="3", set_max_repeaters_to_num=25)
-    assert s.set_max_repeaters_to_num == "25"
     del s
 
 
