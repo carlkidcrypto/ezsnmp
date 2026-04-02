@@ -148,8 +148,9 @@ Configure your AI tool to help with the hybrid Python/C++ codebase:
 .. code-block:: json
 
     {
-      "python.formatting.provider": "black",
-      "python.linting.enabled": true,
+      "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+      },
       "python.testing.pytestEnabled": true,
       "python.testing.pytestArgs": ["python_tests"],
       "[cpp]": {
