@@ -2,7 +2,7 @@ Swig Interface File(s)
 ======================
 
 The following interface files are used to generate the Python bindings for the EzSnmp C++ modules.
-For more information on the SWIG interface files, see the `SWIG documentation <http://www.swig.org/Doc4.3/SWIGDocumentation.html>`_.
+For more information on the SWIG interface files, see the `SWIG documentation <https://www.swig.org/Doc4.3/SWIGDocumentation.html>`_.
 
 .. toctree::
    :maxdepth: 10
