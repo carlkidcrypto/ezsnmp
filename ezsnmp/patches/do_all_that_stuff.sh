@@ -25,9 +25,10 @@ for file in master_src/*.cpp; do
     sed -i '/netsnmp_cleanup_session(&session);/d' "$file"
 done
 
-# Step 4: Run make_patches on 5.7-5.8 in parallel
-echo "##### Making patches for versions 5.7, 5.8... #####"
-for version in 5.7 5.8; do
+# Step 4: Run make_patches on all versions except 5.9 in parallel
+echo "##### Making patches for versions needing the cleanup hack... #####"
+for version in "${versions[@]}"; do
+    [[ "$version" == "5.9" ]] && continue
     ./make_patches.sh "$version" &
 done
 wait  # Wait for all make_patches jobs to finish
@@ -37,16 +38,16 @@ echo "##### Restoring master_src from backup... #####"
 rm -rf master_src
 mv master_src_backup master_src
 
-# Step 6: Apply patches on 5.7-5.9 in parallel
-echo "##### Applying patches for versions 5.7, 5.8, 5.9... #####"
-for version in 5.7 5.8 5.9; do
+# Step 6: Apply patches on all versions in parallel
+echo "##### Applying patches for versions ${versions[*]}... #####"
+for version in "${versions[@]}"; do
     ./apply_patches.sh "$version" &
 done
 wait  # Wait for all apply_patches jobs to finish
 
 # Step 7: Run clang-format
 echo "##### Running clang-format on entire repository... #####"
-cd ../../
+cd "$(dirname "$0")/../.."
 find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
 echo "##### All tasks completed successfully. #####"
