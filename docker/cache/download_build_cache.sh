@@ -30,7 +30,7 @@ NETSNMP_VERSIONS=(
     "5.6.2.1:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.6.2.1/net-snmp-5.6.2.1.tar.gz"
     "5.7.3:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.3/net-snmp-5.7.3.tar.gz"
     "5.8:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.8/net-snmp-5.8.tar.gz"
-    "5.9.4:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.4/net-snmp-5.9.4.tar.gz"
+    "5.9.5.2:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.5.2/net-snmp-5.9.5.2.tar.gz"
 )
 
 # GoogleTest for CentOS8

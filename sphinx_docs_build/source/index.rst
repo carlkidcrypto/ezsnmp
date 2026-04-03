@@ -33,7 +33,7 @@ On macOS systems:
 Installation via Building net-snmp from Source
 ----------------------------------------------
 If your OS doesn't ship with net-snmp 5.9.x or newer, please follow instructions
-provided on the `net-snmp install page <http://www.net-snmp.org/docs/INSTALL.html>`_
+provided on the `net-snmp install page <https://www.net-snmp.org/docs/INSTALL.html>`_
 to build and install net-snmp on your system.
 
 You'll also need to ensure that you have the following packages installed so
