@@ -6,7 +6,7 @@ This directory contains patches and scripts for modifying Net-SNMP source code t
 Overview
 --------
 
-The patches in this directory allow ezsnmp to work with different versions of Net-SNMP (5.6 through 5.10). The process involves fetching the Net-SNMP source code, applying necessary modifications, and generating version-specific patches.
+The patches in this directory allow ezsnmp to work with different versions of Net-SNMP (5.7 through 5.10). The process involves fetching the Net-SNMP source code, applying necessary modifications, and generating version-specific patches.
 
 Order of Operations
 -------------------
@@ -15,7 +15,7 @@ Follow these steps in order to prepare and apply patches for your desired Net-SN
 
 1. **Fetch Net-SNMP Versions**
 
-   Run the ``fetch_net_snmp_versions.sh`` script to download the source code for Net-SNMP versions 5.6 through 5.10:
+   Run the ``fetch_net_snmp_versions.sh`` script to download the source code for Net-SNMP versions 5.7 through 5.10:
 
    .. code-block:: bash
 
@@ -57,7 +57,7 @@ For Net-SNMP versions 5.8 and lower, you must use ``netsnmp_cleanup_session(&ses
 Automated Script
 ----------------
 
-The ``do_all_that_stuff.sh`` script automates the entire process of downloading Net-SNMP versions, generating patches with version-specific modifications, applying patches, and formatting the code. It handles special cases for compatibility, such as removing ``netsnmp_cleanup_session`` calls for versions 5.6-5.8 and using ``gettimeofday`` instead of ``netsnmp_get_monotonic_clock`` for version 5.6.
+The ``do_all_that_stuff.sh`` script automates the entire process of downloading Net-SNMP versions, generating patches with version-specific modifications, applying patches, and formatting the code. It handles special cases for compatibility, such as removing ``netsnmp_cleanup_session`` calls for versions 5.7-5.8.
 
 To run the automated process:
 
@@ -67,16 +67,13 @@ To run the automated process:
 
 This script performs the following steps in order:
 
-1. Downloads Net-SNMP versions 5.6-5.10 in parallel (with ``--no-remove`` to avoid re-downloading if directories exist).
+1. Downloads Net-SNMP versions 5.7-5.10 in parallel (with ``--no-remove`` to avoid re-downloading if directories exist).
 2. Generates patches for versions 5.9 and 5.10 first using the unmodified ``master_src``.
-3. Backs up ``master_src`` and removes ``netsnmp_cleanup_session(&session);`` calls (not available in 5.6-5.8).
-4. Modifies timing calls in ``master_src`` from ``netsnmp_get_monotonic_clock`` to ``gettimeofday`` for 5.6 compatibility.
-5. Generates patches for version 5.6 with the modified ``master_src``.
-6. Reverts timing calls back to ``netsnmp_get_monotonic_clock`` for versions 5.7-5.8.
-7. Generates patches for versions 5.7-5.8 in parallel.
-8. Restores ``master_src`` from backup.
-9. Applies patches to versions 5.6-5.10 in parallel, producing final patched source in ``../src/net-snmp-<version>-final-patched/``.
-10. Runs clang-format on the entire repository to ensure consistent code formatting.
+3. Backs up ``master_src`` and removes ``netsnmp_cleanup_session(&session);`` calls (not available in 5.7-5.8).
+4. Generates patches for versions 5.7-5.8 in parallel.
+5. Restores ``master_src`` from backup.
+6. Applies patches to versions 5.7-5.10 in parallel, producing final patched source in ``../src/net-snmp-<version>-final-patched/``.
+7. Runs clang-format on the entire repository to ensure consistent code formatting.
 
 This script is designed for efficiency and reliability, running tasks in parallel where possible to speed up the process. It ensures that each Net-SNMP version receives the appropriate modifications without manual intervention.
 

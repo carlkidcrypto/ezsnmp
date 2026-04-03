@@ -13,7 +13,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 if [[ -z "$1" ]]; then
     echo "Error: No version specified." >&2
     echo "Usage: $0 <net-snmp-version> [--no-remove]" >&2
-    echo "Supported versions are: 5.6, 5.7, 5.8, 5.9, 5.10" >&2
+    echo "Supported versions are: 5.7, 5.8, 5.9, 5.10" >&2
     exit 1
 fi
 
@@ -26,9 +26,6 @@ TAG=""
 
 # 2. Map the input version to the specific hardcoded git tag
 case "$VERSION" in
-  "5.6")
-    TAG="v5.6.2.1"
-    ;;
   "5.7")
     TAG="v5.7.3"
     ;;
@@ -43,7 +40,7 @@ case "$VERSION" in
     ;;
   *)
     echo "Error: Unsupported version '$VERSION'." >&2
-    echo "Please use one of the supported versions: 5.6, 5.7, 5.8, 5.9, 5.10" >&2
+    echo "Please use one of the supported versions: 5.7, 5.8, 5.9, 5.10" >&2
     exit 1
     ;;
 esac
