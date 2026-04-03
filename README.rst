@@ -54,7 +54,7 @@ Why Another Library?
 
 - Simple, because the maintainer of `Easy SNMP` seems to have abandoned the project or isn't actively working on it.
 - This version (EzSnmp) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
-  and net-snmp versions that are supported by `Net-SNMP <http://www.net-snmp.org/download.html>`__
+  and net-snmp versions that are supported by `Net-SNMP <https://www.net-snmp.org/download.html>`__
 
 
 How to Support This Project?
@@ -67,7 +67,7 @@ How to Support This Project?
 
 Getting Started
 ---------------
-Please check out the `EzSnmp documentation <http://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
+Please check out the `EzSnmp documentation <https://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
 instructions for various operating systems.
 
 Code Coverage

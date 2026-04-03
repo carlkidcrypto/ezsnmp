@@ -233,7 +233,7 @@ The Net-SNMP C library explicitly documents threading limitations:
    
    *"The library is not thread-safe. It uses global variables for configuration, MIB parsing, and internal state management."*
 
-3. **Net-SNMP Developer Mailing List** (http://www.net-snmp.org/lists/):
+3. **Net-SNMP Developer Mailing List** (https://www.net-snmp.org/lists/):
    
    Multiple discussions confirm: *"Net-SNMP was never designed for multi-threaded use"*
 

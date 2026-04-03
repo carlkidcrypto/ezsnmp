@@ -53,7 +53,7 @@ required by net-snmp tools like ``snmpwalk``.
 
 For more details on the acceptable values for ``security_level`` and other parameters, refer to the 
 official net-snmp documentation: `Net-SNMP Command Line Applications 
-<http://www.net-snmp.org/docs/man/snmpcmd.html>`_.
+<https://www.net-snmp.org/docs/man/snmpcmd.html>`_.
 
 Parameter Mapping Table
 -----------------------
