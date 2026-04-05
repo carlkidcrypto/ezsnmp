@@ -1,7 +1,7 @@
 --- a/net-snmp-5.10/apps/snmpbulkget.c
 +++ b/net-snmp-5.10/apps/snmpbulkget.cpp
 @@ -1,3 +1,4 @@
-+/* straight copy from https://github.com/net-snmp/net-snmp/tree/v5.10.pre2/apps */
++/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
   * snmpbulkget.c - send SNMPv2 Bulk requests to a network entity.
   *
@@ -15,20 +15,24 @@
  #ifdef HAVE_NETDB_H
  #include <netdb.h>
  #endif
-@@ -65,7 +66,9 @@
+@@ -65,32 +66,32 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
 -oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
+-int             max_repetitions = 10;
+-int             non_repeaters = 0;
 +#include <mutex>
 +
 +oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
- int             max_repetitions = 10;
- int             non_repeaters = 0;
++thread_local int max_repetitions = 10;
++thread_local int non_repeaters = 0;
  struct nameStruct {
-@@ -74,23 +77,22 @@
- }              *name, *namep;
- int             names;
+     oid             name[MAX_OID_LEN];
+     size_t          name_len;
+-}              *name, *namep;
+-int             names;
++};
  
 -void
 -usage(void)
@@ -54,11 +58,11 @@
 -    void
 -optProc(int argc, char *const *argv, int opt)
 -{
-+void snmpbulkget_optProc(int argc, char *const *argv, int opt) {
++void snmpbulkget_optProc(int, char *const *, int opt) {
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,8 +111,8 @@
+@@ -109,147 +110,170 @@
                      /*
                       * No number given -- error.  
                       */
@@ -68,8 +72,10 @@
 +                                          " option\n");
                  } else {
                      optarg = endptr;
-                     if (isspace((unsigned char)(*optarg))) {
-@@ -120,40 +122,49 @@
+-                    if (isspace((unsigned char)(*optarg))) {
+-                        return;
+-                    }
+                 }
                  break;
  
              default:
@@ -109,6 +115,10 @@
  
      SOCK_STARTUP;
  
++   // Reset thread-local defaults for each invocation.
++   max_repetitions = 10;
++   non_repeaters = 0;
++
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
 +   // global state (option parsing, DS library settings).
 +   {
@@ -123,23 +133,27 @@
 +      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 +
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
 -        exitval = 0;
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 +
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 +
      default:
          break;
      }
 +   }
-@@ -161,95 +172,99 @@
++
++   // Declare name/namep/names as local variables to avoid data races.
++   int names;
++   struct nameStruct *name, *namep;
+ 
      names = argc - arg;
      if (names < non_repeaters) {
          fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -159,7 +173,6 @@
 -            goto out;
 +         if (snmp_parse_oid(argv[arg], namep->name, &namep->name_len) == NULL) {
 +            snmp_perror_exception(argv[arg]);
-+            return parse_results(return_vector);
          }
          arg++;
          namep++;
@@ -179,7 +192,6 @@
 -        snmp_sess_perror("snmpbulkget", &session);
 -        goto out;
 +      snmp_sess_perror_exception("snmpbulkget", &session);
-+      return parse_results(return_vector);
      }
  
 -    exitval = 0;

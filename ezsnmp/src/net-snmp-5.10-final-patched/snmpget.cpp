@@ -1,4 +1,4 @@
-/* straight copy from https://github.com/net-snmp/net-snmp/tree/v5.10.pre2/apps */
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpget.c - send snmp GET requests to a network entity.
  *
@@ -253,7 +253,6 @@ retry:
       std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
    }
 
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

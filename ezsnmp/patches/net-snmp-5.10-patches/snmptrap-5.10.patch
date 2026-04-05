@@ -1,7 +1,7 @@
 --- a/net-snmp-5.10/apps/snmptrap.c
 +++ b/net-snmp-5.10/apps/snmptrap.cpp
 @@ -1,3 +1,4 @@
-+/* straight copy from https://github.com/net-snmp/net-snmp/tree/v5.10.pre2/apps */
++/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
  /*
   * snmptrap.c - send snmp traps to a network entity.
   *
@@ -14,7 +14,8 @@
  oid             objid_enterprise[] = { 1, 3, 6, 1, 4, 1, 3, 1, 1 };
  oid             objid_sysuptime[] = { 1, 3, 6, 1, 2, 1, 1, 3, 0 };
  oid             objid_snmptrap[] = { 1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0 };
- int             inform = 0;
+-int             inform = 0;
++thread_local int inform = 0;
  
 -void
 -usage(void)
@@ -88,7 +89,7 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -132,32 +135,34 @@
+@@ -132,35 +135,46 @@
      char           *specific = NULL, *description = NULL, *agent = NULL;
      in_addr_t      *pdu_in_addr_t;
  #endif
@@ -96,6 +97,9 @@
  
      SOCK_STARTUP;
  
++   // Reset thread-local inform flag for each invocation.
++   inform = 0;
++
      prognam = strrchr(argv[0], '/');
 -    if (prognam)
 +   if (prognam) {
@@ -113,12 +117,12 @@
 +   if (strcmp(prognam, "snmpinform") == 0) {
          inform = 1;
 +   }
- 
++
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
 +   // global state (option parsing, DS library settings).
 +   {
 +      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
-+
+ 
      /** parse args (also initializes session) */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
@@ -126,22 +130,25 @@
 +      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 +
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
 -        exitval = 0;
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 +
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
      default:
          break;
      }
 +   }
-@@ -173,10 +178,8 @@
+ 
+     session.callback = snmp_input;
+     session.callback_magic = NULL;
+@@ -173,10 +187,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -154,7 +161,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -200,10 +203,8 @@
+@@ -200,10 +212,8 @@
          /*
           * pick our own engineID 
           */
@@ -167,7 +174,7 @@
          }
  
          /*
-@@ -212,24 +213,24 @@
+@@ -212,24 +222,24 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -200,7 +207,7 @@
          goto out;
      }
  
-@@ -247,29 +248,30 @@
+@@ -247,29 +257,30 @@
          pdu_in_addr_t = (in_addr_t *) pdu->agent_addr;
          if (arg == argc) {
              fprintf(stderr, "No enterprise oid\n");
@@ -239,7 +246,7 @@
              goto out;
          }
          agent = argv[arg];
-@@ -284,28 +286,29 @@
+@@ -284,28 +295,29 @@
          }
          if (++arg == argc) {
              fprintf(stderr, "Missing generic-trap parameter\n");
@@ -274,7 +281,7 @@
      } else
  #endif
      {
-@@ -319,7 +322,7 @@
+@@ -319,7 +331,7 @@
          }
          if (arg == argc) {
              fprintf(stderr, "Missing up-time parameter\n");
@@ -283,7 +290,7 @@
              goto out;
          }
          trap = argv[arg];
-@@ -328,17 +331,14 @@
+@@ -328,17 +340,14 @@
              snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
              trap = csysuptime;
          }
@@ -305,7 +312,7 @@
              goto out;
          }
      }
-@@ -347,44 +347,47 @@
+@@ -347,44 +356,46 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -362,7 +369,7 @@
  
  out:
 -    free(posix_env);
-     netsnmp_cleanup_session(&session);
+-    netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
      return exitval;
