@@ -408,7 +408,7 @@ class Session(SessionBase):
     def retries(self):
         """Get the number of retries.
 
-        :type: int
+        :type: str
         """
         return super()._get_retries()
 
@@ -425,7 +425,7 @@ class Session(SessionBase):
     def timeout(self):
         """Get the timeout value.
 
-        :type: int
+        :type: str
         """
         return super()._get_timeout()
 
