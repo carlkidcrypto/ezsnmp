@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-15]
+        os: [macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
   
     steps:
@@ -201,13 +201,8 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-14 - MacPorts - 3.10, pytest-results_macos-14_3.10/test-outputs_macos-14_3.10.txt, pytest-results_macos-14_3.10/test-results_macos-14_3.10.xml
-            macos-14 - MacPorts - 3.11, pytest-results_macos-14_3.11/test-outputs_macos-14_3.11.txt, pytest-results_macos-14_3.11/test-results_macos-14_3.11.xml
-            macos-14 - MacPorts - 3.12, pytest-results_macos-14_3.12/test-outputs_macos-14_3.12.txt, pytest-results_macos-14_3.12/test-results_macos-14_3.12.xml
-            macos-14 - MacPorts - 3.13, pytest-results_macos-14_3.13/test-outputs_macos-14_3.13.txt, pytest-results_macos-14_3.13/test-results_macos-14_3.13.xml
-            macos-14 - MacPorts - 3.14, pytest-results_macos-14_3.14/test-outputs_macos-14_3.14.txt, pytest-results_macos-14_3.14/test-results_macos-14_3.14.xml
-            macos-15 - MacPorts - 3.10, pytest-results_macos-15_3.10/test-outputs_macos-15_3.10.txt, pytest-results_macos-15_3.10/test-results_macos-15_3.10.xml
-            macos-15 - MacPorts - 3.11, pytest-results_macos-15_3.11/test-outputs_macos-15_3.11.txt, pytest-results_macos-15_3.11/test-results_macos-15_3.11.xml
-            macos-15 - MacPorts - 3.12, pytest-results_macos-15_3.12/test-outputs_macos-15_3.12.txt, pytest-results_macos-15_3.12/test-results_macos-15_3.12.xml
-            macos-15 - MacPorts - 3.13, pytest-results_macos-15_3.13/test-outputs_macos-15_3.13.txt, pytest-results_macos-15_3.13/test-results_macos-15_3.13.xml
-            macos-15 - MacPorts - 3.14, pytest-results_macos-15_3.14/test-outputs_macos-15_3.14.txt, pytest-results_macos-15_3.14/test-results_macos-15_3.14.xml
+            macos-latest - MacPorts - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - MacPorts - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - MacPorts - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            macos-latest - MacPorts - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
+            macos-latest - MacPorts - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
