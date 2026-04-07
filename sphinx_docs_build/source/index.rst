@@ -50,7 +50,7 @@ On macOS systems (alternative, using homebrew-core net-snmp):
 Installation via Building net-snmp from Source
 ----------------------------------------------
 If your OS doesn't ship with net-snmp 5.9.x or newer, please follow instructions
-provided on the `net-snmp install page <http://www.net-snmp.org/docs/INSTALL.html>`_
+provided on the `net-snmp install page <https://www.net-snmp.org/docs/INSTALL.html>`_
 to build and install net-snmp on your system.
 
 You'll also need to ensure that you have the following packages installed so
@@ -140,12 +140,9 @@ are planning on requesting multiple pieces of SNMP data from a source.
     # Each returned item can be used normally as its related type (str or int)
     # but also has several extended attributes with SNMP-specific information
     for item in system_items:
-        print '{oid}.{oid_index} {snmp_type} = {value}'.format(
-            oid=item.oid,
-            oid_index=item.oid_index,
-            snmp_type=item.snmp_type,
-            value=item.value
-        )
+        print('{}.{} {} = {}'.format(
+            item.oid, item.oid_index, item.snmp_type, item.value
+        ))
 
 You may also use EzSnmp via its simple interface which is intended for
 one-off operations where you wish to specify all details in the request:

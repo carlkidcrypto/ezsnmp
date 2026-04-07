@@ -41,7 +41,8 @@ class Session(SessionBase):
         :type hostname: str
         :param port_number: The port number of the SNMP agent.
         :type port_number: Union[str, int]
-        :param version: The SNMP version to use (1, 2c, or 3).
+        :param version: The SNMP version to use (1, 2, 2c, or 3). The integer value 2
+            is automatically converted to "2c".
         :type version: Union[str, int]
         :param community: The community string for SNMPv1/v2c.
         :type community: str
@@ -63,7 +64,9 @@ class Session(SessionBase):
         :type privacy_protocol: str
         :param privacy_passphrase: The privacy passphrase.
         :type privacy_passphrase: str
-        :param boots_time: The boots time.
+        :param boots_time: The SNMPv3 authoritative engine boots and time, formatted
+            as "BOOTS,TIME" (e.g., "1,100"). Used to synchronize with the agent's
+            time window.
         :type boots_time: str
         :param retries: The number of retries.
         :type retries: Union[str, int]
@@ -405,7 +408,7 @@ class Session(SessionBase):
     def retries(self):
         """Get the number of retries.
 
-        :type: int
+        :type: str
         """
         return super()._get_retries()
 
@@ -422,7 +425,7 @@ class Session(SessionBase):
     def timeout(self):
         """Get the timeout value.
 
-        :type: int
+        :type: str
         """
         return super()._get_timeout()
 
@@ -539,7 +542,7 @@ class Session(SessionBase):
 
     @property
     def set_max_repeaters_to_num(self):
-        """Get max-repeaters value.
+        """Get the maximum number of repeaters for GETBULK PDUs.
 
         :type: str
         """
@@ -547,9 +550,10 @@ class Session(SessionBase):
 
     @set_max_repeaters_to_num.setter
     def set_max_repeaters_to_num(self, value):
-        """Set max-repeaters value.
+        """Set the maximum number of repeaters for GETBULK PDUs.
 
-        :param value: The new value for max-repeaters.
+        :param value: The maximum number of repeaters. Only applies to bulk_walk
+            and bulk_get operations.
         :type value: str
         """
         super()._set_max_repeaters_to_num(value)
