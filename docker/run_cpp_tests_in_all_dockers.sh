@@ -50,7 +50,7 @@ else
 	while IFS= read -r DOCKERFILE_PATH; do
 		DIR_NAME=$(basename "$(dirname "$DOCKERFILE_PATH")")
 		DISTROS_TO_TEST+=("$DIR_NAME")
-	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -printf '%p\n')
+	done < <(find . -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile' -print)
 	echo "Mode: Testing all found images."
 fi
 

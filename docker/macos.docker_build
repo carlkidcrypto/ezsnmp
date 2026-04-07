@@ -1,0 +1,86 @@
+Platform mode: Apple Silicon detected; defaulting to --platform linux/amd64 for maximum image compatibility
+Build platform: linux/amd64
+Build progress mode: plain
+Attempting to log in to Docker Hub...
+Login Succeeded
+Successfully logged in to Docker Hub.
+--------------------------------------------------
+INFO: GHCR credentials not provided. Skipping GitHub Container Registry publishing.
+--------------------------------------------------
+Checking Python tarball cache...
+Running cache download script...
+=== Docker Build Cache Downloader ===
+Cache directory: /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache
+
+--- Python Source Tarballs ---
+✓ Python-3.10.16.tgz already cached
+✓ Python-3.11.11.tgz already cached
+✓ Python-3.12.8.tgz already cached
+✓ Python-3.13.7.tgz already cached
+✓ Python-3.14.2.tgz already cached
+
+--- OpenSSL and SQLite ---
+✓ openssl-1.1.1w.tar.gz already cached
+✓ openssl-1.0.2u.tar.gz already cached
+✓ sqlite-autoconf-3450100.tar.gz already cached
+
+--- Net-SNMP Source Tarballs ---
+✓ net-snmp-5.6.2.1.tar.gz already cached
+✓ net-snmp-5.7.3.tar.gz already cached
+✓ net-snmp-5.8.tar.gz already cached
+✓ net-snmp-5.9.4.tar.gz already cached
+
+--- GoogleTest (for CentOS8) ---
+✓ v1.15.2.tar.gz already cached
+
+--- Archlinux Packages (for net-snmp 5.7/5.8 compatibility) ---
+✓ net-snmp-5.7.3-1-x86_64.pkg.tar.xz already cached
+✓ net-snmp-5.8-1-x86_64.pkg.tar.xz already cached
+✓ pcre-8.43-1-x86_64.pkg.tar.xz already cached
+✓ openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz already cached
+✓ openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst already cached
+
+=== Cache Summary ===
+Python tarballs:
+-rw-r--r--  1 carlossantos  staff    25M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/Python-3.10.16.tgz
+-rw-r--r--  1 carlossantos  staff    25M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/Python-3.11.11.tgz
+-rw-r--r--  1 carlossantos  staff    26M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/Python-3.12.8.tgz
+-rw-r--r--  1 carlossantos  staff    28M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/Python-3.13.7.tgz
+-rw-r--r--  1 carlossantos  staff    29M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/Python-3.14.2.tgz
+
+OpenSSL and SQLite:
+-rw-r--r--  1 carlossantos  staff   5.1M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/openssl-1.0.2u.tar.gz
+-rw-r--r--  1 carlossantos  staff   9.4M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/openssl-1.1.1w.tar.gz
+-rw-r--r--  1 carlossantos  staff   3.1M Mar 18 14:33 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/sqlite-autoconf-3450100.tar.gz
+
+Net-SNMP tarballs:
+-rw-r--r--  1 carlossantos  staff   5.7M Mar 18 21:22 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/net-snmp-5.6.2.1.tar.gz
+-rw-r--r--  1 carlossantos  staff   6.1M Mar 18 21:22 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/net-snmp-5.7.3.tar.gz
+-rw-r--r--  1 carlossantos  staff   6.3M Mar 18 21:22 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/net-snmp-5.8.tar.gz
+-rw-r--r--  1 carlossantos  staff   6.4M Mar 18 21:23 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/net-snmp-5.9.4.tar.gz
+
+GoogleTest:
+-rw-r--r--  1 carlossantos  staff   852K Mar 18 14:34 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/v1.15.2.tar.gz
+
+Archlinux packages:
+-rw-r--r--  1 carlossantos  staff   1.6M Mar 18 21:23 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/net-snmp-5.7.3-1-x86_64.pkg.tar.xz
+-rw-r--r--  1 carlossantos  staff   1.7M Mar 18 21:23 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/net-snmp-5.8-1-x86_64.pkg.tar.xz
+-rw-r--r--  1 carlossantos  staff   1.5M Mar 18 14:34 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz
+-rw-r--r--  1 carlossantos  staff   1.8M Mar 18 14:34 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst
+-rw-r--r--  1 carlossantos  staff   929K Mar 18 14:34 /Users/carlossantos/Documents/GitHub/ezsnmp/docker/cache/pcre-8.43-1-x86_64.pkg.tar.xz
+
+Total cache size: 184M
+
+✓ Cache is ready!
+--------------------------------------------------
+Mode: Building all found images (excluding test_outputs*, test-results*, previous_results*, and cache directories).
+Images to process: fedora41_netsnmp_5.8 fedora41_netsnmp_5.6 rockylinux8_netsnmp_5.8 centos8_netsnmp_5.8 fedora41_netsnmp_5.7 fedora41_netsnmp_5.9 centos7_netsnmp_5.7 archlinux_netsnmp_5.8 rockylinux9_netsnmp_5.9 archlinux_netsnmp_5.9 archlinux_netsnmp_5.7 almalinux10_netsnmp_5.9
+--------------------------------------------------
+>>> Processing image: fedora41_netsnmp_5.8
+    - Context Path: ..
+    - Dockerfile: ./fedora41_netsnmp_5.8/Dockerfile
+    - Dated Tag: carlkidcrypto/ezsnmp_test_images:fedora41_netsnmp_5.8-03-19-2026.1
+    - Latest Tag: carlkidcrypto/ezsnmp_test_images:fedora41_netsnmp_5.8-latest
+    - Build Options: 
+    - Platform: linux/amd64
+    - Progress: plain
