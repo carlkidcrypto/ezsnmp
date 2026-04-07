@@ -8,7 +8,7 @@ based on Net-SNMP. It performs the following tasks:
 1. Detects the system's Net-SNMP installation (system, Homebrew, or MacPorts)
 2. Runs SWIG to generate C++ wrapper code from interface files (.i -> .cpp)
 3. Compiles four C++ extension modules (_datatypes, _exceptionsbase, _netsnmpbase, _sessionbase)
-4. Selects version-specific Net-SNMP source files based on detected version (5.7, 5.8, or 5.9)
+4. Selects version-specific Net-SNMP source files based on detected version (5.7, 5.8, 5.9, or 5.10)
 
 Command-line options:
     --debug         Enable debug compilation flags (-Wall -O0 -g)
@@ -355,6 +355,14 @@ def gather_build_configuration():
 
 def resolve_snmp_source_path(version_str: str) -> str:
     if version_str.startswith("5.6"):
+        if platform == "darwin":
+            raise RuntimeError(
+                f"Net-SNMP version {version_str} is no longer supported. "
+                "On macOS, the system-provided Net-SNMP (5.6.x) is not supported. "
+                "Please install a supported version via Homebrew "
+                "(`brew install net-snmp`) or MacPorts "
+                "(`sudo port install net-snmp`)."
+            )
         raise RuntimeError(
             f"Net-SNMP version {version_str} is no longer supported. "
             "Please upgrade to Net-SNMP 5.7 or later."
@@ -365,6 +373,8 @@ def resolve_snmp_source_path(version_str: str) -> str:
         return "ezsnmp/src/net-snmp-5.8-final-patched"
     if version_str.startswith("5.9"):
         return "ezsnmp/src/net-snmp-5.9-final-patched"
+    if version_str.startswith("5.10"):
+        return "ezsnmp/src/net-snmp-5.10-final-patched"
     raise RuntimeError(f"Unsupported net-snmp version: {version_str}")
 
 
