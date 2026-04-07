@@ -43,8 +43,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+          # macOS is intentionally excluded: the macOS system net-snmp (5.6.x) is no longer
+          # supported. macOS testing is covered by tests_homebrew.yml and tests_macports.yml,
+          # where a supported version of net-snmp is installed via Homebrew or MacPorts.
+          os: [ubuntu-latest]
+          python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Set up dependencies
