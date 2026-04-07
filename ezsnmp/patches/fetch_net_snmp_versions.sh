@@ -13,7 +13,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 if [[ -z "$1" ]]; then
     echo "Error: No version specified." >&2
     echo "Usage: $0 <net-snmp-version> [--no-remove]" >&2
-    echo "Supported versions are: 5.7, 5.8, 5.9" >&2
+    echo "Supported versions are: 5.7, 5.8, 5.9, 5.10" >&2
     exit 1
 fi
 
@@ -35,9 +35,12 @@ case "$VERSION" in
   "5.9")
     TAG="v5.9.4"
     ;;
+  "5.10")
+    TAG="v5.10.pre2"
+    ;;
   *)
     echo "Error: Unsupported version '$VERSION'." >&2
-    echo "Please use one of the supported versions: 5.7, 5.8, 5.9" >&2
+    echo "Please use one of the supported versions: 5.7, 5.8, 5.9, 5.10" >&2
     exit 1
     ;;
 esac

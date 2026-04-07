@@ -8,7 +8,7 @@ based on Net-SNMP. It performs the following tasks:
 1. Detects the system's Net-SNMP installation (system, Homebrew, or MacPorts)
 2. Runs SWIG to generate C++ wrapper code from interface files (.i -> .cpp)
 3. Compiles four C++ extension modules (_datatypes, _exceptionsbase, _netsnmpbase, _sessionbase)
-4. Selects version-specific Net-SNMP source files based on detected version (5.7, 5.8, or 5.9)
+4. Selects version-specific Net-SNMP source files based on detected version (5.7, 5.8, 5.9, or 5.10)
 
 Command-line options:
     --debug         Enable debug compilation flags (-Wall -O0 -g)
@@ -92,9 +92,6 @@ def get_homebrew_net_snmp_info():
     """
     Retrieves net-snmp and its OpenSSL dependency information from Homebrew.
 
-    Checks for net-snmp installed under either the 'net-snmp' formula name (from
-    homebrew-core) or the 'ezsnmp' formula name (from the carlkidcrypto/ezsnmp tap).
-
     Returns:
       tuple or None: A 5-tuple (homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs)
                      if net-snmp is installed via Homebrew, None otherwise (including when Homebrew
@@ -104,32 +101,15 @@ def get_homebrew_net_snmp_info():
     if not homebrew_version:
         return None
 
-    # Try both the 'net-snmp' formula (homebrew-core) and the 'ezsnmp' formula
-    # (carlkidcrypto/ezsnmp tap), which also provides a net-snmp build.
-    formula_name = None
-    brew_output_lines = []
-    for candidate in ("net-snmp", "ezsnmp"):
-        try:
-            brew_output = check_output(
-                ["brew", "list", candidate]
-            ).decode()
-            lines = brew_output.splitlines()
-            if lines:
-                formula_name = candidate
-                brew_output_lines = lines
-                break
-        except CalledProcessError:
-            continue
-
-    if not formula_name or not brew_output_lines:
-        return None
-
     try:
-        lines = brew_output_lines
+        brew_output = check_output("brew list net-snmp", shell=True).decode()
+        lines = brew_output.splitlines()
 
-        # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths,
-        # and both 'net-snmp' and 'ezsnmp' formula names in the Cellar)
-        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/(?:net-snmp|ezsnmp)/(\d+\.\d+(?:\.\d+)?)/"
+        if not lines:
+            return None
+
+        # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
+        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)?)/"
         match = search(pattern, lines[0])
         if not match:
             return None
@@ -151,11 +131,9 @@ def get_homebrew_net_snmp_info():
         if lib_file_path:
             libdirs.append(os.path.dirname(lib_file_path))
 
-        # Get OpenSSL dependency information using the detected formula name
+        # Get OpenSSL dependency information
         # Look for any OpenSSL version (e.g., openssl@3, openssl@1.1, etc.)
-        brew_info_output = check_output(
-            ["brew", "info", formula_name]
-        ).decode()
+        brew_info_output = check_output("brew info net-snmp", shell=True).decode()
         openssl_version = next(
             (
                 line.split()[0]
@@ -168,7 +146,7 @@ def get_homebrew_net_snmp_info():
             return None
 
         openssl_info_output = check_output(
-            ["brew", "info", openssl_version]
+            f"brew info {openssl_version}", shell=True
         ).decode()
         openssl_lines = openssl_info_output.splitlines()
 
@@ -377,6 +355,14 @@ def gather_build_configuration():
 
 def resolve_snmp_source_path(version_str: str) -> str:
     if version_str.startswith("5.6"):
+        if platform == "darwin":
+            raise RuntimeError(
+                f"Net-SNMP version {version_str} is no longer supported. "
+                "On macOS, the system-provided Net-SNMP (5.6.x) is not supported. "
+                "Please install a supported version via Homebrew "
+                "(`brew install net-snmp`) or MacPorts "
+                "(`sudo port install net-snmp`)."
+            )
         raise RuntimeError(
             f"Net-SNMP version {version_str} is no longer supported. "
             "Please upgrade to Net-SNMP 5.7 or later."
@@ -387,6 +373,8 @@ def resolve_snmp_source_path(version_str: str) -> str:
         return "ezsnmp/src/net-snmp-5.8-final-patched"
     if version_str.startswith("5.9"):
         return "ezsnmp/src/net-snmp-5.9-final-patched"
+    if version_str.startswith("5.10"):
+        return "ezsnmp/src/net-snmp-5.10-final-patched"
     raise RuntimeError(f"Unsupported net-snmp version: {version_str}")
 
 
