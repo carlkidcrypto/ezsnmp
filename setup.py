@@ -355,6 +355,14 @@ def gather_build_configuration():
 
 def resolve_snmp_source_path(version_str: str) -> str:
     if version_str.startswith("5.6"):
+        if platform == "darwin":
+            raise RuntimeError(
+                f"Net-SNMP version {version_str} is no longer supported. "
+                "On macOS, the system-provided Net-SNMP (5.6.x) is not supported. "
+                "Please install a supported version via Homebrew "
+                "(`brew install net-snmp`) or MacPorts "
+                "(`sudo port install net-snmp`)."
+            )
         raise RuntimeError(
             f"Net-SNMP version {version_str} is no longer supported. "
             "Please upgrade to Net-SNMP 5.7 or later."

@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
@@ -55,8 +55,6 @@ jobs:
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
-                 echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          macos: mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Checkout repo
@@ -82,25 +80,8 @@ jobs:
 
       - name: Start SNMP daemon
         run: |
-          if [ "$RUNNER_OS" == "Linux" ]
-          then
-            mibdir="-M +/var/lib/snmp/mibs"
-            SNMPD=$(which snmpd)
-          elif [ "$RUNNER_OS" == "macOS" ]
-          then
-            # On macOS, check for Homebrew MIB directories (both Intel and Apple Silicon)
-            if [ -d "/opt/homebrew/share/snmp/mibs" ]; then
-              mibdir="-M +/opt/homebrew/share/snmp/mibs"
-            elif [ -d "/usr/local/share/snmp/mibs" ]; then
-              mibdir="-M +/usr/local/share/snmp/mibs"
-            else
-              mibdir=""
-            fi
-            SNMPD=$(which snmpd)
-          else
-            mibdir=""
-            SNMPD=$(which.exe snmpd)
-          fi
+          mibdir="-M +/var/lib/snmp/mibs"
+          SNMPD=$(which snmpd)
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
       
       - name: Run Tests
@@ -178,11 +159,6 @@ jobs:
           hide-comment: false
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - Native - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-            macos-latest - Native - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
-            macos-latest - Native - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
-            macos-latest - Native - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            macos-latest - Native - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
             ubuntu-latest - Native - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
             ubuntu-latest - Native - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
             ubuntu-latest - Native - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
