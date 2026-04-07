@@ -123,12 +123,9 @@ are planning on requesting multiple pieces of SNMP data from a source.
     # Each returned item can be used normally as its related type (str or int)
     # but also has several extended attributes with SNMP-specific information
     for item in system_items:
-        print '{oid}.{oid_index} {snmp_type} = {value}'.format(
-            oid=item.oid,
-            oid_index=item.oid_index,
-            snmp_type=item.snmp_type,
-            value=item.value
-        )
+        print('{}.{} {} = {}'.format(
+            item.oid, item.oid_index, item.snmp_type, item.value
+        ))
 
 You may also use EzSnmp via its simple interface which is intended for
 one-off operations where you wish to specify all details in the request:
