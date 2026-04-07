@@ -2,11 +2,11 @@
 FROM fedora:41
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.2
-ARG PYTHON_MIN_2_VERSION=3.13.7
-ARG PYTHON_MIN_1_VERSION=3.12.8
-ARG PYTHON_MIN_0_VERSION=3.11.11
-ARG PYTHON_MIN_VERSION=3.10.16
+ARG PYTHON_MAX_VERSION=3.14.3
+ARG PYTHON_MIN_2_VERSION=3.13.12
+ARG PYTHON_MIN_1_VERSION=3.12.13
+ARG PYTHON_MIN_0_VERSION=3.11.15
+ARG PYTHON_MIN_VERSION=3.10.20
 
 # Update system and install GCC (native GCC 14.x on Fedora 41 - no toolset needed)
 RUN dnf update -y && \
@@ -18,26 +18,26 @@ RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Copy and build NetSNMP 5.9.4 from cache to ensure complete headers are available
+# Copy and build NetSNMP 5.9.5.2 from cache to ensure complete headers are available
 # Disable all Perl support to minimize image size and avoid perl-ExtUtils-MakeMaker dependency
-COPY docker/cache/net-snmp-5.9.4.tar.gz /tmp/
+COPY docker/cache/net-snmp-5.9.5.2.tar.gz /tmp/
 RUN cd /tmp && \
-    tar -xzf net-snmp-5.9.4.tar.gz && \
-    cd net-snmp-5.9.4 && \
+    tar -xzf net-snmp-5.9.5.2.tar.gz && \
+    cd net-snmp-5.9.5.2 && \
     ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
     make -j$(nproc) && \
     make install && \
     ldconfig && \
     cd /tmp && \
-    rm -rf net-snmp-5.9.4.tar.gz net-snmp-5.9.4 && \
+    rm -rf net-snmp-5.9.5.2.tar.gz net-snmp-5.9.5.2 && \
     net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.16.tgz /tmp/
-COPY docker/cache/Python-3.11.11.tgz /tmp/
-COPY docker/cache/Python-3.12.8.tgz /tmp/
-COPY docker/cache/Python-3.13.7.tgz /tmp/
-COPY docker/cache/Python-3.14.2.tgz /tmp/
+COPY docker/cache/Python-3.10.20.tgz /tmp/
+COPY docker/cache/Python-3.11.15.tgz /tmp/
+COPY docker/cache/Python-3.12.13.tgz /tmp/
+COPY docker/cache/Python-3.13.12.tgz /tmp/
+COPY docker/cache/Python-3.14.3.tgz /tmp/
 
 # Build Python from source (all versions, split into separate layers for caching)
 
@@ -89,20 +89,24 @@ RUN cd /tmp && \
     ldconfig
 
 # Create the pkg-config file for net-snmp (built from source above)
-RUN LIBS=$(net-snmp-config --libs) && \
+RUN LIBDIR=$(net-snmp-config --libdir) && \
+    PREFIX=$(net-snmp-config --prefix) && \
+    EXEC_PREFIX=$(net-snmp-config --exec-prefix) && \
+    INCLUDEDIR=$(net-snmp-config --includedir) && \
+    LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(net-snmp-config --version) && \
-    mkdir -p /usr/lib64/pkgconfig && \
-    echo 'prefix=/usr' > /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo 'exec_prefix=${prefix}' >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo 'libdir=${exec_prefix}/lib64' >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo 'includedir=${prefix}/include' >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo '' >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo 'Name: netsnmp' >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo 'Description: A collection of libraries for SNMP applications.' >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
-    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/netsnmp.pc
+    mkdir -p "${LIBDIR}/pkgconfig" && \
+    echo "prefix=${PREFIX}" > "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "exec_prefix=${EXEC_PREFIX}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "libdir=${LIBDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "includedir=${INCLUDEDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo '' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo 'Name: netsnmp' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo 'Description: A collection of libraries for SNMP applications.' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Version: ${VERSION}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Libs: ${LIBS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Cflags: ${CFLAGS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc"
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv

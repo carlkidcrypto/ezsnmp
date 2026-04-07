@@ -63,11 +63,11 @@ Python Versions
 
 All Python versions are compiled from source:
 
-* Python 3.10.16
-* Python 3.11.11
-* Python 3.12.8
-* Python 3.13.7
-* Python 3.14.2 (default venv)
+* Python 3.10.20
+* Python 3.11.15
+* Python 3.12.13
+* Python 3.13.12
+* Python 3.14.3 (default venv)
 
 GCC
 ===

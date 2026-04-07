@@ -11,7 +11,7 @@ This Docker image provides a testing environment based on Fedora 41 (latest stab
 * **GCC**: Native GCC 14.x (g++ 14.x, exceeds g++ 9.5 minimum — no toolset wrapper needed)
 * **Python Versions**: 3.10, 3.11, 3.12, 3.13, 3.14 (all from source builds)
 * **Virtual Environment**: /opt/venv (Python 3.14 with all project dependencies pre-installed)
-* **net-snmp**: 5.9.4 (built from source)
+* **net-snmp**: 5.9.5.2 (built from source)
 * **C++ Testing**: Full g++ 14 support for cpp_tests with coverage reporting
 * **Python Testing**: Full support for python_tests with coverage reporting
 * **Image Size**: Optimized to minimal size through consolidated RUN statements and cache cleanup
@@ -63,11 +63,11 @@ Python Versions
 
 All Python versions are compiled from source:
 
-* Python 3.10.16
-* Python 3.11.11
-* Python 3.12.8
-* Python 3.13.7
-* Python 3.14.2 (default venv)
+* Python 3.10.20
+* Python 3.11.15
+* Python 3.12.13
+* Python 3.13.12
+* Python 3.14.3 (default venv)
 
 GCC
 ===

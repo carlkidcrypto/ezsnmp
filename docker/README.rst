@@ -12,10 +12,9 @@ This project uses pre-built Docker images hosted on Docker Hub for running unit 
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.10-3.12 from source)
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source (OpenSSL 1.1.1w built to enable SSL)
 * **centos8** - CentOS 8 (EOL) with gcc-toolset-11 (g++ 11.x), Python 3.10-3.14 all from source
-* **fedora41_netsnmp_5.9** - Fedora 41 with native GCC 14.x (g++ 14.x), net-snmp 5.9.4, Python 3.10-3.14 all from source
+* **fedora41_netsnmp_5.9** - Fedora 41 with native GCC 14.x (g++ 14.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
 * **fedora41_netsnmp_5.8** - Fedora 41 with native GCC 14.x (g++ 14.x), net-snmp 5.8, Python 3.10-3.14 all from source
 * **fedora41_netsnmp_5.7** - Fedora 41 with native GCC 14.x (g++ 14.x), net-snmp 5.7.3 (OpenSSL 1.0.2u), Python 3.10-3.14 all from source
-* **fedora41_netsnmp_5.6** - Fedora 41 with native GCC 14.x (g++ 14.x), net-snmp 5.6.2.1 (OpenSSL 1.0.2u), Python 3.10-3.14 all from source
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14 (3.10, 3.13 from source)
 * **rockylinux9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), Python 3.10-3.14 all from source
 
