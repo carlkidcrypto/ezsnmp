@@ -4,16 +4,16 @@
 # Usage:
 #   ./make_patches.sh <version> [<version> ...]
 # Example:
-#   ./make_patches.sh 5.6 5.7 5.8 5.9
-#   ./make_patches.sh 5.6 5.9
-#   ./make_patches.sh 5.6
+#   ./make_patches.sh 5.7 5.8 5.9
+#   ./make_patches.sh 5.7 5.9
+#   ./make_patches.sh 5.9
 # ---------------------------------------------------------------
 
 # 1. Validate that at least one version number was provided
 if [[ $# -eq 0 ]]; then
     echo "Error: No version specified." >&2
     echo "Usage: $0 <net-snmp-version> [<net-snmp-version> ...]" >&2
-    echo "Example: $0 5.6 5.7 5.8 5.9" >&2
+    echo "Example: $0 5.7 5.8 5.9" >&2
     exit 1
 fi
 
