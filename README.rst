@@ -16,30 +16,32 @@ EzSnmp
      - |Tests Native|
    * - |CodeCov|
      - |License|
-     -
+     - |Build and Publish Docker Images|
 
-.. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+.. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square
     :target: https://github.com/psf/black
-.. |Clang-format Code Style| image:: https://img.shields.io/badge/code%20style-clang--format-brightgreen.svg
+.. |Clang-format Code Style| image:: https://img.shields.io/badge/code%20style-clang--format-brightgreen.svg?style=flat-square
     :target: https://clang.llvm.org/docs/ClangFormat.html
-.. |Black| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml/badge.svg
+.. |Black| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/black.yml?style=flat-square&label=Black
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml
-.. |Clang-format| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/clang_format.yml/badge.svg
+.. |Clang-format| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/clang_format.yml?style=flat-square&label=Clang-format
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/clang_format.yml
-.. |Pull Request Sphinx Docs Check| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml/badge.svg
+.. |Pull Request Sphinx Docs Check| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/sphinx_build.yml?style=flat-square&label=Sphinx+Docs+Check
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml
-.. |PyPI Distributions| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml/badge.svg
+.. |PyPI Distributions| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_to_pypi.yml?style=flat-square&label=PyPI+Distributions
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml
-.. |TestPyPI Distributions| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml/badge.svg
+.. |TestPyPI Distributions| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_to_test_pypi.yml?style=flat-square&label=TestPyPI+Distributions
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml
-.. |Tests Homebrew| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml/badge.svg
+.. |Tests Homebrew| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/tests_homebrew.yml?style=flat-square&label=Tests+Homebrew
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml
-.. |Tests Native| image:: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml/badge.svg
+.. |Tests Native| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/tests_native.yml?style=flat-square&label=Tests+Native
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml
-.. |CodeCov| image:: https://codecov.io/gh/carlkidcrypto/ezsnmp/branch/main/graph/badge.svg
+.. |CodeCov| image:: https://img.shields.io/codecov/c/github/carlkidcrypto/ezsnmp/main?style=flat-square&label=CodeCov
     :target: https://codecov.io/gh/carlkidcrypto/ezsnmp
-.. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg
+.. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg?style=flat-square
     :target: https://github.com/carlkidcrypto/ezsnmp/blob/main/LICENSE
+.. |Build and Publish Docker Images| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_docker_images.yml?style=flat-square&label=Build+Docker+Images
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_docker_images.yml
 
 .. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp_logo.jpeg
     :alt: EzSnmp Logo
