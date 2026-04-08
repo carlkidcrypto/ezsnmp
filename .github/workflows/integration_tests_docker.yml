@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
+        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, centos8_netsnmp_5.8, fedora41_netsnmp_5.7, fedora41_netsnmp_5.8, fedora41_netsnmp_5.9, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5

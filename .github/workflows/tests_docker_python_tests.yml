@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, rockylinux8_netsnmp_5.8]
+        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, centos8_netsnmp_5.8, fedora41_netsnmp_5.7, fedora41_netsnmp_5.8, fedora41_netsnmp_5.9, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
         python: [py310, py311, py312, py313, py314]
     steps:
       - name: Checkout repository
@@ -269,8 +269,33 @@ jobs:
             centos7_netsnmp_5.7_py312, test-outputs_centos7_netsnmp_5.7_test_container_py312.txt, test-results_centos7_netsnmp_5.7_test_container_py312.xml
             centos7_netsnmp_5.7_py313, test-outputs_centos7_netsnmp_5.7_test_container_py313.txt, test-results_centos7_netsnmp_5.7_test_container_py313.xml
             centos7_netsnmp_5.7_py314, test-outputs_centos7_netsnmp_5.7_test_container_py314.txt, test-results_centos7_netsnmp_5.7_test_container_py314.xml
+            centos8_netsnmp_5.8_py310, test-outputs_centos8_netsnmp_5.8_test_container_py310.txt, test-results_centos8_netsnmp_5.8_test_container_py310.xml
+            centos8_netsnmp_5.8_py311, test-outputs_centos8_netsnmp_5.8_test_container_py311.txt, test-results_centos8_netsnmp_5.8_test_container_py311.xml
+            centos8_netsnmp_5.8_py312, test-outputs_centos8_netsnmp_5.8_test_container_py312.txt, test-results_centos8_netsnmp_5.8_test_container_py312.xml
+            centos8_netsnmp_5.8_py313, test-outputs_centos8_netsnmp_5.8_test_container_py313.txt, test-results_centos8_netsnmp_5.8_test_container_py313.xml
+            centos8_netsnmp_5.8_py314, test-outputs_centos8_netsnmp_5.8_test_container_py314.txt, test-results_centos8_netsnmp_5.8_test_container_py314.xml
+            fedora41_netsnmp_5.7_py310, test-outputs_fedora41_netsnmp_5.7_test_container_py310.txt, test-results_fedora41_netsnmp_5.7_test_container_py310.xml
+            fedora41_netsnmp_5.7_py311, test-outputs_fedora41_netsnmp_5.7_test_container_py311.txt, test-results_fedora41_netsnmp_5.7_test_container_py311.xml
+            fedora41_netsnmp_5.7_py312, test-outputs_fedora41_netsnmp_5.7_test_container_py312.txt, test-results_fedora41_netsnmp_5.7_test_container_py312.xml
+            fedora41_netsnmp_5.7_py313, test-outputs_fedora41_netsnmp_5.7_test_container_py313.txt, test-results_fedora41_netsnmp_5.7_test_container_py313.xml
+            fedora41_netsnmp_5.7_py314, test-outputs_fedora41_netsnmp_5.7_test_container_py314.txt, test-results_fedora41_netsnmp_5.7_test_container_py314.xml
+            fedora41_netsnmp_5.8_py310, test-outputs_fedora41_netsnmp_5.8_test_container_py310.txt, test-results_fedora41_netsnmp_5.8_test_container_py310.xml
+            fedora41_netsnmp_5.8_py311, test-outputs_fedora41_netsnmp_5.8_test_container_py311.txt, test-results_fedora41_netsnmp_5.8_test_container_py311.xml
+            fedora41_netsnmp_5.8_py312, test-outputs_fedora41_netsnmp_5.8_test_container_py312.txt, test-results_fedora41_netsnmp_5.8_test_container_py312.xml
+            fedora41_netsnmp_5.8_py313, test-outputs_fedora41_netsnmp_5.8_test_container_py313.txt, test-results_fedora41_netsnmp_5.8_test_container_py313.xml
+            fedora41_netsnmp_5.8_py314, test-outputs_fedora41_netsnmp_5.8_test_container_py314.txt, test-results_fedora41_netsnmp_5.8_test_container_py314.xml
+            fedora41_netsnmp_5.9_py310, test-outputs_fedora41_netsnmp_5.9_test_container_py310.txt, test-results_fedora41_netsnmp_5.9_test_container_py310.xml
+            fedora41_netsnmp_5.9_py311, test-outputs_fedora41_netsnmp_5.9_test_container_py311.txt, test-results_fedora41_netsnmp_5.9_test_container_py311.xml
+            fedora41_netsnmp_5.9_py312, test-outputs_fedora41_netsnmp_5.9_test_container_py312.txt, test-results_fedora41_netsnmp_5.9_test_container_py312.xml
+            fedora41_netsnmp_5.9_py313, test-outputs_fedora41_netsnmp_5.9_test_container_py313.txt, test-results_fedora41_netsnmp_5.9_test_container_py313.xml
+            fedora41_netsnmp_5.9_py314, test-outputs_fedora41_netsnmp_5.9_test_container_py314.txt, test-results_fedora41_netsnmp_5.9_test_container_py314.xml
             rockylinux8_netsnmp_5.8_py310, test-outputs_rockylinux8_netsnmp_5.8_test_container_py310.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py310.xml
             rockylinux8_netsnmp_5.8_py311, test-outputs_rockylinux8_netsnmp_5.8_test_container_py311.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py311.xml
             rockylinux8_netsnmp_5.8_py312, test-outputs_rockylinux8_netsnmp_5.8_test_container_py312.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py312.xml
             rockylinux8_netsnmp_5.8_py313, test-outputs_rockylinux8_netsnmp_5.8_test_container_py313.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py313.xml
             rockylinux8_netsnmp_5.8_py314, test-outputs_rockylinux8_netsnmp_5.8_test_container_py314.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py314.xml
+            rockylinux9_netsnmp_5.9_py310, test-outputs_rockylinux9_netsnmp_5.9_test_container_py310.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py310.xml
+            rockylinux9_netsnmp_5.9_py311, test-outputs_rockylinux9_netsnmp_5.9_test_container_py311.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py311.xml
+            rockylinux9_netsnmp_5.9_py312, test-outputs_rockylinux9_netsnmp_5.9_test_container_py312.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py312.xml
+            rockylinux9_netsnmp_5.9_py313, test-outputs_rockylinux9_netsnmp_5.9_test_container_py313.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py313.xml
+            rockylinux9_netsnmp_5.9_py314, test-outputs_rockylinux9_netsnmp_5.9_test_container_py314.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py314.xml
