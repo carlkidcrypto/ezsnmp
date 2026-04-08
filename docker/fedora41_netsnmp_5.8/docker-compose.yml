@@ -1,0 +1,10 @@
+services:
+  fedora41_netsnmp_5.8_snmp_container:
+    build:
+      context: ../../
+      dockerfile: docker/fedora41_netsnmp_5.8/Dockerfile
+    container_name: fedora41_netsnmp_5.8_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/usr/local/bin/DockerEntry.sh"]
