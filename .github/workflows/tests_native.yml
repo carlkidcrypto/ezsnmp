@@ -169,6 +169,23 @@ jobs:
             ubuntu-latest - Native - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
             ubuntu-latest - Native - 3.14, pytest-results_ubuntu-latest_3.14/test-outputs_ubuntu-latest_3.14.txt, pytest-results_ubuntu-latest_3.14/test-results_ubuntu-latest_3.14.xml
 
+      - name: Strip leading newlines from summaryReport
+        id: clean-report
+        env:
+          SUMMARY_REPORT: ${{ steps.pytest-coverage.outputs.summaryReport }}
+        run: |
+          python3 -c "
+          import os
+          report = os.environ.get('SUMMARY_REPORT', '').lstrip('\n')
+          delimiter = 'GHADELIMITER'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'report<<{delimiter}\n')
+              f.write(report)
+              if not report.endswith('\n'):
+                  f.write('\n')
+              f.write(f'{delimiter}\n')
+          "
+
       - name: Find existing pytest coverage comment (PR)
         id: find-pytest-comment
         if: github.event_name == 'pull_request'
@@ -191,8 +208,7 @@ jobs:
             <details>
             <summary>📊 Test Results (click to expand)</summary>
 
-            ${{ steps.pytest-coverage.outputs.summaryReport }}
-
+            ${{ steps.clean-report.outputs.report }}
             </details>
 
       - name: Post pytest coverage comment (Push)
@@ -204,6 +220,5 @@ jobs:
             <details>
             <summary>📊 Test Results (click to expand)</summary>
 
-            ${{ steps.pytest-coverage.outputs.summaryReport }}
-
+            ${{ steps.clean-report.outputs.report }}
             </details>
