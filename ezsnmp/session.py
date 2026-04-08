@@ -720,11 +720,11 @@ class Session(SessionBase):
             if oids is None:
                 oids = []
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            result = super().bulk_walk(oids)
-            self.set_max_repeaters_to_num = ""
-            return result
+            return super().bulk_walk(oids)
         except Exception as e:
             _handle_error(e)
+        finally:
+            self.set_max_repeaters_to_num = ""
 
     def get(self, oids=None):
         """
@@ -858,11 +858,11 @@ class Session(SessionBase):
             if oids is None:
                 oids = []
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            result = super().bulk_get(oids)
-            self.set_max_repeaters_to_num = ""
-            return result
+            return super().bulk_get(oids)
         except Exception as e:
             _handle_error(e)
+        finally:
+            self.set_max_repeaters_to_num = ""
 
     def set(self, oids=None):
         """
