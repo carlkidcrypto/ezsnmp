@@ -191,6 +191,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
+        id: pytest-coverage
         uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
         with:
           title: Pytest Coverage Report - MacPorts
@@ -198,7 +199,7 @@ jobs:
           hide-badge: true
           hide-report: true
           create-new-comment: false
-          hide-comment: false
+          hide-comment: true
           report-only-changed-files: false
           multiple-files: |
             macos-latest - MacPorts - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
@@ -206,3 +207,42 @@ jobs:
             macos-latest - MacPorts - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
             macos-latest - MacPorts - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
             macos-latest - MacPorts - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
+
+      - name: Find existing pytest coverage comment (PR)
+        id: find-pytest-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pytest-coverage-macports -->'
+
+      - name: Post collapsible pytest coverage comment (PR)
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@2b6bdb56ad3073fa0e4beef00447158f55a18414 # v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-pytest-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- pytest-coverage-macports -->
+            ## Pytest Coverage Report - MacPorts 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.pytest-coverage.outputs.summaryReport }}
+
+            </details>
+
+      - name: Post pytest coverage comment (Push)
+        if: github.event_name == 'push'
+        uses: peter-evans/commit-comment@f6d60c65d05bb59f750fa51ad3de1d443ba0eb52 # v4
+        with:
+          body: |
+            ## Pytest Coverage Report - MacPorts 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.pytest-coverage.outputs.summaryReport }}
+
+            </details>

@@ -1,4 +1,5 @@
-# Valgrind Comment
+<details>
+<summary>📊 Valgrind Results (click to expand)</summary>
 
 | Python Version  | Results         | OS Version    |
 | --------------- | --------------- | ------------- |
@@ -7,3 +8,5 @@
 | 3.12            | {{ .py3_12 }}   | ubuntu-latest |
 | 3.13            | {{ .py3_13 }}   | ubuntu-latest |
 | 3.14            | {{ .py3_14 }}   | ubuntu-latest |
+
+</details>
