@@ -672,14 +672,17 @@ class Session(SessionBase):
         except Exception as e:
             _handle_error(e)
 
-    def bulk_walk(self, oid="."):
+    def bulk_walk(self, oids=None):
         """
         Performs a bulk SNMP walk operation to retrieve a collection of values.
         The bulk walk operation is designed to return multiple OIDs in a single request,
         making it more efficient than regular walk operations for retrieving large amounts of data.
 
-        :param oid: The base OID to start the walk from, defaults to "."
-        :type oid: str
+        Accepts either a single OID string or a list of OID strings.
+
+        :param oids: A single OID string or a list of base OIDs to start the walks from,
+            defaults to None (empty list)
+        :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
         :rtype: tuple[Result]
@@ -697,52 +700,13 @@ class Session(SessionBase):
         :raises Exception: If the exception type does not match any of the above, the original
             exception `e` is raised.
 
-        Example:
+        Example (single OID string):
             >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> results = session.bulk_walk("1.3.6.1.2.1")
-            >>> for item in results:
-            ...     print("OID:", item.oid)
-            ...     print("Index:", item.index)
-            ...     print("Value:", item.value)
-            ...     print("Type:", item.type)
-            ...     print("---")
-        """
+            >>> print("OID:", results[0].oid)
 
-        try:
-            self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            return super().bulk_walk(oid)
-        except Exception as e:
-            _handle_error(e)
-
-    def bulk_walk(self, oids=[]):
-        """
-        Performs a bulk SNMP walk operation to retrieve a collection of values from multiple OIDs.
-        The bulk walk operation is designed to return multiple OIDs in a single request,
-        making it more efficient than regular walk operations for retrieving large amounts of data.
-
-        :param oids: List of base OIDs to start the walks from
-        :type oids: list[str]
-        :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
-            attributes: oid (str), index (str), value (str), and type (str)
-        :rtype: tuple[Result]
-
-        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
-        :raises GenericError: If the exception type is `GenericErrorBase`.
-        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
-        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
-        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
-        :raises PacketError: If the exception type is `PacketErrorBase`.
-        :raises ParseError: If the exception type is `ParseErrorBase`.
-        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
-        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
-        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
-        :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
-
-        Example:
-            >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+        Example (list of OIDs):
             >>> results = session.bulk_walk(["1.3.6.1.2.1.1", "1.3.6.1.2.1.2"])
             >>> for item in results:
             ...     print("OID:", item.oid)
@@ -753,6 +717,8 @@ class Session(SessionBase):
         """
 
         try:
+            if oids is None:
+                oids = []
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = super().bulk_walk(oids)
             self.set_max_repeaters_to_num = ""
@@ -760,12 +726,15 @@ class Session(SessionBase):
         except Exception as e:
             _handle_error(e)
 
-    def get(self, oid="."):
+    def get(self, oids=None):
         """
-        Performs an SNMP GET operation to retrieve the value of a single OID.
+        Performs an SNMP GET operation to retrieve values for one or more OIDs.
 
-        :param oid: The Object Identifier (OID) to retrieve the value from
-        :type oid: str
+        Accepts either a single OID string or a list of OID strings.
+
+        :param oids: A single OID string or a list of Object Identifiers (OIDs) to retrieve
+            values from, defaults to None (empty list)
+        :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
         :rtype: tuple[Result]
@@ -783,49 +752,13 @@ class Session(SessionBase):
         :raises Exception: If the exception type does not match any of the above, the original
             exception `e` is raised.
 
-        Example:
+        Example (single OID string):
             >>> from ezsnmp import Session
             >>> session = Session(hostname="localhost", community="public", version="2")
             >>> result = session.get("1.3.6.1.2.1.1.1.0")
-            >>> for item in result:
-            ...     print("OID:", item.oid)
-            ...     print("Index:", item.index)
-            ...     print("Value:", item.value)
-            ...     print("Type:", item.type)
-            ...     print("---")
-        """
+            >>> print("OID:", result[0].oid)
 
-        try:
-            return super().get(oid)
-        except Exception as e:
-            _handle_error(e)
-
-    def get(self, oids=[]):
-        """
-        Performs an SNMP GET operation to retrieve values for multiple OIDs.
-
-        :param oids: List of Object Identifiers (OIDs) to retrieve values from
-        :type oids: list
-        :return: A tuple of Result objects containing SNMP variable bindings with attributes:
-            oid (str), index (str), value (str), and type (str)
-        :rtype: tuple[Result]
-
-        :raises GenericError: If the exception type is `GenericErrorBase`.
-        :raises ConnectionError: If the exception type is `ConnectionErrorBase`.
-        :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`.
-        :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`.
-        :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`.
-        :raises PacketError: If the exception type is `PacketErrorBase`.
-        :raises ParseError: If the exception type is `ParseErrorBase`.
-        :raises TimeoutError: If the exception type is `TimeoutErrorBase`.
-        :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`.
-        :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`.
-        :raises Exception: If the exception type does not match any of the above, the original
-            exception `e` is raised.
-
-        Example:
-            >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+        Example (list of OIDs):
             >>> results = session.get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
             >>> for item in results:
             ...     print("OID:", item.oid)
@@ -836,15 +769,18 @@ class Session(SessionBase):
         """
 
         try:
+            if oids is None:
+                oids = []
             return super().get(oids)
         except Exception as e:
             _handle_error(e)
 
-    def get_next(self, oids=[]):
+    def get_next(self, oids=None):
         """
         Performs an SNMP GET-NEXT operation to retrieve values for the next objects after the specified OIDs.
 
-        :param oids: List of Object Identifiers (OIDs) to get next values from
+        :param oids: List of Object Identifiers (OIDs) to get next values from,
+            defaults to None (empty list)
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -876,15 +812,18 @@ class Session(SessionBase):
         """
 
         try:
+            if oids is None:
+                oids = []
             return super().get_next(oids)
         except Exception as e:
             _handle_error(e)
 
-    def bulk_get(self, oids=[]):
+    def bulk_get(self, oids=None):
         """
         Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.
 
-        :param oids: List of Object Identifiers (OIDs) to retrieve values from
+        :param oids: List of Object Identifiers (OIDs) to retrieve values from,
+            defaults to None (empty list)
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -916,6 +855,8 @@ class Session(SessionBase):
         """
 
         try:
+            if oids is None:
+                oids = []
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
             result = super().bulk_get(oids)
             self.set_max_repeaters_to_num = ""
@@ -923,13 +864,14 @@ class Session(SessionBase):
         except Exception as e:
             _handle_error(e)
 
-    def set(self, oids=[]):
+    def set(self, oids=None):
         """
         Performs an SNMP SET operation to set values for multiple OIDs.
 
         :param oids: List containing groups of OID, type and value. Each group should be a sequence of
             [oid, type, value] where type is a string indicating the SNMP data type
-            (e.g. 'i' for INTEGER, 's' for STRING, 'o' for OBJECT IDENTIFIER)
+            (e.g. 'i' for INTEGER, 's' for STRING, 'o' for OBJECT IDENTIFIER),
+            defaults to None (empty list)
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -965,6 +907,8 @@ class Session(SessionBase):
         """
 
         try:
+            if oids is None:
+                oids = []
             return super().set(oids)
         except Exception as e:
             _handle_error(e)
