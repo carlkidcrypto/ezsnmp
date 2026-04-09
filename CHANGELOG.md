@@ -1,32 +1,91 @@
-Last Updated: 2026-03-26 13:57:40 UTC
+Last Updated: 2026-04-09 15:32:48 UTC
 
 # Changelog
 
-<a name="unreleased"></a>
-## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a0...HEAD)
+
+<a name="v2.3.0a0"></a>
+## [v2.3.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0...v2.3.0a0) (2026-04-08)
 
 
 ### Changes
 
-#### Dependency Updates
+#### Address
 
-- chore(deps): bump github/codeql-action from 4.32.6 to 4.34.1 ([#747](https://github.com/carlkidcrypto/ezsnmp/issues/747))
+- Address Gemini AI review comments on PR [#776](https://github.com/carlkidcrypto/ezsnmp/issues/776)
 
-- chore(deps): bump pytest-cov from 7.0.0 to 7.1.0 ([#765](https://github.com/carlkidcrypto/ezsnmp/issues/765))
 
-- chore(deps): bump github/gh-aw-actions from 0.62.5 to 0.64.0 ([#772](https://github.com/carlkidcrypto/ezsnmp/issues/772))
+#### Bug Fixes
 
-- chore(deps): bump tomli from 2.4.0 to 2.4.1 ([#773](https://github.com/carlkidcrypto/ezsnmp/issues/773))
+- fix: Preserve multi-line string values in SNMP parse_result (TDD)
 
-- chore(deps): bump actions/deploy-pages from 4.0.5 to 5.0.0 ([#774](https://github.com/carlkidcrypto/ezsnmp/issues/774))
 
-- chore(deps): bump build from 1.4.0 to 1.4.2 ([#775](https://github.com/carlkidcrypto/ezsnmp/issues/775))
+#### Documentation Updates
+
+- docs: fix Python 2 print syntax and incorrect property type annotations ([#803](https://github.com/carlkidcrypto/ezsnmp/issues/803))
+
+- docs: fix typos, improve docstrings, and update http links to https ([#795](https://github.com/carlkidcrypto/ezsnmp/issues/795))
+
+- docs: fix typos, grammar, and clarify docstrings
+
+- docs: fix typos, broken examples, and inaccurate framework reference
+
+- docs: add versioned documentation for v2.2.0
+
+
+#### Drop
+
+- Drop macOS x86_64 wheels from PyPI/TestPyPI builds ([#761](https://github.com/carlkidcrypto/ezsnmp/issues/761))
+
+- Drop macOS x86_64 wheels from PyPI/TestPyPI builds ([#808](https://github.com/carlkidcrypto/ezsnmp/issues/808))
+
+- Drop Net-SNMP 5.6.x support ([#719](https://github.com/carlkidcrypto/ezsnmp/issues/719))
+
+
+#### Features
+
+- Add Docker images badge and make all badges uniform with flat-square style ([#814](https://github.com/carlkidcrypto/ezsnmp/issues/814))
+
+- Add Homebrew formula so `brew install ezsnmp` works with Homebrew Python (3.10–3.14) ([#718](https://github.com/carlkidcrypto/ezsnmp/issues/718))
+
+- Add net-snmp v5.10.pre2 support ([#720](https://github.com/carlkidcrypto/ezsnmp/issues/720))
+
+- Add Valgrind PR history analysis and workflow
+
+- Add Valgrind PR history analysis and workflow
+
+
+#### Improve
+
+- Improve changelog and release note workflows
+
+
+#### Maintenance
+
+- chore: bump version from 2.2.0 to 2.3.0a0 ([#817](https://github.com/carlkidcrypto/ezsnmp/issues/817))
+
+
+#### Remove
+
+- Remove dead method overloads and fix mutable defaults in session.py ([#815](https://github.com/carlkidcrypto/ezsnmp/issues/815))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#778](https://github.com/carlkidcrypto/ezsnmp/issues/778) from carlkidcrypto/docs/add-versioned-docs-v2.2.0
+
+
+
 
 
 ---
 
 <a name="v2.2.0"></a>
-## [v2.2.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b1...v2.2.0) (2026-03-26)
+## [v2.2.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b1...v2.2.0) (2026-03-25)
 
 
 ### Changes
@@ -38,24 +97,38 @@ Last Updated: 2026-03-26 13:57:40 UTC
 
 #### Features
 
-- Feature/gh aw 3 ([#763](https://github.com/carlkidcrypto/ezsnmp/issues/763))
-
 - Add Auto Release Notes workflow; update changelog ([#766](https://github.com/carlkidcrypto/ezsnmp/issues/766))
+
+
+#### Features
+
+- Feature/gh aw 3 ([#763](https://github.com/carlkidcrypto/ezsnmp/issues/763))
 
 
 #### Maintenance
 
 - chore: update CHANGELOG.md
 
-- chore(docs): update changelog ([#764](https://github.com/carlkidcrypto/ezsnmp/issues/764))
+
+#### Release
+
+- Release/prep for v2.2.0 ([#767](https://github.com/carlkidcrypto/ezsnmp/issues/767))
+
+
+
+
+
 
 
 ### Merged Pull Requests
 
 - Merge pull request [#759](https://github.com/carlkidcrypto/ezsnmp/issues/759) from carlkidcrypto/update-changelog-23409474942
 
-- Release/prep for v2.2.0 ([#767](https://github.com/carlkidcrypto/ezsnmp/issues/767))
 
+
+
+
+---
 
 <a name="v2.2.0b1"></a>
 ## [v2.2.0b1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0b0...v2.2.0b1) (2026-03-22)
