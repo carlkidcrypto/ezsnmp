@@ -1,0 +1,831 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Migration Guide: V1.X.X to V2.X.X" href="migration_guide.html"><link rel="prev" title="Welcome to EzSnmp’s documentation!" href="index.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>Concurrency in EzSnmp: Multiprocessing (Recommended) - EzSnmp v2.3.0a0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">EzSnmp v2.3.0a0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">EzSnmp v2.3.0a0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Concurrency in EzSnmp: Multiprocessing (Recommended)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="migration_guide.html">Migration Guide: V1.X.X to V2.X.X</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes_cpp.html">Datatypes C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions_python.html">Exceptions Python Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptionsbase_cpp.html">Exceptions C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input aria-label="Toggle navigation of Swig Interface File(s)" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpget_interface.html">snmpget.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpgetnext_interface.html">snmpgetnext.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpset_interface.html">snmpset.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmptrap_interface.html">snmptrap.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_guide.html">Documentation Guide</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/threading-vs-multiprocessing.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="concurrency-in-ezsnmp-multiprocessing-recommended">
+<h1>Concurrency in EzSnmp: Multiprocessing (Recommended)<a class="headerlink" href="#concurrency-in-ezsnmp-multiprocessing-recommended" title="Link to this heading">¶</a></h1>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>READ THIS FIRST if you’re planning to use EzSnmp with concurrency!</strong></p>
+<ul class="simple">
+<li><p><strong>USE MULTIPROCESSING</strong> - Officially supported and production-ready</p></li>
+<li><p><strong>DO NOT USE THREADING</strong> - Not recommended for production due to Net-SNMP limitations</p></li>
+<li><p>High concurrency threading (&gt;4 threads) will experience failures</p></li>
+<li><p>This is a limitation of Net-SNMP, not EzSnmp</p></li>
+</ul>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><strong>EzSnmp officially supports multiprocessing for concurrent SNMP operations.</strong> Threading is NOT recommended and should NOT be used for production workloads due to fundamental limitations in the underlying Net-SNMP C library.</p>
+<p><strong>IMPORTANT</strong>: Always start with multiprocessing. Do not use threading unless you have a specific constraint that makes multiprocessing impossible.</p>
+<section id="architecture-comparison">
+<h3>Architecture Comparison<a class="headerlink" href="#architecture-comparison" title="Link to this heading">¶</a></h3>
+<p>The following diagrams illustrate why multiprocessing is recommended over threading:</p>
+<p><strong>Threading Architecture (NOT RECOMMENDED)</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────┐
+│                   Python Process                         │
+│                                                          │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │ Thread 1 │  │ Thread 2 │  │ Thread 3 │  ...         │
+│  └─────┬────┘  └─────┬────┘  └─────┬────┘              │
+│        │             │             │                     │
+│        └─────────────┼─────────────┘                     │
+│                      │                                   │
+│         ┌────────────▼──────────────┐                    │
+│         │  SHARED Net-SNMP State    │ ◄── PROBLEM!      │
+│         │  ┌──────────────────────┐ │     Race          │
+│         │  │ Global MIB Tree      │ │     Conditions    │
+│         │  │ OID Cache            │ │     &amp; Data        │
+│         │  │ Config State         │ │     Corruption    │
+│         │  │ File Descriptors     │ │                   │
+│         │  └──────────────────────┘ │                   │
+│         └───────────────────────────┘                    │
+└─────────────────────────────────────────────────────────┘
+
+Result: Threads compete for shared Net-SNMP resources
+        causing corruption and failures
+</pre></div>
+</div>
+<p><strong>Multiprocessing Architecture (RECOMMENDED)</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌────────────────────────┐  ┌────────────────────────┐
+│   Process 1            │  │   Process 2            │
+│                        │  │                        │
+│  ┌──────────────────┐  │  │  ┌──────────────────┐  │
+│  │ Isolated         │  │  │  │ Isolated         │  │
+│  │ Net-SNMP State   │  │  │  │ Net-SNMP State   │  │
+│  │ ┌──────────────┐ │  │  │  │ ┌──────────────┐ │  │
+│  │ │ MIB Tree     │ │  │  │  │ │ MIB Tree     │ │  │
+│  │ │ OID Cache    │ │  │  │  │ │ OID Cache    │ │  │
+│  │ │ Config       │ │  │  │  │ │ Config       │ │  │
+│  │ └──────────────┘ │  │  │  │ └──────────────┘ │  │
+│  └──────────────────┘  │  │  └──────────────────┘  │
+│                        │  │                        │
+└────────────────────────┘  └────────────────────────┘
+       │                           │
+       │                           │
+┌────────────────────────┐  ┌────────────────────────┐
+│   Process 3            │  │   Process 4            │
+│                        │  │                        │
+│  ┌──────────────────┐  │  │  ┌──────────────────┐  │
+│  │ Isolated         │  │  │  │ Isolated         │  │
+│  │ Net-SNMP State   │  │  │  │ Net-SNMP State   │  │
+│  │ ┌──────────────┐ │  │  │  │ ┌──────────────┐ │  │
+│  │ │ MIB Tree     │ │  │  │  │ │ MIB Tree     │ │  │
+│  │ │ OID Cache    │ │  │  │  │ │ OID Cache    │ │  │
+│  │ │ Config       │ │  │  │  │ │ Config       │ │  │
+│  │ └──────────────┘ │  │  │  │ └──────────────┘ │  │
+│  └──────────────────┘  │  │  └──────────────────┘  │
+│                        │  │                        │
+└────────────────────────┘  └────────────────────────┘
+
+Result: Each process has isolated Net-SNMP state
+        eliminating all race conditions ✓
+</pre></div>
+</div>
+</section>
+</section>
+<section id="threading-limitations-not-supported">
+<h2>Threading Limitations (NOT SUPPORTED)<a class="headerlink" href="#threading-limitations-not-supported" title="Link to this heading">¶</a></h2>
+<p><strong>WARNING</strong>: Threading is NOT officially supported and is NOT recommended for any use case. The underlying Net-SNMP C library has fundamental architectural limitations that make threading unreliable.</p>
+<section id="known-threading-issues">
+<h3>Known Threading Issues<a class="headerlink" href="#known-threading-issues" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>MIB Parser Corruption</strong>: The MIB parsing subsystem uses global state that can become corrupted under concurrent access</p></li>
+<li><p><strong>OID Cache Contention</strong>: OID-to-name resolution uses a shared cache that may produce incorrect results</p></li>
+<li><p><strong>File Descriptor Conflicts</strong>: Persistent storage and file operations may fail with “Bad file descriptor” errors</p></li>
+<li><p><strong>Memory Corruption</strong>: Internal data structures may be corrupted, leading to segmentation faults</p></li>
+</ol>
+<p>These issues occur even with mutex protection because Net-SNMP’s internal code paths access shared state without synchronization.</p>
+</section>
+<section id="limited-thread-support">
+<h3>Limited Thread Support<a class="headerlink" href="#limited-thread-support" title="Link to this heading">¶</a></h3>
+<p>While basic threading works for simple scenarios, <strong>production workloads should use multiprocessing</strong> (see below).</p>
+<p>If you must use threading:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+
+<span class="c1"># Works for simple cases, but may fail under load</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">():</span>
+    <span class="c1"># Create a new session per thread</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Keep concurrency low (≤4 threads) to reduce failures</span>
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Limitations</strong>:
+- Expect occasional failures under high concurrency (&gt;4 threads)
+- MIB parsing errors may occur
+- SNMPv3 operations are more likely to fail
+- Not recommended for production use</p>
+</section>
+</section>
+<section id="multiprocessing-recommended-officially-supported">
+<h2>Multiprocessing (RECOMMENDED - OFFICIALLY SUPPORTED)<a class="headerlink" href="#multiprocessing-recommended-officially-supported" title="Link to this heading">¶</a></h2>
+<p><strong>Recommended Approach</strong>: EzSnmp officially supports and recommends multiprocessing for all concurrent SNMP operations.</p>
+<p>Each process has its own independent copy of the Net-SNMP library state, eliminating all race conditions and data corruption issues:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">worker_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Worker process that performs SNMP operations.&quot;&quot;&quot;</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">)</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">({</span>
+            <span class="s1">&#39;worker_id&#39;</span><span class="p">:</span> <span class="n">worker_id</span><span class="p">,</span>
+            <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">})</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Create a queue for collecting results</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+
+<span class="c1"># Spawn worker processes (can safely use many)</span>
+<span class="n">processes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>  <span class="c1"># High concurrency works perfectly</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+<span class="c1"># Collect results</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">results</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Worker </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;worker_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (PID </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;pid&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Advantages</strong>:
+- Reliable: No race conditions or corruption issues
+- Scalable: Can use many processes without failures
+- Production-ready: Tested and stable
+- True Parallelism: No GIL limitations</p>
+<p><strong>Use Cases</strong>:
+- Polling multiple devices
+- Bulk SNMP operations
+- Production monitoring systems
+- Any scenario requiring high reliability</p>
+</section>
+<section id="implementation-details">
+<h2>Implementation Details<a class="headerlink" href="#implementation-details" title="Link to this heading">¶</a></h2>
+<p>EzSnmp provides thread-safety protections, but these are limited by Net-SNMP’s architecture:</p>
+<ol class="arabic simple">
+<li><p><strong>Global Net-SNMP Mutex</strong>: A global mutex (<code class="docutils literal notranslate"><span class="pre">g_netsnmp_mib_mutex</span></code>) serializes critical Net-SNMP operations:
+- Library initialization (<code class="docutils literal notranslate"><span class="pre">init_snmp</span></code>)
+- Library cleanup (<code class="docutils literal notranslate"><span class="pre">snmp_shutdown</span></code>)
+- MIB parsing and tree traversal
+- OID resolution and caching
+- All SNMP operations (GET, WALK, SET, etc.)</p></li>
+<li><p><strong>Reference Counting</strong>: Atomic reference counting (<code class="docutils literal notranslate"><span class="pre">g_netsnmp_init_count</span></code>) ensures:
+- Only the first session initializes Net-SNMP
+- Only the last session cleans up Net-SNMP
+- Prevents premature shutdown with active sessions</p></li>
+<li><p><strong>GIL Release</strong>: SWIG bindings release the Python GIL during C++ calls for I/O parallelism</p></li>
+</ol>
+<p><strong>Limitations</strong>: Despite these protections, Net-SNMP’s internal code paths access shared global state without synchronization, causing the threading issues described above. The global mutex helps but cannot fully protect against Net-SNMP’s thread-unsafe internals. Multiprocessing avoids these issues entirely by giving each process its own isolated Net-SNMP state.</p>
+<p><strong>Implementation Files</strong>:</p>
+<ul class="simple">
+<li><p>Thread safety implementation: <code class="docutils literal notranslate"><span class="pre">ezsnmp/src/thread_safety.cpp</span></code> and <code class="docutils literal notranslate"><span class="pre">ezsnmp/include/thread_safety.h</span></code></p></li>
+<li><p>SessionBase implementation: <code class="docutils literal notranslate"><span class="pre">ezsnmp/src/sessionbase.cpp</span></code> and <code class="docutils literal notranslate"><span class="pre">ezsnmp/include/sessionbase.h</span></code></p></li>
+<li><p>Python Session wrapper: <code class="docutils literal notranslate"><span class="pre">ezsnmp/session.py</span></code></p></li>
+</ul>
+<section id="why-threading-is-limited">
+<h3>Why Threading Is Limited<a class="headerlink" href="#why-threading-is-limited" title="Link to this heading">¶</a></h3>
+<p><strong>Official Net-SNMP Documentation on Threading:</strong></p>
+<p>The Net-SNMP C library explicitly documents threading limitations:</p>
+<ol class="arabic">
+<li><p><strong>Net-SNMP FAQ</strong> (<a class="reference external" href="https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_">https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_</a>):</p>
+<p><em>“The Net-SNMP library is not thread-safe… Applications using threads should only call the library from a single thread.”</em></p>
+</li>
+<li><p><strong>Net-SNMP README.thread</strong> (included in Net-SNMP source distribution):</p>
+<p><em>“The library is not thread-safe. It uses global variables for configuration, MIB parsing, and internal state management.”</em></p>
+</li>
+<li><p><strong>Net-SNMP Developer Mailing List</strong> (<a class="reference external" href="https://www.net-snmp.org/lists/">https://www.net-snmp.org/lists/</a>):</p>
+<p>Multiple discussions confirm: <em>“Net-SNMP was never designed for multi-threaded use”</em></p>
+</li>
+</ol>
+<p><strong>Key Architectural Issues:</strong></p>
+<ul class="simple">
+<li><p><strong>Global MIB Tree</strong>: A single shared data structure for all OID/name mappings</p></li>
+<li><p><strong>Parser State</strong>: MIB file parsing uses global variables (not thread-safe)</p></li>
+<li><p><strong>Caching</strong>: OID resolution caches are not protected by locks</p></li>
+<li><p><strong>File I/O</strong>: Persistent storage and configuration file access uses process-global state</p></li>
+<li><p><strong>No Internal Locking</strong>: Net-SNMP’s internal code does not use mutexes or synchronization</p></li>
+</ul>
+<p><strong>About Session API:</strong></p>
+<p>While Net-SNMP documentation mentions using <code class="docutils literal notranslate"><span class="pre">snmp_sess_init()</span></code> and <code class="docutils literal notranslate"><span class="pre">snmp_sess_open()</span></code> for “better thread isolation,” it explicitly states: <em>“Resource locking is not handled within the library, and is the responsibility of the main application.”</em></p>
+<p>Even with session handles, the underlying MIB parser, OID cache, and configuration state remain process-global and thread-unsafe.</p>
+<p>These architectural decisions cannot be changed without rewriting major portions of Net-SNMP.</p>
+</section>
+</section>
+<section id="performance-considerations">
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading">¶</a></h2>
+<p><strong>Multiprocessing</strong>:
+- Excellent throughput for I/O-bound SNMP operations
+- Full CPU utilization across cores
+- Higher memory usage (each process has its own Python interpreter)
+- Process creation overhead (use process pools for many operations)</p>
+<p><strong>Threading</strong> (NOT SUPPORTED):
+- Unreliable under high concurrency
+- Mutex contention reduces parallelism
+- Lower memory footprint than multiprocessing
+- Not recommended for production</p>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p><strong>Use Multiprocessing for Production</strong>: This is the reliable, tested approach:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">snmp_get</span><span class="p">(</span><span class="n">hostname</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># Process pool for efficient resource usage</span>
+<span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">hosts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;host1&#39;</span><span class="p">,</span> <span class="s1">&#39;host2&#39;</span><span class="p">,</span> <span class="s1">&#39;host3&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">snmp_get</span><span class="p">,</span> <span class="n">hosts</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Limit Thread Concurrency</strong>: If you must use threading, keep concurrency low:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="c1"># Maximum 4 concurrent threads to reduce failures</span>
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">snmp_operation</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Error Handling</strong>: Always handle exceptions, especially in threaded code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_snmp_operation</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sysDescr.0&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SNMP operation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Connection Pooling for Sequential Operations</strong>: If operations are sequential, reuse sessions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Good: Reuse session for multiple operations</span>
+<span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">oid</span> <span class="ow">in</span> <span class="n">oids_to_query</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">oid</span><span class="p">)</span>
+        <span class="n">process</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="known-limitations">
+<h2>Known Limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">¶</a></h2>
+<section id="threading-limitations-due-to-net-snmp">
+<h3>Threading Limitations (Due to Net-SNMP)<a class="headerlink" href="#threading-limitations-due-to-net-snmp" title="Link to this heading">¶</a></h3>
+<p>The Net-SNMP C library has fundamental threading limitations:</p>
+<ol class="arabic simple">
+<li><p><strong>Global State</strong>: Extensive use of global variables for MIB parsing, OID caching, and configuration</p></li>
+<li><p><strong>No Internal Locking</strong>: Net-SNMP’s internal code does not use mutexes or locks</p></li>
+<li><p><strong>Shared Data Structures</strong>: The MIB tree and OID cache are shared across all sessions</p></li>
+<li><p><strong>File I/O Conflicts</strong>: Configuration and persistent storage use process-global state</p></li>
+</ol>
+<p><strong>Result</strong>: Even with EzSnmp’s thread-safety protections, high-concurrency threading will experience:
+- MIB parser corruption
+- OID resolution failures
+- File descriptor errors
+- Occasional segmentation faults</p>
+<p><strong>Solution</strong>: Use multiprocessing instead, which is fully reliable.</p>
+</section>
+<section id="mib-parsing">
+<h3>MIB Parsing<a class="headerlink" href="#mib-parsing" title="Link to this heading">¶</a></h3>
+<p>MIB loading and parsing operations are serialized through a global mutex. If your application frequently loads different MIBs from multiple threads, this may be a bottleneck. Consider:
+- Pre-loading all needed MIBs at startup
+- Using multiprocessing if MIB loading is performance-critical</p>
+</section>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
+<p>Multiprocessing is thoroughly tested and reliable:</p>
+<p><strong>Integration Tests (Passing)</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">integration_tests/</span></code> directory validates multiprocessing works correctly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># These tests pass reliably</span>
+<span class="nb">cd</span><span class="w"> </span>integration_tests
+python3<span class="w"> </span>test_snmp_get.py<span class="w"> </span><span class="m">20</span><span class="w"> </span>process<span class="w">      </span><span class="c1"># 20 concurrent processes</span>
+python3<span class="w"> </span>test_snmp_walk.py<span class="w"> </span><span class="m">20</span><span class="w"> </span>process
+python3<span class="w"> </span>test_snmp_bulkwalk.py<span class="w"> </span><span class="m">20</span><span class="w"> </span>process
+</pre></div>
+</div>
+<p><strong>Threading Tests (NOT SUPPORTED)</strong></p>
+<p>Threading tests may fail under high concurrency due to Net-SNMP limitations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># May fail with &gt;4 threads</span>
+python3<span class="w"> </span>test_snmp_get.py<span class="w"> </span><span class="m">4</span><span class="w"> </span>thread<span class="w">      </span><span class="c1"># Usually works</span>
+python3<span class="w"> </span>test_snmp_get.py<span class="w"> </span><span class="m">10</span><span class="w"> </span>thread<span class="w">     </span><span class="c1"># May experience failures</span>
+</pre></div>
+</div>
+<p><strong>Test Coverage</strong>:
+- All SNMP versions (v1, v2c, v3) with various auth/priv protocols
+- Multiple session configurations
+- Real operations against running snmpd
+- Retry logic for transient network errors
+- High-concurrency stress tests (multiprocessing only)</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">integration_tests/README.rst</span></code> for more details.</p>
+</section>
+<section id="migration-guide">
+<h2>Migration Guide<a class="headerlink" href="#migration-guide" title="Link to this heading">¶</a></h2>
+<section id="choosing-concurrency-model">
+<h3>Choosing Concurrency Model<a class="headerlink" href="#choosing-concurrency-model" title="Link to this heading">¶</a></h3>
+<p><strong>For New Projects</strong>: Use multiprocessing</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ezsnmp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">query_device</span><span class="p">(</span><span class="n">hostname</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s1">&#39;system&#39;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">query_device</span><span class="p">,</span> <span class="n">device_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For Existing Threading Code</strong>: Migrate to multiprocessing or limit concurrency</p>
+<p><strong>Option 1 - Migrate to Multiprocessing</strong> (Recommended):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Before (Threading - Unreliable)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
+
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+<span class="c1"># After (Multiprocessing - Reliable)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Process</span>
+
+<span class="n">processes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Option 2 - Limit Thread Concurrency</strong> (if threading is required):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Limit to 4 concurrent threads to reduce failures</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">items</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="backward-compatibility">
+<h3>Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Link to this heading">¶</a></h3>
+<p>Existing single-threaded code continues to work without any changes. The concurrency improvements are additive and don’t break existing functionality.</p>
+</section>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">¶</a></h2>
+<p>If you find issues or have suggestions for improvement, please open an issue on GitHub: <a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp/issues">https://github.com/carlkidcrypto/ezsnmp/issues</a></p>
+<p><strong>Known Issues</strong>:
+- Threading reliability under high concurrency (Net-SNMP limitation)
+- Multiprocessing is the recommended approach</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<p><strong>Official Net-SNMP Documentation:</strong></p>
+<ul class="simple">
+<li><p>Net-SNMP FAQ - Thread Safety: <a class="reference external" href="https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_">https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_</a></p></li>
+<li><p>Net-SNMP README.thread: Included in Net-SNMP source distribution (explains session API limitations)</p></li>
+<li><p>Net-SNMP Mailing List Archives: <a class="reference external" href="https://sourceforge.net/p/net-snmp/mailman/">https://sourceforge.net/p/net-snmp/mailman/</a></p></li>
+<li><p>Net-SNMP Source Code: <a class="reference external" href="https://github.com/net-snmp/net-snmp">https://github.com/net-snmp/net-snmp</a> (shows global state usage)</p></li>
+</ul>
+<p><strong>EzSnmp Documentation:</strong></p>
+<ul class="simple">
+<li><p>GitHub Repository: <a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp">https://github.com/carlkidcrypto/ezsnmp</a></p></li>
+<li><p>Issue #45: v3 multi threading fails due to user cache (<a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp/issues/45">https://github.com/carlkidcrypto/ezsnmp/issues/45</a>)</p></li>
+<li><p>Integration Tests: <a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp/tree/main/integration_tests">https://github.com/carlkidcrypto/ezsnmp/tree/main/integration_tests</a></p></li>
+<li><p>Thread Safety Implementation: <code class="docutils literal notranslate"><span class="pre">ezsnmp/src/thread_safety.cpp</span></code></p></li>
+<li><p>C++ Tests: <code class="docutils literal notranslate"><span class="pre">cpp_tests/test_thread_safety.cpp</span></code></p></li>
+</ul>
+<p><strong>Python Documentation:</strong></p>
+<ul class="simple">
+<li><p>Python Threading: <a class="reference external" href="https://docs.python.org/3/library/threading.html">https://docs.python.org/3/library/threading.html</a></p></li>
+<li><p>Python Multiprocessing: <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">https://docs.python.org/3/library/multiprocessing.html</a></p></li>
+<li><p>SWIG Thread Support: <a class="reference external" href="https://swig.org/Doc4.0/Python.html#Python_multithreaded">https://swig.org/Doc4.0/Python.html#Python_multithreaded</a></p></li>
+</ul>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p><strong>Use Multiprocessing (OFFICIALLY SUPPORTED)</strong>
+- Reliable and production-ready
+- High concurrency support
+- No race conditions or corruption
+- Recommended for all production use cases</p>
+<p><strong>Do NOT Use Threading (NOT SUPPORTED)</strong>
+- Works for simple cases (≤4 threads)
+- May fail under high concurrency
+- Not recommended for production
+- Use only when multiprocessing is absolutely not feasible</p>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
+<p>Related Documentation:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="migration_guide.html"><span class="doc">Migration Guide: V1.X.X to V2.X.X</span></a> - Migrating from older versions of EzSnmp</p></li>
+<li><p><a class="reference internal" href="development.html"><span class="doc">Development Guide</span></a> - Contributing to EzSnmp development</p></li>
+<li><p><a class="reference internal" href="modules.html"><span class="doc">&lt;no title&gt;</span></a> - Complete API reference</p></li>
+</ul>
+<p>External Resources:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">Python multiprocessing documentation</a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/threading.html">Python threading documentation</a></p></li>
+<li><p><a class="reference external" href="https://www.net-snmp.org/docs/FAQ.html#Is_Net_SNMP_thread_safe_">Net-SNMP FAQ on thread safety</a></p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="migration_guide.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Migration Guide: V1.X.X to V2.X.X</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024-2026, carlkidcrypto
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Concurrency in EzSnmp: Multiprocessing (Recommended)</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#architecture-comparison">Architecture Comparison</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#threading-limitations-not-supported">Threading Limitations (NOT SUPPORTED)</a><ul>
+<li><a class="reference internal" href="#known-threading-issues">Known Threading Issues</a></li>
+<li><a class="reference internal" href="#limited-thread-support">Limited Thread Support</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiprocessing-recommended-officially-supported">Multiprocessing (RECOMMENDED - OFFICIALLY SUPPORTED)</a></li>
+<li><a class="reference internal" href="#implementation-details">Implementation Details</a><ul>
+<li><a class="reference internal" href="#why-threading-is-limited">Why Threading Is Limited</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#performance-considerations">Performance Considerations</a></li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li><a class="reference internal" href="#known-limitations">Known Limitations</a><ul>
+<li><a class="reference internal" href="#threading-limitations-due-to-net-snmp">Threading Limitations (Due to Net-SNMP)</a></li>
+<li><a class="reference internal" href="#mib-parsing">MIB Parsing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing">Testing</a></li>
+<li><a class="reference internal" href="#migration-guide">Migration Guide</a><ul>
+<li><a class="reference internal" href="#choosing-concurrency-model">Choosing Concurrency Model</a></li>
+<li><a class="reference internal" href="#backward-compatibility">Backward Compatibility</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contributing">Contributing</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+<li><a class="reference internal" href="#see-also">See Also</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=ce7f56c0"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
