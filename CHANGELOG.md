@@ -3,7 +3,7 @@ Last Updated: 2026-03-26 13:57:40 UTC
 # Changelog
 
 <a name="unreleased"></a>
-## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0...HEAD)
+## [Unreleased](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a0...HEAD)
 
 
 ### Changes
