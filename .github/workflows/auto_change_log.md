@@ -44,32 +44,34 @@ Generate and open a changelog update PR only when substantive changelog content 
 
 1. Prepare tooling and history:
    - Ensure full git history and tags are available.
-  - Use local repository history for all commit analysis steps.
-  - Do not call GitHub commit-reading APIs/tools (for example `list_commits`, `get_commit`) for changelog intelligence.
-   - If `git-chglog` is missing, install it with:
-     - `go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest`
+   - Use local repository history for all commit analysis steps.
+   - Do not call GitHub commit-reading APIs/tools (for example `list_commits`, `get_commit`) for changelog intelligence.
+   - If `git-chglog` is missing, install it using the pre-built binary (fast — no compilation):
+     ```
+     curl -sSfL https://github.com/git-chglog/git-chglog/releases/download/v0.15.4/git-chglog_0.15.4_linux_amd64.tar.gz \
+       | tar xz -C /usr/local/bin git-chglog
+     ```
+   - If the curl download fails, fall back to: `go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest`
+   - After installation, verify it works: `git-chglog --version`
+   - **If git-chglog cannot be installed by either method, stop immediately with a clear error message. Do NOT attempt to re-implement changelog generation using Python, shell, or any other scripting language.**
 
 2. Generate candidate changelog content:
    - `git-chglog --config .chglog/config.yml -o CHANGELOG.tmp`
 
 3. Build commit intelligence context for summary quality:
-  - Identify the current release tag from the triggering release.
-  - Determine whether the triggering release is a prerelease (`prerelease: true|false`) from the GitHub release payload.
-  - Select a comparison base using this priority order (first match wins):
-    1) If the release body contains `<!-- BASE_TAG: <tag> -->`, use `<tag>`.
-    2) For stable releases, use the most recent earlier stable release tag by publish date.
-    3) For prereleases, use the most recent earlier release tag (stable or prerelease) by publish date.
-    4) Fallback: choose the nearest lower semantic-version tag from git.
-    5) Final fallback: use the repository root commit (`git rev-list --max-parents=0 HEAD`).
-  - Validate that base and current are not equal; if equal, walk backward one more release/tag.
-  - Extract commit titles and full commit messages from `<base>..<current>` using local git only:
-    - `git log <base>..<current> --pretty=format:"%H%x09%s%x09%b"`
-  - For each commit, collect changed files from local git and use paths to infer impact areas:
-    - `git show --name-only --pretty="" <hash>`
-  - If commit messages reference PRs or issue numbers, include those references in your reasoning.
-  - If PR titles are not locally available without API calls, omit PR-title enrichment and continue using commit text plus PR numbers from commit messages.
-  - Group changes into themes inferred from BOTH commit text and changed paths (for example: runtime/core library, bug fixes, tests, containers/packaging, CI/workflows, docs, dependencies).
-  - Log the selected range: `Changelog range: <base>...<current>`.
+   - Identify the current release tag from the triggering release.
+   - Determine whether the triggering release is a prerelease (`prerelease: true|false`) from the GitHub release payload.
+   - Select a comparison base using this priority order (first match wins):
+     1) If the release body contains `<!-- BASE_TAG: <tag> -->`, use `<tag>`.
+     2) For stable releases, use the most recent earlier stable release tag by publish date.
+     3) For prereleases, use the most recent earlier release tag (stable or prerelease) by publish date.
+     4) Fallback: choose the nearest lower semantic-version tag from git.
+     5) Final fallback: use the repository root commit (`git rev-list --max-parents=0 HEAD`).
+   - Validate that base and current are not equal; if equal, walk backward one more release/tag.
+   - Extract commit titles from `<base>..<current>` using a **single** git command:
+     - `git log <base>..<current> --pretty=format:"%s"`
+   - If commit messages reference PRs or issue numbers, include those references in your reasoning.
+   - Log the selected range: `Changelog range: <base>...<current>`.
 
 4. Perform smart diff detection:
    - If `CHANGELOG.md` exists and starts with `Last Updated:`, compare against the old file with the first two lines removed.
@@ -95,9 +97,8 @@ Include:
 - Whether a release tag triggered this run (if available)
 - Explicit comparison range used (`<base>...<current>`)
 - Summary of notable top-level sections changed in `CHANGELOG.md`
-- A concise, commit-driven "What changed" summary derived from commit titles/messages
-- A "Grouped themes" section showing categorized changes inferred from commit text and changed file paths
-- Mention of notable PR numbers/issues inferred from commit references when available
+- A concise "What changed" summary derived from commit titles (from the single `git log` run above)
+- Mention of notable PR numbers/issues inferred from commit messages when available
 - A note that timestamp-only changes are filtered out
 
 ## Constraints
@@ -108,3 +109,4 @@ Include:
 - Never choose a prerelease base for a stable release if an earlier stable release exists.
 - Prefer meaningful, user-impacting summaries over dependency/CI churn when both are present.
 - Never fail the run solely because external commit APIs are blocked by integrity filtering; fall back to local git history and continue.
+- Never attempt to re-implement `git-chglog` in Python, shell, or any other language. If the tool cannot be installed, stop with a clear error.
