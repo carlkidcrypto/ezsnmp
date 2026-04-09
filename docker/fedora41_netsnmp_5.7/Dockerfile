@@ -119,10 +119,10 @@ RUN cd /tmp && \
     ldconfig
 
 # Create the pkg-config file for net-snmp (built from source above)
-RUN LIBDIR=$(net-snmp-config --libdir) && \
+RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
     PREFIX=$(net-snmp-config --prefix) && \
     EXEC_PREFIX=$(net-snmp-config --exec-prefix) && \
-    INCLUDEDIR=$(net-snmp-config --includedir) && \
+    INCLUDEDIR=$(net-snmp-config --includedir | sed 's/^-I//') && \
     LIBS=$(net-snmp-config --libs) && \
     CFLAGS=$(net-snmp-config --cflags) && \
     VERSION=$(net-snmp-config --version) && \
