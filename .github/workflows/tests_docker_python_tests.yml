@@ -307,8 +307,15 @@ jobs:
           SUMMARY_REPORT: ${{ steps.pytest-coverage.outputs.summaryReport }}
         run: |
           python3 -c "
-          import os
-          report = os.environ.get('SUMMARY_REPORT', '').lstrip('\n')
+          import os, json
+          report = os.environ.get('SUMMARY_REPORT', '')
+          try:
+              decoded = json.loads(report)
+              if isinstance(decoded, str):
+                  report = decoded
+          except (json.JSONDecodeError, ValueError):
+              pass
+          report = report.lstrip('\n')
           delimiter = 'GHADELIMITER'
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'report<<{delimiter}\n')
