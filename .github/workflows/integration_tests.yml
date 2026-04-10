@@ -27,6 +27,7 @@ jobs:
             .github/workflows/integration_tests.yml
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            Formula/ezsnmp.rb
             integration_tests/**
             python_tests/*.conf
             python_tests/*.py
@@ -65,6 +66,7 @@ jobs:
           macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
+                 brew install python@${{ matrix.python-version }} || true;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
@@ -98,9 +100,17 @@ jobs:
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
+            python3 -m pip install . --verbose;
+            rm -drf build/ ezsnmp.egg-info/;
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            # Package the current checkout as a tarball and point the formula at it
+            git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
+            TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
+            sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" Formula/ezsnmp.rb
+            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" Formula/ezsnmp.rb
+            # Build and install via the repo Homebrew formula
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula ./Formula/ezsnmp.rb
           fi
-          python3 -m pip install . --verbose;
-          rm -drf build/ ezsnmp.egg-info/;
       
       - name: Start SNMP daemon
         run: |
@@ -144,6 +154,11 @@ jobs:
             echo "artifactPath5=/home/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
 
           macos: |
+            # Resolve the Python that brew installed ezsnmp for and put it first in PATH
+            # so that `python3` calls inside run_integration_tests.sh use that interpreter
+            BREW_EZSNMP=$(brew --prefix ezsnmp)
+            PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
+            export PATH="$(brew --prefix python@${PYTHON_VER})/bin:${PATH}"
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
             ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
             # Extract key metrics into per-file logs
