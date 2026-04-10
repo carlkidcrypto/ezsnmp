@@ -83,8 +83,8 @@ Install EzSnmp via pip as follows:
 Installation Troubleshooting
 ----------------------------
 
-Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>` to make EzSnmp compatible
-with as many as possible linux distros. Occasionally it isn't perfect. If you have issues try
+Note: We use `cibuildwheel <https://pypi.org/project/cibuildwheel/>`_ to make EzSnmp compatible
+with as many Linux distributions as possible. Occasionally it isn't perfect. If you have issues try
 something like this:
 
 .. code-block:: bash
@@ -141,7 +141,7 @@ are planning on requesting multiple pieces of SNMP data from a source.
     # but also has several extended attributes with SNMP-specific information
     for item in system_items:
         print('{}.{} {} = {}'.format(
-            item.oid, item.oid_index, item.snmp_type, item.value
+            item.oid, item.index, item.type, item.value
         ))
 
 You may also use EzSnmp via its simple interface which is intended for
