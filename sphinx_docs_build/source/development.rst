@@ -234,7 +234,8 @@ Python Tests on MacOS
     tox
 
 
-Note: If you have issues installing the python package without HomeBrew or Ports, try to update your Xcode Command Line Tools:
+Note: If you have issues installing the python package without Homebrew or Ports, try to update your Xcode Command Line Tools:
+
 .. code:: bash
 
     # List available software updates
