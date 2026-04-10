@@ -153,8 +153,11 @@ jobs:
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
-            # Build and install via the repo Homebrew formula
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula ./Formula/ezsnmp.rb
+            # Register the local checkout as a Homebrew tap, then install from it.
+            # brew install --formula <path> is rejected unless the file is inside a
+            # registered tap; tapping the local directory is the correct approach.
+            brew tap carlkidcrypto/ezsnmp "$(pwd)"
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
             # Determine which Python the formula used and where it installed the package
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')

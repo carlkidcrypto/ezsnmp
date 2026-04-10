@@ -113,8 +113,11 @@ jobs:
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
-            # Build and install via the repo Homebrew formula
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula ./Formula/ezsnmp.rb
+            # Register the local checkout as a Homebrew tap, then install from it.
+            # brew install --formula <path> is rejected unless the file is inside a
+            # registered tap; tapping the local directory is the correct approach.
+            brew tap carlkidcrypto/ezsnmp "$(pwd)"
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
           fi
       
       - name: Start SNMP daemon
