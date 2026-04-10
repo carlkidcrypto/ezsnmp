@@ -146,10 +146,12 @@ jobs:
             # Package the current checkout as a tarball and point the formula at it
             git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
             TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
-            sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" Formula/ezsnmp.rb
-            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" Formula/ezsnmp.rb
+            # Formula/ezsnmp.rb is a symlink; copy to a real file so sed -i '' works
+            cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
+            sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" /tmp/ezsnmp_formula.rb
+            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
             # Build and install via the repo Homebrew formula
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula ./Formula/ezsnmp.rb
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula /tmp/ezsnmp_formula.rb
             # Determine which Python the formula used and where it installed the package
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
