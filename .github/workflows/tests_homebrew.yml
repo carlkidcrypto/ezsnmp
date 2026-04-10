@@ -28,6 +28,7 @@ jobs:
             .github/workflows/tests_homebrew.yml
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            Formula/ezsnmp.rb
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
@@ -67,6 +68,7 @@ jobs:
           macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
+                 brew install python@${{ matrix.python-version }} || true;
                  echo "export PATH=\"$(brew --prefix net-snmp)/bin:\$PATH\"" >> ~/.zshrc;
                  export PATH="$(brew --prefix net-snmp)/bin:$PATH";
                  echo "export PATH=\"$(brew --prefix net-snmp)/sbin:\$PATH\"" >> ~/.zshrc;
@@ -141,9 +143,30 @@ jobs:
                  ${VALGRIND[@]} pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml  python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
-            python3 -m pip install . --verbose
-            rm -drf build/ ezsnmp.egg-info/
-            pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+            # Package the current checkout as a tarball and point the formula at it
+            git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
+            TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
+            # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
+            # sed -i '' works, then put it back in Formula/ so brew sees a tap path
+            cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
+            sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" /tmp/ezsnmp_formula.rb
+            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
+            rm Formula/ezsnmp.rb
+            cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
+            # Register the local checkout as a Homebrew tap, then install from it.
+            # brew install --formula <path> is rejected unless the file is inside a
+            # registered tap; tapping the local directory is the correct approach.
+            brew tap carlkidcrypto/ezsnmp "$(pwd)"
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            # Determine which Python the formula used and where it installed the package
+            BREW_EZSNMP=$(brew --prefix ezsnmp)
+            PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
+            BREW_PYTHON=$(brew --prefix python@${PYTHON_VER})/bin/python3
+            # Create an isolated test venv that inherits the brew Python's site-packages
+            # (where brew link already placed the installed ezsnmp package)
+            ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
+            /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
+            /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
