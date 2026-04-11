@@ -1,0 +1,121 @@
+# This workflow updates the Homebrew formula in Formula/ezsnmp.rb with the
+# correct tarball URL and SHA256 hash whenever a new GitHub release is published.
+# It then opens a PR against main and enables auto-merge so the change lands
+# without manual intervention.
+
+name: Homebrew Formula Deploy
+
+concurrency: homebrew_deploy
+
+on:
+  release:
+    types: [published]
+
+  # Allow manual re-runs (e.g. to repair a formula after a workflow update).
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to deploy (e.g. v2.3.0)"
+        required: true
+        type: string
+
+  # Trigger CI syntax-check whenever this workflow file itself is updated.
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/homebrew_deploy.yml
+
+jobs:
+  update-formula:
+    # Only perform the deploy on a real release event or an explicit manual run.
+    # Push events (workflow-file updates) still satisfy the 'on:' trigger above
+    # so GitHub validates the YAML, but we skip the actual formula update.
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # needed to commit the updated formula via a PR
+      pull-requests: write  # needed to open and auto-merge the PR
+
+    steps:
+      - name: Check out repository (main branch)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "value=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download release tarball and compute SHA256
+        id: tarball
+        run: |
+          TAG="${{ steps.tag.outputs.value }}"
+          URL="https://github.com/carlkidcrypto/ezsnmp/archive/refs/tags/${TAG}.tar.gz"
+
+          echo "Downloading ${URL} …"
+          curl -fsSL "$URL" -o release.tar.gz
+
+          SHA256=$(sha256sum release.tar.gz | awk '{print $1}')
+          echo "SHA256: ${SHA256}"
+
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
+          echo "url=${URL}"       >> "$GITHUB_OUTPUT"
+
+          rm release.tar.gz
+
+      - name: Update Homebrew formula
+        run: |
+          TAG="${{ steps.tag.outputs.value }}"
+          URL="${{ steps.tarball.outputs.url }}"
+          SHA256="${{ steps.tarball.outputs.sha256 }}"
+          FORMULA="Formula/ezsnmp.rb"
+
+          # Replace the tarball URL (the `url "…"` line, not the `head "…"` line)
+          sed -i "s|^\(  url \"\)[^\"]*\(\".*\)|\1${URL}\2|" "$FORMULA"
+
+          # Replace the sha256 value (handles both empty and previously-set hashes)
+          sed -i "s|^\(  sha256 \"\)[^\"]*\(\".*\)|\1${SHA256}\2|" "$FORMULA"
+
+          echo "Formula updated for ${TAG}:"
+          grep -E '^\s*(url|sha256) ' "$FORMULA"
+
+      - name: Create Pull Request with updated formula
+        id: create-pr
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update Homebrew formula for ${{ steps.tag.outputs.value }}"
+          title: "🍺 Update Homebrew formula for ${{ steps.tag.outputs.value }}"
+          body: |
+            Updates `Formula/ezsnmp.rb` for release `${{ steps.tag.outputs.value }}`.
+
+            | Field    | Value |
+            |----------|-------|
+            | **Tag**    | `${{ steps.tag.outputs.value }}` |
+            | **URL**    | `${{ steps.tarball.outputs.url }}` |
+            | **SHA256** | `${{ steps.tarball.outputs.sha256 }}` |
+
+            - Triggered by: `${{ github.event_name }}`
+            - Run ID: ${{ github.run_id }}
+            - Auto-merge enabled
+          branch: chore/update-homebrew-formula-${{ steps.tag.outputs.value }}
+          base: main
+          delete-branch: true
+          labels: automated-pr
+          add-paths: |
+            Formula/ezsnmp.rb
+
+      - name: Enable Auto-merge
+        if: steps.create-pr.outputs.pull-request-number != ''
+        run: |
+          PR_NUMBER="${{ steps.create-pr.outputs.pull-request-number }}"
+          echo "Enabling auto-merge on PR #${PR_NUMBER}"
+          gh pr merge --auto --merge "${PR_NUMBER}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
