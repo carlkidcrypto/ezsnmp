@@ -152,6 +152,7 @@ jobs:
         run: ls -R pytest-results_*
 
       - name: Pytest coverage comment
+        id: pytest-coverage
         uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
         with:
           title: Pytest Coverage Report - Native
@@ -159,7 +160,7 @@ jobs:
           hide-badge: true
           hide-report: true
           create-new-comment: false
-          hide-comment: false
+          hide-comment: true
           report-only-changed-files: false
           multiple-files: |
             ubuntu-latest - Native - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
@@ -167,3 +168,64 @@ jobs:
             ubuntu-latest - Native - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
             ubuntu-latest - Native - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
             ubuntu-latest - Native - 3.14, pytest-results_ubuntu-latest_3.14/test-outputs_ubuntu-latest_3.14.txt, pytest-results_ubuntu-latest_3.14/test-results_ubuntu-latest_3.14.xml
+
+      - name: Strip leading newlines from summaryReport
+        id: clean-report
+        env:
+          SUMMARY_REPORT: ${{ steps.pytest-coverage.outputs.summaryReport }}
+        run: |
+          python3 -c "
+          import os, json
+          report = os.environ.get('SUMMARY_REPORT', '')
+          try:
+              decoded = json.loads(report)
+              if isinstance(decoded, str):
+                  report = decoded
+          except (json.JSONDecodeError, ValueError):
+              pass
+          report = report.lstrip('\n')
+          delimiter = 'GHADELIMITER'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'report<<{delimiter}\n')
+              f.write(report)
+              if not report.endswith('\n'):
+                  f.write('\n')
+              f.write(f'{delimiter}\n')
+          "
+
+      - name: Find existing pytest coverage comment (PR)
+        id: find-pytest-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pytest-coverage-native -->'
+
+      - name: Post collapsible pytest coverage comment (PR)
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@2b6bdb56ad3073fa0e4beef00447158f55a18414 # v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-pytest-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- pytest-coverage-native -->
+            ## Pytest Coverage Report - Native 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.clean-report.outputs.report }}
+            </details>
+
+      - name: Post pytest coverage comment (Push)
+        if: github.event_name == 'push'
+        uses: peter-evans/commit-comment@f6d60c65d05bb59f750fa51ad3de1d443ba0eb52 # v4
+        with:
+          body: |
+            ## Pytest Coverage Report - Native 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.clean-report.outputs.report }}
+            </details>
