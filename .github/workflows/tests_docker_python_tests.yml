@@ -105,6 +105,19 @@ jobs:
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
 
+      - name: Set up pip cache directory
+        run: |
+          mkdir -p ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+
+      - name: Cache pip packages for tox (Docker)
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          key: pip-docker-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
+          restore-keys: |
+            pip-docker-${{ matrix.python }}-
+
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
@@ -120,6 +133,7 @@ jobs:
           if ! docker run -d \
             --name "$CONTAINER_NAME" \
             -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+            -v "$RUNNER_TEMP/pip-cache-${{ matrix.python }}:/pip-cache" \
             "$IMAGE" \
             /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
               echo "ERROR: Docker run failed for $IMAGE" >&2
@@ -144,6 +158,7 @@ jobs:
             cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -);
             cd "$WORK_DIR";
             echo "    - Installing tox";
+            export PIP_CACHE_DIR=/pip-cache;
             python3 -m pip install --quiet tox;
             echo "    - Forcing pytest to write junit and coverage to /ezsnmp";
             export PYTEST_ADDOPTS="$PYTEST_ADDOPTS --junitxml=/ezsnmp/test-results.xml --cov-report=xml:/ezsnmp/coverage.xml";
@@ -232,6 +247,7 @@ jobs:
         run: ls -Rlah
 
       - name: Pytest coverage comment (Dockerized Tests)
+        id: pytest-coverage
         uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
         continue-on-error: true
         with:
@@ -241,7 +257,7 @@ jobs:
           hide-badge: true
           hide-report: true
           create-new-comment: false
-          hide-comment: false
+          hide-comment: true
           report-only-changed-files: false
           multiple-files: |
             almalinux10_netsnmp_5.9_py310, test-outputs_almalinux10_netsnmp_5.9_test_container_py310.txt, test-results_almalinux10_netsnmp_5.9_test_container_py310.xml
@@ -299,3 +315,64 @@ jobs:
             rockylinux9_netsnmp_5.9_py312, test-outputs_rockylinux9_netsnmp_5.9_test_container_py312.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py312.xml
             rockylinux9_netsnmp_5.9_py313, test-outputs_rockylinux9_netsnmp_5.9_test_container_py313.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py313.xml
             rockylinux9_netsnmp_5.9_py314, test-outputs_rockylinux9_netsnmp_5.9_test_container_py314.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py314.xml
+
+      - name: Strip leading newlines from summaryReport
+        id: clean-report
+        env:
+          SUMMARY_REPORT: ${{ steps.pytest-coverage.outputs.summaryReport }}
+        run: |
+          python3 -c "
+          import os, json
+          report = os.environ.get('SUMMARY_REPORT', '')
+          try:
+              decoded = json.loads(report)
+              if isinstance(decoded, str):
+                  report = decoded
+          except (json.JSONDecodeError, ValueError):
+              pass
+          report = report.lstrip('\n')
+          delimiter = 'GHADELIMITER'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'report<<{delimiter}\n')
+              f.write(report)
+              if not report.endswith('\n'):
+                  f.write('\n')
+              f.write(f'{delimiter}\n')
+          "
+
+      - name: Find existing pytest coverage comment (PR)
+        id: find-pytest-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pytest-coverage-dockerized -->'
+
+      - name: Post collapsible pytest coverage comment (PR)
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@2b6bdb56ad3073fa0e4beef00447158f55a18414 # v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-pytest-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- pytest-coverage-dockerized -->
+            ## Pytest Coverage Report - Dockerized Tests 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.clean-report.outputs.report }}
+            </details>
+
+      - name: Post pytest coverage comment (Push)
+        if: github.event_name == 'push'
+        uses: peter-evans/commit-comment@f6d60c65d05bb59f750fa51ad3de1d443ba0eb52 # v4
+        with:
+          body: |
+            ## Pytest Coverage Report - Dockerized Tests 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.clean-report.outputs.report }}
+            </details>
