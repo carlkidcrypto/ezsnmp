@@ -77,6 +77,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - name: Cache tox environments
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: .tox
+          key: tox-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('python_tests/requirements.txt', 'tox.ini') }}
+          restore-keys: |
+            tox-${{ runner.os }}-${{ matrix.python-version }}-
+
       - name: Install pip dependencies
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
@@ -90,7 +98,7 @@ jobs:
       - name: Run Tests
         run: |
           python3 -m pip install . --verbose
-          rm -drf build/ ezsnmp.egg-info/ .tox/
+          rm -drf build/ ezsnmp.egg-info/
           TOX_ENV="py${{ matrix.python-version }}"
           TOX_ENV="${TOX_ENV/./}"
           tox -e "$TOX_ENV" | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
