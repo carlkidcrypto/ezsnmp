@@ -3,8 +3,8 @@ Last Updated: 2026-04-09 15:32:48 UTC
 # Changelog
 
 
-<a name="v2.3.0a0"></a>
-## [v2.3.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0...v2.3.0a0) (2026-04-08)
+<a name="v2.3.0a1"></a>
+## [v2.3.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.2.0...v2.3.0a1) (2026-04-08)
 
 
 ### Changes
@@ -55,7 +55,7 @@ Last Updated: 2026-04-09 15:32:48 UTC
 
 #### Maintenance
 
-- chore: bump version from 2.2.0 to 2.3.0a0 ([#817](https://github.com/carlkidcrypto/ezsnmp/issues/817))
+- chore: bump version from 2.2.0 to 2.3.0a1 ([#817](https://github.com/carlkidcrypto/ezsnmp/issues/817))
 
 #### Remove
 
