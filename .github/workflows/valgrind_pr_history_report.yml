@@ -46,7 +46,7 @@ jobs:
         run: cat valgrind-pr-history-report.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload report artifacts
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: valgrind-pr-history-report
           path: |
