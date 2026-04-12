@@ -38,8 +38,8 @@ Keep open pull requests current by merging the latest main branch into PR branch
    - Attempt to merge origin/main into the PR branch.
    - **Only emit one `push_to_pull_request_branch` safe output per run** — process the first eligible PR and stop. Do not queue multiple push outputs in a single execution.
 3. If merge succeeds and produces changes, push to that PR branch.
-4. If merge conflict occurs, skip that PR and continue others.
-5. If no PR branches can be updated, emit a no-op result.
+4. If merge conflict occurs, skip that PR and continue to the next one.
+5. If no open PRs have the `auto-sync` label, or no PR branches can be updated (all are already up to date or all have merge conflicts), call the `noop` tool with a brief explanation such as "No open PRs with auto-sync label found" or "All qualifying PRs are already up to date with main".
 
 ## Constraints
 

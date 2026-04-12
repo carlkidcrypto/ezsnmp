@@ -28,6 +28,7 @@ jobs:
             .github/workflows/tests_homebrew.yml
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            Formula/ezsnmp.rb
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
@@ -67,6 +68,7 @@ jobs:
           macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
+                 brew install python@${{ matrix.python-version }} || true;
                  echo "export PATH=\"$(brew --prefix net-snmp)/bin:\$PATH\"" >> ~/.zshrc;
                  export PATH="$(brew --prefix net-snmp)/bin:$PATH";
                  echo "export PATH=\"$(brew --prefix net-snmp)/sbin:\$PATH\"" >> ~/.zshrc;
@@ -141,12 +143,33 @@ jobs:
                  ${VALGRIND[@]} pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml  python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
-            python3 -m pip install . --verbose
-            rm -drf build/ ezsnmp.egg-info/
-            pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+            # Package the current checkout as a tarball and point the formula at it
+            git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
+            TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
+            # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
+            # sed -i '' works, then put it back in Formula/ so brew sees a tap path
+            cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
+            sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" /tmp/ezsnmp_formula.rb
+            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
+            rm Formula/ezsnmp.rb
+            cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
+            # Register the local checkout as a Homebrew tap, then install from it.
+            # brew install --formula <path> is rejected unless the file is inside a
+            # registered tap; tapping the local directory is the correct approach.
+            brew tap carlkidcrypto/ezsnmp "$(pwd)"
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            # Determine which Python the formula used and where it installed the package
+            BREW_EZSNMP=$(brew --prefix ezsnmp)
+            PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
+            BREW_PYTHON=$(brew --prefix python@${PYTHON_VER})/bin/python3
+            # Create an isolated test venv that inherits the brew Python's site-packages
+            # (where brew link already placed the installed ezsnmp package)
+            ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
+            /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
+            /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -154,7 +177,7 @@ jobs:
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Valgrind Reports
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
@@ -174,6 +197,7 @@ jobs:
           merge-multiple: false
 
       - name: Pytest coverage comment
+        id: pytest-coverage
         uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
         with:
           title: Pytest Coverage Report - Homebrew
@@ -181,7 +205,7 @@ jobs:
           hide-badge: true
           hide-report: true
           create-new-comment: false
-          hide-comment: false
+          hide-comment: true
           report-only-changed-files: false
           multiple-files: |
             macos-latest - Homebrew - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
@@ -194,6 +218,67 @@ jobs:
             ubuntu-latest - Homebrew - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
             ubuntu-latest - Homebrew - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
             ubuntu-latest - Homebrew - 3.14, pytest-results_ubuntu-latest_3.14/test-outputs_ubuntu-latest_3.14.txt, pytest-results_ubuntu-latest_3.14/test-results_ubuntu-latest_3.14.xml
+
+      - name: Strip leading newlines from summaryReport
+        id: clean-report
+        env:
+          SUMMARY_REPORT: ${{ steps.pytest-coverage.outputs.summaryReport }}
+        run: |
+          python3 -c "
+          import os, json
+          report = os.environ.get('SUMMARY_REPORT', '')
+          try:
+              decoded = json.loads(report)
+              if isinstance(decoded, str):
+                  report = decoded
+          except (json.JSONDecodeError, ValueError):
+              pass
+          report = report.lstrip('\n')
+          delimiter = 'GHADELIMITER'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'report<<{delimiter}\n')
+              f.write(report)
+              if not report.endswith('\n'):
+                  f.write('\n')
+              f.write(f'{delimiter}\n')
+          "
+
+      - name: Find existing pytest coverage comment (PR)
+        id: find-pytest-comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pytest-coverage-homebrew -->'
+
+      - name: Post collapsible pytest coverage comment (PR)
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@2b6bdb56ad3073fa0e4beef00447158f55a18414 # v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-pytest-comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- pytest-coverage-homebrew -->
+            ## Pytest Coverage Report - Homebrew 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.clean-report.outputs.report }}
+            </details>
+
+      - name: Post pytest coverage comment (Push)
+        if: github.event_name == 'push'
+        uses: peter-evans/commit-comment@f6d60c65d05bb59f750fa51ad3de1d443ba0eb52 # v4
+        with:
+          body: |
+            ## Pytest Coverage Report - Homebrew 🐍
+            <details>
+            <summary>📊 Test Results (click to expand)</summary>
+
+            ${{ steps.clean-report.outputs.report }}
+            </details>
 
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
@@ -224,7 +309,7 @@ jobs:
           EOF
 
       - name: Upload Stripped Valgrind Reports
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: valgrind-stripped_${{matrix.os}}_${{matrix.python-version}}
           path: |
@@ -287,7 +372,7 @@ jobs:
           comment-id: ${{ steps.find-valgrind-comment.outputs.comment-id }}
           edit-mode: replace
           body: |
-            ## Valgrind (Homebrew)
+            ## Valgrind (Homebrew) 🔍
             <!-- ezsnmp-homebrew-valgrind -->
             ${{ steps.template.outputs.result }}
 
