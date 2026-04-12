@@ -78,7 +78,7 @@ with safe, track-aware rules.
 
 4. Validate impact:
    - Ensure replacements are consistent and no mixed-version references remain for files touched.
-   - If no version bumps are needed, stop with a no-op summary.
+   - If no version bumps are needed, call the `noop` safe output tool with a message summarizing the current pinned versions and confirming they are already up to date.
 
 5. If changes exist, create or update one PR using:
    - Branch: `automation/update-docker-netsnmp-versions`
@@ -101,4 +101,4 @@ Include:
 - Restrict edits to Net-SNMP version references in Docker-related files.
 - Keep default behavior on stable releases only unless `include_prerelease=true` was explicitly provided.
 - Do not change Python versions, distro versions, workflow logic, or unrelated code.
-- If upstream data is ambiguous or unavailable, stop with no-op and explain why.
+- If upstream data is ambiguous or unavailable, call the `noop` safe output tool with an explanation of why no action was taken.
