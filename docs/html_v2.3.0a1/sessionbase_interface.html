@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="snmpset.i" href="snmpset_interface.html"><link rel="prev" title="snmpget.i" href="snmpget_interface.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="snmpbulkget.i" href="snmpbulkget_interface.html"><link rel="prev" title="netsnmpbase.i" href="netsnmpbase_interface.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>snmpgetnext.i - EzSnmp v2.3.0a0 documentation</title>
+        <title>sessionbase.i - EzSnmp v2.3.0a1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp v2.3.0a0 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.3.0a1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">EzSnmp v2.3.0a0 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.3.0a1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -210,11 +210,11 @@
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">sessionbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpget_interface.html">snmpget.i</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">snmpgetnext.i</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snmpgetnext_interface.html">snmpgetnext.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpset_interface.html">snmpset.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmptrap_interface.html">snmptrap.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
@@ -245,7 +245,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/snmpgetnext_interface.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/sessionbase_interface.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -263,19 +263,28 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="snmpgetnext-i">
-<h1>snmpgetnext.i<a class="headerlink" href="#snmpgetnext-i" title="Link to this heading">¶</a></h1>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">module</span><span class="w"> </span><span class="n">netsnmp</span>
-<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">argcargv</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
+          <section id="sessionbase-i">
+<h1>sessionbase.i<a class="headerlink" href="#sessionbase-i" title="Link to this heading">¶</a></h1>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">module</span><span class="w"> </span><span class="n">sessionbase</span>
+<span class="o">%</span><span class="n">feature</span><span class="p">(</span><span class="s">&quot;autodoc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">);</span>
+
 <span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">stl</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="s">&quot;datatypes.i&quot;</span>
 <span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="s">&quot;exceptionsbase.i&quot;</span>
 
+<span class="o">%</span><span class="n">feature</span><span class="p">(</span><span class="s">&quot;kwargs&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">SessionBase</span><span class="o">::</span><span class="n">SessionBase</span><span class="p">;</span>
+<span class="o">%</span><span class="n">feature</span><span class="p">(</span><span class="s">&quot;python:annotations&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span>
+
+<span class="c1">// Tell SWIG how to handle our special return type(s) from C++</span>
+<span class="o">%</span><span class="k">template</span><span class="p">(</span><span class="n">_string_list</span><span class="p">)</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="o">%</span><span class="k">template</span><span class="p">(</span><span class="n">_result_list</span><span class="p">)</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&gt;</span><span class="p">;</span>
+
 <span class="o">%</span><span class="p">{</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;snmpgetnext.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sessionbase.h&quot;</span>
 <span class="o">%</span><span class="p">}</span>
 
 <span class="c1">// Now list ANSI C/C++ declarations</span>
-<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&gt;</span><span class="w"> </span><span class="n">snmpgetnext</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="k">const</span><span class="o">&amp;</span><span class="w"> </span><span class="n">init_app_name</span><span class="p">);</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="s">&quot;../include/sessionbase.h&quot;</span>
 </pre></div>
 </div>
 </section>
@@ -285,23 +294,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="snmpset_interface.html">
+          <a class="next-page" href="snmpbulkget_interface.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">snmpset.i</div>
+                <div class="title">snmpbulkget.i</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="snmpget_interface.html">
+          <a class="prev-page" href="netsnmpbase_interface.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">snmpget.i</div>
+                <div class="title">netsnmpbase.i</div>
                 
               </div>
             </a>

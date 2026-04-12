@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="datatypes.i" href="datatypes_interface.html"><link rel="prev" title="SessionBase C++ Module" href="sessionbase_cpp.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="snmptrap.i" href="snmptrap_interface.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Swig Interface File(s) - EzSnmp v2.3.0a0 documentation</title>
+        <title>snmpwalk.i - EzSnmp v2.3.0a1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">EzSnmp v2.3.0a0 documentation</div></a>
+      <a href="index.html"><div class="brand">EzSnmp v2.3.0a1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">EzSnmp v2.3.0a0 documentation</span>
+  <span class="sidebar-brand-text">EzSnmp v2.3.0a1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="session_python.html">Session Python Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html">SessionBase C++ Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sessionbase_cpp.html#analysis-of-snmpwalk-options-and-sessionbase-constructor-mapping">Analysis of Snmpwalk Options and SessionBase Constructor Mapping</a></li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Swig Interface File(s)</a><input aria-label="Toggle navigation of Swig Interface File(s)" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="swig_interface_files.html">Swig Interface File(s)</a><input aria-label="Toggle navigation of Swig Interface File(s)" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
@@ -217,7 +217,7 @@
 <li class="toctree-l2"><a class="reference internal" href="snmpgetnext_interface.html">snmpgetnext.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmpset_interface.html">snmpset.i</a></li>
 <li class="toctree-l2"><a class="reference internal" href="snmptrap_interface.html">snmptrap.i</a></li>
-<li class="toctree-l2"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">snmpwalk.i</a></li>
 </ul>
 </li>
 </ul>
@@ -245,7 +245,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/swig_interface_files.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/snmpwalk_interface.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -263,24 +263,20 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="swig-interface-file-s">
-<h1>Swig Interface File(s)<a class="headerlink" href="#swig-interface-file-s" title="Link to this heading">¶</a></h1>
-<p>The following interface files are used to generate the Python bindings for the EzSnmp C++ modules.
-For more information on the SWIG interface files, see the <a class="reference external" href="https://www.swig.org/Doc4.3/SWIGDocumentation.html">SWIG documentation</a>.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="datatypes_interface.html">datatypes.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptionsbase_interface.html">exceptionsbase.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="netsnmpbase_interface.html">netsnmpbase.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sessionbase_interface.html">sessionbase.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmpbulkget_interface.html">snmpbulkget.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmpbulkwalk_interface.html">snmpbulkwalk.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmpget_interface.html">snmpget.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmpgetnext_interface.html">snmpgetnext.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmpset_interface.html">snmpset.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmptrap_interface.html">snmptrap.i</a></li>
-<li class="toctree-l1"><a class="reference internal" href="snmpwalk_interface.html">snmpwalk.i</a></li>
-</ul>
+          <section id="snmpwalk-i">
+<h1>snmpwalk.i<a class="headerlink" href="#snmpwalk-i" title="Link to this heading">¶</a></h1>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">module</span><span class="w"> </span><span class="n">netsnmp</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">argcargv</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">stl</span><span class="p">.</span><span class="n">i</span><span class="o">&gt;</span>
+<span class="o">%</span><span class="n">include</span><span class="w"> </span><span class="s">&quot;exceptionsbase.i&quot;</span>
+
+<span class="o">%</span><span class="p">{</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;snmpwalk.h&quot;</span>
+<span class="o">%</span><span class="p">}</span>
+
+<span class="c1">// Now list ANSI C/C++ declarations</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&gt;</span><span class="w"> </span><span class="n">snmpwalk</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="k">const</span><span class="o">&amp;</span><span class="w"> </span><span class="n">init_app_name</span><span class="p">);</span>
+</pre></div>
 </div>
 </section>
 
@@ -289,23 +285,15 @@ For more information on the SWIG interface files, see the <a class="reference ex
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="datatypes_interface.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">datatypes.i</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="sessionbase_cpp.html">
+          
+          <a class="prev-page" href="snmptrap_interface.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">SessionBase C++ Module</div>
+                <div class="title">snmptrap.i</div>
                 
               </div>
             </a>
