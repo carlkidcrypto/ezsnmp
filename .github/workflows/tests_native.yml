@@ -77,6 +77,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - name: Cache tox environments
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        with:
+          path: .tox
+          key: tox-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('python_tests/requirements.txt', 'tox.ini') }}
+          restore-keys: |
+            tox-${{ runner.os }}-${{ matrix.python-version }}-
+
       - name: Install pip dependencies
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
@@ -90,7 +98,7 @@ jobs:
       - name: Run Tests
         run: |
           python3 -m pip install . --verbose
-          rm -drf build/ ezsnmp.egg-info/ .tox/
+          rm -drf build/ ezsnmp.egg-info/
           TOX_ENV="py${{ matrix.python-version }}"
           TOX_ENV="${TOX_ENV/./}"
           tox -e "$TOX_ENV" | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
@@ -101,7 +109,7 @@ jobs:
           if [ -f coverage.xml ]; then mv coverage.xml coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml; fi
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |

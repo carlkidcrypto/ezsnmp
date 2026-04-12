@@ -74,7 +74,7 @@ jobs:
           make html SPHINXOPTS="-W"
 
       - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: docs/
 
@@ -207,7 +207,7 @@ jobs:
 
       - name: Create Pull Request with versioned docs
         id: create-pr
-        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v7
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "docs: add versioned documentation for ${{ github.event.release.tag_name }}"
