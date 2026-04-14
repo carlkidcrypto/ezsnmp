@@ -276,7 +276,7 @@ Example 1: Adding a New SNMP Data Type
 .. code-block:: bash
 
     # Build the extension
-    python setup.py build_ext --inplace
+    python3 -m pip install .
 
     # Run Python tests
     pytest python_tests/test_datatypes.py -v
@@ -322,7 +322,7 @@ Example 2: Fixing a C++ Compilation Error
 .. code-block:: bash
 
     # Apply the fix and rebuild
-    python setup.py build_ext --inplace
+    python3 -m pip install .
 
     # Run all tests
     pytest python_tests/
@@ -330,7 +330,7 @@ Example 2: Fixing a C++ Compilation Error
 
     # Format code
     black ezsnmp/
-    clang-format -i ezsnmp/src/*.cpp ezsnmp/include/*.h
+    find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
 Example 3: Adding a New Session Method
 ---------------------------------------
@@ -375,7 +375,7 @@ Example 3: Adding a New Session Method
 
     # Make changes to all three layers
     # Rebuild
-    python setup.py build_ext --inplace
+    python3 -m pip install .
 
     # Run tests
     pytest python_tests/test_session.py::test_get_bulk_repeaters -v
