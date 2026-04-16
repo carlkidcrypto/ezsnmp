@@ -46,12 +46,14 @@ jobs:
       matrix:
         distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, centos8_netsnmp_5.8, fedora41_netsnmp_5.7, fedora41_netsnmp_5.8, fedora41_netsnmp_5.9, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
         python: [py310, py311, py312, py313, py314]
-        test_group: [session, netsnmp, misc]
+        test_group: [session, netsnmp, exceptions, misc]
         include:
           - test_group: session
-            test_files: "python_tests/test_session.py python_tests/test_session_parameters.py python_tests/test_getters.py python_tests/test_exceptions.py"
+            test_files: "python_tests/test_session.py"
           - test_group: netsnmp
-            test_files: "python_tests/test_netsnmp.py python_tests/test_helpers.py"
+            test_files: "python_tests/test_netsnmp.py"
+          - test_group: exceptions
+            test_files: "python_tests/test_exceptions.py python_tests/test_session_parameters.py python_tests/test_getters.py python_tests/test_helpers.py"
           - test_group: misc
             test_files: "python_tests/test_datatypes.py python_tests/test_logging.py python_tests/test_auth_priv_v3.py python_tests/test_cache_v3.py"
     steps:
@@ -155,7 +157,7 @@ jobs:
             echo "    - Installing ezsnmp";
             cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
-            if "$VENV_DIR/bin/pytest" -v -s -n auto --dist loadfile \
+            if "$VENV_DIR/bin/pytest" -v -s --timeout=60 \
               --junitxml=/ezsnmp/test-results.xml \
               --cov=ezsnmp --cov-report=term-missing \
               --cov-report=xml:/ezsnmp/coverage.xml \
@@ -169,6 +171,7 @@ jobs:
           '
 
       - name: Collect artifacts
+        if: always()
         run: |
           set -euo pipefail
           mkdir -p docker
@@ -188,6 +191,7 @@ jobs:
           docker rm -f "${{ matrix.distribution }}_test_container" >/dev/null 2>&1 || true
 
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: pytest-results_${{ matrix.distribution }}_${{ matrix.python }}_${{ matrix.test_group }}
@@ -254,168 +258,223 @@ jobs:
           multiple-files: |
             almalinux10_netsnmp_5.9_py310_session, test-outputs_almalinux10_netsnmp_5.9_test_container_py310_session.txt, test-results_almalinux10_netsnmp_5.9_test_container_py310_session.xml
             almalinux10_netsnmp_5.9_py310_netsnmp, test-outputs_almalinux10_netsnmp_5.9_test_container_py310_netsnmp.txt, test-results_almalinux10_netsnmp_5.9_test_container_py310_netsnmp.xml
+            almalinux10_netsnmp_5.9_py310_exceptions, test-outputs_almalinux10_netsnmp_5.9_test_container_py310_exceptions.txt, test-results_almalinux10_netsnmp_5.9_test_container_py310_exceptions.xml
             almalinux10_netsnmp_5.9_py310_misc, test-outputs_almalinux10_netsnmp_5.9_test_container_py310_misc.txt, test-results_almalinux10_netsnmp_5.9_test_container_py310_misc.xml
             almalinux10_netsnmp_5.9_py311_session, test-outputs_almalinux10_netsnmp_5.9_test_container_py311_session.txt, test-results_almalinux10_netsnmp_5.9_test_container_py311_session.xml
             almalinux10_netsnmp_5.9_py311_netsnmp, test-outputs_almalinux10_netsnmp_5.9_test_container_py311_netsnmp.txt, test-results_almalinux10_netsnmp_5.9_test_container_py311_netsnmp.xml
+            almalinux10_netsnmp_5.9_py311_exceptions, test-outputs_almalinux10_netsnmp_5.9_test_container_py311_exceptions.txt, test-results_almalinux10_netsnmp_5.9_test_container_py311_exceptions.xml
             almalinux10_netsnmp_5.9_py311_misc, test-outputs_almalinux10_netsnmp_5.9_test_container_py311_misc.txt, test-results_almalinux10_netsnmp_5.9_test_container_py311_misc.xml
             almalinux10_netsnmp_5.9_py312_session, test-outputs_almalinux10_netsnmp_5.9_test_container_py312_session.txt, test-results_almalinux10_netsnmp_5.9_test_container_py312_session.xml
             almalinux10_netsnmp_5.9_py312_netsnmp, test-outputs_almalinux10_netsnmp_5.9_test_container_py312_netsnmp.txt, test-results_almalinux10_netsnmp_5.9_test_container_py312_netsnmp.xml
+            almalinux10_netsnmp_5.9_py312_exceptions, test-outputs_almalinux10_netsnmp_5.9_test_container_py312_exceptions.txt, test-results_almalinux10_netsnmp_5.9_test_container_py312_exceptions.xml
             almalinux10_netsnmp_5.9_py312_misc, test-outputs_almalinux10_netsnmp_5.9_test_container_py312_misc.txt, test-results_almalinux10_netsnmp_5.9_test_container_py312_misc.xml
             almalinux10_netsnmp_5.9_py313_session, test-outputs_almalinux10_netsnmp_5.9_test_container_py313_session.txt, test-results_almalinux10_netsnmp_5.9_test_container_py313_session.xml
             almalinux10_netsnmp_5.9_py313_netsnmp, test-outputs_almalinux10_netsnmp_5.9_test_container_py313_netsnmp.txt, test-results_almalinux10_netsnmp_5.9_test_container_py313_netsnmp.xml
+            almalinux10_netsnmp_5.9_py313_exceptions, test-outputs_almalinux10_netsnmp_5.9_test_container_py313_exceptions.txt, test-results_almalinux10_netsnmp_5.9_test_container_py313_exceptions.xml
             almalinux10_netsnmp_5.9_py313_misc, test-outputs_almalinux10_netsnmp_5.9_test_container_py313_misc.txt, test-results_almalinux10_netsnmp_5.9_test_container_py313_misc.xml
             almalinux10_netsnmp_5.9_py314_session, test-outputs_almalinux10_netsnmp_5.9_test_container_py314_session.txt, test-results_almalinux10_netsnmp_5.9_test_container_py314_session.xml
             almalinux10_netsnmp_5.9_py314_netsnmp, test-outputs_almalinux10_netsnmp_5.9_test_container_py314_netsnmp.txt, test-results_almalinux10_netsnmp_5.9_test_container_py314_netsnmp.xml
+            almalinux10_netsnmp_5.9_py314_exceptions, test-outputs_almalinux10_netsnmp_5.9_test_container_py314_exceptions.txt, test-results_almalinux10_netsnmp_5.9_test_container_py314_exceptions.xml
             almalinux10_netsnmp_5.9_py314_misc, test-outputs_almalinux10_netsnmp_5.9_test_container_py314_misc.txt, test-results_almalinux10_netsnmp_5.9_test_container_py314_misc.xml
             archlinux_netsnmp_5.7_py310_session, test-outputs_archlinux_netsnmp_5.7_test_container_py310_session.txt, test-results_archlinux_netsnmp_5.7_test_container_py310_session.xml
             archlinux_netsnmp_5.7_py310_netsnmp, test-outputs_archlinux_netsnmp_5.7_test_container_py310_netsnmp.txt, test-results_archlinux_netsnmp_5.7_test_container_py310_netsnmp.xml
+            archlinux_netsnmp_5.7_py310_exceptions, test-outputs_archlinux_netsnmp_5.7_test_container_py310_exceptions.txt, test-results_archlinux_netsnmp_5.7_test_container_py310_exceptions.xml
             archlinux_netsnmp_5.7_py310_misc, test-outputs_archlinux_netsnmp_5.7_test_container_py310_misc.txt, test-results_archlinux_netsnmp_5.7_test_container_py310_misc.xml
             archlinux_netsnmp_5.7_py311_session, test-outputs_archlinux_netsnmp_5.7_test_container_py311_session.txt, test-results_archlinux_netsnmp_5.7_test_container_py311_session.xml
             archlinux_netsnmp_5.7_py311_netsnmp, test-outputs_archlinux_netsnmp_5.7_test_container_py311_netsnmp.txt, test-results_archlinux_netsnmp_5.7_test_container_py311_netsnmp.xml
+            archlinux_netsnmp_5.7_py311_exceptions, test-outputs_archlinux_netsnmp_5.7_test_container_py311_exceptions.txt, test-results_archlinux_netsnmp_5.7_test_container_py311_exceptions.xml
             archlinux_netsnmp_5.7_py311_misc, test-outputs_archlinux_netsnmp_5.7_test_container_py311_misc.txt, test-results_archlinux_netsnmp_5.7_test_container_py311_misc.xml
             archlinux_netsnmp_5.7_py312_session, test-outputs_archlinux_netsnmp_5.7_test_container_py312_session.txt, test-results_archlinux_netsnmp_5.7_test_container_py312_session.xml
             archlinux_netsnmp_5.7_py312_netsnmp, test-outputs_archlinux_netsnmp_5.7_test_container_py312_netsnmp.txt, test-results_archlinux_netsnmp_5.7_test_container_py312_netsnmp.xml
+            archlinux_netsnmp_5.7_py312_exceptions, test-outputs_archlinux_netsnmp_5.7_test_container_py312_exceptions.txt, test-results_archlinux_netsnmp_5.7_test_container_py312_exceptions.xml
             archlinux_netsnmp_5.7_py312_misc, test-outputs_archlinux_netsnmp_5.7_test_container_py312_misc.txt, test-results_archlinux_netsnmp_5.7_test_container_py312_misc.xml
             archlinux_netsnmp_5.7_py313_session, test-outputs_archlinux_netsnmp_5.7_test_container_py313_session.txt, test-results_archlinux_netsnmp_5.7_test_container_py313_session.xml
             archlinux_netsnmp_5.7_py313_netsnmp, test-outputs_archlinux_netsnmp_5.7_test_container_py313_netsnmp.txt, test-results_archlinux_netsnmp_5.7_test_container_py313_netsnmp.xml
+            archlinux_netsnmp_5.7_py313_exceptions, test-outputs_archlinux_netsnmp_5.7_test_container_py313_exceptions.txt, test-results_archlinux_netsnmp_5.7_test_container_py313_exceptions.xml
             archlinux_netsnmp_5.7_py313_misc, test-outputs_archlinux_netsnmp_5.7_test_container_py313_misc.txt, test-results_archlinux_netsnmp_5.7_test_container_py313_misc.xml
             archlinux_netsnmp_5.7_py314_session, test-outputs_archlinux_netsnmp_5.7_test_container_py314_session.txt, test-results_archlinux_netsnmp_5.7_test_container_py314_session.xml
             archlinux_netsnmp_5.7_py314_netsnmp, test-outputs_archlinux_netsnmp_5.7_test_container_py314_netsnmp.txt, test-results_archlinux_netsnmp_5.7_test_container_py314_netsnmp.xml
+            archlinux_netsnmp_5.7_py314_exceptions, test-outputs_archlinux_netsnmp_5.7_test_container_py314_exceptions.txt, test-results_archlinux_netsnmp_5.7_test_container_py314_exceptions.xml
             archlinux_netsnmp_5.7_py314_misc, test-outputs_archlinux_netsnmp_5.7_test_container_py314_misc.txt, test-results_archlinux_netsnmp_5.7_test_container_py314_misc.xml
             archlinux_netsnmp_5.8_py310_session, test-outputs_archlinux_netsnmp_5.8_test_container_py310_session.txt, test-results_archlinux_netsnmp_5.8_test_container_py310_session.xml
             archlinux_netsnmp_5.8_py310_netsnmp, test-outputs_archlinux_netsnmp_5.8_test_container_py310_netsnmp.txt, test-results_archlinux_netsnmp_5.8_test_container_py310_netsnmp.xml
+            archlinux_netsnmp_5.8_py310_exceptions, test-outputs_archlinux_netsnmp_5.8_test_container_py310_exceptions.txt, test-results_archlinux_netsnmp_5.8_test_container_py310_exceptions.xml
             archlinux_netsnmp_5.8_py310_misc, test-outputs_archlinux_netsnmp_5.8_test_container_py310_misc.txt, test-results_archlinux_netsnmp_5.8_test_container_py310_misc.xml
             archlinux_netsnmp_5.8_py311_session, test-outputs_archlinux_netsnmp_5.8_test_container_py311_session.txt, test-results_archlinux_netsnmp_5.8_test_container_py311_session.xml
             archlinux_netsnmp_5.8_py311_netsnmp, test-outputs_archlinux_netsnmp_5.8_test_container_py311_netsnmp.txt, test-results_archlinux_netsnmp_5.8_test_container_py311_netsnmp.xml
+            archlinux_netsnmp_5.8_py311_exceptions, test-outputs_archlinux_netsnmp_5.8_test_container_py311_exceptions.txt, test-results_archlinux_netsnmp_5.8_test_container_py311_exceptions.xml
             archlinux_netsnmp_5.8_py311_misc, test-outputs_archlinux_netsnmp_5.8_test_container_py311_misc.txt, test-results_archlinux_netsnmp_5.8_test_container_py311_misc.xml
             archlinux_netsnmp_5.8_py312_session, test-outputs_archlinux_netsnmp_5.8_test_container_py312_session.txt, test-results_archlinux_netsnmp_5.8_test_container_py312_session.xml
             archlinux_netsnmp_5.8_py312_netsnmp, test-outputs_archlinux_netsnmp_5.8_test_container_py312_netsnmp.txt, test-results_archlinux_netsnmp_5.8_test_container_py312_netsnmp.xml
+            archlinux_netsnmp_5.8_py312_exceptions, test-outputs_archlinux_netsnmp_5.8_test_container_py312_exceptions.txt, test-results_archlinux_netsnmp_5.8_test_container_py312_exceptions.xml
             archlinux_netsnmp_5.8_py312_misc, test-outputs_archlinux_netsnmp_5.8_test_container_py312_misc.txt, test-results_archlinux_netsnmp_5.8_test_container_py312_misc.xml
             archlinux_netsnmp_5.8_py313_session, test-outputs_archlinux_netsnmp_5.8_test_container_py313_session.txt, test-results_archlinux_netsnmp_5.8_test_container_py313_session.xml
             archlinux_netsnmp_5.8_py313_netsnmp, test-outputs_archlinux_netsnmp_5.8_test_container_py313_netsnmp.txt, test-results_archlinux_netsnmp_5.8_test_container_py313_netsnmp.xml
+            archlinux_netsnmp_5.8_py313_exceptions, test-outputs_archlinux_netsnmp_5.8_test_container_py313_exceptions.txt, test-results_archlinux_netsnmp_5.8_test_container_py313_exceptions.xml
             archlinux_netsnmp_5.8_py313_misc, test-outputs_archlinux_netsnmp_5.8_test_container_py313_misc.txt, test-results_archlinux_netsnmp_5.8_test_container_py313_misc.xml
             archlinux_netsnmp_5.8_py314_session, test-outputs_archlinux_netsnmp_5.8_test_container_py314_session.txt, test-results_archlinux_netsnmp_5.8_test_container_py314_session.xml
             archlinux_netsnmp_5.8_py314_netsnmp, test-outputs_archlinux_netsnmp_5.8_test_container_py314_netsnmp.txt, test-results_archlinux_netsnmp_5.8_test_container_py314_netsnmp.xml
+            archlinux_netsnmp_5.8_py314_exceptions, test-outputs_archlinux_netsnmp_5.8_test_container_py314_exceptions.txt, test-results_archlinux_netsnmp_5.8_test_container_py314_exceptions.xml
             archlinux_netsnmp_5.8_py314_misc, test-outputs_archlinux_netsnmp_5.8_test_container_py314_misc.txt, test-results_archlinux_netsnmp_5.8_test_container_py314_misc.xml
             archlinux_netsnmp_5.9_py310_session, test-outputs_archlinux_netsnmp_5.9_test_container_py310_session.txt, test-results_archlinux_netsnmp_5.9_test_container_py310_session.xml
             archlinux_netsnmp_5.9_py310_netsnmp, test-outputs_archlinux_netsnmp_5.9_test_container_py310_netsnmp.txt, test-results_archlinux_netsnmp_5.9_test_container_py310_netsnmp.xml
+            archlinux_netsnmp_5.9_py310_exceptions, test-outputs_archlinux_netsnmp_5.9_test_container_py310_exceptions.txt, test-results_archlinux_netsnmp_5.9_test_container_py310_exceptions.xml
             archlinux_netsnmp_5.9_py310_misc, test-outputs_archlinux_netsnmp_5.9_test_container_py310_misc.txt, test-results_archlinux_netsnmp_5.9_test_container_py310_misc.xml
             archlinux_netsnmp_5.9_py311_session, test-outputs_archlinux_netsnmp_5.9_test_container_py311_session.txt, test-results_archlinux_netsnmp_5.9_test_container_py311_session.xml
             archlinux_netsnmp_5.9_py311_netsnmp, test-outputs_archlinux_netsnmp_5.9_test_container_py311_netsnmp.txt, test-results_archlinux_netsnmp_5.9_test_container_py311_netsnmp.xml
+            archlinux_netsnmp_5.9_py311_exceptions, test-outputs_archlinux_netsnmp_5.9_test_container_py311_exceptions.txt, test-results_archlinux_netsnmp_5.9_test_container_py311_exceptions.xml
             archlinux_netsnmp_5.9_py311_misc, test-outputs_archlinux_netsnmp_5.9_test_container_py311_misc.txt, test-results_archlinux_netsnmp_5.9_test_container_py311_misc.xml
             archlinux_netsnmp_5.9_py312_session, test-outputs_archlinux_netsnmp_5.9_test_container_py312_session.txt, test-results_archlinux_netsnmp_5.9_test_container_py312_session.xml
             archlinux_netsnmp_5.9_py312_netsnmp, test-outputs_archlinux_netsnmp_5.9_test_container_py312_netsnmp.txt, test-results_archlinux_netsnmp_5.9_test_container_py312_netsnmp.xml
+            archlinux_netsnmp_5.9_py312_exceptions, test-outputs_archlinux_netsnmp_5.9_test_container_py312_exceptions.txt, test-results_archlinux_netsnmp_5.9_test_container_py312_exceptions.xml
             archlinux_netsnmp_5.9_py312_misc, test-outputs_archlinux_netsnmp_5.9_test_container_py312_misc.txt, test-results_archlinux_netsnmp_5.9_test_container_py312_misc.xml
             archlinux_netsnmp_5.9_py313_session, test-outputs_archlinux_netsnmp_5.9_test_container_py313_session.txt, test-results_archlinux_netsnmp_5.9_test_container_py313_session.xml
             archlinux_netsnmp_5.9_py313_netsnmp, test-outputs_archlinux_netsnmp_5.9_test_container_py313_netsnmp.txt, test-results_archlinux_netsnmp_5.9_test_container_py313_netsnmp.xml
+            archlinux_netsnmp_5.9_py313_exceptions, test-outputs_archlinux_netsnmp_5.9_test_container_py313_exceptions.txt, test-results_archlinux_netsnmp_5.9_test_container_py313_exceptions.xml
             archlinux_netsnmp_5.9_py313_misc, test-outputs_archlinux_netsnmp_5.9_test_container_py313_misc.txt, test-results_archlinux_netsnmp_5.9_test_container_py313_misc.xml
             archlinux_netsnmp_5.9_py314_session, test-outputs_archlinux_netsnmp_5.9_test_container_py314_session.txt, test-results_archlinux_netsnmp_5.9_test_container_py314_session.xml
             archlinux_netsnmp_5.9_py314_netsnmp, test-outputs_archlinux_netsnmp_5.9_test_container_py314_netsnmp.txt, test-results_archlinux_netsnmp_5.9_test_container_py314_netsnmp.xml
+            archlinux_netsnmp_5.9_py314_exceptions, test-outputs_archlinux_netsnmp_5.9_test_container_py314_exceptions.txt, test-results_archlinux_netsnmp_5.9_test_container_py314_exceptions.xml
             archlinux_netsnmp_5.9_py314_misc, test-outputs_archlinux_netsnmp_5.9_test_container_py314_misc.txt, test-results_archlinux_netsnmp_5.9_test_container_py314_misc.xml
             centos7_netsnmp_5.7_py310_session, test-outputs_centos7_netsnmp_5.7_test_container_py310_session.txt, test-results_centos7_netsnmp_5.7_test_container_py310_session.xml
             centos7_netsnmp_5.7_py310_netsnmp, test-outputs_centos7_netsnmp_5.7_test_container_py310_netsnmp.txt, test-results_centos7_netsnmp_5.7_test_container_py310_netsnmp.xml
+            centos7_netsnmp_5.7_py310_exceptions, test-outputs_centos7_netsnmp_5.7_test_container_py310_exceptions.txt, test-results_centos7_netsnmp_5.7_test_container_py310_exceptions.xml
             centos7_netsnmp_5.7_py310_misc, test-outputs_centos7_netsnmp_5.7_test_container_py310_misc.txt, test-results_centos7_netsnmp_5.7_test_container_py310_misc.xml
             centos7_netsnmp_5.7_py311_session, test-outputs_centos7_netsnmp_5.7_test_container_py311_session.txt, test-results_centos7_netsnmp_5.7_test_container_py311_session.xml
             centos7_netsnmp_5.7_py311_netsnmp, test-outputs_centos7_netsnmp_5.7_test_container_py311_netsnmp.txt, test-results_centos7_netsnmp_5.7_test_container_py311_netsnmp.xml
+            centos7_netsnmp_5.7_py311_exceptions, test-outputs_centos7_netsnmp_5.7_test_container_py311_exceptions.txt, test-results_centos7_netsnmp_5.7_test_container_py311_exceptions.xml
             centos7_netsnmp_5.7_py311_misc, test-outputs_centos7_netsnmp_5.7_test_container_py311_misc.txt, test-results_centos7_netsnmp_5.7_test_container_py311_misc.xml
             centos7_netsnmp_5.7_py312_session, test-outputs_centos7_netsnmp_5.7_test_container_py312_session.txt, test-results_centos7_netsnmp_5.7_test_container_py312_session.xml
             centos7_netsnmp_5.7_py312_netsnmp, test-outputs_centos7_netsnmp_5.7_test_container_py312_netsnmp.txt, test-results_centos7_netsnmp_5.7_test_container_py312_netsnmp.xml
+            centos7_netsnmp_5.7_py312_exceptions, test-outputs_centos7_netsnmp_5.7_test_container_py312_exceptions.txt, test-results_centos7_netsnmp_5.7_test_container_py312_exceptions.xml
             centos7_netsnmp_5.7_py312_misc, test-outputs_centos7_netsnmp_5.7_test_container_py312_misc.txt, test-results_centos7_netsnmp_5.7_test_container_py312_misc.xml
             centos7_netsnmp_5.7_py313_session, test-outputs_centos7_netsnmp_5.7_test_container_py313_session.txt, test-results_centos7_netsnmp_5.7_test_container_py313_session.xml
             centos7_netsnmp_5.7_py313_netsnmp, test-outputs_centos7_netsnmp_5.7_test_container_py313_netsnmp.txt, test-results_centos7_netsnmp_5.7_test_container_py313_netsnmp.xml
+            centos7_netsnmp_5.7_py313_exceptions, test-outputs_centos7_netsnmp_5.7_test_container_py313_exceptions.txt, test-results_centos7_netsnmp_5.7_test_container_py313_exceptions.xml
             centos7_netsnmp_5.7_py313_misc, test-outputs_centos7_netsnmp_5.7_test_container_py313_misc.txt, test-results_centos7_netsnmp_5.7_test_container_py313_misc.xml
             centos7_netsnmp_5.7_py314_session, test-outputs_centos7_netsnmp_5.7_test_container_py314_session.txt, test-results_centos7_netsnmp_5.7_test_container_py314_session.xml
             centos7_netsnmp_5.7_py314_netsnmp, test-outputs_centos7_netsnmp_5.7_test_container_py314_netsnmp.txt, test-results_centos7_netsnmp_5.7_test_container_py314_netsnmp.xml
+            centos7_netsnmp_5.7_py314_exceptions, test-outputs_centos7_netsnmp_5.7_test_container_py314_exceptions.txt, test-results_centos7_netsnmp_5.7_test_container_py314_exceptions.xml
             centos7_netsnmp_5.7_py314_misc, test-outputs_centos7_netsnmp_5.7_test_container_py314_misc.txt, test-results_centos7_netsnmp_5.7_test_container_py314_misc.xml
             centos8_netsnmp_5.8_py310_session, test-outputs_centos8_netsnmp_5.8_test_container_py310_session.txt, test-results_centos8_netsnmp_5.8_test_container_py310_session.xml
             centos8_netsnmp_5.8_py310_netsnmp, test-outputs_centos8_netsnmp_5.8_test_container_py310_netsnmp.txt, test-results_centos8_netsnmp_5.8_test_container_py310_netsnmp.xml
+            centos8_netsnmp_5.8_py310_exceptions, test-outputs_centos8_netsnmp_5.8_test_container_py310_exceptions.txt, test-results_centos8_netsnmp_5.8_test_container_py310_exceptions.xml
             centos8_netsnmp_5.8_py310_misc, test-outputs_centos8_netsnmp_5.8_test_container_py310_misc.txt, test-results_centos8_netsnmp_5.8_test_container_py310_misc.xml
             centos8_netsnmp_5.8_py311_session, test-outputs_centos8_netsnmp_5.8_test_container_py311_session.txt, test-results_centos8_netsnmp_5.8_test_container_py311_session.xml
             centos8_netsnmp_5.8_py311_netsnmp, test-outputs_centos8_netsnmp_5.8_test_container_py311_netsnmp.txt, test-results_centos8_netsnmp_5.8_test_container_py311_netsnmp.xml
+            centos8_netsnmp_5.8_py311_exceptions, test-outputs_centos8_netsnmp_5.8_test_container_py311_exceptions.txt, test-results_centos8_netsnmp_5.8_test_container_py311_exceptions.xml
             centos8_netsnmp_5.8_py311_misc, test-outputs_centos8_netsnmp_5.8_test_container_py311_misc.txt, test-results_centos8_netsnmp_5.8_test_container_py311_misc.xml
             centos8_netsnmp_5.8_py312_session, test-outputs_centos8_netsnmp_5.8_test_container_py312_session.txt, test-results_centos8_netsnmp_5.8_test_container_py312_session.xml
             centos8_netsnmp_5.8_py312_netsnmp, test-outputs_centos8_netsnmp_5.8_test_container_py312_netsnmp.txt, test-results_centos8_netsnmp_5.8_test_container_py312_netsnmp.xml
+            centos8_netsnmp_5.8_py312_exceptions, test-outputs_centos8_netsnmp_5.8_test_container_py312_exceptions.txt, test-results_centos8_netsnmp_5.8_test_container_py312_exceptions.xml
             centos8_netsnmp_5.8_py312_misc, test-outputs_centos8_netsnmp_5.8_test_container_py312_misc.txt, test-results_centos8_netsnmp_5.8_test_container_py312_misc.xml
             centos8_netsnmp_5.8_py313_session, test-outputs_centos8_netsnmp_5.8_test_container_py313_session.txt, test-results_centos8_netsnmp_5.8_test_container_py313_session.xml
             centos8_netsnmp_5.8_py313_netsnmp, test-outputs_centos8_netsnmp_5.8_test_container_py313_netsnmp.txt, test-results_centos8_netsnmp_5.8_test_container_py313_netsnmp.xml
+            centos8_netsnmp_5.8_py313_exceptions, test-outputs_centos8_netsnmp_5.8_test_container_py313_exceptions.txt, test-results_centos8_netsnmp_5.8_test_container_py313_exceptions.xml
             centos8_netsnmp_5.8_py313_misc, test-outputs_centos8_netsnmp_5.8_test_container_py313_misc.txt, test-results_centos8_netsnmp_5.8_test_container_py313_misc.xml
             centos8_netsnmp_5.8_py314_session, test-outputs_centos8_netsnmp_5.8_test_container_py314_session.txt, test-results_centos8_netsnmp_5.8_test_container_py314_session.xml
             centos8_netsnmp_5.8_py314_netsnmp, test-outputs_centos8_netsnmp_5.8_test_container_py314_netsnmp.txt, test-results_centos8_netsnmp_5.8_test_container_py314_netsnmp.xml
+            centos8_netsnmp_5.8_py314_exceptions, test-outputs_centos8_netsnmp_5.8_test_container_py314_exceptions.txt, test-results_centos8_netsnmp_5.8_test_container_py314_exceptions.xml
             centos8_netsnmp_5.8_py314_misc, test-outputs_centos8_netsnmp_5.8_test_container_py314_misc.txt, test-results_centos8_netsnmp_5.8_test_container_py314_misc.xml
             fedora41_netsnmp_5.7_py310_session, test-outputs_fedora41_netsnmp_5.7_test_container_py310_session.txt, test-results_fedora41_netsnmp_5.7_test_container_py310_session.xml
             fedora41_netsnmp_5.7_py310_netsnmp, test-outputs_fedora41_netsnmp_5.7_test_container_py310_netsnmp.txt, test-results_fedora41_netsnmp_5.7_test_container_py310_netsnmp.xml
+            fedora41_netsnmp_5.7_py310_exceptions, test-outputs_fedora41_netsnmp_5.7_test_container_py310_exceptions.txt, test-results_fedora41_netsnmp_5.7_test_container_py310_exceptions.xml
             fedora41_netsnmp_5.7_py310_misc, test-outputs_fedora41_netsnmp_5.7_test_container_py310_misc.txt, test-results_fedora41_netsnmp_5.7_test_container_py310_misc.xml
             fedora41_netsnmp_5.7_py311_session, test-outputs_fedora41_netsnmp_5.7_test_container_py311_session.txt, test-results_fedora41_netsnmp_5.7_test_container_py311_session.xml
             fedora41_netsnmp_5.7_py311_netsnmp, test-outputs_fedora41_netsnmp_5.7_test_container_py311_netsnmp.txt, test-results_fedora41_netsnmp_5.7_test_container_py311_netsnmp.xml
+            fedora41_netsnmp_5.7_py311_exceptions, test-outputs_fedora41_netsnmp_5.7_test_container_py311_exceptions.txt, test-results_fedora41_netsnmp_5.7_test_container_py311_exceptions.xml
             fedora41_netsnmp_5.7_py311_misc, test-outputs_fedora41_netsnmp_5.7_test_container_py311_misc.txt, test-results_fedora41_netsnmp_5.7_test_container_py311_misc.xml
             fedora41_netsnmp_5.7_py312_session, test-outputs_fedora41_netsnmp_5.7_test_container_py312_session.txt, test-results_fedora41_netsnmp_5.7_test_container_py312_session.xml
             fedora41_netsnmp_5.7_py312_netsnmp, test-outputs_fedora41_netsnmp_5.7_test_container_py312_netsnmp.txt, test-results_fedora41_netsnmp_5.7_test_container_py312_netsnmp.xml
+            fedora41_netsnmp_5.7_py312_exceptions, test-outputs_fedora41_netsnmp_5.7_test_container_py312_exceptions.txt, test-results_fedora41_netsnmp_5.7_test_container_py312_exceptions.xml
             fedora41_netsnmp_5.7_py312_misc, test-outputs_fedora41_netsnmp_5.7_test_container_py312_misc.txt, test-results_fedora41_netsnmp_5.7_test_container_py312_misc.xml
             fedora41_netsnmp_5.7_py313_session, test-outputs_fedora41_netsnmp_5.7_test_container_py313_session.txt, test-results_fedora41_netsnmp_5.7_test_container_py313_session.xml
             fedora41_netsnmp_5.7_py313_netsnmp, test-outputs_fedora41_netsnmp_5.7_test_container_py313_netsnmp.txt, test-results_fedora41_netsnmp_5.7_test_container_py313_netsnmp.xml
+            fedora41_netsnmp_5.7_py313_exceptions, test-outputs_fedora41_netsnmp_5.7_test_container_py313_exceptions.txt, test-results_fedora41_netsnmp_5.7_test_container_py313_exceptions.xml
             fedora41_netsnmp_5.7_py313_misc, test-outputs_fedora41_netsnmp_5.7_test_container_py313_misc.txt, test-results_fedora41_netsnmp_5.7_test_container_py313_misc.xml
             fedora41_netsnmp_5.7_py314_session, test-outputs_fedora41_netsnmp_5.7_test_container_py314_session.txt, test-results_fedora41_netsnmp_5.7_test_container_py314_session.xml
             fedora41_netsnmp_5.7_py314_netsnmp, test-outputs_fedora41_netsnmp_5.7_test_container_py314_netsnmp.txt, test-results_fedora41_netsnmp_5.7_test_container_py314_netsnmp.xml
+            fedora41_netsnmp_5.7_py314_exceptions, test-outputs_fedora41_netsnmp_5.7_test_container_py314_exceptions.txt, test-results_fedora41_netsnmp_5.7_test_container_py314_exceptions.xml
             fedora41_netsnmp_5.7_py314_misc, test-outputs_fedora41_netsnmp_5.7_test_container_py314_misc.txt, test-results_fedora41_netsnmp_5.7_test_container_py314_misc.xml
             fedora41_netsnmp_5.8_py310_session, test-outputs_fedora41_netsnmp_5.8_test_container_py310_session.txt, test-results_fedora41_netsnmp_5.8_test_container_py310_session.xml
             fedora41_netsnmp_5.8_py310_netsnmp, test-outputs_fedora41_netsnmp_5.8_test_container_py310_netsnmp.txt, test-results_fedora41_netsnmp_5.8_test_container_py310_netsnmp.xml
+            fedora41_netsnmp_5.8_py310_exceptions, test-outputs_fedora41_netsnmp_5.8_test_container_py310_exceptions.txt, test-results_fedora41_netsnmp_5.8_test_container_py310_exceptions.xml
             fedora41_netsnmp_5.8_py310_misc, test-outputs_fedora41_netsnmp_5.8_test_container_py310_misc.txt, test-results_fedora41_netsnmp_5.8_test_container_py310_misc.xml
             fedora41_netsnmp_5.8_py311_session, test-outputs_fedora41_netsnmp_5.8_test_container_py311_session.txt, test-results_fedora41_netsnmp_5.8_test_container_py311_session.xml
             fedora41_netsnmp_5.8_py311_netsnmp, test-outputs_fedora41_netsnmp_5.8_test_container_py311_netsnmp.txt, test-results_fedora41_netsnmp_5.8_test_container_py311_netsnmp.xml
+            fedora41_netsnmp_5.8_py311_exceptions, test-outputs_fedora41_netsnmp_5.8_test_container_py311_exceptions.txt, test-results_fedora41_netsnmp_5.8_test_container_py311_exceptions.xml
             fedora41_netsnmp_5.8_py311_misc, test-outputs_fedora41_netsnmp_5.8_test_container_py311_misc.txt, test-results_fedora41_netsnmp_5.8_test_container_py311_misc.xml
             fedora41_netsnmp_5.8_py312_session, test-outputs_fedora41_netsnmp_5.8_test_container_py312_session.txt, test-results_fedora41_netsnmp_5.8_test_container_py312_session.xml
             fedora41_netsnmp_5.8_py312_netsnmp, test-outputs_fedora41_netsnmp_5.8_test_container_py312_netsnmp.txt, test-results_fedora41_netsnmp_5.8_test_container_py312_netsnmp.xml
+            fedora41_netsnmp_5.8_py312_exceptions, test-outputs_fedora41_netsnmp_5.8_test_container_py312_exceptions.txt, test-results_fedora41_netsnmp_5.8_test_container_py312_exceptions.xml
             fedora41_netsnmp_5.8_py312_misc, test-outputs_fedora41_netsnmp_5.8_test_container_py312_misc.txt, test-results_fedora41_netsnmp_5.8_test_container_py312_misc.xml
             fedora41_netsnmp_5.8_py313_session, test-outputs_fedora41_netsnmp_5.8_test_container_py313_session.txt, test-results_fedora41_netsnmp_5.8_test_container_py313_session.xml
             fedora41_netsnmp_5.8_py313_netsnmp, test-outputs_fedora41_netsnmp_5.8_test_container_py313_netsnmp.txt, test-results_fedora41_netsnmp_5.8_test_container_py313_netsnmp.xml
+            fedora41_netsnmp_5.8_py313_exceptions, test-outputs_fedora41_netsnmp_5.8_test_container_py313_exceptions.txt, test-results_fedora41_netsnmp_5.8_test_container_py313_exceptions.xml
             fedora41_netsnmp_5.8_py313_misc, test-outputs_fedora41_netsnmp_5.8_test_container_py313_misc.txt, test-results_fedora41_netsnmp_5.8_test_container_py313_misc.xml
             fedora41_netsnmp_5.8_py314_session, test-outputs_fedora41_netsnmp_5.8_test_container_py314_session.txt, test-results_fedora41_netsnmp_5.8_test_container_py314_session.xml
             fedora41_netsnmp_5.8_py314_netsnmp, test-outputs_fedora41_netsnmp_5.8_test_container_py314_netsnmp.txt, test-results_fedora41_netsnmp_5.8_test_container_py314_netsnmp.xml
+            fedora41_netsnmp_5.8_py314_exceptions, test-outputs_fedora41_netsnmp_5.8_test_container_py314_exceptions.txt, test-results_fedora41_netsnmp_5.8_test_container_py314_exceptions.xml
             fedora41_netsnmp_5.8_py314_misc, test-outputs_fedora41_netsnmp_5.8_test_container_py314_misc.txt, test-results_fedora41_netsnmp_5.8_test_container_py314_misc.xml
             fedora41_netsnmp_5.9_py310_session, test-outputs_fedora41_netsnmp_5.9_test_container_py310_session.txt, test-results_fedora41_netsnmp_5.9_test_container_py310_session.xml
             fedora41_netsnmp_5.9_py310_netsnmp, test-outputs_fedora41_netsnmp_5.9_test_container_py310_netsnmp.txt, test-results_fedora41_netsnmp_5.9_test_container_py310_netsnmp.xml
+            fedora41_netsnmp_5.9_py310_exceptions, test-outputs_fedora41_netsnmp_5.9_test_container_py310_exceptions.txt, test-results_fedora41_netsnmp_5.9_test_container_py310_exceptions.xml
             fedora41_netsnmp_5.9_py310_misc, test-outputs_fedora41_netsnmp_5.9_test_container_py310_misc.txt, test-results_fedora41_netsnmp_5.9_test_container_py310_misc.xml
             fedora41_netsnmp_5.9_py311_session, test-outputs_fedora41_netsnmp_5.9_test_container_py311_session.txt, test-results_fedora41_netsnmp_5.9_test_container_py311_session.xml
             fedora41_netsnmp_5.9_py311_netsnmp, test-outputs_fedora41_netsnmp_5.9_test_container_py311_netsnmp.txt, test-results_fedora41_netsnmp_5.9_test_container_py311_netsnmp.xml
+            fedora41_netsnmp_5.9_py311_exceptions, test-outputs_fedora41_netsnmp_5.9_test_container_py311_exceptions.txt, test-results_fedora41_netsnmp_5.9_test_container_py311_exceptions.xml
             fedora41_netsnmp_5.9_py311_misc, test-outputs_fedora41_netsnmp_5.9_test_container_py311_misc.txt, test-results_fedora41_netsnmp_5.9_test_container_py311_misc.xml
             fedora41_netsnmp_5.9_py312_session, test-outputs_fedora41_netsnmp_5.9_test_container_py312_session.txt, test-results_fedora41_netsnmp_5.9_test_container_py312_session.xml
             fedora41_netsnmp_5.9_py312_netsnmp, test-outputs_fedora41_netsnmp_5.9_test_container_py312_netsnmp.txt, test-results_fedora41_netsnmp_5.9_test_container_py312_netsnmp.xml
+            fedora41_netsnmp_5.9_py312_exceptions, test-outputs_fedora41_netsnmp_5.9_test_container_py312_exceptions.txt, test-results_fedora41_netsnmp_5.9_test_container_py312_exceptions.xml
             fedora41_netsnmp_5.9_py312_misc, test-outputs_fedora41_netsnmp_5.9_test_container_py312_misc.txt, test-results_fedora41_netsnmp_5.9_test_container_py312_misc.xml
             fedora41_netsnmp_5.9_py313_session, test-outputs_fedora41_netsnmp_5.9_test_container_py313_session.txt, test-results_fedora41_netsnmp_5.9_test_container_py313_session.xml
             fedora41_netsnmp_5.9_py313_netsnmp, test-outputs_fedora41_netsnmp_5.9_test_container_py313_netsnmp.txt, test-results_fedora41_netsnmp_5.9_test_container_py313_netsnmp.xml
+            fedora41_netsnmp_5.9_py313_exceptions, test-outputs_fedora41_netsnmp_5.9_test_container_py313_exceptions.txt, test-results_fedora41_netsnmp_5.9_test_container_py313_exceptions.xml
             fedora41_netsnmp_5.9_py313_misc, test-outputs_fedora41_netsnmp_5.9_test_container_py313_misc.txt, test-results_fedora41_netsnmp_5.9_test_container_py313_misc.xml
             fedora41_netsnmp_5.9_py314_session, test-outputs_fedora41_netsnmp_5.9_test_container_py314_session.txt, test-results_fedora41_netsnmp_5.9_test_container_py314_session.xml
             fedora41_netsnmp_5.9_py314_netsnmp, test-outputs_fedora41_netsnmp_5.9_test_container_py314_netsnmp.txt, test-results_fedora41_netsnmp_5.9_test_container_py314_netsnmp.xml
+            fedora41_netsnmp_5.9_py314_exceptions, test-outputs_fedora41_netsnmp_5.9_test_container_py314_exceptions.txt, test-results_fedora41_netsnmp_5.9_test_container_py314_exceptions.xml
             fedora41_netsnmp_5.9_py314_misc, test-outputs_fedora41_netsnmp_5.9_test_container_py314_misc.txt, test-results_fedora41_netsnmp_5.9_test_container_py314_misc.xml
             rockylinux8_netsnmp_5.8_py310_session, test-outputs_rockylinux8_netsnmp_5.8_test_container_py310_session.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py310_session.xml
             rockylinux8_netsnmp_5.8_py310_netsnmp, test-outputs_rockylinux8_netsnmp_5.8_test_container_py310_netsnmp.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py310_netsnmp.xml
+            rockylinux8_netsnmp_5.8_py310_exceptions, test-outputs_rockylinux8_netsnmp_5.8_test_container_py310_exceptions.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py310_exceptions.xml
             rockylinux8_netsnmp_5.8_py310_misc, test-outputs_rockylinux8_netsnmp_5.8_test_container_py310_misc.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py310_misc.xml
             rockylinux8_netsnmp_5.8_py311_session, test-outputs_rockylinux8_netsnmp_5.8_test_container_py311_session.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py311_session.xml
             rockylinux8_netsnmp_5.8_py311_netsnmp, test-outputs_rockylinux8_netsnmp_5.8_test_container_py311_netsnmp.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py311_netsnmp.xml
+            rockylinux8_netsnmp_5.8_py311_exceptions, test-outputs_rockylinux8_netsnmp_5.8_test_container_py311_exceptions.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py311_exceptions.xml
             rockylinux8_netsnmp_5.8_py311_misc, test-outputs_rockylinux8_netsnmp_5.8_test_container_py311_misc.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py311_misc.xml
             rockylinux8_netsnmp_5.8_py312_session, test-outputs_rockylinux8_netsnmp_5.8_test_container_py312_session.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py312_session.xml
             rockylinux8_netsnmp_5.8_py312_netsnmp, test-outputs_rockylinux8_netsnmp_5.8_test_container_py312_netsnmp.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py312_netsnmp.xml
+            rockylinux8_netsnmp_5.8_py312_exceptions, test-outputs_rockylinux8_netsnmp_5.8_test_container_py312_exceptions.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py312_exceptions.xml
             rockylinux8_netsnmp_5.8_py312_misc, test-outputs_rockylinux8_netsnmp_5.8_test_container_py312_misc.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py312_misc.xml
             rockylinux8_netsnmp_5.8_py313_session, test-outputs_rockylinux8_netsnmp_5.8_test_container_py313_session.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py313_session.xml
             rockylinux8_netsnmp_5.8_py313_netsnmp, test-outputs_rockylinux8_netsnmp_5.8_test_container_py313_netsnmp.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py313_netsnmp.xml
+            rockylinux8_netsnmp_5.8_py313_exceptions, test-outputs_rockylinux8_netsnmp_5.8_test_container_py313_exceptions.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py313_exceptions.xml
             rockylinux8_netsnmp_5.8_py313_misc, test-outputs_rockylinux8_netsnmp_5.8_test_container_py313_misc.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py313_misc.xml
             rockylinux8_netsnmp_5.8_py314_session, test-outputs_rockylinux8_netsnmp_5.8_test_container_py314_session.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py314_session.xml
             rockylinux8_netsnmp_5.8_py314_netsnmp, test-outputs_rockylinux8_netsnmp_5.8_test_container_py314_netsnmp.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py314_netsnmp.xml
+            rockylinux8_netsnmp_5.8_py314_exceptions, test-outputs_rockylinux8_netsnmp_5.8_test_container_py314_exceptions.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py314_exceptions.xml
             rockylinux8_netsnmp_5.8_py314_misc, test-outputs_rockylinux8_netsnmp_5.8_test_container_py314_misc.txt, test-results_rockylinux8_netsnmp_5.8_test_container_py314_misc.xml
             rockylinux9_netsnmp_5.9_py310_session, test-outputs_rockylinux9_netsnmp_5.9_test_container_py310_session.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py310_session.xml
             rockylinux9_netsnmp_5.9_py310_netsnmp, test-outputs_rockylinux9_netsnmp_5.9_test_container_py310_netsnmp.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py310_netsnmp.xml
+            rockylinux9_netsnmp_5.9_py310_exceptions, test-outputs_rockylinux9_netsnmp_5.9_test_container_py310_exceptions.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py310_exceptions.xml
             rockylinux9_netsnmp_5.9_py310_misc, test-outputs_rockylinux9_netsnmp_5.9_test_container_py310_misc.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py310_misc.xml
             rockylinux9_netsnmp_5.9_py311_session, test-outputs_rockylinux9_netsnmp_5.9_test_container_py311_session.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py311_session.xml
             rockylinux9_netsnmp_5.9_py311_netsnmp, test-outputs_rockylinux9_netsnmp_5.9_test_container_py311_netsnmp.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py311_netsnmp.xml
+            rockylinux9_netsnmp_5.9_py311_exceptions, test-outputs_rockylinux9_netsnmp_5.9_test_container_py311_exceptions.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py311_exceptions.xml
             rockylinux9_netsnmp_5.9_py311_misc, test-outputs_rockylinux9_netsnmp_5.9_test_container_py311_misc.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py311_misc.xml
             rockylinux9_netsnmp_5.9_py312_session, test-outputs_rockylinux9_netsnmp_5.9_test_container_py312_session.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py312_session.xml
             rockylinux9_netsnmp_5.9_py312_netsnmp, test-outputs_rockylinux9_netsnmp_5.9_test_container_py312_netsnmp.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py312_netsnmp.xml
+            rockylinux9_netsnmp_5.9_py312_exceptions, test-outputs_rockylinux9_netsnmp_5.9_test_container_py312_exceptions.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py312_exceptions.xml
             rockylinux9_netsnmp_5.9_py312_misc, test-outputs_rockylinux9_netsnmp_5.9_test_container_py312_misc.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py312_misc.xml
             rockylinux9_netsnmp_5.9_py313_session, test-outputs_rockylinux9_netsnmp_5.9_test_container_py313_session.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py313_session.xml
             rockylinux9_netsnmp_5.9_py313_netsnmp, test-outputs_rockylinux9_netsnmp_5.9_test_container_py313_netsnmp.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py313_netsnmp.xml
+            rockylinux9_netsnmp_5.9_py313_exceptions, test-outputs_rockylinux9_netsnmp_5.9_test_container_py313_exceptions.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py313_exceptions.xml
             rockylinux9_netsnmp_5.9_py313_misc, test-outputs_rockylinux9_netsnmp_5.9_test_container_py313_misc.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py313_misc.xml
             rockylinux9_netsnmp_5.9_py314_session, test-outputs_rockylinux9_netsnmp_5.9_test_container_py314_session.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py314_session.xml
             rockylinux9_netsnmp_5.9_py314_netsnmp, test-outputs_rockylinux9_netsnmp_5.9_test_container_py314_netsnmp.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py314_netsnmp.xml
+            rockylinux9_netsnmp_5.9_py314_exceptions, test-outputs_rockylinux9_netsnmp_5.9_test_container_py314_exceptions.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py314_exceptions.xml
             rockylinux9_netsnmp_5.9_py314_misc, test-outputs_rockylinux9_netsnmp_5.9_test_container_py314_misc.txt, test-results_rockylinux9_netsnmp_5.9_test_container_py314_misc.xml
 
       - name: Strip leading newlines from summaryReport
