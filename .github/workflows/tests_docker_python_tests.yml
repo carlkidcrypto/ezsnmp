@@ -33,7 +33,6 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
-            tox.ini
 
   test-python-tests:
     needs: check-changes
@@ -110,7 +109,7 @@ jobs:
           mkdir -p ${{ runner.temp }}/pip-cache-${{ matrix.python }}
           chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
 
-      - name: Cache pip packages for tox (Docker)
+      - name: Cache pip packages (Docker)
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
@@ -133,45 +132,42 @@ jobs:
           if ! docker run -d \
             --name "$CONTAINER_NAME" \
             -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
-            -v "$RUNNER_TEMP/pip-cache-${{ matrix.python }}:/pip-cache" \
             "$IMAGE" \
             /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
               echo "ERROR: Docker run failed for $IMAGE" >&2
               exit 1
           fi
 
-      - name: Run tox for ${{ matrix.python }}
+      - name: Run pytest for ${{ matrix.python }}
         run: |
           set -euo pipefail
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
-          echo ">>> Executing tox tests inside container: $CONTAINER_NAME"
+          echo ">>> Executing pytest inside container: $CONTAINER_NAME"
           docker exec -t "$CONTAINER_NAME" bash -c '
             set -e
-            echo "    - Preparing environment and isolated work dirs";
             export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
-            export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
-            export WORK_DIR=/tmp/ezsnmp_${{ matrix.distribution }};
-            export TOX_WORK_DIR=/tmp/tox_${{ matrix.distribution }};
-            rm -rf "$WORK_DIR" "$TOX_WORK_DIR";
-            mkdir -p "$WORK_DIR";
-            echo "    - Copying sources to isolated directory";
-            cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd "$WORK_DIR" && tar xf -);
-            cd "$WORK_DIR";
-            echo "    - Installing tox";
+            export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-};
             export PIP_CACHE_DIR=/pip-cache;
-            python3 -m pip install --quiet tox;
-            echo "    - Forcing pytest to write junit and coverage to /ezsnmp";
-            export PYTEST_ADDOPTS="$PYTEST_ADDOPTS --junitxml=/ezsnmp/test-results.xml --cov-report=xml:/ezsnmp/coverage.xml";
-            TOX_ENV="${{ matrix.python }}";
-            echo "    - Running tox environment: $TOX_ENV";
-            if tox -e "$TOX_ENV" --workdir "$TOX_WORK_DIR" > /ezsnmp/test-outputs.txt 2>&1; then
-              echo "    - Tox completed for $TOX_ENV";
+            PY_KEY="${{ matrix.python }}";
+            PY_VER="${PY_KEY#py}";
+            PYTHON_BIN="python${PY_VER:0:1}.${PY_VER:1}";
+            VENV_DIR="/tmp/venv_${{ matrix.python }}";
+            echo "    - Creating venv with $PYTHON_BIN at $VENV_DIR";
+            "$PYTHON_BIN" -m venv "$VENV_DIR";
+            echo "    - Installing test dependencies";
+            "$VENV_DIR/bin/pip" install --quiet -r /ezsnmp/python_tests/requirements.txt;
+            echo "    - Installing ezsnmp";
+            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
+            echo "    - Running pytest";
+            if "$VENV_DIR/bin/pytest" -v -s -n auto --dist loadfile \
+              --junitxml=/ezsnmp/test-results.xml \
+              --cov=ezsnmp --cov-report=term-missing \
+              --cov-report=xml:/ezsnmp/coverage.xml \
+              --cov-config=/ezsnmp/.coveragerc \
+              /ezsnmp/python_tests/ > /ezsnmp/test-outputs.txt 2>&1; then
+              echo "    - Pytest completed for $PY_KEY";
             else
-              echo "    - Tox reported failures for $TOX_ENV (continuing to collect artifacts)";
-            fi;
-            echo "    - Copying coverage.xml to /ezsnmp/ if not already present";
-            if [ -f "$WORK_DIR/coverage.xml" ] && [ ! -f /ezsnmp/coverage.xml ]; then
-              cp "$WORK_DIR/coverage.xml" /ezsnmp/coverage.xml;
+              echo "    - Pytest reported failures for $PY_KEY (continuing to collect artifacts)";
             fi;
             exit 0;
           '

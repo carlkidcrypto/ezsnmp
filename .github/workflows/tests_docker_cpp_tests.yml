@@ -39,7 +39,6 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
-            tox.ini
 
   test-cpp-tests:
     needs: check-changes
