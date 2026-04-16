@@ -104,19 +104,6 @@ jobs:
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
 
-      - name: Set up pip cache directory
-        run: |
-          mkdir -p ${{ runner.temp }}/pip-cache-${{ matrix.python }}
-          chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
-
-      - name: Cache pip packages (Docker)
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
-          key: pip-docker-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
-          restore-keys: |
-            pip-docker-${{ matrix.python }}-
-
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
@@ -147,7 +134,6 @@ jobs:
             set -e
             export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
             export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-};
-            export PIP_CACHE_DIR=/pip-cache;
             PY_KEY="${{ matrix.python }}";
             PY_VER="${PY_KEY#py}";
             PYTHON_BIN="python${PY_VER:0:1}.${PY_VER:1}";
