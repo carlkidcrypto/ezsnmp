@@ -1,4 +1,4 @@
-project('ezsnmp_tests', 'cpp', version: '2.3.0a0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
+project('ezsnmp_tests', 'cpp', version: '2.3.0a1', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
