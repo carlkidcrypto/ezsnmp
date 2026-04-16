@@ -657,7 +657,7 @@ class Session(SessionBase):
 
         Example:
             >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> session = Session(hostname="localhost", community="public", version="2c")
             >>> results = session.walk("1.3.6.1.2.1")
             >>> for item in results:
             ...     print("OID:", item.oid)
@@ -702,7 +702,7 @@ class Session(SessionBase):
 
         Example (single OID string):
             >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> session = Session(hostname="localhost", community="public", version="2c")
             >>> results = session.bulk_walk("1.3.6.1.2.1")
             >>> print("OID:", results[0].oid)
 
@@ -754,7 +754,7 @@ class Session(SessionBase):
 
         Example (single OID string):
             >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> session = Session(hostname="localhost", community="public", version="2c")
             >>> result = session.get("1.3.6.1.2.1.1.1.0")
             >>> print("OID:", result[0].oid)
 
@@ -801,7 +801,7 @@ class Session(SessionBase):
 
         Example:
             >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> session = Session(hostname="localhost", community="public", version="2c")
             >>> results = session.get_next(["1.3.6.1.2.1.1.1.0"])
             >>> for item in results:
             ...     print("OID:", item.oid)
@@ -844,7 +844,7 @@ class Session(SessionBase):
 
         Example:
             >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> session = Session(hostname="localhost", community="public", version="2c")
             >>> results = session.bulk_get(["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"])
             >>> for item in results:
             ...     print("OID:", item.oid)
@@ -892,7 +892,7 @@ class Session(SessionBase):
 
         Example:
             >>> from ezsnmp import Session
-            >>> session = Session(hostname="localhost", community="public", version="2")
+            >>> session = Session(hostname="localhost", community="public", version="2c")
             >>> results = session.set([
             ...     ".1.3.6.1.6.3.12.1.2.1.2.116.101.115.116", "o", ".1.3.6.1.6.1.1",
             ...     ".1.3.6.1.6.3.12.1.2.1.3.116.101.115.116", "s", "1234",
