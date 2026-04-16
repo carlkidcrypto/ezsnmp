@@ -136,8 +136,8 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.14
         with:
-          packages_dir: dist/
-          verify_metadata: false
-          skip_existing: true
-          print_hash: true
-          repository_url: https://test.pypi.org/legacy/
+          packages-dir: dist/
+          verify-metadata: false
+          skip-existing: true
+          print-hash: true
+          repository-url: https://test.pypi.org/legacy/
