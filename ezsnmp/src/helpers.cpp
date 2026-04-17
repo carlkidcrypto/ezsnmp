@@ -40,26 +40,11 @@ std::string print_variable_to_string(oid const *objid,
    }
 }
 
-/* straight copy from
- * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
- */
-/* Slight modifications to raise GenericError instead of print to stderr */
-void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
-   std::string err;
-   char *err_cstr = nullptr;
-
-   snmp_error(ss, NULL, NULL, &err_cstr);
-   err = err_cstr;
-   SNMP_FREE(err_cstr);
-   snmp_close(ss);
-
-   // Construct the error message
-   std::string message = std::string(prog_string) + ": " + err;
-
-   // Perform case-insensitive matching for common connection failures across platforms
-   std::string message_lower = message;
-   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
-
+// Shared helper: classifies an SNMP error message and throws the appropriate exception.
+// Takes both the original-case message (for the exception text) and the lower-case version
+// (for case-insensitive matching). [[noreturn]] tells the compiler this always throws.
+[[noreturn]] static void throw_snmp_exception_from_message(std::string message,
+                                                           std::string const &message_lower) {
    auto const is_connection_error = [](std::string const &haystack) {
       return haystack.find("unknown host") != std::string::npos ||
              haystack.find("name or service not known") != std::string::npos ||
@@ -84,14 +69,32 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
       throw TimeoutErrorBase(message);
    }
 
-   if (message.find("Cannot send V2 PDU on V1 session") != std::string::npos) {
+   if (message_lower.find("cannot send v2 pdu on v1 session") != std::string::npos) {
       message = message.substr(0, message.find_last_not_of(' ') + 1);
-
       throw PacketErrorBase(message);
    }
 
-   // Throw a runtime_error with the message
    throw GenericErrorBase(message);
+}
+
+/* straight copy from
+ * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
+ */
+/* Slight modifications to raise GenericError instead of print to stderr */
+void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
+   std::string err;
+   char *err_cstr = nullptr;
+
+   snmp_error(ss, NULL, NULL, &err_cstr);
+   err = err_cstr;
+   SNMP_FREE(err_cstr);
+   snmp_close(ss);
+
+   std::string message = std::string(prog_string) + ": " + err;
+   std::string message_lower = message;
+   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
+
+   throw_snmp_exception_from_message(std::move(message), message_lower);
 }
 
 /* Variant of snmp_sess_perror_exception for the single-session API (void* opaque session).
@@ -106,44 +109,11 @@ void snmp_single_sess_perror_exception(char const *prog_string, void *sessp) {
    err = err_cstr;
    SNMP_FREE(err_cstr);
 
-   // Construct the error message
    std::string message = std::string(prog_string) + ": " + err;
-
-   // Perform case-insensitive matching for common connection failures across platforms
    std::string message_lower = message;
    std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
 
-   auto const is_connection_error = [](std::string const &haystack) {
-      return haystack.find("unknown host") != std::string::npos ||
-             haystack.find("name or service not known") != std::string::npos ||
-             haystack.find("temporary failure in name resolution") != std::string::npos ||
-             haystack.find("could not translate host name") != std::string::npos ||
-             haystack.find("no address associated with hostname") != std::string::npos ||
-             haystack.find("invalid address") != std::string::npos;
-   };
-
-   auto const is_timeout_error = [](std::string const &haystack) {
-      return haystack.find("timeout") != std::string::npos ||
-             haystack.find("timed out") != std::string::npos;
-   };
-
-   if (is_connection_error(message_lower)) {
-      message = message.substr(0, message.find_last_not_of(' ') + 1);
-      throw ConnectionErrorBase(message);
-   }
-
-   if (is_timeout_error(message_lower)) {
-      message = message.substr(0, message.find_last_not_of(' ') + 1);
-      throw TimeoutErrorBase(message);
-   }
-
-   if (message.find("Cannot send V2 PDU on V1 session") != std::string::npos) {
-      message = message.substr(0, message.find_last_not_of(' ') + 1);
-      throw PacketErrorBase(message);
-   }
-
-   // Throw a runtime_error with the message
-   throw GenericErrorBase(message);
+   throw_snmp_exception_from_message(std::move(message), message_lower);
 }
 
 /* straight copy from

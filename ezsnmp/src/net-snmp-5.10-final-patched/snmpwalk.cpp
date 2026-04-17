@@ -84,9 +84,7 @@ thread_local char *end_name = NULL;
 #include "snmpwalk.h"
 #include "thread_safety.h"
 
-std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss,
-                                                     oid *theoid,
-                                                     size_t theoid_len) {
+std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss, oid *theoid, size_t theoid_len) {
    std::vector<std::string> str_values;
 
    netsnmp_pdu *pdu, *response;
