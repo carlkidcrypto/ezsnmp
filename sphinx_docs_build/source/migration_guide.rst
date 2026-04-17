@@ -51,6 +51,14 @@ underlying net-snmp applications. For example:
 V2.X.X, the possible values are now ``noAuthNoPriv``, ``authNoPriv``, and ``authPriv``, as
 required by net-snmp tools like ``snmpwalk``.
 
+``version``: All three of the following forms are valid and equivalent for SNMPv2c:
+
+- Integer ``2`` — automatically converted to ``"2c"`` internally.
+- String ``"2"`` — passed through as-is; net-snmp accepts ``-v 2``.
+- String ``"2c"`` — the canonical form; passed through as-is.
+
+For other versions use ``1`` / ``"1"`` (SNMPv1) or ``3`` / ``"3"`` (SNMPv3).
+
 For more details on the acceptable values for ``security_level`` and other parameters, refer to the 
 official net-snmp documentation: `Net-SNMP Command Line Applications 
 <https://www.net-snmp.org/docs/man/snmpcmd.html>`_.
