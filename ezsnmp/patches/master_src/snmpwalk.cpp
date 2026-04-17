@@ -84,7 +84,7 @@ thread_local char *end_name = NULL;
 #include "snmpwalk.h"
 #include "thread_safety.h"
 
-std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
+std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss,
                                                      oid *theoid,
                                                      size_t theoid_len) {
    std::vector<std::string> str_values;
@@ -96,7 +96,7 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(netsnmp_session *ss,
    pdu = snmp_pdu_create(SNMP_MSG_GET);
    snmp_add_null_var(pdu, theoid, theoid_len);
 
-   status = snmp_synch_response(ss, pdu, &response);
+   status = snmp_sess_synch_response(ss, pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -173,7 +173,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    std::vector<std::string> return_vector;
 
    netsnmp_session session;
-   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
+   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -292,7 +292,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss.reset(snmp_open(&session));
+   ss.reset(snmp_sess_open(&session));
    if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
@@ -334,7 +334,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       if (time_results_single) {
          netsnmp_get_monotonic_clock(&tv_a);
       }
-      status = snmp_synch_response(ss.get(), pdu, &response);
+      status = snmp_sess_synch_response(ss.get(), pdu, &response);
       if (status == STAT_SUCCESS) {
          if (time_results_single) {
             netsnmp_get_monotonic_clock(&tv_b);
@@ -415,7 +415,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
          std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
          throw TimeoutErrorBase(err_msg);
       } else { /* status == STAT_ERROR */
-         snmp_sess_perror_exception("snmpwalk", ss.get());
+         snmp_single_sess_perror_exception("snmpwalk", ss.get());
       }
       if (response) {
          snmp_free_pdu(response);
@@ -449,7 +449,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    }
 
    {
-      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
 
    netsnmp_cleanup_session(&session);

@@ -94,8 +94,59 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
    throw GenericErrorBase(message);
 }
 
+/* Variant of snmp_sess_perror_exception for the single-session API (void* opaque session).
+ * Uses snmp_sess_error() to retrieve the error message. Does NOT close the session;
+ * the caller's RAII smart pointer (SnmpSingleSessionCloser) handles cleanup during
+ * stack unwinding after this function throws. */
+void snmp_single_sess_perror_exception(char const *prog_string, void *sessp) {
+   std::string err;
+   char *err_cstr = nullptr;
+
+   snmp_sess_error(sessp, NULL, NULL, &err_cstr);
+   err = err_cstr;
+   SNMP_FREE(err_cstr);
+
+   // Construct the error message
+   std::string message = std::string(prog_string) + ": " + err;
+
+   // Perform case-insensitive matching for common connection failures across platforms
+   std::string message_lower = message;
+   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
+
+   auto const is_connection_error = [](std::string const &haystack) {
+      return haystack.find("unknown host") != std::string::npos ||
+             haystack.find("name or service not known") != std::string::npos ||
+             haystack.find("temporary failure in name resolution") != std::string::npos ||
+             haystack.find("could not translate host name") != std::string::npos ||
+             haystack.find("no address associated with hostname") != std::string::npos ||
+             haystack.find("invalid address") != std::string::npos;
+   };
+
+   auto const is_timeout_error = [](std::string const &haystack) {
+      return haystack.find("timeout") != std::string::npos ||
+             haystack.find("timed out") != std::string::npos;
+   };
+
+   if (is_connection_error(message_lower)) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
+      throw ConnectionErrorBase(message);
+   }
+
+   if (is_timeout_error(message_lower)) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
+      throw TimeoutErrorBase(message);
+   }
+
+   if (message.find("Cannot send V2 PDU on V1 session") != std::string::npos) {
+      message = message.substr(0, message.find_last_not_of(' ') + 1);
+      throw PacketErrorBase(message);
+   }
+
+   // Throw a runtime_error with the message
+   throw GenericErrorBase(message);
+}
+
 /* straight copy from
- * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L505-L511
  */
 /* Slight modifications to raise GenericError instead of print to stderr */
 void snmp_perror_exception(char const *prog_string) {
@@ -274,6 +325,10 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
    // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
    // std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
+   // usm_get_userList() returns a global linked list that is not thread-safe.
+   // Hold the mutex for the full traversal and removal to prevent concurrent
+   // threads from causing use-after-free or infinite loops.
+   std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
