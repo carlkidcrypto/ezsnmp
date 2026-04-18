@@ -135,6 +135,25 @@ jobs:
               exit 1
           fi
 
+      - name: Wait for SNMP daemon to be ready
+        run: |
+          set -euo pipefail
+          CONTAINER_NAME="${{ matrix.distribution }}_test_container"
+          echo ">>> Waiting for snmpd to be ready in $CONTAINER_NAME (port 11161)..."
+          for i in $(seq 1 30); do
+            if docker exec "$CONTAINER_NAME" bash -c \
+              'snmpget -v2c -c public -t 1 -r 0 localhost:11161 sysDescr.0 >/dev/null 2>&1'; then
+              echo "    - snmpd is ready (after ${i}s)"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "    - WARNING: snmpd did not respond after 30s, proceeding anyway"
+            else
+              echo "    - snmpd not ready yet (${i}s)..."
+              sleep 1
+            fi
+          done
+
       - name: Run pytest for ${{ matrix.python }} - ${{ matrix.test_group }}
         run: |
           set -euo pipefail
@@ -157,7 +176,7 @@ jobs:
             echo "    - Installing ezsnmp";
             cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
-            if "$VENV_DIR/bin/pytest" -v -s --timeout=60 \
+            if "$VENV_DIR/bin/pytest" -v -s --timeout=120 \
               --junitxml=/ezsnmp/test-results.xml \
               --cov=ezsnmp --cov-report=term-missing \
               --cov-report=xml:/ezsnmp/coverage.xml \

@@ -302,7 +302,6 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
-      struct usmUser *dummy = actUser;
       auto act_user_sec_name_str = std::string("");
       auto act_user_engine_id_str = std::string("");
 
@@ -313,36 +312,33 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
          act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));
       }
 
-      // if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
-      //     security_name_str == act_user_sec_name_str &&
-      //     context_engine_id_str == act_user_engine_id_str) {
-      //    std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
-      //    usm_remove_user(actUser);
-      //    actUser->next = NULL;
-      //    actUser->prev = NULL;
-      //    usm_free_user(actUser);
-      //    break;
-      // }
-
-      // This works for now, but it may change when threads/muli-procs are involved.
+      // Remove ALL matching entries for this security name so that stale USM cache
+      // entries from previous (possibly failed) sessions cannot accumulate and cause
+      // net-snmp to enter an infinite loop during subsequent operations.
       if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
           security_name_str == act_user_sec_name_str &&
           context_engine_id_str == act_user_engine_id_str) {
          // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         // Capture the next pointer first; we zero actUser->next before freeing as a
+         // defensive measure so freed memory has no dangling pointers.
+         struct usmUser *next_user = actUser->next;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
-         break;
+         actUser = next_user;
       } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
          // std::cout << "Removing user: " << security_name_str.c_str() << std::endl;
+         // Same defensive zeroing: capture next before nulling the pointer.
+         struct usmUser *next_user = actUser->next;
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
-         break;
+         actUser = next_user;
+      } else {
+         actUser = actUser->next;
       }
-      actUser = dummy->next;
    }
 }
 
