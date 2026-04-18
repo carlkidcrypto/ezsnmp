@@ -67,8 +67,8 @@ All Python versions are compiled from source:
 * Python 3.10.20
 * Python 3.11.15
 * Python 3.12.13
-* Python 3.13.12
-* Python 3.14.3 (default venv)
+* Python 3.13.13
+* Python 3.14.4 (default venv)
 
 Gcc Toolset
 ===========

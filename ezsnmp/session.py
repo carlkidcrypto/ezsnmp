@@ -41,8 +41,15 @@ class Session(SessionBase):
         :type hostname: str
         :param port_number: The port number of the SNMP agent.
         :type port_number: Union[str, int]
-        :param version: The SNMP version to use (1, 2, 2c, or 3). The integer value 2
-            is automatically converted to "2c".
+        :param version: The SNMP version to use. All of the following forms are
+            accepted and equivalent for SNMPv2c:
+
+            - Integer ``2`` — automatically converted to ``"2c"`` internally.
+            - String ``"2"`` — passed through as-is; net-snmp accepts ``-v 2``.
+            - String ``"2c"`` — the canonical form; passed through as-is.
+
+            For other versions use ``1`` / ``"1"`` (SNMPv1) or ``3`` / ``"3"``
+            (SNMPv3).
         :type version: Union[str, int]
         :param community: The community string for SNMPv1/v2c.
         :type community: str

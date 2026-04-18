@@ -206,10 +206,10 @@ To run C++ tests in Docker:
     ./run_cpp_tests_in_all_dockers.sh rockylinux8
 
     # Run C++ tests in multiple specific distributions
-    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+    ./run_cpp_tests_in_all_dockers.sh rockylinux8 rockylinux9
 
     # Test only net-snmp 5.7 containers (useful for iterative debugging)
-    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+    ./run_cpp_tests_in_all_dockers.sh fedora41_netsnmp_5.7
 
     # Show help and usage examples
     ./run_cpp_tests_in_all_dockers.sh --help

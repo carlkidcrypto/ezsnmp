@@ -2,8 +2,8 @@
 FROM almalinux:10-kitten
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.3
-ARG PYTHON_MIN_2_VERSION=3.13.12  # Not built from source, provided by OS package manager
+ARG PYTHON_MAX_VERSION=3.14.4
+ARG PYTHON_MIN_2_VERSION=3.13.13  # Not built from source, provided by OS package manager
 ARG PYTHON_MIN_1_VERSION=3.12.13  # Not built from source, provided by OS package manager
 ARG PYTHON_MIN_0_VERSION=3.11.15
 ARG PYTHON_MIN_VERSION=3.10.20
@@ -20,7 +20,7 @@ RUN dnf install -y epel-release && \
 # Copy Python tarballs from cache to avoid repeated downloads
 COPY docker/cache/Python-3.10.20.tgz /tmp/
 COPY docker/cache/Python-3.11.15.tgz /tmp/
-COPY docker/cache/Python-3.14.3.tgz /tmp/
+COPY docker/cache/Python-3.14.4.tgz /tmp/
 
 # Build Python 3.10, 3.11, 3.14 from source (not available in AlmaLinux 10 repos)
 # AlmaLinux 10 only ships with Python 3.12 and 3.13
