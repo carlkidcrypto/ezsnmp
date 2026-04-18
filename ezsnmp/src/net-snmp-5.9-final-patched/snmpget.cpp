@@ -104,7 +104,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    std::vector<std::string> return_vector;
 
    netsnmp_session session;
-   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
+   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu = NULL;
    netsnmp_pdu *response = NULL;
    netsnmp_variable_list *vars = NULL;
@@ -170,7 +170,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
    /*
     * Open an SNMP session.
     */
-   ss.reset(snmp_open(&session));
+   ss.reset(snmp_sess_open(&session));
    if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer
@@ -200,7 +200,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
     * "fix" the PDU (removing the error-prone OID) and retry.
     */
 retry:
-   status = snmp_synch_response(ss.get(), pdu, &response);
+   status = snmp_sess_synch_response(ss.get(), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -241,7 +241,7 @@ retry:
       std::string err_msg = "Timeout: No Response from " + std::string(session.peername) + ".\n";
       throw TimeoutErrorBase(err_msg);
    } else { /* status == STAT_ERROR */
-      snmp_sess_perror_exception("snmpget", ss.get());
+      snmp_single_sess_perror_exception("snmpget", ss.get());
 
    } /* endif -- STAT_SUCCESS */
 
@@ -250,7 +250,7 @@ retry:
    }
 
    {
-      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
+      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
 
    netsnmp_cleanup_session(&session);
