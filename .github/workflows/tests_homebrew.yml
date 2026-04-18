@@ -86,7 +86,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -345,7 +345,7 @@ jobs:
 
       - name: Render Valgrind Comment Template
         id: template
-        uses: chuhlomin/render-template@807354a04d9300c9c2ac177c0aa41556c92b3f75 # v1.10
+        uses: chuhlomin/render-template@a7c644e341797d050d1cb24332d83791b9a46dae # v1.12
         with:
           template: .github/comment-valgrind-template.md
           vars: |

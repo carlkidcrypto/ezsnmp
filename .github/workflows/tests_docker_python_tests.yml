@@ -68,7 +68,7 @@ jobs:
 
       - name: Restore cached Docker image tar
         id: cache-restore
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: .docker-image-cache/${{ matrix.distribution }}.tar
           key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
@@ -113,6 +113,19 @@ jobs:
           TAR_PATH=".docker-image-cache/${{ matrix.distribution }}.tar"
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
+
+      - name: Set up pip cache directory
+        run: |
+          mkdir -p ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+
+      - name: Cache pip packages for tox (Docker)
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          key: pip-docker-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
+          restore-keys: |
+            pip-docker-${{ matrix.python }}-
 
       - name: Start container and SNMP daemon
         run: |
