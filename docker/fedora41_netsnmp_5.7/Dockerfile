@@ -2,8 +2,8 @@
 FROM fedora:41
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.3
-ARG PYTHON_MIN_2_VERSION=3.13.12
+ARG PYTHON_MAX_VERSION=3.14.4
+ARG PYTHON_MIN_2_VERSION=3.13.13
 ARG PYTHON_MIN_1_VERSION=3.12.13
 ARG PYTHON_MIN_0_VERSION=3.11.15
 ARG PYTHON_MIN_VERSION=3.10.20
@@ -66,8 +66,8 @@ ENV MALLOC_CHECK_=0
 COPY docker/cache/Python-3.10.20.tgz /tmp/
 COPY docker/cache/Python-3.11.15.tgz /tmp/
 COPY docker/cache/Python-3.12.13.tgz /tmp/
-COPY docker/cache/Python-3.13.12.tgz /tmp/
-COPY docker/cache/Python-3.14.3.tgz /tmp/
+COPY docker/cache/Python-3.13.13.tgz /tmp/
+COPY docker/cache/Python-3.14.4.tgz /tmp/
 
 # Build Python from source (all versions, split into separate layers for caching)
 
