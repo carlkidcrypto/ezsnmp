@@ -34,12 +34,13 @@ Keep open pull requests current by merging the latest main branch into PR branch
 2. For each qualifying PR:
    - Skip if PR comes from a fork without push permission.
    - Skip if PR does not have the `auto-sync` label.
-   - Fetch main and the PR branch.
+   - Checkout the PR branch locally: run `git fetch origin` and then `git checkout <branch-name>` (if the local branch already exists) or `git checkout -b <branch-name> origin/<branch-name>` (if it does not exist locally yet). This ensures the branch exists locally before pushing, which is required by the push tool.
    - Attempt to merge origin/main into the PR branch.
    - **Only emit one `push_to_pull_request_branch` safe output per run** — process the first eligible PR and stop. Do not queue multiple push outputs in a single execution.
 3. If merge succeeds and produces changes, push to that PR branch.
 4. If merge conflict occurs, skip that PR and continue to the next one.
-5. If no open PRs have the `auto-sync` label, or no PR branches can be updated (all are already up to date or all have merge conflicts), call the `noop` tool with a brief explanation such as "No open PRs with auto-sync label found" or "All qualifying PRs are already up to date with main".
+5. If the `push_to_pull_request_branch` tool fails for any technical reason (e.g., branch not found locally, patch generation error, or other tool malfunction), skip that PR and continue to the next one. Do **not** call `report_incomplete` for push tool failures.
+6. If no open PRs have the `auto-sync` label, or no PR branches can be updated (all are already up to date, have merge conflicts, or the push tool failed), call the `noop` tool with a brief explanation such as "No open PRs with auto-sync label found" or "All qualifying PRs are already up to date with main".
 
 ## Constraints
 
