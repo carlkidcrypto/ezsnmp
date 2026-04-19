@@ -56,8 +56,8 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 1. Prepare Python dependencies and run Python tests with coverage:
    - `python -m pip install --upgrade pip`
    - `python -m pip install -r python_tests/requirements.txt`
-   - `python -m pip install tox`
-   - `tox -e py312`
+   - `python -m pip install .`
+   - `pytest -v -s -n auto --dist loadfile --junitxml=test-results.xml --cov=ezsnmp --cov-report=term-missing --cov-report=xml:coverage.xml --cov-config=.coveragerc python_tests/`
    - Read coverage from `coverage.xml` when available.
 
 2. Run C++ tests and coverage from `cpp_tests/` on Linux:
@@ -71,7 +71,7 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
   For each distro:
   - Pull `carlkidcrypto/ezsnmp_test_images:<distro>-latest`
   - Start a container with the repo mounted at `/ezsnmp`
-  - Run Python tests in-container with at least `tox -e py312`
+  - Run Python tests in-container with at least `pytest python_tests/`
   - Collect and evaluate `coverage.xml` for that distro
   - Treat any per-distro Python test failure as actionable
 

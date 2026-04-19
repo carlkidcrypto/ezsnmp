@@ -222,12 +222,12 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		fi
 		echo "    - [${DISTRO_NAME}] Container started successfully"
 
-		# 3. Run tests using tox
-		echo "    - [${DISTRO_NAME}] Executing tox tests..."
+		# 3. Run tests using pytest
+		echo "    - [${DISTRO_NAME}] Executing pytest tests..."
 		for TOX_PYTHON_VERSION_ITERATOR in "${!TOX_PYTHON_VERSION[@]}"; do
 			TOX_PY=${TOX_PYTHON_VERSION[$TOX_PYTHON_VERSION_ITERATOR]}
 			TOX_START=$(date +%s)
-			echo "      * [${DISTRO_NAME}] Running tox for environment: $TOX_PY"
+			echo "      * [${DISTRO_NAME}] Running pytest for environment: $TOX_PY"
 
 		OUTPUT_FILE="test-outputs_${DISTRO_NAME}_${TOX_PY}.txt"
 		
