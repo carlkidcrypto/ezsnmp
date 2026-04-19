@@ -132,7 +132,7 @@ jobs:
           set -euo pipefail
           IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
-          ENTRY_SCRIPT="/ezsnmp/docker/${{ matrix.distribution }}/DockerEntry.sh"
+          ENTRY_SCRIPT="/usr/local/bin/DockerEntry.sh"
           HOST_SOURCE_PATH="$PWD"
           CONTAINER_WORK_DIR="/ezsnmp"
           echo ">>> Starting container: $CONTAINER_NAME"
