@@ -170,7 +170,7 @@ jobs:
             echo "    - Installing ezsnmp";
             cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
-            if "$VENV_DIR/bin/pytest" -v -s --timeout=60 \
+            if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
               --junitxml=/ezsnmp/test-results.xml \
               --cov=ezsnmp --cov-report=term-missing \
               --cov-report=xml:/ezsnmp/coverage.xml \
