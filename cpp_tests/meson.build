@@ -279,6 +279,19 @@ test_helpers_branches_shim = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_helpers_single_sess_perror_shim = executable(
+    'test_helpers_single_sess_perror_shim',
+    [
+        'test_helpers_single_sess_perror_shim.cpp',
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpget_null_shim = executable(
     'test_snmpget_null_shim',
     [
@@ -455,6 +468,7 @@ test('snmpbulkwalk_null_shim_test', test_snmpbulkwalk_null_shim, env: test_env)
 test('exceptionsbase_test', test_exceptionsbase, env: test_env)
 test('helpers_session_perror_shim_test', test_helpers_session_perror_shim, env: test_env)
 test('helpers_branches_shim_test', test_helpers_branches_shim, env: test_env)
+test('helpers_single_sess_perror_shim_test', test_helpers_single_sess_perror_shim, env: test_env)
 
 # New shim tests for coverage improvement
 foreach test_name, exe : new_shim_executables
