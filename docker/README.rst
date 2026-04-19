@@ -151,13 +151,13 @@ The ``DockerEntry.sh`` script accepts an optional parameter to control Python se
 Executing Unit Tests
 ====================
 
-Once the container is running in detached mode, you can use ``docker exec`` to run your tests (e.g., using ``tox``) and copy the results back to your host machine.
+Once the container is running in detached mode, you can use ``docker exec`` to run your tests and copy the results back to your host machine.
 
 **1. Run Tests Inside the Container:**
 
 .. code-block:: bash
 
-    # Execute tox for a specific environment (e.g., py312 on almalinux10)
+    # Execute pytest for a specific environment (e.g., py312 on almalinux10)
     sudo docker exec -t almalinux10_snmp_container bash /ezsnmp/docker/run_tests_inside_container.sh \
       almalinux10 py312 test-outputs_almalinux10_py312.txt
 
@@ -186,20 +186,20 @@ The ``docker`` directory includes helper scripts for automated testing:
 
 **run_tests_inside_container.sh**
 
-A helper script designed to be executed inside Docker containers via ``docker exec``. It sets up the test environment, isolates the source code, and runs tox tests with the specified Python version.
+A helper script designed to be executed inside Docker containers via ``docker exec``. It sets up the test environment and runs pytest with the specified Python version.
 
 .. code-block:: bash
 
-  # Usage: run_tests_inside_container.sh <DISTRO_NAME> <TOX_PY> <OUTPUT_FILE>
+  # Usage: run_tests_inside_container.sh <DISTRO_NAME> <PY_ENV> <OUTPUT_FILE>
   docker exec -t container_name bash /ezsnmp/docker/run_tests_inside_container.sh \
     almalinux10 py312 test-outputs_almalinux10_py312.txt
 
 This script:
 
 * Sets up the necessary environment variables (PATH, LD_LIBRARY_PATH)
-* Creates isolated work directories for testing
-* Copies source code while excluding build artifacts and virtual environments
-* Installs and runs tox for the specified Python version
+* Creates an isolated virtual environment for the specified Python version
+* Installs test dependencies and ezsnmp into it
+* Runs pytest for the specified Python version
 * Outputs results to the specified file in the ``/ezsnmp`` directory
 
 **build_and_publish_images.sh**

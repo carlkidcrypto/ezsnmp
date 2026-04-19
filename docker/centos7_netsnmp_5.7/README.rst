@@ -68,7 +68,7 @@ Virtual Environment
 Created with Python 3.14 at ``/opt/venv``; contains both:
 
 * ``requirements.txt`` (project tooling)
-* ``python_tests/requirements.txt`` (pytest, coverage, tox, etc.)
+* ``python_tests/requirements.txt`` (pytest, coverage, etc.)
 
 Contributing
 ============

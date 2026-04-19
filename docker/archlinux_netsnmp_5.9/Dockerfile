@@ -102,7 +102,7 @@ RUN cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     ldconfig
 
-# Ensure tox can find all Python versions by adding /usr/local/bin to PATH first
+# Ensure all Python versions are accessible by adding /usr/local/bin to PATH first
 # Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
 ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
