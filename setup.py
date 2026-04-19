@@ -102,7 +102,9 @@ def get_homebrew_net_snmp_info():
         return None
 
     try:
-        brew_output = check_output("brew list net-snmp", shell=True, stderr=DEVNULL).decode()
+        brew_output = check_output(
+            "brew list net-snmp", shell=True, stderr=DEVNULL
+        ).decode()
         lines = brew_output.splitlines()
 
         if not lines:

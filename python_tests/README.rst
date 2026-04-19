@@ -47,14 +47,14 @@ To run all tests locally:
 .. code-block:: bash
 
     # From the repository root
-    tox
+    python3 -m pytest python_tests/
 
-To run tests with pytest directly:
+To run tests with verbose output and coverage:
 
 .. code-block:: bash
 
     # From the repository root
-    python3 -m pytest python_tests/
+    python3 -m pytest -v -s python_tests/ --cov=ezsnmp --cov-report=term-missing
 
 To run a specific test file:
 

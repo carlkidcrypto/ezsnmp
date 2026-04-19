@@ -38,6 +38,19 @@ std::string print_variable_to_string(oid const *objid,
 void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss);
 
 /**
+ * @brief Throws an exception with SNMP single-session error information.
+ *
+ * Variant of snmp_sess_perror_exception() for use with the single-session API
+ * (opaque void* returned by snmp_sess_open). The session is NOT closed by this
+ * function; the caller's RAII smart pointer (SnmpSingleSessionCloser) handles
+ * cleanup during stack unwinding.
+ *
+ * @param prog_string A string describing the program or context.
+ * @param sessp Opaque single-session pointer returned by snmp_sess_open().
+ */
+void snmp_single_sess_perror_exception(char const *prog_string, void *sessp);
+
+/**
  * @brief Throws an exception with SNMP error information.
  *
  * This function throws an exception that includes the provided program string
@@ -73,6 +86,21 @@ struct SnmpSessionCloser {
    void operator()(netsnmp_session *session) const {
       if (session) {
          snmp_close(session);
+      }
+   }
+};
+
+/**
+ * @struct SnmpSingleSessionCloser
+ * @brief RAII deleter for opaque single-session pointers returned by snmp_sess_open().
+ *
+ * Uses the single-session API (snmp_sess_close) which does not interact with the
+ * global Net-SNMP session list, making it safe for concurrent multi-threaded use.
+ */
+struct SnmpSingleSessionCloser {
+   void operator()(void *sessp) const {
+      if (sessp) {
+         snmp_sess_close(sessp);
       }
    }
 };
