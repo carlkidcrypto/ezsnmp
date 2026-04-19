@@ -40,26 +40,11 @@ std::string print_variable_to_string(oid const *objid,
    }
 }
 
-/* straight copy from
- * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
- */
-/* Slight modifications to raise GenericError instead of print to stderr */
-void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
-   std::string err;
-   char *err_cstr = nullptr;
-
-   snmp_error(ss, NULL, NULL, &err_cstr);
-   err = err_cstr;
-   SNMP_FREE(err_cstr);
-   snmp_close(ss);
-
-   // Construct the error message
-   std::string message = std::string(prog_string) + ": " + err;
-
-   // Perform case-insensitive matching for common connection failures across platforms
-   std::string message_lower = message;
-   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
-
+// Shared helper: classifies an SNMP error message and throws the appropriate exception.
+// Takes both the original-case message (for the exception text) and the lower-case version
+// (for case-insensitive matching). [[noreturn]] tells the compiler this always throws.
+[[noreturn]] static void throw_snmp_exception_from_message(std::string message,
+                                                           std::string const &message_lower) {
    auto const is_connection_error = [](std::string const &haystack) {
       return haystack.find("unknown host") != std::string::npos ||
              haystack.find("name or service not known") != std::string::npos ||
@@ -84,18 +69,54 @@ void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
       throw TimeoutErrorBase(message);
    }
 
-   if (message.find("Cannot send V2 PDU on V1 session") != std::string::npos) {
+   if (message_lower.find("cannot send v2 pdu on v1 session") != std::string::npos) {
       message = message.substr(0, message.find_last_not_of(' ') + 1);
-
       throw PacketErrorBase(message);
    }
 
-   // Throw a runtime_error with the message
    throw GenericErrorBase(message);
 }
 
 /* straight copy from
- * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L505-L511
+ * https://github.com/net-snmp/net-snmp/blob/b3163b31ee86930111cf097395cdb33074619cab/snmplib/snmp_api.c#L620-L636
+ */
+/* Slight modifications to raise GenericError instead of print to stderr */
+void snmp_sess_perror_exception(char const *prog_string, netsnmp_session *ss) {
+   std::string err;
+   char *err_cstr = nullptr;
+
+   snmp_error(ss, NULL, NULL, &err_cstr);
+   err = err_cstr;
+   SNMP_FREE(err_cstr);
+   snmp_close(ss);
+
+   std::string message = std::string(prog_string) + ": " + err;
+   std::string message_lower = message;
+   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
+
+   throw_snmp_exception_from_message(std::move(message), message_lower);
+}
+
+/* Variant of snmp_sess_perror_exception for the single-session API (void* opaque session).
+ * Uses snmp_sess_error() to retrieve the error message. Does NOT close the session;
+ * the caller's RAII smart pointer (SnmpSingleSessionCloser) handles cleanup during
+ * stack unwinding after this function throws. */
+void snmp_single_sess_perror_exception(char const *prog_string, void *sessp) {
+   std::string err;
+   char *err_cstr = nullptr;
+
+   snmp_sess_error(sessp, NULL, NULL, &err_cstr);
+   err = err_cstr;
+   SNMP_FREE(err_cstr);
+
+   std::string message = std::string(prog_string) + ": " + err;
+   std::string message_lower = message;
+   std::transform(message_lower.begin(), message_lower.end(), message_lower.begin(), ::tolower);
+
+   throw_snmp_exception_from_message(std::move(message), message_lower);
+}
+
+/* straight copy from
  */
 /* Slight modifications to raise GenericError instead of print to stderr */
 void snmp_perror_exception(char const *prog_string) {
@@ -274,6 +295,10 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
    // std::cout << "security_name_str: " << security_name_str.c_str() << std::endl;
    // std::cout << "context_engine_id_str:" << context_engine_id_str.c_str() << std::endl;
+   // usm_get_userList() returns a global linked list that is not thread-safe.
+   // Hold the mutex for the full traversal and removal to prevent concurrent
+   // threads from causing use-after-free or infinite loops.
+   std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {

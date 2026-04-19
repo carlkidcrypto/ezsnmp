@@ -103,9 +103,10 @@ them with the following on Linux:
     mkdir -p -m 0755 ~/.snmp;
     echo 'mibs +ALL' > ~/.snmp/snmp.conf;
     sudo systemctl start snmpd;
-    rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
+    rm -drf build/ ezsnmp.egg-info/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
     python3 -m pip install -r python_tests/requirements.txt;
-    tox
+    python3 -m pip install .;
+    pytest -v -s -n auto --dist loadfile python_tests/
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
     # Bottom one for valgrind. Replace the top one with it if needed.
@@ -176,18 +177,14 @@ To run Python tests in Docker:
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
       /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
 
-    # Execute Python tests inside the container using tox
+    # Execute Python tests inside the container using pytest
     sudo docker exec -t almalinux10_snmp_container bash -c '
       export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
-      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH;
-      export WORK_DIR=/tmp/ezsnmp_test;
-      export TOX_WORK_DIR=/tmp/tox_test;
-      rm -rf $WORK_DIR $TOX_WORK_DIR;
-      mkdir -p $WORK_DIR;
-      cd /ezsnmp && tar --exclude="*.egg-info" --exclude="build" --exclude="dist" --exclude=".tox" --exclude="__pycache__" --exclude="*.pyc" --exclude=".coverage*" --exclude="python3.*venv" --exclude="*.venv" --exclude="venv" -cf - . 2>/dev/null | (cd $WORK_DIR && tar xf -);
-      cd $WORK_DIR;
-      python3 -m pip install tox > /dev/null 2>&1;
-      tox --workdir $TOX_WORK_DIR;
+      export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-};
+      python3.14 -m venv /tmp/venv_test;
+      /tmp/venv_test/bin/pip install -r /ezsnmp/python_tests/requirements.txt;
+      cd /ezsnmp && /tmp/venv_test/bin/pip install .;
+      /tmp/venv_test/bin/pytest -v -s -n auto --dist loadfile /ezsnmp/python_tests/;
     '
 
 Docker C++ Tests
@@ -206,10 +203,10 @@ To run C++ tests in Docker:
     ./run_cpp_tests_in_all_dockers.sh rockylinux8
 
     # Run C++ tests in multiple specific distributions
-    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+    ./run_cpp_tests_in_all_dockers.sh rockylinux8 rockylinux9
 
     # Test only net-snmp 5.7 containers (useful for iterative debugging)
-    ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+    ./run_cpp_tests_in_all_dockers.sh fedora41_netsnmp_5.7
 
     # Show help and usage examples
     ./run_cpp_tests_in_all_dockers.sh --help
@@ -234,9 +231,10 @@ Python Tests on MacOS
     sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf;
     sudo launchctl unload /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
     sudo launchctl load -w /System/Library/LaunchDaemons/org.net-snmp.snmpd.plist;
-    rm -drf build/ ezsnmp.egg-info/ .tox/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
+    rm -drf build/ ezsnmp.egg-info/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
     python3 -m pip install -r python_tests/requirements.txt;
-    tox
+    python3 -m pip install .;
+    pytest -v -s -n auto --dist loadfile python_tests/
 
 
 Note: If you have issues installing the python package without Homebrew or Ports, try to update your Xcode Command Line Tools:

@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
       - name: Cache pip dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
@@ -136,8 +136,8 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.14
         with:
-          packages_dir: dist/
-          verify_metadata: false
-          skip_existing: true
-          print_hash: true
-          repository_url: https://test.pypi.org/legacy/
+          packages-dir: dist/
+          verify-metadata: false
+          skip-existing: true
+          print-hash: true
+          repository-url: https://test.pypi.org/legacy/

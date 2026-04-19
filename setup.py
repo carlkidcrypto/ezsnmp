@@ -23,7 +23,7 @@ Requirements:
 
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from subprocess import check_output, CalledProcessError, run
+from subprocess import check_output, CalledProcessError, run, DEVNULL
 from sys import argv, platform
 from shlex import split as s_split
 from setuptools import setup, Extension
@@ -102,7 +102,9 @@ def get_homebrew_net_snmp_info():
         return None
 
     try:
-        brew_output = check_output("brew list net-snmp", shell=True).decode()
+        brew_output = check_output(
+            "brew list net-snmp", shell=True, stderr=DEVNULL
+        ).decode()
         lines = brew_output.splitlines()
 
         if not lines:
