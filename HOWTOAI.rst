@@ -194,7 +194,7 @@ Key insights:
 - **ezsnmp/interface/**: SWIG interface files (.i) that bridge Python and C++
 - **python_tests/**: Python test suite using pytest
 - **cpp_tests/**: C++ test suite using Google Test
-- **setup.py**: Build script that compiles C++ extensions and runs SWIG
+- **setup.py** / **pyproject.toml**: Build configuration that compiles C++ extensions and runs SWIG
 
 **"How does SNMP communication work in ezsnmp?"**
 
@@ -293,8 +293,8 @@ Example 2: Fixing a C++ Compilation Error
 
 .. code-block:: bash
 
-    python setup.py build_ext --inplace 2>&1 | clip  # Windows
-    python setup.py build_ext --inplace 2>&1 | pbcopy  # macOS
+    python3 -m pip install . 2>&1 | clip  # Windows
+    python3 -m pip install . 2>&1 | pbcopy  # macOS
 
 **Step 2 - Ask AI with context:**
 
