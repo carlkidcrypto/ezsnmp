@@ -1,6 +1,18 @@
-Last Updated: 2026-04-12 16:54:58 UTC
+Last Updated: 2026-04-21 03:20:06 UTC
 
 # Changelog
+
+<a name="v2.3.0a2"></a>
+## [v2.3.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a1...v2.3.0a2) (2026-04-21)
+
+
+### Changes
+
+#### Maintenance
+
+- chore: bump version from 2.3.0a1 to 2.3.0a2
+
+
 
 
 <a name="v2.3.0a1"></a>
