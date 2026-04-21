@@ -1096,30 +1096,30 @@ TEST_F(SessionBaseTest, TestCloseSession) {
 // username can be created and used sequentially without cache interference causing
 // usmStatsNotInTimeWindows errors
 TEST_F(SessionBaseTest, TestV3MultipleSessionsSameUserSequential) {
-   // Create first V3 session
-   SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
-                        "authPriv", "", "testuser", "AES", "priv_pass");
+   // Create first V3 session using a user configured in configs/snmpd.conf
+   SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv", "",
+                        "initial_md5_aes", "AES", "priv_pass", "", "3", "5");
 
    // Perform an operation with first session
-   auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
+   auto result1 = session1.get("SNMPv2-MIB::sysDescr.0");
    EXPECT_FALSE(result1.empty());
 
    // Create second session with same credentials (simulating different device with same username)
-   SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
-                        "authPriv", "", "testuser", "AES", "priv_pass");
+   SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv", "",
+                        "initial_md5_aes", "AES", "priv_pass", "", "3", "5");
 
    // Perform an operation with second session
    // Before fix: This could fail with usmStatsNotInTimeWindows
    // After fix: The cache is cleared before each operation, so it should work
-   auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
+   auto result2 = session2.get("SNMPv2-MIB::sysDescr.0");
    EXPECT_FALSE(result2.empty());
 
    // Alternate between sessions multiple times to verify cache clearing works consistently
    for (int i = 0; i < 3; i++) {
-      auto result1_alt = session1.get("1.3.6.1.2.1.1.1.0");
+      auto result1_alt = session1.get("SNMPv2-MIB::sysDescr.0");
       EXPECT_FALSE(result1_alt.empty());
 
-      auto result2_alt = session2.get("1.3.6.1.2.1.1.1.0");
+      auto result2_alt = session2.get("SNMPv2-MIB::sysDescr.0");
       EXPECT_FALSE(result2_alt.empty());
    }
 }
@@ -1130,29 +1130,29 @@ TEST_F(SessionBaseTest, TestV3MultipleSessionsSameUserSequential) {
 TEST_F(SessionBaseTest, TestV3SessionRecreationSameUser) {
    // Create and use first session
    {
-      SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
-                           "authPriv", "", "testuser", "AES", "priv_pass");
-      auto result1 = session1.get("1.3.6.1.2.1.1.1.0");
+      SessionBase session1("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv",
+                           "", "initial_md5_aes", "AES", "priv_pass", "", "3", "5");
+      auto result1 = session1.get("SNMPv2-MIB::sysDescr.0");
       EXPECT_FALSE(result1.empty());
       // session1 goes out of scope here
    }
 
    // Create new session with same credentials
    {
-      SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
-                           "authPriv", "", "testuser", "AES", "priv_pass");
+      SessionBase session2("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv",
+                           "", "initial_md5_aes", "AES", "priv_pass", "", "3", "5");
 
       // This should work without usmStatsNotInTimeWindows error
-      auto result2 = session2.get("1.3.6.1.2.1.1.1.0");
+      auto result2 = session2.get("SNMPv2-MIB::sysDescr.0");
       EXPECT_FALSE(result2.empty());
       // session2 goes out of scope here
    }
 
    // Repeat the process one more time
    {
-      SessionBase session3("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
-                           "authPriv", "", "testuser", "AES", "priv_pass");
-      auto result3 = session3.get("1.3.6.1.2.1.1.1.0");
+      SessionBase session3("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv",
+                           "", "initial_md5_aes", "AES", "priv_pass", "", "3", "5");
+      auto result3 = session3.get("SNMPv2-MIB::sysDescr.0");
       EXPECT_FALSE(result3.empty());
    }
 }
@@ -1160,28 +1160,28 @@ TEST_F(SessionBaseTest, TestV3SessionRecreationSameUser) {
 // Test that cache clearing is called before each SNMP operation type
 // This verifies the fix is applied to all operation methods (get, walk, bulk_walk, etc.)
 TEST_F(SessionBaseTest, TestV3CacheClearingBeforeAllOperations) {
-   SessionBase session("localhost", "11161", "3", "", "MD5", "auth_pass", "", "engine123",
-                       "authPriv", "", "testuser", "AES", "priv_pass");
+   SessionBase session("localhost", "11161", "3", "", "MD5", "auth_pass", "", "", "authPriv", "",
+                       "initial_md5_aes", "AES", "priv_pass", "", "3", "5");
 
    // Test cache clearing before get()
-   auto result = session.get("1.3.6.1.2.1.1.1.0");
+   auto result = session.get("SNMPv2-MIB::sysDescr.0");
    EXPECT_FALSE(result.empty());
 
    // Test cache clearing before walk()
-   auto walk_result = session.walk("1.3.6.1.2.1.1");
+   auto walk_result = session.walk("SNMPv2-MIB::system");
    // walk may return empty or non-empty depending on OID, but shouldn't crash
 
    // Test cache clearing before bulk_walk()
-   auto bulk_walk_result = session.bulk_walk("1.3.6.1.2.1.1");
+   auto bulk_walk_result = session.bulk_walk("SNMPv2-MIB::system");
    // bulk_walk may return empty or non-empty depending on OID, but shouldn't crash
 
    // Test cache clearing before get_next()
-   std::vector<std::string> oids = {"1.3.6.1.2.1.1.1.0"};
+   std::vector<std::string> oids = {"SNMPv2-MIB::sysDescr.0"};
    auto get_next_result = session.get_next(oids);
    // get_next may return empty or non-empty depending on OID, but shouldn't crash
 
    // Test cache clearing before bulk_get()
-   std::vector<std::string> bulk_oids = {"1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1.2.0"};
+   std::vector<std::string> bulk_oids = {"SNMPv2-MIB::sysDescr.0", "SNMPv2-MIB::sysObjectID.0"};
    auto bulk_get_result = session.bulk_get(bulk_oids);
    // bulk_get may return empty or non-empty depending on OIDs, but shouldn't crash
 
