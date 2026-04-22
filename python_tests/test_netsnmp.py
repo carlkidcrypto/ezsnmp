@@ -11,7 +11,7 @@ from ezsnmp.netsnmp import (
     snmptrap,
 )
 
-from ezsnmp.exceptions import GenericError, PacketError, ParseError
+from ezsnmp.exceptions import ConnectionError, GenericError, PacketError, ParseError
 
 import faulthandler
 
@@ -345,6 +345,72 @@ def test_snmptrap_parse_error_unknown_flag():
     ]
     with pytest.raises(ParseError):
         snmptrap(args)
+
+
+def test_snmptrap_basic_v2c():
+    """Test that snmptrap sends a basic V2c trap successfully (returns 0).
+
+    UDP is fire-and-forget; snmp_send succeeds even without a listening trap receiver.
+    """
+    args = [
+        "-v",
+        "2c",
+        "-c",
+        "public",
+        "localhost:11162",
+        "",                        # sysUpTime: empty uses current uptime
+        ".1.3.6.1.6.3.1.1.5.1",  # SNMPv2-MIB::snmpTraps.coldStart
+    ]
+    result = snmptrap(args)
+    assert result == 0
+
+
+def test_snmptrap_unknown_host():
+    """Test that snmptrap raises ConnectionError for an unknown host."""
+    args = [
+        "-v",
+        "2c",
+        "-c",
+        "public",
+        "nonexistenthost.invalid:11162",
+        "",
+        ".1.3.6.1.6.3.1.1.5.1",
+    ]
+    with pytest.raises(ConnectionError):
+        snmptrap(args)
+
+
+def test_snmptrap_invalid_version():
+    """Test that snmptrap raises ParseError for an invalid SNMP version."""
+    args = [
+        "-v",
+        "999",
+        "-c",
+        "public",
+        "localhost:11162",
+        "",
+        ".1.3.6.1.6.3.1.1.5.1",
+    ]
+    with pytest.raises(ParseError):
+        snmptrap(args)
+
+
+def test_snmptrap_v2c_with_varbind():
+    """Test that snmptrap sends a V2c trap with an additional varbind successfully."""
+    args = [
+        "-v",
+        "2c",
+        "-c",
+        "public",
+        "localhost:11162",
+        "",                            # sysUpTime
+        ".1.3.6.1.6.3.1.1.5.4",      # SNMPv2-MIB::snmpTraps.linkUp
+        "SNMPv2-MIB::sysDescr.0",    # OID
+        "s",                           # type: string
+        "test link up",               # value
+    ]
+    result = snmptrap(args)
+    assert result == 0
 
 
 def test_snmpgetnext_regular(netsnmp_args):
