@@ -12,11 +12,13 @@ class SnmpTrapTest : public ::testing::Test {
 // V2c trap: UDP is fire-and-forget, so snmp_send succeeds even without a listening trap receiver.
 TEST_F(SnmpTrapTest, TestBasicV2cTrap) {
    std::vector<std::string> args = {
-       "-v", "2c",
-       "-c", "public",
+       "-v",
+       "2c",
+       "-c",
+       "public",
        "localhost:11162",
-       "",                         // sysUpTime: empty uses current uptime
-       ".1.3.6.1.6.3.1.1.5.1"    // SNMPv2-MIB::snmpTraps.coldStart
+       "",                    // sysUpTime: empty uses current uptime
+       ".1.3.6.1.6.3.1.1.5.1" // SNMPv2-MIB::snmpTraps.coldStart
    };
    int result = snmptrap(args, "testing_snmptrap_basic");
    EXPECT_EQ(result, 0);
@@ -24,12 +26,7 @@ TEST_F(SnmpTrapTest, TestBasicV2cTrap) {
 
 TEST_F(SnmpTrapTest, TestUnknownHost) {
    std::vector<std::string> args = {
-       "-v", "2c",
-       "-c", "public",
-       "nonexistenthost.invalid:11162",
-       "",
-       ".1.3.6.1.6.3.1.1.5.1"
-   };
+       "-v", "2c", "-c", "public", "nonexistenthost.invalid:11162", "", ".1.3.6.1.6.3.1.1.5.1"};
    EXPECT_THROW(
        {
           try {
@@ -45,12 +42,7 @@ TEST_F(SnmpTrapTest, TestUnknownHost) {
 
 TEST_F(SnmpTrapTest, TestInvalidVersion) {
    std::vector<std::string> args = {
-       "-v", "999",
-       "-c", "public",
-       "localhost:11162",
-       "",
-       ".1.3.6.1.6.3.1.1.5.1"
-   };
+       "-v", "999", "-c", "public", "localhost:11162", "", ".1.3.6.1.6.3.1.1.5.1"};
    EXPECT_THROW(
        {
           try {
@@ -64,13 +56,7 @@ TEST_F(SnmpTrapTest, TestInvalidVersion) {
 
 TEST_F(SnmpTrapTest, TestUnknownCFlag) {
    std::vector<std::string> args = {
-       "-v", "2c",
-       "-c", "public",
-       "-Cz",
-       "localhost:11162",
-       "",
-       ".1.3.6.1.6.3.1.1.5.1"
-   };
+       "-v", "2c", "-c", "public", "-Cz", "localhost:11162", "", ".1.3.6.1.6.3.1.1.5.1"};
    EXPECT_THROW(
        {
           try {
@@ -86,14 +72,16 @@ TEST_F(SnmpTrapTest, TestUnknownCFlag) {
 
 TEST_F(SnmpTrapTest, TestV2cTrapWithAdditionalVarbind) {
    std::vector<std::string> args = {
-       "-v", "2c",
-       "-c", "public",
+       "-v",
+       "2c",
+       "-c",
+       "public",
        "localhost:11162",
-       "",                            // sysUpTime
-       ".1.3.6.1.6.3.1.1.5.4",      // SNMPv2-MIB::snmpTraps.linkUp
-       "SNMPv2-MIB::sysDescr.0",     // OID
-       "s",                           // type: string
-       "test description"             // value
+       "",                       // sysUpTime
+       ".1.3.6.1.6.3.1.1.5.4",   // SNMPv2-MIB::snmpTraps.linkUp
+       "SNMPv2-MIB::sysDescr.0", // OID
+       "s",                      // type: string
+       "test description"        // value
    };
    int result = snmptrap(args, "testing_snmptrap_with_varbind");
    EXPECT_EQ(result, 0);

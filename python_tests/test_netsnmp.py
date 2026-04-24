@@ -358,7 +358,7 @@ def test_snmptrap_basic_v2c():
         "-c",
         "public",
         "localhost:11162",
-        "",                        # sysUpTime: empty uses current uptime
+        "",  # sysUpTime: empty uses current uptime
         ".1.3.6.1.6.3.1.1.5.1",  # SNMPv2-MIB::snmpTraps.coldStart
     ]
     result = snmptrap(args)
@@ -403,11 +403,11 @@ def test_snmptrap_v2c_with_varbind():
         "-c",
         "public",
         "localhost:11162",
-        "",                            # sysUpTime
-        ".1.3.6.1.6.3.1.1.5.4",      # SNMPv2-MIB::snmpTraps.linkUp
-        "SNMPv2-MIB::sysDescr.0",    # OID
-        "s",                           # type: string
-        "test link up",               # value
+        "",  # sysUpTime
+        ".1.3.6.1.6.3.1.1.5.4",  # SNMPv2-MIB::snmpTraps.linkUp
+        "SNMPv2-MIB::sysDescr.0",  # OID
+        "s",  # type: string
+        "test link up",  # value
     ]
     result = snmptrap(args)
     assert result == 0
