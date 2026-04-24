@@ -51,7 +51,7 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@e58f0b60d43355cab9d13c7ecf58a4fbfced93c2 # master
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
+        uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd snmp-mibs-downloader;
@@ -137,7 +137,7 @@ jobs:
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
       
       - name: Run Integration Tests (single)
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
+        uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
           linux: |
             export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
