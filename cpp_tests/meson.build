@@ -173,6 +173,20 @@ test_snmpset = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_snmptrap = executable(
+    'test_snmptrap',
+    [
+        'test_snmptrap.cpp',
+        join_paths(snmp_source_dir, 'snmptrap.cpp'),
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpwalk = executable(
     'test_snmpwalk',
     [
@@ -406,6 +420,7 @@ new_shim_tests_map = {
     'snmpget': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpgetnext': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpset': ['', '_timeout', '_parse_args', '_stat_error', '_addvar'],
+    'snmptrap': ['_parse_args'],
 }
 
 new_shim_executables = {}
@@ -456,6 +471,7 @@ test('snmpgetnext_shim_test', test_snmpgetnext_shim, env: test_env)
 test('snmpgetnext_null_shim_test', test_snmpgetnext_null_shim, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
 test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
+test('snmptrap_test', test_snmptrap, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env, timeout: 120)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
 test('snmpwalk_null_shim_test', test_snmpwalk_null_shim, env: test_env)
