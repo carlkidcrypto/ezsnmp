@@ -1,5 +1,6 @@
 import platform
 import pytest
+import unittest.mock
 
 from ezsnmp.session import Session
 from ezsnmp.exceptions import (
@@ -604,6 +605,35 @@ def test_session_del_safe_when_not_closed():
     s = Session(version="3")
     assert not s._closed
     s.__del__()
+
+
+def test_session_del_safe_when_no_closed_attr():
+    """Test that __del__ is safe when _closed attribute doesn't exist."""
+    s = Session(version="3")
+    del s._closed
+    # __del__ calls hasattr(self, "_closed") first; must not raise
+    s.__del__()
+
+
+def test_session_del_swallows_close_exception():
+    """Test that __del__ swallows exceptions raised by close()."""
+    s = Session(version="3")
+    with unittest.mock.patch.object(s, "close", side_effect=Exception("simulated close failure")):
+        # Must not propagate the exception
+        s.__del__()
+
+
+def test_session_to_dict_optional_prop_attribute_error():
+    """Test that to_dict() sets None for optional props that raise AttributeError."""
+    s = Session(version="3")
+    # Patch 'load_mibs' property to raise AttributeError, simulating an
+    # unimplemented getter on the C++ SessionBase side.
+    broken_prop = property(
+        lambda self: (_ for _ in ()).throw(AttributeError("not implemented"))
+    )
+    with unittest.mock.patch.object(type(s), "load_mibs", broken_prop):
+        d = s.to_dict()
+    assert d["load_mibs"] is None
 
 
 def test_session_version_2_converts_to_2c():
