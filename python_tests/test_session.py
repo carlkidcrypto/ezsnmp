@@ -628,9 +628,10 @@ def test_session_to_dict_optional_prop_attribute_error():
     s = Session(version="3")
     # Patch 'load_mibs' property to raise AttributeError, simulating an
     # unimplemented getter on the C++ SessionBase side.
-    broken_prop = property(
-        lambda self: (_ for _ in ()).throw(AttributeError("not implemented"))
-    )
+def raise_attribute_error(self):
+    raise AttributeError("not implemented")
+
+with unittest.mock.patch.object(type(s), "load_mibs", property(raise_attribute_error)):
     with unittest.mock.patch.object(type(s), "load_mibs", broken_prop):
         d = s.to_dict()
     assert d["load_mibs"] is None
