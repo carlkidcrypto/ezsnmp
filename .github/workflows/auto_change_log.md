@@ -18,6 +18,7 @@ safe-outputs:
     draft: false
     preserve-branch-name: true
     if-no-changes: "ignore"
+    base-branch: main
 timeout-minutes: 30
 engine:
   id: copilot
