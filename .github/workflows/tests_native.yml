@@ -22,7 +22,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
           files: |
             .github/workflows/tests_native.yml
@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
+        uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader;
@@ -160,7 +160,7 @@ jobs:
 
       - name: Pytest coverage comment
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
+        uses: MishaKav/pytest-coverage-comment@dd5b80bde6d16941f336518e92929e89069d8451 # v1.7.2
         with:
           title: Pytest Coverage Report - Native
           unique-id-for-comment: native-tests
