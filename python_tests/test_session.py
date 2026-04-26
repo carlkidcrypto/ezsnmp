@@ -618,7 +618,9 @@ def test_session_del_safe_when_no_closed_attr():
 def test_session_del_swallows_close_exception():
     """Test that __del__ swallows exceptions raised by close()."""
     s = Session(version="3")
-    with unittest.mock.patch.object(s, "close", side_effect=Exception("simulated close failure")):
+    with unittest.mock.patch.object(
+        s, "close", side_effect=Exception("simulated close failure")
+    ):
         # Must not propagate the exception
         s.__del__()
 
@@ -628,10 +630,11 @@ def test_session_to_dict_optional_prop_attribute_error():
     s = Session(version="3")
     # Patch 'load_mibs' property to raise AttributeError, simulating an
     # unimplemented getter on the C++ SessionBase side.
-def raise_attribute_error(self):
-    raise AttributeError("not implemented")
 
-with unittest.mock.patch.object(type(s), "load_mibs", property(raise_attribute_error)):
+    def raise_attribute_error(self):
+        raise AttributeError("not implemented")
+
+    broken_prop = property(raise_attribute_error)
     with unittest.mock.patch.object(type(s), "load_mibs", broken_prop):
         d = s.to_dict()
     assert d["load_mibs"] is None
