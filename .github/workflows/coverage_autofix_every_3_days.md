@@ -96,6 +96,38 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Avoid broad refactors or unrelated formatting churn.
 - Keep commits coherent and reviewable.
 
+## Formatting Step (Final, Required)
+
+After all code and test changes are complete, run the project formatters on any
+modified files before committing. This step is mandatory and must be the last
+step before creating the PR.
+
+### Python — black
+
+Run `black` on every Python file that was added or modified:
+
+```
+pip install black
+black <modified_python_files>
+```
+
+If no Python files were changed, skip this sub-step.
+
+### C++ — clang-format
+
+Run `clang-format` on every C++ source or header file that was added or modified.
+Do **not** run clang-format on SWIG interface files (`.i` files under
+`ezsnmp/interface/`).
+
+```
+clang-format -i <modified_cpp_or_header_files>
+```
+
+If no C++ files were changed, skip this sub-step.
+
+Commit any formatting changes as part of the same PR branch before opening the
+pull request.
+
 ## Pull Request Output
 
 When changes exist, create exactly one PR using this fixed branch name:
