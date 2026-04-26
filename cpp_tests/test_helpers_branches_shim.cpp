@@ -161,10 +161,12 @@ TEST_F(HelpersBranchesShimTest, DeleterCalledDirectlyFreesArrayAndStrings) {
    // Directly invoke the Deleter on a manually constructed argv array to confirm
    // it frees the outer allocation as well as individual strdup'd strings.
    constexpr int kArgc = 3;
-   char **arr = new char *[kArgc + 1];
+   char **arr = new char *[kArgc + 1]();
    arr[0] = const_cast<char *>("netsnmp"); // argv[0] is never freed by Deleter
    arr[1] = strdup("arg1");
+   ASSERT_NE(arr[1], nullptr);
    arr[2] = strdup("arg2");
+   ASSERT_NE(arr[2], nullptr);
    arr[3] = nullptr;
 
    Deleter d;
