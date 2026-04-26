@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
+        uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build libgtest-dev lcov;
@@ -91,7 +91,7 @@ jobs:
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
 
       - name: Configure, Build, and Run C++ Tests
-        uses: carlkidcrypto/os-specific-runner@efb93fedfd29ca19926cbc08707d66734288c78d # v2.2.0
+        uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
           linux: |
             cd cpp_tests
