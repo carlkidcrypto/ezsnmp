@@ -123,8 +123,9 @@ are planning on requesting multiple pieces of SNMP data from a source.
     # You may retrieve an individual OID using an SNMP GET
     location = session.get('sysLocation.0')
 
-    # You may also retrieve using a string that combines name and index
-    contact = session.get('sysContact.0')
+    # You may also retrieve multiple OIDs at once by passing a list
+    # Note: session.get returns a tuple of Result objects
+    results = session.get(['sysContact.0', 'sysLocation.0'])
 
     # And of course, you may use the numeric OID too
     description = session.get('.1.3.6.1.2.1.1.1.0')
