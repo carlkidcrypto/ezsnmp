@@ -66,7 +66,8 @@ void snmp_perror_exception(char const *prog_string);
  *
  * This struct provides an overloaded function call operator to free memory
  * allocated for each element in a null-terminated array of C-style strings,
- * starting from the second element (index 1).
+ * starting from the second element (index 1), and then frees the outer
+ * pointer array itself.
  *
  * @note The first element (index 0) is not freed by this deleter.
  */
@@ -75,6 +76,7 @@ struct Deleter {
       for (int i = 1; ptr[i] != nullptr; ++i) {
          free(ptr[i]);
       }
+      delete[] ptr;
    }
 };
 
