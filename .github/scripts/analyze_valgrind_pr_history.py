@@ -331,7 +331,7 @@ def main() -> int:
     )
 
     print(markdown_report)
-    return 0
+    return 1 if leak_records else 0
 
 
 if __name__ == "__main__":

@@ -139,6 +139,41 @@ TEST_F(HelpersBranchesShimTest, CreateArgvThrowsOnStrdupFailure) {
    EXPECT_THROW((void)create_argv({"-v2c", "-c", "public", "127.0.0.1"}, argc), std::runtime_error);
 }
 
+TEST_F(HelpersBranchesShimTest, DeleterFreesOuterArrayAndStrings) {
+   // Verify that the Deleter frees both the strdup'd strings AND the outer char** array.
+   // The outer array was previously leaked (only strdup'd strings were freed).
+   // Running under AddressSanitizer or Valgrind will detect any remaining leak.
+   int argc = 0;
+   {
+      auto argv = create_argv({"-v", "2c", "-c", "public"}, argc);
+      EXPECT_EQ(argc, 5);
+      EXPECT_STREQ(argv[0], "netsnmp");
+      EXPECT_STREQ(argv[1], "-v");
+      EXPECT_STREQ(argv[4], "public");
+      EXPECT_EQ(argv[5], nullptr);
+      // unique_ptr goes out of scope here; Deleter must free both the
+      // strdup'd elements AND the outer char** allocation (delete[] ptr).
+   }
+   SUCCEED();
+}
+
+TEST_F(HelpersBranchesShimTest, DeleterCalledDirectlyFreesArrayAndStrings) {
+   // Directly invoke the Deleter on a manually constructed argv array to confirm
+   // it frees the outer allocation as well as individual strdup'd strings.
+   constexpr int kArgc = 3;
+   char **arr = new char *[kArgc + 1]();
+   arr[0] = const_cast<char *>("netsnmp"); // argv[0] is never freed by Deleter
+   arr[1] = strdup("arg1");
+   ASSERT_NE(arr[1], nullptr);
+   arr[2] = strdup("arg2");
+   ASSERT_NE(arr[2], nullptr);
+   arr[3] = nullptr;
+
+   Deleter d;
+   d(arr); // frees arr[1], arr[2], then delete[] arr — no leaks or double-frees
+   SUCCEED();
+}
+
 TEST_F(HelpersBranchesShimTest, ParseResultRegexFallbackBranch) {
    auto result = parse_result("SNMPv2-MIB::sysDescr = STRING: value");
    EXPECT_EQ(result.oid, "SNMPv2-MIB::sysDescr");
