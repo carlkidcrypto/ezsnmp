@@ -138,6 +138,7 @@ jobs:
                    '--show-leak-kinds=definite,indirect,possible'
                    '--suppressions=./valgrind-python.supp'
                    '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
+                   '--error-exitcode=1'
                  );
                  echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
                  ${VALGRIND[@]} pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml  python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
