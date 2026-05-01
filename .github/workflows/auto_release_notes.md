@@ -20,7 +20,7 @@ safe-outputs:
 timeout-minutes: 60
 engine:
   id: copilot
-  model: auto
+  model: gpt-4.1
 network:
   allowed: [defaults, github]
 tools:
