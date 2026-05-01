@@ -1169,21 +1169,21 @@ TEST_F(SessionBaseTest, TestV3CacheClearingBeforeAllOperations) {
 
    // Test cache clearing before walk()
    auto walk_result = session.walk("SNMPv2-MIB::system");
-   // walk may return empty or non-empty depending on OID, but shouldn't crash
+   EXPECT_FALSE(walk_result.empty());
 
    // Test cache clearing before bulk_walk()
    auto bulk_walk_result = session.bulk_walk("SNMPv2-MIB::system");
-   // bulk_walk may return empty or non-empty depending on OID, but shouldn't crash
+   EXPECT_FALSE(bulk_walk_result.empty());
 
    // Test cache clearing before get_next()
    std::vector<std::string> oids = {"SNMPv2-MIB::sysDescr.0"};
    auto get_next_result = session.get_next(oids);
-   // get_next may return empty or non-empty depending on OID, but shouldn't crash
+   EXPECT_FALSE(get_next_result.empty());
 
    // Test cache clearing before bulk_get()
    std::vector<std::string> bulk_oids = {"SNMPv2-MIB::sysDescr.0", "SNMPv2-MIB::sysObjectID.0"};
    auto bulk_get_result = session.bulk_get(bulk_oids);
-   // bulk_get may return empty or non-empty depending on OIDs, but shouldn't crash
+   EXPECT_FALSE(bulk_get_result.empty());
 
    // Note: We skip testing set() as it requires write access and could modify the system
 }
