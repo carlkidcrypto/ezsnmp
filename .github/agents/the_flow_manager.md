@@ -84,13 +84,13 @@ Current agentic workflow source files:
    Confirm it reports `0 error(s), 0 warning(s)` before committing.
 3. **Commit both files together** — the edited `.md` and the regenerated
    `.lock.yml` must be in the same commit.
-4. **Model selection**: always use `model: gpt-4.1` in the `engine:` block.
+4. **Model selection**: always use `model: gpt-5.2-codex` in the `engine:` block.
    The value `auto` is not supported on all Copilot subscription tiers and
    will cause a `400 The requested model is not supported` error at runtime.
    ```yaml
    engine:
      id: copilot
-     model: gpt-4.1
+     model: gpt-5.2-codex
    ```
 5. **Installing gh-aw**: if `gh aw` is not available, install it with:
    ```
