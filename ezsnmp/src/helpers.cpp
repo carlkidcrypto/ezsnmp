@@ -368,6 +368,6 @@ void clear_net_snmp_library_data() {
 
 void snmp_check_null_response(netsnmp_pdu const *response) {
    if (response == NULL) {
-      throw PacketErrorBase("received NULL response from snmp_synch_response");
+      throw PacketErrorBase("received NULL response from snmp_sess_synch_response");
    }
 }

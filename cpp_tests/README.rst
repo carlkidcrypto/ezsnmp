@@ -102,7 +102,7 @@ Shimmed Net-SNMP Error Tests
 Some error-handling branches in the vendored Net-SNMP sources are extremely hard to hit with a
 real agent (for example, crafted error PDUs that return ``SNMP_ERR_GENERR`` with a valid
 ``errindex``, or a ``STAT_SUCCESS`` return with a NULL response pointer). To cover those branches
-deterministically, we add shim tests that interpose ``snmp_synch_response`` and return a
+deterministically, we add shim tests that interpose ``snmp_sess_synch_response`` and return a
 fabricated response.
 
 Why these shims exist
@@ -113,7 +113,7 @@ Why these shims exist
 
 How the shims work
 ==================
-Each shim test defines a C symbol named ``snmp_synch_response``. During linking, this symbol is
+Each shim test defines a C symbol named ``snmp_sess_synch_response``. During linking, this symbol is
 preferred over the Net-SNMP library version for that test binary only.
 
 **Packet error shims** (``test_snmp*_shim.cpp``): The shim constructs a ``netsnmp_pdu`` with
@@ -122,7 +122,7 @@ code under test reads the fake response and raises ``PacketErrorBase``.
 
 **NULL response shims** (``test_snmp*_null_shim.cpp``): The shim sets ``*response = NULL`` and
 returns ``STAT_SUCCESS``. The production code calls ``snmp_check_null_response()`` which raises
-``PacketErrorBase`` with the message "received NULL response from snmp_synch_response".
+``PacketErrorBase`` with the message "received NULL response from snmp_sess_synch_response".
 
 Shim test files
 ==============
@@ -148,7 +148,7 @@ Diagram: Shimmed Packet Error Flow
 
     [test_snmp*_shim.cpp]
         |
-        | defines snmp_synch_response()
+        | defines snmp_sess_synch_response()
         v
     +---------------------------+
     | fake netsnmp_pdu response |
@@ -169,14 +169,14 @@ Diagram: NULL Response Shim Flow
 
     [test_snmp*_null_shim.cpp]
         |
-        | defines snmp_synch_response()
+        | defines snmp_sess_synch_response()
         | sets *response = NULL, returns STAT_SUCCESS
         v
     [snmpget/snmpgetnext/snmpset/snmpbulkget/snmpwalk/snmpbulkwalk]
         |
         | calls snmp_check_null_response(response)
         v
-      PacketErrorBase thrown ("received NULL response from snmp_synch_response")
+      PacketErrorBase thrown ("received NULL response from snmp_sess_synch_response")
 
 ----
 
