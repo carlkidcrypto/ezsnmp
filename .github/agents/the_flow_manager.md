@@ -51,3 +51,48 @@ Focus on the following instructions:
     or failure of all uts
 - Ensure that workflows cache items that are commonly downloaded like pip updates/packages.
 - Ensure that workflows all trigger when they are updated.
+
+## Agentic Workflows (gh-aw)
+
+Several workflows in `.github/workflows/` are **agentic workflows** managed by
+the `gh aw` CLI extension. These files come in pairs:
+
+- A **source file** (`<name>.md`) — the human-readable workflow definition with
+  YAML front-matter and a Markdown task description. This is the file you edit.
+- A **compiled lock file** (`<name>.lock.yml`) — the machine-generated GitHub
+  Actions workflow. **Never edit lock files directly.** They are always
+  regenerated from the source file.
+
+Current agentic workflow source files:
+- `auto_change_log.md`
+- `auto_release_notes.md`
+- `coverage_autofix_every_3_days.md`
+- `docs_continuous_improvement_every_3_days.md`
+- `sync_open_prs_with_main.md`
+- `triage_incoming_bug_reports.md`
+- `update_docker_netsnmp_versions.md`
+- `update_docker_python_versions.md`
+
+### Rules for editing agentic workflows
+
+1. **Always edit the `.md` source file**, never the `.lock.yml` file.
+2. **After every edit**, run `gh aw compile` from the repository root to
+   regenerate all lock files:
+   ```
+   gh aw compile
+   ```
+   Confirm it reports `0 error(s), 0 warning(s)` before committing.
+3. **Commit both files together** — the edited `.md` and the regenerated
+   `.lock.yml` must be in the same commit.
+4. **Model selection**: always use `model: gpt-5.3-codex` in the `engine:` block.
+   The value `auto` is not supported on all Copilot subscription tiers and
+   will cause a `400 The requested model is not supported` error at runtime.
+   ```yaml
+   engine:
+     id: copilot
+     model: gpt-5.3-codex
+   ```
+5. **Installing gh-aw**: if `gh aw` is not available, install it with:
+   ```
+   curl -sL https://raw.githubusercontent.com/github/gh-aw/main/install-gh-aw.sh | bash
+   ```
