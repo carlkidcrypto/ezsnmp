@@ -23,7 +23,7 @@ safe-outputs:
 timeout-minutes: 45
 engine:
   id: copilot
-  model: gpt-5.2-codex
+  model: gpt-5.3-codex
 network:
   allowed: [defaults, python]
 tools:
