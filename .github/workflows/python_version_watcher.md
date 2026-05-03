@@ -45,13 +45,13 @@ versions and automatically update the repository to stay in sync.
   "prerelease") vs. end-of-life (status = "end-of-life").
 - Update `setup.cfg` (`python_requires` range, `[tool:black]` `target-version` list, and
   `Programming Language :: Python :: 3.x` classifier lines) to reflect the current supported set.
-- Update ALL FIVE workflow files that each declare a `python-version: [...]` matrix list:
+- Update all four workflow files that declare a `python-version: [...]` matrix list (five
+  occurrences total, because `tests_homebrew.yml` has two):
   - `.github/workflows/tests_native.yml`
   - `.github/workflows/tests_homebrew.yml` (has **two** occurrences of the matrix line)
   - `.github/workflows/tests_macports.yml`
   - `.github/workflows/integration_tests.yml`
 - Open a draft PR only when changes are actually needed.
-
 ## Steps
 
 ### 1. Fetch the Python versions page
@@ -171,9 +171,9 @@ Apply the following edits to `setup.cfg`:
    `Programming Language :: Python :: 3.x` classifier lines with the new set of classifier
    lines (one per supported version, in ascending order, each indented with 4 spaces).
 
-### 6. Update ALL FIVE workflow files
+### 6. Update the four workflow files (five occurrences total)
 
-For each of the five workflow files listed in the Goals section, replace every occurrence of the
+For each of the four workflow files listed in the Goals section, replace every occurrence of the
 `python-version: [...]` matrix definition line with the new version list.
 
 The exact pattern to match and replace is the line:
