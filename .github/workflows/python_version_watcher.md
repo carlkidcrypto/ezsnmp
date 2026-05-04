@@ -31,7 +31,7 @@ tools:
 
 engine:
   id: copilot
-  model: auto
+  model: gpt-4o
 ---
 
 ## Python Version Watcher and Auto-Sync
