@@ -6,8 +6,8 @@
 #include "exceptionsbase.h"
 #include "snmpset.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
-   (void)ss;
+extern "C" int snmp_sess_synch_response(void *sessp, netsnmp_pdu *pdu, netsnmp_pdu **response) {
+   (void)sessp;
    (void)pdu;
    *response = NULL;
    return STAT_SUCCESS;
@@ -25,7 +25,7 @@ TEST_F(SnmpSetNullShimTest, TestNullResponseThrowsPacketError) {
           try {
              auto results = snmpset(args, "testing_set_null_shim");
           } catch (PacketErrorBase const &e) {
-             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_sess_synch_response");
              throw;
           }
        },

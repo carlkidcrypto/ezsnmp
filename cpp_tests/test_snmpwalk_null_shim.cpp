@@ -5,8 +5,8 @@
 #include "exceptionsbase.h"
 #include "snmpwalk.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
-   (void)ss;
+extern "C" int snmp_sess_synch_response(void *sessp, netsnmp_pdu *pdu, netsnmp_pdu **response) {
+   (void)sessp;
    (void)pdu;
    *response = NULL;
    return STAT_SUCCESS;
@@ -23,7 +23,7 @@ TEST_F(SnmpWalkNullShimTest, TestNullResponseThrowsPacketError) {
           try {
              auto results = snmpwalk(args, "testing_walk_null_shim");
           } catch (PacketErrorBase const &e) {
-             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_sess_synch_response");
              throw;
           }
        },
@@ -39,7 +39,7 @@ TEST_F(SnmpWalkNullShimTest, TestNullResponseWithCiFlagThrowsPacketError) {
           try {
              auto results = snmpwalk(args, "testing_walk_null_shim_ci");
           } catch (PacketErrorBase const &e) {
-             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_sess_synch_response");
              throw;
           }
        },
@@ -47,7 +47,7 @@ TEST_F(SnmpWalkNullShimTest, TestNullResponseWithCiFlagThrowsPacketError) {
 }
 
 /* -CI (DONT_GET_REQUESTED): covers the toggle in snmpwalk_optProc, and suppresses the
- * snmpwalk_snmp_get_and_print fallback so it does not call snmp_synch_response again. */
+ * snmpwalk_snmp_get_and_print fallback so it does not call snmp_sess_synch_response again. */
 TEST_F(SnmpWalkNullShimTest, TestDontGetRequestedFlagThrowsPacketError) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "-CI", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
@@ -57,7 +57,7 @@ TEST_F(SnmpWalkNullShimTest, TestDontGetRequestedFlagThrowsPacketError) {
           try {
              auto results = snmpwalk(args, "testing_walk_null_shim_CI");
           } catch (PacketErrorBase const &e) {
-             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_sess_synch_response");
              throw;
           }
        },
@@ -74,7 +74,7 @@ TEST_F(SnmpWalkNullShimTest, TestDontCheckLexicographicFlagThrowsPacketError) {
           try {
              auto results = snmpwalk(args, "testing_walk_null_shim_Cc");
           } catch (PacketErrorBase const &e) {
-             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_sess_synch_response");
              throw;
           }
        },
