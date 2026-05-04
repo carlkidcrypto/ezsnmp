@@ -18,7 +18,7 @@ safe-outputs:
 timeout-minutes: 45
 engine:
   id: copilot
-  model: auto
+  model: gpt-4o
 checkout:
   fetch-depth: 0
   fetch: ["*"]
