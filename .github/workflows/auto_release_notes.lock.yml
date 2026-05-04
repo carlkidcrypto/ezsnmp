@@ -100,7 +100,7 @@ jobs:
         env:
           GH_AW_INFO_ENGINE_ID: "copilot"
           GH_AW_INFO_ENGINE_NAME: "GitHub Copilot CLI"
-          GH_AW_INFO_MODEL: "gpt-4o"
+          GH_AW_INFO_MODEL: "claude-sonnet-4.6"
           GH_AW_INFO_VERSION: "1.0.35"
           GH_AW_INFO_AGENT_VERSION: "1.0.35"
           GH_AW_INFO_CLI_VERSION: "v0.71.1"
@@ -184,14 +184,14 @@ jobs:
         run: |
           bash "${RUNNER_TEMP}/gh-aw/actions/create_prompt_first.sh"
           {
-          cat << 'GH_AW_PROMPT_bcbe2d744efbc0f8_EOF'
+          cat << 'GH_AW_PROMPT_2480e3d01bc09523_EOF'
           <system>
-          GH_AW_PROMPT_bcbe2d744efbc0f8_EOF
+          GH_AW_PROMPT_2480e3d01bc09523_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/xpia.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/temp_folder_prompt.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/markdown.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/safe_outputs_prompt.md"
-          cat << 'GH_AW_PROMPT_bcbe2d744efbc0f8_EOF'
+          cat << 'GH_AW_PROMPT_2480e3d01bc09523_EOF'
           <safe-output-tools>
           Tools: update_release, missing_tool, missing_data, noop
           </safe-output-tools>
@@ -223,12 +223,12 @@ jobs:
           {{/if}}
           </github-context>
           
-          GH_AW_PROMPT_bcbe2d744efbc0f8_EOF
+          GH_AW_PROMPT_2480e3d01bc09523_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/github_mcp_tools_with_safeoutputs_prompt.md"
-          cat << 'GH_AW_PROMPT_bcbe2d744efbc0f8_EOF'
+          cat << 'GH_AW_PROMPT_2480e3d01bc09523_EOF'
           </system>
           {{#runtime-import .github/workflows/auto_release_notes.md}}
-          GH_AW_PROMPT_bcbe2d744efbc0f8_EOF
+          GH_AW_PROMPT_2480e3d01bc09523_EOF
           } > "$GH_AW_PROMPT"
       - name: Interpolate variables and render templates
         uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
@@ -412,9 +412,9 @@ jobs:
           mkdir -p "${RUNNER_TEMP}/gh-aw/safeoutputs"
           mkdir -p /tmp/gh-aw/safeoutputs
           mkdir -p /tmp/gh-aw/mcp-logs/safeoutputs
-          cat > "${RUNNER_TEMP}/gh-aw/safeoutputs/config.json" << 'GH_AW_SAFE_OUTPUTS_CONFIG_1d755c48c674e9d3_EOF'
+          cat > "${RUNNER_TEMP}/gh-aw/safeoutputs/config.json" << 'GH_AW_SAFE_OUTPUTS_CONFIG_e6f7bc102fd4757a_EOF'
           {"create_report_incomplete_issue":{},"missing_data":{},"missing_tool":{},"noop":{"max":1,"report-as-issue":"true"},"report_incomplete":{},"update_release":{"max":1}}
-          GH_AW_SAFE_OUTPUTS_CONFIG_1d755c48c674e9d3_EOF
+          GH_AW_SAFE_OUTPUTS_CONFIG_e6f7bc102fd4757a_EOF
       - name: Write Safe Outputs Tools
         env:
           GH_AW_TOOLS_META_JSON: |
@@ -605,7 +605,7 @@ jobs:
           
           mkdir -p /home/runner/.copilot
           GH_AW_NODE=$(which node 2>/dev/null || command -v node 2>/dev/null || echo node)
-          cat << GH_AW_MCP_CONFIG_a1855a8272b83aae_EOF | "$GH_AW_NODE" "${RUNNER_TEMP}/gh-aw/actions/start_mcp_gateway.cjs"
+          cat << GH_AW_MCP_CONFIG_a1beff407269fae0_EOF | "$GH_AW_NODE" "${RUNNER_TEMP}/gh-aw/actions/start_mcp_gateway.cjs"
           {
             "mcpServers": {
               "github": {
@@ -646,7 +646,7 @@ jobs:
               "payloadDir": "${MCP_GATEWAY_PAYLOAD_DIR}"
             }
           }
-          GH_AW_MCP_CONFIG_a1855a8272b83aae_EOF
+          GH_AW_MCP_CONFIG_a1beff407269fae0_EOF
       - name: Clean git credentials
         continue-on-error: true
         run: bash "${RUNNER_TEMP}/gh-aw/actions/clean_git_credentials.sh"
@@ -1175,7 +1175,7 @@ jobs:
       GH_AW_DETECTION_REASON: ${{ needs.detection.outputs.detection_reason }}
       GH_AW_EFFECTIVE_TOKENS: ${{ needs.agent.outputs.effective_tokens }}
       GH_AW_ENGINE_ID: "copilot"
-      GH_AW_ENGINE_MODEL: "gpt-4o"
+      GH_AW_ENGINE_MODEL: "claude-sonnet-4.6"
       GH_AW_ENGINE_VERSION: "1.0.35"
       GH_AW_WORKFLOW_ID: "auto_release_notes"
       GH_AW_WORKFLOW_NAME: "Auto Update Release Notes"
