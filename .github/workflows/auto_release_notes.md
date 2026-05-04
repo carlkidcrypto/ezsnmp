@@ -22,7 +22,7 @@ engine:
   id: copilot
   model: claude-sonnet-4.6
 network:
-  allowed: [defaults, github]
+  allowed: [defaults, github, pypi.org]
 tools:
   bash: true
 ---
