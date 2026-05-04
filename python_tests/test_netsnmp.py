@@ -420,3 +420,31 @@ def test_snmpgetnext_regular(netsnmp_args):
     assert res is not None
     assert len(res) > 0
     assert res[0].oid != ""
+
+
+def test_snmpgetnext_invalid_version():
+    """Test snmpgetnext raises ParseError for an invalid SNMP version."""
+    args = ["-v", "999", "-c", "public", "localhost:11161", "sysDescr.0"]
+    with pytest.raises(ParseError):
+        snmpgetnext(args, "testing_getnext_invalid_version")
+
+
+def test_snmpgetnext_unknown_oid(netsnmp_args):
+    """Test snmpgetnext raises GenericError for an unknown OID."""
+    with pytest.raises(GenericError):
+        netsnmp_args = netsnmp_args + ["doesnotexistoid12345"]
+        snmpgetnext(netsnmp_args, "testing_getnext_unknown_oid")
+
+
+def test_snmpset_invalid_version():
+    """Test snmpset raises ParseError for an invalid SNMP version."""
+    args = ["-v", "999", "-c", "public", "localhost:11161", "sysLocation.0", "s", "x"]
+    with pytest.raises(ParseError):
+        snmpset(args, "testing_snmpset_invalid_version")
+
+
+def test_snmpwalk_invalid_version():
+    """Test snmpwalk raises ParseError for an invalid SNMP version."""
+    args = ["-v", "999", "-c", "public", "localhost:11161", "system"]
+    with pytest.raises(ParseError):
+        snmpwalk(args, "testing_snmpwalk_invalid_version")
