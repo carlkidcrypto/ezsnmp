@@ -20,9 +20,9 @@ safe-outputs:
 timeout-minutes: 60
 engine:
   id: copilot
-  model: gpt-5.3-codex
+  model: claude-sonnet-4.6
 network:
-  allowed: [defaults, github]
+  allowed: [defaults, github, pypi.org]
 tools:
   bash: true
 ---

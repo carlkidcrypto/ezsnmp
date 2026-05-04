@@ -18,7 +18,7 @@ safe-outputs:
 timeout-minutes: 45
 engine:
   id: copilot
-  model: gpt-5.3-codex
+  model: claude-sonnet-4.6
 ---
 
 # Documentation Continuous Improvement
