@@ -6,8 +6,8 @@
 #include "exceptionsbase.h"
 #include "snmpwalk.h"
 
-extern "C" int snmp_synch_response(netsnmp_session *ss, netsnmp_pdu *pdu, netsnmp_pdu **response) {
-   (void)ss;
+extern "C" int snmp_sess_synch_response(void *sessp, netsnmp_pdu *pdu, netsnmp_pdu **response) {
+   (void)sessp;
    (void)pdu;
    *response = NULL;
    return STAT_TIMEOUT;

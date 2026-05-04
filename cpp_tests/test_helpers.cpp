@@ -695,7 +695,7 @@ TEST_F(SnmpCheckNullResponseTest, ThrowsPacketErrorBaseOnNullResponse) {
           try {
              snmp_check_null_response(nullptr);
           } catch (PacketErrorBase const& e) {
-             EXPECT_STREQ(e.what(), "received NULL response from snmp_synch_response");
+             EXPECT_STREQ(e.what(), "received NULL response from snmp_sess_synch_response");
              throw;
           }
        },

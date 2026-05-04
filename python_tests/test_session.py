@@ -626,17 +626,26 @@ def test_session_del_swallows_close_exception():
 
 
 def test_session_to_dict_optional_prop_attribute_error():
-    """Test that to_dict() sets None for optional props that raise AttributeError."""
-    s = Session(version="3")
-    # Patch 'load_mibs' property to raise AttributeError, simulating an
-    # unimplemented getter on the C++ SessionBase side.
+    """Test that to_dict() sets None for optional props that raise AttributeError.
 
-    def raise_attribute_error(self):
-        raise AttributeError("not implemented")
+    Uses a subclass to avoid SWIG metaclass interference that occurs when
+    unittest.mock.patch.object attempts to restore a class-level property on a
+    SWIG-generated base class (the setter is invoked with the class as ``self``
+    instead of an instance, causing a TypeError).
+    """
 
-    broken_prop = property(raise_attribute_error)
-    with unittest.mock.patch.object(type(s), "load_mibs", broken_prop):
-        d = s.to_dict()
+    class _BrokenLoadMibsSession(Session):
+        @property
+        def load_mibs(self):
+            raise AttributeError("not implemented")
+
+        @load_mibs.setter
+        def load_mibs(self, value):
+            # Delegate to base-class setter so __init__ can write the default value
+            super()._set_load_mibs(value)
+
+    s = _BrokenLoadMibsSession(version="3")
+    d = s.to_dict()
     assert d["load_mibs"] is None
 
 

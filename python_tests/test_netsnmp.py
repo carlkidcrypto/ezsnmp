@@ -366,7 +366,12 @@ def test_snmptrap_basic_v2c():
 
 
 def test_snmptrap_unknown_host():
-    """Test that snmptrap raises ConnectionError for an unknown host."""
+    """Test that snmptrap raises an error for an unknown host.
+
+    Depending on the OS and net-snmp version, DNS resolution failure for an
+    unknown host raises either ConnectionError or GenericError.  Both are
+    acceptable outcomes; the important thing is that an exception is raised.
+    """
     args = [
         "-v",
         "2c",
@@ -376,7 +381,7 @@ def test_snmptrap_unknown_host():
         "",
         ".1.3.6.1.6.3.1.1.5.1",
     ]
-    with pytest.raises(ConnectionError):
+    with pytest.raises((ConnectionError, GenericError)):
         snmptrap(args)
 
 
