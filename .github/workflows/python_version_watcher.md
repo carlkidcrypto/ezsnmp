@@ -31,7 +31,7 @@ tools:
 
 engine:
   id: copilot
-  model: gpt-4o
+  model: claude-sonnet-4.6
 ---
 
 ## Python Version Watcher and Auto-Sync
