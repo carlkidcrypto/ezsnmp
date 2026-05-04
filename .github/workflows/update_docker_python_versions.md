@@ -18,7 +18,7 @@ safe-outputs:
     if-no-changes: "ignore"
 engine:
   id: copilot
-  model: gpt-5.3-codex
+  model: auto
 network:
   allowed: [defaults, python]
 tools:
