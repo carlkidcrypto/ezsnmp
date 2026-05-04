@@ -12,6 +12,10 @@ on:
         description: 'Backfill release notes for ALL existing releases'
         required: false
         default: 'false'
+      additional_context:
+        description: 'Optional extra context or instructions to incorporate when generating release notes (e.g. "PyPI link format was fixed in this push")'
+        required: false
+        default: ''
 permissions:
   actions: read
   contents: read
@@ -46,7 +50,8 @@ When a new release is published, generate and update its release notes body on G
 0. Determine the run mode:
    - If triggered by `release: published`, process only the triggering release tag.
    - If triggered by `workflow_dispatch` with `backfill_all: true`, fetch all releases via the GitHub API and process each one in chronological order (oldest first). For each release, follow steps 1–5 below.
-   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset, stop with a message explaining that `backfill_all` must be set to `true` for manual runs.
+   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset, fetch all releases via the GitHub API and process only the single most-recently published release. Follow steps 1–5 for that one release.
+   - In all run modes: if the `additional_context` workflow input is non-empty, treat its value as supplemental instructions to apply when generating every release's notes (e.g. "PyPI link format was fixed — use `https://pypi.org/project/ezsnmp/<version>/`"). Incorporate it naturally into the notes; do not echo it verbatim.
 
 1. Identify the release context:
    - Determine the tag name from the release being processed.

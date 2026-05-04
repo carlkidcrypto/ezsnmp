@@ -52,6 +52,12 @@ name: "Auto Update Release Notes"
     - published
   workflow_dispatch:
     inputs:
+      additional_context:
+        default: ""
+        description: Optional extra context or instructions to incorporate when generating release notes
+          (e.g. "PyPI link format was fixed in this push")
+        required: false
+        type: string
       aw_context:
         default: ""
         description: Agent caller context (used internally by Agentic Workflows).
