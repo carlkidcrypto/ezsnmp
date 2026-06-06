@@ -1,0 +1,30 @@
+name: Validate Workflow Files
+
+on:
+  push:
+    paths:
+      - '.github/workflows/*.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install yamllint
+        run: python -m pip install yamllint
+
+      - name: Lint workflow YAML files
+        run: |
+          set -e
+          echo "Linting all workflow YAML files (excluding lock files) in .github/workflows/ ..."
+          find .github/workflows/ -name "*.yml" ! -name "*.lock.yml" | xargs yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}"
+          echo "All workflow YAML files passed linting."
