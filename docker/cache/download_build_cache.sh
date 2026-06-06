@@ -12,7 +12,7 @@ PYTHON_VERSIONS=(
     "3.11.15"
     "3.12.13"
     "3.13.13"
-    "3.14.4"
+    "3.14.5"
 )
 
 # OpenSSL versions
