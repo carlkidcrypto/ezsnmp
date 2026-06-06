@@ -50,7 +50,7 @@
 name: "Sync Open PRs With Main"
 on:
   schedule:
-  - cron: "54 22 * * *"
+  - cron: "6 22 * * *"
     # Friendly format: daily (scattered)
   workflow_dispatch:
     inputs:
