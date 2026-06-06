@@ -2,7 +2,7 @@
 FROM centos:7
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.4
+ARG PYTHON_MAX_VERSION=3.14.5
 ARG PYTHON_MIN_2_VERSION=3.13.13
 ARG PYTHON_MIN_1_VERSION=3.12.13
 ARG PYTHON_MIN_0_VERSION=3.11.15
@@ -57,9 +57,9 @@ COPY docker/cache/Python-3.10.20.tgz /tmp/
 COPY docker/cache/Python-3.11.15.tgz /tmp/
 COPY docker/cache/Python-3.12.13.tgz /tmp/
 COPY docker/cache/Python-3.13.13.tgz /tmp/
-COPY docker/cache/Python-3.14.4.tgz /tmp/
+COPY docker/cache/Python-3.14.5.tgz /tmp/
 
-# Build Python 3.10.20, 3.11.15, 3.12.13, 3.13.13, 3.14.4 from source with OpenSSL 1.1.1w
+# Build Python 3.10.20, 3.11.15, 3.12.13, 3.13.13, 3.14.5 from source with OpenSSL 1.1.1w
 # Note: --enable-optimizations disabled due to coverage profiling conflicts
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
