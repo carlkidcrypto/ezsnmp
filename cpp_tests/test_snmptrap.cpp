@@ -29,8 +29,7 @@ TEST_F(SnmpTrapTest, TestUnknownHost) {
        "-v", "2c", "-c", "public", "nonexistenthost.invalid:11162", "", ".1.3.6.1.6.3.1.1.5.1"};
    // DNS lookup failure may raise ConnectionErrorBase or GenericErrorBase depending on
    // OS/net-snmp version; accept either.
-   EXPECT_THROW(
-       { snmptrap(args, "testing_snmptrap_unknown_host"); }, GenericErrorBase);
+   EXPECT_THROW({ snmptrap(args, "testing_snmptrap_unknown_host"); }, GenericErrorBase);
 }
 
 TEST_F(SnmpTrapTest, TestInvalidVersion) {
