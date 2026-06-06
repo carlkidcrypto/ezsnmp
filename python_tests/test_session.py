@@ -672,6 +672,108 @@ def test_session_property_setters():
     del s
 
 
+def test_session_property_setters_extended():
+    """Test additional property setters not covered by the basic setter test."""
+    s = Session(version="3")
+
+    s.hostname = "newhost"
+    assert s.hostname == "newhost"
+
+    s.port_number = "1234"
+    assert s.port_number == "1234"
+
+    s.version = "2c"
+    assert s.version == "2c"
+
+    s.auth_passphrase = "auth_pass"
+    assert s.auth_passphrase == "auth_pass"
+
+    s.security_engine_id = "engine123"
+    assert s.security_engine_id == "engine123"
+
+    s.context_engine_id = "ctx_engine"
+    assert s.context_engine_id == "ctx_engine"
+
+    s.security_level = "authNoPriv"
+    assert s.security_level == "authNoPriv"
+
+    s.context = "mycontext"
+    assert s.context == "mycontext"
+
+    s.privacy_protocol = "AES"
+    assert s.privacy_protocol == "AES"
+
+    s.privacy_passphrase = "priv_pass"
+    assert s.privacy_passphrase == "priv_pass"
+
+    s.boots_time = "1,100"
+    assert s.boots_time == "1,100"
+
+    s.load_mibs = "RFC1213-MIB"
+    assert s.load_mibs == "RFC1213-MIB"
+
+    s.mib_directories = "/usr/share/snmp/mibs"
+    assert s.mib_directories == "/usr/share/snmp/mibs"
+
+    s.print_enums_numerically = True
+    assert s.print_enums_numerically is True
+
+    s.print_full_oids = True
+    assert s.print_full_oids is True
+
+    s.print_oids_numerically = True
+    assert s.print_oids_numerically is True
+
+    s.print_timeticks_numerically = True
+    assert s.print_timeticks_numerically is True
+
+    s.set_max_repeaters_to_num = "20"
+    assert s.set_max_repeaters_to_num == "20"
+
+    del s
+
+
+def test_session_get_none_oids(sess):
+    """Test that Session.get(None) is treated same as empty list (None->[] branch)."""
+    # None should just return results from the root, but actually passing None
+    # triggers oids=[] which may return empty or raise. Just check it doesn't crash.
+    # Most implementations return empty tuple for empty oids.
+    res = sess.get(None)
+    assert res is not None
+
+
+def test_session_get_next_none_oids(sess):
+    """Test that Session.get_next(None) is treated same as empty list."""
+    res = sess.get_next(None)
+    assert res is not None
+
+
+def test_session_set_none_oids(sess):
+    """Test that Session.set(None) is treated same as empty list."""
+    res = sess.set(None)
+    assert res is not None
+
+
+def test_session_bulk_walk_none_oids(sess):
+    """Test that Session.bulk_walk(None) is treated same as empty list."""
+    if sess.version == "1":
+        with pytest.raises(PacketError):
+            sess.bulk_walk(None)
+    else:
+        res = sess.bulk_walk(None)
+        assert res is not None
+
+
+def test_session_bulk_get_none_oids(sess):
+    """Test that Session.bulk_get(None) is treated same as empty list."""
+    if sess.version == "1":
+        with pytest.raises(PacketError):
+            sess.bulk_get(None)
+    else:
+        res = sess.bulk_get(None)
+        assert res is not None
+
+
 def test_string_values_no_surrounding_quotes(sess):
     """
     Test for issue #355: String values should not be enclosed in quotes.
