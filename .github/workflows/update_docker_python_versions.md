@@ -18,7 +18,7 @@ safe-outputs:
     if-no-changes: "ignore"
 engine:
   id: copilot
-  model: claude-sonnet-4.6
+  model: copilot/claude-opus-4.5?effort=medium
 network:
   allowed: [defaults, python]
 tools:
