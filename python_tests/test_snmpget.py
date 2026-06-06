@@ -56,7 +56,7 @@ def test_unknown(netsnmp_args):
 
 
 def test_invalid_instance(netsnmp_args):
-    # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
+    # Sadly, SNMP v1 doesn't distinguish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if netsnmp_args[1] == "1":
         if platform.system() != "Darwin":
