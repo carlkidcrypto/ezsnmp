@@ -157,7 +157,7 @@ Code Documentation
 ------------------
 
 **Python:**
-    * Use Google-style or NumPy-style docstrings
+    * Use Sphinx/reStructuredText-style docstrings (e.g., ``:param:``, ``:type:``, ``:returns:``, ``:rtype:``)
     * Document all public classes, methods, and functions
     * Include parameter types and return types
     * Provide usage examples where helpful

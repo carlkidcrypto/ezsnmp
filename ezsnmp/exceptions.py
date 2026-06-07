@@ -85,7 +85,8 @@ class ParseError(GenericError):
         """
         Exception raised for handling SNMP parse errors.
 
-        This exception is thrown when an error occurs while parsing SNMP command line arguments.
+        This exception is thrown when an error occurs while parsing SNMP
+        messages or command-line arguments.
 
         :param message: Explanation of the error.
         :type message: str

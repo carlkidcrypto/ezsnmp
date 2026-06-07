@@ -237,7 +237,7 @@ Python Tests on MacOS
     pytest -v -s -n auto --dist loadfile python_tests/
 
 
-Note: If you have issues installing the python package without Homebrew or Ports, try to update your Xcode Command Line Tools:
+Note: If you have issues installing the Python package without Homebrew or Ports, try to update your Xcode Command Line Tools:
 
 .. code:: bash
 
