@@ -54,7 +54,7 @@ EzSnmp is a fork of `Easy SNMP <https://github.com/easysnmp/easysnmp>`__
 Why Another Library?
 --------------------
 
-- Simple, because the maintainer of `Easy SNMP` seems to have abandoned the project or isn't actively working on it.
+- Simply because the maintainer of `Easy SNMP` seems to have abandoned the project or isn't actively working on it.
 - This version (EzSnmp) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
   and net-snmp versions that are supported by `Net-SNMP <https://www.net-snmp.org/download.html>`__
 
