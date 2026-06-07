@@ -594,6 +594,9 @@ class Session(SessionBase):
         """Convert session to dictionary for logging/JSON serialization.
 
         Sensitive fields (community, passwords) are masked.
+
+        :return: A dictionary of session parameters, with sensitive values masked.
+        :rtype: dict
         """
         # Core properties that should always work
         result = {
@@ -786,9 +789,11 @@ class Session(SessionBase):
         """
         Performs an SNMP GET-NEXT operation to retrieve values for the next objects after the specified OIDs.
 
-        :param oids: List of Object Identifiers (OIDs) to get next values from,
-            defaults to None (empty list)
-        :type oids: list
+        Accepts either a single OID string or a list of OID strings.
+
+        :param oids: A single OID string or a list of Object Identifiers (OIDs) to get
+            next values from, defaults to None (empty list)
+        :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
         :rtype: tuple[Result]
@@ -829,9 +834,11 @@ class Session(SessionBase):
         """
         Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.
 
-        :param oids: List of Object Identifiers (OIDs) to retrieve values from,
-            defaults to None (empty list)
-        :type oids: list
+        Accepts either a single OID string or a list of OID strings.
+
+        :param oids: A single OID string or a list of Object Identifiers (OIDs) to retrieve
+            values from, defaults to None (empty list)
+        :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
         :rtype: tuple[Result]
