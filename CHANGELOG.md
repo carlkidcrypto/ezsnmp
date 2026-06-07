@@ -1,19 +1,199 @@
-Last Updated: 2026-04-21 03:20:06 UTC
+Last Updated: 2026-06-07 04:46:59 UTC
 
 # Changelog
 
-<a name="v2.3.0a2"></a>
-## [v2.3.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a1...v2.3.0a2) (2026-04-21)
+
+<a name="v2.3.0"></a>
+## [v2.3.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0b0...v2.3.0) (2026-06-06)
 
 
 ### Changes
 
+#### Bug Fixes
+
+- fix: snmpv3 usmStatsNotInTimeWindows  ([#526](https://github.com/carlkidcrypto/ezsnmp/issues/526))
+
+- fix: allow pypi.org in auto_release_notes agentic workflow firewall ([#915](https://github.com/carlkidcrypto/ezsnmp/issues/915))
+
+- fix: change agentic workflow model from gpt-4o to claude-sonnet-4.6 ([#913](https://github.com/carlkidcrypto/ezsnmp/issues/913))
+
+- fix: use explicit gpt-4o model in all agentic workflows (Copilot Pro compatibility) ([#912](https://github.com/carlkidcrypto/ezsnmp/issues/912))
+
+
+#### Docker
+
+- Docker ([#975](https://github.com/carlkidcrypto/ezsnmp/issues/975))
+
+
+#### Documentation Updates
+
+- docs: fix typos, grammar, and docstring improvements ([#974](https://github.com/carlkidcrypto/ezsnmp/issues/974))
+
+- docs: add versioned documentation for v2.3.0b0
+
+
+#### Features
+
+- feat: add additional_context input to auto_release_notes workflow ([#918](https://github.com/carlkidcrypto/ezsnmp/issues/918))
+
+
 #### Maintenance
 
-- chore: bump version from 2.3.0a1 to 2.3.0a2
+- chore: update models to claude-sonnet-4.6 and recompile AW ([#967](https://github.com/carlkidcrypto/ezsnmp/issues/967))
+
+- chore: update Homebrew formula for v2.3.0b0
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into docs/add-versioned-docs-v2.3.0b0
+
+- Merge branch 'main' into chore/update-homebrew-formula-v2.3.0b0
+
+
+#### Regenerate
+
+- Regenerate all agentic workflow lock files ([#914](https://github.com/carlkidcrypto/ezsnmp/issues/914))
 
 
 
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#910](https://github.com/carlkidcrypto/ezsnmp/issues/910) from carlkidcrypto/docs/add-versioned-docs-v2.3.0b0
+
+- Merge pull request [#909](https://github.com/carlkidcrypto/ezsnmp/issues/909) from carlkidcrypto/chore/update-homebrew-formula-v2.3.0b0
+
+
+
+
+
+---
+
+<a name="v2.3.0b0"></a>
+## [v2.3.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a2...v2.3.0b0) (2026-05-03)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix agentic workflows: replace inaccessible `gpt-5.3-codex` model with `auto` ([#908](https://github.com/carlkidcrypto/ezsnmp/issues/908))
+
+- Fix configuration for Coverage Autofix every 3 days ([#899](https://github.com/carlkidcrypto/ezsnmp/issues/899))
+
+
+#### Bug Fixes
+
+- fix: recompile agentic workflow lock files to resolve copilot_driver.cjs missing module error ([#896](https://github.com/carlkidcrypto/ezsnmp/issues/896))
+
+- fix: free outer char** array in Deleter to eliminate create_argv memory leak ([#887](https://github.com/carlkidcrypto/ezsnmp/issues/887))
+
+
+#### Bump
+
+- bump version from 2.3.0a2 to 2.3.0b0 ([#894](https://github.com/carlkidcrypto/ezsnmp/issues/894))
+
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2.3.0a2
+
+
+#### Features
+
+- feat: add Python Version Watcher agentic workflow ([#906](https://github.com/carlkidcrypto/ezsnmp/issues/906))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.3.0a2
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into docs/add-versioned-docs-v2.3.0a2
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#875](https://github.com/carlkidcrypto/ezsnmp/issues/875) from carlkidcrypto/docs/add-versioned-docs-v2.3.0a2
+
+- Merge pull request [#876](https://github.com/carlkidcrypto/ezsnmp/issues/876) from carlkidcrypto/chore/update-homebrew-formula-v2.3.0a2
+
+
+
+
+
+---
+
+<a name="v2.3.0a2"></a>
+## [v2.3.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a1...v2.3.0a2) (2026-04-22)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: use correct ENTRY_SCRIPT path /usr/local/bin/DockerEntry.sh in docker python tests workflow ([#865](https://github.com/carlkidcrypto/ezsnmp/issues/865))
+
+- fix: use Net-SNMP single-session API to eliminate multi-thread SEGFAULT ([#860](https://github.com/carlkidcrypto/ezsnmp/issues/860))
+
+- fix: handle push_to_pull_request_branch tool failures gracefully in sync workflow ([#856](https://github.com/carlkidcrypto/ezsnmp/issues/856))
+
+
+#### Bug Fixes
+
+- Fix pypi workflow warnings: skip selectors, deprecated inputs, brew stderr ([#855](https://github.com/carlkidcrypto/ezsnmp/issues/855))
+
+
+#### Documentation Updates
+
+- docs: fix outdated Docker distro list and modernize build commands ([#847](https://github.com/carlkidcrypto/ezsnmp/issues/847))
+
+- docs: add versioned documentation for v2.3.0a1
+
+
+#### Maintenance
+
+- chore: bump version from 2.3.0a1 to 2.3.0a2 ([#870](https://github.com/carlkidcrypto/ezsnmp/issues/870))
+
+- chore: remove tox, run pytest directly ([#858](https://github.com/carlkidcrypto/ezsnmp/issues/858))
+
+- chore: remove duplicate homebrew/ezsnmp.rb formula ([#846](https://github.com/carlkidcrypto/ezsnmp/issues/846))
+
+- chore: update Homebrew formula for v2.3.0a1
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into chore/update-homebrew-formula-v2.3.0a1
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#844](https://github.com/carlkidcrypto/ezsnmp/issues/844) from carlkidcrypto/chore/update-homebrew-formula-v2.3.0a1
+
+- Merge pull request [#843](https://github.com/carlkidcrypto/ezsnmp/issues/843) from carlkidcrypto/docs/add-versioned-docs-v2.3.0a1
+
+
+
+
+
+---
 
 <a name="v2.3.0a1"></a>
 ## [v2.3.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0a0...v2.3.0a1) (2026-04-12)
