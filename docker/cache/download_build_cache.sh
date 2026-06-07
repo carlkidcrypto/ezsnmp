@@ -20,6 +20,8 @@ OPENSSL_1_1_VERSION="1.1.1w"
 OPENSSL_1_1_URL="https://www.openssl.org/source/openssl-${OPENSSL_1_1_VERSION}.tar.gz"
 OPENSSL_1_0_VERSION="1.0.2u"
 OPENSSL_1_0_URL="https://www.openssl.org/source/old/1.0.2/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
+OPENSSL_1_0_GITHUB_TAG="OpenSSL_${OPENSSL_1_0_VERSION//./_}"
+OPENSSL_1_0_FALLBACK_URL="https://github.com/openssl/openssl/releases/download/${OPENSSL_1_0_GITHUB_TAG}/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
 
 # SQLite for CentOS7 (Python 3.13+ requires SQLite >= 3.15.2)
 SQLITE_VERSION="3450100"  # SQLite 3.45.1
@@ -165,7 +167,13 @@ if [ -f "${openssl_1_0_output}" ]; then
     echo "✓ ${openssl_1_0_file} already cached"
 else
     echo "⬇ Downloading ${openssl_1_0_file}..."
-    download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"
+    if ! download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"; then
+        echo "WARN: Primary download failed for ${openssl_1_0_file}. Trying GitHub release fallback..."
+        if ! download "${OPENSSL_1_0_FALLBACK_URL}" "${openssl_1_0_output}"; then
+            echo "ERROR: Failed to download ${openssl_1_0_file} from both primary and fallback URLs."
+            exit 1
+        fi
+    fi
     echo "✓ Downloaded ${openssl_1_0_file}"
 fi
 
