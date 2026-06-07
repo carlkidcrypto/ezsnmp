@@ -168,7 +168,7 @@ if [ -f "${openssl_1_0_output}" ]; then
 else
     echo "⬇ Downloading ${openssl_1_0_file}..."
     if ! download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"; then
-        echo "WARN: Primary OpenSSL 1.0.2u URL failed. Trying GitHub release fallback..."
+        echo "WARN: Primary download failed for ${openssl_1_0_file}. Trying GitHub release fallback..."
         if ! download "${OPENSSL_1_0_FALLBACK_URL}" "${openssl_1_0_output}"; then
             echo "ERROR: Failed to download ${openssl_1_0_file} from both primary and fallback URLs."
             exit 1
