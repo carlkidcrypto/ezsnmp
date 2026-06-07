@@ -29,8 +29,6 @@ RUN cd /tmp && \
     echo "/usr/local/openssl10/lib" > /etc/ld.so.conf.d/openssl10.conf && ldconfig && \
     cd /tmp && rm -rf openssl-1.0.2u.tar.gz openssl-1.0.2u
 
-ENV LD_LIBRARY_PATH="/usr/local/openssl10/lib:${LD_LIBRARY_PATH:-}"
-
 # Copy and build NetSNMP 5.7.3 from cache
 # Uses OpenSSL 1.0.2u built above, -j1 and MALLOC_CHECK_=0 for stability
 # net-snmp 5.7.3 is old C code; pass -Wno-error and -fno-strict-aliasing to
