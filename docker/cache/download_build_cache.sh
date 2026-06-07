@@ -20,7 +20,8 @@ OPENSSL_1_1_VERSION="1.1.1w"
 OPENSSL_1_1_URL="https://www.openssl.org/source/openssl-${OPENSSL_1_1_VERSION}.tar.gz"
 OPENSSL_1_0_VERSION="1.0.2u"
 OPENSSL_1_0_URL="https://www.openssl.org/source/old/1.0.2/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
-OPENSSL_1_0_FALLBACK_URL="https://github.com/openssl/openssl/releases/download/OpenSSL_1_0_2u/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
+OPENSSL_1_0_GITHUB_TAG="OpenSSL_${OPENSSL_1_0_VERSION//./_}"
+OPENSSL_1_0_FALLBACK_URL="https://github.com/openssl/openssl/releases/download/${OPENSSL_1_0_GITHUB_TAG}/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
 
 # SQLite for CentOS7 (Python 3.13+ requires SQLite >= 3.15.2)
 SQLITE_VERSION="3450100"  # SQLite 3.45.1
