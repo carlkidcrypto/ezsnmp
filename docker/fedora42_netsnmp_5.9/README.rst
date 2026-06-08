@@ -41,7 +41,7 @@ Or manually:
 .. code-block:: bash
 
     docker-compose up -d
-    docker exec -it fedora41_snmp_container /bin/bash
+    docker exec -it fedora42_snmp_container /bin/bash
 
 Testing
 =======
