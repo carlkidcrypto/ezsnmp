@@ -389,9 +389,9 @@ meson<span class="w"> </span><span class="nb">test</span><span class="w"> </span
 <li><p><strong>archlinux_netsnmp_5.8</strong> - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x</p></li>
 <li><p><strong>centos7</strong> - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source</p></li>
 <li><p><strong>centos8</strong> - CentOS 8 (EOL) with gcc-toolset-11 (g++ 11.x), Python 3.10-3.14 all from source</p></li>
-<li><p><strong>fedora41_netsnmp_5.9</strong> - Fedora 41 with GCC 14.x, net-snmp 5.9.5.2, Python 3.10-3.14 all from source</p></li>
-<li><p><strong>fedora41_netsnmp_5.8</strong> - Fedora 41 with GCC 14.x, net-snmp 5.8, Python 3.10-3.14 all from source</p></li>
-<li><p><strong>fedora41_netsnmp_5.7</strong> - Fedora 41 with GCC 14.x, net-snmp 5.7.3, Python 3.10-3.14 all from source</p></li>
+<li><p><strong>fedora42_netsnmp_5.9</strong> - Fedora 42 with GCC 14.x, net-snmp 5.9.5.2, Python 3.10-3.14 all from source</p></li>
+<li><p><strong>fedora42_netsnmp_5.8</strong> - Fedora 42 with GCC 14.x, net-snmp 5.8, Python 3.10-3.14 all from source</p></li>
+<li><p><strong>fedora42_netsnmp_5.7</strong> - Fedora 42 with GCC 14.x, net-snmp 5.7.3, Python 3.10-3.14 all from source</p></li>
 <li><p><strong>rockylinux8</strong> - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14</p></li>
 <li><p><strong>rockylinux9</strong> - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), Python 3.10-3.14 all from source</p></li>
 </ul>
@@ -441,7 +441,7 @@ chmod<span class="w"> </span>+x<span class="w"> </span>run_cpp_tests_in_all_dock
 ./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>rockylinux8<span class="w"> </span>rockylinux9
 
 <span class="c1"># Test only net-snmp 5.7 containers (useful for iterative debugging)</span>
-./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>fedora41_netsnmp_5.7
+./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>fedora42_netsnmp_5.7
 
 <span class="c1"># Show help and usage examples</span>
 ./run_cpp_tests_in_all_dockers.sh<span class="w"> </span>--help

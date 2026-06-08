@@ -1,13 +1,13 @@
 =====================================
-Fedora 41 with net-snmp 5.8 Docker
+Fedora 42 with net-snmp 5.8 Docker
 =====================================
 
 Overview
 ========
 
-This Docker image provides a testing environment based on Fedora 41 (latest stable) with:
+This Docker image provides a testing environment based on Fedora 42 (latest stable) with:
 
-* **Base OS**: Fedora 41
+* **Base OS**: Fedora 42
 * **GCC**: Native GCC 14.x (g++ 14.x, exceeds g++ 9.5 minimum — no toolset wrapper needed)
 * **Python Versions**: 3.10, 3.11, 3.12, 3.13, 3.14 (all from source builds)
 * **Virtual Environment**: /opt/venv (Python 3.14 with all project dependencies pre-installed)
@@ -23,7 +23,7 @@ To build the image locally:
 
 .. code-block:: bash
 
-    cd docker/fedora41_netsnmp_5.8
+    cd docker/fedora42_netsnmp_5.8
     docker-compose build
 
 Running
@@ -33,7 +33,7 @@ To run the container with automatic setup:
 
 .. code-block:: bash
 
-    cd docker/fedora41_netsnmp_5.8
+    cd docker/fedora42_netsnmp_5.8
     ./go_docker.sh
 
 Or manually:
@@ -41,7 +41,7 @@ Or manually:
 .. code-block:: bash
 
     docker-compose up -d
-    docker exec -it fedora41_netsnmp_5.8_snmp_container /bin/bash
+    docker exec -it fedora42_netsnmp_5.8_snmp_container /bin/bash
 
 Testing
 =======
@@ -72,7 +72,7 @@ All Python versions are compiled from source:
 GCC
 ===
 
-Fedora 41 ships with native GCC 14.x which provides:
+Fedora 42 ships with native GCC 14.x which provides:
 
 * GCC 14.x compiler suite (no toolset wrapper required)
 * Support for modern C++ features
