@@ -1,5 +1,5 @@
-# Use Fedora 41 as the base image
-FROM fedora:41
+# Use Fedora 42 as the base image
+FROM fedora:42
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
 ARG PYTHON_MAX_VERSION=3.14.5
@@ -8,57 +8,29 @@ ARG PYTHON_MIN_1_VERSION=3.12.13
 ARG PYTHON_MIN_0_VERSION=3.11.15
 ARG PYTHON_MIN_VERSION=3.10.20
 
-# Update system and install GCC (native GCC 14.x on Fedora 41 - no toolset needed)
+# Update system and install GCC (native GCC 14.x on Fedora 42 - no toolset needed)
 RUN dnf update -y && \
     dnf install -y gcc gcc-c++ findutils
 
 # Install remaining dependencies from requirements file
-COPY docker/fedora41_netsnmp_5.7/dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/fedora42_netsnmp_5.9/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Build OpenSSL 1.0.2u from cache (required for net-snmp 5.7.3)
-# Installed to /usr/local/openssl10 to avoid conflicting with system OpenSSL 3.x
-COPY docker/cache/openssl-1.0.2u.tar.gz /tmp/
+# Copy and build NetSNMP 5.9.5.2 from cache to ensure complete headers are available
+# Disable all Perl support to minimize image size and avoid perl-ExtUtils-MakeMaker dependency
+COPY docker/cache/net-snmp-5.9.5.2.tar.gz /tmp/
 RUN cd /tmp && \
-    tar -xzf openssl-1.0.2u.tar.gz && \
-    cd openssl-1.0.2u && \
-    ./config shared --prefix=/usr/local/openssl10 && \
-    make && make install_sw && \
-    echo "/usr/local/openssl10/lib" > /etc/ld.so.conf.d/openssl10.conf && ldconfig && \
-    cd /tmp && rm -rf openssl-1.0.2u.tar.gz openssl-1.0.2u
-
-# Copy and build NetSNMP 5.7.3 from cache
-# Uses OpenSSL 1.0.2u built above, -j1 and MALLOC_CHECK_=0 for stability
-# net-snmp 5.7.3 is old C code; pass -Wno-error and -fno-strict-aliasing to
-# prevent GCC 14's stricter default error promotions from blocking the build.
-COPY docker/cache/net-snmp-5.7.3.tar.gz /tmp/
-RUN cd /tmp && \
-    tar -xzf net-snmp-5.7.3.tar.gz && \
-    cd net-snmp-5.7.3 && \
-    COMPAT_CFLAGS="-Wno-error -fno-strict-aliasing" && \
-    CFLAGS="${COMPAT_CFLAGS}" \
-    ./configure --prefix=/usr \
-        --enable-shared \
-        --disable-embedded-perl \
-        --without-perl-modules \
-        --with-defaults \
-        --with-sys-contact="root@localhost" \
-        --with-sys-location="Unknown" \
-        --with-logfile=/var/log/snmpd.log \
-        --with-persistent-directory=/var/net-snmp \
-        --disable-debugging \
-        --with-openssl=/usr/local/openssl10 \
-        --with-security-modules="tsm,usm" && \
-    MALLOC_CHECK_=0 make -j1 CFLAGS="${COMPAT_CFLAGS}" && \
-    MALLOC_CHECK_=0 make install && \
+    tar -xzf net-snmp-5.9.5.2.tar.gz && \
+    cd net-snmp-5.9.5.2 && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    make -j$(nproc) && \
+    make install && \
     ldconfig && \
     cd /tmp && \
-    rm -rf net-snmp-5.7.3.tar.gz net-snmp-5.7.3 && \
-    if ! snmpd -v 2>&1 | grep -q "5.7.3"; then echo "ERROR: Net-SNMP 5.7.3 not installed correctly"; exit 1; fi
-
-ENV MALLOC_CHECK_=0
+    rm -rf net-snmp-5.9.5.2.tar.gz net-snmp-5.9.5.2 && \
+    net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
 COPY docker/cache/Python-3.10.20.tgz /tmp/

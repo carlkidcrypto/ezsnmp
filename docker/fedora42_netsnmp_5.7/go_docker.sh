@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-CONTAINER_NAME="fedora41_netsnmp_5.7_snmp_container"
+CONTAINER_NAME="fedora42_netsnmp_5.7_snmp_container"
 sudo chown $USER /var/run/docker.sock
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     docker stop $CONTAINER_NAME
@@ -19,7 +19,7 @@ docker-compose up -d
 # Wait for the container to start by checking its logs
 WAIT_TIME=240
 for i in $(seq $WAIT_TIME -1 1); do
-    if docker logs fedora41_netsnmp_5.7_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
+    if docker logs fedora42_netsnmp_5.7_snmp_container 2>&1 | grep -q "Starting SNMP daemon..."; then
         echo -ne "\nContainer started successfully in $((WAIT_TIME - i)) seconds.\n"
         break
     fi
@@ -29,7 +29,7 @@ done
 echo -ne "\n"
 
 # Show the last logs after waiting or early stop
-docker logs fedora41_netsnmp_5.7_snmp_container --details --tail 5
+docker logs fedora42_netsnmp_5.7_snmp_container --details --tail 5
 
 # Join the container
-docker exec -it fedora41_netsnmp_5.7_snmp_container /bin/bash
+docker exec -it fedora42_netsnmp_5.7_snmp_container /bin/bash

@@ -148,9 +148,9 @@ EzSnmp provides pre-built Docker images for testing across multiple Linux distri
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source
 * **centos8** - CentOS 8 (EOL) with gcc-toolset-11 (g++ 11.x), Python 3.10-3.14 all from source
-* **fedora41_netsnmp_5.9** - Fedora 41 with GCC 14.x, net-snmp 5.9.5.2, Python 3.10-3.14 all from source
-* **fedora41_netsnmp_5.8** - Fedora 41 with GCC 14.x, net-snmp 5.8, Python 3.10-3.14 all from source
-* **fedora41_netsnmp_5.7** - Fedora 41 with GCC 14.x, net-snmp 5.7.3, Python 3.10-3.14 all from source
+* **fedora42_netsnmp_5.9** - Fedora 42 with GCC 14.x, net-snmp 5.9.5.2, Python 3.10-3.14 all from source
+* **fedora42_netsnmp_5.8** - Fedora 42 with GCC 14.x, net-snmp 5.8, Python 3.10-3.14 all from source
+* **fedora42_netsnmp_5.7** - Fedora 42 with GCC 14.x, net-snmp 5.7.3, Python 3.10-3.14 all from source
 * **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14
 * **rockylinux9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), Python 3.10-3.14 all from source
 
@@ -206,7 +206,7 @@ To run C++ tests in Docker:
     ./run_cpp_tests_in_all_dockers.sh rockylinux8 rockylinux9
 
     # Test only net-snmp 5.7 containers (useful for iterative debugging)
-    ./run_cpp_tests_in_all_dockers.sh fedora41_netsnmp_5.7
+    ./run_cpp_tests_in_all_dockers.sh fedora42_netsnmp_5.7
 
     # Show help and usage examples
     ./run_cpp_tests_in_all_dockers.sh --help

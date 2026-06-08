@@ -1,5 +1,5 @@
-# Use Fedora 41 as the base image
-FROM fedora:41
+# Use Fedora 42 as the base image
+FROM fedora:42
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
 ARG PYTHON_MAX_VERSION=3.14.5
@@ -8,12 +8,12 @@ ARG PYTHON_MIN_1_VERSION=3.12.13
 ARG PYTHON_MIN_0_VERSION=3.11.15
 ARG PYTHON_MIN_VERSION=3.10.20
 
-# Update system and install GCC (native GCC 14.x on Fedora 41 - no toolset needed)
+# Update system and install GCC (native GCC 14.x on Fedora 42 - no toolset needed)
 RUN dnf update -y && \
     dnf install -y gcc gcc-c++ findutils
 
 # Install remaining dependencies from requirements file
-COPY docker/fedora41_netsnmp_5.8/dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/fedora42_netsnmp_5.8/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt

@@ -1,9 +1,9 @@
 services:
-  fedora41_snmp_container:
+  fedora42_netsnmp_5.8_snmp_container:
     build:
       context: ../../
-      dockerfile: docker/fedora41_netsnmp_5.9/Dockerfile
-    container_name: fedora41_snmp_container
+      dockerfile: docker/fedora42_netsnmp_5.8/Dockerfile
+    container_name: fedora42_netsnmp_5.8_snmp_container
     volumes:
       - ../../:/ezsnmp
     working_dir: /ezsnmp
