@@ -4,7 +4,7 @@ Welcome to EzSnmp's documentation!
 Introduction
 ------------
 EzSnmp has been tested and is supported on systems running net-snmp
-5.9.x and newer. All Python versions 3.10 and above are fully supported.
+5.7.x and newer. All Python versions 3.10 and above are fully supported.
 
 Installation via Homebrew (macOS)
 ---------------------------------
@@ -49,7 +49,7 @@ On macOS systems (alternative, using homebrew-core net-snmp):
 
 Installation via Building net-snmp from Source
 ----------------------------------------------
-If your OS doesn't ship with net-snmp 5.9.x or newer, please follow instructions
+If your OS doesn't ship with net-snmp 5.7.x or newer, please follow instructions
 provided on the `net-snmp install page <https://www.net-snmp.org/docs/INSTALL.html>`_
 to build and install net-snmp on your system.
 
