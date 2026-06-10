@@ -6,7 +6,7 @@ from typing import Union
 class Session(SessionBase):
     """
     Python wrapper class for SessionBase, providing a Pythonic interface
-    for managing NetSNMP sessions.
+    for managing Net-SNMP sessions.
     """
 
     def __init__(
@@ -424,7 +424,7 @@ class Session(SessionBase):
         """Set the number of retries.
 
         :param value: The number of retries to set.
-        :type value: int
+        :type value: Union[str, int]
         """
         super()._set_retries(value)
 
@@ -441,7 +441,7 @@ class Session(SessionBase):
         """Set the timeout value.
 
         :param value: The timeout value to set in seconds.
-        :type value: int
+        :type value: Union[str, int]
         """
         super()._set_timeout(value)
 
@@ -561,7 +561,7 @@ class Session(SessionBase):
 
         :param value: The maximum number of repeaters. Only applies to bulk_walk
             and bulk_get operations.
-        :type value: str
+        :type value: Union[str, int]
         """
         super()._set_max_repeaters_to_num(value)
 
