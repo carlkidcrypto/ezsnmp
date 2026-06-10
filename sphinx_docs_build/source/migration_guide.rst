@@ -111,6 +111,8 @@ The following table maps EzSnmp parameter names to their corresponding net-snmp 
        - ``-O f``
      * - ``print_oids_numerically``
        - ``-O n``
+     * - ``print_timeticks_numerically``
+       - ``-O t``
 
 
 Migration Example
