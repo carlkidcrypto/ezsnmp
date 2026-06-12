@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-       os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
@@ -24,6 +24,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install cibuildwheel
+        shell: bash
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
@@ -67,8 +68,20 @@ jobs:
             throw 'Unable to locate the extracted Net-SNMP source directory.'
           }
 
+          $configureArgs = @(
+            '--config=release',
+            '--linktype=dynamic',
+            '--with-sdk',
+            '--with-ssl',
+            '--enable-blumenthal-aes',
+            '--with-ipv6',
+            "--prefix=$($installRoot -replace '\\', '/')",
+            "--with-sslincdir=$($opensslInclude -replace '\\', '/')",
+            "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
+          )
+
           Push-Location (Join-Path $netSnmpSource.FullName 'win32')
-          perl Configure --config=release --linktype=dynamic --with-sdk --with-ssl --enable-blumenthal-aes --with-ipv6 --prefix="$($installRoot -replace '\\', '/')" --with-sslincdir="$($opensslInclude -replace '\\', '/')" --with-ssllibdir="$($opensslLib -replace '\\', '/')" | Write-Host
+          perl Configure @configureArgs | Write-Host
           nmake /nologo clean
           nmake /nologo libs
           Pop-Location
@@ -140,7 +153,7 @@ jobs:
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           python-version: "3.11"
-    
+
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
