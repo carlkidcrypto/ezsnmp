@@ -388,6 +388,14 @@ std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) 
    return snmpgetnext(m_args, m_init_name);
 }
 
+std::vector<Result> SessionBase::get_next(std::string const& mib) {
+   std::vector<std::string> mibs;
+   if (!mib.empty()) {
+      mibs.push_back(mib);
+   }
+   return get_next(mibs);
+}
+
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
    check_and_clear_v3_user();
    populate_args();
