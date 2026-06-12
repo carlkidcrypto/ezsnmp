@@ -38,6 +38,15 @@ before-all = """
           port -N upgrade net-snmp openssl;"""
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
+[tool.cibuildwheel.windows]
+archs = "AMD64"
+before-build = "python -m pip install delvewheel"
+environment = { EZSNMP_NETSNMP_INCLUDE_DIR = "${EZSNMP_NETSNMP_INCLUDE_DIR}", EZSNMP_NETSNMP_LIB_DIR = "${EZSNMP_NETSNMP_LIB_DIR}", EZSNMP_NETSNMP_BIN_DIR = "${EZSNMP_NETSNMP_BIN_DIR}", EZSNMP_OPENSSL_BIN_DIR = "${EZSNMP_OPENSSL_BIN_DIR}", EZSNMP_NETSNMP_USE_DLL = "1", PATH = "${EZSNMP_NETSNMP_BIN_DIR};${EZSNMP_OPENSSL_BIN_DIR};${PATH}" }
+repair-wheel-command = [
+  "delvewheel show --add-path ${EZSNMP_NETSNMP_BIN_DIR};${EZSNMP_OPENSSL_BIN_DIR} {wheel}",
+  "delvewheel repair --add-path ${EZSNMP_NETSNMP_BIN_DIR};${EZSNMP_OPENSSL_BIN_DIR} -w {dest_dir} {wheel}",
+]
+
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [

@@ -269,6 +269,14 @@ For MacOS builds on a MacOS machine
     clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
 
 
+For Windows builds on a Windows machine
+
+.. code:: powershell
+
+    Remove-Item wheelhouse, build, ezsnmp.egg-info -Recurse -Force -ErrorAction SilentlyContinue
+    py -m cibuildwheel --output-dir wheelhouse --platform windows
+
+
 Formatting
 ----------
 

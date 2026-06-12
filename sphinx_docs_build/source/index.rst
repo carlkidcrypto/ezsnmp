@@ -49,9 +49,16 @@ On macOS systems (alternative, using homebrew-core net-snmp):
 
 On Windows systems:
 
-EzSnmp can be built natively on Windows when you have a supported Net-SNMP
-installation available to MSVC. The upstream Net-SNMP project ships a native
-``win32/Configure`` flow for building ``netsnmp.lib`` / ``netsnmp.dll``.
+Published Windows wheels bundle ``netsnmp.dll`` and its required DLL dependencies,
+so most users can install EzSnmp directly:
+
+.. code-block:: powershell
+
+    py -m pip install ezsnmp
+
+If you need to build EzSnmp from source on Windows, install a supported
+Net-SNMP build that is available to MSVC. The upstream Net-SNMP project ships a
+native ``win32/Configure`` flow for building ``netsnmp.lib`` / ``netsnmp.dll``.
 After Net-SNMP is installed, point EzSnmp at the native headers and libraries:
 
 .. code-block:: powershell
