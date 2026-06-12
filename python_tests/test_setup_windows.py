@@ -44,6 +44,25 @@ def test_gather_build_configuration_windows_uses_env_vars(tmp_path, monkeypatch)
     assert cfg["system_netsnmp_version"] == "5.9.4"
 
 
+def test_gather_build_configuration_windows_supports_dll_imports(tmp_path, monkeypatch):
+    include_dir = tmp_path / "include"
+    lib_dir = tmp_path / "lib"
+    header_path = include_dir / "net-snmp" / "net-snmp-config.h"
+    header_path.parent.mkdir(parents=True)
+    header_path.write_text('#define PACKAGE_VERSION "5.10.1"\n', encoding="utf-8")
+    lib_dir.mkdir()
+
+    monkeypatch.setattr(SETUP_MODULE, "platform", "win32")
+    monkeypatch.setattr(SETUP_MODULE, "argv", ["setup.py"])
+    monkeypatch.setenv("EZSNMP_NETSNMP_INCLUDE_DIR", str(include_dir))
+    monkeypatch.setenv("EZSNMP_NETSNMP_LIB_DIR", str(lib_dir))
+    monkeypatch.setenv("EZSNMP_NETSNMP_USE_DLL", "1")
+
+    cfg = SETUP_MODULE.gather_build_configuration()
+
+    assert "/DNETSNMP_USE_DLL" in cfg["compile_args"]
+
+
 def test_gather_build_configuration_windows_requires_paths(monkeypatch):
     monkeypatch.setattr(SETUP_MODULE, "platform", "win32")
     monkeypatch.setattr(SETUP_MODULE, "argv", ["setup.py"])

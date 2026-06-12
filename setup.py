@@ -260,6 +260,13 @@ def split_env_list(raw_value):
     return [entry.strip() for entry in normalized_value.split(os.pathsep) if entry.strip()]
 
 
+def env_truthy(*names):
+    value = get_first_env(*names)
+    if value is None:
+        return False
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def get_first_env(*names):
     for name in names:
         value = os.environ.get(name)
@@ -326,8 +333,13 @@ def gather_windows_build_configuration():
     libraries = split_env_list(
         get_first_env("EZSNMP_NETSNMP_LIBS", "NETSNMP_LIBS")
     ) or ["netsnmp", "advapi32", "ws2_32", "kernel32", "user32"]
+    compile_args = []
+
+    if env_truthy("EZSNMP_NETSNMP_USE_DLL", "NETSNMP_USE_DLL"):
+        compile_args.append("/DNETSNMP_USE_DLL")
 
     return {
+        "compile_args": compile_args,
         "link_args": [],
         "libs": libraries,
         "libdirs": library_dirs,
@@ -368,7 +380,7 @@ def gather_build_configuration():
             {
                 "basedir": basedir,
                 "in_tree": in_tree,
-                "compile_args": compile_args,
+                "compile_args": compile_args + windows_cfg["compile_args"],
             }
         )
         return windows_cfg

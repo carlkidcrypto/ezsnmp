@@ -63,6 +63,9 @@ After Net-SNMP is installed, point EzSnmp at the native headers and libraries:
 If you use a non-default import library set, also define
 ``EZSNMP_NETSNMP_LIBS`` as a semicolon-separated list. EzSnmp defaults to
 ``netsnmp;advapi32;ws2_32;kernel32;user32`` on Windows.
+When linking against ``netsnmp.dll`` instead of the static library, also set
+``EZSNMP_NETSNMP_USE_DLL=1`` so the Net-SNMP headers use the correct import
+declarations.
 
 Installation via Building net-snmp from Source
 ----------------------------------------------
