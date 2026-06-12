@@ -29,80 +29,81 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Prepare Net-SNMP for Windows wheels
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $netSnmpVersion = '5.10.2'
-          $workRoot = Join-Path $env:RUNNER_TEMP 'ezsnmp-windows-wheel'
-          $sourceRoot = Join-Path $workRoot 'src'
-          $installRoot = Join-Path $workRoot 'net-snmp'
-          $archivePath = Join-Path $workRoot "net-snmp-$netSnmpVersion.zip"
+        uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
+        with:
+          windowsShell: pwsh
+          windows: |
+            $ErrorActionPreference = 'Stop'
+            $netSnmpVersion = '5.10.2'
+            $workRoot = Join-Path $env:RUNNER_TEMP 'ezsnmp-windows-wheel'
+            $sourceRoot = Join-Path $workRoot 'src'
+            $installRoot = Join-Path $workRoot 'net-snmp'
+            $archivePath = Join-Path $workRoot "net-snmp-$netSnmpVersion.zip"
 
-          Remove-Item -Recurse -Force $workRoot -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force -Path $workRoot, $sourceRoot, $installRoot | Out-Null
+            Remove-Item -Recurse -Force $workRoot -ErrorAction SilentlyContinue
+            New-Item -ItemType Directory -Force -Path $workRoot, $sourceRoot, $installRoot | Out-Null
 
-          choco install openssl --yes --no-progress
-          if (-not (Get-Command perl -ErrorAction SilentlyContinue)) {
-            choco install strawberryperl --yes --no-progress
-          }
+            choco install openssl --yes --no-progress
+            if (-not (Get-Command perl -ErrorAction SilentlyContinue)) {
+              choco install strawberryperl --yes --no-progress
+            }
 
-          $opensslRoot = @(
-            'C:\Program Files\OpenSSL-Win64',
-            'C:\OpenSSL-Win64'
-          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+            $opensslRoot = @(
+              'C:\Program Files\OpenSSL-Win64',
+              'C:\OpenSSL-Win64'
+            ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 
-          if (-not $opensslRoot) {
-            throw 'Unable to locate the OpenSSL installation directory on the Windows runner.'
-          }
+            if (-not $opensslRoot) {
+              throw 'Unable to locate the OpenSSL installation directory on the Windows runner.'
+            }
 
-          $opensslInclude = Join-Path $opensslRoot 'include'
-          $opensslLib = Join-Path $opensslRoot 'lib\VC\x64'
-          $opensslBin = Join-Path $opensslRoot 'bin'
+            $opensslInclude = Join-Path $opensslRoot 'include'
+            $opensslLib = Join-Path $opensslRoot 'lib\VC\x64'
+            $opensslBin = Join-Path $opensslRoot 'bin'
 
-          Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
-          Expand-Archive -LiteralPath $archivePath -DestinationPath $sourceRoot -Force
-          $netSnmpSource = Get-ChildItem -Path $sourceRoot -Directory | Select-Object -First 1
+            Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
+            Expand-Archive -LiteralPath $archivePath -DestinationPath $sourceRoot -Force
+            $netSnmpSource = Get-ChildItem -Path $sourceRoot -Directory | Select-Object -First 1
 
-          if (-not $netSnmpSource) {
-            throw 'Unable to locate the extracted Net-SNMP source directory.'
-          }
+            if (-not $netSnmpSource) {
+              throw 'Unable to locate the extracted Net-SNMP source directory.'
+            }
 
-          $configureArgs = @(
-            '--config=release',
-            '--linktype=dynamic',
-            '--with-sdk',
-            '--with-ssl',
-            '--enable-blumenthal-aes',
-            '--with-ipv6',
-            "--prefix=$($installRoot -replace '\\', '/')",
-            "--with-sslincdir=$($opensslInclude -replace '\\', '/')",
-            "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
-          )
+            $configureArgs = @(
+              '--config=release',
+              '--linktype=dynamic',
+              '--with-sdk',
+              '--with-ssl',
+              '--enable-blumenthal-aes',
+              '--with-ipv6',
+              "--prefix=$($installRoot -replace '\\', '/')",
+              "--with-sslincdir=$($opensslInclude -replace '\\', '/')",
+              "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
+            )
 
-          Push-Location (Join-Path $netSnmpSource.FullName 'win32')
-          perl Configure @configureArgs | Write-Host
-          nmake /nologo clean
-          nmake /nologo libs
-          Pop-Location
+            Push-Location (Join-Path $netSnmpSource.FullName 'win32')
+            perl Configure @configureArgs | Write-Host
+            nmake /nologo clean
+            nmake /nologo libs
+            Pop-Location
 
-          $wheelInclude = Join-Path $installRoot 'include'
-          $wheelLib = Join-Path $installRoot 'lib\release'
-          $wheelBin = Join-Path $installRoot 'bin\release'
+            $wheelInclude = Join-Path $installRoot 'include'
+            $wheelLib = Join-Path $installRoot 'lib\release'
+            $wheelBin = Join-Path $installRoot 'bin\release'
 
-          New-Item -ItemType Directory -Force -Path $wheelInclude, $wheelLib, $wheelBin | Out-Null
-          Copy-Item -Path (Join-Path $netSnmpSource.FullName 'include\net-snmp') -Destination $wheelInclude -Recurse -Force
-          Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\agent') -Destination $wheelInclude -Recurse -Force
-          Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\library') -Destination $wheelInclude -Recurse -Force
-          Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\*.h') -Destination (Join-Path $wheelInclude 'net-snmp') -Force
-          Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\lib\release\netsnmp.lib') -Destination $wheelLib -Force
-          Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\bin\release\netsnmp.dll') -Destination $wheelBin -Force
+            New-Item -ItemType Directory -Force -Path $wheelInclude, $wheelLib, $wheelBin | Out-Null
+            Copy-Item -Path (Join-Path $netSnmpSource.FullName 'include\net-snmp') -Destination $wheelInclude -Recurse -Force
+            Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\agent') -Destination $wheelInclude -Recurse -Force
+            Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\library') -Destination $wheelInclude -Recurse -Force
+            Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\*.h') -Destination (Join-Path $wheelInclude 'net-snmp') -Force
+            Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\lib\release\netsnmp.lib') -Destination $wheelLib -Force
+            Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\bin\release\netsnmp.dll') -Destination $wheelBin -Force
 
-          Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_VERSION=$netSnmpVersion"
-          Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_INCLUDE_DIR=$wheelInclude"
-          Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_LIB_DIR=$wheelLib"
-          Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_BIN_DIR=$wheelBin"
-          Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_BIN_DIR=$opensslBin"
+            Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_VERSION=$netSnmpVersion"
+            Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_INCLUDE_DIR=$wheelInclude"
+            Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_LIB_DIR=$wheelLib"
+            Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_BIN_DIR=$wheelBin"
+            Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_BIN_DIR=$opensslBin"
 
       - name: Build wheels using cibuildwheel
         uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
