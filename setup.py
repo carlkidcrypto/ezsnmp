@@ -22,6 +22,7 @@ Requirements:
 """
 
 import os
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from subprocess import check_output, CalledProcessError, run, DEVNULL
 from sys import argv, platform
@@ -252,11 +253,99 @@ class BuildEverythingWithSwig(_build_py):
         super().run()
 
 
+def split_env_list(raw_value):
+    if not raw_value:
+        return []
+    normalized_value = raw_value.replace(";", os.pathsep).replace(",", os.pathsep)
+    return [entry.strip() for entry in normalized_value.split(os.pathsep) if entry.strip()]
+
+
+def get_first_env(*names):
+    for name in names:
+        value = os.environ.get(name)
+        if value:
+            return value
+    return None
+
+
+def resolve_windows_netsnmp_version(include_dirs):
+    configured_version = get_first_env(
+        "EZSNMP_NETSNMP_VERSION",
+        "NETSNMP_VERSION",
+    )
+    if configured_version:
+        return configured_version
+
+    for include_dir in include_dirs:
+        header_candidates = (
+            Path(include_dir) / "net-snmp" / "net-snmp-config.h",
+            Path(include_dir) / "net-snmp-config.h",
+        )
+        for header_path in header_candidates:
+            if not header_path.is_file():
+                continue
+            match = search(
+                r'#define\s+PACKAGE_VERSION\s+"([^"]+)"',
+                header_path.read_text(encoding="utf-8", errors="ignore"),
+            )
+            if match:
+                return match.group(1)
+
+    raise RuntimeError(
+        "Unable to determine the Net-SNMP version on Windows. "
+        "Set EZSNMP_NETSNMP_VERSION (or NETSNMP_VERSION) or ensure "
+        "net-snmp-config.h is available under the configured include directory."
+    )
+
+
+def gather_windows_build_configuration():
+    include_dirs = split_env_list(
+        get_first_env(
+            "EZSNMP_NETSNMP_INCLUDE_DIR",
+            "EZSNMP_NETSNMP_INCLUDEDIR",
+            "NETSNMP_INCLUDE_DIR",
+            "NETSNMP_INCLUDEDIR",
+        )
+    )
+    library_dirs = split_env_list(
+        get_first_env(
+            "EZSNMP_NETSNMP_LIB_DIR",
+            "EZSNMP_NETSNMP_LIBDIR",
+            "NETSNMP_LIB_DIR",
+            "NETSNMP_LIBDIR",
+        )
+    )
+
+    if not include_dirs or not library_dirs:
+        raise RuntimeError(
+            "Windows builds require Net-SNMP headers and libraries to be configured. "
+            "Set EZSNMP_NETSNMP_INCLUDE_DIR and EZSNMP_NETSNMP_LIB_DIR "
+            "(or the NETSNMP_* equivalents) before building ezsnmp."
+        )
+
+    libraries = split_env_list(
+        get_first_env("EZSNMP_NETSNMP_LIBS", "NETSNMP_LIBS")
+    ) or ["netsnmp", "advapi32", "ws2_32", "kernel32", "user32"]
+
+    return {
+        "link_args": [],
+        "libs": libraries,
+        "libdirs": library_dirs,
+        "incdirs": ["ezsnmp/include/"] + include_dirs,
+        "system_netsnmp_version": resolve_windows_netsnmp_version(include_dirs),
+        "homebrew_version": None,
+        "homebrew_netsnmp_version": None,
+        "homebrew_openssl_version": None,
+        "macports_version": None,
+        "macports_netsnmp_version": None,
+    }
+
+
 # Determine if a base directory has been provided with the --basedir option
 def gather_build_configuration():
     basedir = None
     in_tree = False
-    compile_args = ["-std=c++17"]
+    compile_args = ["/std:c++17", "/EHsc"] if platform == "win32" else ["-std=c++17"]
     link_args = []
     libs = []
     libdirs = []
@@ -264,10 +353,25 @@ def gather_build_configuration():
 
     for arg in argv:
         if arg.startswith("--debug"):
-            compile_args.extend(["-Wall", "-O0", "-g"])
+            compile_args.extend(
+                ["/W3", "/Od", "/Zi"] if platform == "win32" else ["-Wall", "-O0", "-g"]
+            )
         elif arg.startswith("--basedir="):
             basedir = arg.split("=", 1)[1]
             in_tree = True
+
+    if platform == "win32":
+        if in_tree:
+            raise RuntimeError("--basedir is not supported for Windows builds.")
+        windows_cfg = gather_windows_build_configuration()
+        windows_cfg.update(
+            {
+                "basedir": basedir,
+                "in_tree": in_tree,
+                "compile_args": compile_args,
+            }
+        )
+        return windows_cfg
 
     system_netsnmp_version = check_output(
         "net-snmp-config --version", shell=True

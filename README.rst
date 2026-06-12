@@ -70,7 +70,8 @@ How to Support This Project?
 Getting Started
 ---------------
 Please check out the `EzSnmp documentation <https://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
-instructions for various operating systems.
+instructions for various operating systems, including native Windows builds with
+an existing Net-SNMP installation.
 
 Code Coverage
 -------------
