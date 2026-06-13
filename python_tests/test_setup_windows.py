@@ -1,13 +1,6 @@
-import importlib.util
-from pathlib import Path
+import build_utils
 
 import pytest
-
-
-SETUP_PATH = Path(__file__).resolve().parents[1] / "setup.py"
-SPEC = importlib.util.spec_from_file_location("ezsnmp_setup", SETUP_PATH)
-SETUP_MODULE = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(SETUP_MODULE)
 
 
 def test_resolve_windows_netsnmp_version_from_header(tmp_path, monkeypatch):
@@ -18,7 +11,7 @@ def test_resolve_windows_netsnmp_version_from_header(tmp_path, monkeypatch):
     header_path.parent.mkdir(parents=True)
     header_path.write_text('#define PACKAGE_VERSION "5.10.2"\n', encoding="utf-8")
 
-    assert SETUP_MODULE.resolve_windows_netsnmp_version([str(tmp_path)]) == "5.10.2"
+    assert build_utils.resolve_windows_netsnmp_version([str(tmp_path)]) == "5.10.2"
 
 
 def test_resolve_windows_netsnmp_version_from_fallback_header_path(tmp_path, monkeypatch):
@@ -28,7 +21,7 @@ def test_resolve_windows_netsnmp_version_from_fallback_header_path(tmp_path, mon
     header_path = tmp_path / "net-snmp-config.h"
     header_path.write_text('#define PACKAGE_VERSION "5.8.9"\n', encoding="utf-8")
 
-    assert SETUP_MODULE.resolve_windows_netsnmp_version([str(tmp_path)]) == "5.8.9"
+    assert build_utils.resolve_windows_netsnmp_version([str(tmp_path)]) == "5.8.9"
 
 
 def test_resolve_windows_netsnmp_version_requires_header_or_env(tmp_path, monkeypatch):
@@ -36,11 +29,11 @@ def test_resolve_windows_netsnmp_version_requires_header_or_env(tmp_path, monkey
     monkeypatch.delenv("NETSNMP_VERSION", raising=False)
 
     with pytest.raises(RuntimeError, match="Unable to determine the Net-SNMP version"):
-        SETUP_MODULE.resolve_windows_netsnmp_version([str(tmp_path)])
+        build_utils.resolve_windows_netsnmp_version([str(tmp_path)])
 
 
 def test_split_env_list_supports_multiple_delimiters():
-    assert SETUP_MODULE.split_env_list("alpha;beta,gamma") == ["alpha", "beta", "gamma"]
+    assert build_utils.split_env_list("alpha;beta,gamma") == ["alpha", "beta", "gamma"]
 
 
 def test_get_first_env_returns_first_available(monkeypatch):
@@ -49,7 +42,7 @@ def test_get_first_env_returns_first_available(monkeypatch):
     monkeypatch.setenv("EZSNMP_TERTIARY", "third")
 
     assert (
-        SETUP_MODULE.get_first_env("EZSNMP_PRIMARY", "EZSNMP_SECONDARY", "EZSNMP_TERTIARY")
+        build_utils.get_first_env("EZSNMP_PRIMARY", "EZSNMP_SECONDARY", "EZSNMP_TERTIARY")
         == "second"
     )
 
@@ -58,14 +51,14 @@ def test_get_first_env_returns_first_available(monkeypatch):
 def test_env_truthy_accepts_common_true_values(monkeypatch, value):
     monkeypatch.setenv("EZSNMP_BOOL", value)
 
-    assert SETUP_MODULE.env_truthy("EZSNMP_BOOL")
+    assert build_utils.env_truthy("EZSNMP_BOOL")
 
 
 def test_env_truthy_uses_fallback_names(monkeypatch):
     monkeypatch.delenv("EZSNMP_BOOL_PRIMARY", raising=False)
     monkeypatch.setenv("EZSNMP_BOOL_FALLBACK", "true")
 
-    assert SETUP_MODULE.env_truthy("EZSNMP_BOOL_PRIMARY", "EZSNMP_BOOL_FALLBACK")
+    assert build_utils.env_truthy("EZSNMP_BOOL_PRIMARY", "EZSNMP_BOOL_FALLBACK")
 
 
 def test_gather_build_configuration_windows_uses_env_vars(tmp_path, monkeypatch):
@@ -76,13 +69,13 @@ def test_gather_build_configuration_windows_uses_env_vars(tmp_path, monkeypatch)
     header_path.write_text('#define PACKAGE_VERSION "5.9.4"\n', encoding="utf-8")
     lib_dir.mkdir()
 
-    monkeypatch.setattr(SETUP_MODULE, "platform", "win32")
-    monkeypatch.setattr(SETUP_MODULE, "argv", ["setup.py"])
+    monkeypatch.setattr(build_utils, "platform", "win32")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
     monkeypatch.setenv("EZSNMP_NETSNMP_INCLUDE_DIR", str(include_dir))
     monkeypatch.setenv("EZSNMP_NETSNMP_LIB_DIR", str(lib_dir))
     monkeypatch.delenv("EZSNMP_NETSNMP_LIBS", raising=False)
 
-    cfg = SETUP_MODULE.gather_build_configuration()
+    cfg = build_utils.gather_build_configuration()
 
     assert cfg["compile_args"] == ["/std:c++17", "/EHsc"]
     assert cfg["libdirs"] == [str(lib_dir)]
@@ -99,13 +92,13 @@ def test_gather_build_configuration_windows_uses_custom_library_list(tmp_path, m
     header_path.write_text('#define PACKAGE_VERSION "5.9.4"\n', encoding="utf-8")
     lib_dir.mkdir()
 
-    monkeypatch.setattr(SETUP_MODULE, "platform", "win32")
-    monkeypatch.setattr(SETUP_MODULE, "argv", ["setup.py"])
+    monkeypatch.setattr(build_utils, "platform", "win32")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
     monkeypatch.setenv("EZSNMP_NETSNMP_INCLUDE_DIR", str(include_dir))
     monkeypatch.setenv("EZSNMP_NETSNMP_LIB_DIR", str(lib_dir))
     monkeypatch.setenv("EZSNMP_NETSNMP_LIBS", "netsnmp_d;advapi32,ws2_32")
 
-    cfg = SETUP_MODULE.gather_build_configuration()
+    cfg = build_utils.gather_build_configuration()
 
     assert cfg["libs"] == ["netsnmp_d", "advapi32", "ws2_32"]
 
@@ -118,20 +111,20 @@ def test_gather_build_configuration_windows_supports_dll_imports(tmp_path, monke
     header_path.write_text('#define PACKAGE_VERSION "5.10.1"\n', encoding="utf-8")
     lib_dir.mkdir()
 
-    monkeypatch.setattr(SETUP_MODULE, "platform", "win32")
-    monkeypatch.setattr(SETUP_MODULE, "argv", ["setup.py"])
+    monkeypatch.setattr(build_utils, "platform", "win32")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
     monkeypatch.setenv("EZSNMP_NETSNMP_INCLUDE_DIR", str(include_dir))
     monkeypatch.setenv("EZSNMP_NETSNMP_LIB_DIR", str(lib_dir))
     monkeypatch.setenv("EZSNMP_NETSNMP_USE_DLL", "1")
 
-    cfg = SETUP_MODULE.gather_build_configuration()
+    cfg = build_utils.gather_build_configuration()
 
     assert "/DNETSNMP_USE_DLL" in cfg["compile_args"]
 
 
 def test_gather_build_configuration_windows_requires_paths(monkeypatch):
-    monkeypatch.setattr(SETUP_MODULE, "platform", "win32")
-    monkeypatch.setattr(SETUP_MODULE, "argv", ["setup.py"])
+    monkeypatch.setattr(build_utils, "platform", "win32")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
     monkeypatch.delenv("EZSNMP_NETSNMP_INCLUDE_DIR", raising=False)
     monkeypatch.delenv("EZSNMP_NETSNMP_INCLUDEDIR", raising=False)
     monkeypatch.delenv("NETSNMP_INCLUDE_DIR", raising=False)
@@ -142,4 +135,4 @@ def test_gather_build_configuration_windows_requires_paths(monkeypatch):
     monkeypatch.delenv("NETSNMP_LIBDIR", raising=False)
 
     with pytest.raises(RuntimeError, match="EZSNMP_NETSNMP_INCLUDE_DIR"):
-        SETUP_MODULE.gather_build_configuration()
+        build_utils.gather_build_configuration()
