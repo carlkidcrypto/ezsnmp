@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-       os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
@@ -24,14 +24,18 @@ jobs:
           python-version: "3.11"
 
       - name: Install cibuildwheel
+        shell: bash
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Prepare Net-SNMP for Windows wheels
+        if: runner.os == 'Windows'
+        uses: ./.github/actions/prepare-windows-netsnmp
 
       - name: Build wheels using cibuildwheel
         uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
-          
           macos: |
             MACOS_VERSION=$(sw_vers -productVersion)
             if [[ "$MACOS_VERSION" == "10.15."* ]]; then
@@ -56,6 +60,7 @@ jobs:
                 sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\110.15"/' pyproject.toml
             fi
             python -m cibuildwheel --output-dir wheelhouse --platform macos;
+          windows: python -m cibuildwheel --output-dir wheelhouse --platform windows;
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
@@ -76,7 +81,7 @@ jobs:
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
           python-version: "3.11"
-    
+
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@3d43286418f0ea8789c57b3ba2c06df2ac176922 # v2.3.0
         with:
