@@ -49,6 +49,7 @@ The root of this directory also contains Python modules:
 
 * ``__init__.py`` - Package initialization and exports
 * ``session.py`` - Python Session class wrapper
+* ``netsnmp.py`` - Python wrappers for low-level Net-SNMP operations (snmpget, snmpset, snmpwalk, etc.)
 * ``exceptions.py`` - Python exception classes
 * Generated SWIG wrapper files (``*_wrap.cpp``, ``*.py``)
 

@@ -278,16 +278,16 @@ def snmptrap(netsnmp_args=[], init_app_name="ezsnmp_snmptrap"):
     """
     Perform an SNMP TRAP operation using the provided arguments.
 
-    This function uses the `netsnmp_snmptrap` function to perform an SNMP TRAP
-    operation and returns the result.
+    This function uses the `netsnmp_snmptrap` function to send an SNMP TRAP
+    and returns 0 on success. Unlike other SNMP operations, traps do not
+    receive a response from the agent (fire-and-forget).
 
     :param netsnmp_args: The arguments required for the SNMP TRAP operation
     :type netsnmp_args: list
     :param init_app_name: The name of the application initializing the SNMP request
     :type init_app_name: str
-    :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
-            attributes: oid (str), index (str), value (str), and type (str)
-    :rtype: tuple[Result]
+    :return: 0 on success
+    :rtype: int
 
     :raises ConnectionError: If the exception type is `ConnectionErrorBase`
     :raises GenericError: If the exception type is `GenericErrorBase`
@@ -303,13 +303,11 @@ def snmptrap(netsnmp_args=[], init_app_name="ezsnmp_snmptrap"):
 
     Example:
         >>> from ezsnmp.netsnmp import snmptrap
-        >>> NETSNMP_SESS_V2_ARGS = ["-v", "2c", "-c", "public", "localhost:11162"]
-        >>> netsnmp_args = NETSNMP_SESS_V2_ARGS + ["'' .1.3.6.1.6.3.1.1.5.1 0"]
+        >>> # Send a SNMPv2c coldStart trap; uptime defaults to current if empty string
+        >>> netsnmp_args = ["-v", "2c", "-c", "public", "localhost:11162",
+        ...                 "", ".1.3.6.1.6.3.1.1.5.1"]
         >>> result = snmptrap(netsnmp_args)
-        >>> print("OID:", result[0].oid)
-        >>> print("Index:", result[0].index)
-        >>> print("Value:", result[0].value)
-        >>> print("Type:", result[0].type)
+        >>> print("Return code:", result)  # 0 on success
     """
     try:
         result = netsnmp_snmptrap(netsnmp_args, init_app_name)

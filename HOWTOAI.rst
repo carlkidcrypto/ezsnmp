@@ -44,7 +44,7 @@ Best Practices
 Workflow Tips
 -------------
 
-- Start small and validate often. Build, format, and test incrementally
+- Start small and validate often. Build, format, and test incrementally.
 - Study existing patterns in both Python and C++ layers
 - Always ask: "Is this secure? Does it handle SNMP errors properly? What edge cases need testing?"
 - Test on multiple platforms (Linux, macOS) when modifying C++ code
