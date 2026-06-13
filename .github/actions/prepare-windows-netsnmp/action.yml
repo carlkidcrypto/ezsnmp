@@ -5,7 +5,11 @@ inputs:
   net-snmp-version:
     description: Net-SNMP version to build.
     required: false
-    default: "5.10.2"
+    default: "5.10.pre2"
+  net-snmp-sha256:
+    description: Expected SHA256 hash for the Net-SNMP source archive.
+    required: false
+    default: "7a5fc63515f0477d84fb160b6e8a2aee0196117d7e4ffe7d0fba2bdf3a8d72cc"
 
 runs:
   using: composite
@@ -19,6 +23,7 @@ runs:
         $sourceRoot = Join-Path $workRoot 'src'
         $installRoot = Join-Path $workRoot 'net-snmp'
         $archivePath = Join-Path $workRoot "net-snmp-$netSnmpVersion.zip"
+        $expectedArchiveSha256 = '${{ inputs.net-snmp-sha256 }}'.ToLowerInvariant()
 
         Remove-Item -Recurse -Force $workRoot -ErrorAction SilentlyContinue
         New-Item -ItemType Directory -Force -Path $workRoot, $sourceRoot, $installRoot | Out-Null
@@ -42,6 +47,10 @@ runs:
         $opensslBin = Join-Path $opensslRoot 'bin'
 
         Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
+        $actualArchiveSha256 = (Get-FileHash -Path $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+        if ($actualArchiveSha256 -ne $expectedArchiveSha256) {
+          throw "Net-SNMP archive checksum mismatch. Expected $expectedArchiveSha256, got $actualArchiveSha256."
+        }
         Expand-Archive -LiteralPath $archivePath -DestinationPath $sourceRoot -Force
         $netSnmpSource = Get-ChildItem -Path $sourceRoot -Directory | Select-Object -First 1
 
