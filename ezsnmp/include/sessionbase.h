@@ -191,6 +191,16 @@ class SessionBase {
    std::vector<Result> get_next(std::string const& mib = "");
 
    /**
+    * @brief Performs an SNMP BULK GET operation.
+    *
+    * Retrieves the values of management information objects using BULK GET.
+    *
+    * @param mib The OID to retrieve (default: "").
+    * @return A vector of Result objects containing the retrieved data.
+    */
+   std::vector<Result> bulk_get(std::string const& mib = "");
+
+   /**
     * @brief Performs an SNMP GET NEXT operation on multiple OIDs.
     *
     * Retrieves the values of the next lexicographically greater OIDs.
