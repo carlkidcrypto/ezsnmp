@@ -47,6 +47,33 @@ On macOS systems (alternative, using homebrew-core net-snmp):
 
     brew install net-snmp
 
+On Windows systems:
+
+Published Windows wheels bundle ``netsnmp.dll`` and its required DLL dependencies,
+so most users can install EzSnmp directly:
+
+.. code-block:: powershell
+
+    py -m pip install ezsnmp
+
+If you need to build EzSnmp from source on Windows, install a supported
+Net-SNMP build that is available to MSVC. The upstream Net-SNMP project ships a
+native ``win32/Configure`` flow for building ``netsnmp.lib`` / ``netsnmp.dll``.
+After Net-SNMP is installed, point EzSnmp at the native headers and libraries:
+
+.. code-block:: powershell
+
+    $env:EZSNMP_NETSNMP_INCLUDE_DIR = 'C:\net-snmp\include'
+    $env:EZSNMP_NETSNMP_LIB_DIR = 'C:\net-snmp\lib\release'
+    py -m pip install --no-binary :all: ezsnmp
+
+If you use a non-default import library set, also define
+``EZSNMP_NETSNMP_LIBS`` as a semicolon-separated list. EzSnmp defaults to
+``netsnmp;advapi32;ws2_32;kernel32;user32`` on Windows.
+When linking against ``netsnmp.dll`` instead of the static library, also set
+``EZSNMP_NETSNMP_USE_DLL=1`` so the Net-SNMP headers use the correct import
+declarations.
+
 Installation via Building net-snmp from Source
 ----------------------------------------------
 If your OS doesn't ship with net-snmp 5.7.x or newer, please follow instructions

@@ -269,6 +269,16 @@ For MacOS builds on a MacOS machine
     clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform macos
 
 
+For Windows builds on a Windows machine
+
+.. code:: powershell
+
+    # Make sure EZSNMP_NETSNMP_INCLUDE_DIR, EZSNMP_NETSNMP_LIB_DIR and the
+    # Net-SNMP/OpenSSL DLL search paths are configured first.
+    Remove-Item wheelhouse, build, ezsnmp.egg-info -Recurse -Force -ErrorAction SilentlyContinue
+    py -m cibuildwheel --output-dir wheelhouse --platform windows
+
+
 Formatting
 ----------
 
