@@ -167,6 +167,15 @@ def get_homebrew_net_snmp_info():
 # ---------------------------------------------------------------------------
 
 def split_env_list(raw_value):
+    """Split an environment variable value into a list of entries.
+
+    Accepts semicolons, commas, and ``os.pathsep`` as delimiters.
+    Empty entries (after stripping whitespace) are discarded.
+
+    Returns:
+      list[str]: Non-empty, whitespace-stripped entries, or an empty list
+                 when *raw_value* is falsy.
+    """
     if not raw_value:
         return []
     normalized_value = raw_value.replace(";", os.pathsep).replace(",", os.pathsep)
@@ -174,6 +183,18 @@ def split_env_list(raw_value):
 
 
 def env_truthy(*names):
+    """Return True when the first matching environment variable holds a truthy string.
+
+    Accepted truthy values (case-insensitive): ``"1"``, ``"true"``, ``"yes"``, ``"on"``.
+    Falls back through *names* in order until a non-empty variable is found;
+    returns False if all are unset or empty.
+
+    Args:
+      *names: One or more environment variable names to check in order.
+
+    Returns:
+      bool: True when the resolved value is truthy, False otherwise.
+    """
     value = get_first_env(*names)
     if value is None:
         return False
@@ -181,6 +202,17 @@ def env_truthy(*names):
 
 
 def get_first_env(*names):
+    """Return the value of the first non-empty environment variable.
+
+    Iterates through *names* and returns the value of the first variable
+    that is set and non-empty.
+
+    Args:
+      *names: One or more environment variable names to check in order.
+
+    Returns:
+      str or None: The first non-empty value found, or None if all are unset/empty.
+    """
     for name in names:
         value = os.environ.get(name)
         if value:
