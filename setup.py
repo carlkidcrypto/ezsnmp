@@ -31,8 +31,9 @@ from setuptools.command.build_py import build_py as _build_py
 from setuptools.command.build_ext import build_ext
 import time
 
-path.insert(0, str(Path(globals().get("__file__", "setup.py")).resolve().parent))
-
+setup_dir = str(Path(globals().get("__file__", "setup.py")).resolve().parent)
+if setup_dir not in path:
+    path.insert(0, setup_dir)
 from build_utils import gather_build_configuration
 
 
