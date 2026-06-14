@@ -34,8 +34,8 @@ runs:
         }
 
         $opensslRoot = @(
-          'C:\Program Files\OpenSSL-Win64',
           'C:\Program Files\OpenSSL',
+          'C:\Program Files\OpenSSL-Win64',
           'C:\OpenSSL-Win64'
         ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 
