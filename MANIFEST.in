@@ -1,2 +1,2 @@
-include README.rst LICENSE
+include README.rst LICENSE build_utils.py
 graft ezsnmp
