@@ -14,7 +14,9 @@ def test_resolve_windows_netsnmp_version_from_header(tmp_path, monkeypatch):
     assert build_utils.resolve_windows_netsnmp_version([str(tmp_path)]) == "5.10.2"
 
 
-def test_resolve_windows_netsnmp_version_from_fallback_header_path(tmp_path, monkeypatch):
+def test_resolve_windows_netsnmp_version_from_fallback_header_path(
+    tmp_path, monkeypatch
+):
     monkeypatch.delenv("EZSNMP_NETSNMP_VERSION", raising=False)
     monkeypatch.delenv("NETSNMP_VERSION", raising=False)
 
@@ -42,7 +44,9 @@ def test_get_first_env_returns_first_available(monkeypatch):
     monkeypatch.setenv("EZSNMP_TERTIARY", "third")
 
     assert (
-        build_utils.get_first_env("EZSNMP_PRIMARY", "EZSNMP_SECONDARY", "EZSNMP_TERTIARY")
+        build_utils.get_first_env(
+            "EZSNMP_PRIMARY", "EZSNMP_SECONDARY", "EZSNMP_TERTIARY"
+        )
         == "second"
     )
 
@@ -84,7 +88,9 @@ def test_gather_build_configuration_windows_uses_env_vars(tmp_path, monkeypatch)
     assert cfg["system_netsnmp_version"] == "5.9.4"
 
 
-def test_gather_build_configuration_windows_uses_custom_library_list(tmp_path, monkeypatch):
+def test_gather_build_configuration_windows_uses_custom_library_list(
+    tmp_path, monkeypatch
+):
     include_dir = tmp_path / "include"
     lib_dir = tmp_path / "lib"
     header_path = include_dir / "net-snmp" / "net-snmp-config.h"
