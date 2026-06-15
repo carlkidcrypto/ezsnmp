@@ -13,10 +13,10 @@ from shlex import split as s_split
 from subprocess import check_output, CalledProcessError, DEVNULL
 from sys import argv, platform
 
-
 # ---------------------------------------------------------------------------
 # macOS package-manager helpers
 # ---------------------------------------------------------------------------
+
 
 def is_macports_installed():
     """
@@ -166,6 +166,7 @@ def get_homebrew_net_snmp_info():
 # Generic env-var helpers
 # ---------------------------------------------------------------------------
 
+
 def split_env_list(raw_value):
     """Split an environment variable value into a list of entries.
 
@@ -179,7 +180,9 @@ def split_env_list(raw_value):
     if not raw_value:
         return []
     normalized_value = raw_value.replace(";", os.pathsep).replace(",", os.pathsep)
-    return [entry.strip() for entry in normalized_value.split(os.pathsep) if entry.strip()]
+    return [
+        entry.strip() for entry in normalized_value.split(os.pathsep) if entry.strip()
+    ]
 
 
 def env_truthy(*names):
@@ -223,6 +226,7 @@ def get_first_env(*names):
 # ---------------------------------------------------------------------------
 # Windows-specific build configuration
 # ---------------------------------------------------------------------------
+
 
 def resolve_windows_netsnmp_version(include_dirs):
     configured_version = get_first_env(
@@ -305,6 +309,7 @@ def gather_windows_build_configuration():
 # ---------------------------------------------------------------------------
 # Top-level build configuration
 # ---------------------------------------------------------------------------
+
 
 def gather_build_configuration():
     basedir = None
