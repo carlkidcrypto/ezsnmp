@@ -23,15 +23,18 @@ Requirements:
 
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 from subprocess import run, CalledProcessError
-from sys import platform
+from sys import path, platform
 from setuptools import setup, Extension
 from setuptools.command.build_py import build_py as _build_py
 from setuptools.command.build_ext import build_ext
 import time
 
+setup_dir = str(Path(globals().get("__file__", "setup.py")).resolve().parent)
+if setup_dir not in path:
+    path.insert(0, setup_dir)
 from build_utils import gather_build_configuration
-
 
 swig_targets = [
     ("ezsnmp/interface/datatypes.i", "ezsnmp/src/ezsnmp_datatypes.cpp"),

@@ -143,7 +143,7 @@ Running Tests with Docker
 
 EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
 
-* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.10-3.14, g++ 14.x
+* **almalinux10** - AlmaLinux 10 with Python 3.10-3.14, g++ 14.x
 * **archlinux** - Arch Linux (latest) with Python 3.10-3.14, g++ 14.x
 * **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x
 * **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source
