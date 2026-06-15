@@ -36,7 +36,6 @@ if setup_dir not in path:
     path.insert(0, setup_dir)
 from build_utils import gather_build_configuration
 
-
 swig_targets = [
     ("ezsnmp/interface/datatypes.i", "ezsnmp/src/ezsnmp_datatypes.cpp"),
     ("ezsnmp/interface/exceptionsbase.i", "ezsnmp/src/ezsnmp_exceptionsbase.cpp"),
