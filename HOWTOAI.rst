@@ -12,7 +12,7 @@ Core Principles
 ===============
 
 - **Human Oversight**: You are accountable for all code you submit. Never commit code you don't understand or can't maintain.
-- **Quality Standards**: AI code must meet the same standards as human written code—tests, docs, and patterns included.
+- **Quality Standards**: AI code must meet the same standards as human-written code—tests, docs, and patterns included.
 - **Transparency**: Be open about significant AI usage in PRs and explain how you validated it.
 
 ----
