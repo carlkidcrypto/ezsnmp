@@ -220,7 +220,7 @@ The script now accepts zero or more distribution names:
 For more information on Docker testing, see the `Docker README <../../docker/README.rst>`_.
 
 
-Python Tests on MacOS
+Python Tests on macOS
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
@@ -252,8 +252,8 @@ Note: If you have issues installing the Python package without Homebrew or Ports
     # Install the Command Line Tools for Xcode (use quotes around the label)
     softwareupdate -i "Command Line Tools for Xcode-16.4"
 
-Running cibuildwheels
----------------------
+Running cibuildwheel
+--------------------
 
 For Linux builds on a Linux machine
 
@@ -262,7 +262,7 @@ For Linux builds on a Linux machine
     clear && rm -drf wheelhouse/ build/ ezsnmp.egg-info/  && python3 -m cibuildwheel --output-dir wheelhouse --platform linux
 
 
-For MacOS builds on a MacOS machine
+For macOS builds on a macOS machine
 
 .. code:: bash
 
