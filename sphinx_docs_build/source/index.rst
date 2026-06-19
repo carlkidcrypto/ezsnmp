@@ -300,7 +300,7 @@ needed.
 EzSnmp Exception Handling
 -------------------------
 
-EzSnmp provides custom exception classes contained in `exceptions` to handle errors that may occur during SNMP operations.
+EzSnmp provides custom exception classes contained in ``ezsnmp.exceptions`` to handle errors that may occur during SNMP operations.
 This allows you to catch and manage exceptions specific to EzSnmp more effectively.
 
 Here's an example of how to use one of the exception classes:
