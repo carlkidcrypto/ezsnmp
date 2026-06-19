@@ -90,7 +90,7 @@ Documentation
 The C++ code is documented using Doxygen-style comments. The documentation is
 generated and integrated with Sphinx via the Breathe extension.
 
-To view the generated documentation, visit the `EzSnmp Documentation <http://carlkidcrypto.github.io/ezsnmp/>`_.
+To view the generated documentation, visit the `EzSnmp Documentation <https://carlkidcrypto.github.io/ezsnmp/>`_.
 
 Related Documentation
 =====================

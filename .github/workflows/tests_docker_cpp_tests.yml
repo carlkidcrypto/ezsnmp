@@ -22,7 +22,7 @@ jobs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
 
       - name: Check for changes in source code
         id: changed-files
@@ -62,7 +62,7 @@ jobs:
           - rockylinux9_netsnmp_5.9
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
 
       - name: Run unit tests inside the Docker container (${{ matrix.distro }})
         run: |
@@ -87,7 +87,7 @@ jobs:
     if: needs.check-changes.outputs.any_changed == 'true'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
 
       - name: Download coverage artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -123,7 +123,7 @@ jobs:
         run: ls -Rlah artifacts/
 
       - name: Publish C++ Test Results (Dockerized Tests)
-        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
+        uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
         if: needs.check-changes.outputs.any_changed == 'true'
         with:
           files: "artifacts/**/test-results.xml"
