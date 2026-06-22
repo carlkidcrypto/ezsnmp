@@ -157,7 +157,7 @@ Code Documentation
 ------------------
 
 **Python:**
-    * Use Sphinx/reStructuredText-style docstrings (e.g., ``:param:``, ``:type:``, ``:returns:``, ``:rtype:``)
+    * Use Sphinx/reStructuredText-style docstrings (e.g., ``:param:``, ``:type:``, ``:return:``, ``:rtype:``)
     * Document all public classes, methods, and functions
     * Include parameter types and return types
     * Provide usage examples where helpful
