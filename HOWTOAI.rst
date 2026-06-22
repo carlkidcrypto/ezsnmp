@@ -282,7 +282,7 @@ Example 1: Adding a New SNMP Data Type
     pytest python_tests/test_datatypes.py -v
 
     # Run C++ tests
-    cd cpp_tests && meson test
+    cd cpp_tests && meson setup build && meson test -C build
 
 Example 2: Fixing a C++ Compilation Error
 ------------------------------------------
@@ -326,7 +326,7 @@ Example 2: Fixing a C++ Compilation Error
 
     # Run all tests
     pytest python_tests/
-    cd cpp_tests && meson test
+    cd cpp_tests && meson setup build && meson test -C build
 
     # Format code
     black ezsnmp/

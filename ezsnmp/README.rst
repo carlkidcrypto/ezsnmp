@@ -18,6 +18,7 @@ Contains C++ header files (.h) for the library:
 * ``exceptionsbase.h`` - Base exception classes for error handling
 * ``helpers.h`` - Helper functions and utilities
 * ``sessionbase.h`` - Core SNMP session management
+* ``thread_safety.h`` - Thread-safety utilities and global mutex declarations
 
 ``interface/``
 --------------
@@ -37,6 +38,7 @@ Contains C++ implementation files (.cpp):
 * ``exceptionsbase.cpp`` - Exception handling implementation
 * ``helpers.cpp`` - Helper function implementations
 * ``sessionbase.cpp`` - SNMP session implementation
+* ``thread_safety.cpp`` - Thread-safety implementation (global mutex and reference counting)
 * ``snmpget.cpp``, ``snmpset.cpp``, ``snmpwalk.cpp``, etc. - SNMP operation implementations
 
 ``patches/``
