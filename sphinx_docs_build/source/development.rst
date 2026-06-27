@@ -282,7 +282,7 @@ For Windows builds on a Windows machine
 Formatting
 ----------
 
-For c++ code using clang-format 20+:
+For C++ code using clang-format 20+:
 
 .. code:: bash
 
