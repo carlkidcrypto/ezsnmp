@@ -666,8 +666,8 @@ class Session(SessionBase):
         This method performs an SNMP walk operation, which retrieves a subtree of
         management values from the SNMP agent, starting from the specified OID.
 
-        :param oid: The starting OID for the SNMP walk. If not specified, the walk
-                will start from the root.
+        :param oid: The starting OID for the SNMP walk. Defaults to ``"."``
+                which starts the walk from the top of the OID tree.
         :type oid: str
 
         :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has

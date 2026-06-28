@@ -43,7 +43,7 @@ EzSnmp
 .. |Build and Publish Docker Images| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_docker_images.yml?style=flat-square&label=Build+Docker+Images
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_docker_images.yml
 
-.. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/ezsnmp_logo.jpeg
+.. image:: https://raw.githubusercontent.com/carlkidcrypto/ezsnmp/main/images/ezsnmp_logo.jpeg
     :alt: EzSnmp Logo
 
 Introduction
@@ -62,8 +62,8 @@ Why Another Library?
 How to Support This Project?
 ----------------------------
 
-.. image:: https://github.com/carlkidcrypto/ezsnmp/blob/main/images/buy_me_a_coffee.png
-    :alt: Buy Me A Coffee. 
+.. image:: https://raw.githubusercontent.com/carlkidcrypto/ezsnmp/main/images/buy_me_a_coffee.png
+    :alt: Buy Me A Coffee
 
 `Use this link to buy me a coffee! <https://www.buymeacoffee.com/carlkidcrypto>`__
 
