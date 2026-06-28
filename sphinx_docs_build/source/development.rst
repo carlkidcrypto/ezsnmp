@@ -63,9 +63,8 @@ Step 5: Run
 
 Step 6: Run it in python3
 
-.. code-block:: bash
+.. code-block:: pycon
 
-    python3
     >>> import ezsnmp
     >>> args = ["-v" , "3", "-u", "secondary_sha_aes", "-a", "SHA", "-A", "auth_second", "-x", "AES", "-X" ,"priv_second", "-l", "authPriv", "localhost:11161"]
     >>> retval = ezsnmp.snmpwalk(args)
