@@ -1,11 +1,11 @@
 ---
-name: Coverage Autofix Every 3 Days
+name: Coverage Autofix C++
 on:
   schedule:
     - cron: "0 9 */3 * *"
   workflow_dispatch:
   skip-if-match:
-    query: 'is:pr is:open head:automation/coverage-autofix-every-3-days label:automated-pr'
+    query: 'is:pr is:open head:automation/coverage-autofix-cpp label:automated-pr'
 permissions:
   actions: read
   contents: read
@@ -18,22 +18,22 @@ safe-outputs:
     if-no-changes: "ignore"
   add-labels:
     target: "*"
-    allowed: [coverage, tests, cpp, python]
+    allowed: [coverage, tests, cpp]
     max: 4
 timeout-minutes: 45
 engine:
   id: copilot
   model: claude-opus-4.8
 network:
-  allowed: [defaults, python]
+  allowed: [defaults]
 tools:
   edit:
   bash: true
 ---
 
-# Coverage Checks And Suggested Fixes
+# C++ Coverage Checks And Suggested Fixes
 
-Run an end-to-end coverage health check for both Python and C++ tests, then
+Run an end-to-end coverage health check for C++ tests, then
 propose and implement minimal, safe fixes that improve coverage and reliability.
 
 ## Hard Requirements
@@ -41,48 +41,22 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks in both native and Dockerized environments for Python and C++.
-- Dockerized checks must cover this distro set used by the repo workflows:
-  almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8,
-  archlinux_netsnmp_5.9, centos7_netsnmp_5.7, centos8_netsnmp_5.8,
-  fedora42_netsnmp_5.7, fedora42_netsnmp_5.8,
-  fedora42_netsnmp_5.9, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9.
+- Run coverage checks in native environment.
 - Do not open a new pull request if an open automation PR already exists for
-  branch `automation/coverage-autofix-every-3-days`.
+  branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Prepare Python dependencies and run Python tests with coverage:
-   - `python -m pip install --upgrade pip`
-   - `python -m pip install -r python_tests/requirements.txt`
-   - `python -m pip install .`
-   - `pytest -v -s -n auto --dist loadfile --junitxml=test-results.xml --cov=ezsnmp --cov-report=term-missing --cov-report=xml:coverage.xml --cov-config=.coveragerc python_tests/`
-   - Read coverage from `coverage.xml` when available.
-
-2. Run C++ tests and coverage from `cpp_tests/` on Linux:
+1. Run C++ tests and coverage from `cpp_tests/` on Linux:
    - `meson setup build || true`
    - `ninja -C build`
    - `meson test -C build --print-errorlogs`
    - `lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true`
    - If `coverage.info` exists, filter external/system paths before evaluating totals.
 
-3. Run Dockerized Python tests and coverage across the distro set above.
-  For each distro:
-  - Pull `carlkidcrypto/ezsnmp_test_images:<distro>-latest`
-  - Start a container with the repo mounted at `/ezsnmp`
-  - Run Python tests in-container with at least `pytest python_tests/`
-  - Collect and evaluate `coverage.xml` for that distro
-  - Treat any per-distro Python test failure as actionable
-
-4. Run Dockerized C++ tests and coverage across the same distro set.
-  For each distro:
-  - Run `docker/run_cpp_tests_in_all_dockers.sh <distro>`
-  - Collect and evaluate `docker/test_outputs_<distro>/lcov_coverage.info`
-  - Treat any per-distro C++ test failure as actionable
-
-5. Determine if action is needed:
-   - If Python or C++ coverage is below 99%, or tests reveal clear reliability
+2. Determine if action is needed:
+   - If C++ coverage is below 99%, or tests reveal clear reliability
      gaps, create targeted fixes.
    - If current coverage looks healthy and no concrete improvement is justified,
      do not change code.
@@ -101,17 +75,6 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 After all code and test changes are complete, run the project formatters on any
 modified files before committing. This step is mandatory and must be the last
 step before creating the PR.
-
-### Python — black
-
-Run `black` on every Python file that was added or modified:
-
-```
-pip install black
-black <modified_python_files>
-```
-
-If no Python files were changed, skip this sub-step.
 
 ### C++ — clang-format
 
@@ -132,21 +95,18 @@ pull request.
 
 When changes exist, create exactly one PR using this fixed branch name:
 
-- Branch: `automation/coverage-autofix-every-3-days`
+- Branch: `automation/coverage-autofix-cpp`
 - Base: `main`
-- Title style: `[coverage-autofix] <short summary>`
+- Title style: `[coverage-autofix-cpp] <short summary>`
 - PR body must include:
-  - Native Python coverage before/after (if measurable)
   - Native C++ coverage before/after (if measurable)
-  - Dockerized Python coverage before/after by distro (if measurable)
-  - Dockerized C++ coverage before/after by distro (if measurable)
   - Summary of tests added/updated
   - Any limitations or follow-up recommendations
 
 After creating the PR, attempt a best-effort follow-up label step:
 
 - Add supplemental labels to the created PR when possible: `coverage`, `tests`,
-  `cpp`, `python`.
+  `cpp`.
 - Treat this as non-critical metadata enrichment. If supplemental labeling fails,
   do not treat the run as a primary failure and do not abandon the created PR.
 
