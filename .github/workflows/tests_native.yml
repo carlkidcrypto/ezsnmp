@@ -42,11 +42,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          # macOS is intentionally excluded: the macOS system net-snmp (5.6.x) is no longer
-          # supported. macOS testing is covered by tests_homebrew.yml and tests_macports.yml,
-          # where a supported version of net-snmp is installed via Homebrew or MacPorts.
-          os: [ubuntu-latest]
-          python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        # macOS is intentionally excluded: the macOS system net-snmp (5.6.x) is no longer
+        # supported. macOS testing is covered by tests_homebrew.yml and tests_macports.yml,
+        # where a supported version of net-snmp is installed via Homebrew or MacPorts.
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Set up dependencies
@@ -67,7 +67,7 @@ jobs:
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Cache pip dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
@@ -93,7 +93,7 @@ jobs:
           mibdir="-M +/var/lib/snmp/mibs"
           SNMPD=$(which snmpd)
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
-      
+
       - name: Run Tests
         run: |
           python3 -m pip install . --verbose
