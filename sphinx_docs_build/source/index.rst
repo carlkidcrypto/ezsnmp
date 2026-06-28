@@ -190,8 +190,8 @@ one-off operations where you wish to specify all details in the request:
     # Perform an SNMP walk
     snmpwalk(SNMP_ARGS + ["system"])
 
-Example Session Kargs
----------------------
+Example Session Kwargs
+----------------------
 
 .. code-block:: python
 
@@ -267,7 +267,7 @@ Example Session Kargs
         "auth_passphrase": "auth_pass",
     }
 
-    # Use the kargs you want. For example
+    # Use the kwargs you want. For example
     s = Session(**SESS_V3_MD5_NO_PRIV_ARGS)
     res = s.get("sysDescr.0")
 
