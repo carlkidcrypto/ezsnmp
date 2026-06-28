@@ -162,7 +162,10 @@ jobs:
           set -euo pipefail
           python3 -m pip install . --verbose
           rm -drf build/ ezsnmp.egg-info/
-          pytest -v -s --cov=ezsnmp --cov-report=term-missing --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt || true
+          pytest -v -s --cov=ezsnmp \
+            --cov-report=term-missing \
+            --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
+            python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt || true
           # Ensure a placeholder junit file exists even if pytest failed to write one
           if [ ! -f test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml ]; then echo "<testsuite></testsuite>" > test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml; fi
 
