@@ -7,6 +7,28 @@ class Session(SessionBase):
     """
     Python wrapper class for SessionBase, providing a Pythonic interface
     for managing Net-SNMP sessions.
+
+    Supports SNMP v1, v2c, and v3. Wraps the underlying C++ ``SessionBase``
+    class generated via SWIG. Use as a context manager (``with`` statement)
+    to ensure the session is closed and resources are released automatically.
+
+    Supported operations:
+
+    - :meth:`get` — SNMP GET
+    - :meth:`get_next` — SNMP GETNEXT
+    - :meth:`walk` — SNMP WALK
+    - :meth:`bulk_get` — SNMP GETBULK (v2c/v3 only)
+    - :meth:`bulk_walk` — SNMP bulk WALK (v2c/v3 only)
+    - :meth:`set` — SNMP SET
+
+    Example::
+
+        from ezsnmp import Session
+
+        with Session(hostname='localhost', community='public', version=2) as session:
+            results = session.get(['sysDescr.0', 'sysLocation.0'])
+            for item in results:
+                print(item.oid, item.value)
     """
 
     def __init__(
@@ -644,8 +666,8 @@ class Session(SessionBase):
         This method performs an SNMP walk operation, which retrieves a subtree of
         management values from the SNMP agent, starting from the specified OID.
 
-        :param oid: The starting OID for the SNMP walk. If not specified, the walk
-                will start from the root.
+        :param oid: The starting OID for the SNMP walk. Defaults to ``"."``
+                which starts the walk from the top of the OID tree.
         :type oid: str
 
         :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has

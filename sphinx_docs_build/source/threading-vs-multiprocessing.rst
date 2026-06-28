@@ -116,7 +116,7 @@ If you must use threading:
         session = Session(hostname='localhost', community='public', version=2)
         try:
             result = session.get('sysDescr.0')
-            print(result.value)
+            print(result[0].value)
         finally:
             session.close()
 
@@ -154,7 +154,7 @@ Each process has its own independent copy of the Net-SNMP library state, elimina
             queue.put({
                 'worker_id': worker_id,
                 'pid': os.getpid(),
-                'value': result.value
+                'value': result[0].value
             })
         finally:
             session.close()
@@ -280,7 +280,7 @@ Best Practices
 
        def snmp_get(hostname):
            with Session(hostname=hostname, community='public', version=2) as session:
-               return session.get('sysDescr.0').value
+               return session.get('sysDescr.0')[0].value
 
        # Process pool for efficient resource usage
        with Pool(processes=10) as pool:
