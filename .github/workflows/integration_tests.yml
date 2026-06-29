@@ -44,7 +44,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-  
+
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -62,7 +62,7 @@ jobs:
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
-          
+
           macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
@@ -119,7 +119,7 @@ jobs:
             brew tap carlkidcrypto/ezsnmp "$(pwd)"
             HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
           fi
-      
+
       - name: Start SNMP daemon
         run: |
           if [ "$RUNNER_OS" == "Linux" ]
@@ -135,25 +135,26 @@ jobs:
             SNMPD=$(which.exe snmpd)
           fi
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
-      
+
       - name: Run Integration Tests (single)
         uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
         with:
           linux: |
             export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/net-snmp/5.9.4/lib:${LD_LIBRARY_PATH:-}
             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
+            LOG_FILE="integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log"
+            ./run_integration_tests.sh 2>&1 | tee "$LOG_FILE";
             # Extract key metrics into per-file logs
-            grep "Total execution time:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log || true
-            grep "usm_unknown_security_name_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
-            grep "connection_error_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "Total execution time:" "$LOG_FILE" > "total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" || true
+            grep "usm_unknown_security_name_counter:" "$LOG_FILE" > "usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" || true
+            grep "connection_error_counter:" "$LOG_FILE" > "connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" || true
             # Try to copy the per-test file descriptor log from the output directory saved by the script
-            OUT_DIR=$(grep -m1 "Results saved to:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log | sed 's/Results saved to: //') || true
+            OUT_DIR=$(grep -m1 "Results saved to:" "$LOG_FILE" | sed 's/Results saved to: //') || true
             if [ -n "$OUT_DIR" ] && [ -f "$OUT_DIR/test_file_descriptors.log" ]; then
-              cp "$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+              cp "$OUT_DIR/test_file_descriptors.log" "test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" || true
             else
               # Fallback: grep relevant lines
-              grep -A2 "Running file descriptor tests" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+              grep -A2 "Running file descriptor tests" "$LOG_FILE" > "test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" || true
             fi
             echo "artifactPath1=/home/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath2=/home/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
@@ -168,25 +169,26 @@ jobs:
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
             export PATH="$(brew --prefix python@${PYTHON_VER})/bin:${PATH}"
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
-            ./run_integration_tests.sh 2>&1 | tee integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log;
+            LOG_FILE="integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log"
+            ./run_integration_tests.sh 2>&1 | tee "$LOG_FILE";
             # Extract key metrics into per-file logs
-            grep "Total execution time:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log || true
-            grep "usm_unknown_security_name_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
-            grep "connection_error_counter:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log || true
+            grep "Total execution time:" "$LOG_FILE" > "total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" || true
+            grep "usm_unknown_security_name_counter:" "$LOG_FILE" > "usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" || true
+            grep "connection_error_counter:" "$LOG_FILE" > "connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" || true
             # Try to copy the per-test file descriptor log from the output directory saved by the script
-            OUT_DIR=$(grep -m1 "Results saved to:" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log | sed 's/Results saved to: //') || true
+            OUT_DIR=$(grep -m1 "Results saved to:" "$LOG_FILE" | sed 's/Results saved to: //') || true
             if [ -n "$OUT_DIR" ] && [ -f "$OUT_DIR/test_file_descriptors.log" ]; then
-              cp "$OUT_DIR/test_file_descriptors.log" test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+              cp "$OUT_DIR/test_file_descriptors.log" "test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" || true
             else
               # Fallback: grep relevant lines
-              grep -A2 "Running file descriptor tests" integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log > test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log || true
+              grep -A2 "Running file descriptor tests" "$LOG_FILE" > "test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" || true
             fi
             echo "artifactPath1=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/total_execution_time_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath2=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/usm_unknown_security_name_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath3=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/connection_error_counter_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath4=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/test_file_descriptors_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
             echo "artifactPath5=/Users/runner/work/ezsnmp/ezsnmp/integration_tests/integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log" >> $GITHUB_ENV;
-      
+
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:

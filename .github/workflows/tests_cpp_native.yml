@@ -97,12 +97,14 @@ jobs:
             cd cpp_tests
             meson setup build
             ninja -C build
-            meson test -C build --print-errorlogs --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
+            meson test -C build --print-errorlogs \
+              --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
             mv build/meson-logs/testlog.junit.xml cpp-test-results_${{ matrix.os }}.xml
             # Generate lcov coverage report
             lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
             if [ -f coverage.info ] && [ -s coverage.info ]; then
-              lcov --remove coverage.info '/usr/*' '/opt/*' '/Library/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
+              lcov --remove coverage.info '/usr/*' '/opt/*' '/Library/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' \
+                --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
             else
               touch coverage_filtered.info
             fi
@@ -112,12 +114,14 @@ jobs:
             export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
             meson setup build
             ninja -C build
-            meson test -C build --print-errorlogs --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
+            meson test -C build --print-errorlogs \
+              --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
             mv build/meson-logs/testlog.junit.xml cpp-test-results_${{ matrix.os }}.xml
             # Generate lcov coverage report
             lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
             if [ -f coverage.info ] && [ -s coverage.info ]; then
-              lcov --remove coverage.info '/usr/*' '/opt/*' '/Library/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
+              lcov --remove coverage.info '/usr/*' '/opt/*' '/Library/*' '*/bits/*' '*/ext/*' '*/gtest/*' '*/googletest/*' \
+                --output-file coverage_filtered.info || cp coverage.info coverage_filtered.info
             else
               touch coverage_filtered.info
             fi
