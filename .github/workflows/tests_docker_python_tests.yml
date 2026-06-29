@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distribution: 
+        distribution:
           - almalinux10_netsnmp_5.9
           - archlinux_netsnmp_5.7
           - archlinux_netsnmp_5.8
