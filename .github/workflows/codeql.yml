@@ -22,38 +22,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'c++', 'python' ] 
+        language: [ 'c++', 'python' ]
 
     steps:
-    - name: Set up Homebrew
-      id: set-up-homebrew
-      uses: Homebrew/actions/setup-homebrew@e58f0b60d43355cab9d13c7ecf58a4fbfced93c2 # master
-    
-    - name: Checkout repository
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@e58f0b60d43355cab9d13c7ecf58a4fbfced93c2 # master
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
-      with:
-        languages: ${{ matrix.language }}
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
 
-    - name: Install Linux Dependencies
-      if: matrix.language == 'c++'
-      run: |
-        brew update;
-        brew install net-snmp;
-        brew install openssl@3;
-    
-    - name: Set up Python 3.10
-      if: matrix.language == 'c++'
-      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
-      with:
-        python-version: "3.10"
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Build Python Extension
-      if: matrix.language == 'c++'
-      run: |
-        pip install .
+      - name: Install Linux Dependencies
+        if: matrix.language == 'c++'
+        run: |
+          brew update;
+          brew install net-snmp;
+          brew install openssl@3;
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
+      - name: Set up Python 3.10
+        if: matrix.language == 'c++'
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.10"
+
+      - name: Build Python Extension
+        if: matrix.language == 'c++'
+        run: |
+          pip install .
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4

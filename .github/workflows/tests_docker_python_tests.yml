@@ -44,7 +44,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distribution: [almalinux10_netsnmp_5.9, archlinux_netsnmp_5.7, archlinux_netsnmp_5.8, archlinux_netsnmp_5.9, centos7_netsnmp_5.7, centos8_netsnmp_5.8, fedora42_netsnmp_5.7, fedora42_netsnmp_5.8, fedora42_netsnmp_5.9, rockylinux8_netsnmp_5.8, rockylinux9_netsnmp_5.9]
+        distribution:
+          - almalinux10_netsnmp_5.9
+          - archlinux_netsnmp_5.7
+          - archlinux_netsnmp_5.8
+          - archlinux_netsnmp_5.9
+          - centos7_netsnmp_5.7
+          - centos8_netsnmp_5.8
+          - fedora42_netsnmp_5.7
+          - fedora42_netsnmp_5.8
+          - fedora42_netsnmp_5.9
+          - rockylinux8_netsnmp_5.8
+          - rockylinux9_netsnmp_5.9
         python: [py310, py311, py312, py313, py314]
         test_group: [session, netsnmp, exceptions, misc]
         include:
@@ -168,7 +179,7 @@ jobs:
             echo "    - Installing test dependencies";
             "$VENV_DIR/bin/pip" install --quiet -r /ezsnmp/python_tests/requirements.txt;
             echo "    - Installing ezsnmp";
-            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
+            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet . && mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
             if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
               --junitxml=/ezsnmp/test-results.xml \
@@ -244,14 +255,14 @@ jobs:
     permissions:
       contents: write # This is needed to create/update commit comments
       pull-requests: write # This is needed to create/update comments
-    if: always() 
+    if: always()
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: pytest-results_*
-          merge-multiple: true 
-      
+          merge-multiple: true
+
       - name: List files
         run: ls -Rlah
 
