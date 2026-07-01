@@ -69,7 +69,7 @@ TEST_F(SessionBaseTest, TestBulkGetSingleMibStringOverload) {
       GTEST_SKIP() << "SNMP agent is not reachable in this environment";
    }
 
-   EXPECT_FALSE(results.empty());
+   ASSERT_FALSE(results.empty());
    EXPECT_FALSE(results[0].oid.empty());
    EXPECT_FALSE(results[0].type.empty());
 
