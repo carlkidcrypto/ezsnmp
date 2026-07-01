@@ -255,6 +255,32 @@ def test_session_get_next(sess):
     del sess
 
 
+def test_session_get_next_single_oid_string(sess):
+    try:
+        res = sess.get_next(".1.3.6.1.2.1.1.5.0")
+    except TimeoutError:
+        pytest.skip("SNMP agent is not reachable in this environment")
+
+    assert len(res) == 1
+    assert res[0].oid
+    assert res[0].type
+
+
+def test_session_get_next_single_oid_string_with_module_prefix(sess):
+    try:
+        res = sess.get_next("IF-MIB::ifDescr")
+    except TimeoutError:
+        pytest.skip("SNMP agent is not reachable in this environment")
+    except GenericError as e:
+        if "Unknown Object Identifier" in str(e):
+            pytest.skip("IF-MIB is not available in this test environment")
+        raise
+
+    assert len(res) == 1
+    assert res[0].oid
+    assert res[0].type
+
+
 def test_session_set(sess, reset_values):
 
     res = sess.get("sysLocation.0")
@@ -804,3 +830,16 @@ def test_string_values_no_surrounding_quotes(sess):
     ), f"Value should not end with quote: {res[0].value}"
 
     del sess
+
+
+def test_session_bulk_get_single_oid_string(sess):
+    if sess.version == "1":
+        pytest.skip("BULK GET is not supported in SNMPv1")
+    try:
+        res = sess.bulk_get(".1.3.6.1.2.1.1.5.0")
+    except TimeoutError:
+        pytest.skip("SNMP agent is not reachable in this environment")
+
+    assert len(res) >= 1
+    assert res[0].oid
+    assert res[0].type
