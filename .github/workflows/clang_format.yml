@@ -6,13 +6,57 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   check-formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
-      - uses: DoozyX/clang-format-lint-action@bcb4eb2cb0d707ee4f3e5cc3b456eb075f12cf73 # v0.20
+      - uses: actions/checkout@v4
         with:
-          source: '.'
-          extensions: 'c,cpp,h,hpp'
-          clangFormatVersion: 20
+          fetch-depth: 0
+
+      - name: Install Clang-Format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Run Clang-Format
+        run: find . -regex '.*\.\(cpp\|h\|hpp\|c\)' -exec clang-format -i {} +
+
+      - name: Check for changes
+        id: changed
+        run: |
+          if git diff --exit-code; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR for formatting fixes
+        if: steps.changed.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determine the base branch (the branch that needs the fix)
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_BRANCH="${{ github.head_ref }}"
+          else
+            BASE_BRANCH="${{ github.ref_name }}"
+          fi
+
+          BRANCH_NAME="auto-clangformat-${{ github.run_id }}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          git commit -m "style: auto-format with clang-format"
+          git push origin "$BRANCH_NAME"
+          
+          gh pr create \
+            --title "style: auto-format with clang-format" \
+            --body "This is an automated PR to fix formatting issues detected by clang-format." \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH_NAME"
