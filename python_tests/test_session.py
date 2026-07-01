@@ -830,3 +830,4 @@ def test_string_values_no_surrounding_quotes(sess):
     ), f"Value should not end with quote: {res[0].value}"
 
     del sess
+
