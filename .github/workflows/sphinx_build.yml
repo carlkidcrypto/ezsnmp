@@ -10,8 +10,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ── Build latest docs on push to main ─────────────────────────────────────
+  verify-syntax:
+    uses: ./.github/workflows/verify_syntax.yml
   sphinx_docs_build:
+    needs: verify-syntax
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
@@ -94,6 +96,7 @@ jobs:
 
   # ── Build versioned docs on release and commit back to main ───────────────
   sphinx_docs_build_release:
+    needs: verify-syntax
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     permissions:

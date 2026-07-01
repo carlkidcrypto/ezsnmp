@@ -11,7 +11,10 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
+  verify-syntax:
+    uses: ./.github/workflows/verify_syntax.yml
   analyze:
+    needs: verify-syntax
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
