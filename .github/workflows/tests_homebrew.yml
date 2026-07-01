@@ -130,6 +130,7 @@ jobs:
                  export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
+                 mv ezsnmp _ezsnmp
                  wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
                  VALGRIND=(
                    'valgrind'
@@ -170,6 +171,8 @@ jobs:
             # (where brew link already placed the installed ezsnmp package)
             ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
             /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
+            # Hide source directory to prevent shadowing
+            mv ezsnmp _ezsnmp
             /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp \
               --cov-report=term-missing \
               --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
@@ -205,7 +208,7 @@ jobs:
 
       - name: Pytest coverage comment
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@dd5b80bde6d16941f336518e92929e89069d8451 # v1.7.2
+        uses: MishaKav/pytest-coverage-comment@e48ae95fa406cefacc7fbdd79949122795569961 # v1.8.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew

@@ -179,7 +179,7 @@ jobs:
             echo "    - Installing test dependencies";
             "$VENV_DIR/bin/pip" install --quiet -r /ezsnmp/python_tests/requirements.txt;
             echo "    - Installing ezsnmp";
-            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
+            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet . && mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
             if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
               --junitxml=/ezsnmp/test-results.xml \
@@ -268,7 +268,7 @@ jobs:
 
       - name: Pytest coverage comment (Dockerized Tests)
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@dd5b80bde6d16941f336518e92929e89069d8451 # v1.7.2
+        uses: MishaKav/pytest-coverage-comment@e48ae95fa406cefacc7fbdd79949122795569961 # v1.8.0
         continue-on-error: true
         with:
           pytest-coverage-path: ""
