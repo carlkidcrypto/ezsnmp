@@ -179,7 +179,7 @@ jobs:
             echo "    - Installing test dependencies";
             "$VENV_DIR/bin/pip" install --quiet -r /ezsnmp/python_tests/requirements.txt;
             echo "    - Installing ezsnmp";
-            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet .;
+            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet . && mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
             if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
               --junitxml=/ezsnmp/test-results.xml \

@@ -113,7 +113,7 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
-        :param set_max_repeaters_to_num: Set the maximum number of repeaters to num. Default is 10. Only applies to GETBULK PDUs.
+        :param set_max_repeaters_to_num: The maximum number of repeaters for GETBULK PDUs. Defaults to 10. Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
         :type set_max_repeaters_to_num: Union[str, int]
 
         """
@@ -426,9 +426,10 @@ class Session(SessionBase):
 
     @boots_time.setter
     def boots_time(self, value):
-        """Set the boots time.
+        """Set the SNMPv3 authoritative engine boots and time.
 
-        :param value: The boots time to set.
+        :param value: The boots and time string, formatted as "BOOTS,TIME"
+            (e.g., "1,100"). Used to synchronize with the agent's time window.
         :type value: str
         """
         super()._set_boots_time(value)
@@ -809,7 +810,7 @@ class Session(SessionBase):
 
     def get_next(self, oids=None):
         """
-        Performs an SNMP GET-NEXT operation to retrieve values for the next objects after the specified OIDs.
+        Performs an SNMP GETNEXT operation to retrieve the next object instance for each of the specified OIDs.
 
         Accepts either a single OID string or a list of OID strings.
 
@@ -904,9 +905,10 @@ class Session(SessionBase):
         """
         Performs an SNMP SET operation to set values for multiple OIDs.
 
-        :param oids: List containing groups of OID, type and value. Each group should be a sequence of
-            [oid, type, value] where type is a string indicating the SNMP data type
-            (e.g. 'i' for INTEGER, 's' for STRING, 'o' for OBJECT IDENTIFIER),
+        :param oids: A flat list of OID/type/value triples. Elements are ordered as
+            ``[oid, type, value, oid, type, value, ...]`` where type is a single-character
+            string indicating the SNMP data type
+            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER),
             defaults to None (empty list)
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
