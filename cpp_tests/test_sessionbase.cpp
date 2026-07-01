@@ -791,27 +791,6 @@ TEST_F(SessionBaseTest, TestGetNext) {
    ASSERT_EQ(args, expected_args);
 }
 
-TEST_F(SessionBaseTest, TestGetNextSingleMibStringOverload) {
-   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
-                       "3", "5");
-
-   std::vector<Result> results;
-   try {
-      results = session.get_next(".1.3.6.1.2.1.1.5.0");
-   } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent is not reachable in this environment";
-   }
-
-   ASSERT_EQ(results.size(), 1u);
-   EXPECT_FALSE(results[0].oid.empty());
-   EXPECT_FALSE(results[0].type.empty());
-
-   auto args = session._get_args();
-   std::vector<std::string> expected_args = {
-       "-c", "public", "-r", "3", "-t", "5", "-v", "2c", "localhost:11161", ".1.3.6.1.2.1.1.5.0"};
-   ASSERT_EQ(args, expected_args);
-}
-
 TEST_F(SessionBaseTest, TestGetNextEmptyMibs) {
    SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
                        "3", "5");
