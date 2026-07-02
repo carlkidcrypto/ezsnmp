@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   verify-syntax:
+    permissions: { contents: read }
     uses: ./.github/workflows/verify_syntax.yml
   check-source-changes:
     needs: verify-syntax

@@ -27,6 +27,7 @@ on:
 
 jobs:
   verify-syntax:
+    permissions: { contents: read }
     uses: ./.github/workflows/verify_syntax.yml
   update-formula:
     needs: verify-syntax

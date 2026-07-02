@@ -9,6 +9,7 @@ on:
 
 jobs:
   verify-syntax:
+    permissions: { contents: read }
     uses: ./.github/workflows/verify_syntax.yml
   build_wheels:
     needs: verify-syntax

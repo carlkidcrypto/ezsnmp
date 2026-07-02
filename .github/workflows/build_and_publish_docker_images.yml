@@ -23,6 +23,7 @@ env:
 
 jobs:
   verify-syntax:
+    permissions: { contents: read }
     uses: ./.github/workflows/verify_syntax.yml
   set-matrix:
     needs: verify-syntax

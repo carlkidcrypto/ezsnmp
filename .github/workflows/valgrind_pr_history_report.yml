@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   verify-syntax:
+    permissions: { contents: read }
     uses: ./.github/workflows/verify_syntax.yml
   analyze-valgrind-history:
     needs: verify-syntax
