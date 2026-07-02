@@ -23,10 +23,10 @@ jobs:
           fetch-depth: 0
 
       - name: Install Clang-Format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format-20
 
       - name: Run Clang-Format
-        run: find . -regex '.*\.\(cpp\|h\|hpp\|c\)' -exec clang-format -i {} +
+        run: find . -regex '.*\.\(cpp\|h\|hpp\|c\)' -exec clang-format-20 -i {} +
 
       - name: Check for changes
         id: changed
