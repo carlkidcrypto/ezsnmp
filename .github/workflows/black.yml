@@ -55,15 +55,15 @@ jobs:
           fi
 
           BRANCH_NAME="auto-black-${{ github.run_id }}"
-          
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           git checkout -b "$BRANCH_NAME"
           git add .
           git commit -m "style: auto-format with black"
           git push origin "$BRANCH_NAME"
-          
+
           gh pr create \
             --title "style: auto-format with black" \
             --body "This is an automated PR to fix formatting issues detected by Black." \
@@ -73,4 +73,5 @@ jobs:
       - name: Note for fork contributors
         if: steps.changed.outputs.changed == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
         run: |
-          echo "::warning:: Formatting issues were detected. Since this PR is from a fork, the bot cannot automatically create a fix PR. Please run 'black .' locally and push the changes to your branch."
+          echo "::warning:: Formatting issues were detected. Since this PR is from a fork, the bot cannot automatically create a fix PR. \
+          Please run 'black .' locally and push the changes to your branch."
