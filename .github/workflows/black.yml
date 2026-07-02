@@ -43,7 +43,7 @@ jobs:
           fi
 
       - name: Create PR for formatting fixes
-        if: steps.changed.outputs.changed == 'true'
+        if: steps.changed.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -69,3 +69,8 @@ jobs:
             --body "This is an automated PR to fix formatting issues detected by Black." \
             --base "$BASE_BRANCH" \
             --head "$BRANCH_NAME"
+
+      - name: Note for fork contributors
+        if: steps.changed.outputs.changed == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::warning:: Formatting issues were detected. Since this PR is from a fork, the bot cannot automatically create a fix PR. Please run 'black .' locally and push the changes to your branch."
