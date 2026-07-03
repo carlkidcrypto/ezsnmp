@@ -89,14 +89,19 @@ runs:
         if ($LASTEXITCODE -ne 0) {
           throw "Configuring Net-SNMP with perl Configure failed with exit code $LASTEXITCODE."
         }
-        $nmakeCommand = "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 && nmake /nologo clean && nmake /nologo libs"
+        $nmakeCommand = (
+          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 || exit /b 10",
+          "nmake /nologo clean || exit /b 11",
+          "nmake /nologo libs || exit /b 12"
+        ) -join ' && '
         cmd.exe /s /c $nmakeCommand
         if ($LASTEXITCODE -ne 0) {
-          throw (
-            "Activating the Visual Studio build environment and building Net-SNMP with nmake failed " +
-            "with exit code $LASTEXITCODE. Check the command output above to see whether " +
-            "VsDevCmd.bat, 'nmake clean', or 'nmake libs' failed."
-          )
+          switch ($LASTEXITCODE) {
+            10 { throw "Activating the Visual Studio build environment with VsDevCmd.bat failed." }
+            11 { throw "Running 'nmake /nologo clean' for Net-SNMP failed." }
+            12 { throw "Running 'nmake /nologo libs' for Net-SNMP failed." }
+            default { throw "Building Net-SNMP on Windows failed with unexpected exit code $LASTEXITCODE." }
+          }
         }
         Pop-Location
 
