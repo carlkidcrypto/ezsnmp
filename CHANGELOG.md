@@ -1,7 +1,107 @@
-Last Updated: 2026-06-07 04:46:59 UTC
+Last Updated: 2026-07-03 04:25:46 UTC
 
 # Changelog
 
+
+<a name="v2.4.0a1"></a>
+## [v2.4.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0...v2.4.0a1) (2026-07-01)
+
+
+### Changes
+
+#### Black
+
+- Black ([#1000](https://github.com/carlkidcrypto/ezsnmp/issues/1000))
+
+
+#### Bug Fixes
+
+- Fix `Session.get_next` string OID dispatch to prevent character-splitting and invalid OID parsing ([#991](https://github.com/carlkidcrypto/ezsnmp/issues/991))
+
+- Fix ModuleNotFoundError by running pytest from python_tests directory ([#1022](https://github.com/carlkidcrypto/ezsnmp/issues/1022))
+
+- Fix/fixing yaml workflows ([#1021](https://github.com/carlkidcrypto/ezsnmp/issues/1021))
+
+- Fix failing GitHub Actions job 'Build wheels on windows-latest' ([#999](https://github.com/carlkidcrypto/ezsnmp/issues/999))
+
+- Fix Windows wheel build by recognizing Chocolatey OpenSSL install path ([#998](https://github.com/carlkidcrypto/ezsnmp/issues/998))
+
+- Fix isolated wheel builds failing to import `build_utils` ([#997](https://github.com/carlkidcrypto/ezsnmp/issues/997))
+
+
+#### Documentation Updates
+
+- docs: fix capitalization, wording, and docstring clarity ([#1026](https://github.com/carlkidcrypto/ezsnmp/issues/1026))
+
+- docs: fix typos, image URLs, and code block language ([#1019](https://github.com/carlkidcrypto/ezsnmp/issues/1019))
+
+- docs: fix example bugs, typos, and improve Session docstring ([#1015](https://github.com/carlkidcrypto/ezsnmp/issues/1015))
+
+- docs: fix C++ test commands, missing headers, docstring style, and get() tuple note ([#1009](https://github.com/carlkidcrypto/ezsnmp/issues/1009))
+
+- docs: fix typos, grammar, and link issues across documentation ([#1006](https://github.com/carlkidcrypto/ezsnmp/issues/1006))
+
+- docs: fix type annotations, net-snmp version, and parameter table ([#987](https://github.com/carlkidcrypto/ezsnmp/issues/987))
+
+- docs: add versioned documentation for v2.3.0
+
+
+#### Features
+
+- Add build_utils.py: extract build helpers from setup.py for cleaner test imports ([#992](https://github.com/carlkidcrypto/ezsnmp/issues/992))
+
+
+#### Fedora
+
+- Fedora 42 ([#982](https://github.com/carlkidcrypto/ezsnmp/issues/982))
+
+
+#### Harden
+
+- Harden Docker cache download for OpenSSL 1.0.2u in CI ([#976](https://github.com/carlkidcrypto/ezsnmp/issues/976))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.3.0
+
+
+#### Merged Pull Requests
+
+- Merge branch 'main' into docs/add-versioned-docs-v2.3.0
+
+
+#### Sphinx
+
+- Sphinx ([#981](https://github.com/carlkidcrypto/ezsnmp/issues/981))
+
+
+#### Split
+
+- Split coverage autofix workflow into separate Python and C++ focused … ([#1018](https://github.com/carlkidcrypto/ezsnmp/issues/1018))
+
+
+#### Updates & Improvements
+
+- Update dependabot.yml ([#986](https://github.com/carlkidcrypto/ezsnmp/issues/986))
+
+
+
+
+
+
+
+### Merged Pull Requests
+
+- Merge pull request [#978](https://github.com/carlkidcrypto/ezsnmp/issues/978) from carlkidcrypto/docs/add-versioned-docs-v2.3.0
+
+- Merge pull request [#977](https://github.com/carlkidcrypto/ezsnmp/issues/977) from carlkidcrypto/chore/update-homebrew-formula-v2.3.0
+
+
+
+
+
+---
 
 <a name="v2.3.0"></a>
 ## [v2.3.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0b0...v2.3.0) (2026-06-06)
