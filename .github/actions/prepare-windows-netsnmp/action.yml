@@ -54,6 +54,14 @@ runs:
         }
         $opensslBin = Join-Path $opensslRoot 'bin'
 
+        # Convert OpenSSL include/lib paths to 8.3 short form so that the
+        # Net-SNMP perl Configure script can embed them in Makefiles without
+        # spaces.  cl.exe splits unquoted paths containing spaces, which causes
+        # the include directory to be silently ignored and headers to go missing.
+        $fso = New-Object -ComObject Scripting.FileSystemObject
+        $opensslIncludeShort = $fso.GetFolder($opensslInclude).ShortPath
+        $opensslLibShort = $fso.GetFolder($opensslLib).ShortPath
+
         Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
         $actualArchiveSha256 = (Get-FileHash -Path $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actualArchiveSha256 -ne $expectedArchiveSha256) {
@@ -74,8 +82,8 @@ runs:
           '--enable-blumenthal-aes',
           '--with-ipv6',
           "--prefix=$($installRoot -replace '\\', '/')",
-          "--with-sslincdir=$($opensslInclude -replace '\\', '/')",
-          "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
+          "--with-sslincdir=$($opensslIncludeShort -replace '\\', '/')",
+          "--with-ssllibdir=$($opensslLibShort -replace '\\', '/')"
         )
 
         $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
