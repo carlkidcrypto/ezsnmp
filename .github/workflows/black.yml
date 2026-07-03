@@ -2,14 +2,77 @@ name: Black
 
 on:
   push:
-    branches: [ main ]
-
+    branches: [ main, feature/auto-format-prs ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   black:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
-      - uses: psf/black@26.5.1
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Black
+        run: pip install black==26.5.1
+
+      - name: Run Black
+        run: black .
+
+      - name: Check for changes
+        id: changed
+        run: |
+          if git diff --exit-code; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR for formatting fixes
+        if: steps.changed.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determine the base branch (the branch that needs the fix)
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_BRANCH="${{ github.head_ref }}"
+          else
+            BASE_BRANCH="${{ github.ref_name }}"
+          fi
+
+          BRANCH_NAME="auto-black-${{ github.run_id }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          git commit -m "style: auto-format with black"
+          git push origin "$BRANCH_NAME"
+
+          gh pr create \
+            --title "style: auto-format with black" \
+            --body "This is an automated PR to fix formatting issues detected by Black." \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH_NAME"
+
+      - name: Note for fork contributors
+        if: steps.changed.outputs.changed == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::warning:: Formatting issues were detected. Since this PR is from a fork, the bot cannot automatically create a fix PR. \
+          Please run 'black .' locally and push the changes to your branch."

@@ -6,12 +6,16 @@ concurrency:
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/auto-format-prs ]
   pull_request:
     branches: [ main ]
 
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   check-changes:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     outputs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
