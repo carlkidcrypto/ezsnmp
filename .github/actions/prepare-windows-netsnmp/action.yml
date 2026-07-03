@@ -114,8 +114,8 @@ runs:
 
         New-Item -ItemType Directory -Force -Path $wheelInclude, $wheelLib, $wheelBin | Out-Null
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'include\net-snmp') -Destination $wheelInclude -Recurse -Force
-        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\agent') -Destination $wheelInclude -Recurse -Force
-        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\library') -Destination $wheelInclude -Recurse -Force
+        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\agent') -Destination (Join-Path $wheelInclude 'net-snmp') -Recurse -Force
+        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\library') -Destination (Join-Path $wheelInclude 'net-snmp') -Recurse -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\*.h') -Destination (Join-Path $wheelInclude 'net-snmp') -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\lib\release\netsnmp.lib') -Destination $wheelLib -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\bin\release\netsnmp.dll') -Destination $wheelBin -Force
