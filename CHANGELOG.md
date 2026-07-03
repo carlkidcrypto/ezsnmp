@@ -78,7 +78,7 @@ Last Updated: 2026-07-03 04:25:46 UTC
 
 #### Split
 
-- Split coverage autofix workflow into separate Python and C++ focused … ([#1018](https://github.com/carlkidcrypto/ezsnmp/issues/1018))
+- Split coverage autofix workflow into separate Python and C++ focused workflows ([#1018](https://github.com/carlkidcrypto/ezsnmp/issues/1018))
 
 
 #### Updates & Improvements
