@@ -89,17 +89,20 @@ runs:
         if ($LASTEXITCODE -ne 0) {
           throw "Configuring Net-SNMP with perl Configure failed with exit code $LASTEXITCODE."
         }
+        $vsDevCmdFailedExitCode = 10
+        $nmakeCleanFailedExitCode = 11
+        $nmakeLibsFailedExitCode = 12
         $nmakeCommand = (
-          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 || exit /b 10",
-          "nmake /nologo clean || exit /b 11",
-          "nmake /nologo libs || exit /b 12"
+          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 || exit /b $vsDevCmdFailedExitCode",
+          "nmake /nologo clean || exit /b $nmakeCleanFailedExitCode",
+          "nmake /nologo libs || exit /b $nmakeLibsFailedExitCode"
         ) -join ' && '
         cmd.exe /s /c $nmakeCommand
         if ($LASTEXITCODE -ne 0) {
           switch ($LASTEXITCODE) {
-            10 { throw "Activating the Visual Studio build environment with VsDevCmd.bat failed." }
-            11 { throw "Running 'nmake /nologo clean' for Net-SNMP failed." }
-            12 { throw "Running 'nmake /nologo libs' for Net-SNMP failed." }
+            $vsDevCmdFailedExitCode { throw "Activating the Visual Studio build environment with VsDevCmd.bat failed." }
+            $nmakeCleanFailedExitCode { throw "Running 'nmake /nologo clean' for Net-SNMP failed." }
+            $nmakeLibsFailedExitCode { throw "Running 'nmake /nologo libs' for Net-SNMP failed." }
             default { throw "Building Net-SNMP on Windows failed with unexpected exit code $LASTEXITCODE." }
           }
         }
