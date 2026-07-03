@@ -2,7 +2,7 @@ name: Black
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/auto-format-prs ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:

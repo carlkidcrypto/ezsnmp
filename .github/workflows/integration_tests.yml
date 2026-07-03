@@ -5,7 +5,7 @@ permissions:
 concurrency: integration_tests
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature/auto-format-prs ]
 
   pull_request:
     branches: [ main ]
