@@ -71,10 +71,26 @@ runs:
           "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
         )
 
+        $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+        if (-not (Test-Path $vswhere)) {
+          throw 'Unable to locate vswhere.exe on the Windows runner.'
+        }
+        $vsInstallPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        if (-not $vsInstallPath) {
+          throw 'Unable to locate a Visual Studio installation with MSVC build tools.'
+        }
+        $vsDevCmd = Join-Path $vsInstallPath 'Common7\Tools\VsDevCmd.bat'
+        if (-not (Test-Path $vsDevCmd)) {
+          throw "Unable to locate VsDevCmd.bat under '$vsInstallPath'."
+        }
+
         Push-Location (Join-Path $netSnmpSource.FullName 'win32')
         perl Configure @configureArgs | Write-Host
-        nmake /nologo clean
-        nmake /nologo libs
+        $nmakeCommand = "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 && nmake /nologo clean && nmake /nologo libs"
+        cmd.exe /s /c $nmakeCommand
+        if ($LASTEXITCODE -ne 0) {
+          throw "Building Net-SNMP with nmake failed with exit code $LASTEXITCODE."
+        }
         Pop-Location
 
         $wheelInclude = Join-Path $installRoot 'include'
