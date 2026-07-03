@@ -12,7 +12,11 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   check-source-changes:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
