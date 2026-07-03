@@ -44,7 +44,14 @@ runs:
         }
 
         $opensslInclude = Join-Path $opensslRoot 'include'
-        $opensslLib = Join-Path $opensslRoot 'lib\VC\x64'
+        $opensslLib = @(
+          (Join-Path $opensslRoot 'lib\VC\x64'),
+          (Join-Path $opensslRoot 'lib\VC'),
+          (Join-Path $opensslRoot 'lib')
+        ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if (-not $opensslLib) {
+          throw "Unable to locate the OpenSSL library directory under '$opensslRoot'."
+        }
         $opensslBin = Join-Path $opensslRoot 'bin'
 
         Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
@@ -92,12 +99,21 @@ runs:
         $vsDevCmdFailedExitCode = 10
         $nmakeCleanFailedExitCode = 11
         $nmakeLibsFailedExitCode = 12
-        $nmakeCommand = (
-          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 || exit /b $vsDevCmdFailedExitCode",
-          "nmake /nologo clean || exit /b $nmakeCleanFailedExitCode",
-          "nmake /nologo libs || exit /b $nmakeLibsFailedExitCode"
-        ) -join ' && '
-        cmd.exe /s /c $nmakeCommand
+        # Write build commands to a batch file instead of using cmd.exe /s /c with an
+        # inline string.  When PowerShell passes the inline string to cmd.exe it wraps
+        # it in outer quotes and escapes inner quotes as \" which cmd.exe /s then
+        # mis-parses, silently dropping the && chain so nmake is never invoked.
+        $batFile = Join-Path $env:RUNNER_TEMP 'build-netsnmp.bat'
+        @(
+          '@echo off',
+          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64",
+          "if %ERRORLEVEL% neq 0 exit /b $vsDevCmdFailedExitCode",
+          'nmake /nologo clean',
+          "if %ERRORLEVEL% neq 0 exit /b $nmakeCleanFailedExitCode",
+          'nmake /nologo libs',
+          "if %ERRORLEVEL% neq 0 exit /b $nmakeLibsFailedExitCode"
+        ) | Set-Content -Path $batFile -Encoding ASCII
+        cmd.exe /c $batFile
         if ($LASTEXITCODE -ne 0) {
           switch ($LASTEXITCODE) {
             $vsDevCmdFailedExitCode { throw "Activating the Visual Studio build environment with VsDevCmd.bat failed." }
