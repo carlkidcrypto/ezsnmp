@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/*.yml'
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
