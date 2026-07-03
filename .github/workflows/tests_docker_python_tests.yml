@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: [ main, feature/auto-format-prs ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
