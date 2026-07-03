@@ -86,10 +86,17 @@ runs:
 
         Push-Location (Join-Path $netSnmpSource.FullName 'win32')
         perl Configure @configureArgs | Write-Host
+        if ($LASTEXITCODE -ne 0) {
+          throw "Configuring Net-SNMP with perl Configure failed with exit code $LASTEXITCODE."
+        }
         $nmakeCommand = "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 && nmake /nologo clean && nmake /nologo libs"
         cmd.exe /s /c $nmakeCommand
         if ($LASTEXITCODE -ne 0) {
-          throw "Activating the Visual Studio build environment and building Net-SNMP with nmake failed with exit code $LASTEXITCODE. Check the command output above to see whether VsDevCmd.bat, 'nmake clean', or 'nmake libs' failed."
+          throw (
+            "Activating the Visual Studio build environment and building Net-SNMP with nmake failed " +
+            "with exit code $LASTEXITCODE. Check the command output above to see whether " +
+            "VsDevCmd.bat, 'nmake clean', or 'nmake libs' failed."
+          )
         }
         Pop-Location
 
