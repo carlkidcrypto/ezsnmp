@@ -71,10 +71,41 @@ runs:
           "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
         )
 
+        $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+        if (-not (Test-Path $vswhere)) {
+          throw 'Unable to locate vswhere.exe on the Windows runner.'
+        }
+        $vsInstallPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        if (-not $vsInstallPath) {
+          throw 'Unable to locate a Visual Studio installation with MSVC build tools.'
+        }
+        $vsDevCmd = Join-Path $vsInstallPath 'Common7\Tools\VsDevCmd.bat'
+        if (-not (Test-Path $vsDevCmd)) {
+          throw "Unable to locate VsDevCmd.bat under '$vsInstallPath'."
+        }
+
         Push-Location (Join-Path $netSnmpSource.FullName 'win32')
         perl Configure @configureArgs | Write-Host
-        nmake /nologo clean
-        nmake /nologo libs
+        if ($LASTEXITCODE -ne 0) {
+          throw "Configuring Net-SNMP with perl Configure failed with exit code $LASTEXITCODE."
+        }
+        $vsDevCmdFailedExitCode = 10
+        $nmakeCleanFailedExitCode = 11
+        $nmakeLibsFailedExitCode = 12
+        $nmakeCommand = (
+          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 || exit /b $vsDevCmdFailedExitCode",
+          "nmake /nologo clean || exit /b $nmakeCleanFailedExitCode",
+          "nmake /nologo libs || exit /b $nmakeLibsFailedExitCode"
+        ) -join ' && '
+        cmd.exe /s /c $nmakeCommand
+        if ($LASTEXITCODE -ne 0) {
+          switch ($LASTEXITCODE) {
+            $vsDevCmdFailedExitCode { throw "Activating the Visual Studio build environment with VsDevCmd.bat failed." }
+            $nmakeCleanFailedExitCode { throw "Running 'nmake /nologo clean' for Net-SNMP failed." }
+            $nmakeLibsFailedExitCode { throw "Running 'nmake /nologo libs' for Net-SNMP failed." }
+            default { throw "Building Net-SNMP on Windows failed with unexpected exit code $LASTEXITCODE." }
+          }
+        }
         Pop-Location
 
         $wheelInclude = Join-Path $installRoot 'include'
@@ -83,8 +114,8 @@ runs:
 
         New-Item -ItemType Directory -Force -Path $wheelInclude, $wheelLib, $wheelBin | Out-Null
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'include\net-snmp') -Destination $wheelInclude -Recurse -Force
-        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\agent') -Destination $wheelInclude -Recurse -Force
-        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\library') -Destination $wheelInclude -Recurse -Force
+        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\agent') -Destination (Join-Path $wheelInclude 'net-snmp') -Recurse -Force
+        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\library') -Destination (Join-Path $wheelInclude 'net-snmp') -Recurse -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\*.h') -Destination (Join-Path $wheelInclude 'net-snmp') -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\lib\release\netsnmp.lib') -Destination $wheelLib -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\bin\release\netsnmp.dll') -Destination $wheelBin -Force

@@ -22,7 +22,11 @@ env:
   GHCR_REPO: ghcr.io/carlkidcrypto/ezsnmp_test_images
 
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   set-matrix:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     outputs:
       distributions: ${{ steps.matrix.outputs.distributions }}
