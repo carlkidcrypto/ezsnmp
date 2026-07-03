@@ -74,6 +74,23 @@ runs:
           throw 'Unable to locate the extracted Net-SNMP source directory.'
         }
 
+        # Apply an OpenSSL 3.x compatibility patch to snmplib/snmp_openssl.c.
+        # OpenSSL 3.0 made ASN1_STRING opaque (asn1_string_st members are no
+        # longer accessible via -> on Windows builds). Replace the direct member
+        # accesses with the public accessor functions that work with both
+        # OpenSSL 1.x and 3.x.
+        $snmpOpensslPath = Join-Path $netSnmpSource.FullName 'snmplib' 'snmp_openssl.c'
+        if (Test-Path $snmpOpensslPath) {
+          $src = Get-Content $snmpOpensslPath -Raw
+          $src = $src -replace 'oname_value->type', 'ASN1_STRING_type(oname_value)'
+          $src = $src -replace 'oname->d\.iPAddress->length', 'ASN1_STRING_length(oname->d.iPAddress)'
+          $src = $src -replace 'oname->d\.iPAddress->data', 'ASN1_STRING_get0_data(oname->d.iPAddress)'
+          Set-Content $snmpOpensslPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied OpenSSL 3.x compatibility patch to snmplib/snmp_openssl.c'
+        } else {
+          Write-Warning "snmplib/snmp_openssl.c not found at '$snmpOpensslPath'; skipping OpenSSL 3.x patch."
+        }
+
         $configureArgs = @(
           '--config=release',
           '--linktype=dynamic',
