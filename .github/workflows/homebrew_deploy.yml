@@ -26,7 +26,11 @@ on:
       - .github/workflows/homebrew_deploy.yml
 
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   update-formula:
+    needs: verify-syntax
     # Only perform the deploy on a real release event or an explicit manual run.
     # Push events (workflow-file updates) still satisfy the 'on:' trigger above
     # so GitHub validates the YAML, but we skip the actual formula update.
