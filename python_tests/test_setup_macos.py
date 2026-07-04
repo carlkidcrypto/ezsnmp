@@ -14,8 +14,7 @@ import pytest
 )
 def test_resolve_macos_deployment_target(product_version, expected_target):
     assert (
-        build_utils.resolve_macos_deployment_target(product_version)
-        == expected_target
+        build_utils.resolve_macos_deployment_target(product_version) == expected_target
     )
 
 
