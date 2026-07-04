@@ -44,8 +44,25 @@ runs:
         }
 
         $opensslInclude = Join-Path $opensslRoot 'include'
-        $opensslLib = Join-Path $opensslRoot 'lib\VC\x64'
+        $opensslLib = @(
+          (Join-Path $opensslRoot 'lib\VC\x64\MD'),
+          (Join-Path $opensslRoot 'lib\VC\x64\MDd'),
+          (Join-Path $opensslRoot 'lib\VC\x64'),
+          (Join-Path $opensslRoot 'lib\VC'),
+          (Join-Path $opensslRoot 'lib')
+        ) | Where-Object { Test-Path (Join-Path $_ 'libcrypto.lib') } | Select-Object -First 1
+        if (-not $opensslLib) {
+          throw "Unable to locate the OpenSSL library directory containing libcrypto.lib under '$opensslRoot'."
+        }
         $opensslBin = Join-Path $opensslRoot 'bin'
+
+        # Convert OpenSSL include/lib paths to 8.3 short form so that the
+        # Net-SNMP perl Configure script can embed them in Makefiles without
+        # spaces.  cl.exe splits unquoted paths containing spaces, which causes
+        # the include directory to be silently ignored and headers to go missing.
+        $fso = New-Object -ComObject Scripting.FileSystemObject
+        $opensslIncludeShort = $fso.GetFolder($opensslInclude).ShortPath
+        $opensslLibShort = $fso.GetFolder($opensslLib).ShortPath
 
         Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
         $actualArchiveSha256 = (Get-FileHash -Path $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -59,6 +76,23 @@ runs:
           throw 'Unable to locate the extracted Net-SNMP source directory.'
         }
 
+        # Apply an OpenSSL 3.x compatibility patch to snmplib/snmp_openssl.c.
+        # OpenSSL 3.0 made ASN1_STRING opaque (asn1_string_st members are no
+        # longer accessible via -> on Windows builds). Replace the direct member
+        # accesses with the public accessor functions that work with both
+        # OpenSSL 1.x and 3.x.
+        $snmpOpensslPath = Join-Path $netSnmpSource.FullName 'snmplib' 'snmp_openssl.c'
+        if (Test-Path $snmpOpensslPath) {
+          $src = Get-Content $snmpOpensslPath -Raw
+          $src = $src -replace 'oname_value->type', 'ASN1_STRING_type(oname_value)'
+          $src = $src -replace 'oname->d\.iPAddress->length', 'ASN1_STRING_length(oname->d.iPAddress)'
+          $src = $src -replace 'oname->d\.iPAddress->data', 'ASN1_STRING_get0_data(oname->d.iPAddress)'
+          Set-Content $snmpOpensslPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied OpenSSL 3.x compatibility patch to snmplib/snmp_openssl.c'
+        } else {
+          Write-Warning "snmplib/snmp_openssl.c not found at '$snmpOpensslPath'; skipping OpenSSL 3.x patch."
+        }
+
         $configureArgs = @(
           '--config=release',
           '--linktype=dynamic',
@@ -67,8 +101,8 @@ runs:
           '--enable-blumenthal-aes',
           '--with-ipv6',
           "--prefix=$($installRoot -replace '\\', '/')",
-          "--with-sslincdir=$($opensslInclude -replace '\\', '/')",
-          "--with-ssllibdir=$($opensslLib -replace '\\', '/')"
+          "--with-sslincdir=$($opensslIncludeShort -replace '\\', '/')",
+          "--with-ssllibdir=$($opensslLibShort -replace '\\', '/')"
         )
 
         $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
@@ -92,12 +126,21 @@ runs:
         $vsDevCmdFailedExitCode = 10
         $nmakeCleanFailedExitCode = 11
         $nmakeLibsFailedExitCode = 12
-        $nmakeCommand = (
-          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64 || exit /b $vsDevCmdFailedExitCode",
-          "nmake /nologo clean || exit /b $nmakeCleanFailedExitCode",
-          "nmake /nologo libs || exit /b $nmakeLibsFailedExitCode"
-        ) -join ' && '
-        cmd.exe /s /c $nmakeCommand
+        # Write build commands to a batch file instead of using cmd.exe /s /c with an
+        # inline string.  When PowerShell passes the inline string to cmd.exe it wraps
+        # it in outer quotes and escapes inner quotes as \" which cmd.exe /s then
+        # mis-parses, silently dropping the && chain so nmake is never invoked.
+        $batFile = Join-Path $env:RUNNER_TEMP 'build-netsnmp.bat'
+        @(
+          '@echo off',
+          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64",
+          "if %ERRORLEVEL% neq 0 exit /b $vsDevCmdFailedExitCode",
+          'nmake /nologo clean',
+          "if %ERRORLEVEL% neq 0 exit /b $nmakeCleanFailedExitCode",
+          'nmake /nologo libs',
+          "if %ERRORLEVEL% neq 0 exit /b $nmakeLibsFailedExitCode"
+        ) | Set-Content -Path $batFile -Encoding ASCII
+        cmd.exe /c $batFile
         if ($LASTEXITCODE -ne 0) {
           switch ($LASTEXITCODE) {
             $vsDevCmdFailedExitCode { throw "Activating the Visual Studio build environment with VsDevCmd.bat failed." }
@@ -114,8 +157,8 @@ runs:
 
         New-Item -ItemType Directory -Force -Path $wheelInclude, $wheelLib, $wheelBin | Out-Null
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'include\net-snmp') -Destination $wheelInclude -Recurse -Force
-        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\agent') -Destination $wheelInclude -Recurse -Force
-        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\library') -Destination $wheelInclude -Recurse -Force
+        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\agent') -Destination (Join-Path $wheelInclude 'net-snmp') -Recurse -Force
+        Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\library') -Destination (Join-Path $wheelInclude 'net-snmp') -Recurse -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\*.h') -Destination (Join-Path $wheelInclude 'net-snmp') -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\lib\release\netsnmp.lib') -Destination $wheelLib -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\bin\release\netsnmp.dll') -Destination $wheelBin -Force

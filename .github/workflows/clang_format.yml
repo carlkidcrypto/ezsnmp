@@ -50,21 +50,30 @@ jobs:
             BASE_BRANCH="${{ github.ref_name }}"
           fi
 
-          BRANCH_NAME="auto-clangformat-${{ github.run_id }}"
+          # Use a deterministic branch name based on the base branch to avoid duplicate PRs
+          SAFE_BASE_BRANCH=$(echo "$BASE_BRANCH" | sed 's/[^a-zA-Z0-9._/-]/_/g')
+          BRANCH_NAME="auto-clangformat-$SAFE_BASE_BRANCH"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git checkout -b "$BRANCH_NAME"
+          # Checkout or create the auto-format branch, starting from the base branch
+          git checkout -B "$BRANCH_NAME" "$BASE_BRANCH"
           git add .
-          git commit -m "style: auto-format with clang-format"
-          git push origin "$BRANCH_NAME"
+          git commit -m "style: auto-format with clang-format" || echo "No changes to commit"
+          git push origin "$BRANCH_NAME" --force
 
-          gh pr create \
-            --title "style: auto-format with clang-format" \
-            --body "This is an automated PR to fix formatting issues detected by clang-format." \
-            --base "$BASE_BRANCH" \
-            --head "$BRANCH_NAME"
+          # Create PR only if one doesn't already exist for this head branch
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --state open --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            gh pr create \
+              --title "style: auto-format with clang-format" \
+              --body "This is an automated PR to fix formatting issues detected by clang-format." \
+              --base "$BASE_BRANCH" \
+              --head "$BRANCH_NAME"
+          else
+            echo "PR #$PR_NUMBER already exists for $BRANCH_NAME. Updated the branch."
+          fi
 
       - name: Note for fork contributors
         if: steps.changed.outputs.changed == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
