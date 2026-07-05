@@ -162,11 +162,18 @@ jobs:
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
+            # Remove any pre-existing ezsnmp install to prevent version conflicts
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
             # Register the local checkout as a Homebrew tap, then install from it.
             # brew install --formula <path> is rejected unless the file is inside a
             # registered tap; tapping the local directory is the correct approach.
+            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from downloading a
+            # pre-built bottle for an old version, ensuring we build from source.
             brew tap carlkidcrypto/ezsnmp "$(pwd)"
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            # Force-overwrite any conflicting files/symlinks so the newly installed
+            # version is what Python finds in the global site-packages.
+            brew link --overwrite ezsnmp 2>/dev/null || true
             # Determine which Python the formula used and where it installed the package
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
@@ -177,6 +184,7 @@ jobs:
             /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
             # Hide source directory to prevent shadowing
             mv ezsnmp _ezsnmp
+            set -o pipefail
             /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp \
               --cov-report=term-missing \
               --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
