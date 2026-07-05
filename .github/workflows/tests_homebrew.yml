@@ -155,15 +155,39 @@ jobs:
             # Package the current checkout as a tarball and point the formula at it
             git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
             TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
+            PKG_VERSION=$(python3 -c "
+            import re
+            content = open('setup.cfg').read()
+            m = re.search(r'^version\s*=\s*(.+)$', content, re.MULTILINE)
+            print(m.group(1).strip() if m else '0.0.0')
+            ")
             # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
-            # sed -i '' works, then put it back in Formula/ so brew sees a tap path
+            # we can modify it, then put it back so brew sees a tap path.
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
             sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" /tmp/ezsnmp_formula.rb
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
+            # Add an explicit version stanza so Homebrew does not fail to detect
+            # the version from the local tarball URL (which has no version in its name).
+            python3 - << PYEOF
+            import re
+            formula = open('/tmp/ezsnmp_formula.rb').read()
+            pkg_version = '${PKG_VERSION}'
+            if 'version "' + pkg_version + '"' not in formula:
+                formula = re.sub(
+                    r'(  sha256 "[^"]+")',
+                    r'\1' + '\n  version "' + pkg_version + '"',
+                    formula, count=1
+                )
+            open('/tmp/ezsnmp_formula.rb', 'w').write(formula)
+            PYEOF
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
             # Remove any pre-existing ezsnmp install to prevent version conflicts
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
+            # setup-homebrew may have already registered carlkidcrypto/ezsnmp tap
+            # pointing at the GitHub remote (old release).  Force-untap so our
+            # local checkout with the modified formula always takes precedence.
+            brew untap carlkidcrypto/ezsnmp 2>/dev/null || true
             # Register the local checkout as a Homebrew tap, then install from it.
             # brew install --formula <path> is rejected unless the file is inside a
             # registered tap; tapping the local directory is the correct approach.
