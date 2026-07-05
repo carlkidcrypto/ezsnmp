@@ -156,10 +156,12 @@ jobs:
             git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
             TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
             PKG_VERSION=$(python3 -c "
-            import re
+            import re, sys
             content = open('setup.cfg').read()
             m = re.search(r'^version\s*=\s*(.+)$', content, re.MULTILINE)
-            print(m.group(1).strip() if m else '0.0.0')
+            if not m:
+                sys.exit('ERROR: could not find version field in setup.cfg')
+            print(m.group(1).strip())
             ")
             # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
             # we can modify it, then put it back so brew sees a tap path.
@@ -172,9 +174,10 @@ jobs:
             import re
             formula = open('/tmp/ezsnmp_formula.rb').read()
             pkg_version = '${PKG_VERSION}'
-            if 'version "' + pkg_version + '"' not in formula:
+            # Check for an existing version stanza line (e.g. '  version "..."')
+            if not re.search(r'^\s+version\s+"', formula, re.MULTILINE):
                 formula = re.sub(
-                    r'(  sha256 "[^"]+")',
+                    r'(\s+sha256\s+"[^"]+")',
                     r'\1' + '\n  version "' + pkg_version + '"',
                     formula, count=1
                 )
