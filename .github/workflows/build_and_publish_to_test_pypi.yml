@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
@@ -70,27 +70,8 @@ jobs:
           linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
           macos: |
             MACOS_VERSION=$(sw_vers -productVersion)
-            if [[ "$MACOS_VERSION" == "10.15."* ]]; then
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\110.15"/' pyproject.toml
-
-            elif [[ "$MACOS_VERSION" == "11."* ]]; then
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\111.0"/' pyproject.toml
-
-            elif [[ "$MACOS_VERSION" == "12."* ]]; then
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\112.0"/' pyproject.toml
-
-            elif [[ "$MACOS_VERSION" == "13."* ]]; then
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\113.0"/' pyproject.toml
-
-            elif [[ "$MACOS_VERSION" == "14."* ]]; then
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\114.0"/' pyproject.toml
-
-            elif [[ "$MACOS_VERSION" == "15."* ]]; then
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\115.0"/' pyproject.toml
-
-            else
-                sed -i '' 's/\(MACOSX_DEPLOYMENT_TARGET = "\)[^"]*"/\110.15"/' pyproject.toml
-            fi
+            MACOSX_DEPLOYMENT_TARGET=$(python -c "import build_utils; print(build_utils.resolve_macos_deployment_target('$MACOS_VERSION'))")
+            sed -i '' "s/\\(MACOSX_DEPLOYMENT_TARGET = \\\"\\)[^\\\"]*\\\"/\\1${MACOSX_DEPLOYMENT_TARGET}\\\"/" pyproject.toml
             python -m cibuildwheel --output-dir wheelhouse --platform macos;
           windows: python -m cibuildwheel --output-dir wheelhouse --platform windows;
 
@@ -110,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
       - name: Set up Python 3.11
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
