@@ -5,14 +5,78 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   check-formatting:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
-      - uses: DoozyX/clang-format-lint-action@bcb4eb2cb0d707ee4f3e5cc3b456eb075f12cf73 # v0.20
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
         with:
-          source: '.'
-          extensions: 'c,cpp,h,hpp'
-          clangFormatVersion: 20
+          fetch-depth: 0
+
+      - name: Install Clang-Format
+        run: sudo apt-get update && sudo apt-get install -y clang-format-20
+
+      - name: Run Clang-Format
+        run: find . -regex '.*\.\(cpp\|h\|hpp\|c\)' -exec clang-format-20 -i {} +
+
+      - name: Check for changes
+        id: changed
+        run: |
+          if git diff --exit-code; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR for formatting fixes
+        if: steps.changed.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determine the base branch (the branch that needs the fix)
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_BRANCH="${{ github.head_ref }}"
+          else
+            BASE_BRANCH="${{ github.ref_name }}"
+          fi
+
+          # Use a deterministic branch name based on the base branch to avoid duplicate PRs
+          SAFE_BASE_BRANCH=$(echo "$BASE_BRANCH" | sed 's/[^a-zA-Z0-9._/-]/_/g')
+          BRANCH_NAME="auto-clangformat-$SAFE_BASE_BRANCH"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Checkout or create the auto-format branch, starting from the base branch
+          git checkout -B "$BRANCH_NAME" "$BASE_BRANCH"
+          git add .
+          git commit -m "style: auto-format with clang-format" || echo "No changes to commit"
+          git push origin "$BRANCH_NAME" --force
+
+          # Create PR only if one doesn't already exist for this head branch
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --state open --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ]; then
+            gh pr create \
+              --title "style: auto-format with clang-format" \
+              --body "This is an automated PR to fix formatting issues detected by clang-format." \
+              --base "$BASE_BRANCH" \
+              --head "$BRANCH_NAME"
+          else
+            echo "PR #$PR_NUMBER already exists for $BRANCH_NAME. Updated the branch."
+          fi
+
+      - name: Note for fork contributors
+        if: steps.changed.outputs.changed == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::warning:: Formatting issues were detected. Since this PR is from a fork, the bot cannot automatically create a fix PR. \
+          Please run clang-format locally and push the changes to your branch."
