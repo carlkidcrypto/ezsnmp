@@ -55,6 +55,26 @@ def is_net_snmp_installed_macports():
         return ""
 
 
+def resolve_macos_deployment_target(product_version):
+    """Return the wheel deployment target that matches the active macOS runner.
+
+    GitHub's macOS runners may report patch releases (for example ``15.6.1``) or
+    newer major versions that are not yet explicitly enumerated in workflow
+    shell scripts.  For macOS 11+, wheels in this repository should track the
+    runner major version as ``<major>.0``.  For macOS 10.x, preserve the major
+    and minor version because the historical deployment target is ``10.15``.
+    """
+    match = search(r"^\s*(\d+)(?:\.(\d+))?", product_version or "")
+    if not match:
+        raise ValueError(f"Unsupported macOS version string: {product_version!r}")
+
+    major = int(match.group(1))
+    minor = int(match.group(2) or 0)
+    if major >= 11:
+        return f"{major}.0"
+    return f"{major}.{minor}"
+
+
 def get_homebrew_info():
     """
     Checks if Homebrew is installed and retrieves its version.
