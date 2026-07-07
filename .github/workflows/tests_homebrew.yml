@@ -12,7 +12,11 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   check-source-changes:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     outputs:
       run_job: ${{ steps.changed-files.outputs.any_changed }}
@@ -80,13 +84,13 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -151,18 +155,52 @@ jobs:
             # Package the current checkout as a tarball and point the formula at it
             git archive HEAD --format=tar.gz -o /tmp/ezsnmp_source.tar.gz
             TARBALL_SHA=$(shasum -a 256 /tmp/ezsnmp_source.tar.gz | awk '{print $1}')
+            PKG_VERSION=$(python3 -c "
+            import re, sys
+            content = open('setup.cfg').read()
+            m = re.search(r'^version\s*=\s*(.+)$', content, re.MULTILINE)
+            if not m:
+                sys.exit('ERROR: could not find version field in setup.cfg')
+            print(m.group(1).strip())
+            ")
             # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
-            # sed -i '' works, then put it back in Formula/ so brew sees a tap path
+            # we can modify it, then put it back so brew sees a tap path.
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
             sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" /tmp/ezsnmp_formula.rb
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
+            # Add an explicit version stanza so Homebrew does not fail to detect
+            # the version from the local tarball URL (which has no version in its name).
+            python3 - << PYEOF
+            import re
+            formula = open('/tmp/ezsnmp_formula.rb').read()
+            pkg_version = '${PKG_VERSION}'
+            # Check for an existing version stanza line (e.g. '  version "..."')
+            if not re.search(r'^\s+version\s+"', formula, re.MULTILINE):
+                formula = re.sub(
+                    r'(\s+sha256\s+"[^"]+")',
+                    r'\1' + '\n  version "' + pkg_version + '"',
+                    formula, count=1
+                )
+            open('/tmp/ezsnmp_formula.rb', 'w').write(formula)
+            PYEOF
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
+            # Remove any pre-existing ezsnmp install to prevent version conflicts
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
+            # setup-homebrew may have already registered carlkidcrypto/ezsnmp tap
+            # pointing at the GitHub remote (old release).  Force-untap so our
+            # local checkout with the modified formula always takes precedence.
+            brew untap carlkidcrypto/ezsnmp 2>/dev/null || true
             # Register the local checkout as a Homebrew tap, then install from it.
             # brew install --formula <path> is rejected unless the file is inside a
             # registered tap; tapping the local directory is the correct approach.
+            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from downloading a
+            # pre-built bottle for an old version, ensuring we build from source.
             brew tap carlkidcrypto/ezsnmp "$(pwd)"
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            # Force-overwrite any conflicting files/symlinks so the newly installed
+            # version is what Python finds in the global site-packages.
+            brew link --overwrite ezsnmp 2>/dev/null || true
             # Determine which Python the formula used and where it installed the package
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
@@ -173,6 +211,7 @@ jobs:
             /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
             # Hide source directory to prevent shadowing
             mv ezsnmp _ezsnmp
+            set -o pipefail
             /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp \
               --cov-report=term-missing \
               --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
@@ -196,6 +235,7 @@ jobs:
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
     needs: build-and-test
+    if: always() && needs.build-and-test.result != 'skipped'
     permissions:
       contents: write    # For creating commit comments on push
       pull-requests: write # This is needed to create/update comments

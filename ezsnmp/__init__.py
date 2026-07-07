@@ -15,6 +15,7 @@ Typical usage::
         for item in results:
             print(item.oid, item.value)
 """
+
 from .datatypes import Result
 from .exceptions import (
     ConnectionError,

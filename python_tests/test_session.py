@@ -760,18 +760,15 @@ def test_session_property_setters_extended():
 
 
 def test_session_get_none_oids(sess):
-    """Test that Session.get(None) is treated same as empty list (None->[] branch)."""
-    # None should just return results from the root, but actually passing None
-    # triggers oids=[] which may return empty or raise. Just check it doesn't crash.
-    # Most implementations return empty tuple for empty oids.
+    """Test that Session.get(None) returns an empty tuple (None->[] early-return)."""
     res = sess.get(None)
-    assert res is not None
+    assert res == ()
 
 
 def test_session_get_next_none_oids(sess):
-    """Test that Session.get_next(None) is treated same as empty list."""
+    """Test that Session.get_next(None) returns an empty tuple (None->[] early-return)."""
     res = sess.get_next(None)
-    assert res is not None
+    assert res == ()
 
 
 def test_session_set_none_oids(sess):
