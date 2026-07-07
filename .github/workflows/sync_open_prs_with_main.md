@@ -18,7 +18,7 @@ safe-outputs:
 timeout-minutes: 45
 engine:
   id: copilot
-  model: claude-sonnet-4.6
+  model: auto
 checkout:
   fetch-depth: 0
   fetch: ["*"]
