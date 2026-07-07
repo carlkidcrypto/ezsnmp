@@ -45,12 +45,14 @@ runs:
 
         $opensslInclude = Join-Path $opensslRoot 'include'
         $opensslLib = @(
+          (Join-Path $opensslRoot 'lib\VC\x64\MD'),
+          (Join-Path $opensslRoot 'lib\VC\x64\MDd'),
           (Join-Path $opensslRoot 'lib\VC\x64'),
           (Join-Path $opensslRoot 'lib\VC'),
           (Join-Path $opensslRoot 'lib')
-        ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+        ) | Where-Object { Test-Path (Join-Path $_ 'libcrypto.lib') } | Select-Object -First 1
         if (-not $opensslLib) {
-          throw "Unable to locate the OpenSSL library directory under '$opensslRoot'."
+          throw "Unable to locate the OpenSSL library directory containing libcrypto.lib under '$opensslRoot'."
         }
         $opensslBin = Join-Path $opensslRoot 'bin'
 
