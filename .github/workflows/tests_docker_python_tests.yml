@@ -83,7 +83,7 @@ jobs:
 
       - name: Restore cached Docker image tar
         id: cache-restore
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .docker-image-cache/${{ matrix.distribution }}.tar
           key: docker-image-${{ matrix.distribution }}-${{ steps.cache-key.outputs.week }}-v1
@@ -135,7 +135,7 @@ jobs:
           chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
 
       - name: Cache pip packages for tox (Docker)
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
           key: pip-docker-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
