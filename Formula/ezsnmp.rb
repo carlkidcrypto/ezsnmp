@@ -1,8 +1,8 @@
 class Ezsnmp < Formula
   desc "Blazingly fast Python SNMP library based on Net-SNMP"
   homepage "https://github.com/carlkidcrypto/ezsnmp"
-  url "https://github.com/carlkidcrypto/ezsnmp/archive/refs/tags/v2.3.0.tar.gz"
-  sha256 "827a760a4cf7d06a18cbd74d6314156c4f0d7729602d3804e198c7391beec631"
+  url "https://github.com/carlkidcrypto/ezsnmp/archive/refs/tags/v2.4.0a8.tar.gz"
+  sha256 "39e201e0ec62ed47808ee6215ccabf21ebeb4f44a68b1566ce7140956042f8f1"
   license "BSD-3-Clause"
   head "https://github.com/carlkidcrypto/ezsnmp.git", branch: "main"
 

@@ -22,7 +22,11 @@ env:
   GHCR_REPO: ghcr.io/carlkidcrypto/ezsnmp_test_images
 
 jobs:
+  verify-syntax:
+    permissions: { contents: read }
+    uses: ./.github/workflows/verify_syntax.yml
   set-matrix:
+    needs: verify-syntax
     runs-on: ubuntu-latest
     outputs:
       distributions: ${{ steps.matrix.outputs.distributions }}
@@ -82,7 +86,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore Python tarball cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: docker/cache
           key: python-tarballs-${{ hashFiles('docker/cache/download_build_cache.sh') }}
@@ -110,7 +114,7 @@ jobs:
           echo "ghcr_latest=${GHCR_IMAGE}-latest" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
-        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
           context: .
           file: docker/${{ matrix.distribution }}/Dockerfile

@@ -804,6 +804,8 @@ class Session(SessionBase):
         try:
             if oids is None:
                 oids = []
+            if not oids:
+                return ()
             return super().get(oids)
         except Exception as e:
             _handle_error(e)
@@ -849,6 +851,8 @@ class Session(SessionBase):
         try:
             if oids is None:
                 oids = []
+            if not oids:
+                return ()
             return super().get_next(oids)
         except Exception as e:
             _handle_error(e)
