@@ -24,7 +24,7 @@ safe-outputs:
 timeout-minutes: 60
 engine:
   id: copilot
-  model: claude-sonnet-4.6
+  model: auto
 network:
   allowed: [defaults, github, pypi.org]
 tools:
