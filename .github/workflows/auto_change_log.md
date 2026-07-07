@@ -9,6 +9,7 @@ on:
   skip-if-match:
     query: 'is:pr is:open head:automation/update-changelog label:documentation label:automated-pr'
 permissions:
+  copilot-requests: write
   actions: read
   contents: read
 safe-outputs:

@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
   schedule: weekly on saturday
 permissions:
+  copilot-requests: write
   actions: read
   contents: read
 safe-outputs:
