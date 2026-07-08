@@ -185,8 +185,10 @@ jobs:
             PYEOF
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
-            # Remove any pre-existing ezsnmp install to prevent version conflicts
+            # Remove any pre-existing ezsnmp install to prevent version conflicts.
+            # Try both short name and fully-qualified name to catch all cases.
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force carlkidcrypto/ezsnmp/ezsnmp 2>/dev/null || true
             # setup-homebrew may have already registered carlkidcrypto/ezsnmp tap
             # pointing at the GitHub remote (old release).  Force-untap so our
             # local checkout with the modified formula always takes precedence.
@@ -194,10 +196,14 @@ jobs:
             # Register the local checkout as a Homebrew tap, then install from it.
             # brew install --formula <path> is rejected unless the file is inside a
             # registered tap; tapping the local directory is the correct approach.
-            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from downloading a
-            # pre-built bottle for an old version, ensuring we build from source.
-            brew tap carlkidcrypto/ezsnmp "$(pwd)"
-            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            # --force ensures the local path overrides any pre-existing tap pointing
+            # at the GitHub remote, even if brew untap above did not fully clean up.
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
+            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from using the formula
+            # API. --build-from-source forces building from the tarball above instead
+            # of restoring any cached bottle from a previous run, ensuring the
+            # freshly-packaged source (with all local fixes) is always compiled.
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall --build-from-source carlkidcrypto/ezsnmp/ezsnmp
             # Force-overwrite any conflicting files/symlinks so the newly installed
             # version is what Python finds in the global site-packages.
             brew link --overwrite ezsnmp 2>/dev/null || true
@@ -205,6 +211,12 @@ jobs:
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
             BREW_PYTHON=$(brew --prefix python@${PYTHON_VER})/bin/python3
+            # Verify the installed session.py contains the empty-OID early-return fix.
+            # If this fails, the wrong (old) version was installed — fail fast rather
+            # than silently running tests against stale code.
+            INSTALLED_SESSION="${BREW_EZSNMP}/lib/python${PYTHON_VER}/site-packages/ezsnmp/session.py"
+            grep -q "if not oids:" "${INSTALLED_SESSION}" \
+              || { echo "ERROR: installed ${INSTALLED_SESSION} is missing the empty-OID early-return fix. Wrong version installed."; exit 1; }
             # Create an isolated test venv that inherits the brew Python's site-packages
             # (where brew link already placed the installed ezsnmp package)
             ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
