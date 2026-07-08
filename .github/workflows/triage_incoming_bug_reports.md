@@ -8,6 +8,7 @@ permissions:
   actions: read
   contents: read
   issues: read
+  copilot-requests: write
 safe-outputs:
   add-comment:
     target: triggering

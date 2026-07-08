@@ -19,6 +19,7 @@ on:
 permissions:
   actions: read
   contents: read
+  copilot-requests: write
 safe-outputs:
   update-release:
 timeout-minutes: 60
