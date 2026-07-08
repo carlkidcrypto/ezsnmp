@@ -7,6 +7,7 @@ on:
   skip-if-match:
     query: 'is:pr is:open head:automation/coverage-autofix-cpp label:automated-pr'
 permissions:
+  copilot-requests: write
   actions: read
   contents: read
 safe-outputs:

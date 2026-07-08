@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   schedule: daily
 permissions:
+  copilot-requests: write
   actions: read
   contents: read
   pull-requests: read

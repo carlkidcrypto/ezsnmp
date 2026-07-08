@@ -15,6 +15,7 @@ on:
   skip-if-match:
     query: 'is:pr is:open head:automation/update-docker-netsnmp-versions label:dependencies label:docker label:automated-pr'
 permissions:
+  copilot-requests: write
   actions: read
   contents: read
 safe-outputs:
