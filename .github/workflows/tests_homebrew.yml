@@ -211,12 +211,17 @@ jobs:
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
             BREW_PYTHON=$(brew --prefix python@${PYTHON_VER})/bin/python3
-            # Verify the installed session.py contains the empty-OID early-return fix.
-            # If this fails, the wrong (old) version was installed — fail fast rather
-            # than silently running tests against stale code.
-            INSTALLED_SESSION="${BREW_EZSNMP}/lib/python${PYTHON_VER}/site-packages/ezsnmp/session.py"
-            grep -q "if not oids:" "${INSTALLED_SESSION}" \
-              || { echo "ERROR: installed ${INSTALLED_SESSION} is missing the empty-OID early-return fix. Wrong version installed."; exit 1; }
+            # Verify behavior, not source text: an installed package with the
+            # empty-OID early-return fix must return () for get/get_next([]).
+            # This avoids brittle grep checks that fail across harmless refactors.
+            ${BREW_PYTHON} - <<'PYEOF'
+            from ezsnmp import Session
+            from ezsnmp import session as session_module
+
+            s = Session(hostname="localhost", version=2, community="public")
+            assert s.get([]) == (), f"get([]) did not return (), loaded from {session_module.__file__}"
+            assert s.get_next([]) == (), f"get_next([]) did not return (), loaded from {session_module.__file__}"
+            PYEOF
             # Create an isolated test venv that inherits the brew Python's site-packages
             # (where brew link already placed the installed ezsnmp package)
             ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
