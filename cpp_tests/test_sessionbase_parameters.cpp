@@ -14,6 +14,7 @@ struct PrintOptions {
    bool print_full_oids;
    bool print_oids_numerically;
    bool print_timeticks_numerically;
+   bool print_hex_strings;
    std::vector<std::string> expected_flags;
 };
 
@@ -41,9 +42,11 @@ static std::vector<std::string> build_expected_args(std::string const& version,
 TEST_P(SessionsParamTest, PrintOptionsAreAppliedToArgs) {
    auto const& [version, options] = GetParam();
 
-   SessionBase session("localhost", "161", version, "public", "", "", "", "", "", "", "", "", "",
-                       "", "", "", "", "", options.print_enums_numerically, options.print_full_oids,
-                       options.print_oids_numerically, options.print_timeticks_numerically);
+   SessionBase session(
+       "localhost", "161", version, "public", "", "", "", "", "", "", "", "", "", "", "", "", "",
+       "", options.print_enums_numerically, options.print_full_oids,
+       options.print_oids_numerically, options.print_timeticks_numerically,
+       options.print_hex_strings);
 
    auto args = session._get_args();
    auto expected = build_expected_args(version, options);
@@ -164,15 +167,16 @@ TEST(SessionBaseParametersIntegration, OidsNumericFlagChangesOidFormat) {
 
 static auto const SESSION_PARAM_VALUES =
     testing::Combine(testing::Values(std::string("1"), std::string("2c"), std::string("3")),
-                     testing::Values(PrintOptions{false, false, false, false, {}},
-                                     PrintOptions{true, false, false, false, {"e"}},
-                                     PrintOptions{false, true, false, false, {"f"}},
-                                     PrintOptions{false, false, true, false, {"n"}},
-                                     PrintOptions{true, true, false, false, {"e", "f"}},
-                                     PrintOptions{true, false, true, false, {"e", "n"}},
-                                     PrintOptions{false, true, true, false, {"f", "n"}},
-                                     PrintOptions{true, true, true, false, {"e", "f", "n"}},
-                                     PrintOptions{false, false, false, true, {"t"}}));
+                     testing::Values(PrintOptions{false, false, false, false, false, {}},
+                                     PrintOptions{true, false, false, false, false, {"e"}},
+                                     PrintOptions{false, true, false, false, false, {"f"}},
+                                     PrintOptions{false, false, true, false, false, {"n"}},
+                                     PrintOptions{true, true, false, false, false, {"e", "f"}},
+                                     PrintOptions{true, false, true, false, false, {"e", "n"}},
+                                     PrintOptions{false, true, true, false, false, {"f", "n"}},
+                                     PrintOptions{true, true, true, false, false, {"e", "f", "n"}},
+                                     PrintOptions{false, false, false, true, false, {"t"}},
+                                     PrintOptions{false, false, false, false, true, {"x"}}));
 
 #if defined(INSTANTIATE_TEST_SUITE_P)
 INSTANTIATE_TEST_SUITE_P(SessionVersions,
@@ -195,31 +199,34 @@ INSTANTIATE_TEST_CASE_P(
     SessionVersions,
     SessionsParamTest,
     testing::Values(
-        std::make_tuple(std::string("1"), PrintOptions{false, false, false, false, {}}),
-        std::make_tuple(std::string("1"), PrintOptions{true, false, false, false, {"e"}}),
-        std::make_tuple(std::string("1"), PrintOptions{false, true, false, false, {"f"}}),
-        std::make_tuple(std::string("1"), PrintOptions{false, false, true, false, {"n"}}),
-        std::make_tuple(std::string("1"), PrintOptions{true, true, false, false, {"e", "f"}}),
-        std::make_tuple(std::string("1"), PrintOptions{true, false, true, false, {"e", "n"}}),
-        std::make_tuple(std::string("1"), PrintOptions{false, true, true, false, {"f", "n"}}),
-        std::make_tuple(std::string("1"), PrintOptions{true, true, true, false, {"e", "f", "n"}}),
-        std::make_tuple(std::string("1"), PrintOptions{false, false, false, true, {"t"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, false, {}}),
-        std::make_tuple(std::string("2c"), PrintOptions{true, false, false, false, {"e"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{false, true, false, false, {"f"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{false, false, true, false, {"n"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{true, true, false, false, {"e", "f"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{true, false, true, false, {"e", "n"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{false, true, true, false, {"f", "n"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{true, true, true, false, {"e", "f", "n"}}),
-        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, true, {"t"}}),
-        std::make_tuple(std::string("3"), PrintOptions{false, false, false, false, {}}),
-        std::make_tuple(std::string("3"), PrintOptions{true, false, false, false, {"e"}}),
-        std::make_tuple(std::string("3"), PrintOptions{false, true, false, false, {"f"}}),
-        std::make_tuple(std::string("3"), PrintOptions{false, false, true, false, {"n"}}),
-        std::make_tuple(std::string("3"), PrintOptions{true, true, false, false, {"e", "f"}}),
-        std::make_tuple(std::string("3"), PrintOptions{true, false, true, false, {"e", "n"}}),
-        std::make_tuple(std::string("3"), PrintOptions{false, true, true, false, {"f", "n"}}),
-        std::make_tuple(std::string("3"), PrintOptions{true, true, true, false, {"e", "f", "n"}}),
-        std::make_tuple(std::string("3"), PrintOptions{false, false, false, true, {"t"}})));
+        std::make_tuple(std::string("1"), PrintOptions{false, false, false, false, false, {}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, false, false, false, false, {"e"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, true, false, false, false, {"f"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, false, true, false, false, {"n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, true, false, false, false, {"e", "f"}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, false, true, false, false, {"e", "n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, true, true, false, false, {"f", "n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{true, true, true, false, false, {"e", "f", "n"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, false, false, true, false, {"t"}}),
+        std::make_tuple(std::string("1"), PrintOptions{false, false, false, false, true, {"x"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, false, false, {}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, false, false, false, false, {"e"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, true, false, false, false, {"f"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, true, false, false, {"n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, true, false, false, false, {"e", "f"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, false, true, false, false, {"e", "n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, true, true, false, false, {"f", "n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{true, true, true, false, false, {"e", "f", "n"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, true, false, {"t"}}),
+        std::make_tuple(std::string("2c"), PrintOptions{false, false, false, false, true, {"x"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, false, false, false, {}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, false, false, false, false, {"e"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, true, false, false, false, {"f"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, true, false, false, {"n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, true, false, false, false, {"e", "f"}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, false, true, false, false, {"e", "n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, true, true, false, false, {"f", "n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{true, true, true, false, false, {"e", "f", "n"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, false, true, false, {"t"}}),
+        std::make_tuple(std::string("3"), PrintOptions{false, false, false, false, true, {"x"}})));
 #endif

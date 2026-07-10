@@ -41,6 +41,7 @@ class SessionBase {
    bool m_print_oids_numerically = false;  ///< Print OIDs numerically (-O n).
    bool m_print_timeticks_numerically =
        false; ///< Print timeticks unparsed as numeric integers (-O t).
+   bool m_print_hex_strings = false; ///< Print OCTET STRINGs as hex strings when appropriate (-O x).
    std::string m_set_max_repeaters_to_num = ""; ///< Set max-repeaters to <NUM> (-C r<NUM>).
 
    std::string
@@ -90,6 +91,8 @@ class SessionBase {
     * @param print_full_oids Print full OIDs on output (default: false).
     * @param print_oids_numerically Print OIDs numerically (default: false).
     * @param print_timeticks_numerically Print timeticks as numeric integers (default: false).
+    * @param print_hex_strings Print OCTET STRING values in hex format when supported (default:
+    * false).
     * @param set_max_repeaters_to_num Set max-repeaters to <NUM> (default: ""). Only applies to
     * GETBULK PDUs.
     */
@@ -115,6 +118,7 @@ class SessionBase {
                bool print_full_oids = false,
                bool print_oids_numerically = false,
                bool print_timeticks_numerically = false,
+               bool print_hex_strings = false,
                std::string const& set_max_repeaters_to_num = "");
 
    /**
@@ -394,6 +398,13 @@ class SessionBase {
    bool _get_print_timeticks_numerically() const;
 
    /**
+    * @brief Returns whether OCTET STRING values are printed as hex strings.
+    *
+    * @return True if OCTET STRING values are printed as hex strings, false otherwise.
+    */
+   bool _get_print_hex_strings() const;
+
+   /**
     * @brief Returns the configured max-repeaters value as a string.
     *
     * @return A constant reference to the max-repeaters string.
@@ -555,6 +566,13 @@ class SessionBase {
     * @param print_timeticks_numerically The new value for printing timeticks numerically.
     */
    void _set_print_timeticks_numerically(bool print_timeticks_numerically);
+
+   /**
+    * @brief Sets whether to print OCTET STRING values as hex strings.
+    *
+    * @param print_hex_strings The new value for printing OCTET STRING values as hex strings.
+    */
+   void _set_print_hex_strings(bool print_hex_strings);
 
    /**
     * @brief Sets max-repeaters to <NUM>.

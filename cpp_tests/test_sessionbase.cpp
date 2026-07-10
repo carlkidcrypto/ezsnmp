@@ -146,10 +146,11 @@ TEST_F(SessionBaseTest, TestPrintOptions) {
        /* print_enums_numerically */ true,
        /* print_full_oids */ true,
        /* print_oids_numerically */ true,
-       /* print_timeticks_numerically */ true);
+       /* print_timeticks_numerically */ true,
+       /* print_hex_strings */ true);
    auto args = session._get_args();
    std::vector<std::string> expected = {"-c", "public", "-v", "1", "-O",           "e", "-O", "f",
-                                        "-O", "n",      "-O", "t", "localhost:161"};
+                                        "-O", "n",      "-O", "t", "-O", "x", "localhost:161"};
    ASSERT_EQ(args, expected);
 }
 
