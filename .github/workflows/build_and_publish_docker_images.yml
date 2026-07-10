@@ -65,7 +65,7 @@ jobs:
 
       - name: Restore Python tarball cache
         id: restore-cache
-        uses: actions/cache/restore@8c4dda9e6310b01a84f55c3b8f03f65e6cf6f0a3 # v4.2.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: docker/cache
           key: python-tarballs-${{ hashFiles('docker/cache/download_build_cache.sh') }}
@@ -81,7 +81,7 @@ jobs:
 
       - name: Save Python tarball cache
         if: steps.restore-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@8c4dda9e6310b01a84f55c3b8f03f65e6cf6f0a3 # v4.2.4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: docker/cache
           key: ${{ steps.restore-cache.outputs.cache-primary-key }}
@@ -120,7 +120,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore Python tarball cache
-        uses: actions/cache/restore@8c4dda9e6310b01a84f55c3b8f03f65e6cf6f0a3 # v4.2.4
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: docker/cache
           key: python-tarballs-${{ hashFiles('docker/cache/download_build_cache.sh') }}
