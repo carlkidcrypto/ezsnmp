@@ -735,8 +735,8 @@ class Session(SessionBase):
 
         Accepts either a single OID string or a list of OID strings.
 
-        :param oids: A single OID string or a list of base OIDs to start the walks from,
-            defaults to None (empty list)
+        :param oids: A single OID string or a list of base OIDs to start the walks from.
+            Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
@@ -788,7 +788,7 @@ class Session(SessionBase):
         Accepts either a single OID string or a list of OID strings.
 
         :param oids: A single OID string or a list of Object Identifiers (OIDs) to retrieve
-            values from, defaults to None (empty list)
+            values from. Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -839,7 +839,7 @@ class Session(SessionBase):
         Accepts either a single OID string or a list of OID strings.
 
         :param oids: A single OID string or a list of Object Identifiers (OIDs) to get
-            next values from, defaults to None (empty list)
+            next values from. Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -886,7 +886,7 @@ class Session(SessionBase):
         Accepts either a single OID string or a list of OID strings.
 
         :param oids: A single OID string or a list of Object Identifiers (OIDs) to retrieve
-            values from, defaults to None (empty list)
+            values from. Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
