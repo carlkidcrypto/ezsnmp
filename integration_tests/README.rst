@@ -1,6 +1,6 @@
-=======
+=================
 Integration Tests
-=======
+=================
 
 A collection of scripts developed to help test real life usage scenarios.
 
