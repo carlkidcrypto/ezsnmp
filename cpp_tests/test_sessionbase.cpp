@@ -324,6 +324,7 @@ TEST_F(SessionBaseTest, TestGetters) {
        /* print_full_oids */ true,
        /* print_oids_numerically */ true,
        /* print_timeticks_numerically */ true,
+       /* print_hex_strings */ false,
        /* set_max_repeaters_to_num */ "25");
 
    EXPECT_EQ(session._get_hostname(), "localhost");
@@ -982,6 +983,7 @@ TEST_F(SessionBaseTest, TestMaxRepeatersParam) {
        /* print_full_oids */ false,
        /* print_oids_numerically */ false,
        /* print_timeticks_numerically */ false,
+       /* print_hex_strings */ false,
        /* set_max_repeaters_to_num */ "25");
 
    auto args = session._get_args();

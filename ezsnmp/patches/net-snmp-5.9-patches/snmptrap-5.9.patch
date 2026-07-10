@@ -49,13 +49,20 @@
 -           int reqid, netsnmp_pdu *pdu, void *magic)
 -{
 +int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *pdu, void *magic) {
-     return 1;
- }
++   (void)operation;
++   (void)session;
++   (void)reqid;
++   (void)pdu;
++   (void)magic;
+    return 1;
+}
  
 -static void
 -optProc(int argc, char *const *argv, int opt)
 -{
 +void snmptrap_optProc(int argc, char *const *argv, int opt) {
++   (void)argc;
++   (void)argv;
      switch (opt) {
      case 'C':
          while (*optarg) {
