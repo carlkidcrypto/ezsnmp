@@ -129,7 +129,7 @@ def test_session_get_next_single_oid_string_with_module_prefix(sess):
 
 def test_session_get_invalid_instance(sess):
 
-    # Sadly, SNMP v1 doesn't distuingish between an invalid instance and an
+    # Sadly, SNMP v1 doesn't distinguish between an invalid instance and an
     # invalid object ID, instead it excepts with noSuchName
     if sess.version == "1":
         with pytest.raises(PacketError):
