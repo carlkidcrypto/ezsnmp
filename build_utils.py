@@ -22,8 +22,8 @@ def is_macports_installed():
     """
     Checks if MacPorts is installed on the system.
 
-    Returns:
-      str: The MacPorts version if installed, "" otherwise.
+    :return: The MacPorts version if installed, ``""`` otherwise.
+    :rtype: str
     """
     try:
         version_output = check_output("port version", shell=True).decode()
@@ -40,8 +40,8 @@ def is_net_snmp_installed_macports():
     """
     Checks if any version of net-snmp is installed via MacPorts.
 
-    Returns:
-      str: The net-snmp version if installed, "" otherwise.
+    :return: The net-snmp version if installed, ``""`` otherwise.
+    :rtype: str
     """
     try:
         macports_output = check_output("port installed net-snmp", shell=True).decode()
@@ -79,8 +79,8 @@ def get_homebrew_info():
     """
     Checks if Homebrew is installed and retrieves its version.
 
-    Returns:
-      str: Homebrew version or None if Homebrew is not installed.
+    :return: Homebrew version, or ``None`` if Homebrew is not installed.
+    :rtype: str or None
     """
     try:
         homebrew_version_output = check_output("brew --version", shell=True).decode()
@@ -97,10 +97,10 @@ def get_homebrew_net_snmp_info():
     """
     Retrieves net-snmp and its OpenSSL dependency information from Homebrew.
 
-    Returns:
-      tuple or None: A 5-tuple (homebrew_version, net_snmp_version, openssl_version, libdirs, incdirs)
-                     if net-snmp is installed via Homebrew, None otherwise (including when Homebrew
-                     is not installed).
+    :return: A 5-tuple ``(homebrew_version, net_snmp_version, openssl_version,
+        libdirs, incdirs)`` if net-snmp is installed via Homebrew,
+        ``None`` otherwise (including when Homebrew is not installed).
+    :rtype: tuple or None
     """
     homebrew_version = get_homebrew_info()
     if not homebrew_version:
@@ -193,9 +193,9 @@ def split_env_list(raw_value):
     Accepts semicolons, commas, and ``os.pathsep`` as delimiters.
     Empty entries (after stripping whitespace) are discarded.
 
-    Returns:
-      list[str]: Non-empty, whitespace-stripped entries, or an empty list
-                 when *raw_value* is falsy.
+    :return: Non-empty, whitespace-stripped entries, or an empty list
+        when *raw_value* is falsy.
+    :rtype: list[str]
     """
     if not raw_value:
         return []
@@ -212,11 +212,9 @@ def env_truthy(*names):
     Falls back through *names* in order until a non-empty variable is found;
     returns False if all are unset or empty.
 
-    Args:
-      *names: One or more environment variable names to check in order.
-
-    Returns:
-      bool: True when the resolved value is truthy, False otherwise.
+    :param names: One or more environment variable names to check in order.
+    :return: ``True`` when the resolved value is truthy, ``False`` otherwise.
+    :rtype: bool
     """
     value = get_first_env(*names)
     if value is None:
@@ -230,11 +228,9 @@ def get_first_env(*names):
     Iterates through *names* and returns the value of the first variable
     that is set and non-empty.
 
-    Args:
-      *names: One or more environment variable names to check in order.
-
-    Returns:
-      str or None: The first non-empty value found, or None if all are unset/empty.
+    :param names: One or more environment variable names to check in order.
+    :return: The first non-empty value found, or ``None`` if all are unset or empty.
+    :rtype: str or None
     """
     for name in names:
         value = os.environ.get(name)
