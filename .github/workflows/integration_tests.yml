@@ -121,7 +121,7 @@ jobs:
             # brew install --formula <path> is rejected unless the file is inside a
             # registered tap; tapping the local directory is the correct approach.
             brew tap carlkidcrypto/ezsnmp "$(pwd)"
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source carlkidcrypto/ezsnmp/ezsnmp
           fi
 
       - name: Start SNMP daemon
@@ -225,7 +225,7 @@ jobs:
           for root, dirs, files in os.walk('artifacts'):
               for file in files:
                   if file.startswith('integration_tests_full_') and file.endswith('.log'):
-                      with open(os.path.join(root, file)) as f:
+                      with open(os.path.join(root, file), errors='replace') as f:
                           for line in f:
                               m = re.search(r'(\w+): - (\d+) - (?:.+): (.+)', line.strip())
                               if m:
@@ -267,7 +267,7 @@ jobs:
           for root, dirs, files in os.walk('artifacts'):
               for file in files:
                   if file.startswith('test_file_descriptors_') and file.endswith('.log'):
-                      with open(os.path.join(root, file)) as f:
+                      with open(os.path.join(root, file), errors='replace') as f:
                           content = f.read()
                       cur = None
                       for line in content.split('\n'):

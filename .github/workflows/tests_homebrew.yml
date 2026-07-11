@@ -197,7 +197,7 @@ jobs:
             # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from downloading a
             # pre-built bottle for an old version, ensuring we build from source.
             brew tap carlkidcrypto/ezsnmp "$(pwd)"
-            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install carlkidcrypto/ezsnmp/ezsnmp
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source carlkidcrypto/ezsnmp/ezsnmp
             # Force-overwrite any conflicting files/symlinks so the newly installed
             # version is what Python finds in the global site-packages.
             brew link --overwrite ezsnmp 2>/dev/null || true

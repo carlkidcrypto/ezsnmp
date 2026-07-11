@@ -41,7 +41,8 @@ class SessionBase {
    bool m_print_oids_numerically = false;  ///< Print OIDs numerically (-O n).
    bool m_print_timeticks_numerically =
        false; ///< Print timeticks unparsed as numeric integers (-O t).
-   bool m_print_hex_strings = false; ///< Print OCTET STRINGs as hex strings when appropriate (-O x).
+   bool m_print_hex_strings =
+       false; ///< Print OCTET STRINGs as hex strings when appropriate (-O x).
    std::string m_set_max_repeaters_to_num = ""; ///< Set max-repeaters to <NUM> (-C r<NUM>).
 
    std::string
