@@ -55,6 +55,7 @@ class Session(SessionBase):
         print_full_oids: bool = False,
         print_oids_numerically: bool = False,
         print_timeticks_numerically: bool = False,
+        print_hex_strings: bool = False,
         set_max_repeaters_to_num: Union[str, int] = "10",
     ):
         """Initialize the Session object with NetSNMP session parameters.
@@ -113,6 +114,8 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
+        :param print_hex_strings: Whether to print OCTET STRING values in hex format.
+        :type print_hex_strings: bool
         :param set_max_repeaters_to_num: The maximum number of repeaters for GETBULK PDUs. Defaults to 10. Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
         :type set_max_repeaters_to_num: Union[str, int]
 
@@ -155,6 +158,7 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
+                print_hex_strings,
                 "",  # Set to empty string here. We will set it in the bulk methods.
             )
 
@@ -571,6 +575,23 @@ class Session(SessionBase):
         super()._set_print_timeticks_numerically(value)
 
     @property
+    def print_hex_strings(self):
+        """Get whether to print OCTET STRING values as hex strings.
+
+        :type: bool
+        """
+        return super()._get_print_hex_strings()
+
+    @print_hex_strings.setter
+    def print_hex_strings(self, value):
+        """Set whether to print OCTET STRING values as hex strings.
+
+        :param value: The new value for printing OCTET STRING values as hex strings.
+        :type value: bool
+        """
+        super()._set_print_hex_strings(value)
+
+    @property
     def set_max_repeaters_to_num(self):
         """Get the maximum number of repeaters for GETBULK PDUs.
 
@@ -649,6 +670,7 @@ class Session(SessionBase):
             "print_full_oids",
             "print_oids_numerically",
             "print_timeticks_numerically",
+            "print_hex_strings",
             "set_max_repeaters_to_num",
         ]
 
