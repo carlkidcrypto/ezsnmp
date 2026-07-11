@@ -185,8 +185,10 @@ jobs:
             PYEOF
             rm Formula/ezsnmp.rb
             cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
-            # Remove any pre-existing ezsnmp install to prevent version conflicts
+            # Remove any pre-existing ezsnmp install to prevent version conflicts.
+            # Try both short name and fully-qualified name to catch all cases.
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force carlkidcrypto/ezsnmp/ezsnmp 2>/dev/null || true
             # setup-homebrew may have already registered carlkidcrypto/ezsnmp tap
             # pointing at the GitHub remote (old release).  Force-untap so our
             # local checkout with the modified formula always takes precedence.
@@ -194,10 +196,19 @@ jobs:
             # Register the local checkout as a Homebrew tap, then install from it.
             # brew install --formula <path> is rejected unless the file is inside a
             # registered tap; tapping the local directory is the correct approach.
-            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from downloading a
-            # pre-built bottle for an old version, ensuring we build from source.
-            brew tap carlkidcrypto/ezsnmp "$(pwd)"
-            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source carlkidcrypto/ezsnmp/ezsnmp
+            # --force ensures the local path overrides any pre-existing tap pointing
+            # at the GitHub remote, even if brew untap above did not fully clean up.
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
+            # brew tap clones from git HEAD (working-tree formula modifications are
+            # NOT included).  Overwrite the formula in the registered tap directory
+            # with our modified version so Homebrew uses the local tarball URL.
+            BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
+            cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
+            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from using the formula
+            # API. --build-from-source forces building from the tarball above instead
+            # of restoring any cached bottle from a previous run, ensuring the
+            # freshly-packaged source (with all local fixes) is always compiled.
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall --build-from-source carlkidcrypto/ezsnmp/ezsnmp
             # Force-overwrite any conflicting files/symlinks so the newly installed
             # version is what Python finds in the global site-packages.
             brew link --overwrite ezsnmp 2>/dev/null || true
@@ -205,12 +216,26 @@ jobs:
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
             BREW_PYTHON=$(brew --prefix python@${PYTHON_VER})/bin/python3
+            # Hide source directory to prevent shadowing the Homebrew-installed
+            # package.  Must happen before any Python import check so that
+            # Python resolves 'ezsnmp' from the installed location, not the
+            # uncompiled source tree (which has no compiled .so extension).
+            mv ezsnmp _ezsnmp
+            # Verify behavior, not source text: an installed package with the
+            # empty-OID early-return fix must return () for get/get_next([]).
+            # This avoids brittle grep checks that fail across harmless refactors.
+            ${BREW_PYTHON} - <<'PYEOF'
+            from ezsnmp import Session
+            from ezsnmp import session as session_module
+
+            s = Session(hostname="localhost", version=2, community="public")
+            assert s.get([]) == (), f"get([]) did not return (), loaded from {session_module.__file__}"
+            assert s.get_next([]) == (), f"get_next([]) did not return (), loaded from {session_module.__file__}"
+            PYEOF
             # Create an isolated test venv that inherits the brew Python's site-packages
             # (where brew link already placed the installed ezsnmp package)
             ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
             /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
-            # Hide source directory to prevent shadowing
-            mv ezsnmp _ezsnmp
             set -o pipefail
             /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp \
               --cov-report=term-missing \
