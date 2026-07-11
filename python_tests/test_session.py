@@ -753,6 +753,9 @@ def test_session_property_setters_extended():
     s.print_timeticks_numerically = True
     assert s.print_timeticks_numerically is True
 
+    s.print_hex_strings = True
+    assert s.print_hex_strings is True
+
     s.set_max_repeaters_to_num = "20"
     assert s.set_max_repeaters_to_num == "20"
 
