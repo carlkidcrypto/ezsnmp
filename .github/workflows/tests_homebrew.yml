@@ -199,6 +199,11 @@ jobs:
             # --force ensures the local path overrides any pre-existing tap pointing
             # at the GitHub remote, even if brew untap above did not fully clean up.
             HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
+            # brew tap clones from git HEAD (working-tree formula modifications are
+            # NOT included).  Overwrite the formula in the registered tap directory
+            # with our modified version so Homebrew uses the local tarball URL.
+            BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
+            cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
             # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from using the formula
             # API. --build-from-source forces building from the tarball above instead
             # of restoring any cached bottle from a previous run, ensuring the
