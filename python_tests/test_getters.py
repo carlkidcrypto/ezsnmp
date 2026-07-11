@@ -47,6 +47,7 @@ def test_session_default_constructed_getters_do_not_crash():
     assert isinstance(s._get_print_full_oids(), bool)
     assert isinstance(s._get_print_oids_numerically(), bool)
     assert isinstance(s._get_print_timeticks_numerically(), bool)
+    assert isinstance(s._get_print_hex_strings(), bool)
     assert isinstance(s._get_set_max_repeaters_to_num(), str)
     args = s._get_args()
     assert isinstance(args, (list, tuple))
