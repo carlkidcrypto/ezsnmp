@@ -26,7 +26,7 @@ engine:
   id: copilot
   model: claude-sonnet-4.6
 network:
-  allowed: [defaults, python]
+  allowed: [defaults, python, containers]
 tools:
   edit:
   bash: true
@@ -42,18 +42,55 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks in native environment.
+- Run coverage checks inside a Docker container (the ezsnmp package requires
+  net-snmp C libraries to build its native C++ extension, which are only
+  available in the pre-built Docker test images).
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-python`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Prepare Python dependencies and run Python tests with coverage:
-   - `python -m pip install --upgrade pip`
-   - `python -m pip install -r python_tests/requirements.txt`
-   - `python -m pip install .`
-   - `pytest -v -s -n auto --dist loadfile --junitxml=test-results.xml --cov=ezsnmp --cov-report=term-missing --cov-report=xml:coverage.xml --cov-config=.coveragerc python_tests/`
+1. Run Python tests with coverage inside a pre-built Docker container that has
+   net-snmp libraries included. The ezsnmp package cannot be installed in the
+   native runner environment because its C++ extension requires `libsnmp-dev` /
+   `net-snmp-devel`, which are only available in the Docker test images.
+
+   a. Pull the test image (try Docker Hub first, fall back to GHCR):
+      ```
+      docker pull carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest || \
+        docker pull ghcr.io/carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest
+      ```
+
+   b. Run tests inside the container with the repository bind-mounted at
+      `/ezsnmp`. This starts `snmpd` in the background, installs the package,
+      and runs pytest with coverage. Coverage output files are written back to
+      the host working directory via the bind mount:
+      ```
+      docker run --rm \
+        -v "$(pwd):/ezsnmp" \
+        carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest \
+        bash -c "
+          export PATH=/usr/local/bin:$PATH
+          export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+          export MALLOC_CHECK_=0
+          export MALLOC_PERTURB_=0
+          mkdir -p /etc/snmp
+          cp /ezsnmp/configs/snmpd.conf /etc/snmp/snmpd.conf
+          snmpd -C -c /etc/snmp/snmpd.conf &
+          sleep 2
+          python3 -m venv /tmp/gh-aw/agent/venv
+          /tmp/gh-aw/agent/venv/bin/pip install -q -r /ezsnmp/python_tests/requirements.txt
+          cd /ezsnmp && /tmp/gh-aw/agent/venv/bin/pip install -q .
+          /tmp/gh-aw/agent/venv/bin/pytest -v -s -n auto --dist loadfile \
+            --junitxml=/ezsnmp/test-results.xml \
+            --cov=ezsnmp --cov-report=term-missing \
+            --cov-report=xml:/ezsnmp/coverage.xml \
+            --cov-config=/ezsnmp/.coveragerc \
+            /ezsnmp/python_tests/
+        "
+      ```
+
    - Read coverage from `coverage.xml` when available.
 
 2. Determine if action is needed:
@@ -99,7 +136,7 @@ When changes exist, create exactly one PR using this fixed branch name:
 - Base: `main`
 - Title style: `[coverage-autofix-py] <short summary>`
 - PR body must include:
-  - Native Python coverage before/after (if measurable)
+  - Docker-based Python coverage before/after (if measurable)
   - Summary of tests added/updated
   - Any limitations or follow-up recommendations
 
