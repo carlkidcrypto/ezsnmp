@@ -56,6 +56,10 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
    native runner environment because its C++ extension requires `libsnmp-dev` /
    `net-snmp-devel`, which are only available in the Docker test images.
 
+   The `archlinux_netsnmp_5.9-latest` image is used here because it is the
+   same distribution and net-snmp version used throughout the repository's CI
+   test matrix; it always refers to the latest published build of that image.
+
    a. Pull the test image (try Docker Hub first, fall back to GHCR):
       ```
       docker pull carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest || \
@@ -73,12 +77,16 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
         bash -c "
           export PATH=/usr/local/bin:$PATH
           export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+          # Disable glibc malloc checking to avoid false positives with Net-SNMP
+          # (mirrors the same setting in docker/DockerEntry.sh)
           export MALLOC_CHECK_=0
           export MALLOC_PERTURB_=0
           mkdir -p /etc/snmp
           cp /ezsnmp/configs/snmpd.conf /etc/snmp/snmpd.conf
           snmpd -C -c /etc/snmp/snmpd.conf &
           sleep 2
+          # /tmp/gh-aw/agent/ is the recommended temp root for agent-generated
+          # files in gh-aw (its contents are uploaded as a run artifact)
           python3 -m venv /tmp/gh-aw/agent/venv
           /tmp/gh-aw/agent/venv/bin/pip install -q -r /ezsnmp/python_tests/requirements.txt
           cd /ezsnmp && /tmp/gh-aw/agent/venv/bin/pip install -q .
