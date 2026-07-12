@@ -24,7 +24,7 @@ safe-outputs:
 timeout-minutes: 45
 engine:
   id: copilot
-  model: claude-sonnet-4.6
+  model: auto
 network:
   allowed: [defaults]
 tools:
@@ -42,18 +42,42 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks in native environment.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
+- **Never call `report_incomplete` solely because build tools are unavailable
+  in the agent environment.** Use the artifact-based fallback instead.
 
-## Coverage Check Procedure
+## Environment Setup (Required First)
+
+Before attempting to build, check whether required tools are present:
+
+```bash
+command -v meson && command -v lcov && command -v net-snmp-config && command -v ninja && echo "ALL_TOOLS_PRESENT"
+```
+
+If any tool is missing, attempt installation:
+
+```bash
+sudo apt-get update && sudo apt-get install -y meson lcov libsnmp-dev libgtest-dev snmpd ninja-build || true
+pip install meson || true
+```
+
+Re-check availability after the install attempt. If tools are **still
+unavailable** (command returns non-zero / not found), skip the native build
+steps entirely and proceed directly to **Fallback: Artifact-Based Coverage
+Analysis** below.
+
+## Coverage Check Procedure (Native Build — only when all tools present)
 
 1. Run C++ tests and coverage from `cpp_tests/` on Linux:
-   - `meson setup build || true`
-   - `ninja -C build`
-   - `meson test -C build --print-errorlogs`
-   - `lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true`
+   ```bash
+   cd cpp_tests
+   meson setup build || true
+   ninja -C build
+   meson test -C build --print-errorlogs
+   lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
+   ```
    - If `coverage.info` exists, filter external/system paths before evaluating totals.
 
 2. Determine if action is needed:
@@ -61,6 +85,23 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
      gaps, create targeted fixes.
    - If current coverage looks healthy and no concrete improvement is justified,
      do not change code.
+
+## Fallback: Artifact-Based Coverage Analysis
+
+Use this path when the native build environment is missing required tools
+(meson, lcov, libsnmp-dev, libgtest-dev, snmpd) **and** they cannot be
+installed.
+
+1. Use the GitHub MCP server to find the most recent **successful** run of
+   the `C++ Tests` workflow (`.github/workflows/tests_cpp_native.yml`) on
+   the `main` branch.
+2. Download the artifact named `cpp-test-results_ubuntu-latest` from that run.
+3. Extract and read `coverage_filtered.info` (an lcov-format file) from the
+   artifact to identify uncovered lines and branches.
+4. Based on the coverage gaps found, proceed with the **Fix Strategy** below.
+5. If no successful recent run exists or the artifact is unavailable, perform
+   **static analysis** of the C++ source files under `ezsnmp/` and `cpp_tests/`
+   to identify obvious untested paths, then apply targeted improvements.
 
 ## Fix Strategy
 
