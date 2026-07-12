@@ -34,9 +34,14 @@ The base repository for these images is: **carlkidcrypto/ezsnmp\_test\_images** 
 Test Report Generation
 ======================
 
-A comprehensive test report generation script is available to analyze all test results across containers and Python versions.
+A comprehensive test report generation script is available to analyze existing test results across containers and Python versions.
 
 **Usage:**
+
+Run this after one of the Docker test runners has already produced one or more
+``test_outputs_*`` directories in ``docker/`` (for example
+``./run_python_tests_in_all_dockers.sh``). The report script summarizes those
+existing outputs; it does not execute the test matrix itself.
 
 .. code-block:: bash
 
@@ -50,7 +55,7 @@ A comprehensive test report generation script is available to analyze all test r
 * Checks SNMP daemon logs for errors
 * Generates both console output and timestamped report file
 * Color-coded status indicators (green=pass, red=fail, yellow=warning)
-* Identifies specific issues and provides recommendations
+* Summarizes per-container pass/fail status from the collected output files
 
 **Output:**
 
@@ -60,7 +65,6 @@ The script generates a comprehensive report saved to ``test_summary_report_YYYYM
 * SNMP daemon version and error status
 * Detailed test results (passed/failed/skipped/errors)
 * Overall statistics
-* Known issues and recommendations
 
 ----------------------------------------------------------------------
 
