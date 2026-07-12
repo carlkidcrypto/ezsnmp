@@ -75,8 +75,12 @@ CSV_PERF_RAW = DATA_DIR / "integration_test_results_history_performance_raw.csv"
 CSV_FD_RAW = DATA_DIR / "integration_test_results_history_fd_raw.csv"
 CSV_FD_STATUS = DATA_DIR / "integration_test_results_history_fd_status.csv"
 CSV_FD_SUMMARY = DATA_DIR / "integration_test_results_history_fd_summary.csv"
-CSV_MP_SUMMARY = DATA_DIR / "integration_test_results_history_multi_process_tests_summary.csv"
-CSV_MT_SUMMARY = DATA_DIR / "integration_test_results_history_multi_thread_tests_summary.csv"
+CSV_MP_SUMMARY = (
+    DATA_DIR / "integration_test_results_history_multi_process_tests_summary.csv"
+)
+CSV_MT_SUMMARY = (
+    DATA_DIR / "integration_test_results_history_multi_thread_tests_summary.csv"
+)
 
 # ── GitHub API helpers ────────────────────────────────────────────────────────
 
@@ -105,8 +109,13 @@ def _iter_pull_requests(token: str, repository: str, max_prs: int) -> Iterable[d
     page = 1
     while fetched < max_prs:
         params = urlencode(
-            {"state": "all", "sort": "updated", "direction": "desc",
-             "per_page": 100, "page": page}
+            {
+                "state": "all",
+                "sort": "updated",
+                "direction": "desc",
+                "per_page": 100,
+                "page": page,
+            }
         )
         prs = _api_get(token, f"{API_BASE}/repos/{repository}/pulls?{params}")
         if not isinstance(prs, list) or not prs:
@@ -141,7 +150,9 @@ def _iter_issue_comments(
 _TABLE_ROW_RE = re.compile(r"^\|(.+)\|$")
 _SEPARATOR_RE = re.compile(r"^\|[-| :]+\|$")
 _PERF_HEADING_RE = re.compile(r"####\s+(Multi (?:Process|Thread) Tests)", re.IGNORECASE)
-_FD_STATUS_RE = re.compile(r"File Descriptor Tests[^:]*:\s*(.+?)(?:\n|$)", re.IGNORECASE)
+_FD_STATUS_RE = re.compile(
+    r"File Descriptor Tests[^:]*:\s*(.+?)(?:\n|$)", re.IGNORECASE
+)
 
 
 def _parse_table_rows(lines: list, start: int) -> tuple:
@@ -207,16 +218,20 @@ def _parse_comment(comment_body: str) -> dict:
                 if len(row) >= 6:
                     try:
                         stddev_raw = _strip_emoji(row[5])
-                        stddev = float(stddev_raw) if stddev_raw not in ("N/A", "") else None
-                        result["performance"].append({
-                            "category": current_category,
-                            "operation": row[0],
-                            "workers": int(row[1]),
-                            "min_seconds": float(row[2]),
-                            "max_seconds": float(row[3]),
-                            "avg_seconds": float(row[4]),
-                            "stddev_seconds": stddev,
-                        })
+                        stddev = (
+                            float(stddev_raw) if stddev_raw not in ("N/A", "") else None
+                        )
+                        result["performance"].append(
+                            {
+                                "category": current_category,
+                                "operation": row[0],
+                                "workers": int(row[1]),
+                                "min_seconds": float(row[2]),
+                                "max_seconds": float(row[3]),
+                                "avg_seconds": float(row[4]),
+                                "stddev_seconds": stddev,
+                            }
+                        )
                     except (ValueError, IndexError):
                         pass
             continue
@@ -247,16 +262,18 @@ def _parse_comment(comment_body: str) -> dict:
                         avg_s = float(row[5]) if row[5] not in ("-", "") else None
                     except ValueError:
                         avg_s = None
-                    result["fd_rows"].append({
-                        "session": _strip_emoji(row[0]),
-                        "operation": row[1],
-                        "mode": row[2],
-                        "fd_leak": row[3],
-                        "fd_leak_numeric": leak_numeric,
-                        "exec_seconds": exec_s,
-                        "avg_per_call_seconds": avg_s,
-                        "fd_status": fd_status_str,
-                    })
+                    result["fd_rows"].append(
+                        {
+                            "session": _strip_emoji(row[0]),
+                            "operation": row[1],
+                            "mode": row[2],
+                            "fd_leak": row[3],
+                            "fd_leak_numeric": leak_numeric,
+                            "exec_seconds": exec_s,
+                            "avg_per_call_seconds": avg_s,
+                            "fd_status": fd_status_str,
+                        }
+                    )
             continue
 
         i += 1
@@ -312,16 +329,20 @@ def _build_perf_summary(perf_rows: list, category: str) -> list:
             pass
 
     summary = []
-    for (op, workers), vals in sorted(grouped.items(), key=lambda x: (x[0][0], x[0][1])):
-        summary.append({
-            "Operation": op,
-            "Workers": workers,
-            "Runs": len(vals),
-            "Min (s)": round(min(vals), 3),
-            "Max (s)": round(max(vals), 3),
-            "Avg (s)": round(mean(vals), 3),
-            "StdDev (s)": round(stdev(vals), 3) if len(vals) > 1 else 0.0,
-        })
+    for (op, workers), vals in sorted(
+        grouped.items(), key=lambda x: (x[0][0], x[0][1])
+    ):
+        summary.append(
+            {
+                "Operation": op,
+                "Workers": workers,
+                "Runs": len(vals),
+                "Min (s)": round(min(vals), 3),
+                "Max (s)": round(max(vals), 3),
+                "Avg (s)": round(mean(vals), 3),
+                "StdDev (s)": round(stdev(vals), 3) if len(vals) > 1 else 0.0,
+            }
+        )
     return summary
 
 
@@ -359,21 +380,24 @@ def _build_fd_summary(fd_rows: list) -> list:
     summary = []
     for (sess, op, mode), g in sorted(grouped.items()):
         leak_vals = g["fd_leak_numeric"]
-        summary.append({
-            "Session": sess,
-            "Operation": op,
-            "Mode": mode,
-            "Runs": max(len(g["exec_seconds"]), len(g["fd_leak_numeric"]), 1),
-            "Leak warnings": g["leak_warnings"],
-            "Mean FD leak": round(mean(leak_vals), 2) if leak_vals else "",
-            "Avg Exec (s)": (
-                round(mean(g["exec_seconds"]), 6) if g["exec_seconds"] else ""
-            ),
-            "Avg Avg/Call (s)": (
-                round(mean(g["avg_per_call_seconds"]), 6)
-                if g["avg_per_call_seconds"] else ""
-            ),
-        })
+        summary.append(
+            {
+                "Session": sess,
+                "Operation": op,
+                "Mode": mode,
+                "Runs": max(len(g["exec_seconds"]), len(g["fd_leak_numeric"]), 1),
+                "Leak warnings": g["leak_warnings"],
+                "Mean FD leak": round(mean(leak_vals), 2) if leak_vals else "",
+                "Avg Exec (s)": (
+                    round(mean(g["exec_seconds"]), 6) if g["exec_seconds"] else ""
+                ),
+                "Avg Avg/Call (s)": (
+                    round(mean(g["avg_per_call_seconds"]), 6)
+                    if g["avg_per_call_seconds"]
+                    else ""
+                ),
+            }
+        )
     return summary
 
 
@@ -606,41 +630,49 @@ def main() -> int:
             perf = parsed.get("performance", [])
             fd_rows_parsed = parsed.get("fd_rows", [])
 
-            new_overview.append({
-                "pr_number": pr_number,
-                "pr_title": pr_title,
-                "pr_url": pr_url,
-                "comment_url": comment_url,
-                "updated_at": updated_at,
-                "performance_rows": len(perf),
-                "fd_rows": len(fd_rows_parsed),
-                "fd_status": fd_status,
-            })
+            new_overview.append(
+                {
+                    "pr_number": pr_number,
+                    "pr_title": pr_title,
+                    "pr_url": pr_url,
+                    "comment_url": comment_url,
+                    "updated_at": updated_at,
+                    "performance_rows": len(perf),
+                    "fd_rows": len(fd_rows_parsed),
+                    "fd_status": fd_status,
+                }
+            )
 
             for p in perf:
-                new_perf.append({
-                    "pr_number": pr_number,
-                    "pr_title": pr_title,
-                    "pr_url": pr_url,
-                    "comment_url": comment_url,
-                    "updated_at": updated_at,
-                    **p,
-                })
+                new_perf.append(
+                    {
+                        "pr_number": pr_number,
+                        "pr_title": pr_title,
+                        "pr_url": pr_url,
+                        "comment_url": comment_url,
+                        "updated_at": updated_at,
+                        **p,
+                    }
+                )
 
             for f in fd_rows_parsed:
-                new_fd.append({
-                    "pr_number": pr_number,
-                    "pr_title": pr_title,
-                    "pr_url": pr_url,
-                    "comment_url": comment_url,
-                    "updated_at": updated_at,
-                    **f,
-                })
+                new_fd.append(
+                    {
+                        "pr_number": pr_number,
+                        "pr_title": pr_title,
+                        "pr_url": pr_url,
+                        "comment_url": comment_url,
+                        "updated_at": updated_at,
+                        **f,
+                    }
+                )
 
             seen_keys.add(key)
             comment_count += 1
 
-    print(f"Scanned {pr_count} PRs, found {comment_count} new integration-test comments")
+    print(
+        f"Scanned {pr_count} PRs, found {comment_count} new integration-test comments"
+    )
 
     if not new_overview and args.mode == "append":
         print("No new data -- CSVs are already up to date")
@@ -663,8 +695,15 @@ def main() -> int:
 
     # ── Write CSVs ────────────────────────────────────────────────────────────
     overview_fields = [
-        "rank", "pr_number", "pr_title", "pr_url", "comment_url",
-        "updated_at", "performance_rows", "fd_rows", "fd_status",
+        "rank",
+        "pr_number",
+        "pr_title",
+        "pr_url",
+        "comment_url",
+        "updated_at",
+        "performance_rows",
+        "fd_rows",
+        "fd_status",
     ]
     _write_csv(CSV_OVERVIEW, overview_fields, all_overview)
     print(f"Written: {CSV_OVERVIEW} ({len(all_overview)} rows)")
@@ -678,17 +717,36 @@ def main() -> int:
     )
 
     perf_fields = [
-        "pr_number", "pr_title", "pr_url", "comment_url", "updated_at",
-        "category", "operation", "workers", "min_seconds", "max_seconds",
-        "avg_seconds", "stddev_seconds",
+        "pr_number",
+        "pr_title",
+        "pr_url",
+        "comment_url",
+        "updated_at",
+        "category",
+        "operation",
+        "workers",
+        "min_seconds",
+        "max_seconds",
+        "avg_seconds",
+        "stddev_seconds",
     ]
     _write_csv(CSV_PERF_RAW, perf_fields, all_perf)
     print(f"Written: {CSV_PERF_RAW} ({len(all_perf)} rows)")
 
     fd_fields = [
-        "pr_number", "pr_title", "pr_url", "comment_url", "updated_at",
-        "session", "operation", "mode", "fd_leak", "fd_leak_numeric",
-        "exec_seconds", "avg_per_call_seconds", "fd_status",
+        "pr_number",
+        "pr_title",
+        "pr_url",
+        "comment_url",
+        "updated_at",
+        "session",
+        "operation",
+        "mode",
+        "fd_leak",
+        "fd_leak_numeric",
+        "exec_seconds",
+        "avg_per_call_seconds",
+        "fd_status",
     ]
     _write_csv(CSV_FD_RAW, fd_fields, all_fd)
     print(f"Written: {CSV_FD_RAW} ({len(all_fd)} rows)")
@@ -699,15 +757,27 @@ def main() -> int:
     _write_csv(
         CSV_FD_SUMMARY,
         [
-            "Session", "Operation", "Mode", "Runs", "Leak warnings",
-            "Mean FD leak", "Avg Exec (s)", "Avg Avg/Call (s)",
+            "Session",
+            "Operation",
+            "Mode",
+            "Runs",
+            "Leak warnings",
+            "Mean FD leak",
+            "Avg Exec (s)",
+            "Avg Avg/Call (s)",
         ],
         _build_fd_summary(all_fd),
     )
     print(f"Written: {CSV_FD_SUMMARY}")
 
     perf_summary_fields = [
-        "Operation", "Workers", "Runs", "Min (s)", "Max (s)", "Avg (s)", "StdDev (s)",
+        "Operation",
+        "Workers",
+        "Runs",
+        "Min (s)",
+        "Max (s)",
+        "Avg (s)",
+        "StdDev (s)",
     ]
     _write_csv(
         CSV_MP_SUMMARY,
