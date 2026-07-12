@@ -24,9 +24,9 @@ safe-outputs:
 timeout-minutes: 45
 engine:
   id: copilot
-  model: auto
+  model: claude-sonnet-4.6
 network:
-  allowed: [defaults]
+  allowed: [defaults, containers]
 tools:
   edit:
   bash: true
@@ -42,84 +42,48 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
+- Run coverage checks inside a Docker container (the ezsnmp C++ extension
+  requires net-snmp headers, meson, ninja, and lcov, which are only reliably
+  available in the pre-built Docker test images).
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
-- **Never call `report_incomplete` solely because build tools are unavailable
-  in the agent environment.** Use the artifact-based fallback instead.
 
-## Environment Setup (Required First)
+## Coverage Check Procedure
 
-Before attempting to build, check which required tools are present:
+1. Run C++ tests with coverage inside a pre-built Docker container that has
+   all required tools (meson, ninja, lcov, net-snmp headers) included.
 
-```bash
-MISSING_TOOLS=()
-command -v meson >/dev/null 2>&1 || MISSING_TOOLS+=(meson)
-command -v lcov >/dev/null 2>&1 || MISSING_TOOLS+=(lcov)
-# The `net-snmp-config` command is installed by the libsnmp-dev package;
-# meson uses it at configure time to locate Net-SNMP headers and libraries.
-command -v net-snmp-config >/dev/null 2>&1 || MISSING_TOOLS+=(net-snmp-config)
-command -v ninja >/dev/null 2>&1 || MISSING_TOOLS+=(ninja)
-echo "Missing tools: ${MISSING_TOOLS[*]:-none}"
-```
+   The `archlinux_netsnmp_5.9-latest` image is used here because it is the
+   same distribution and net-snmp version used throughout the repository's CI
+   test matrix; it always refers to the latest published build of that image.
 
-If any tool is missing, attempt to install the required packages. The `update`
-and `install` are separated so a failed refresh does not prevent the install
-attempt; `|| true` is intentional because the subsequent tool re-check is what
-determines whether to proceed with the native build or the fallback:
+   a. Pull the test image (try Docker Hub first, fall back to GHCR):
+      ```
+      docker pull carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest || \
+        docker pull ghcr.io/carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest
+      ```
 
-```bash
-sudo apt-get update || echo "apt-get update failed; install may use stale package lists."
-# libsnmp-dev provides net-snmp-config; snmpd is the live daemon needed by integration tests
-sudo apt-get install -y meson lcov libsnmp-dev libgtest-dev snmpd ninja-build || true
-# Only use pip for meson if apt did not make it available
-command -v meson >/dev/null 2>&1 || pip install meson || true
-```
+   b. Run the cpp tests using the existing helper script inside the `docker/`
+      directory. The script handles starting the container with the repository
+      bind-mounted at `/ezsnmp`, running meson/ninja/lcov inside it, and saving
+      coverage artifacts to `docker/test_outputs_archlinux_netsnmp_5.9/`:
+      ```
+      cd docker/
+      chmod +x run_cpp_tests_in_all_dockers.sh
+      ./run_cpp_tests_in_all_dockers.sh archlinux_netsnmp_5.9
+      ```
 
-Re-run the tool check after the install attempt. If required tools are
-**still unavailable**, skip the native build steps entirely and proceed
-directly to **Fallback: Artifact-Based Coverage Analysis** below.
-
-## Coverage Check Procedure (Native Build — only when all tools present)
-
-1. Run C++ tests and coverage from `cpp_tests/` on Linux (run inside a
-   subshell so the working directory returns to the repo root afterward):
-   ```bash
-   (
-     cd cpp_tests
-     # meson uses net-snmp-config (from libsnmp-dev) at configure time
-     meson setup build
-     ninja -C build
-     meson test -C build --print-errorlogs
-     lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
-   )
-   ```
-   - If `meson setup build` fails, stop and proceed to the **Fallback** section.
-   - If `coverage.info` exists inside `cpp_tests/build`, filter external/system
-     paths before evaluating totals.
+   - Coverage output is written to
+     `docker/test_outputs_archlinux_netsnmp_5.9/lcov_coverage.info`.
+   - Test results are in
+     `docker/test_outputs_archlinux_netsnmp_5.9/test-results.xml`.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability
      gaps, create targeted fixes.
    - If current coverage looks healthy and no concrete improvement is justified,
      do not change code.
-
-## Fallback: Artifact-Based Coverage Analysis
-
-Use this path when the required CLI tools (`meson`, `lcov`, `net-snmp-config`,
-`ninja`) are missing from the environment and cannot be installed via the steps
-above.
-
-1. Use the GitHub MCP server to find the most recent **successful** run of
-   the `C++ Tests` workflow (file: `.github/workflows/tests_cpp_native.yml`,
-   name: `C++ Tests`) on the `main` branch.
-2. Download the artifact named `cpp-test-results_ubuntu-latest` from that run.
-3. Extract and read `coverage_filtered.info` (an lcov-format file) from the
-   artifact to identify uncovered lines and branches.
-4. Based on the coverage gaps found, proceed with the **Fix Strategy** below.
-5. If no successful recent run exists or the artifact is unavailable, perform
-   **static analysis** of the C++ source files under `ezsnmp/` and `cpp_tests/`
-   to identify obvious untested paths, then apply targeted improvements.
 
 ## Fix Strategy
 
