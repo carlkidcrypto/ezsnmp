@@ -50,35 +50,53 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 
 ## Environment Setup (Required First)
 
-Before attempting to build, check whether required tools are present:
+Before attempting to build, check which required tools are present:
 
 ```bash
-command -v meson && command -v lcov && command -v net-snmp-config && command -v ninja && echo "ALL_TOOLS_PRESENT"
+MISSING_TOOLS=()
+command -v meson >/dev/null 2>&1 || MISSING_TOOLS+=(meson)
+command -v lcov >/dev/null 2>&1 || MISSING_TOOLS+=(lcov)
+# The `net-snmp-config` command is installed by the libsnmp-dev package;
+# meson uses it at configure time to locate Net-SNMP headers and libraries.
+command -v net-snmp-config >/dev/null 2>&1 || MISSING_TOOLS+=(net-snmp-config)
+command -v ninja >/dev/null 2>&1 || MISSING_TOOLS+=(ninja)
+echo "Missing tools: ${MISSING_TOOLS[*]:-none}"
 ```
 
-If any tool is missing, attempt installation:
+If any tool is missing, attempt to install the required packages. The `update`
+and `install` are separated so a failed refresh does not prevent the install
+attempt; `|| true` is intentional because the subsequent tool re-check is what
+determines whether to proceed with the native build or the fallback:
 
 ```bash
-sudo apt-get update && sudo apt-get install -y meson lcov libsnmp-dev libgtest-dev snmpd ninja-build || true
-pip install meson || true
+sudo apt-get update || echo "apt-get update failed; install may use stale package lists."
+# libsnmp-dev provides net-snmp-config; snmpd is the live daemon needed by integration tests
+sudo apt-get install -y meson lcov libsnmp-dev libgtest-dev snmpd ninja-build || true
+# Only use pip for meson if apt did not make it available
+command -v meson >/dev/null 2>&1 || pip install meson || true
 ```
 
-Re-check availability after the install attempt. If tools are **still
-unavailable** (command returns non-zero / not found), skip the native build
-steps entirely and proceed directly to **Fallback: Artifact-Based Coverage
-Analysis** below.
+Re-run the tool check after the install attempt. If required tools are
+**still unavailable**, skip the native build steps entirely and proceed
+directly to **Fallback: Artifact-Based Coverage Analysis** below.
 
 ## Coverage Check Procedure (Native Build — only when all tools present)
 
-1. Run C++ tests and coverage from `cpp_tests/` on Linux:
+1. Run C++ tests and coverage from `cpp_tests/` on Linux (run inside a
+   subshell so the working directory returns to the repo root afterward):
    ```bash
-   cd cpp_tests
-   meson setup build || true
-   ninja -C build
-   meson test -C build --print-errorlogs
-   lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
+   (
+     cd cpp_tests
+     # meson uses net-snmp-config (from libsnmp-dev) at configure time
+     meson setup build
+     ninja -C build
+     meson test -C build --print-errorlogs
+     lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true
+   )
    ```
-   - If `coverage.info` exists, filter external/system paths before evaluating totals.
+   - If `meson setup build` fails, stop and proceed to the **Fallback** section.
+   - If `coverage.info` exists inside `cpp_tests/build`, filter external/system
+     paths before evaluating totals.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability
@@ -88,13 +106,13 @@ Analysis** below.
 
 ## Fallback: Artifact-Based Coverage Analysis
 
-Use this path when the native build environment is missing required tools
-(meson, lcov, libsnmp-dev, libgtest-dev, snmpd) **and** they cannot be
-installed.
+Use this path when the required CLI tools (`meson`, `lcov`, `net-snmp-config`,
+`ninja`) are missing from the environment and cannot be installed via the steps
+above.
 
 1. Use the GitHub MCP server to find the most recent **successful** run of
-   the `C++ Tests` workflow (`.github/workflows/tests_cpp_native.yml`) on
-   the `main` branch.
+   the `C++ Tests` workflow (file: `.github/workflows/tests_cpp_native.yml`,
+   name: `C++ Tests`) on the `main` branch.
 2. Download the artifact named `cpp-test-results_ubuntu-latest` from that run.
 3. Extract and read `coverage_filtered.info` (an lcov-format file) from the
    artifact to identify uncovered lines and branches.
