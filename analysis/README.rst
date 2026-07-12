@@ -11,6 +11,10 @@ Folder layout
     analysis/
     ├── README.rst                            # this file
     ├── integration_test_results_history.rst  # human-readable report (Sphinx-compatible)
+    ├── scripts/                              # collection & utility scripts
+    │   ├── README.rst                        # script usage docs
+    │   ├── collect_integration_test_history.py  # fetch from GitHub API, write all CSVs + RST
+    │   └── update_recent_slice.py            # re-derive recent_N.csv from overview.csv
     └── data/                                 # raw CSV data files
         ├── integration_test_results_history_overview.csv          # ALL recoverable comments (canonical record)
         ├── integration_test_results_history_recent_20.csv          # newest-20 convenience slice (fixed window, not a batch size)
@@ -20,6 +24,19 @@ Folder layout
         ├── integration_test_results_history_fd_summary.csv
         ├── integration_test_results_history_multi_process_tests_summary.csv
         └── integration_test_results_history_multi_thread_tests_summary.csv
+
+Scripts
+-------
+
+All collection and utility scripts live in ``scripts/``.  See
+``scripts/README.rst`` for full usage, CLI reference, and troubleshooting.
+
+Quick summary:
+
+* ``scripts/collect_integration_test_history.py`` — fetch PR comments from GitHub,
+  parse performance and FD tables, and write/update all CSVs and the RST report.
+* ``scripts/update_recent_slice.py`` — re-derive ``data/recent_N.csv`` from
+  ``data/overview.csv`` without hitting the GitHub API.
 
 Adding new results
 ------------------
