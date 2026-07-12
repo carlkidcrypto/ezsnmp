@@ -9,12 +9,10 @@ permissions:
   contents: read
   pull-requests: read
 safe-outputs:
-  create-issue:
-    labels: [auto-sync]
   push-to-pull-request-branch:
     target: "*"
     labels: [auto-sync]
-    protected-files: fallback-to-issue
+    protected-files: allowed
     if-no-changes: "ignore"
 timeout-minutes: 45
 engine:
@@ -48,6 +46,6 @@ Keep open pull requests current by merging the latest main branch into PR branch
 - Do not modify main directly.
 - Only update open PR branches that have the `auto-sync` label applied by a maintainer.
 - Do not push to PRs without the `auto-sync` label — they are intentionally excluded.
-- If a merge would change protected files, do not force the push; rely on protected-file fallback handling.
+- If a merge would change protected files, allow the branch update to proceed.
 - Keep commit messages clear, e.g.:
   - chore: merge main into PR branch
