@@ -14,8 +14,6 @@ Last Updated: 2026-07-12 19:52:49 UTC
 - fix: graceful fallback for coverage_autofix_cpp when build tools unavailable ([#1109](https://github.com/carlkidcrypto/ezsnmp/issues/1109))
 
 
-#### Bug Fixes
-
 - Fix Coverage Autofix Python: run in Docker to get net-snmp libraries ([#1108](https://github.com/carlkidcrypto/ezsnmp/issues/1108))
 
 - Fix macOS Homebrew CI: always build from local source ([#1092](https://github.com/carlkidcrypto/ezsnmp/issues/1092))
@@ -87,7 +85,7 @@ Last Updated: 2026-07-12 19:52:49 UTC
 
 #### Handle
 
-- Handle new macOS runner versions in wheel builds ([#1064](https://github.com/carlkidcrypto/ezsnmp/issues/1064)) inch
+- Handle new macOS runner versions in wheel builds ([#1064](https://github.com/carlkidcrypto/ezsnmp/issues/1064))
 
 
 #### Maintenance
@@ -126,8 +124,6 @@ Last Updated: 2026-07-12 19:52:49 UTC
 
 - Fix Windows wheel build toolchain setup and bump package version to 2.4.0a2 ([#1041](https://github.com/carlkidcrypto/ezsnmp/issues/1041))
 
-
-#### Bug Fixes
 
 - fix: correct Net-SNMP win32 header copy paths in Windows wheel action ([#1047](https://github.com/carlkidcrypto/ezsnmp/issues/1047))
 
