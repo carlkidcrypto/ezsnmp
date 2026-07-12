@@ -1,7 +1,172 @@
-Last Updated: 2026-07-03 04:25:46 UTC
+Last Updated: 2026-07-12 19:52:49 UTC
 
 # Changelog
 
+
+<a name="v2.4.0a9"></a>
+## [v2.4.0a9](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0a8...v2.4.0a9) (2026-07-12)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: graceful fallback for coverage_autofix_cpp when build tools unavailable ([#1109](https://github.com/carlkidcrypto/ezsnmp/issues/1109))
+
+
+- Fix Coverage Autofix Python: run in Docker to get net-snmp libraries ([#1108](https://github.com/carlkidcrypto/ezsnmp/issues/1108))
+
+- Fix macOS Homebrew CI: always build from local source ([#1092](https://github.com/carlkidcrypto/ezsnmp/issues/1092))
+
+- Fix invalid actions/cache SHA in build_and_publish_docker_images.yml ([#1104](https://github.com/carlkidcrypto/ezsnmp/issues/1104))
+
+- Fix: Add copilot-requests permission for Agentic Workflows ([#1091](https://github.com/carlkidcrypto/ezsnmp/issues/1091))
+
+- Fix Session.get/get_next crash on empty OIDs and ensure coverage comments post on test failures ([#1067](https://github.com/carlkidcrypto/ezsnmp/issues/1067))
+
+
+#### Documentation Updates
+
+- docs: fix RST heading, unify docstring style, clarify param wording ([#1101](https://github.com/carlkidcrypto/ezsnmp/issues/1101))
+
+- docs: add versioned documentation for v2.4.0a8 ([#1070](https://github.com/carlkidcrypto/ezsnmp/issues/1070))
+
+
+#### Features
+
+- Add `-Ox`-backed hex string output option for OCTET STRING values ([#1100](https://github.com/carlkidcrypto/ezsnmp/issues/1100))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.4.0a8 ([#1071](https://github.com/carlkidcrypto/ezsnmp/issues/1071))
+
+
+#### Scope
+
+- Scope Dependabot away from agentic workflow artifacts using path exclusions ([#1105](https://github.com/carlkidcrypto/ezsnmp/issues/1105))
+
+
+#### Split
+
+- Split test_session.py into focused files; expand Docker CI to 10 test groups ([#1107](https://github.com/carlkidcrypto/ezsnmp/issues/1107))
+
+
+#### Stabilize
+
+- Stabilize Docker image workflow by serializing tarball cache population ([#1094](https://github.com/carlkidcrypto/ezsnmp/issues/1094))
+
+
+#### Updates & Improvements
+
+- Update setup.cfg: expand keywords and add Windows platform support ([#1093](https://github.com/carlkidcrypto/ezsnmp/issues/1093))
+
+
+
+
+
+
+
+
+
+
+---
+
+<a name="v2.4.0a8"></a>
+## [v2.4.0a8](https://github.com/carlkidcrypto/ezsnmp/compare/2.4.0a7...v2.4.0a8) (2026-07-05)
+
+
+### Changes
+
+#### Documentation Updates
+
+- docs: add versioned documentation for 2.4.0a7 ([#1061](https://github.com/carlkidcrypto/ezsnmp/issues/1061))
+
+
+#### Handle
+
+- Handle new macOS runner versions in wheel builds ([#1064](https://github.com/carlkidcrypto/ezsnmp/issues/1064))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for 2.4.0a7 ([#1060](https://github.com/carlkidcrypto/ezsnmp/issues/1060))
+
+
+#### Styles
+
+- style: auto-format with black ([#1066](https://github.com/carlkidcrypto/ezsnmp/issues/1066))
+
+
+
+
+
+
+
+
+
+
+---
+
+<a name="2.4.0a7"></a>
+## [2.4.0a7](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0a1...2.4.0a7) (2026-07-03)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix Windows wheel build: patch Net-SNMP snmp_openssl.c for OpenSSL 3.x; bump to 2.4.0a6 ([#1052](https://github.com/carlkidcrypto/ezsnmp/issues/1052))
+
+- Fix Windows wheel build: use 8.3 short paths for OpenSSL; bump version to 2.4.0a5 ([#1051](https://github.com/carlkidcrypto/ezsnmp/issues/1051))
+
+- Fix Windows wheel prep by aligning Net-SNMP artifact copy paths with actual win32 layout ([#1050](https://github.com/carlkidcrypto/ezsnmp/issues/1050))
+
+- Fix Windows wheel build toolchain setup and bump package version to 2.4.0a2 ([#1041](https://github.com/carlkidcrypto/ezsnmp/issues/1041))
+
+
+- fix: correct Net-SNMP win32 header copy paths in Windows wheel action ([#1047](https://github.com/carlkidcrypto/ezsnmp/issues/1047))
+
+
+#### Continuous Integration
+
+- ci: update all agentic workflows to use claude-sonnet-4.6 ([#1049](https://github.com/carlkidcrypto/ezsnmp/issues/1049))
+
+- ci: implement auto-PR for formatting fixes in black and clang-format … ([#1030](https://github.com/carlkidcrypto/ezsnmp/issues/1030))
+
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2.4.0a1 ([#1039](https://github.com/carlkidcrypto/ezsnmp/issues/1039))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.4.0a1 ([#1038](https://github.com/carlkidcrypto/ezsnmp/issues/1038))
+
+
+#### Styles
+
+- style: auto-format with black ([#1046](https://github.com/carlkidcrypto/ezsnmp/issues/1046))
+
+- style: auto-format with black ([#1045](https://github.com/carlkidcrypto/ezsnmp/issues/1045))
+
+- style: auto-format with black ([#1043](https://github.com/carlkidcrypto/ezsnmp/issues/1043))
+
+- style: auto-format with black ([#1044](https://github.com/carlkidcrypto/ezsnmp/issues/1044))
+
+- style: auto-format with black ([#1042](https://github.com/carlkidcrypto/ezsnmp/issues/1042))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.4.0a1"></a>
 ## [v2.4.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0...v2.4.0a1) (2026-07-01)
@@ -78,7 +243,7 @@ Last Updated: 2026-07-03 04:25:46 UTC
 
 #### Split
 
-- Split coverage autofix workflow into separate Python and C++ focused workflows ([#1018](https://github.com/carlkidcrypto/ezsnmp/issues/1018))
+- Split coverage autofix workflow into separate Python and C++ focused … ([#1018](https://github.com/carlkidcrypto/ezsnmp/issues/1018))
 
 
 #### Updates & Improvements
