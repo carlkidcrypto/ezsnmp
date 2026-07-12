@@ -28,8 +28,14 @@ CSV files
 
 All CSV data files live under the ``data/`` sub-folder next to this report.
 
-* ``data/integration_test_results_history_overview.csv`` — all recoverable source comments
-* ``data/integration_test_results_history_recent_20.csv`` — the newest 20 source comments
+* ``data/integration_test_results_history_overview.csv`` — **complete** set: every recoverable
+  source comment found at report-generation time (41 entries in the initial run).  This is the
+  canonical record; append new rows here on every future update.
+* ``data/integration_test_results_history_recent_20.csv`` — **convenience subset**: a fixed
+  window of the newest 20 entries, sliced from the overview at report-generation time.  The
+  number ``20`` is an arbitrary display cap, not a batch size.  If all recoverable comments fit
+  in 20 rows this file is smaller than the overview; once the dataset exceeds 20 entries these
+  files will diverge.  Regenerate this slice from the overview whenever a new batch is added.
 * ``data/integration_test_results_history_performance_raw.csv`` — every parsed performance row
 * ``data/integration_test_results_history_fd_raw.csv`` — every parsed file-descriptor row
 * ``data/integration_test_results_history_fd_status.csv`` — file-descriptor status counts

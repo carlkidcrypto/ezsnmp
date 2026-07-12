@@ -12,8 +12,8 @@ Folder layout
     ├── README.rst                            # this file
     ├── integration_test_results_history.rst  # human-readable report (Sphinx-compatible)
     └── data/                                 # raw CSV data files
-        ├── integration_test_results_history_overview.csv
-        ├── integration_test_results_history_recent_20.csv
+        ├── integration_test_results_history_overview.csv          # ALL recoverable comments (canonical record)
+        ├── integration_test_results_history_recent_20.csv          # newest-20 convenience slice (fixed window, not a batch size)
         ├── integration_test_results_history_performance_raw.csv
         ├── integration_test_results_history_fd_raw.csv
         ├── integration_test_results_history_fd_status.csv
@@ -35,6 +35,8 @@ Steps for a future update run:
 2. Deduplicate against rows already present in ``data/integration_test_results_history_overview.csv``
    (use the PR number + ``updated_at`` timestamp as the composite key).
 3. Append only the new rows to the relevant ``data/*.csv`` files.
+   (``recent_20.csv`` is a derived convenience slice — regenerate it by taking the
+   20 most-recent rows from the updated ``overview.csv``, do not append to it directly.)
 4. Regenerate ``integration_test_results_history.rst`` with an updated **Report generated** timestamp
    and updated Dataset counts (comments analyzed, newest/oldest PR, rows parsed).
 5. Commit the updated ``data/*.csv`` files and the updated ``.rst`` together.
