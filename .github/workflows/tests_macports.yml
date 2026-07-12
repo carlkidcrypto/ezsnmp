@@ -210,21 +210,11 @@ jobs:
           hide-comment: true
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - MacPorts - 3.10,
-            pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt,
-            pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-            macos-latest - MacPorts - 3.11,
-            pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt,
-            pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
-            macos-latest - MacPorts - 3.12,
-            pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt,
-            pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
-            macos-latest - MacPorts - 3.13,
-            pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt,
-            pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
-            macos-latest - MacPorts - 3.14,
-            pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt,
-            pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
+            macos-latest - MacPorts - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
+            macos-latest - MacPorts - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
+            macos-latest - MacPorts - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
+            macos-latest - MacPorts - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
+            macos-latest - MacPorts - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
 
       - name: Strip leading newlines from summaryReport
         id: clean-report
