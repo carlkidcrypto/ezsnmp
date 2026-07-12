@@ -1,6 +1,7 @@
 """
 Network tests for Session.walk and Session.bulk_walk operations.
 """
+
 import platform
 
 import pytest

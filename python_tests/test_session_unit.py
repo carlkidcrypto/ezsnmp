@@ -3,6 +3,7 @@ Unit tests for Session that require no SNMP daemon and make no network calls.
 Covers: constructor validation, repr/str, to_dict, close, context manager,
         __del__, property setters, IPv6 hostname parsing.
 """
+
 import unittest.mock
 
 import pytest

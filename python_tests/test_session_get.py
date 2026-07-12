@@ -3,6 +3,7 @@ Network tests for Session.get and Session.get_next operations.
 Also covers validation tests that exercise the get path (invalid version,
 invalid hostname, invalid port, invalid IPv6).
 """
+
 import platform
 
 import pytest

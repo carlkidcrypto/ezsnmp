@@ -1,6 +1,7 @@
 """
 Network tests for Session.bulk_get operations.
 """
+
 import pytest
 
 from ezsnmp.exceptions import PacketError, TimeoutError

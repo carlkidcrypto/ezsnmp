@@ -1,6 +1,7 @@
 """
 Network tests for Session.set operations.
 """
+
 import pytest
 
 from ezsnmp.exceptions import PacketError
