@@ -32,9 +32,7 @@ jobs:
             docker/**
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
-            python_tests/*.conf
-            python_tests/*.py
-            python_tests/requirements.txt
+            python_tests/**
             setup.cfg
             setup.py
 
