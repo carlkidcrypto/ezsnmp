@@ -26,7 +26,7 @@ engine:
   id: copilot
   model: claude-sonnet-4.6
 network:
-  allowed: [defaults]
+  allowed: [defaults, containers]
 tools:
   edit:
   bash: true
@@ -42,19 +42,42 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks in native environment.
+- Run coverage checks inside a Docker container (the ezsnmp C++ extension
+  requires net-snmp headers, meson, ninja, and lcov, which are only reliably
+  available in the pre-built Docker test images).
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Run C++ tests and coverage from `cpp_tests/` on Linux:
-   - `meson setup build || true`
-   - `ninja -C build`
-   - `meson test -C build --print-errorlogs`
-   - `lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true`
-   - If `coverage.info` exists, filter external/system paths before evaluating totals.
+1. Run C++ tests with coverage inside a pre-built Docker container that has
+   all required tools (meson, ninja, lcov, net-snmp headers) included.
+
+   The `archlinux_netsnmp_5.9-latest` image is used here because it is the
+   same distribution and net-snmp version used throughout the repository's CI
+   test matrix; it always refers to the latest published build of that image.
+
+   a. Pull the test image (try Docker Hub first, fall back to GHCR):
+      ```
+      docker pull carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest || \
+        docker pull ghcr.io/carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest
+      ```
+
+   b. Run the cpp tests using the existing helper script inside the `docker/`
+      directory. The script handles starting the container with the repository
+      bind-mounted at `/ezsnmp`, running meson/ninja/lcov inside it, and saving
+      coverage artifacts to `docker/test_outputs_archlinux_netsnmp_5.9/`:
+      ```
+      cd docker/
+      chmod +x run_cpp_tests_in_all_dockers.sh
+      ./run_cpp_tests_in_all_dockers.sh archlinux_netsnmp_5.9
+      ```
+
+   - Coverage output is written to
+     `docker/test_outputs_archlinux_netsnmp_5.9/lcov_coverage.info`.
+   - Test results are in
+     `docker/test_outputs_archlinux_netsnmp_5.9/test-results.xml`.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability
