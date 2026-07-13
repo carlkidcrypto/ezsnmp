@@ -8,10 +8,22 @@ using the same security username.
 Related issue: https://github.com/carlkidcrypto/ezsnmp/issues/[BUG] snmpv3 usmStatsNotInTimeWindows
 """
 
+import time
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+
 import pytest
 from ezsnmp.session import Session
 from platform_compat import is_des_supported
-import time
+
+SYSTEM_DESCRIPTION_OID = "1.3.6.1.2.1.1.1.0"
+
+
+def _get_system_description(session):
+    result = session.get(SYSTEM_DESCRIPTION_OID)
+    assert len(result) == 1
+    assert result[0].value
+    return result[0].value
 
 
 @pytest.mark.skipif(not is_des_supported(), reason="DES not supported on AlmaLinux 10+")
@@ -88,3 +100,38 @@ def test_v3_session_recreation_same_user(sess_v3_md5_des):
     s3 = Session(**sess_v3_md5_des)
     res3 = s3.get("1.3.6.1.2.1.1.1.0")  # sysDescr.0
     assert res3 is not None
+
+
+def test_issue_56_repeated_alternating_v3_sessions(sess_v3_md5_aes):
+    """Issue #56: alternating calls must not corrupt shared SNMPv3 state."""
+    first_session = Session(**sess_v3_md5_aes)
+    second_session = Session(**sess_v3_md5_aes)
+
+    expected_value = _get_system_description(first_session)
+
+    # Exercise both call orders repeatedly. Issue #56 reported that one ordering
+    # could time out after another Session populated net-snmp's USM cache.
+    for session in (first_session, second_session, second_session, first_session) * 5:
+        assert _get_system_description(session) == expected_value
+
+
+def test_issue_56_concurrent_v3_sessions(sess_v3_md5_aes):
+    """Issue #56: concurrent calls on separate Sessions must remain successful."""
+    worker_count = 4
+    calls_per_worker = 5
+    sessions = [Session(**sess_v3_md5_aes) for _ in range(worker_count)]
+    start_barrier = Barrier(worker_count)
+
+    def get_repeatedly(session):
+        start_barrier.wait()
+        return [_get_system_description(session) for _ in range(calls_per_worker)]
+
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        results = list(executor.map(get_repeatedly, sessions))
+
+    expected_value = results[0][0]
+    assert all(
+        value == expected_value
+        for worker_results in results
+        for value in worker_results
+    )
