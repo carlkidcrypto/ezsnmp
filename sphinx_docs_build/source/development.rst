@@ -33,7 +33,7 @@ The documentation is automatically deployed to https://carlkidcrypto.github.io/e
 Making The SWIG Interface Files
 -------------------------------
 
-Step 1: Look for the netsnmp app file under <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>
+Step 1: Look for the netsnmp app file under the `net-snmp apps directory <https://github.com/net-snmp/net-snmp/tree/5e691a85bcd95a42872933515698309e57832cfc/apps>`_.
 
 Step 2: Copy the C file over, for example `snmpwalk.c`. Then rename it to change the extension to `.cpp`.
 
