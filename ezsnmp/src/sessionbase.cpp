@@ -115,6 +115,21 @@ class SnmpV3OperationGuard {
    std::unique_lock<std::mutex> m_lock;
 };
 
+class SnmpV3SetterGuard {
+  public:
+   explicit SnmpV3SetterGuard(bool enabled) {
+      if (enabled) {
+         m_lock = std::unique_lock<std::mutex>(g_snmpv3_operation_mutex);
+      }
+   }
+
+   SnmpV3SetterGuard(SnmpV3SetterGuard const&) = delete;
+   SnmpV3SetterGuard& operator=(SnmpV3SetterGuard const&) = delete;
+
+  private:
+   std::unique_lock<std::mutex> m_lock;
+};
+
 } // namespace
 
 SessionBase::SessionBase(std::string const& hostname,
@@ -363,6 +378,12 @@ void SessionBase::populate_args() {
    m_args.push_back(host_address);
 }
 
+void SessionBase::check_and_clear_v3_user() {
+   if (m_version == "3") {
+      remove_v3_user_from_cache(m_security_username, m_context_engine_id);
+   }
+}
+
 std::vector<Result> SessionBase::walk(std::string const& mib) {
    SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
@@ -511,52 +532,61 @@ void SessionBase::_set_community(std::string const& community) {
    populate_args();
 }
 void SessionBase::_set_auth_protocol(std::string const& auth_protocol) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_auth_protocol = auth_protocol;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_auth_passphrase(std::string const& auth_passphrase) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_auth_passphrase = auth_passphrase;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_security_engine_id(std::string const& security_engine_id) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_security_engine_id = security_engine_id;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_context_engine_id(std::string const& context_engine_id) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_context_engine_id = context_engine_id;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_security_level(std::string const& security_level) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_security_level = security_level;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_context(std::string const& context) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_context = context;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_security_username(std::string const& security_username) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_security_username = security_username;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_privacy_protocol(std::string const& privacy_protocol) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_privacy_protocol = privacy_protocol;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_privacy_passphrase(std::string const& privacy_passphrase) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_privacy_passphrase = privacy_passphrase;
    populate_args();
+   check_and_clear_v3_user();
 }
 void SessionBase::_set_boots_time(std::string const& boots_time) {
-   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   SnmpV3SetterGuard guard(m_version == "3");
    m_boots_time = boots_time;
    populate_args();
 }

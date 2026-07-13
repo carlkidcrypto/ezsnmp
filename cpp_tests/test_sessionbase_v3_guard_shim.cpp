@@ -35,6 +35,30 @@ void reset_shim_state() {
    g_cache_removals.clear();
 }
 
+void release_blocked_gets() {
+   {
+      std::lock_guard<std::mutex> lock(g_state_mutex);
+      g_release_get = true;
+   }
+   g_state_changed.notify_all();
+}
+
+bool wait_for_first_get_or_release() {
+   bool entered;
+   {
+      std::unique_lock<std::mutex> lock(g_state_mutex);
+      entered = g_state_changed.wait_for(lock, std::chrono::seconds(2),
+                                         [] { return g_entered_gets == 1; });
+      if (!entered) {
+         g_release_get = true;
+      }
+   }
+   if (!entered) {
+      g_state_changed.notify_all();
+   }
+   return entered;
+}
+
 SessionBase make_v3_session(std::string const &username, std::string const &context_engine_id) {
    return SessionBase("localhost", "161", "3", "", "", "", "", context_engine_id, "noAuthNoPriv",
                       "", username);
@@ -120,11 +144,7 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV3OperationsAndTheirClean
    g_get_behavior = GetBehavior::Block;
 
    auto first_get = std::async(std::launch::async, [&first] { return first.get(".1"); });
-   {
-      std::unique_lock<std::mutex> lock(g_state_mutex);
-      ASSERT_TRUE(g_state_changed.wait_for(lock, std::chrono::seconds(2),
-                                           [] { return g_entered_gets == 1; }));
-   }
+   ASSERT_TRUE(wait_for_first_get_or_release());
 
    auto second_get = std::async(std::launch::async, [&second] { return second.get(".1"); });
    {
@@ -132,9 +152,8 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV3OperationsAndTheirClean
       EXPECT_FALSE(g_state_changed.wait_for(lock, std::chrono::milliseconds(100),
                                             [] { return g_entered_gets > 1; }));
       EXPECT_EQ(g_max_active_gets, 1);
-      g_release_get = true;
    }
-   g_state_changed.notify_all();
+   release_blocked_gets();
 
    EXPECT_TRUE(first_get.get().empty());
    EXPECT_TRUE(second_get.get().empty());
@@ -143,5 +162,44 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV3OperationsAndTheirClean
 
    std::vector<std::pair<std::string, std::string>> const expected = {
        {"alice", "engine-a"}, {"alice", "engine-a"}, {"bob", "engine-b"}, {"bob", "engine-b"}};
+   EXPECT_EQ(g_cache_removals, expected);
+}
+
+TEST_F(SessionBaseV3GuardShimTest, SerializesContextEngineIdSetterAndCleanup) {
+   SessionBase session = make_v3_session("alice", "engine-old");
+   g_get_behavior = GetBehavior::Block;
+
+   auto get = std::async(std::launch::async, [&session] { return session.get(".1"); });
+   ASSERT_TRUE(wait_for_first_get_or_release());
+
+   std::promise<void> setter_started;
+   auto setter_started_future = setter_started.get_future();
+   auto setter = std::async(std::launch::async, [&session, &setter_started] {
+      setter_started.set_value();
+      session._set_context_engine_id("engine-new");
+   });
+
+   auto const started_status = setter_started_future.wait_for(std::chrono::seconds(2));
+   bool const setter_started_in_time = started_status == std::future_status::ready;
+   if (!setter_started_in_time) {
+      // Release the get before a fatal assertion can destroy and join its blocked future.
+      release_blocked_gets();
+   }
+   ASSERT_TRUE(setter_started_in_time);
+   EXPECT_TRUE(setter.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout);
+   {
+      std::lock_guard<std::mutex> lock(g_state_mutex);
+      std::vector<std::pair<std::string, std::string>> const expected = {
+          {"alice", "engine-old"}};
+      EXPECT_EQ(g_cache_removals, expected);
+   }
+
+   release_blocked_gets();
+   EXPECT_TRUE(get.get().empty());
+   setter.get();
+
+   EXPECT_EQ(session._get_context_engine_id(), "engine-new");
+   std::vector<std::pair<std::string, std::string>> const expected = {
+       {"alice", "engine-old"}, {"alice", "engine-old"}, {"alice", "engine-new"}};
    EXPECT_EQ(g_cache_removals, expected);
 }

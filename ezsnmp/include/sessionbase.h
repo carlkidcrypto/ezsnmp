@@ -56,6 +56,11 @@ class SessionBase {
     */
    void populate_args();
 
+   /**
+    * @brief Clears the cached SNMPv3 user for the current session parameters.
+    */
+   void check_and_clear_v3_user();
+
   public:
    /**
     * @brief Constructor for SessionBase.
