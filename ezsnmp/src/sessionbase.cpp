@@ -81,6 +81,42 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"set_max_repeaters_to_num", "-Cr"},
 };
 
+namespace {
+
+std::mutex g_snmpv3_operation_mutex;
+
+class SnmpV3OperationGuard {
+  public:
+   SnmpV3OperationGuard(bool enabled,
+                        std::string const& security_name,
+                        std::string const& context_engine_id)
+       : m_enabled(enabled),
+         m_security_name(security_name),
+         m_context_engine_id(context_engine_id) {
+      if (m_enabled) {
+         m_lock = std::unique_lock<std::mutex>(g_snmpv3_operation_mutex);
+         remove_v3_user_from_cache(m_security_name, m_context_engine_id);
+      }
+   }
+
+   ~SnmpV3OperationGuard() {
+      if (m_enabled) {
+         remove_v3_user_from_cache(m_security_name, m_context_engine_id);
+      }
+   }
+
+   SnmpV3OperationGuard(SnmpV3OperationGuard const&) = delete;
+   SnmpV3OperationGuard& operator=(SnmpV3OperationGuard const&) = delete;
+
+  private:
+   bool m_enabled;
+   std::string const& m_security_name;
+   std::string const& m_context_engine_id;
+   std::unique_lock<std::mutex> m_lock;
+};
+
+} // namespace
+
 SessionBase::SessionBase(std::string const& hostname,
                          std::string const& port_number,
                          std::string const& version,
@@ -334,7 +370,7 @@ void SessionBase::check_and_clear_v3_user() {
 }
 
 std::vector<Result> SessionBase::walk(std::string const& mib) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    if (!mib.empty()) {
@@ -345,7 +381,7 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    if (!mib.empty()) {
@@ -356,7 +392,7 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -367,7 +403,7 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 }
 
 std::vector<Result> SessionBase::get(std::string const& mib) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    if (!mib.empty()) {
@@ -378,7 +414,7 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -389,7 +425,7 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -416,7 +452,7 @@ std::vector<Result> SessionBase::bulk_get(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -427,7 +463,7 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 }
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
-   check_and_clear_v3_user();
+   SnmpV3OperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {

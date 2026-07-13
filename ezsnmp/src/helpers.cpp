@@ -293,6 +293,8 @@ std::vector<Result> parse_results(std::vector<std::string> const &inputs) {
 // This is a helper to remove V3 users from the cache when V3 information changes
 void remove_v3_user_from_cache(std::string const &security_name_str,
                                std::string const &context_engine_id_str) {
+   static_cast<void>(context_engine_id_str);
+
    // The USM user list is a global Net-SNMP data structure that is not thread-safe.
    // We must hold the MIB mutex to protect concurrent access from multiple threads
    // that may be calling SNMP operations or modifying the cache simultaneously.
@@ -300,33 +302,21 @@ void remove_v3_user_from_cache(std::string const &security_name_str,
    struct usmUser *actUser = usm_get_userList();
 
    while (actUser != NULL) {
-      struct usmUser *dummy = actUser;
-      auto act_user_sec_name_str = std::string("");
-      auto act_user_engine_id_str = std::string("");
+      struct usmUser *next_user = actUser->next;
+      std::string const act_user_sec_name =
+          actUser->secName != NULL ? std::string(actUser->secName) : std::string();
 
-      if (actUser->secName != NULL) {
-         act_user_sec_name_str = std::string(actUser->secName);
-      }
-      if (actUser->engineID != NULL) {
-         act_user_engine_id_str = std::string(reinterpret_cast<char *>(actUser->engineID));
-      }
-
-      if (!act_user_sec_name_str.empty() && !act_user_engine_id_str.empty() &&
-          security_name_str == act_user_sec_name_str &&
-          context_engine_id_str == act_user_engine_id_str) {
+      if (!act_user_sec_name.empty() && security_name_str == act_user_sec_name) {
+         if (actUser->engineID != NULL && actUser->engineIDLen > 0) {
+            free_enginetime(actUser->engineID, actUser->engineIDLen);
+         }
          usm_remove_user(actUser);
          actUser->next = NULL;
          actUser->prev = NULL;
          usm_free_user(actUser);
-         break;
-      } else if (!act_user_sec_name_str.empty() && security_name_str == act_user_sec_name_str) {
-         usm_remove_user(actUser);
-         actUser->next = NULL;
-         actUser->prev = NULL;
-         usm_free_user(actUser);
-         break;
       }
-      actUser = dummy->next;
+
+      actUser = next_user;
    }
 }
 
