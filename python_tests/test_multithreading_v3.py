@@ -149,9 +149,7 @@ def second_snmpd_port(tmp_path, sess_v3_md5_aes):
                 pytrace=False,
             )
 
-        started, startup_error = _wait_for_second_agent(
-            process, sess_v3_md5_aes, port
-        )
+        started, startup_error = _wait_for_second_agent(process, sess_v3_md5_aes, port)
         if not started:
             _stop_process(process)
             return_code = process.returncode
@@ -214,9 +212,9 @@ def _sessions_for_distinct_agents(session_args, second_agent_port, count=1):
     second_agent_sessions = [Session(**second_agent_args) for _ in range(count)]
     first_engine_id = _get_engine_id(first_agent_sessions[0])
     second_engine_id = _get_engine_id(second_agent_sessions[0])
-    assert first_engine_id != second_engine_id, (
-        "the existing and second SNMP agents must expose distinct engine IDs"
-    )
+    assert (
+        first_engine_id != second_engine_id
+    ), "the existing and second SNMP agents must expose distinct engine IDs"
     return first_agent_sessions, second_agent_sessions
 
 
@@ -296,9 +294,7 @@ def test_v3_session_recreation_same_user(sess_v3_md5_des):
     assert res3 is not None
 
 
-def test_issue_56_repeated_alternating_v3_sessions(
-    sess_v3_md5_aes, second_snmpd_port
-):
+def test_issue_56_repeated_alternating_v3_sessions(sess_v3_md5_aes, second_snmpd_port):
     """Issue #56: alternating calls must not corrupt shared SNMPv3 state."""
     first_sessions, second_sessions = _sessions_for_distinct_agents(
         sess_v3_md5_aes, second_snmpd_port
@@ -321,9 +317,7 @@ def test_issue_56_repeated_alternating_v3_sessions(
         assert _get_system_description(session) == expected_value
 
 
-def test_issue_56_concurrent_v3_sessions(
-    sess_v3_md5_aes, second_snmpd_port
-):
+def test_issue_56_concurrent_v3_sessions(sess_v3_md5_aes, second_snmpd_port):
     """Issue #56: concurrent calls on separate Sessions must remain successful."""
     worker_count = 4
     calls_per_worker = 5
@@ -331,9 +325,7 @@ def test_issue_56_concurrent_v3_sessions(
         sess_v3_md5_aes, second_snmpd_port, count=worker_count // 2
     )
     sessions = [
-        session
-        for pair in zip(first_sessions, second_sessions)
-        for session in pair
+        session for pair in zip(first_sessions, second_sessions) for session in pair
     ]
     expected_values = [_get_system_description(session) for session in sessions]
     start_barrier = Barrier(worker_count)
