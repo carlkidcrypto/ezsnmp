@@ -56,14 +56,6 @@ class SessionBase {
     */
    void populate_args();
 
-   /**
-    * @brief Checks and clears SNMP v3 user parameters if not applicable.
-    *
-    * This private method ensures that SNMP v3 user-related parameters
-    * are cleared if the SNMP version is not 3.
-    */
-   void check_and_clear_v3_user();
-
   public:
    /**
     * @brief Constructor for SessionBase.
