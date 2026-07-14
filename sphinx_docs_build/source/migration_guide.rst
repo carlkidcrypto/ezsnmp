@@ -26,11 +26,11 @@ Renamed Parameters
 Removed Parameters
 ~~~~~~~~~~~~~~~~~~
 
-The following parameters have been removed in V2.X.X and will be reintroduced in future releases, 
+The following parameters have been removed in V2.X.X and will be reintroduced in future releases,
 as we focus on stabilizing core functionality:
 
 - ``local_port``
-- ``engine_boots`` 
+- ``engine_boots``
 - ``engine_time``
 - ``our_identity``
 - ``their_identity``
@@ -59,8 +59,8 @@ required by net-snmp tools like ``snmpwalk``.
 
 For other versions use ``1`` / ``"1"`` (SNMPv1) or ``3`` / ``"3"`` (SNMPv3).
 
-For more details on the acceptable values for ``security_level`` and other parameters, refer to the 
-official net-snmp documentation: `Net-SNMP Command Line Applications 
+For more details on the acceptable values for ``security_level`` and other parameters, refer to the
+official net-snmp documentation: `Net-SNMP Command Line Applications
 <https://www.net-snmp.org/docs/man/snmpcmd.html>`_.
 
 Parameter Mapping Table

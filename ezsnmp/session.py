@@ -934,8 +934,8 @@ class Session(SessionBase):
         :param oids: A flat list of OID/type/value triples. Elements are ordered as
             ``[oid, type, value, oid, type, value, ...]`` where type is a single-character
             string indicating the SNMP data type
-            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER),
-            defaults to None (empty list)
+            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER).
+            Defaults to ``None``, treated as an empty list.
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
