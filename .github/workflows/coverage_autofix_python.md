@@ -42,64 +42,16 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks inside a Docker container (the ezsnmp package requires
-  net-snmp C libraries to build its native C++ extension, which are only
-  available in the pre-built Docker test images).
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-python`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Run Python tests with coverage inside a pre-built Docker container that has
-   net-snmp libraries included. The ezsnmp package cannot be installed in the
-   native runner environment because its C++ extension requires `libsnmp-dev` /
-   `net-snmp-devel`, which are only available in the Docker test images.
-
-   The `archlinux_netsnmp_5.9-latest` image is used here because it is the
-   same distribution and net-snmp version used throughout the repository's CI
-   test matrix; it always refers to the latest published build of that image.
-
-   a. Pull the test image (try Docker Hub first, fall back to GHCR):
-      ```
-      docker pull carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest || \
-        docker pull ghcr.io/carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest
-      ```
-
-   b. Run tests inside the container with the repository bind-mounted at
-      `/ezsnmp`. This starts `snmpd` in the background, installs the package,
-      and runs pytest with coverage. Coverage output files are written back to
-      the host working directory via the bind mount:
-      ```
-      docker run --rm \
-        -v "$(pwd):/ezsnmp" \
-        carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest \
-        bash -c "
-          export PATH=/usr/local/bin:$PATH
-          export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
-          # Disable glibc malloc checking to avoid false positives with Net-SNMP
-          # (mirrors the same setting in docker/DockerEntry.sh)
-          export MALLOC_CHECK_=0
-          export MALLOC_PERTURB_=0
-          mkdir -p /etc/snmp
-          cp /ezsnmp/configs/snmpd.conf /etc/snmp/snmpd.conf
-          snmpd -C -c /etc/snmp/snmpd.conf &
-          sleep 2
-          # /tmp/gh-aw/agent/ is the recommended temp root for agent-generated
-          # files in gh-aw (its contents are uploaded as a run artifact)
-          python3 -m venv /tmp/gh-aw/agent/venv
-          /tmp/gh-aw/agent/venv/bin/pip install -q -r /ezsnmp/python_tests/requirements.txt
-          cd /ezsnmp && /tmp/gh-aw/agent/venv/bin/pip install -q .
-          /tmp/gh-aw/agent/venv/bin/pytest -v -s -n auto --dist loadfile \
-            --junitxml=/ezsnmp/test-results.xml \
-            --cov=ezsnmp --cov-report=term-missing \
-            --cov-report=xml:/ezsnmp/coverage.xml \
-            --cov-config=/ezsnmp/.coveragerc \
-            /ezsnmp/python_tests/
-        "
-      ```
-
-   - Read coverage from `coverage.xml` when available.
+1. Use Codecov to identify coverage gaps.
+   - Visit https://app.codecov.io/gh/carlkidcrypto/ezsnmp to view the current
+     coverage reports for the `main` branch.
+   - Analyze the Python files to find uncovered lines or branches.
 
 2. Determine if action is needed:
    - If Python coverage is below 99%, or tests reveal clear reliability
@@ -144,9 +96,16 @@ When changes exist, create exactly one PR using this fixed branch name:
 - Base: `main`
 - Title style: `[coverage-autofix-py] <short summary>`
 - PR body must include:
-  - Docker-based Python coverage before/after (if measurable)
   - Summary of tests added/updated
+  - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
+
+### Human Verification Task
+
+Since local Docker-based verification is unavailable, you MUST create a task
+in the PR (e.g., as a checklist item or a comment) explicitly requesting the
+human reviewer to verify that the coverage has actually increased in the
+resulting CI run before merging.
 
 After creating the PR, attempt a best-effort follow-up label step:
 

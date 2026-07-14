@@ -42,42 +42,16 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks inside a Docker container (the ezsnmp C++ extension
-  requires net-snmp headers, meson, ninja, and lcov, which are only reliably
-  available in the pre-built Docker test images).
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Run C++ tests with coverage inside a pre-built Docker container that has
-   all required tools (meson, ninja, lcov, net-snmp headers) included.
-
-   The `archlinux_netsnmp_5.9-latest` image is used here because it is the
-   same distribution and net-snmp version used throughout the repository's CI
-   test matrix; it always refers to the latest published build of that image.
-
-   a. Pull the test image (try Docker Hub first, fall back to GHCR):
-      ```
-      docker pull carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest || \
-        docker pull ghcr.io/carlkidcrypto/ezsnmp_test_images:archlinux_netsnmp_5.9-latest
-      ```
-
-   b. Run the cpp tests using the existing helper script inside the `docker/`
-      directory. The script handles starting the container with the repository
-      bind-mounted at `/ezsnmp`, running meson/ninja/lcov inside it, and saving
-      coverage artifacts to `docker/test_outputs_archlinux_netsnmp_5.9/`:
-      ```
-      cd docker/
-      chmod +x run_cpp_tests_in_all_dockers.sh
-      ./run_cpp_tests_in_all_dockers.sh archlinux_netsnmp_5.9
-      ```
-
-   - Coverage output is written to
-     `docker/test_outputs_archlinux_netsnmp_5.9/lcov_coverage.info`.
-   - Test results are in
-     `docker/test_outputs_archlinux_netsnmp_5.9/test-results.xml`.
+1. Use Codecov to identify coverage gaps.
+   - Visit https://app.codecov.io/gh/carlkidcrypto/ezsnmp to view the current
+     coverage reports for the `main` branch.
+   - Analyze the C++ source files to find uncovered lines or branches.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability
@@ -123,9 +97,16 @@ When changes exist, create exactly one PR using this fixed branch name:
 - Base: `main`
 - Title style: `[coverage-autofix-cpp] <short summary>`
 - PR body must include:
-  - Native C++ coverage before/after (if measurable)
   - Summary of tests added/updated
+  - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
+
+### Human Verification Task
+
+Since local Docker-based verification is unavailable, you MUST create a task
+in the PR (e.g., as a checklist item or a comment) explicitly requesting the
+human reviewer to verify that the coverage has actually increased in the
+resulting CI run before merging.
 
 After creating the PR, attempt a best-effort follow-up label step:
 
