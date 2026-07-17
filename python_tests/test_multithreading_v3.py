@@ -119,7 +119,9 @@ def second_snmpd_port(tmp_path, sess_v3_md5_aes):
 
     environment = os.environ.copy()
     environment["SNMP_PERSISTENT_DIR"] = str(persistent_dir)
-    environment["SNMPCONFPATH"] = str(config_search_dir)
+    environment["SNMPCONFPATH"] = os.pathsep.join(
+        (str(config_search_dir), str(persistent_dir))
+    )
     environment.pop("SNMP_PERSISTENT_FILE", None)
     process = None
     output_thread = None
