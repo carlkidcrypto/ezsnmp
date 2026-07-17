@@ -729,9 +729,11 @@ class Session(SessionBase):
 
     def bulk_walk(self, oids=None):
         """
-        Performs a bulk SNMP walk operation to retrieve a collection of values.
+        Performs a bulk SNMP walk (GETBULK-based) operation to retrieve a collection of values.
         The bulk walk operation is designed to return multiple OIDs in a single request,
         making it more efficient than regular walk operations for retrieving large amounts of data.
+
+        Requires SNMPv2c or SNMPv3. GETBULK is not supported in SNMPv1.
 
         Accepts either a single OID string or a list of OID strings.
 
@@ -881,7 +883,9 @@ class Session(SessionBase):
 
     def bulk_get(self, oids=None):
         """
-        Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.
+        Performs an SNMP GETBULK operation to retrieve values for multiple OIDs.
+
+        Requires SNMPv2c or SNMPv3. GETBULK is not supported in SNMPv1.
 
         Accepts either a single OID string or a list of OID strings.
 
