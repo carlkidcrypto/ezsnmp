@@ -119,6 +119,7 @@ def second_snmpd_port(tmp_path, sess_v3_md5_aes):
 
     environment = os.environ.copy()
     environment["SNMP_PERSISTENT_DIR"] = str(persistent_dir)
+    # Keep the fixture isolated from host config while loading its createUser entry.
     environment["SNMPCONFPATH"] = os.pathsep.join(
         (str(config_search_dir), str(persistent_dir))
     )
