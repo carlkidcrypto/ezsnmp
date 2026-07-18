@@ -105,7 +105,9 @@ them with the following on Linux:
     rm -drf build/ ezsnmp.egg-info/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
     python3 -m pip install -r python_tests/requirements.txt;
     python3 -m pip install .;
-    pytest -v -s -n auto --dist loadfile python_tests/
+    mv ezsnmp _ezsnmp;
+    pytest -v -s -n auto --dist loadfile python_tests/;
+    mv _ezsnmp ezsnmp;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
     # Bottom one for valgrind. Replace the top one with it if needed.

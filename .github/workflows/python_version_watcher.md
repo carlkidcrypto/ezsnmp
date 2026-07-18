@@ -60,11 +60,11 @@ versions and automatically update the repository to stay in sync.
 Use `curl` to download the Python versions page:
 
 ```bash
-curl -fsSL https://devguide.python.org/versions/ -o /tmp/pyversions.html
+curl -fsSL https://devguide.python.org/versions/ -o /tmp/gh-aw/agent/pyversions.html
 ```
 
 - If the command fails (non-zero exit code), stop immediately and report the error.
-- Check that `/tmp/pyversions.html` is at least 500 bytes. If not, stop and report that the
+- Check that `/tmp/gh-aw/agent/pyversions.html` is at least 500 bytes. If not, stop and report that the
   page content looks truncated or empty.
 
 ### 2. Parse supported versions
@@ -74,7 +74,7 @@ Use Python to extract the currently supported version numbers from the downloade
 ```python
 import re
 
-with open('/tmp/pyversions.html') as f:
+with open('/tmp/gh-aw/agent/pyversions.html') as f:
     content = f.read()
 
 # The devguide page includes a table where each row has a version number and a status.
@@ -207,3 +207,15 @@ Include the following information in the PR body:
 - Newly detected supported versions (with their statuses if available)
 - Summary of changes made per file
 - Note that this was generated automatically by the Python Version Watcher workflow
+
+## Scripts And Tools
+
+As you develope scripts and tools to better do you job place them in the following location.
+`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+
+The scripts shall:
+
+- Be written in python3
+- Be maintained and updated as needed to help you better accomplish your job
+- Modular and maintainable by both a human and Agent as needed
+- Be well documented via python3 doc strings and function strings.
