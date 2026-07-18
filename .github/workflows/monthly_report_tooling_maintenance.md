@@ -113,3 +113,15 @@ Include:
 - Keep changes limited to report workflows, report scripts, and directly related
   documentation.
 - Do not manually edit generated `.lock.yml` files.
+
+## Scripts And Tools
+
+As you develope scripts and tools to better do you job place them in the following location.
+`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+
+The scripts shall:
+
+- Be written in python3
+- Be maintained and updated as needed to help you better accomplish your job
+- Modular and maintainable by both a human and Agent as needed
+- Be well documented via python3 doc strings and function strings.
