@@ -53,6 +53,7 @@ Step 4: Run the command below to generate the wrap file.
 * `-python` to build a Python module
 * `-builtin` to build with native Python data types. `Python_builtin_types <https://swig.org/Doc4.0/Python.html#Python_builtin_types>`_
 * `-doxygen` converts C++ doxygen comments to pydoc comments in proxy classes. `Python_commandline <https://swig.org/Doc4.0/Python.html#Python_commandline>`_
+* `-std=c++17` to compile the generated wrapper using the C++17 standard
 * `-threads` adds thread support for all modules. `Support for Multithreaded Applications <https://swig.org/Doc4.0/Python.html#Support_for_Multithreaded_Applications>`_
 
 Step 5: Run
