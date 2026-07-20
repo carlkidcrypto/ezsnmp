@@ -148,7 +148,8 @@ are planning on requesting multiple pieces of SNMP data from a source.
     session = Session(hostname='localhost', community='public', version=2)
 
     # You may retrieve an individual OID using an SNMP GET
-    # Note: get() always returns a tuple of Result objects, even for a single OID
+    # Note: get() always returns a tuple of Result objects, even for a single OID.
+    # Access the first element to get the single result: location[0].value
     location = session.get('sysLocation.0')
 
     # You may also retrieve multiple OIDs at once by passing a list
