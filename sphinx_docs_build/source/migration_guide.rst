@@ -21,7 +21,7 @@ Renamed Parameters
 - ``auth_password`` → ``auth_passphrase``
 - ``use_numeric`` → ``print_oids_numerically``
 - ``use_long_names`` → ``print_full_oids``
-- ``use_enums`` → ``print_enums_numerically``
+- ``use_enums`` → ``print_enums_numerically`` (note: semantics are inverted — ``use_enums=True`` in V1 enabled named enum values; ``print_enums_numerically=True`` in V2 prints enum values as numbers instead)
 
 Removed Parameters
 ~~~~~~~~~~~~~~~~~~
