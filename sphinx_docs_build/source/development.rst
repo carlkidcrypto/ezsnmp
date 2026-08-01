@@ -95,7 +95,7 @@ them with the following on Linux:
     cd ezsnmp;
     sudo apt update && sudo apt upgrade -y;
     sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
-    sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
+    sudo apt install -y python3-pip python3-dev python3-setuptools gdb;
     sudo systemctl stop snmpd;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
     sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf;
@@ -288,7 +288,7 @@ For C++ code using clang-format 20+:
 
     find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
-For python3 code:
+For Python code:
 
 .. code:: bash
 
