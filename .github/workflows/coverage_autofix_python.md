@@ -26,7 +26,7 @@ engine:
   id: copilot
   model: claude-sonnet-4.6
 network:
-  allowed: [defaults, python]
+  allowed: [defaults, python, containers]
 tools:
   edit:
   bash: true
@@ -42,19 +42,16 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks in native environment.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-python`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Prepare Python dependencies and run Python tests with coverage:
-   - `python -m pip install --upgrade pip`
-   - `python -m pip install -r python_tests/requirements.txt`
-   - `python -m pip install .`
-   - `pytest -v -s -n auto --dist loadfile --junitxml=test-results.xml --cov=ezsnmp --cov-report=term-missing --cov-report=xml:coverage.xml --cov-config=.coveragerc python_tests/`
-   - Read coverage from `coverage.xml` when available.
+1. Use Codecov to identify coverage gaps.
+   - Visit https://app.codecov.io/gh/carlkidcrypto/ezsnmp to view the current
+     coverage reports for the `main` branch.
+   - Analyze the Python files to find uncovered lines or branches.
 
 2. Determine if action is needed:
    - If Python coverage is below 99%, or tests reveal clear reliability
@@ -99,9 +96,16 @@ When changes exist, create exactly one PR using this fixed branch name:
 - Base: `main`
 - Title style: `[coverage-autofix-py] <short summary>`
 - PR body must include:
-  - Native Python coverage before/after (if measurable)
   - Summary of tests added/updated
+  - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
+
+### Human Verification Task
+
+Since local Docker-based verification is unavailable, you MUST create a task
+in the PR (e.g., as a checklist item or a comment) explicitly requesting the
+human reviewer to verify that the coverage has actually increased in the
+resulting CI run before merging.
 
 After creating the PR, attempt a best-effort follow-up label step:
 

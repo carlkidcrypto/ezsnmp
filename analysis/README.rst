@@ -1,0 +1,65 @@
+Analysis
+========
+
+This folder stores historical integration-test analysis reports and the raw data that backs them.
+
+Folder layout
+-------------
+
+::
+
+    analysis/
+    ├── README.rst                            # this file
+    ├── integration_test_results_history.rst  # human-readable report (Sphinx-compatible)
+    ├── scripts/                              # collection & utility scripts
+    │   ├── README.rst                        # script usage docs
+    │   ├── collect_integration_test_history.py  # fetch from GitHub API, write all CSVs + RST
+    │   └── update_recent_slice.py            # re-derive recent_N.csv from overview.csv
+    └── data/                                 # raw CSV data files
+        ├── integration_test_results_history_overview.csv          # ALL recoverable comments (canonical record)
+        ├── integration_test_results_history_recent_20.csv          # newest-20 convenience slice (fixed window, not a batch size)
+        ├── integration_test_results_history_performance_raw.csv
+        ├── integration_test_results_history_fd_raw.csv
+        ├── integration_test_results_history_fd_status.csv
+        ├── integration_test_results_history_fd_summary.csv
+        ├── integration_test_results_history_multi_process_tests_summary.csv
+        └── integration_test_results_history_multi_thread_tests_summary.csv
+
+Scripts
+-------
+
+All collection and utility scripts live in ``scripts/``.  See
+``scripts/README.rst`` for full usage, CLI reference, and troubleshooting.
+
+Quick summary:
+
+* ``scripts/collect_integration_test_history.py`` — fetch PR comments from GitHub,
+  parse performance and FD tables, and write/update all CSVs and the RST report.
+* ``scripts/update_recent_slice.py`` — re-derive ``data/recent_N.csv`` from
+  ``data/overview.csv`` without hitting the GitHub API.
+
+Adding new results
+------------------
+
+When new integration-test data becomes available, **append** to the existing CSV files instead of
+regenerating the full history from PR comments.  GitHub overwrites PR comments in place, so
+older result bodies are lost over time; the CSVs in ``data/`` are the authoritative long-term
+record.
+
+Steps for a future update run:
+
+1. Fetch the latest successful ``<!-- integration-test-summary -->`` PR comments.
+2. Deduplicate against rows already present in ``data/integration_test_results_history_overview.csv``
+   (use the PR number + ``updated_at`` timestamp as the composite key).
+3. Append only the new rows to the relevant ``data/*.csv`` files.
+   (``recent_20.csv`` is a derived convenience slice — regenerate it by taking the
+   20 most-recent rows from the updated ``overview.csv``, do not append to it directly.)
+4. Regenerate ``integration_test_results_history.rst`` with an updated **Report generated** timestamp
+   and updated Dataset counts (comments analyzed, newest/oldest PR, rows parsed).
+5. Commit the updated ``data/*.csv`` files and the updated ``.rst`` together.
+
+Report timestamp
+----------------
+
+Each ``.rst`` report carries a **Report generated** field near the top showing the UTC timestamp
+of when the report was last regenerated.  Update this field every time a new data batch is added.

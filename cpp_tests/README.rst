@@ -58,7 +58,7 @@ The Meson project in this directory supports two optional build flags:
 Example::
 
     meson setup build --reconfigure -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true
-        ninja -C build
+    ninja -C build
 
 Prerequisites
 =============

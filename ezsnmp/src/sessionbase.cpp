@@ -53,6 +53,7 @@
 //                           f:  print full OIDs on output
 //                           n:  print OIDs numerically
 //                           t:  print timeticks unparsed as numeric integers
+//                           x:  print OCTET STRING values in hex format
 //   -C APPOPTS            Set various application specific behaviours:
 //                           r<NUM>:  set max-repeaters to <NUM>. Only applies to GETBULK PDUs.
 static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
@@ -76,6 +77,7 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_full_oids", "-O f"},
     {"print_oids_numerically", "-O n"},
     {"print_timeticks_numerically", "-O t"},
+    {"print_hex_strings", "-O x"},
     {"set_max_repeaters_to_num", "-Cr"},
 };
 
@@ -101,6 +103,7 @@ SessionBase::SessionBase(std::string const& hostname,
                          bool print_full_oids,
                          bool print_oids_numerically,
                          bool print_timeticks_numerically,
+                         bool print_hex_strings,
                          std::string const& set_max_repeaters_to_num)
     : m_hostname(hostname),
       m_port_number(port_number),
@@ -124,6 +127,7 @@ SessionBase::SessionBase(std::string const& hostname,
       m_print_full_oids(print_full_oids),
       m_print_oids_numerically(print_oids_numerically),
       m_print_timeticks_numerically(print_timeticks_numerically),
+      m_print_hex_strings(print_hex_strings),
       m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
    populate_args();
 
@@ -219,6 +223,13 @@ void SessionBase::populate_args() {
       auto const& t_parts = split_string(CML_PARAM_LOOKUP["print_timeticks_numerically"], ' ');
       auto const& option = t_parts[0];
       auto const& value = t_parts[1];
+      m_args.push_back(option);
+      m_args.push_back(value);
+   }
+   if (m_print_hex_strings) {
+      auto const& x_parts = split_string(CML_PARAM_LOOKUP["print_hex_strings"], ' ');
+      auto const& option = x_parts[0];
+      auto const& value = x_parts[1];
       m_args.push_back(option);
       m_args.push_back(value);
    }
@@ -449,6 +460,7 @@ bool SessionBase::_get_print_enums_numerically() const { return m_print_enums_nu
 bool SessionBase::_get_print_full_oids() const { return m_print_full_oids; }
 bool SessionBase::_get_print_oids_numerically() const { return m_print_oids_numerically; }
 bool SessionBase::_get_print_timeticks_numerically() const { return m_print_timeticks_numerically; }
+bool SessionBase::_get_print_hex_strings() const { return m_print_hex_strings; }
 std::string const& SessionBase::_get_set_max_repeaters_to_num() const {
    return m_set_max_repeaters_to_num;
 }
@@ -553,6 +565,11 @@ void SessionBase::_set_print_oids_numerically(bool print_oids_numerically) {
 
 void SessionBase::_set_print_timeticks_numerically(bool print_timeticks_numerically) {
    m_print_timeticks_numerically = print_timeticks_numerically;
+   populate_args();
+}
+
+void SessionBase::_set_print_hex_strings(bool print_hex_strings) {
+   m_print_hex_strings = print_hex_strings;
    populate_args();
 }
 

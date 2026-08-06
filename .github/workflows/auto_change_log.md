@@ -20,6 +20,7 @@ safe-outputs:
     preserve-branch-name: true
     if-no-changes: "ignore"
     base-branch: main
+    protected-files: allowed
 timeout-minutes: 30
 engine:
   id: copilot

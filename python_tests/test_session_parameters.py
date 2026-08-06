@@ -793,3 +793,71 @@ def test_session_print_timeticks_numerically_unset(version):
     assert not res_ticks[0].value.isdigit()
 
     del session
+
+
+@pytest.mark.parametrize("version", ["1", "2c", "3", 1, 2, 3])
+def test_session_print_hex_strings_set(version):
+    if version == "3" or version == 3:
+        session = Session(
+            version=version,
+            hostname="localhost",
+            port_number="11161",
+            auth_protocol="SHA",
+            security_level="authPriv",
+            security_username="secondary_sha_aes",
+            privacy_protocol="AES",
+            privacy_passphrase="priv_second",
+            auth_passphrase="auth_second",
+            print_hex_strings=True,
+        )
+
+        args = session.args
+
+        assert args == (
+            "-A",
+            "auth_second",
+            "-a",
+            "SHA",
+            "-X",
+            "priv_second",
+            "-x",
+            "AES",
+            "-r",
+            "3",
+            "-l",
+            "authPriv",
+            "-u",
+            "secondary_sha_aes",
+            "-t",
+            "1",
+            "-v",
+            "3",
+            "-O",
+            "x",
+            "localhost:11161",
+        )
+
+    else:
+        session = Session(
+            hostname="localhost:11161",
+            version=version,
+            print_hex_strings=True,
+        )
+
+        args = session.args
+
+        assert args == (
+            "-c",
+            "public",
+            "-r",
+            "3",
+            "-t",
+            "1",
+            "-v",
+            "2c" if version == 2 else f"{version}",
+            "-O",
+            "x",
+            "localhost:11161",
+        )
+
+    del session

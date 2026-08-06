@@ -26,7 +26,7 @@ engine:
   id: copilot
   model: claude-sonnet-4.6
 network:
-  allowed: [defaults]
+  allowed: [defaults, containers]
 tools:
   edit:
   bash: true
@@ -42,19 +42,16 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk.
 - Prefer tests first when improving coverage.
-- Run coverage checks in native environment.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
 
 ## Coverage Check Procedure
 
-1. Run C++ tests and coverage from `cpp_tests/` on Linux:
-   - `meson setup build || true`
-   - `ninja -C build`
-   - `meson test -C build --print-errorlogs`
-   - `lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,inconsistent || true`
-   - If `coverage.info` exists, filter external/system paths before evaluating totals.
+1. Use Codecov to identify coverage gaps.
+   - Visit https://app.codecov.io/gh/carlkidcrypto/ezsnmp to view the current
+     coverage reports for the `main` branch.
+   - Analyze the C++ source files to find uncovered lines or branches.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability
@@ -100,9 +97,16 @@ When changes exist, create exactly one PR using this fixed branch name:
 - Base: `main`
 - Title style: `[coverage-autofix-cpp] <short summary>`
 - PR body must include:
-  - Native C++ coverage before/after (if measurable)
   - Summary of tests added/updated
+  - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
+
+### Human Verification Task
+
+Since local Docker-based verification is unavailable, you MUST create a task
+in the PR (e.g., as a checklist item or a comment) explicitly requesting the
+human reviewer to verify that the coverage has actually increased in the
+resulting CI run before merging.
 
 After creating the PR, attempt a best-effort follow-up label step:
 

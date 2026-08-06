@@ -52,7 +52,7 @@
 name: "Update Docker Net-SNMP Versions"
 on:
   schedule:
-  - cron: "49 5 * * 6"
+  - cron: "50 21 * * 6"
     # Friendly format: weekly on saturday (scattered)
   # skip-if-match: # Skip-if-match processed as search check in pre-activation job
     # query: is:pr is:open head:automation/update-docker-netsnmp-versions label:dependencies label:docker label:automated-pr

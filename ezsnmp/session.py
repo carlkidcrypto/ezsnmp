@@ -55,6 +55,7 @@ class Session(SessionBase):
         print_full_oids: bool = False,
         print_oids_numerically: bool = False,
         print_timeticks_numerically: bool = False,
+        print_hex_strings: bool = False,
         set_max_repeaters_to_num: Union[str, int] = "10",
     ):
         """Initialize the Session object with NetSNMP session parameters.
@@ -113,6 +114,8 @@ class Session(SessionBase):
         :type print_oids_numerically: bool
         :param print_timeticks_numerically: Whether to print timeticks numerically.
         :type print_timeticks_numerically: bool
+        :param print_hex_strings: Whether to print OCTET STRING values in hex format.
+        :type print_hex_strings: bool
         :param set_max_repeaters_to_num: The maximum number of repeaters for GETBULK PDUs. Defaults to 10. Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
         :type set_max_repeaters_to_num: Union[str, int]
 
@@ -155,6 +158,7 @@ class Session(SessionBase):
                 print_full_oids,
                 print_oids_numerically,
                 print_timeticks_numerically,
+                print_hex_strings,
                 "",  # Set to empty string here. We will set it in the bulk methods.
             )
 
@@ -571,6 +575,23 @@ class Session(SessionBase):
         super()._set_print_timeticks_numerically(value)
 
     @property
+    def print_hex_strings(self):
+        """Get whether to print OCTET STRING values as hex strings.
+
+        :type: bool
+        """
+        return super()._get_print_hex_strings()
+
+    @print_hex_strings.setter
+    def print_hex_strings(self, value):
+        """Set whether to print OCTET STRING values as hex strings.
+
+        :param value: The new value for printing OCTET STRING values as hex strings.
+        :type value: bool
+        """
+        super()._set_print_hex_strings(value)
+
+    @property
     def set_max_repeaters_to_num(self):
         """Get the maximum number of repeaters for GETBULK PDUs.
 
@@ -649,6 +670,7 @@ class Session(SessionBase):
             "print_full_oids",
             "print_oids_numerically",
             "print_timeticks_numerically",
+            "print_hex_strings",
             "set_max_repeaters_to_num",
         ]
 
@@ -707,14 +729,16 @@ class Session(SessionBase):
 
     def bulk_walk(self, oids=None):
         """
-        Performs a bulk SNMP walk operation to retrieve a collection of values.
+        Performs a bulk SNMP walk (GETBULK-based) operation to retrieve a collection of values.
         The bulk walk operation is designed to return multiple OIDs in a single request,
         making it more efficient than regular walk operations for retrieving large amounts of data.
 
+        Requires SNMPv2c or SNMPv3. GETBULK is not supported in SNMPv1.
+
         Accepts either a single OID string or a list of OID strings.
 
-        :param oids: A single OID string or a list of base OIDs to start the walks from,
-            defaults to None (empty list)
+        :param oids: A single OID string or a list of base OIDs to start the walks from.
+            Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings. Each Result object has
             attributes: oid (str), index (str), value (str), and type (str)
@@ -766,7 +790,7 @@ class Session(SessionBase):
         Accepts either a single OID string or a list of OID strings.
 
         :param oids: A single OID string or a list of Object Identifiers (OIDs) to retrieve
-            values from, defaults to None (empty list)
+            values from. Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -817,7 +841,7 @@ class Session(SessionBase):
         Accepts either a single OID string or a list of OID strings.
 
         :param oids: A single OID string or a list of Object Identifiers (OIDs) to get
-            next values from, defaults to None (empty list)
+            next values from. Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -859,12 +883,14 @@ class Session(SessionBase):
 
     def bulk_get(self, oids=None):
         """
-        Performs an SNMP BULK GET operation to retrieve values for multiple OIDs.
+        Performs an SNMP GETBULK operation to retrieve values for multiple OIDs.
+
+        Requires SNMPv2c or SNMPv3. GETBULK is not supported in SNMPv1.
 
         Accepts either a single OID string or a list of OID strings.
 
         :param oids: A single OID string or a list of Object Identifiers (OIDs) to retrieve
-            values from, defaults to None (empty list)
+            values from. Defaults to ``None``, which is treated as an empty list.
         :type oids: Union[str, list[str], None]
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)
@@ -912,8 +938,8 @@ class Session(SessionBase):
         :param oids: A flat list of OID/type/value triples. Elements are ordered as
             ``[oid, type, value, oid, type, value, ...]`` where type is a single-character
             string indicating the SNMP data type
-            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER),
-            defaults to None (empty list)
+            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER).
+            Defaults to ``None``, treated as an empty list.
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
             oid (str), index (str), value (str), and type (str)

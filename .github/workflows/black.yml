@@ -63,7 +63,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Checkout or create the auto-format branch, starting from the base branch
-          git checkout -B "$BRANCH_NAME" "$BASE_BRANCH"
+          git checkout -B "$BRANCH_NAME" "origin/$BASE_BRANCH"
           git add .
           git commit -m "style: auto-format with black" || echo "No changes to commit"
           git push origin "$BRANCH_NAME" --force

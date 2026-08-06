@@ -94,10 +94,17 @@ void snmptrap_usage(void) {
 }
 
 int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *pdu, void *magic) {
+   (void)operation;
+   (void)session;
+   (void)reqid;
+   (void)pdu;
+   (void)magic;
    return 1;
 }
 
 void snmptrap_optProc(int argc, char *const *argv, int opt) {
+   (void)argc;
+   (void)argv;
    switch (opt) {
       case 'C':
          while (*optarg) {

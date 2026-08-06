@@ -1,0 +1,85 @@
+Session,Operation,Mode,Runs,Leak warnings,Mean FD leak,Avg Exec (s),Avg Avg/Call (s)
+V1,bulk_get,close,30,0,,0.066,0.000659
+V1,bulk_get,no close,30,0,,0.067,0.000666
+V1,bulk_walk,close,30,0,,0.067,0.000674
+V1,bulk_walk,no close,30,0,,0.070,0.000704
+V1,get,close,30,0,,4.360,0.043596
+V1,get,no close,30,0,,4.478,0.044779
+V1,get_next,close,30,0,,4.370,0.043701
+V1,get_next,no close,30,0,,4.331,0.043307
+V1,set,close,30,0,,0.160,0.001605
+V1,set,no close,30,0,,0.162,0.001616
+V1,walk,close,30,0,,4.504,0.045041
+V1,walk,no close,30,0,,4.495,0.044953
+V2,bulk_get,close,30,0,,4.361,0.043612
+V2,bulk_get,no close,30,0,,4.272,0.042715
+V2,bulk_walk,close,30,0,,4.300,0.043003
+V2,bulk_walk,no close,30,0,,4.324,0.043238
+V2,get,close,30,0,,4.396,0.043959
+V2,get,no close,30,0,,4.369,0.043692
+V2,get_next,close,30,0,,4.319,0.043188
+V2,get_next,no close,30,0,,4.333,0.043328
+V2,set,close,30,0,,0.157,0.001574
+V2,set,no close,30,0,,0.152,0.001524
+V2,walk,close,30,0,,4.423,0.044233
+V2,walk,no close,30,0,,4.430,0.044300
+V3_MD5_AES,bulk_get,close,30,0,,4.775,0.047747
+V3_MD5_AES,bulk_get,no close,30,0,,4.750,0.047497
+V3_MD5_AES,bulk_walk,close,30,0,,4.841,0.048414
+V3_MD5_AES,bulk_walk,no close,30,0,,4.785,0.047852
+V3_MD5_AES,get,close,30,0,,4.758,0.047579
+V3_MD5_AES,get,no close,30,0,,4.798,0.047982
+V3_MD5_AES,get_next,close,30,0,,4.739,0.047389
+V3_MD5_AES,get_next,no close,30,0,,4.767,0.047666
+V3_MD5_AES,set,close,30,0,,1.118,0.011182
+V3_MD5_AES,set,no close,30,0,,1.115,0.011153
+V3_MD5_AES,walk,close,30,0,,4.887,0.048872
+V3_MD5_AES,walk,no close,30,0,,4.896,0.048965
+V3_MD5_DES,bulk_get,close,30,0,,4.752,0.047515
+V3_MD5_DES,bulk_get,no close,30,0,,4.773,0.047730
+V3_MD5_DES,bulk_walk,close,30,0,,4.782,0.047815
+V3_MD5_DES,bulk_walk,no close,30,0,,4.795,0.047954
+V3_MD5_DES,get,close,30,0,,4.734,0.047345
+V3_MD5_DES,get,no close,30,0,,4.744,0.047444
+V3_MD5_DES,get_next,close,30,0,,4.711,0.047107
+V3_MD5_DES,get_next,no close,30,0,,4.740,0.047398
+V3_MD5_DES,set,close,30,0,,1.121,0.011213
+V3_MD5_DES,set,no close,30,0,,1.121,0.011207
+V3_MD5_DES,walk,close,30,0,,4.903,0.049034
+V3_MD5_DES,walk,no close,30,0,,4.896,0.048960
+V3_MD5_NO_PRIV,bulk_get,close,30,0,,4.522,0.045223
+V3_MD5_NO_PRIV,bulk_get,no close,30,0,,4.537,0.045372
+V3_MD5_NO_PRIV,bulk_walk,close,30,0,,4.550,0.045499
+V3_MD5_NO_PRIV,bulk_walk,no close,30,0,,4.544,0.045442
+V3_MD5_NO_PRIV,get,close,30,0,,4.496,0.044960
+V3_MD5_NO_PRIV,get,no close,30,0,,4.538,0.045377
+V3_MD5_NO_PRIV,get_next,close,30,0,,4.495,0.044954
+V3_MD5_NO_PRIV,get_next,no close,30,0,,4.511,0.045106
+V3_MD5_NO_PRIV,set,close,30,0,,0.640,0.006395
+V3_MD5_NO_PRIV,set,no close,30,0,,0.638,0.006383
+V3_MD5_NO_PRIV,walk,close,30,0,,4.655,0.046550
+V3_MD5_NO_PRIV,walk,no close,30,0,,4.677,0.046775
+V3_SHA_AES,bulk_get,close,30,0,,4.670,0.046699
+V3_SHA_AES,bulk_get,no close,30,0,,4.708,0.047083
+V3_SHA_AES,bulk_walk,close,30,0,,4.715,0.047146
+V3_SHA_AES,bulk_walk,no close,30,0,,4.719,0.047187
+V3_SHA_AES,get,close,30,0,,4.674,0.046741
+V3_SHA_AES,get,no close,30,0,,4.687,0.046866
+V3_SHA_AES,get_next,close,30,0,,4.697,0.046966
+V3_SHA_AES,get_next,no close,30,0,,4.665,0.046653
+V3_SHA_AES,set,close,30,0,,0.870,0.008698
+V3_SHA_AES,set,no close,30,0,,0.856,0.008555
+V3_SHA_AES,walk,close,30,0,,4.834,0.048342
+V3_SHA_AES,walk,no close,30,0,,4.844,0.048437
+V3_SHA_NO_PRIV,bulk_get,close,30,0,,4.484,0.044839
+V3_SHA_NO_PRIV,bulk_get,no close,30,0,,4.518,0.045184
+V3_SHA_NO_PRIV,bulk_walk,close,30,0,,4.497,0.044974
+V3_SHA_NO_PRIV,bulk_walk,no close,30,0,,4.497,0.044970
+V3_SHA_NO_PRIV,get,close,30,0,,4.487,0.044874
+V3_SHA_NO_PRIV,get,no close,30,0,,4.552,0.045522
+V3_SHA_NO_PRIV,get_next,close,30,0,,4.438,0.044378
+V3_SHA_NO_PRIV,get_next,no close,30,0,,4.446,0.044458
+V3_SHA_NO_PRIV,set,close,30,0,,0.515,0.005152
+V3_SHA_NO_PRIV,set,no close,30,0,,0.508,0.005083
+V3_SHA_NO_PRIV,walk,close,30,0,,4.630,0.046299
+V3_SHA_NO_PRIV,walk,no close,30,0,,4.614,0.046138
