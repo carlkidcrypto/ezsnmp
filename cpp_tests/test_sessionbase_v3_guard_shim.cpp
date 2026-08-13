@@ -189,8 +189,7 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesContextEngineIdSetterAndCleanup) {
    EXPECT_TRUE(setter.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout);
    {
       std::lock_guard<std::mutex> lock(g_state_mutex);
-      std::vector<std::pair<std::string, std::string>> const expected = {
-          {"alice", "engine-old"}};
+      std::vector<std::pair<std::string, std::string>> const expected = {{"alice", "engine-old"}};
       EXPECT_EQ(g_cache_removals, expected);
    }
 

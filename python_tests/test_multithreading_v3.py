@@ -334,7 +334,7 @@ def test_issue_56_concurrent_v3_sessions(sess_v3_md5_aes, second_snmpd_port):
     start_barrier = Barrier(worker_count)
 
     def get_repeatedly(session):
-        start_barrier.wait()
+        start_barrier.wait(timeout=10)
         return [_get_system_description(session) for _ in range(calls_per_worker)]
 
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
