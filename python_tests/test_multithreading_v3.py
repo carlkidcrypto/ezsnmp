@@ -16,7 +16,7 @@ import time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from threading import Barrier, Thread
+from threading import Barrier, BrokenBarrierError, Thread
 
 import pytest
 from ezsnmp.session import Session
@@ -334,7 +334,10 @@ def test_issue_56_concurrent_v3_sessions(sess_v3_md5_aes, second_snmpd_port):
     start_barrier = Barrier(worker_count)
 
     def get_repeatedly(session):
-        start_barrier.wait(timeout=10)
+        try:
+            start_barrier.wait(timeout=10)
+        except BrokenBarrierError as error:
+            raise TimeoutError("SNMPv3 worker start barrier timed out") from error
         return [_get_system_description(session) for _ in range(calls_per_worker)]
 
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
