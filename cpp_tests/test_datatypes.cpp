@@ -172,9 +172,7 @@ TEST(ResultTest, VectorOfResultsTest) {
 }
 
 // Helper function to create and test a Result object
-void testResultConversion(std::string const& oid,
-                          std::string const& index,
-                          std::string const& type,
+void testResultConversion(std::string const& oid, std::string const& index, std::string const& type,
                           std::string const& value,
                           std::string const& expected_string_without_converted,
                           Result::ConvertedValue const& expected_converted_value) {
@@ -344,7 +342,7 @@ TEST_F(ResultConvertedValueTest, HandlesZeroCounter64) {
 
 TEST_F(ResultConvertedValueTest, HandlesMalformedHexCharacters) {
    auto converted = result_obj._make_converted_value(
-       "Hex-STRING", "0xG"); // "0xG" is treated as two parts: "0x" and "G"
+       "Hex-STRING", "0xG");  // "0xG" is treated as two parts: "0x" and "G"
    EXPECT_EQ(std::get<std::string>(converted),
              "Hex-STRING Conversion Error: Malformed hex part '0xG'");
 }
@@ -547,7 +545,7 @@ TEST(ResultIntegrationTest, MissingDatatype) {
    Result r;
    r.oid = "test::oid";
    r.index = "1";
-   r.type = ""; // Missing type
+   r.type = "";  // Missing type
    r.value = "some value";
    r.update_converted_value();
 
@@ -559,7 +557,7 @@ TEST(ResultIntegrationTest, MissingDatatype) {
 
 TEST(ResultIntegrationTest, OctetStringConversion) {
    // This is now an integration test to ensure OCTETSTR works with the helper.
-   std::string test_value = "hello\x01\x02\x03world"; // Contains non-printable characters
+   std::string test_value = "hello\x01\x02\x03world";  // Contains non-printable characters
    std::vector<unsigned char> expected_vector(test_value.begin(), test_value.end());
    testResultConversion(
        "TEST-MIB::octetString", "1", "OCTETSTR", test_value,
@@ -598,14 +596,14 @@ TEST_F(ResultConvertedValueTest, HandlesLargeHexString) {
    r.converted_value = vec;
    std::string result = r._converted_value_to_string();
    EXPECT_TRUE(result.find("bytes[40]:") != std::string::npos);
-   EXPECT_TRUE(result.find("...") != std::string::npos); // Should truncate display
+   EXPECT_TRUE(result.find("...") != std::string::npos);  // Should truncate display
 }
 
 // Parameterized test for string-like types
 struct StringTypeTestCase {
    std::string type_name;
    std::string input_value;
-   std::string test_name; // For gtest output
+   std::string test_name;  // For gtest output
 };
 
 class StringTypesTest : public ResultConvertedValueTest,
@@ -631,9 +629,7 @@ TEST_P(StringTypesTest, HandlesStringLikeTypes) {
                      StringTypeTestCase{"ModComp", "mod comp", "ModComp"})
 
 #if defined(INSTANTIATE_TEST_SUITE_P)
-INSTANTIATE_TEST_SUITE_P(ResultConvertedValueStringTypes,
-                         StringTypesTest,
-                         STRING_TYPE_PARAMS,
+INSTANTIATE_TEST_SUITE_P(ResultConvertedValueStringTypes, StringTypesTest, STRING_TYPE_PARAMS,
                          [](::testing::TestParamInfo<StringTypesTest::ParamType> const& info) {
                             return info.param.test_name;
                          });
@@ -701,5 +697,29 @@ TEST_F(ResultConvertedValueTest, HandlesLargeByteVector) {
    r.converted_value = large_vec;
    std::string result = r._converted_value_to_string();
    EXPECT_TRUE(result.find("bytes[50]") != std::string::npos);
-   EXPECT_TRUE(result.find("...") != std::string::npos); // truncation indicator
+   EXPECT_TRUE(result.find("...") != std::string::npos);  // truncation indicator
+}
+
+// Test that "INTEGER32" is treated as an alias for "INTEGER"
+TEST_F(ResultConvertedValueTest, HandlesInteger32TypeAlias) {
+   auto converted = result_obj._make_converted_value("INTEGER32", "42");
+   ASSERT_TRUE(std::holds_alternative<int>(converted));
+   EXPECT_EQ(std::get<int>(converted), 42);
+}
+
+// Test whitespace-only Hex-STRING value returns an empty byte vector
+TEST_F(ResultConvertedValueTest, HandlesWhitespaceOnlyHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "   ");
+   ASSERT_TRUE(std::holds_alternative<std::vector<unsigned char>>(converted));
+   EXPECT_TRUE(std::get<std::vector<unsigned char>>(converted).empty());
+}
+
+// Test that a double stored directly in converted_value is serialized correctly
+TEST_F(ResultConvertedValueTest, HandlesDoubleConvertedValueToString) {
+   Result r;
+   r.converted_value = 3.14159;
+   std::string s = r._converted_value_to_string();
+   EXPECT_FALSE(s.empty());
+   // std::to_string of a double contains a decimal point
+   EXPECT_NE(s.find('.'), std::string::npos);
 }
