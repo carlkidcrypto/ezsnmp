@@ -883,7 +883,7 @@ class Session(SessionBase):
 
     def bulk_get(self, oids=None):
         """
-        Performs an SNMP GETBULK operation to retrieve values for multiple OIDs.
+        Performs an SNMP GETBULK operation to retrieve values for one or more OIDs.
 
         Requires SNMPv2c or SNMPv3. GETBULK is not supported in SNMPv1.
 
@@ -933,12 +933,15 @@ class Session(SessionBase):
 
     def set(self, oids=None):
         """
-        Performs an SNMP SET operation to set values for multiple OIDs.
+        Performs an SNMP SET operation to set values for one or more OIDs.
 
         :param oids: A flat list of OID/type/value triples. Elements are ordered as
             ``[oid, type, value, oid, type, value, ...]`` where type is a single-character
             string indicating the SNMP data type
-            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER).
+            (e.g. ``'i'`` for INTEGER, ``'s'`` for STRING, ``'o'`` for OBJECT IDENTIFIER,
+            ``'u'`` for UNSIGNED, ``'t'`` for TIMETICKS, ``'a'`` for IPADDRESS,
+            ``'x'`` for HEX STRING). For the full list see
+            `snmpset(1) <https://www.net-snmp.org/docs/man/snmpset.html>`_.
             Defaults to ``None``, treated as an empty list.
         :type oids: list
         :return: A tuple of Result objects containing SNMP variable bindings with attributes:
