@@ -658,14 +658,14 @@ TEST_F(SessionBaseTest, TestGetV3MD5DES) {
       std::string error_msg(e.what());
       bool is_deprecated_algorithm_error =
           error_msg.find("NETSNMP_PARSE_ARGS_ERROR") !=
-              std::string::npos ||  // net-snmp 5.9+ with deprecated algorithms
+              std::string::npos || // net-snmp 5.9+ with deprecated algorithms
           error_msg.find("PARSE_ARGS_ERROR") !=
-              std::string::npos ||  // Alternative error code format
-          error_msg.find("unknown auth protocol") != std::string::npos ||     // MD5 not recognized
-          error_msg.find("unknown priv protocol") != std::string::npos ||     // DES not recognized
-          error_msg.find("Invalid privacy protocol") != std::string::npos ||  // DES not supported
+              std::string::npos || // Alternative error code format
+          error_msg.find("unknown auth protocol") != std::string::npos ||    // MD5 not recognized
+          error_msg.find("unknown priv protocol") != std::string::npos ||    // DES not recognized
+          error_msg.find("Invalid privacy protocol") != std::string::npos || // DES not supported
           error_msg.find("Unknown security model") !=
-              std::string::npos;  // Security model not available
+              std::string::npos; // Security model not available
 
       if (is_deprecated_algorithm_error) {
 // Use GTEST_SKIP if available (GTest 1.10+), otherwise just return successfully
@@ -817,8 +817,8 @@ TEST_F(SessionBaseTest, TestBulkGet) {
 
    auto results = session.bulk_get(mibs);
    // Expect 30 results but allow some variance based on net-snmp version
-   EXPECT_GE(results.size(), 15u);  // At least 15 results
-   EXPECT_LE(results.size(), 40u);  // At most 40 results
+   EXPECT_GE(results.size(), 15u); // At least 15 results
+   EXPECT_LE(results.size(), 40u); // At most 40 results
 
    // Verify structure: all results should be sysOR* OIDs with valid types
    for (auto const& result : results) {
@@ -943,7 +943,7 @@ TEST_F(SessionBaseTest, TestV3WithCommunityIgnored) {
        /* hostname */ "localhost",
        /* port_number */ "161",
        /* version */ "3",
-       /* community */ "public",  // This should be ignored for v3
+       /* community */ "public", // This should be ignored for v3
        /* auth_protocol */ "SHA",
        /* auth_passphrase */ "authpass",
        /* security_engine_id */ "",
