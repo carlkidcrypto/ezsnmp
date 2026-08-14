@@ -103,3 +103,15 @@ Include:
 - Keep default behavior on stable releases only unless `include_prerelease=true` was explicitly provided.
 - Do not change Python versions, distro versions, workflow logic, or unrelated code.
 - If upstream data is ambiguous or unavailable, call the `noop` safe output tool with an explanation of why no action was taken.
+
+## Scripts And Tools
+
+As you develope scripts and tools to better do you job place them in the following location.
+`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+
+The scripts shall:
+
+- Be written in python3
+- Be maintained and updated as needed to help you better accomplish your job
+- Modular and maintainable by both a human and Agent as needed
+- Be well documented via python3 doc strings and function strings.
