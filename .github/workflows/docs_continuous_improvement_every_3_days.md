@@ -17,9 +17,9 @@ safe-outputs:
     preserve-branch-name: true
     if-no-changes: "ignore"
 timeout-minutes: 45
+model: claude-sonnet-4.6
 engine:
   id: copilot
-  model: claude-sonnet-4.6
 ---
 
 # Documentation Continuous Improvement
