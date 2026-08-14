@@ -113,3 +113,15 @@ Include:
 - Prefer meaningful, user-impacting summaries over dependency/CI churn when both are present.
 - Never fail the run solely because external commit APIs are blocked by integrity filtering; fall back to local git history and continue.
 - Never attempt to re-implement `git-chglog` in Python, shell, or any other language. If the tool cannot be installed, stop with a clear error.
+
+## Scripts And Tools
+
+As you develope scripts and tools to better do you job place them in the following location.
+`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+
+The scripts shall:
+
+- Be written in python3
+- Be maintained and updated as needed to help you better accomplish your job
+- Modular and maintainable by both a human and Agent as needed
+- Be well documented via python3 doc strings and function strings.
