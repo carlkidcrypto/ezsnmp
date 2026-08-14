@@ -22,9 +22,9 @@ safe-outputs:
     allowed: [coverage, tests, cpp]
     max: 4
 timeout-minutes: 45
+model: claude-sonnet-4.6
 engine:
   id: copilot
-  model: claude-sonnet-4.6
 network:
   allowed: [defaults, containers]
 tools:

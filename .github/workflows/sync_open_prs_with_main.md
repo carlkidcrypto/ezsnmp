@@ -13,13 +13,13 @@ safe-outputs:
     labels: [auto-sync]
   push-to-pull-request-branch:
     target: "*"
-    labels: [auto-sync]
+    required-labels: [auto-sync]
     protected-files: fallback-to-issue
     if-no-changes: "ignore"
 timeout-minutes: 45
+model: claude-sonnet-4.6
 engine:
   id: copilot
-  model: claude-sonnet-4.6
 checkout:
   fetch-depth: 0
   fetch: ["*"]
