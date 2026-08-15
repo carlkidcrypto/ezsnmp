@@ -1,6 +1,8 @@
 
 #include "helpers.h"
 
+#include <net-snmp/library/lcd_time.h>
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>
@@ -8,8 +10,6 @@
 #include <sstream>
 #include <string>
 #include <utility>
-
-#include <net-snmp/library/lcd_time.h>
 
 #include "exceptionsbase.h"
 #include "thread_safety.h"

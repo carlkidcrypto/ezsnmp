@@ -24,7 +24,11 @@ from platform_compat import is_des_supported
 
 SYSTEM_DESCRIPTION_OID = "1.3.6.1.2.1.1.1.0"
 SNMP_ENGINE_ID_OID = "1.3.6.1.6.3.10.2.1.1.0"
-SECOND_AGENT_ENGINE_ID = "ezsnmp-issue-56-second-agent"
+# The engineID directive prepends a 5-octet header to this text, and RFC 3411
+# caps SnmpEngineID at 32 octets, so keep this at 27 characters or fewer.
+# Longer values make strict net-snmp builds reject every response with
+# "error parsing ScopedPDU", which surfaces as a probe timeout.
+SECOND_AGENT_ENGINE_ID = "ezsnmp-issue-56-agent-2"
 
 
 def _allocate_udp_port():
@@ -33,12 +37,12 @@ def _allocate_udp_port():
         return sock.getsockname()[1]
 
 
-def _wait_for_second_agent(process, session_args, port, timeout=10):
+def _wait_for_second_agent(process, session_args, port, timeout=30):
     probe_args = dict(session_args)
     probe_args["hostname"] = "127.0.0.1"
     probe_args["port_number"] = str(port)
-    probe_args["timeout"] = "0.2"
-    probe_args["retries"] = "0"
+    probe_args["timeout"] = "1"
+    probe_args["retries"] = "1"
     deadline = time.monotonic() + timeout
     last_error = None
     while time.monotonic() < deadline:
@@ -117,8 +121,12 @@ def second_snmpd_port(tmp_path, sess_v3_md5_aes):
     output_lines = deque(maxlen=200)
     try:
         try:
+            # -C keeps the isolated agent from also loading the default
+            # configuration files (e.g. the host's /etc/snmp/snmpd.conf), and
+            # -r matches the main test agent so a non-root snmpd does not
+            # exit when privileged interfaces are unavailable.
             process = subprocess.Popen(
-                (snmpd, "-f", "-Lo", "-c", str(config_path)),
+                (snmpd, "-f", "-r", "-C", "-Lo", "-c", str(config_path)),
                 cwd=Path(tmp_path),
                 env=environment,
                 stdin=subprocess.DEVNULL,
