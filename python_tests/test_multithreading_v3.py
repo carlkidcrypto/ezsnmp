@@ -89,10 +89,7 @@ def second_snmpd_port(tmp_path, sess_v3_md5_aes):
 
     persistent_dir = tmp_path / "persistent"
     persistent_dir.mkdir()
-    config_search_dir = tmp_path / "config-search"
-    config_search_dir.mkdir()
     config_path = tmp_path / "snmpd.conf"
-    persistent_config_path = persistent_dir / "snmpd.conf"
     port = _allocate_udp_port()
     username = sess_v3_md5_aes["security_username"]
     auth_protocol = sess_v3_md5_aes["auth_protocol"]
@@ -104,26 +101,17 @@ def second_snmpd_port(tmp_path, sess_v3_md5_aes):
             (
                 f"agentAddress udp:127.0.0.1:{port}",
                 f"engineID {SECOND_AGENT_ENGINE_ID}",
-                f"rouser {username} priv",
+                f"rwuser {username} priv",
+                f"createUser {username} {auth_protocol} {auth_passphrase}"
+                f" {privacy_protocol} {privacy_passphrase}",
                 "",
             )
         ),
         encoding="utf-8",
     )
-    persistent_config_path.write_text(
-        f"createUser {username} {auth_protocol} {auth_passphrase}"
-        f" {privacy_protocol} {privacy_passphrase}\n",
-        encoding="utf-8",
-    )
-    persistent_config_path.chmod(0o600)
 
     environment = os.environ.copy()
     environment["SNMP_PERSISTENT_DIR"] = str(persistent_dir)
-    # Keep the fixture isolated from host config while loading its createUser entry.
-    environment["SNMPCONFPATH"] = os.pathsep.join(
-        (str(config_search_dir), str(persistent_dir))
-    )
-    environment.pop("SNMP_PERSISTENT_FILE", None)
     process = None
     output_thread = None
     output_lines = deque(maxlen=200)
