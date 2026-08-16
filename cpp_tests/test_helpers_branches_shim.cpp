@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -16,9 +17,17 @@ bool g_force_objid_overflow = false;
 
 usmUser g_user1{};
 usmUser g_user2{};
+usmUser g_user3{};
+usmUser g_user4{};
 usmUser *g_user_list = nullptr;
 int g_usm_remove_calls = 0;
 int g_usm_free_calls = 0;
+std::vector<usmUser *> g_removed_users;
+std::vector<usmUser *> g_freed_users;
+std::vector<unsigned char *> g_freed_engine_id_pointers;
+std::vector<std::vector<unsigned char>> g_freed_engine_ids;
+std::vector<size_t> g_freed_engine_id_lengths;
+std::vector<std::string> g_cache_events;
 
 void reset_shim_state() {
    g_fail_calloc = false;
@@ -28,9 +37,17 @@ void reset_shim_state() {
 
    g_user1 = usmUser{};
    g_user2 = usmUser{};
+   g_user3 = usmUser{};
+   g_user4 = usmUser{};
    g_user_list = nullptr;
    g_usm_remove_calls = 0;
    g_usm_free_calls = 0;
+   g_removed_users.clear();
+   g_freed_users.clear();
+   g_freed_engine_id_pointers.clear();
+   g_freed_engine_ids.clear();
+   g_freed_engine_id_lengths.clear();
+   g_cache_events.clear();
 }
 
 } // namespace
@@ -106,12 +123,23 @@ extern "C" usmUser *usm_get_userList(void) { return g_user_list; }
 
 extern "C" usmUser *usm_remove_user(usmUser *user) {
    ++g_usm_remove_calls;
+   g_removed_users.push_back(user);
+   g_cache_events.push_back("remove");
    return user;
 }
 
 extern "C" usmUser *usm_free_user(usmUser *user) {
    ++g_usm_free_calls;
+   g_freed_users.push_back(user);
+   g_cache_events.push_back("free_user");
    return user;
+}
+
+extern "C" void free_enginetime(unsigned char *engine_id, size_t engine_id_length) {
+   g_freed_engine_id_pointers.push_back(engine_id);
+   g_freed_engine_ids.emplace_back(engine_id, engine_id + engine_id_length);
+   g_freed_engine_id_lengths.push_back(engine_id_length);
+   g_cache_events.push_back("free_enginetime");
 }
 
 class HelpersBranchesShimTest : public ::testing::Test {
@@ -242,6 +270,60 @@ TEST_F(HelpersBranchesShimTest, RemoveV3UserFromCacheNoMatchWalksListWithoutRemo
    remove_v3_user_from_cache("charlie", "engine3");
    EXPECT_EQ(g_usm_remove_calls, 0);
    EXPECT_EQ(g_usm_free_calls, 0);
+}
+
+TEST_F(HelpersBranchesShimTest, RemoveV3UserFromCacheClearsAllMatchingUsersAndEngineTimes) {
+   static char alice[] = "alice";
+   static char bob[] = "bob";
+   static unsigned char binary_engine_id[] = {0x80, 0x00, 0x1f, 0x88, 0xff};
+   static unsigned char second_engine_id[] = {0x01, 0x00, 0x02};
+
+   g_user1.secName = alice;
+   g_user1.engineID = binary_engine_id;
+   g_user1.engineIDLen = sizeof(binary_engine_id);
+   g_user1.next = &g_user2;
+
+   g_user2.secName = bob;
+   g_user2.engineID = binary_engine_id;
+   g_user2.engineIDLen = sizeof(binary_engine_id);
+   g_user2.prev = &g_user1;
+   g_user2.next = &g_user3;
+
+   g_user3.secName = alice;
+   g_user3.engineID = nullptr;
+   g_user3.engineIDLen = 0;
+   g_user3.prev = &g_user2;
+   g_user3.next = &g_user4;
+
+   g_user4.secName = alice;
+   g_user4.engineID = second_engine_id;
+   g_user4.engineIDLen = sizeof(second_engine_id);
+   g_user4.prev = &g_user3;
+
+   g_user_list = &g_user1;
+   remove_v3_user_from_cache("alice", "ignored-context-engine-id");
+
+   EXPECT_EQ(g_removed_users, (std::vector<usmUser *>{&g_user1, &g_user3, &g_user4}));
+   EXPECT_EQ(g_freed_users, g_removed_users);
+   ASSERT_EQ(g_freed_engine_id_pointers.size(), 2u);
+   EXPECT_EQ(g_freed_engine_id_pointers[0], binary_engine_id);
+   EXPECT_EQ(g_freed_engine_id_pointers[1], second_engine_id);
+   EXPECT_EQ(g_freed_engine_id_lengths,
+             (std::vector<size_t>{sizeof(binary_engine_id), sizeof(second_engine_id)}));
+   EXPECT_EQ(
+       g_freed_engine_ids[0],
+       (std::vector<unsigned char>(binary_engine_id, binary_engine_id + sizeof(binary_engine_id))));
+   EXPECT_EQ(
+       g_freed_engine_ids[1],
+       (std::vector<unsigned char>(second_engine_id, second_engine_id + sizeof(second_engine_id))));
+   EXPECT_EQ(g_cache_events,
+             (std::vector<std::string>{"free_enginetime", "remove", "free_user", "remove",
+                                       "free_user", "free_enginetime", "remove", "free_user"}));
+
+   EXPECT_EQ(std::find(g_removed_users.begin(), g_removed_users.end(), &g_user2),
+             g_removed_users.end());
+   EXPECT_EQ(std::find(g_freed_users.begin(), g_freed_users.end(), &g_user2), g_freed_users.end());
+   EXPECT_EQ(g_user2.secName, bob);
 }
 
 TEST_F(HelpersBranchesShimTest, PrintObjidToStringCoversAllocFailAndOverflow) {

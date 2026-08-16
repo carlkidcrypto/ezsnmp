@@ -243,19 +243,22 @@ jobs:
               python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
 
       - name: Upload Test Results
+        if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
           path: |
             test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          if-no-files-found: warn
 
       - name: Upload Valgrind Reports
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           name: valgrind-report_${{matrix.os}}_${{matrix.python-version}}
           path: ./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out
+          if-no-files-found: warn
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
@@ -358,6 +361,7 @@ jobs:
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
     needs: build-and-test
+    if: always() && needs.build-and-test.result != 'skipped'
     strategy:
       fail-fast: false
       matrix:
@@ -374,9 +378,12 @@ jobs:
       - name: Parse Valgrind Reports
         run: |
           python - << "EOF"
-          with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
-              data = f.readlines()
-          last_five_lines = data[-5:]
+          try:
+              with open("./valgrind-report_${{matrix.os}}_${{matrix.python-version}}/valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out") as f:
+                  data = f.readlines()
+              last_five_lines = data[-5:]
+          except OSError as error:
+              last_five_lines = [f"valgrind report unavailable: {error}\n"]
           with open('./valgrind-stripped_${{ matrix.os }}_${{ matrix.python-version }}.log', 'w') as f:
               f.write('```sh\n')
               f.writelines(last_five_lines)
@@ -393,6 +400,7 @@ jobs:
   comment-valgrind:
     runs-on: ubuntu-latest
     needs: make-stripped-valgrind-files
+    if: always() && needs.make-stripped-valgrind-files.result != 'skipped'
 
     steps:
       - name: Download Artifacts
@@ -404,11 +412,15 @@ jobs:
       - name: Set Env Variables
         id: valgrind_stripped_vars
         run: |
-         temp1=$(cat valgrind-stripped_ubuntu-latest_3.10/valgrind-stripped_ubuntu-latest_3.10.log);
-         temp2=$(cat valgrind-stripped_ubuntu-latest_3.11/valgrind-stripped_ubuntu-latest_3.11.log);
-         temp3=$(cat valgrind-stripped_ubuntu-latest_3.12/valgrind-stripped_ubuntu-latest_3.12.log);
-         temp4=$(cat valgrind-stripped_ubuntu-latest_3.13/valgrind-stripped_ubuntu-latest_3.13.log);
-         temp5=$(cat valgrind-stripped_ubuntu-latest_3.14/valgrind-stripped_ubuntu-latest_3.14.log);
+         read_stripped_log() {
+           cat "valgrind-stripped_ubuntu-latest_$1/valgrind-stripped_ubuntu-latest_$1.log" 2>/dev/null \
+             || echo "valgrind report unavailable"
+         }
+         temp1=$(read_stripped_log 3.10);
+         temp2=$(read_stripped_log 3.11);
+         temp3=$(read_stripped_log 3.12);
+         temp4=$(read_stripped_log 3.13);
+         temp5=$(read_stripped_log 3.14);
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp1 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp2 >> $GITHUB_OUTPUT;
          echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp3 >> $GITHUB_OUTPUT;
