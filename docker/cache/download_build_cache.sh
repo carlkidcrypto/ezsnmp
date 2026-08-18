@@ -29,7 +29,6 @@ SQLITE_URL="https://www.sqlite.org/2024/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
 
 # Net-SNMP versions
 NETSNMP_VERSIONS=(
-    "5.6.2.1:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.6.2.1/net-snmp-5.6.2.1.tar.gz"
     "5.7.3:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.3/net-snmp-5.7.3.tar.gz"
     "5.8:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.8/net-snmp-5.8.tar.gz"
     "5.9.5.2:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.5.2/net-snmp-5.9.5.2.tar.gz"
@@ -94,7 +93,7 @@ download() {
 # Order:
 # 1) exact tag v<version>
 # 2) exact tag with common patch suffixes (v<version>.1, v<version>.2)
-# 3) nearest stable tag in same major.minor line (e.g. v5.6.2.1 for 5.6.x)
+# 3) nearest stable tag in same major.minor line (e.g. v5.7.3-1 for 5.7.x)
 resolve_netsnmp_github_tag() {
     local requested_version="$1"
     local major_minor
