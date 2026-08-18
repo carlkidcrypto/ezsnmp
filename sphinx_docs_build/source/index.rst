@@ -353,6 +353,7 @@ of the `GitHub repository <https://github.com/carlkidcrypto/ezsnmp>`_.
 
    development
    documentation_guide
+   requirements
 
 Indices and tables
 ==================
