@@ -20,9 +20,9 @@ safe-outputs:
     target: triggering
     allowed: [needs-info]
 timeout-minutes: 20
+model: claude-sonnet-4.6
 engine:
   id: copilot
-  model: claude-sonnet-4.6
 network:
   allowed: [defaults, github]
 tools:
@@ -93,3 +93,15 @@ Then do exactly one of these paths:
 - Do not close issues.
 - Keep comments factual and brief.
 - Avoid duplicate comments: rely on `hide-older-comments: true` and post only one fresh status comment per run.
+
+## Scripts And Tools
+
+As you develope scripts and tools to better do you job place them in the following location.
+`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+
+The scripts shall:
+
+- Be written in python3
+- Be maintained and updated as needed to help you better accomplish your job
+- Modular and maintainable by both a human and Agent as needed
+- Be well documented via python3 doc strings and function strings.

@@ -148,3 +148,40 @@ TEST(ExceptionsBaseTest, MultilineErrorMessage) {
    PacketErrorBase error(multiline);
    EXPECT_STREQ(error.what(), multiline.c_str());
 }
+
+// Verify every exception type is catchable as std::exception
+TEST(ExceptionsBaseTest, AllTypesInheritFromStdException) {
+   EXPECT_THROW({ throw GenericErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw ConnectionErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw TimeoutErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw PacketErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw ParseErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw UnknownObjectIDErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw NoSuchNameErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw NoSuchObjectErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw NoSuchInstanceErrorBase("x"); }, std::exception);
+   EXPECT_THROW({ throw UndeterminedTypeErrorBase("x"); }, std::exception);
+}
+
+// Verify each specific type can be caught by its own type
+TEST(ExceptionsBaseTest, ParseErrorCaughtByOwnType) {
+   try {
+      throw ParseErrorBase("parse failure");
+      FAIL() << "Expected ParseErrorBase";
+   } catch (ParseErrorBase const& e) {
+      EXPECT_STREQ(e.what(), "parse failure");
+   } catch (...) {
+      FAIL() << "Caught wrong type";
+   }
+}
+
+TEST(ExceptionsBaseTest, PacketErrorCaughtByOwnType) {
+   try {
+      throw PacketErrorBase("bad packet");
+      FAIL() << "Expected PacketErrorBase";
+   } catch (PacketErrorBase const& e) {
+      EXPECT_STREQ(e.what(), "bad packet");
+   } catch (...) {
+      FAIL() << "Caught wrong type";
+   }
+}
