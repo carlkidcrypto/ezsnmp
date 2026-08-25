@@ -103,6 +103,18 @@ test_sessionbase_parameters = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_sessionbase_v3_guard_shim = executable(
+    'test_sessionbase_v3_guard_shim',
+    [
+        'test_sessionbase_v3_guard_shim.cpp',
+        join_paths(snmp_source_dir, '../sessionbase.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpget = executable(
     'test_snmpget',
     [
@@ -306,6 +318,32 @@ test_helpers_single_sess_perror_shim = executable(
     dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
 )
 
+test_helpers_snmp_perror_shim = executable(
+    'test_helpers_snmp_perror_shim',
+    [
+        'test_helpers_snmp_perror_shim.cpp',
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
+test_helpers_connection_error_variants_shim = executable(
+    'test_helpers_connection_error_variants_shim',
+    [
+        'test_helpers_connection_error_variants_shim.cpp',
+        join_paths(snmp_source_dir, '../helpers.cpp'),
+        join_paths(snmp_source_dir, '../exceptionsbase.cpp'),
+        join_paths(snmp_source_dir, '../datatypes.cpp'),
+        join_paths(snmp_source_dir, '../thread_safety.cpp'),
+    ],
+    include_directories: include_dirs,
+    dependencies: [gtest_dep, thread_dep, netsnmp_dep, openssl_dep]
+)
+
 test_snmpget_null_shim = executable(
     'test_snmpget_null_shim',
     [
@@ -420,7 +458,7 @@ new_shim_tests_map = {
     'snmpget': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpgetnext': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpset': ['', '_timeout', '_parse_args', '_stat_error', '_addvar'],
-    'snmptrap': ['_parse_args'],
+    'snmptrap': ['_parse_args', '_null', '_stat_error'],
 }
 
 new_shim_executables = {}
@@ -463,6 +501,7 @@ test('helpers_test', test_helpers, env: test_env)
 test('thread_safety_test', test_thread_safety, env: test_env)
 test('sessionbase_test', test_sessionbase, env: test_env)
 test('sessionbase_parameters_test', test_sessionbase_parameters, env: test_env)
+test('sessionbase_v3_guard_shim_test', test_sessionbase_v3_guard_shim, env: test_env)
 test('snmpget_test', test_snmpget, env: test_env)
 test('snmpget_shim_test', test_snmpget_shim, env: test_env)
 test('snmpget_null_shim_test', test_snmpget_null_shim, env: test_env)
@@ -485,6 +524,8 @@ test('exceptionsbase_test', test_exceptionsbase, env: test_env)
 test('helpers_session_perror_shim_test', test_helpers_session_perror_shim, env: test_env)
 test('helpers_branches_shim_test', test_helpers_branches_shim, env: test_env)
 test('helpers_single_sess_perror_shim_test', test_helpers_single_sess_perror_shim, env: test_env)
+test('helpers_snmp_perror_shim_test', test_helpers_snmp_perror_shim, env: test_env)
+test('helpers_connection_error_variants_shim_test', test_helpers_connection_error_variants_shim, env: test_env)
 
 # New shim tests for coverage improvement
 foreach test_name, exe : new_shim_executables

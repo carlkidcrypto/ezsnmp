@@ -1274,3 +1274,39 @@ TEST_F(SessionBaseTest, TestDefaultConstructedGettersDoNotCrash) {
    EXPECT_NE(std::find(args.begin(), args.end(), "-v"), args.end());
    EXPECT_EQ(args.back(), "localhost");
 }
+
+// Test that _close() can be called safely without crashing.
+// _close() delegates to netsnmp_thread_cleanup; when there is no matching
+// netsnmp_thread_init the count goes negative but no crash occurs.
+TEST_F(SessionBaseTest, TestCloseMethod) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "1", "1");
+   EXPECT_NO_THROW(session._close());
+}
+
+// Calling get_next("") must exercise the empty-mib false branch and eventually
+// forward to the SNMP layer. On timeout, the test is skipped.
+TEST_F(SessionBaseTest, TestGetNextEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "1", "1");
+   try {
+      (void)session.get_next("");
+   } catch (TimeoutErrorBase const&) {
+      GTEST_SKIP() << "SNMP agent not reachable";
+   } catch (std::exception const&) {
+      // Any other error still means the empty-mib branch was exercised
+   }
+}
+
+// Calling bulk_get("") must exercise the empty-mib false branch.
+TEST_F(SessionBaseTest, TestBulkGetEmptyMib) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "1", "1");
+   try {
+      (void)session.bulk_get("");
+   } catch (TimeoutErrorBase const&) {
+      GTEST_SKIP() << "SNMP agent not reachable";
+   } catch (std::exception const&) {
+      // Any other error still means the empty-mib branch was exercised
+   }
+}

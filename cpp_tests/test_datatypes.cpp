@@ -703,3 +703,27 @@ TEST_F(ResultConvertedValueTest, HandlesLargeByteVector) {
    EXPECT_TRUE(result.find("bytes[50]") != std::string::npos);
    EXPECT_TRUE(result.find("...") != std::string::npos); // truncation indicator
 }
+
+// Test that "INTEGER32" is treated as an alias for "INTEGER"
+TEST_F(ResultConvertedValueTest, HandlesInteger32TypeAlias) {
+   auto converted = result_obj._make_converted_value("INTEGER32", "42");
+   ASSERT_TRUE(std::holds_alternative<int>(converted));
+   EXPECT_EQ(std::get<int>(converted), 42);
+}
+
+// Test whitespace-only Hex-STRING value returns an empty byte vector
+TEST_F(ResultConvertedValueTest, HandlesWhitespaceOnlyHexString) {
+   auto converted = result_obj._make_converted_value("Hex-STRING", "   ");
+   ASSERT_TRUE(std::holds_alternative<std::vector<unsigned char>>(converted));
+   EXPECT_TRUE(std::get<std::vector<unsigned char>>(converted).empty());
+}
+
+// Test that a double stored directly in converted_value is serialized correctly
+TEST_F(ResultConvertedValueTest, HandlesDoubleConvertedValueToString) {
+   Result r;
+   r.converted_value = 3.14159;
+   std::string s = r._converted_value_to_string();
+   EXPECT_FALSE(s.empty());
+   // std::to_string of a double contains a decimal point
+   EXPECT_NE(s.find('.'), std::string::npos);
+}

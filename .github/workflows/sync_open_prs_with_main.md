@@ -13,13 +13,13 @@ safe-outputs:
     labels: [auto-sync]
   push-to-pull-request-branch:
     target: "*"
-    labels: [auto-sync]
+    required-labels: [auto-sync]
     protected-files: fallback-to-issue
     if-no-changes: "ignore"
 timeout-minutes: 45
+model: claude-sonnet-4.6
 engine:
   id: copilot
-  model: claude-sonnet-4.6
 checkout:
   fetch-depth: 0
   fetch: ["*"]
@@ -51,3 +51,15 @@ Keep open pull requests current by merging the latest main branch into PR branch
 - If a merge would change protected files, do not force the push; rely on protected-file fallback handling.
 - Keep commit messages clear, e.g.:
   - chore: merge main into PR branch
+
+## Scripts And Tools
+
+As you develope scripts and tools to better do you job place them in the following location.
+`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+
+The scripts shall:
+
+- Be written in python3
+- Be maintained and updated as needed to help you better accomplish your job
+- Modular and maintainable by both a human and Agent as needed
+- Be well documented via python3 doc strings and function strings.

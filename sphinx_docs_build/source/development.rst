@@ -95,7 +95,7 @@ them with the following on Linux:
     cd ezsnmp;
     sudo apt update && sudo apt upgrade -y;
     sudo apt install -y snmp snmpd libsnmp-dev libperl-dev snmp-mibs-downloader valgrind;
-    sudo apt install -y python3-pip python3-dev  python3-setuptools gdb -y;
+    sudo apt install -y python3-pip python3-dev python3-setuptools gdb;
     sudo systemctl stop snmpd;
     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.orig;
     sudo cp configs/snmpd.conf /etc/snmp/snmpd.conf;
@@ -106,7 +106,9 @@ them with the following on Linux:
     rm -drf build/ ezsnmp.egg-info/ .pytest_cache/ python_tests/__pycache__/ ezsnmp/__pycache__/ dist/;
     python3 -m pip install -r python_tests/requirements.txt;
     python3 -m pip install .;
-    pytest -v -s -n auto --dist loadfile python_tests/
+    mv ezsnmp _ezsnmp;
+    pytest -v -s -n auto --dist loadfile python_tests/;
+    mv _ezsnmp ezsnmp;
     # Bottom one for debug. Replace the top one with it if needed.
     # python3 -m pip install . && gdb -ex run -ex bt -ex quit --args python3 -m pytest .;
     # Bottom one for valgrind. Replace the top one with it if needed.
@@ -288,7 +290,7 @@ For C++ code using clang-format 20+:
 
     find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
 
-For python3 code:
+For Python code:
 
 .. code:: bash
 
