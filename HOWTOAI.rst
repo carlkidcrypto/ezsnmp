@@ -189,7 +189,7 @@ Ask: "I'm looking at the ezsnmp repository. Can you explain the purpose of each 
 
 Key insights:
 
-- **ezsnmp/**: Python API layer (session.py, datatypes.py, exceptions.py)
+- **ezsnmp/**: Python API layer (session.py, netsnmp.py, exceptions.py)
 - **ezsnmp/src/**: C++ implementation (SessionBase, NetSnmpBase, etc.)
 - **ezsnmp/interface/**: SWIG interface files (.i) that bridge Python and C++
 - **python_tests/**: Python test suite using pytest
@@ -247,8 +247,8 @@ Example 1: Adding a New SNMP Data Type
 .. code-block:: bash
 
     # Ask AI: "Show me how ezsnmp handles SNMP data types"
-    # Look at the Python layer
-    cat ezsnmp/datatypes.py
+    # Look at the SWIG interface file for the Python-accessible datatypes
+    cat ezsnmp/interface/datatypes.i
 
     # Look at the C++ layer
     cat ezsnmp/src/datatypes.cpp
@@ -258,8 +258,8 @@ Example 1: Adding a New SNMP Data Type
 .. code-block:: text
 
     Prompt: "I want to add support for SNMP Opaque data type in ezsnmp. 
-    Based on the pattern for Counter64 in datatypes.py and datatypes.cpp, 
-    draft the implementation for both Python and C++ layers."
+    Based on the pattern for Counter64 in datatypes.i and datatypes.cpp, 
+    draft the implementation for both SWIG interface and C++ layers."
 
 **Step 3 - Validate with AI:**
 
@@ -354,7 +354,7 @@ Example 3: Adding a New Session Method
 
     Prompt: "I want to add a 'get_bulk_repeaters' method to ezsnmp Session class 
     that allows specifying different max-repetitions for different OIDs. 
-    Based on the existing get() and bulkwalk() patterns, draft:
+    Based on the existing get() and bulk_walk() patterns, draft:
     1. The Python Session method in session.py
     2. The C++ SessionBase method in src/sessionbase.cpp
     3. The SWIG interface declaration in interface/sessionbase.i"
