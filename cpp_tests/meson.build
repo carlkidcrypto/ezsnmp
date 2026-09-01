@@ -458,7 +458,7 @@ new_shim_tests_map = {
     'snmpget': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpgetnext': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpset': ['', '_timeout', '_parse_args', '_stat_error', '_addvar'],
-    'snmptrap': ['_parse_args', '_null', '_stat_error'],
+    'snmptrap': ['_parse_args', '_null', '_stat_error', '_v1_branch'],
 }
 
 new_shim_executables = {}

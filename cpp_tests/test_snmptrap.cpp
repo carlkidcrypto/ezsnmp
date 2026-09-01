@@ -78,3 +78,64 @@ TEST_F(SnmpTrapTest, TestV2cTrapWithAdditionalVarbind) {
    int result = snmptrap(args, "testing_snmptrap_with_varbind");
    EXPECT_EQ(result, 0);
 }
+
+// SNMPv1 trap: fire-and-forget UDP, so snmp_send succeeds without a receiver.
+// Exercises the #ifndef NETSNMP_DISABLE_SNMPV1 block in snmptrap.cpp.
+TEST_F(SnmpTrapTest, TestBasicV1TrapDefaultEnterprise) {
+   // SNMPv1 arg layout: host enterprise agent generic-trap specific-trap uptime
+   // "" enterprise -> argv[arg][0]==0 branch (uses default enterprise OID)
+   // "" uptime -> description==NULL||*description==0 branch (calls get_uptime())
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "localhost:11162",
+       "",           // enterprise: "" -> default OID branch
+       "127.0.0.1",  // agent
+       "6",          // generic-trap
+       "0",          // specific-trap
+       "",           // uptime: "" -> get_uptime() branch
+   };
+   int result = snmptrap(args, "testing_snmptrap_v1_default_enterprise");
+   EXPECT_EQ(result, 0);
+}
+
+TEST_F(SnmpTrapTest, TestBasicV1TrapExplicitUptime) {
+   // non-empty uptime -> pdu->time = atol(description) branch
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "localhost:11162",
+       "",           // enterprise: default
+       "127.0.0.1",  // agent
+       "6",          // generic-trap
+       "0",          // specific-trap
+       "9000",       // explicit uptime -> atol branch
+   };
+   int result = snmptrap(args, "testing_snmptrap_v1_explicit_uptime");
+   EXPECT_EQ(result, 0);
+}
+
+TEST_F(SnmpTrapTest, TestV1TrapWithNamedEnterpriseOid) {
+   // non-empty enterprise -> snmp_parse_oid branch (argv[arg][0] != 0)
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "localhost:11162",
+       ".1.3.6.1.4.1",  // enterprise: named OID -> OID-parse branch
+       "127.0.0.1",     // agent
+       "6",             // generic-trap
+       "0",             // specific-trap
+       "",              // uptime
+   };
+   int result = snmptrap(args, "testing_snmptrap_v1_named_enterprise");
+   EXPECT_EQ(result, 0);
+}
+
+TEST_F(SnmpTrapTest, TestV1InformRejected) {
+   // -Ci sets inform=1; combined with -v 1 triggers early exit
+   // "Cannot send INFORM as SNMPv1 PDU" -> exitval=1 (no exception)
+   std::vector<std::string> args = {
+       "-v",  "1",
+       "-c",  "public",
+       "-Ci",            // inform flag
+       "localhost:11162",
+       "",    "127.0.0.1", "6", "0", "",
+   };
+   int result = snmptrap(args, "testing_snmptrap_v1_inform_rejected");
+   // Returns non-zero (exitval=1) without throwing.
+   EXPECT_NE(result, 0);
+}
