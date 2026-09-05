@@ -78,3 +78,4 @@ integration_tests/previous_results**/
 integration_tests/test_results**/
 .claude/settings.local.json
 docker/TEST_SUMMARY*.md
+/.github/aw/logs
