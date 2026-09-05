@@ -44,7 +44,16 @@ jobs:
           LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days || '0' }}
           MAX_PRS: ${{ github.event.inputs.max_prs || '1000' }}
         run: |
+          set -o pipefail
           python .github/scripts/analyze_valgrind_pr_history.py | tee valgrind-pr-history-console.log
+          exit_code=${PIPESTATUS[0]}
+          # Exit code 1 means leak records were found (valid report result, not a workflow failure).
+          # Exit code 2 means a configuration or credential error — treat as a real failure.
+          if [[ $exit_code -eq 1 ]]; then
+            echo "::notice::Valgrind history analysis completed: leak signatures were found (see report)."
+            exit 0
+          fi
+          exit $exit_code
 
       - name: Publish workflow summary
         run: cat valgrind-pr-history-report.md >> "$GITHUB_STEP_SUMMARY"
