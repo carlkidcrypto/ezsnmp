@@ -22,7 +22,7 @@ safe-outputs:
     allowed: [coverage, tests, python]
     max: 4
 timeout-minutes: 45
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:
