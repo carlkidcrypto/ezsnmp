@@ -17,7 +17,7 @@ safe-outputs:
     protected-files: fallback-to-issue
     if-no-changes: "ignore"
 timeout-minutes: 45
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 checkout:
