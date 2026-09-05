@@ -6,6 +6,7 @@ concurrency: build_and_publish_to_test_pypi
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   verify-syntax:
@@ -35,7 +36,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    if: needs.check-source-changes.outputs.run_job == 'true'
+    if: needs.check-source-changes.outputs.run_job == 'true' || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
