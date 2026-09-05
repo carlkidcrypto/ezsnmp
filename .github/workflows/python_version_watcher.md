@@ -24,7 +24,10 @@ safe-outputs:
 
 timeout-minutes: 45
 
-network: defaults
+network:
+  allowed:
+    - defaults
+    - devguide.python.org
 
 tools:
   edit:
