@@ -108,6 +108,22 @@ runs:
           Write-Warning "include/net-snmp/library/scapi.h not found at '$scapiHeaderPath'; skipping OpenSSL 3.5+ patch."
         }
 
+        # Apply an export-visibility patch to include/net-snmp/library/lcd_time.h.
+        # free_enginetime() lacks the NETSNMP_IMPORT decoration that public API
+        # functions have, so it is never added to netsnmp.dll's export table on
+        # Windows (POSIX shared libraries export it implicitly, masking this).
+        # ezsnmp calls it directly from remove_v3_user_from_cache(), so it must
+        # be exported for the link to succeed.
+        $lcdTimeHeaderPath = Join-Path $netSnmpSource.FullName 'include' 'net-snmp' 'library' 'lcd_time.h'
+        if (Test-Path $lcdTimeHeaderPath) {
+          $src = Get-Content $lcdTimeHeaderPath -Raw
+          $src = $src -replace '(?m)^(\s*)void(\s+)free_enginetime\(', "`$1NETSNMP_IMPORT`n`$1void`$2free_enginetime("
+          Set-Content $lcdTimeHeaderPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied export-visibility patch to include/net-snmp/library/lcd_time.h'
+        } else {
+          Write-Warning "include/net-snmp/library/lcd_time.h not found at '$lcdTimeHeaderPath'; skipping export-visibility patch."
+        }
+
         $configureArgs = @(
           '--config=release',
           '--linktype=dynamic',
