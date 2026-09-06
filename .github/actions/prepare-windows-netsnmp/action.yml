@@ -93,6 +93,21 @@ runs:
           Write-Warning "snmplib/snmp_openssl.c not found at '$snmpOpensslPath'; skipping OpenSSL 3.x patch."
         }
 
+        # Apply an OpenSSL 3.5+ compatibility patch to include/net-snmp/library/scapi.h.
+        # <openssl/ossl_typ.h> was a deprecated forwarding header kept around since
+        # OpenSSL 3.0 for API compatibility; it was removed entirely in OpenSSL 3.5.
+        # <openssl/types.h> provides the same typedefs (EVP_MD, EVP_CIPHER, etc.) and
+        # is available since OpenSSL 1.1.0, so it works across the full 1.1.x-3.x range.
+        $scapiHeaderPath = Join-Path $netSnmpSource.FullName 'include' 'net-snmp' 'library' 'scapi.h'
+        if (Test-Path $scapiHeaderPath) {
+          $src = Get-Content $scapiHeaderPath -Raw
+          $src = $src -replace 'include <openssl/ossl_typ\.h>', 'include <openssl/types.h>'
+          Set-Content $scapiHeaderPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied OpenSSL 3.5+ compatibility patch to include/net-snmp/library/scapi.h'
+        } else {
+          Write-Warning "include/net-snmp/library/scapi.h not found at '$scapiHeaderPath'; skipping OpenSSL 3.5+ patch."
+        }
+
         $configureArgs = @(
           '--config=release',
           '--linktype=dynamic',
