@@ -137,7 +137,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    std::vector<std::string> return_vector;
    netsnmp_session session;
-   std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss;
+   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu;
    netsnmp_pdu *response;
    netsnmp_variable_list *vars;
@@ -224,7 +224,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * do the request
     */
-   status = snmp_sess_synch_response(ss.get(), pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -271,7 +271,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    }
 
    {
-      std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss_guard(ss.release());
+      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
 
    clear_net_snmp_library_data();
