@@ -130,6 +130,8 @@ Build and Distribution
 
 [BUILD-09] The per-version Net-SNMP CLI source patches under ``ezsnmp/patches/`` shall be regenerated from ``ezsnmp/patches/master_src`` (the canonical template) whenever that template changes, using ``make_patches.sh`` to produce the diffs and ``apply_patches.sh`` to regenerate the checked-in ``ezsnmp/src/net-snmp-*-final-patched`` sources that are actually compiled.
 
+[BUILD-10] The Windows Net-SNMP source build shall additionally patch ``include/net-snmp/library/lcd_time.h`` to add the ``NETSNMP_IMPORT`` decoration to the ``free_enginetime`` declaration, since that function otherwise lacks the export decoration and is silently omitted from ``netsnmp.dll``'s export table (unlike POSIX shared libraries, which export it implicitly). ezsnmp's C++ wrapper code calls this function directly when removing a cached SNMPv3 USM user.
+
 Binary Wheels
 ~~~~~~~~~~~~~
 
@@ -137,7 +139,7 @@ Binary Wheels
 
 [WHEELS-02] Windows wheels shall bundle all required Net-SNMP and OpenSSL DLLs so that no separate Net-SNMP installation is required.
 
-[WHEELS-03] The Windows wheel build shall pass both the Net-SNMP include directory and the OpenSSL include directory to the Python extension compiler, since ezsnmp's own C++ sources transitively include Net-SNMP headers that reference OpenSSL types.
+[WHEELS-03] The Windows wheel build shall pass the Net-SNMP include directory, the OpenSSL include directory, and the OpenSSL library directory to the Python extension compiler and linker, since ezsnmp's own C++ sources transitively include Net-SNMP headers that reference OpenSSL types, and the generated ``net-snmp-config.h`` embeds ``#pragma comment(lib, ...)`` directives requiring ``libcrypto.lib``/``libssl.lib`` to be resolvable on the linker's library path.
 
 Testing
 ~~~~~~~
@@ -180,3 +182,5 @@ CI/CD and Maintenance
 [CICD-05] The system shall monitor supported Python versions and raise alerts or auto-update when a new supported version is added or an old one reaches end-of-life.
 
 [CICD-06] The TestPyPI publishing workflow shall support manual triggering (``workflow_dispatch``) in addition to push-triggered builds, and shall bypass the changed-files gate when manually dispatched.
+
+[CICD-07] CI steps that run platform-specific commands through a third-party wrapper action (for example one that dispatches to a shell based on the runner OS) shall explicitly propagate the wrapped command's exit code (for example ``if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }`` on Windows/PowerShell) rather than relying on the wrapper to do so, since a PowerShell script invoked via ``pwsh -command "& '{0}'"`` does not automatically surface a failed native command's ``$LASTEXITCODE`` as the process exit code, which would otherwise let a failing build report a false-positive success.
