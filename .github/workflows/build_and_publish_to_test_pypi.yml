@@ -27,6 +27,7 @@ jobs:
         with:
           files: |
             .github/workflows/build_and_publish_to_test_pypi.yml
+            .github/actions/prepare-windows-netsnmp/action.yml
             pyproject.toml
             setup.cfg
             setup.py
