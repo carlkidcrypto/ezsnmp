@@ -108,6 +108,21 @@ runs:
           Write-Warning "include/net-snmp/library/scapi.h not found at '$scapiHeaderPath'; skipping OpenSSL 3.5+ patch."
         }
 
+        # Apply a C++ compatibility patch to win32/net-snmp/net-snmp-config.h.
+        # It unconditionally does `#define inline __inline`, which is legal for the
+        # C-only net-snmp library build but illegal once MSVC's C++ standard library
+        # headers are included (xkeycheck.h forbids macroizing the "inline" keyword).
+        # Guard it so the macro is only defined for C translation units.
+        $netSnmpConfigHeaderPath = Join-Path $netSnmpSource.FullName 'win32' 'net-snmp' 'net-snmp-config.h'
+        if (Test-Path $netSnmpConfigHeaderPath) {
+          $src = Get-Content $netSnmpConfigHeaderPath -Raw
+          $src = $src -replace '(?m)^#define inline __inline$', "#ifndef __cplusplus`n#define inline __inline`n#endif"
+          Set-Content $netSnmpConfigHeaderPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied C++ compatibility patch to win32/net-snmp/net-snmp-config.h'
+        } else {
+          Write-Warning "win32/net-snmp/net-snmp-config.h not found at '$netSnmpConfigHeaderPath'; skipping C++ compatibility patch."
+        }
+
         $configureArgs = @(
           '--config=release',
           '--linktype=dynamic',
