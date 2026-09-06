@@ -205,3 +205,4 @@ runs:
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_BIN_DIR=$wheelBin"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_BIN_DIR=$opensslBin"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_INCLUDE_DIR=$opensslInclude"
+        Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_LIB_DIR=$opensslLib"
