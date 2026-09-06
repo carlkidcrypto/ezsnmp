@@ -117,7 +117,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    std::vector<std::string> return_vector;
 
    netsnmp_session session;
-   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
+   std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response = NULL;
    netsnmp_variable_list *vars;
    int arg;
@@ -135,7 +135,6 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    quiet = 0;
 
    auto cleanup_and_return_empty = [&]() {
-      netsnmp_cleanup_session(&session);
       clear_net_snmp_library_data();
       SOCK_CLEANUP;
       return parse_results(return_vector);
@@ -296,9 +295,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    }
 
    {
-      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
+      std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

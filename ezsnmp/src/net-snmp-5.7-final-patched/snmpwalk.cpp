@@ -94,7 +94,7 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss, oid *theoid, size
    pdu = snmp_pdu_create(SNMP_MSG_GET);
    snmp_add_null_var(pdu, theoid, theoid_len);
 
-   status = snmp_sess_synch_response(ss, pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -171,7 +171,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    std::vector<std::string> return_vector;
 
    netsnmp_session session;
-   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
+   std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -447,7 +447,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    }
 
    {
-      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
+      std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
 
    clear_net_snmp_library_data();

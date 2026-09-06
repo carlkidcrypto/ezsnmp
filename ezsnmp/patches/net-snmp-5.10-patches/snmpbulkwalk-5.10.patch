@@ -15,7 +15,7 @@
  #ifdef HAVE_NETDB_H
  #include <netdb.h>
  #endif
-@@ -65,36 +66,39 @@
+@@ -65,36 +66,37 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -64,19 +64,19 @@
 -static void
 -snmp_get_and_print(netsnmp_session * ss, oid * theoid, size_t theoid_len)
 -{
-+std::vector<std::string> snmpbulkwalk_snmp_get_and_print(netsnmp_session *ss,
-+                                                         oid *theoid,
-+                                                         size_t theoid_len) {
++std::vector<std::string> snmpbulkwalk_snmp_get_and_print(void *ss, oid *theoid, size_t theoid_len) {
 +   std::vector<std::string> str_values;
 +
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             status;
-@@ -103,21 +107,24 @@
+@@ -102,22 +104,25 @@
+     pdu = snmp_pdu_create(SNMP_MSG_GET);
      snmp_add_null_var(pdu, theoid, theoid_len);
  
-     status = snmp_synch_response(ss, pdu, &response);
+-    status = snmp_synch_response(ss, pdu, &response);
 -    if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
++   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss), pdu, &response);
 +   if (status == STAT_SUCCESS) {
 +      snmp_check_null_response(response);
 +      if (response->errstat == SNMP_ERR_NOERROR) {
@@ -104,7 +104,7 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -137,22 +144,19 @@
+@@ -137,22 +142,19 @@
              case 'n':
              case 'r':
                  if (*(optarg - 1) == 'r') {
@@ -131,7 +131,7 @@
                  }
                  break;
  
-@@ -162,19 +166,26 @@
+@@ -162,19 +164,26 @@
                  break;
  
              default:
@@ -161,11 +161,11 @@
 +
 +   std::vector<std::string> return_vector;
 +   netsnmp_session session;
-+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
++   std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -186,36 +197,57 @@
+@@ -186,36 +195,57 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -239,7 +239,7 @@
      /*
       * get the initial object and subtree 
       */
-@@ -224,28 +256,29 @@
+@@ -224,28 +254,29 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -266,7 +266,7 @@
       */
 -    ss = snmp_open(&session);
 -    if (ss == NULL) {
-+   ss.reset(snmp_open(&session));
++   ss.reset(snmp_sess_open(&session));
 +   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
@@ -277,7 +277,7 @@
      }
  
      /*
-@@ -256,72 +289,66 @@
+@@ -256,72 +287,66 @@
  
      running = 1;
  
@@ -312,7 +312,7 @@
           * do the request 
           */
 -        status = snmp_synch_response(ss, pdu, &response);
-+      status = snmp_synch_response(ss.get(), pdu, &response);
++      status = snmp_sess_synch_response(ss.get(), pdu, &response);
          if (status == STAT_SUCCESS) {
 +         snmp_check_null_response(response);
              if (response->errstat == SNMP_ERR_NOERROR) {
@@ -378,7 +378,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -337,55 +364,59 @@
+@@ -337,55 +362,59 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {
@@ -423,7 +423,7 @@
 -            snmp_sess_perror("snmpbulkwalk", ss);
 -            running = 0;
 -            exitval = 1;
-+         snmp_sess_perror_exception("snmpbulkwalk", ss.get());
++         snmp_single_sess_perror_exception("snmpbulkwalk", ss.get());
          }
 -        if (response)
 +      if (response) {
@@ -455,7 +455,7 @@
 +   }
 +
 +   {
-+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++      std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss_guard(ss.release());
      }
  
 -out:

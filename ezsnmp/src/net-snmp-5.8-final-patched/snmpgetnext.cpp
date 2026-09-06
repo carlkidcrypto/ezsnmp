@@ -1,3 +1,4 @@
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpgetnext.c - send snmp GETNEXT requests to a network entity.
  *
@@ -102,7 +103,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    std::vector<std::string> return_vector;
 
    netsnmp_session session;
-   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
+   std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
    int arg;
@@ -243,7 +244,7 @@ retry:
    }
 
    {
-      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
+      std::unique_ptr<struct session_list, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
