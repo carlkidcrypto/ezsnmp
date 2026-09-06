@@ -149,7 +149,10 @@ runs:
         $netSnmpConfigHeaderPath = Join-Path $netSnmpSource.FullName 'win32' 'net-snmp' 'net-snmp-config.h'
         if (Test-Path $netSnmpConfigHeaderPath) {
           $src = Get-Content $netSnmpConfigHeaderPath -Raw
-          $src = $src -replace '(?m)^#define inline __inline$', "#ifndef __cplusplus`n#define inline __inline`n#endif"
+          if ($src -notmatch '(?m)^#define inline __inline\r?$') {
+            Write-Warning "Did not find the expected 'inline' macro definition in '$netSnmpConfigHeaderPath'; the C++ compatibility patch was not applied."
+          }
+          $src = $src -replace '(?m)^#define inline __inline\r?$', "#ifndef __cplusplus`n#define inline __inline`n#endif"
           Set-Content $netSnmpConfigHeaderPath $src -NoNewline -Encoding UTF8
           Write-Host 'Applied C++ compatibility patch to win32/net-snmp/net-snmp-config.h'
         } else {
