@@ -116,12 +116,28 @@ Build and Distribution
 
 [BUILD-04] The system shall support Homebrew (macOS) and MacPorts (macOS) as Net-SNMP installation sources for source builds.
 
+[BUILD-05] Windows wheel builds shall build Net-SNMP from source via a dedicated composite GitHub Action (``perl Configure`` + ``nmake``) rather than relying on a pre-packaged Net-SNMP distribution, since none is available for MSVC.
+
+[BUILD-06] The Windows Net-SNMP source build shall apply the following compatibility patches before compilation:
+
+- Replace ``snmp_openssl.c`` direct ``ASN1_STRING`` member access with the ``ASN1_STRING_*`` accessor functions, since OpenSSL 3.0 made ``ASN1_STRING`` opaque.
+- Replace the ``<openssl/ossl_typ.h>`` include in ``scapi.h`` with ``<openssl/types.h>``, since OpenSSL 3.5 removed the deprecated forwarding header.
+- Guard the unconditional ``#define inline __inline`` in the generated ``net-snmp-config.h`` with ``#ifndef __cplusplus``, since MSVC's C++ standard library forbids macroizing the ``inline`` keyword. This patch shall be applied after ``perl Configure`` runs (Configure regenerates this file from a template) and shall tolerate CRLF line endings.
+
+[BUILD-07] The Net-SNMP single-session API (``snmp_sess_open``, ``snmp_sess_close``, ``snmp_sess_synch_response``, ``snmp_sess_error``) shall be treated by ezsnmp's C++ wrapper code as returning/accepting an opaque handle whose concrete pointer type differs across supported Net-SNMP versions (``void *`` in 5.7-5.9, ``struct session_list *`` in 5.10). Wrapper code shall store this handle as ``void *`` and apply an explicit ``static_cast<struct session_list *>`` at each call site that requires it, so the same source compiles unmodified against every supported version.
+
+[BUILD-08] C++ extension modules shall be declared using dotted Python package notation (for example ``ezsnmp._datatypes``), not path-separator notation, since the latter produces an invalid exported ``PyInit_`` symbol name under MSVC.
+
+[BUILD-09] The per-version Net-SNMP CLI source patches under ``ezsnmp/patches/`` shall be regenerated from ``ezsnmp/patches/master_src`` (the canonical template) whenever that template changes, using ``make_patches.sh`` to produce the diffs and ``apply_patches.sh`` to regenerate the checked-in ``ezsnmp/src/net-snmp-*-final-patched`` sources that are actually compiled.
+
 Binary Wheels
 ~~~~~~~~~~~~~
 
 [WHEELS-01] The system shall be installable on Linux (x86_64 and aarch64), macOS (arm64), and Windows (AMD64) via pre-built binary wheels distributed on PyPI.
 
 [WHEELS-02] Windows wheels shall bundle all required Net-SNMP and OpenSSL DLLs so that no separate Net-SNMP installation is required.
+
+[WHEELS-03] The Windows wheel build shall pass both the Net-SNMP include directory and the OpenSSL include directory to the Python extension compiler, since ezsnmp's own C++ sources transitively include Net-SNMP headers that reference OpenSSL types.
 
 Testing
 ~~~~~~~
@@ -162,3 +178,5 @@ CI/CD and Maintenance
 [CICD-04] The system shall automatically sync open pull requests with the main branch via a scheduled CI workflow.
 
 [CICD-05] The system shall monitor supported Python versions and raise alerts or auto-update when a new supported version is added or an old one reaches end-of-life.
+
+[CICD-06] The TestPyPI publishing workflow shall support manual triggering (``workflow_dispatch``) in addition to push-triggered builds, and shall bypass the changed-files gate when manually dispatched.
