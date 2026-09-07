@@ -20,7 +20,6 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
-
 # ---------------------------------------------------------------------------
 # Data types
 # ---------------------------------------------------------------------------
@@ -102,7 +101,9 @@ def analyze_source_branches(src_files: list[Path]) -> dict[str, list[BranchInfo]
     return {str(f): _find_branches(f) for f in src_files}
 
 
-def find_shim_gaps(cpp_tests_dir: Path, shim_map: dict[str, list[str]]) -> list[ShimGap]:
+def find_shim_gaps(
+    cpp_tests_dir: Path, shim_map: dict[str, list[str]]
+) -> list[ShimGap]:
     """Return shim combinations present in *shim_map* but missing on disk."""
     gaps: list[ShimGap] = []
     for op, suffixes in shim_map.items():
@@ -116,8 +117,7 @@ def find_shim_gaps(cpp_tests_dir: Path, shim_map: dict[str, list[str]]) -> list[
 def summarize_test_counts(cpp_tests_dir: Path) -> dict[str, int]:
     """Return a dict mapping test file stem to test-macro count."""
     return {
-        f.name: _count_tests_for(f)
-        for f in sorted(cpp_tests_dir.glob("test_*.cpp"))
+        f.name: _count_tests_for(f) for f in sorted(cpp_tests_dir.glob("test_*.cpp"))
     }
 
 
@@ -166,8 +166,13 @@ def print_report(
     # --- Notable source-level branches ---
     print(f"\n{sep}")
     print("## Notable branches in core source files (helpers.cpp, sessionbase.cpp)\n")
-    notable = {"helpers.cpp", "sessionbase.cpp", "datatypes.cpp", "exceptionsbase.cpp",
-               "thread_safety.cpp"}
+    notable = {
+        "helpers.cpp",
+        "sessionbase.cpp",
+        "datatypes.cpp",
+        "exceptionsbase.cpp",
+        "thread_safety.cpp",
+    }
     for src, branches in sorted(branch_map.items()):
         if Path(src).name not in notable:
             continue
@@ -206,22 +211,28 @@ def main(argv: list[str] | None = None) -> int:
     cpp_tests_dir = repo / "cpp_tests"
 
     # Core source files (exclude versioned net-snmp sub-directories)
-    core_src_files = [
-        f
-        for f in src_dir.glob("*.cpp")
-        if f.is_file()
-    ]
+    core_src_files = [f for f in src_dir.glob("*.cpp") if f.is_file()]
     core_header_files = list((repo / "ezsnmp" / "include").glob("*.h"))
 
     # Shim map mirrors what meson.build declares so gaps are visible early
     shim_map: dict[str, list[str]] = {
         "snmpwalk": [
-            "_timeout", "_nosuchname", "_get_and_print", "_with_data",
-            "_parse_args", "_stat_error", "_order",
+            "_timeout",
+            "_nosuchname",
+            "_get_and_print",
+            "_with_data",
+            "_parse_args",
+            "_stat_error",
+            "_order",
         ],
         "snmpbulkwalk": [
-            "_timeout", "_nosuchname", "_get_and_print", "_with_data",
-            "_parse_args", "_stat_error", "_order",
+            "_timeout",
+            "_nosuchname",
+            "_get_and_print",
+            "_with_data",
+            "_parse_args",
+            "_stat_error",
+            "_order",
         ],
         "snmpbulkget": ["_nosuchname", "_timeout", "_parse_args", "_stat_error"],
         "snmpget": ["_timeout", "_parse_args", "_stat_error", "_errindex"],
