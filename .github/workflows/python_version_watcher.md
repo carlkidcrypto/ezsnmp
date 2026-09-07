@@ -24,13 +24,16 @@ safe-outputs:
 
 timeout-minutes: 45
 
-network: defaults
+network:
+  allowed:
+    - defaults
+    - devguide.python.org
 
 tools:
   edit:
   bash: true
 
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 ---
