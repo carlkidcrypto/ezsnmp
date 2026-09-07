@@ -17,7 +17,7 @@ safe-outputs:
     draft: false
     preserve-branch-name: true
     if-no-changes: "ignore"
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:
