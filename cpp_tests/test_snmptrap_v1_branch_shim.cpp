@@ -101,14 +101,12 @@ class SnmpTrapV1BranchShimTest : public ::testing::Test {
  * ----------------------------------------------------------------------- */
 TEST_F(SnmpTrapV1BranchShimTest, V1TrapWithDefaultEnterpriseAndGetUptimeBranch) {
    std::vector<std::string> args = {
-       "-v",      "1",
-       "-c",      "public",
-       "localhost:11162",
-       "",           // enterprise: "" -> argv[arg][0]==0 -> use objid_enterprise
-       "127.0.0.1",  // agent address
-       "6",          // generic-trap
-       "0",          // specific-trap
-       "",           // uptime: "" -> description==NULL or *desc==0 -> get_uptime()
+       "-v",        "1", "-c", "public", "localhost:11162",
+       "",          // enterprise: "" -> argv[arg][0]==0 -> use objid_enterprise
+       "127.0.0.1", // agent address
+       "6",         // generic-trap
+       "0",         // specific-trap
+       "",          // uptime: "" -> description==NULL or *desc==0 -> get_uptime()
    };
 
    // With a successful snmp_send the function should return 0.
@@ -126,11 +124,17 @@ TEST_F(SnmpTrapV1BranchShimTest, V1TrapWithDefaultEnterpriseAndGetUptimeBranch) 
  * ----------------------------------------------------------------------- */
 TEST_F(SnmpTrapV1BranchShimTest, V1InformEarlyExitReturnsNonZero) {
    std::vector<std::string> args = {
-       "-v",  "1",
-       "-c",  "public",
-       "-Ci",             // sets inform=1
+       "-v",
+       "1",
+       "-c",
+       "public",
+       "-Ci", // sets inform=1
        "localhost:11162",
-       "",    "127.0.0.1", "6", "0", "",
+       "",
+       "127.0.0.1",
+       "6",
+       "0",
+       "",
    };
 
    // No exception: the function exits early via goto out and returns 1.
@@ -146,14 +150,12 @@ TEST_F(SnmpTrapV1BranchShimTest, V1InformEarlyExitReturnsNonZero) {
  * ----------------------------------------------------------------------- */
 TEST_F(SnmpTrapV1BranchShimTest, V1TrapWithExplicitUptimeBranch) {
    std::vector<std::string> args = {
-       "-v",      "1",
-       "-c",      "public",
-       "localhost:11162",
-       "",           // enterprise: default
-       "127.0.0.1",  // agent address
-       "6",          // generic-trap
-       "0",          // specific-trap
-       "12345",      // explicit uptime -> atol() branch
+       "-v",        "1", "-c", "public", "localhost:11162",
+       "",          // enterprise: default
+       "127.0.0.1", // agent address
+       "6",         // generic-trap
+       "0",         // specific-trap
+       "12345",     // explicit uptime -> atol() branch
    };
 
    int rc = snmptrap(args, "testing_snmptrap_v1_explicit_uptime");
@@ -170,14 +172,7 @@ TEST_F(SnmpTrapV1BranchShimTest, V1SendFailureThrowsException) {
    g_snmp_send_fail = true;
 
    std::vector<std::string> args = {
-       "-v",      "1",
-       "-c",      "public",
-       "localhost:11162",
-       "",
-       "127.0.0.1",
-       "6",
-       "0",
-       "",
+       "-v", "1", "-c", "public", "localhost:11162", "", "127.0.0.1", "6", "0", "",
    };
 
    EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v1_send_fail"); }, GenericErrorBase);
