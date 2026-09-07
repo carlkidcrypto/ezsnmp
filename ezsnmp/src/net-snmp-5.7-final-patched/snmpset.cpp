@@ -256,7 +256,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /*
     * do the request
     */
-   status = snmp_sess_synch_response(ss.get(), pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {

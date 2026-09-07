@@ -291,6 +291,12 @@ def gather_windows_build_configuration():
             "NETSNMP_LIBDIR",
         )
     )
+    openssl_include_dirs = split_env_list(
+        get_first_env("EZSNMP_OPENSSL_INCLUDE_DIR", "OPENSSL_INCLUDE_DIR")
+    )
+    openssl_library_dirs = split_env_list(
+        get_first_env("EZSNMP_OPENSSL_LIB_DIR", "OPENSSL_LIB_DIR")
+    )
 
     if not include_dirs or not library_dirs:
         raise RuntimeError(
@@ -311,8 +317,8 @@ def gather_windows_build_configuration():
         "compile_args": compile_args,
         "link_args": [],
         "libs": libraries,
-        "libdirs": library_dirs,
-        "incdirs": ["ezsnmp/include/"] + include_dirs,
+        "libdirs": library_dirs + openssl_library_dirs,
+        "incdirs": ["ezsnmp/include/"] + include_dirs + openssl_include_dirs,
         "system_netsnmp_version": resolve_windows_netsnmp_version(include_dirs),
         "homebrew_version": None,
         "homebrew_netsnmp_version": None,

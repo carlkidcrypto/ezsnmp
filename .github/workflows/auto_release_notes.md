@@ -2,6 +2,7 @@
 name: Auto Update Release Notes
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
+  job-discriminator: ${{ github.run_id }}
   cancel-in-progress: false
 on:
   release:
@@ -23,7 +24,7 @@ permissions:
 safe-outputs:
   update-release:
 timeout-minutes: 60
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:
