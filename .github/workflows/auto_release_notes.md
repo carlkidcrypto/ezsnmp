@@ -24,7 +24,7 @@ permissions:
 safe-outputs:
   update-release:
 timeout-minutes: 60
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:
