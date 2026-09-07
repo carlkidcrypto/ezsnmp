@@ -1,5 +1,74 @@
+Last Updated: 2026-09-07 04:20:54 UTC
+
 # Changelog
 
+
+<a name="v2.4.0"></a>
+## [v2.4.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0b0...v2.4.0) (2026-09-06)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: align report tooling docs and workflow exit-code handling ([#1253](https://github.com/carlkidcrypto/ezsnmp/issues/1253))
+
+
+#### Critical Bug Fixes
+
+- Hotfix/fixing windows builds again v2 ([#1258](https://github.com/carlkidcrypto/ezsnmp/issues/1258))
+
+- Hotfix/gh aw updates ([#1251](https://github.com/carlkidcrypto/ezsnmp/issues/1251))
+
+
+#### Dependency Updates
+
+- Bump 2.4.0 ([#1245](https://github.com/carlkidcrypto/ezsnmp/issues/1245))
+
+
+#### Documentation Updates
+
+- docs: fix method name typo and broken line-continuation in SWIG example ([#1260](https://github.com/carlkidcrypto/ezsnmp/issues/1260))
+
+- docs: Add feature-grouped Software Requirements document to Sphinx ([#1181](https://github.com/carlkidcrypto/ezsnmp/issues/1181))
+
+- docs: add versioned documentation for v2.4.0b0 ([#1216](https://github.com/carlkidcrypto/ezsnmp/issues/1216))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.4.0b0 ([#1215](https://github.com/carlkidcrypto/ezsnmp/issues/1215))
+
+
+#### Python-related Changes
+
+- Python Version Watcher ([#1254](https://github.com/carlkidcrypto/ezsnmp/issues/1254))
+
+
+#### Switch
+
+- Switch to sonnet 5 ([#1252](https://github.com/carlkidcrypto/ezsnmp/issues/1252))
+
+
+#### Updates & Improvements
+
+- Update action.yml ([#1257](https://github.com/carlkidcrypto/ezsnmp/issues/1257))
+
+
+#### Windows
+
+- Windows Build Fix ([#1256](https://github.com/carlkidcrypto/ezsnmp/issues/1256))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.4.0b0"></a>
 ## [v2.4.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0a9...v2.4.0b0) (2026-08-24)
