@@ -6,6 +6,7 @@ concurrency: build_and_publish_to_test_pypi
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   verify-syntax:
@@ -26,6 +27,7 @@ jobs:
         with:
           files: |
             .github/workflows/build_and_publish_to_test_pypi.yml
+            .github/actions/prepare-windows-netsnmp/action.yml
             pyproject.toml
             setup.cfg
             setup.py
@@ -35,7 +37,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    if: needs.check-source-changes.outputs.run_job == 'true'
+    if: needs.check-source-changes.outputs.run_job == 'true' || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -73,7 +75,9 @@ jobs:
             MACOSX_DEPLOYMENT_TARGET=$(python -c "import build_utils; print(build_utils.resolve_macos_deployment_target('$MACOS_VERSION'))")
             sed -i '' "s/\\(MACOSX_DEPLOYMENT_TARGET = \\\"\\)[^\\\"]*\\\"/\\1${MACOSX_DEPLOYMENT_TARGET}\\\"/" pyproject.toml
             python -m cibuildwheel --output-dir wheelhouse --platform macos;
-          windows: python -m cibuildwheel --output-dir wheelhouse --platform windows;
+          windows: |
+            python -m cibuildwheel --output-dir wheelhouse --platform windows
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:

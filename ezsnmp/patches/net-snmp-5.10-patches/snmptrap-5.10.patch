@@ -5,7 +5,7 @@
  /*
   * snmptrap.c - send snmp traps to a network entity.
   *
-@@ -66,39 +67,37 @@
+@@ -66,39 +67,44 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -55,8 +55,8 @@
 +   (void)reqid;
 +   (void)pdu;
 +   (void)magic;
-    return 1;
-}
+     return 1;
+ }
  
 -static void
 -optProc(int argc, char *const *argv, int opt)
@@ -67,7 +67,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -107,18 +106,22 @@
+@@ -107,18 +113,22 @@
                  inform = 1;
                  break;
              default:
@@ -96,7 +96,7 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -132,35 +135,46 @@
+@@ -132,35 +142,46 @@
      char           *specific = NULL, *description = NULL, *agent = NULL;
      in_addr_t      *pdu_in_addr_t;
  #endif
@@ -155,7 +155,7 @@
  
      session.callback = snmp_input;
      session.callback_magic = NULL;
-@@ -173,10 +187,8 @@
+@@ -173,10 +194,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -168,7 +168,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -200,10 +212,8 @@
+@@ -200,10 +219,8 @@
          /*
           * pick our own engineID 
           */
@@ -181,7 +181,7 @@
          }
  
          /*
-@@ -212,24 +222,24 @@
+@@ -212,24 +229,24 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -214,7 +214,7 @@
          goto out;
      }
  
-@@ -247,29 +257,30 @@
+@@ -247,29 +264,30 @@
          pdu_in_addr_t = (in_addr_t *) pdu->agent_addr;
          if (arg == argc) {
              fprintf(stderr, "No enterprise oid\n");
@@ -253,7 +253,7 @@
              goto out;
          }
          agent = argv[arg];
-@@ -284,28 +295,29 @@
+@@ -284,28 +302,29 @@
          }
          if (++arg == argc) {
              fprintf(stderr, "Missing generic-trap parameter\n");
@@ -288,7 +288,7 @@
      } else
  #endif
      {
-@@ -319,7 +331,7 @@
+@@ -319,7 +338,7 @@
          }
          if (arg == argc) {
              fprintf(stderr, "Missing up-time parameter\n");
@@ -297,7 +297,7 @@
              goto out;
          }
          trap = argv[arg];
-@@ -328,17 +340,14 @@
+@@ -328,17 +347,14 @@
              snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
              trap = csysuptime;
          }
@@ -319,7 +319,7 @@
              goto out;
          }
      }
-@@ -347,44 +356,46 @@
+@@ -347,44 +363,46 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {

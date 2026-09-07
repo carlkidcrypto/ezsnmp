@@ -1,7 +1,155 @@
-Last Updated: 2026-07-12 19:52:49 UTC
+Last Updated: 2026-09-07 04:20:54 UTC
 
 # Changelog
 
+
+<a name="v2.4.0"></a>
+## [v2.4.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0b0...v2.4.0) (2026-09-06)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: align report tooling docs and workflow exit-code handling ([#1253](https://github.com/carlkidcrypto/ezsnmp/issues/1253))
+
+
+#### Critical Bug Fixes
+
+- Hotfix/fixing windows builds again v2 ([#1258](https://github.com/carlkidcrypto/ezsnmp/issues/1258))
+
+- Hotfix/gh aw updates ([#1251](https://github.com/carlkidcrypto/ezsnmp/issues/1251))
+
+
+#### Dependency Updates
+
+- Bump 2.4.0 ([#1245](https://github.com/carlkidcrypto/ezsnmp/issues/1245))
+
+
+#### Documentation Updates
+
+- docs: fix method name typo and broken line-continuation in SWIG example ([#1260](https://github.com/carlkidcrypto/ezsnmp/issues/1260))
+
+- docs: Add feature-grouped Software Requirements document to Sphinx ([#1181](https://github.com/carlkidcrypto/ezsnmp/issues/1181))
+
+- docs: add versioned documentation for v2.4.0b0 ([#1216](https://github.com/carlkidcrypto/ezsnmp/issues/1216))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.4.0b0 ([#1215](https://github.com/carlkidcrypto/ezsnmp/issues/1215))
+
+
+#### Python-related Changes
+
+- Python Version Watcher ([#1254](https://github.com/carlkidcrypto/ezsnmp/issues/1254))
+
+
+#### Switch
+
+- Switch to sonnet 5 ([#1252](https://github.com/carlkidcrypto/ezsnmp/issues/1252))
+
+
+#### Updates & Improvements
+
+- Update action.yml ([#1257](https://github.com/carlkidcrypto/ezsnmp/issues/1257))
+
+
+#### Windows
+
+- Windows Build Fix ([#1256](https://github.com/carlkidcrypto/ezsnmp/issues/1256))
+
+
+
+
+
+
+
+
+
+
+---
+
+<a name="v2.4.0b0"></a>
+## [v2.4.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0a9...v2.4.0b0) (2026-08-24)
+
+
+### Changes
+
+#### Documentation Updates
+
+- docs: improve Session.bulk_get and Session.set docstrings ([#1168](https://github.com/carlkidcrypto/ezsnmp/issues/1168))
+
+- docs: fix duplicate -y flag, double space, and capitalisation in development.rst ([#1152](https://github.com/carlkidcrypto/ezsnmp/issues/1152))
+
+- docs: add -std=c++17 SWIG flag note, clarify get() tuple return, note use_enums semantic reversal ([#1132](https://github.com/carlkidcrypto/ezsnmp/issues/1132))
+
+- docs: clarify bulk_get/bulk_walk v2c/v3 requirement and fix GETBULK terminology ([#1127](https://github.com/carlkidcrypto/ezsnmp/issues/1127))
+
+- docs: fix typos, grammar, and formatting in RST and docstrings ([#1116](https://github.com/carlkidcrypto/ezsnmp/issues/1116))
+
+- docs: add versioned documentation for v2.4.0a9 ([#1111](https://github.com/carlkidcrypto/ezsnmp/issues/1111))
+
+
+#### Features
+
+- Add snmptrap null and stat_error shim tests for coverage ([#1164](https://github.com/carlkidcrypto/ezsnmp/issues/1164))
+
+
+#### Features
+
+- feat: update coverage autofix workflows to use Codecov polling and hu… ([#1123](https://github.com/carlkidcrypto/ezsnmp/issues/1123))
+
+
+#### GW
+
+- GW AW ([#1176](https://github.com/carlkidcrypto/ezsnmp/issues/1176))
+
+
+#### Maintenance
+
+- chore: update Homebrew formula for v2.4.0a9 ([#1110](https://github.com/carlkidcrypto/ezsnmp/issues/1110))
+
+
+#### Move
+
+- Move integration test results into analysis/ folder with data/ sub-folder for CSVs ([#1114](https://github.com/carlkidcrypto/ezsnmp/issues/1114))
+
+
+#### Release
+
+- Release Prep ([#1187](https://github.com/carlkidcrypto/ezsnmp/issues/1187))
+
+
+#### Serialize
+
+- Serialize SNMPv3 setters and strengthen EngineID regression coverage ([#1117](https://github.com/carlkidcrypto/ezsnmp/issues/1117))
+
+
+#### Styles
+
+- style: auto-format with clang-format ([#1177](https://github.com/carlkidcrypto/ezsnmp/issues/1177))
+
+
+#### Tests
+
+- test: add coverage tests for uncovered C++ branches ([#1174](https://github.com/carlkidcrypto/ezsnmp/issues/1174))
+
+
+#### Updates & Improvements
+
+- Update dependabot.yml ([#1213](https://github.com/carlkidcrypto/ezsnmp/issues/1213))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.4.0a9"></a>
 ## [v2.4.0a9](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0a8...v2.4.0a9) (2026-07-12)
@@ -13,6 +161,8 @@ Last Updated: 2026-07-12 19:52:49 UTC
 
 - fix: graceful fallback for coverage_autofix_cpp when build tools unavailable ([#1109](https://github.com/carlkidcrypto/ezsnmp/issues/1109))
 
+
+#### Bug Fixes
 
 - Fix Coverage Autofix Python: run in Docker to get net-snmp libraries ([#1108](https://github.com/carlkidcrypto/ezsnmp/issues/1108))
 
@@ -85,7 +235,7 @@ Last Updated: 2026-07-12 19:52:49 UTC
 
 #### Handle
 
-- Handle new macOS runner versions in wheel builds ([#1064](https://github.com/carlkidcrypto/ezsnmp/issues/1064))
+- Handle new macOS runner versions in wheel builds ([#1064](https://github.com/carlkidcrypto/ezsnmp/issues/1064)) inch
 
 
 #### Maintenance
@@ -124,6 +274,8 @@ Last Updated: 2026-07-12 19:52:49 UTC
 
 - Fix Windows wheel build toolchain setup and bump package version to 2.4.0a2 ([#1041](https://github.com/carlkidcrypto/ezsnmp/issues/1041))
 
+
+#### Bug Fixes
 
 - fix: correct Net-SNMP win32 header copy paths in Windows wheel action ([#1047](https://github.com/carlkidcrypto/ezsnmp/issues/1047))
 
