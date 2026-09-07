@@ -354,7 +354,7 @@ Example 3: Adding a New Session Method
 
     Prompt: "I want to add a 'get_bulk_repeaters' method to ezsnmp Session class 
     that allows specifying different max-repetitions for different OIDs. 
-    Based on the existing get() and bulkwalk() patterns, draft:
+    Based on the existing get() and bulk_walk() patterns, draft:
     1. The Python Session method in session.py
     2. The C++ SessionBase method in src/sessionbase.cpp
     3. The SWIG interface declaration in interface/sessionbase.i"
