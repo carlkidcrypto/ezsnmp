@@ -6,6 +6,8 @@ updates:
     - ".github/workflows/agentics-maintenance.yml"
     - ".github/workflows/*.lock.yml"
     - ".github/workflows/*.md"
+    - ".github/agents/*.md"
+    - ".github/aw/*.lock.json"
   open-pull-requests-limit: 10
   package-ecosystem: github-actions
   schedule:

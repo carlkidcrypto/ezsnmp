@@ -102,7 +102,7 @@ struct SnmpSessionCloser {
 struct SnmpSingleSessionCloser {
    void operator()(void *sessp) const {
       if (sessp) {
-         snmp_sess_close(sessp);
+         snmp_sess_close(static_cast<struct session_list *>(sessp));
       }
    }
 };
