@@ -22,7 +22,7 @@ safe-outputs:
     base-branch: main
     protected-files: allowed
 timeout-minutes: 30
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:
