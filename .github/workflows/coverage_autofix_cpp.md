@@ -26,7 +26,7 @@ model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers]
+  allowed: [defaults, containers, app.codecov.io, python]
 tools:
   edit:
   bash: true
