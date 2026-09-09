@@ -52,8 +52,8 @@ repair-wheel-command = [
 build-backend = "setuptools.build_meta"
 requires = [
    "setuptools == 84.0.0",
-    "wheel == 0.47.0",
-    "swig==4.4.1",
+    "wheel == 0.48.0",
+    "swig==4.5.0",
 ]
 
 [tool.pytest.ini_options]

@@ -13,6 +13,12 @@ updates:
   schedule:
     interval: daily
 - directory: /
+  # The root scan includes setup.cfg, pyproject.toml, setup.py, and nested
+  # requirements files such as python_tests/requirements.txt.
+  groups:
+    python-dependencies:
+      patterns:
+        - "*"
   open-pull-requests-limit: 10
   package-ecosystem: pip
   schedule:
