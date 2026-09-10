@@ -115,6 +115,8 @@ Want to Contribute?
 -------------------
 
 Check out the development guide at `EzSnmp Development <https://carlkidcrypto.github.io/ezsnmp/html/development.html>`_.
+If you plan to use AI coding assistants while contributing, please also read
+`HOWTOAI.rst <HOWTOAI.rst>`_ for guidelines on effective and responsible AI-assisted development.
 
 
 Acknowledgments
