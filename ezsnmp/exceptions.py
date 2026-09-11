@@ -12,6 +12,11 @@ class GenericError(Exception):
 class ConnectionError(GenericError):
     """Exception raised for SNMP connection errors.
 
+    .. note::
+        This class name shadows the built-in :class:`ConnectionError`. Import it
+        explicitly as ``ezsnmp.exceptions.ConnectionError`` (or ``ezsnmp.ConnectionError``)
+        to avoid ambiguity with Python's built-in exception of the same name.
+
     :param message: A descriptive error message.
     :type message: str
     """
@@ -81,6 +86,11 @@ class ParseError(GenericError):
 
 class TimeoutError(GenericError):
     """Exception raised when an SNMP operation times out.
+
+    .. note::
+        This class name shadows the built-in :class:`TimeoutError`. Import it
+        explicitly as ``ezsnmp.exceptions.TimeoutError`` (or ``ezsnmp.TimeoutError``)
+        to avoid ambiguity with Python's built-in exception of the same name.
 
     :param message: A descriptive message about the timeout error.
     :type message: str
