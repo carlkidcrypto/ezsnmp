@@ -4,9 +4,9 @@ FROM centos:8
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
 ARG PYTHON_MAX_VERSION=3.14.7
 ARG PYTHON_MIN_2_VERSION=3.13.15
-ARG PYTHON_MIN_1_VERSION=3.12.13
-ARG PYTHON_MIN_0_VERSION=3.11.15
-ARG PYTHON_MIN_VERSION=3.10.20
+ARG PYTHON_MIN_1_VERSION=3.12.14
+ARG PYTHON_MIN_0_VERSION=3.11.16
+ARG PYTHON_MIN_VERSION=3.10.21
 
 # Fix for CentOS 8 EOL and configure repositories in one layer
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
@@ -28,9 +28,9 @@ RUN dnf install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binu
 ENV PATH="/opt/rh/gcc-toolset-11/root/usr/bin:$PATH"
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.20.tgz /tmp/
-COPY docker/cache/Python-3.11.15.tgz /tmp/
-COPY docker/cache/Python-3.12.13.tgz /tmp/
+COPY docker/cache/Python-3.10.21.tgz /tmp/
+COPY docker/cache/Python-3.11.16.tgz /tmp/
+COPY docker/cache/Python-3.12.14.tgz /tmp/
 COPY docker/cache/Python-3.13.15.tgz /tmp/
 COPY docker/cache/Python-3.14.7.tgz /tmp/
 

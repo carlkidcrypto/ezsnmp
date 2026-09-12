@@ -4,9 +4,9 @@ FROM almalinux:10-kitten
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
 ARG PYTHON_MAX_VERSION=3.14.7
 ARG PYTHON_MIN_2_VERSION=3.13.15  # Not built from source, provided by OS package manager
-ARG PYTHON_MIN_1_VERSION=3.12.13  # Not built from source, provided by OS package manager
-ARG PYTHON_MIN_0_VERSION=3.11.15
-ARG PYTHON_MIN_VERSION=3.10.20
+ARG PYTHON_MIN_1_VERSION=3.12.14  # Not built from source, provided by OS package manager
+ARG PYTHON_MIN_0_VERSION=3.11.16
+ARG PYTHON_MIN_VERSION=3.10.21
 
 # Install EPEL, update system, and install dependencies in one layer to reduce image size
 COPY docker/almalinux10_netsnmp_5.9/dnf-requirements.txt /tmp/dnf-requirements.txt
@@ -18,8 +18,8 @@ RUN dnf install -y epel-release && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.20.tgz /tmp/
-COPY docker/cache/Python-3.11.15.tgz /tmp/
+COPY docker/cache/Python-3.10.21.tgz /tmp/
+COPY docker/cache/Python-3.11.16.tgz /tmp/
 COPY docker/cache/Python-3.14.7.tgz /tmp/
 
 # Build Python 3.10, 3.11, 3.14 from source (not available in AlmaLinux 10 repos)
