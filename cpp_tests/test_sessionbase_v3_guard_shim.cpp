@@ -64,6 +64,11 @@ SessionBase make_v3_session(std::string const &username, std::string const &cont
                       "", username);
 }
 
+SessionBase make_v2_session(bool print_oids_numerically) {
+   return SessionBase("localhost", "161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                      "3", "1", "", "", false, false, print_oids_numerically);
+}
+
 std::vector<Result> empty_result(std::vector<std::string> const &, std::string const &) {
    return {};
 }
@@ -163,6 +168,31 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV3OperationsAndTheirClean
    std::vector<std::pair<std::string, std::string>> const expected = {
        {"alice", "engine-a"}, {"alice", "engine-a"}, {"bob", "engine-b"}, {"bob", "engine-b"}};
    EXPECT_EQ(g_cache_removals, expected);
+}
+
+TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV2OperationsToPreserveOutputFlags) {
+   SessionBase first = make_v2_session(false);
+   SessionBase second = make_v2_session(true);
+   g_get_behavior = GetBehavior::Block;
+
+   auto first_get = std::async(std::launch::async, [&first] { return first.get(".1"); });
+   ASSERT_TRUE(wait_for_first_get_or_release());
+
+   auto second_get = std::async(std::launch::async, [&second] { return second.get(".1"); });
+   {
+     std::unique_lock<std::mutex> lock(g_state_mutex);
+     EXPECT_FALSE(g_state_changed.wait_for(lock, std::chrono::milliseconds(100),
+                                          [] { return g_entered_gets > 1; }));
+     EXPECT_EQ(g_max_active_gets, 1);
+     EXPECT_TRUE(g_cache_removals.empty());
+   }
+   release_blocked_gets();
+
+   EXPECT_TRUE(first_get.get().empty());
+   EXPECT_TRUE(second_get.get().empty());
+   EXPECT_EQ(g_entered_gets, 2);
+   EXPECT_EQ(g_max_active_gets, 1);
+   EXPECT_TRUE(g_cache_removals.empty());
 }
 
 TEST_F(SessionBaseV3GuardShimTest, SerializesContextEngineIdSetterAndCleanup) {
