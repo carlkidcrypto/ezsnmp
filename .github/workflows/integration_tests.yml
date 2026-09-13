@@ -129,14 +129,14 @@ jobs:
             brew untap carlkidcrypto/ezsnmp 2>/dev/null || true
             # Register the local checkout as a Homebrew tap, then install from it.
             # --force ensures the local checkout takes precedence over a remote tap.
+            # Trust the tap before adding it: current Homebrew validates formulae
+            # while indexing a tap and refuses to load untrusted third-party code.
+            brew trust --tap carlkidcrypto/ezsnmp
             HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
             # brew tap clones from git HEAD, so copy the formula with the local
             # source tarball into the registered tap after tapping.
             BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
             cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
-            # Homebrew now requires an explicit trust decision for locally tapped
-            # formulas before it will load the formula on macOS.
-            brew trust --formula carlkidcrypto/ezsnmp/ezsnmp
             HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source carlkidcrypto/ezsnmp/ezsnmp
           fi
 
