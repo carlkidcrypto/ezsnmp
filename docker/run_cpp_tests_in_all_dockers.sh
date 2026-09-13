@@ -119,6 +119,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	echo "    - Executing meson tests..."
 	docker exec -t -e ASAN_OPTIONS='halt_on_error=0' -e UBSAN_OPTIONS='halt_on_error=0' -e MSAN_OPTIONS='halt_on_error=0' "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
+		set -e;
 		rm -drf build/ *.info *.txt *.xml;
 		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
@@ -133,7 +134,10 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  rm -rf build/;
 		  meson setup build/ -Dwarning_level=3 -Dwerror=true;
 		fi;
-		ninja -C build/ -j \$(nproc); 
+		BUILD_JOBS=\$(nproc);
+		if [ "\$BUILD_JOBS" -gt 1 ]; then BUILD_JOBS=\$((BUILD_JOBS - 1)); fi;
+		echo \"    - Building with \$BUILD_JOBS parallel jobs (reserving one CPU)\";
+		ninja -C build/ -j "\$BUILD_JOBS";
 		meson test -C build/ --verbose > test-outputs.txt 2>&1;
 		cp build/meson-logs/testlog.junit.xml test-results.xml;
 		

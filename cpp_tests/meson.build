@@ -1,9 +1,12 @@
-project('ezsnmp_tests', 'cpp', version: '2.3.0a2', default_options: ['cpp_std=c++17', 'b_coverage=true'])
+project('ezsnmp_tests', 'cpp', version: '2.5.0a0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
-openssl_dep = dependency('openssl', required: true)
+# Net-SNMP supplies the OpenSSL ABI it was built against. Linking a separate
+# OpenSSL dependency here mixes incompatible libcrypto versions in legacy
+# compatibility containers (for example OpenSSL 1.0 with OpenSSL 3).
+openssl_dep = declare_dependency()
 
 # MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
 # Find the netsnmp dependency and make it required for the build to proceed.

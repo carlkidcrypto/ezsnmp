@@ -214,6 +214,9 @@ jobs:
             # with our modified version so Homebrew uses the local tarball URL.
             BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
             cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
+            # Homebrew requires an explicit trust decision for locally tapped
+            # formulas before it will load the formula on macOS.
+            brew trust --formula carlkidcrypto/ezsnmp/ezsnmp
             # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from using the formula
             # API. --build-from-source forces building from the tarball above instead
             # of restoring any cached bottle from a previous run, ensuring the

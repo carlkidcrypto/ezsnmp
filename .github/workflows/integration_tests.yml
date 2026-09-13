@@ -115,12 +115,18 @@ jobs:
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
             sed -i '' "s|url \".*\"|url \"file:///tmp/ezsnmp_source.tar.gz\"|" /tmp/ezsnmp_formula.rb
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
-            rm Formula/ezsnmp.rb
-            cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
+            # Remove any remote tap that setup-homebrew may have registered.
+            brew untap carlkidcrypto/ezsnmp 2>/dev/null || true
             # Register the local checkout as a Homebrew tap, then install from it.
-            # brew install --formula <path> is rejected unless the file is inside a
-            # registered tap; tapping the local directory is the correct approach.
-            brew tap carlkidcrypto/ezsnmp "$(pwd)"
+            # --force ensures the local checkout takes precedence over a remote tap.
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
+            # brew tap clones from git HEAD, so copy the formula with the local
+            # source tarball into the registered tap after tapping.
+            BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
+            cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
+            # Homebrew now requires an explicit trust decision for locally tapped
+            # formulas before it will load the formula on macOS.
+            brew trust --formula carlkidcrypto/ezsnmp/ezsnmp
             HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source carlkidcrypto/ezsnmp/ezsnmp
           fi
 
@@ -355,4 +361,3 @@ jobs:
           comment-id: ${{ steps.find-integration-comment.outputs.comment-id }}
           body-file: integration_test_summary.md
           edit-mode: replace
-          comment-tag: integration-test-summary
