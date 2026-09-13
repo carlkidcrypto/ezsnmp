@@ -405,4 +405,3 @@ jobs:
           comment-id: ${{ steps.find-integration-docker-comment.outputs.comment-id }}
           body-file: integration_test_docker_summary.md
           edit-mode: replace
-          comment-tag: integration-test-docker-summary
