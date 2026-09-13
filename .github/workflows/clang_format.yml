@@ -42,12 +42,15 @@ jobs:
         if: steps.changed.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           # Determine the base branch (the branch that needs the fix)
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            BASE_BRANCH="${{ github.head_ref }}"
+          if [ "$EVENT_NAME" == "pull_request" ]; then
+            BASE_BRANCH="$HEAD_REF"
           else
-            BASE_BRANCH="${{ github.ref_name }}"
+            BASE_BRANCH="$REF_NAME"
           fi
 
           # Use a deterministic branch name based on the base branch to avoid duplicate PRs
