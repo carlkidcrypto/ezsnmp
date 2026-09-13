@@ -14,7 +14,7 @@ supported methods like ``snmpget``, ``snmpbulkwalk``, etc.
 Direct Mappings
 ---------------
 
-Several ``snmpwalk``, ``snmpget``, ``etc..`` options have direct equivalents in the ``SessionBase``
+Several ``snmpwalk``, ``snmpget``, etc. options have direct equivalents in the ``SessionBase``
 constructor:
 
 * ``-v 1|2c|3`` -> ``version``
@@ -83,8 +83,8 @@ Summary Table
    "-t TIMEOUT", "timeout", "Yes", ""
    "AGENT (hostname)", "hostname", "Yes", ""
    "[OID]", "(N/A - Action)", "No", "OID is the target of methods like walk, bulk_walk, get, etc., and is not a constructor parameter."
-   "port_number", "port_number", "No (Implicit)", "snmpwalk and methods alike use the default port 161. Parameter allows overriding."
-   "All other options", "(N/A - Tool Options)", "No", "These control snmpwalk's and methods alike behavior, not the core SessionBase. If one wants more control, use the NetSnmpBase functions."
+   "port_number", "port_number", "No (Implicit)", "snmpwalk and similar methods use the default port 161. Parameter allows overriding."
+   "All other options", "(N/A - Tool Options)", "No", "These control snmpwalk's and similar methods' behavior, not the core SessionBase. If one wants more control, use the NetSnmpBase functions."
 
 
 .. doxygenclass:: SessionBase
