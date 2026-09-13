@@ -104,6 +104,16 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
 		continue
 	fi
+	docker exec "$CONTAINER_NAME" bash -c '
+		for attempt in {1..15}; do
+			if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
+				exit 0
+			fi
+			sleep 1
+		done
+		echo "SNMP daemon did not become ready on 127.0.0.1:11161" >&2
+		exit 1
+	'
 
 	# 3. Run cpp tests using meson
 	echo "    - Executing meson tests..."
@@ -124,7 +134,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  meson setup build/ -Dwarning_level=3 -Dwerror=true;
 		fi;
 		ninja -C build/ -j \$(nproc); 
-		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
+		meson test -C build/ --verbose > test-outputs.txt 2>&1;
+		cp build/meson-logs/testlog.junit.xml test-results.xml;
 		
 		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov.
 		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros.

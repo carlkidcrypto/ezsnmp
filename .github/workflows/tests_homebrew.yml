@@ -123,6 +123,16 @@ jobs:
             SNMPD=$(which.exe snmpd)
           fi
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
+          for attempt in {1..15}; do
+            if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
+              break
+            fi
+            if [ "$attempt" -eq 15 ]; then
+              echo "SNMP daemon did not become ready on 127.0.0.1:11161" >&2
+              exit 1
+            fi
+            sleep 1
+          done
 
       - name: Run Tests
         uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
