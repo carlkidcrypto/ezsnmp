@@ -21,7 +21,7 @@ import faulthandler
 
 faulthandler.enable()
 
-from ezsnmp.exceptions import ConnectionError, GenericError
+from ezsnmp.exceptions import ConnectionError
 from ezsnmp.session import Session
 
 # ---------------------------------------------------------------------------
@@ -74,60 +74,14 @@ def test_session_get_next_empty_list_returns_empty_tuple():
 
 
 def test_session_bulk_walk_none_normalises_to_empty_list():
-    """bulk_walk(None) normalises oids to [] before calling the C layer.
-
-    Patch the *instance* method (not the class-level SWIG slot) so we can
-    observe the call without starting a real SNMP operation.
-    """
-    sentinel = object()
-    s = make_session()
-    try:
-        with unittest.mock.patch.object(
-            type(s),
-            "bulk_walk",
-            wraps=None,
-        ):
-            # Use a plain instance mock to intercept the call at the Python level.
-            pass
-    except Exception:
-        pass
-
-    # Direct test: calling bulk_walk(None) on a session whose C layer is mocked
-    # at the instance level to return a sentinel.
-    s2 = make_session()
-    with unittest.mock.patch.object(s2, "bulk_walk", return_value=sentinel) as m:
-        result = s2.bulk_walk(None)
-        m.assert_called_once_with(None)
-        assert result is sentinel
-    s2.close()
-    s.close()
-
-
-def test_session_bulk_walk_none_normalisation_via_subclass():
-    """bulk_walk(None) converts None to [] before invoking super().bulk_walk().
-
-    Uses a subclass to intercept the super() call, which avoids SWIG
-    read-only descriptor restrictions on class-level patching.
-    """
+    """bulk_walk(None) normalises oids before calling the C layer."""
     captured_oids = []
-
-    class _BulkWalkSpy(Session):
-        """Intercepts the super().bulk_walk() call to capture the oids arg."""
-
-        def bulk_walk(self, oids=None):
-            # Replicate the None-normalisation logic from Session.bulk_walk
-            if oids is None:
-                oids = []
-            captured_oids.append(oids)
-            # Do NOT call super() — avoids the C layer entirely.
-            return ()
-
-    s = _BulkWalkSpy(version="3")
-    result = s.bulk_walk(None)
+    s = make_session()
+    with unittest.mock.patch.object(s, "_bulk_walk", return_value=()) as bulk_walk:
+        result = s.bulk_walk(None)
+        captured_oids.extend(bulk_walk.call_args.args)
     assert result == ()
-    assert captured_oids == [
-        []
-    ], "Expected bulk_walk to normalise None to [] before calling super()"
+    assert captured_oids == [[]]
     s.close()
 
 
@@ -136,28 +90,13 @@ def test_session_bulk_walk_none_normalisation_via_subclass():
 # ---------------------------------------------------------------------------
 
 
-def test_session_bulk_get_none_normalisation_via_subclass():
-    """bulk_get(None) converts None to [] before invoking super().bulk_get().
-
-    Uses a subclass to intercept the super() call, avoiding SWIG restrictions.
-    """
-    captured_oids = []
-
-    class _BulkGetSpy(Session):
-        """Intercepts the super().bulk_get() call to capture the oids arg."""
-
-        def bulk_get(self, oids=None):
-            if oids is None:
-                oids = []
-            captured_oids.append(oids)
-            return ()
-
-    s = _BulkGetSpy(version="3")
-    result = s.bulk_get(None)
+def test_session_bulk_get_none_normalisation():
+    """bulk_get(None) converts None to [] before calling the C layer."""
+    s = make_session()
+    with unittest.mock.patch.object(s, "_bulk_get", return_value=()) as bulk_get:
+        result = s.bulk_get(None)
     assert result == ()
-    assert captured_oids == [
-        []
-    ], "Expected bulk_get to normalise None to [] before calling super()"
+    bulk_get.assert_called_once_with([])
     s.close()
 
 
@@ -166,28 +105,13 @@ def test_session_bulk_get_none_normalisation_via_subclass():
 # ---------------------------------------------------------------------------
 
 
-def test_session_set_none_normalisation_via_subclass():
-    """set(None) converts None to [] before invoking super().set().
-
-    Uses a subclass to intercept the super() call, avoiding SWIG restrictions.
-    """
-    captured_oids = []
-
-    class _SetSpy(Session):
-        """Intercepts the super().set() call to capture the oids arg."""
-
-        def set(self, oids=None):
-            if oids is None:
-                oids = []
-            captured_oids.append(oids)
-            return ()
-
-    s = _SetSpy(version="3")
-    result = s.set(None)
+def test_session_set_none_normalisation():
+    """set(None) converts None to [] before calling the C layer."""
+    s = make_session()
+    with unittest.mock.patch.object(s, "_set", return_value=()) as set_method:
+        result = s.set(None)
     assert result == ()
-    assert captured_oids == [
-        []
-    ], "Expected set to normalise None to [] before calling super()"
+    set_method.assert_called_once_with([])
     s.close()
 
 
@@ -213,7 +137,7 @@ def test_session_close_propagates_known_exception():
     s._closed = False
 
     with unittest.mock.patch.object(
-        s, "_close", side_effect=ConnectionErrorBase("mock close failure")
+        s, "_close_session", side_effect=ConnectionErrorBase("mock close failure")
     ):
         with pytest.raises(ConnectionError) as exc_info:
             s.close()
@@ -234,7 +158,7 @@ def test_session_close_propagates_unknown_exception():
     s._closed = False
 
     with unittest.mock.patch.object(
-        s, "_close", side_effect=SomeUnrelatedError("unexpected")
+        s, "_close_session", side_effect=SomeUnrelatedError("unexpected")
     ):
         with pytest.raises(SomeUnrelatedError):
             s.close()
