@@ -9,6 +9,16 @@
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
+#if defined(GTEST_SKIP)
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg) GTEST_SKIP() << msg
+#else
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg) \
+   do { \
+      std::cerr << "SKIPPED: " << msg << std::endl; \
+      return; \
+   } while (false)
+#endif
+
 class SessionBaseTest : public ::testing::Test {
   protected:
    void SetUp() override {}
@@ -45,7 +55,7 @@ TEST_F(SessionBaseTest, TestGetNextSingleMibStringOverload) {
    try {
       results = session.get_next(".1.3.6.1.2.1.1.5.0");
    } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent is not reachable in this environment";
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent is not reachable in this environment");
    }
 
    ASSERT_EQ(results.size(), 1u);
@@ -66,7 +76,7 @@ TEST_F(SessionBaseTest, TestBulkGetSingleMibStringOverload) {
    try {
       results = session.bulk_get(".1.3.6.1.2.1.1.5.0");
    } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent is not reachable in this environment";
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent is not reachable in this environment");
    }
 
    ASSERT_FALSE(results.empty());
@@ -1292,7 +1302,7 @@ TEST_F(SessionBaseTest, TestGetNextEmptyMib) {
    try {
       (void)session.get_next("");
    } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent not reachable";
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent not reachable");
    } catch (std::exception const&) {
       // Any other error still means the empty-mib branch was exercised
    }
@@ -1305,7 +1315,7 @@ TEST_F(SessionBaseTest, TestBulkGetEmptyMib) {
    try {
       (void)session.bulk_get("");
    } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent not reachable";
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent not reachable");
    } catch (std::exception const&) {
       // Any other error still means the empty-mib branch was exercised
    }
