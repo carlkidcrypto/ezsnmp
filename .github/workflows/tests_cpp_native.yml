@@ -125,7 +125,7 @@ jobs:
 
           macos: |
             cd cpp_tests
-            export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
+            export PKG_CONFIG_PATH="$(brew --prefix net-snmp)/lib/pkgconfig:$(brew --prefix openssl@3)/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
             meson setup build
             ninja -C build
             meson test -C build --print-errorlogs \

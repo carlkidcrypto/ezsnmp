@@ -7,6 +7,11 @@ thread_dep = dependency('threads')
 # OpenSSL dependency here mixes incompatible libcrypto versions in legacy
 # compatibility containers (for example OpenSSL 1.0 with OpenSSL 3).
 openssl_dep = declare_dependency()
+if host_machine.system() == 'darwin'
+    # Homebrew keeps OpenSSL keg-only, while its net-snmp pkg-config metadata
+    # omits the OpenSSL include directory required by public Net-SNMP headers.
+    openssl_dep = dependency('openssl', required: true)
+endif
 
 # MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
 # Find the netsnmp dependency and make it required for the build to proceed.
