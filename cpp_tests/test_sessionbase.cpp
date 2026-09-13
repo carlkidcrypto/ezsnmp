@@ -12,10 +12,10 @@
 #if defined(GTEST_SKIP)
 #define EZSNMP_SKIP_TEST_AND_RETURN(msg) GTEST_SKIP() << msg
 #else
-#define EZSNMP_SKIP_TEST_AND_RETURN(msg) \
-   do { \
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg)            \
+   do {                                             \
       std::cerr << "SKIPPED: " << msg << std::endl; \
-      return; \
+      return;                                       \
    } while (false)
 #endif
 
