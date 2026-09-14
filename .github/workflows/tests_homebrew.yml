@@ -168,40 +168,18 @@ jobs:
             SOURCE_TARBALL="/tmp/ezsnmp-${PKG_VERSION}.tar.gz"
             git archive HEAD --format=tar.gz -o "${SOURCE_TARBALL}"
             TARBALL_SHA=$(shasum -a 256 "${SOURCE_TARBALL}" | awk '{print $1}')
-            # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
-            # we can modify it, then put it back so brew sees a tap path.
-            cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
-            sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp_formula.rb
-            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
-            rm Formula/ezsnmp.rb
-            cp /tmp/ezsnmp_formula.rb Formula/ezsnmp.rb
+            # Homebrew normally rejects formulae supplied by path. Developer mode
+            # enables this intentional CI use while avoiding third-party tap trust.
+            cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
+            sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
+            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
             # Remove any pre-existing ezsnmp install to prevent version conflicts.
             # Try both short name and fully-qualified name to catch all cases.
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force carlkidcrypto/ezsnmp/ezsnmp 2>/dev/null || true
-            # setup-homebrew may have already registered carlkidcrypto/ezsnmp tap
-            # pointing at the GitHub remote (old release).  Force-untap so our
-            # local checkout with the modified formula always takes precedence.
-            brew untap carlkidcrypto/ezsnmp 2>/dev/null || true
-            # Register the local checkout as a Homebrew tap, then install from it.
-            # brew install --formula <path> is rejected unless the file is inside a
-            # registered tap; tapping the local directory is the correct approach.
-            # --force ensures the local path overrides any pre-existing tap pointing
-            # at the GitHub remote, even if brew untap above did not fully clean up.
-            # Trust the tap before adding it: current Homebrew validates formulae
-            # while indexing a tap and refuses to load untrusted third-party code.
-            brew trust carlkidcrypto/ezsnmp
-            HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
-            # brew tap clones from git HEAD (working-tree formula modifications are
-            # NOT included).  Overwrite the formula in the registered tap directory
-            # with our modified version so Homebrew uses the local tarball URL.
-            BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
-            cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
-            # HOMEBREW_NO_INSTALL_FROM_API prevents Homebrew from using the formula
-            # API. --build-from-source forces building from the tarball above instead
-            # of restoring any cached bottle from a previous run, ensuring the
-            # freshly-packaged source (with all local fixes) is always compiled.
-            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew reinstall --build-from-source carlkidcrypto/ezsnmp/ezsnmp
+            # --build-from-source ensures the freshly-packaged source is compiled
+            # instead of restoring a cached bottle from a previous run.
+            HOMEBREW_DEVELOPER=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install --build-from-source /tmp/ezsnmp.rb
             # Force-overwrite any conflicting files/symlinks so the newly installed
             # version is what Python finds in the global site-packages.
             brew link --overwrite ezsnmp 2>/dev/null || true

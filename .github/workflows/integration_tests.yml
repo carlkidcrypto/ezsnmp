@@ -113,24 +113,12 @@ jobs:
             SOURCE_TARBALL="/tmp/ezsnmp-${PKG_VERSION}.tar.gz"
             git archive HEAD --format=tar.gz -o "${SOURCE_TARBALL}"
             TARBALL_SHA=$(shasum -a 256 "${SOURCE_TARBALL}" | awk '{print $1}')
-            # Formula/ezsnmp.rb is a symlink; dereference it into a real file so
-            # sed -i '' works, then put it back in Formula/ so brew sees a tap path
-            cp -L Formula/ezsnmp.rb /tmp/ezsnmp_formula.rb
-            sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp_formula.rb
-            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp_formula.rb
-            # Remove any remote tap that setup-homebrew may have registered.
-            brew untap carlkidcrypto/ezsnmp 2>/dev/null || true
-            # Register the local checkout as a Homebrew tap, then install from it.
-            # --force ensures the local checkout takes precedence over a remote tap.
-            # Trust the tap before adding it: current Homebrew validates formulae
-            # while indexing a tap and refuses to load untrusted third-party code.
-            brew trust carlkidcrypto/ezsnmp
-            HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
-            # brew tap clones from git HEAD, so copy the formula with the local
-            # source tarball into the registered tap after tapping.
-            BREW_TAP_DIR="$(brew --prefix)/Library/Taps/carlkidcrypto/homebrew-ezsnmp"
-            cp /tmp/ezsnmp_formula.rb "${BREW_TAP_DIR}/Formula/ezsnmp.rb"
-            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_FROM_API=1 brew install --build-from-source carlkidcrypto/ezsnmp/ezsnmp
+            # Homebrew normally rejects formulae supplied by path. Developer mode
+            # enables this intentional CI use while avoiding third-party tap trust.
+            cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
+            sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
+            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
+            HOMEBREW_DEVELOPER=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install --build-from-source /tmp/ezsnmp.rb
           fi
 
       - name: Start SNMP daemon
