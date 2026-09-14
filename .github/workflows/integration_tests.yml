@@ -54,6 +54,9 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@f8d4222eb633e65c2a0157383cf80861fc7fae7f # master
 
+      - name: Enable Homebrew analytics
+        run: brew analytics on
+
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
         with:
@@ -118,7 +121,7 @@ jobs:
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
             sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
-            HOMEBREW_DEVELOPER=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install --build-from-source /tmp/ezsnmp.rb
+            HOMEBREW_DEVELOPER=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula --build-from-source /tmp/ezsnmp.rb
           fi
 
       - name: Start SNMP daemon
