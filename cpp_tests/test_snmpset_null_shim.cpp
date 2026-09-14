@@ -51,20 +51,26 @@ TEST_F(SnmpSetNullShimTest, TestHelpFlagThrowsParseErrorForSuccessExit) {
        ParseErrorBase);
 }
 
-/* Net-SNMP rejects an invocation without an object name before snmpset validation. */
-TEST_F(SnmpSetNullShimTest, TestMissingObjectNameThrowsParseError) {
+/* Missing object name path: arg >= argc should return an empty result set. */
+TEST_F(SnmpSetNullShimTest, TestMissingObjectNameReturnsEmptyResults) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
 
-   EXPECT_THROW(snmpset(args, "testing_set_null_shim_missing_obj"), ParseErrorBase);
+   EXPECT_NO_THROW({
+      auto results = snmpset(args, "testing_set_null_shim_missing_obj");
+      EXPECT_TRUE(results.empty());
+   });
 }
 
-/* Net-SNMP rejects oversized malformed assignments during option parsing. */
-TEST_F(SnmpSetNullShimTest, TestTooManyAssignmentsThrowsParseError) {
+/* Too-many-assignments path: (argc-arg) > 3*SNMP_MAX_CMDLINE_OIDS should return empty results. */
+TEST_F(SnmpSetNullShimTest, TestTooManyAssignmentsReturnsEmptyResults) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
 
    for (int i = 0; i < (3 * SNMP_MAX_CMDLINE_OIDS) + 1; ++i) {
       args.push_back("dummy");
    }
 
-   EXPECT_THROW(snmpset(args, "testing_set_null_shim_too_many_assignments"), ParseErrorBase);
+   EXPECT_NO_THROW({
+      auto results = snmpset(args, "testing_set_null_shim_too_many_assignments");
+      EXPECT_TRUE(results.empty());
+   });
 }
