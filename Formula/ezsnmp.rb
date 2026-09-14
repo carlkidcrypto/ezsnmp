@@ -9,26 +9,10 @@ class Ezsnmp < Formula
   depends_on "swig" => :build
   depends_on "net-snmp"
   depends_on "openssl@3"
-  # python@3.12 is the required fallback. To build against a different Python
-  # (3.10–3.14), install it first (e.g. `brew install python@3.13`) and the
-  # formula will automatically prefer the newest available version from the
-  # supported range.
   depends_on "python@3.12"
 
-  # Returns the path to the newest Python 3.10–3.14 binary that is opt-linked.
-  # Falls back to python@3.12 (always installed via the required dep above).
-  def find_python3
-    %w[3.14 3.13 3.12 3.11 3.10].each do |v|
-      candidate = Formula["python@#{v}"].opt_bin/"python3"
-      return candidate if candidate.exist?
-    rescue FormulaUnavailableError
-      next
-    end
-    Formula["python@3.12"].opt_bin/"python3"
-  end
-
   def install
-    python3 = find_python3
+    python3 = Formula["python@3.12"].opt_bin/"python3"
     python_version = Language::Python.major_minor_version(python3)
 
     # net-snmp is keg-only; put net-snmp-config on PATH so setup.py can find it
@@ -62,7 +46,7 @@ class Ezsnmp < Formula
   end
 
   def caveats
-    python3 = find_python3
+    python3 = Formula["python@3.12"].opt_bin/"python3"
     python_version = Language::Python.major_minor_version(python3)
     site_packages = opt_prefix/"lib/python#{python_version}/site-packages"
     <<~EOS
@@ -76,14 +60,11 @@ class Ezsnmp < Formula
 
         export PYTHONPATH="#{site_packages}:$PYTHONPATH"
 
-      To build against a different Python (3.10–3.14), install it first:
-        brew install python@3.13
-      Then reinstall ezsnmp and it will use the newer Python automatically.
     EOS
   end
 
   test do
-    python3 = find_python3
+    python3 = Formula["python@3.12"].opt_bin/"python3"
     python_version = Language::Python.major_minor_version(python3)
     ENV.prepend_path "PYTHONPATH", "#{opt_prefix}/lib/python#{python_version}/site-packages"
     system python3, "-c", "import ezsnmp"
