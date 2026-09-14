@@ -197,7 +197,7 @@ jobs:
             # at the GitHub remote, even if brew untap above did not fully clean up.
             # Trust the tap before adding it: current Homebrew validates formulae
             # while indexing a tap and refuses to load untrusted third-party code.
-            brew trust --tap carlkidcrypto/ezsnmp
+            brew trust carlkidcrypto/ezsnmp
             HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
             # brew tap clones from git HEAD (working-tree formula modifications are
             # NOT included).  Overwrite the formula in the registered tap directory

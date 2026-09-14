@@ -131,7 +131,7 @@ jobs:
             # --force ensures the local checkout takes precedence over a remote tap.
             # Trust the tap before adding it: current Homebrew validates formulae
             # while indexing a tap and refuses to load untrusted third-party code.
-            brew trust --tap carlkidcrypto/ezsnmp
+            brew trust carlkidcrypto/ezsnmp
             HOMEBREW_NO_AUTO_UPDATE=1 brew tap --force carlkidcrypto/ezsnmp "$(pwd)"
             # brew tap clones from git HEAD, so copy the formula with the local
             # source tarball into the registered tap after tapping.
