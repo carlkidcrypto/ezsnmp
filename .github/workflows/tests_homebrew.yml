@@ -176,7 +176,6 @@ jobs:
             # Homebrew normally rejects formulae supplied by path. Developer mode
             # enables this intentional CI use while avoiding third-party tap trust.
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
-            sed -i '' 's/python@3\.12/python@${{ matrix.python-version }}/g' /tmp/ezsnmp.rb
             sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
             sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
             # Remove any pre-existing ezsnmp install to prevent version conflicts.

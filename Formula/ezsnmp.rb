@@ -9,10 +9,14 @@ class Ezsnmp < Formula
   depends_on "swig" => :build
   depends_on "net-snmp"
   depends_on "openssl@3"
-  depends_on "python@3.12"
+
+  def find_python3
+    candidates = ["python3"] + Dir["#{HOMEBREW_PREFIX}/opt/python@*/bin/python3"].sort.reverse
+    candidates.find { |candidate| File.executable?(candidate) } || "python3"
+  end
 
   def install
-    python3 = Formula["python@3.12"].opt_bin/"python3"
+    python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
 
     # net-snmp is keg-only; put net-snmp-config on PATH so setup.py can find it
@@ -46,7 +50,7 @@ class Ezsnmp < Formula
   end
 
   def caveats
-    python3 = Formula["python@3.12"].opt_bin/"python3"
+    python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
     site_packages = opt_prefix/"lib/python#{python_version}/site-packages"
     <<~EOS
@@ -64,7 +68,7 @@ class Ezsnmp < Formula
   end
 
   test do
-    python3 = Formula["python@3.12"].opt_bin/"python3"
+    python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
     ENV.prepend_path "PYTHONPATH", "#{opt_prefix}/lib/python#{python_version}/site-packages"
     system python3, "-c", "import ezsnmp"
