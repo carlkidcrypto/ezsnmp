@@ -107,14 +107,7 @@ jobs:
             python3 -m pip install . --verbose;
             rm -drf build/ ezsnmp.egg-info/;
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            PKG_VERSION=$(python3 -c "
-            import re, sys
-            content = open('setup.cfg').read()
-            m = re.search(r'^version\s*=\s*(.+)$', content, re.MULTILINE)
-            if not m:
-              sys.exit('ERROR: could not find version field in setup.cfg')
-            print(m.group(1).strip())
-            ")
+            PKG_VERSION=$(python3 -c "import re, sys; match = re.search(r'^version\s*=\s*(.+)$', open('setup.cfg').read(), re.MULTILINE); print(match.group(1).strip() if match else sys.exit('ERROR: could not find version field in setup.cfg'))")
             # Package the current checkout with a versioned filename so Homebrew
             # can infer the formula version without a temporary version stanza.
             SOURCE_TARBALL="/tmp/ezsnmp-${PKG_VERSION}.tar.gz"
