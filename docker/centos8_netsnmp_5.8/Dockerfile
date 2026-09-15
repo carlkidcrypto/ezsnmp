@@ -85,8 +85,8 @@ RUN cd /tmp && \
     ldconfig
 
 # Manually create the pkg-config file for net-snmp
-RUN LIBS=$(net-snmp-config --libs) && \
-    CFLAGS=$(net-snmp-config --cflags) && \
+RUN LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
+    CFLAGS=$(net-snmp-config --cflags | sed 's/[[:space:]]-Werror=declaration-after-statement//g') && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
     mkdir -p /usr/lib64/pkgconfig && \
     echo 'prefix=/usr' > /usr/lib64/pkgconfig/netsnmp.pc && \

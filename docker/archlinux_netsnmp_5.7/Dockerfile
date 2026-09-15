@@ -68,7 +68,7 @@ includedir=${prefix}/include
 Name: Net-SNMP
 Description: SNMP client and agent libraries
 Version: 5.7.3
-Libs: -L${libdir} -lnetsnmp -lcrypto
+Libs: -L${libdir} -lnetsnmp
 Cflags: -I${includedir}
 EOF
 
