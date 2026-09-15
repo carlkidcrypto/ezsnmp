@@ -117,6 +117,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 
 	# 3. Run cpp tests using meson
 	echo "    - Executing meson tests..."
+	EXEC_EXIT_CODE=0
 	docker exec -t -e ASAN_OPTIONS='halt_on_error=0' -e UBSAN_OPTIONS='halt_on_error=0' -e MSAN_OPTIONS='halt_on_error=0' "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
 		set -e;
@@ -138,8 +139,16 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		if [ "\$BUILD_JOBS" -gt 1 ]; then BUILD_JOBS=\$((BUILD_JOBS - 1)); fi;
 		echo \"    - Building with \$BUILD_JOBS parallel jobs (reserving one CPU)\";
 		ninja -C build/ -j "\$BUILD_JOBS";
-		meson test -C build/ --verbose > test-outputs.txt 2>&1;
-		cp build/meson-logs/testlog.junit.xml test-results.xml;
+		TEST_EXIT_CODE=0
+		meson test -C build/ --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
+		if [ -f build/meson-logs/testlog.junit.xml ]; then
+		  cp build/meson-logs/testlog.junit.xml test-results.xml;
+		fi;
+		if [ \$TEST_EXIT_CODE -ne 0 ]; then
+		  echo \"=== MESON TEST FAILURES (exit code: \$TEST_EXIT_CODE) ===\";
+		  grep -E '^(FAIL|ERROR|\\[  FAILED  \\]|Ok:.*Fail:)' test-outputs.txt || tail -n 50 test-outputs.txt;
+		  echo \"===================================================\";
+		fi;
 		
 		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov.
 		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros.
@@ -187,8 +196,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		fi
 
 		normalize_coverage_paths updated_coverage.info
-		exit 0;
-	"
+		exit \"\$TEST_EXIT_CODE\";
+	" || EXEC_EXIT_CODE=$?
 
 	# 4. Copy artifacts from the container to host into per-distro folder
 	OUT_DIR="./test_outputs_${DISTRO_NAME}"
@@ -236,6 +245,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	docker rm "$CONTAINER_NAME"
 
 	echo "--------------------------------------------------"
+
+	if [ "$EXEC_EXIT_CODE" -ne 0 ]; then
+		echo "ERROR: Tests failed for ${DISTRO_NAME} with exit code ${EXEC_EXIT_CODE}." >&2
+		exit "$EXEC_EXIT_CODE"
+	fi
 
 done
 

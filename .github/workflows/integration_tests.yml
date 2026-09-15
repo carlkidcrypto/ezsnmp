@@ -48,6 +48,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        exclude:
+          - os: macos-latest
+            python-version: "3.15"
 
     steps:
       - name: Set up Homebrew
@@ -73,7 +76,6 @@ jobs:
           macos: brew update;
                  brew install net-snmp;
                  brew install openssl@3;
-                 brew install python@${{ matrix.python-version }} || true;
                  echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
                  export PATH="/usr/local/opt/net-snmp/bin:$PATH";
                  echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
