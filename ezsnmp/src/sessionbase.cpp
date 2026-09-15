@@ -93,19 +93,19 @@ class SnmpOperationGuard {
    SnmpOperationGuard(bool clear_v3_user,
                       std::string const& security_name,
                       std::string const& context_engine_id)
-      : m_clear_v3_user(clear_v3_user),
-        m_security_name(security_name),
-        m_context_engine_id(context_engine_id),
-        m_lock(g_snmp_operation_mutex) {
-     if (m_clear_v3_user) {
-        remove_v3_user_from_cache(m_security_name, m_context_engine_id);
-     }
+       : m_clear_v3_user(clear_v3_user),
+         m_security_name(security_name),
+         m_context_engine_id(context_engine_id),
+         m_lock(g_snmp_operation_mutex) {
+      if (m_clear_v3_user) {
+         remove_v3_user_from_cache(m_security_name, m_context_engine_id);
+      }
    }
 
    ~SnmpOperationGuard() {
-     if (m_clear_v3_user) {
-        remove_v3_user_from_cache(m_security_name, m_context_engine_id);
-     }
+      if (m_clear_v3_user) {
+         remove_v3_user_from_cache(m_security_name, m_context_engine_id);
+      }
    }
 
    SnmpOperationGuard(SnmpOperationGuard const&) = delete;
@@ -122,7 +122,7 @@ class SnmpV3SetterGuard {
   public:
    explicit SnmpV3SetterGuard(bool enabled) {
       if (enabled) {
-        m_lock = std::unique_lock<std::mutex>(g_snmp_operation_mutex);
+         m_lock = std::unique_lock<std::mutex>(g_snmp_operation_mutex);
       }
    }
 
