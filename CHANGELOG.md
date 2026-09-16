@@ -1,7 +1,28 @@
-Last Updated: 2026-09-07 04:20:54 UTC
+Last Updated: 2026-09-16 03:35:17 UTC
 
 # Changelog
 
+
+<a name="v2.5.0a0"></a>
+## [v2.5.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0...v2.5.0a0) (2026-09-15)
+
+
+### Changes
+
+#### GH
+
+- GH Upgrade and Compile ([#1290](https://github.com/carlkidcrypto/ezsnmp/issues/1290))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.4.0"></a>
 ## [v2.4.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0b0...v2.4.0) (2026-09-06)
