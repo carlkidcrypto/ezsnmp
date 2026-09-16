@@ -5,7 +5,7 @@
  /*
   * snmpbulkget.c - send SNMPv2 Bulk requests to a network entity.
   *
-@@ -25,47 +26,49 @@
+@@ -25,72 +26,73 @@
  **********************************************************************/
  #include <net-snmp/net-snmp-config.h>
  
@@ -60,15 +60,20 @@
  #include <net-snmp/net-snmp-includes.h>
  
 -oid             objid_mib[] = { 1, 3, 6, 1, 2, 1 };
+-int             max_repetitions = 10;
+-int             non_repeaters = 0;
 +#include <mutex>
++#include <vector>
 +
 +oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
- int             max_repetitions = 10;
- int             non_repeaters = 0;
++thread_local int max_repetitions = 10;
++thread_local int non_repeaters = 0;
  struct nameStruct {
-@@ -74,23 +77,22 @@
- }              *name, *namep;
- int             names;
+     oid             name[MAX_OID_LEN];
+     size_t          name_len;
+-}              *name, *namep;
+-int             names;
++};
  
 -void
 -usage(void)
@@ -98,7 +103,7 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,51 +111,61 @@
+@@ -109,146 +111,170 @@
                      /*
                       * No number given -- error.  
                       */
@@ -140,7 +145,7 @@
 +
 +   std::vector<std::string> return_vector;
 +   netsnmp_session session;
-+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
++   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
      netsnmp_pdu    *pdu;
      netsnmp_pdu    *response;
      netsnmp_variable_list *vars;
@@ -151,35 +156,44 @@
  
      SOCK_STARTUP;
  
-+   // Reset file-scope defaults for each invocation.
++   // Reset thread-local defaults for each invocation.
 +   max_repetitions = 10;
 +   non_repeaters = 0;
++
++   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
++   // global state (option parsing, DS library settings).
++   {
++      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 +
      /*
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
++      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
++      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 +
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
 -        exitval = 0;
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 +
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
 -        goto out;
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 +
      default:
          break;
      }
-@@ -161,94 +173,97 @@
++   }
++
++   // Declare name/namep/names as local variables to avoid data races.
++   int names;
+ 
      names = argc - arg;
      if (names < non_repeaters) {
          fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -187,7 +201,10 @@
 +      return parse_results(return_vector);
      }
  
-     namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
+-    namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
++   std::vector<nameStruct> name_storage(names);
++   nameStruct *name = name_storage.data();
++   nameStruct *namep = name;
 +   {
 +      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
      while (arg < argc) {
@@ -209,7 +226,7 @@
       */
 -    ss = snmp_open(&session);
 -    if (ss == NULL) {
-+   ss.reset(snmp_open(&session));
++   ss.reset(snmp_sess_open(&session));
 +   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
@@ -236,7 +253,7 @@
       * do the request 
       */
 -    status = snmp_synch_response(ss, pdu, &response);
-+   status = snmp_synch_response(ss.get(), pdu, &response);
++   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
      if (status == STAT_SUCCESS) {
 +      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -294,7 +311,7 @@
      } else {                    /* status == STAT_ERROR */
 -        snmp_sess_perror("snmpbulkget", ss);
 -        exitval = 1;
-+      snmp_sess_perror_exception("snmpbulkget", ss.get());
++      snmp_single_sess_perror_exception("snmpbulkget", ss.get());
      }
  
 -    if (response)
@@ -304,7 +321,7 @@
  
 -    snmp_close(ss);
 +   {
-+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
 +   }
  
 -out:

@@ -20,7 +20,7 @@ safe-outputs:
     target: triggering
     allowed: [needs-info]
 timeout-minutes: 20
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:

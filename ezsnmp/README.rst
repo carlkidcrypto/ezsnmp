@@ -81,8 +81,8 @@ for the C++ code. To regenerate the SWIG wrappers:
 
 .. code-block:: bash
 
-    swig -c++ -python -builtin -threads -doxygen -std=c++17 \\
-         -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmpbase.cpp \\
+    swig -c++ -python -builtin -threads -doxygen -std=c++17 \
+         -outdir ezsnmp/. -o ezsnmp/src/ezsnmp_netsnmpbase.cpp \
          ezsnmp/interface/netsnmpbase.i
 
 For complete SWIG build commands, see the `Development Guide <../sphinx_docs_build/source/development.rst>`_.

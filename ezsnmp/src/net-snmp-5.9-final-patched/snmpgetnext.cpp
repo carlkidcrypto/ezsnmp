@@ -1,3 +1,4 @@
+/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
 /*
  * snmpgetnext.c - send snmp GETNEXT requests to a network entity.
  *
@@ -195,7 +196,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
     * do the request
     */
 retry:
-   status = snmp_sess_synch_response(ss.get(), pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {

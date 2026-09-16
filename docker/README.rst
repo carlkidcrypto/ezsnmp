@@ -245,12 +245,17 @@ Runs Python tests across all distributions in parallel or a specific distributio
 
 The script creates a separate output directory for each distribution in the ``docker/`` directory. For example, after running all tests, you'll see:
 
-- ``test_outputs_almalinux10/``
-- ``test_outputs_archlinux/``
+- ``test_outputs_almalinux10_netsnmp_5.9/``
+- ``test_outputs_archlinux_netsnmp_5.7/``
 - ``test_outputs_archlinux_netsnmp_5.8/``
-- ``test_outputs_centos7/``
-- ``test_outputs_fedora41/``
-- ``test_outputs_rockylinux8/``
+- ``test_outputs_archlinux_netsnmp_5.9/``
+- ``test_outputs_centos7_netsnmp_5.7/``
+- ``test_outputs_centos8_netsnmp_5.8/``
+- ``test_outputs_fedora42_netsnmp_5.7/``
+- ``test_outputs_fedora42_netsnmp_5.8/``
+- ``test_outputs_fedora42_netsnmp_5.9/``
+- ``test_outputs_rockylinux8_netsnmp_5.8/``
+- ``test_outputs_rockylinux9_netsnmp_5.9/``
 
 Each directory contains test results and outputs for all Python versions:
 

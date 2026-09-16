@@ -104,7 +104,7 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(void *ss, oid *theoid, 
    pdu = snmp_pdu_create(SNMP_MSG_GET);
    snmp_add_null_var(pdu, theoid, theoid_len);
 
-   status = snmp_sess_synch_response(ss, pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -308,7 +308,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       /*
        * do the request
        */
-      status = snmp_sess_synch_response(ss.get(), pdu, &response);
+      status =
+          snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
       if (status == STAT_SUCCESS) {
          snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {

@@ -104,11 +104,23 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
 		continue
 	fi
+	docker exec "$CONTAINER_NAME" bash -c '
+		for attempt in {1..15}; do
+			if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
+				exit 0
+			fi
+			sleep 1
+		done
+		echo "SNMP daemon did not become ready on 127.0.0.1:11161" >&2
+		exit 1
+	'
 
 	# 3. Run cpp tests using meson
 	echo "    - Executing meson tests..."
+	EXEC_EXIT_CODE=0
 	docker exec -t -e ASAN_OPTIONS='halt_on_error=0' -e UBSAN_OPTIONS='halt_on_error=0' -e MSAN_OPTIONS='halt_on_error=0' "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
+		set -e;
 		rm -drf build/ *.info *.txt *.xml;
 		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
@@ -123,8 +135,20 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  rm -rf build/;
 		  meson setup build/ -Dwarning_level=3 -Dwerror=true;
 		fi;
-		ninja -C build/ -j \$(nproc); 
-		GTEST_OUTPUT='xml:/ezsnmp/cpp_tests/test-results.xml' meson test -C build/ --verbose > test-outputs.txt 2>&1;
+		BUILD_JOBS=\$(nproc);
+		if [ "\$BUILD_JOBS" -gt 1 ]; then BUILD_JOBS=\$((BUILD_JOBS - 1)); fi;
+		echo \"    - Building with \$BUILD_JOBS parallel jobs (reserving one CPU)\";
+		ninja -C build/ -j "\$BUILD_JOBS";
+		TEST_EXIT_CODE=0
+		meson test -C build/ --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
+		if [ -f build/meson-logs/testlog.junit.xml ]; then
+		  cp build/meson-logs/testlog.junit.xml test-results.xml;
+		fi;
+		if [ \$TEST_EXIT_CODE -ne 0 ]; then
+		  echo \"=== MESON TEST FAILURES (exit code: \$TEST_EXIT_CODE) ===\";
+		  grep -E '^(FAIL|ERROR|\\[  FAILED  \\]|Ok:.*Fail:)' test-outputs.txt || tail -n 50 test-outputs.txt;
+		  echo \"===================================================\";
+		fi;
 		
 		# Coverage collection: prefer geninfo with explicit ignore-errors, then fall back to lcov.
 		# Use version-agnostic options to bypass mismatched lines/inconsistent gcov output across distros.
@@ -172,8 +196,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		fi
 
 		normalize_coverage_paths updated_coverage.info
-		exit 0;
-	"
+		exit \"\$TEST_EXIT_CODE\";
+	" || EXEC_EXIT_CODE=$?
 
 	# 4. Copy artifacts from the container to host into per-distro folder
 	OUT_DIR="./test_outputs_${DISTRO_NAME}"
@@ -221,6 +245,11 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	docker rm "$CONTAINER_NAME"
 
 	echo "--------------------------------------------------"
+
+	if [ "$EXEC_EXIT_CODE" -ne 0 ]; then
+		echo "ERROR: Tests failed for ${DISTRO_NAME} with exit code ${EXEC_EXIT_CODE}." >&2
+		exit "$EXEC_EXIT_CODE"
+	fi
 
 done
 

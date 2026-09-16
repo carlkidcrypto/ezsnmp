@@ -2,6 +2,7 @@
 name: Update Docker Net-SNMP Versions
 concurrency:
   group: ${{ github.workflow }}
+  job-discriminator: ${{ github.run_id }}
   cancel-in-progress: false
 on:
   workflow_dispatch:
@@ -26,7 +27,7 @@ safe-outputs:
     preserve-branch-name: true
     if-no-changes: "ignore"
 timeout-minutes: 45
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:

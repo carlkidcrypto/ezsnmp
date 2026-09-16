@@ -1,9 +1,17 @@
-project('ezsnmp_tests', 'cpp', version: '2.3.0a2', default_options: ['cpp_std=c++17', 'b_coverage=true'])
+project('ezsnmp_tests', 'cpp', version: '2.5.0a0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
 thread_dep = dependency('threads')
-openssl_dep = dependency('openssl', required: true)
+# Net-SNMP supplies the OpenSSL ABI it was built against. Linking a separate
+# OpenSSL dependency here mixes incompatible libcrypto versions in legacy
+# compatibility containers (for example OpenSSL 1.0 with OpenSSL 3).
+openssl_dep = declare_dependency()
+if host_machine.system() == 'darwin'
+    # Homebrew keeps OpenSSL keg-only, while its net-snmp pkg-config metadata
+    # omits the OpenSSL include directory required by public Net-SNMP headers.
+    openssl_dep = dependency('openssl', required: true)
+endif
 
 # MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
 # Find the netsnmp dependency and make it required for the build to proceed.
@@ -458,7 +466,7 @@ new_shim_tests_map = {
     'snmpget': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpgetnext': ['_timeout', '_parse_args', '_stat_error', '_errindex'],
     'snmpset': ['', '_timeout', '_parse_args', '_stat_error', '_addvar'],
-    'snmptrap': ['_parse_args', '_null', '_stat_error'],
+    'snmptrap': ['_parse_args', '_null', '_stat_error', '_v1_branch'],
 }
 
 new_shim_executables = {}

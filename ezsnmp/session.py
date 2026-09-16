@@ -614,9 +614,12 @@ class Session(SessionBase):
         if not self._closed:
             self._closed = True
             try:
-                super()._close()
+                self._close_session()
             except Exception as e:
                 _handle_error(e)
+
+    def _close_session(self):
+        return super()._close()
 
     def __repr__(self):
         """Return detailed string representation for debugging."""
@@ -777,11 +780,14 @@ class Session(SessionBase):
             if oids is None:
                 oids = []
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            return super().bulk_walk(oids)
+            return self._bulk_walk(oids)
         except Exception as e:
             _handle_error(e)
         finally:
             self.set_max_repeaters_to_num = ""
+
+    def _bulk_walk(self, oids):
+        return super().bulk_walk(oids)
 
     def get(self, oids=None):
         """
@@ -925,11 +931,14 @@ class Session(SessionBase):
             if oids is None:
                 oids = []
             self.set_max_repeaters_to_num = self.__set_max_repeaters_to_num
-            return super().bulk_get(oids)
+            return self._bulk_get(oids)
         except Exception as e:
             _handle_error(e)
         finally:
             self.set_max_repeaters_to_num = ""
+
+    def _bulk_get(self, oids):
+        return super().bulk_get(oids)
 
     def set(self, oids=None):
         """
@@ -980,6 +989,9 @@ class Session(SessionBase):
         try:
             if oids is None:
                 oids = []
-            return super().set(oids)
+            return self._set(oids)
         except Exception as e:
             _handle_error(e)
+
+    def _set(self, oids):
+        return super().set(oids)

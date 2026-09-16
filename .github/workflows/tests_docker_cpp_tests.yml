@@ -75,6 +75,7 @@ jobs:
            ./run_cpp_tests_in_all_dockers.sh ${{ matrix.distro }}
 
       - name: Upload Test Results (${{ matrix.distro }})
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: cpp-test-results-dockerized-${{ matrix.distro }}

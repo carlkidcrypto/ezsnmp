@@ -22,11 +22,11 @@ safe-outputs:
     allowed: [coverage, tests, python]
     max: 4
 timeout-minutes: 45
-model: claude-sonnet-4.6
+model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, python, containers]
+  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, dev-tools]
 tools:
   edit:
   bash: true

@@ -76,7 +76,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -80,115 +85,102 @@
+@@ -80,115 +85,114 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -124,7 +124,7 @@
 +   std::vector<std::string> return_vector;
 +
 +   netsnmp_session session;
-+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss;
++   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
 +   netsnmp_pdu *pdu = NULL;
 +   netsnmp_pdu *response = NULL;
 +   netsnmp_variable_list *vars = NULL;
@@ -137,37 +137,48 @@
 -    int             status;
 -    int             failures = 0;
 -    int             exitval = 0;
--
 +   char *names[SNMP_MAX_CMDLINE_OIDS] = {0};
 +   oid name[MAX_OID_LEN] = {0};
 +   size_t name_length = 0;
 +   int status = -1;
 +   SOCK_STARTUP;
  
++   int dont_fix_pdus = 0;
++   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
++   // global state (option parsing, DS library settings).
++   {
++      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+ 
      /*
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
-+   netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
-+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+   switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
++      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
++      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        exit(1);
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 +
      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
 -        exit(0);
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
 +
      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
 -        usage();
 -        exit(1);
-+         throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
 +
      default:
          break;
      }
  
++      // Capture DONT_FIX_PDUS while still holding the setup mutex so no other
++      // thread can reset it before we read its value for this invocation.
++      dont_fix_pdus =
++          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
++   }
++
      if (arg >= argc) {
 -        fprintf(stderr, "Missing object name\n");
 -        usage();
@@ -203,7 +214,7 @@
       */
 -    ss = snmp_open(&session);
 -    if (ss == NULL) {
-+   ss.reset(snmp_open(&session));
++   ss.reset(snmp_sess_open(&session));
 +   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
@@ -242,12 +253,12 @@
      /*
       * Perform the request.
       *
-@@ -196,35 +188,33 @@
+@@ -196,35 +200,33 @@
       * "fix" the PDU (removing the error-prone OID) and retry.
       */
    retry:
 -    status = snmp_synch_response(ss, pdu, &response);
-+   status = snmp_synch_response(ss.get(), pdu, &response);
++   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
      if (status == STAT_SUCCESS) {
 +      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -287,11 +298,11 @@
               */
 -            if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
 -					NETSNMP_DS_APP_DONT_FIX_PDUS)) {
-+         if (!netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS)) {
++         if (!dont_fix_pdus) {
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
                  snmp_free_pdu(response);
                  response = NULL;
-@@ -232,24 +222,26 @@
+@@ -232,24 +234,26 @@
                      goto retry;
  		}
              }
@@ -309,7 +320,7 @@
      } else {                    /* status == STAT_ERROR */
 -        snmp_sess_perror("snmpget", ss);
 -        exitval = 1;
-+      snmp_sess_perror_exception("snmpget", ss.get());
++      snmp_single_sess_perror_exception("snmpget", ss.get());
  
      }                           /* endif -- STAT_SUCCESS */
  
@@ -323,7 +334,7 @@
 +   }
  
 +   {
-+      std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard(ss.release());
++      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
 +   }
 +
 +   clear_net_snmp_library_data();

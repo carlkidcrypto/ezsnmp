@@ -1,30 +1,18 @@
 class Ezsnmp < Formula
   desc "Blazingly fast Python SNMP library based on Net-SNMP"
   homepage "https://github.com/carlkidcrypto/ezsnmp"
-  url "https://github.com/carlkidcrypto/ezsnmp/archive/refs/tags/v2.4.0b0.tar.gz"
-  sha256 "beb84cedcb8adea301b9b5ee89f9b306b748941f6c8ea1d52b4c14e6afc58545"
+  url "https://github.com/carlkidcrypto/ezsnmp/archive/refs/tags/v2.4.0.tar.gz"
+  sha256 "20a3eb641e77e2acdc8d60364c8b37cdd49220093edd00f2cda87822431c0db8"
   license "BSD-3-Clause"
   head "https://github.com/carlkidcrypto/ezsnmp.git", branch: "main"
 
   depends_on "swig" => :build
   depends_on "net-snmp"
   depends_on "openssl@3"
-  # python@3.12 is the required fallback. To build against a different Python
-  # (3.10–3.14), install it first (e.g. `brew install python@3.13`) and the
-  # formula will automatically prefer the newest available version from the
-  # supported range.
-  depends_on "python@3.12"
 
-  # Returns the path to the newest Python 3.10–3.14 binary that is opt-linked.
-  # Falls back to python@3.12 (always installed via the required dep above).
   def find_python3
-    %w[3.14 3.13 3.12 3.11 3.10].each do |v|
-      candidate = Formula["python@#{v}"].opt_bin/"python3"
-      return candidate if candidate.exist?
-    rescue FormulaUnavailableError
-      next
-    end
-    Formula["python@3.12"].opt_bin/"python3"
+    candidates = ["python3"] + Dir["#{HOMEBREW_PREFIX}/opt/python@*/bin/python3"].sort.reverse
+    candidates.find { |candidate| File.executable?(candidate) } || "python3"
   end
 
   def install
@@ -76,9 +64,6 @@ class Ezsnmp < Formula
 
         export PYTHONPATH="#{site_packages}:$PYTHONPATH"
 
-      To build against a different Python (3.10–3.14), install it first:
-        brew install python@3.13
-      Then reinstall ezsnmp and it will use the newer Python automatically.
     EOS
   end
 

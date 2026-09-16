@@ -67,6 +67,7 @@ SOFTWARE.
 #include <net-snmp/net-snmp-includes.h>
 
 #include <mutex>
+#include <vector>
 
 oid snmpbulkget_objid_mib[] = {1, 3, 6, 1, 2, 1};
 thread_local int max_repetitions = 10;
@@ -177,7 +178,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    // Declare name/namep/names as local variables to avoid data races.
    int names;
-   struct nameStruct *name, *namep;
 
    names = argc - arg;
    if (names < non_repeaters) {
@@ -185,7 +185,9 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
       return parse_results(return_vector);
    }
 
-   namep = name = (struct nameStruct *)calloc(names, sizeof(*name));
+   std::vector<nameStruct> name_storage(names);
+   nameStruct *name = name_storage.data();
+   nameStruct *namep = name;
    {
       std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       while (arg < argc) {
@@ -222,7 +224,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * do the request
     */
-   status = snmp_sess_synch_response(ss.get(), pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {

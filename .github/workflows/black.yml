@@ -47,12 +47,15 @@ jobs:
         if: steps.changed.outputs.changed == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           # Determine the base branch (the branch that needs the fix)
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            BASE_BRANCH="${{ github.head_ref }}"
+          if [ "$EVENT_NAME" == "pull_request" ]; then
+            BASE_BRANCH="$HEAD_REF"
           else
-            BASE_BRANCH="${{ github.ref_name }}"
+            BASE_BRANCH="$REF_NAME"
           fi
 
           # Use a deterministic branch name based on the base branch to avoid duplicate PRs
@@ -63,7 +66,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Checkout or create the auto-format branch, starting from the base branch
-          git checkout -B "$BRANCH_NAME" "origin/$BASE_BRANCH"
+          git fetch origin "$BASE_BRANCH"
+          git checkout -B "$BRANCH_NAME" FETCH_HEAD
           git add .
           git commit -m "style: auto-format with black" || echo "No changes to commit"
           git push origin "$BRANCH_NAME" --force

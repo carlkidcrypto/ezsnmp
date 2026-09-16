@@ -200,7 +200,7 @@ std::vector<Result> snmpget(std::vector<std::string> const &args,
     * "fix" the PDU (removing the error-prone OID) and retry.
     */
 retry:
-   status = snmp_sess_synch_response(ss.get(), pdu, &response);
+   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {

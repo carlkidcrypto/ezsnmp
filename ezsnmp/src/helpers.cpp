@@ -107,7 +107,7 @@ void snmp_single_sess_perror_exception(char const *prog_string, void *sessp) {
    std::string err;
    char *err_cstr = nullptr;
 
-   snmp_sess_error(sessp, NULL, NULL, &err_cstr);
+   snmp_sess_error(static_cast<struct session_list *>(sessp), NULL, NULL, &err_cstr);
    err = err_cstr;
    SNMP_FREE(err_cstr);
 

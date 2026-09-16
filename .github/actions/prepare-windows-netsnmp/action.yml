@@ -93,6 +93,37 @@ runs:
           Write-Warning "snmplib/snmp_openssl.c not found at '$snmpOpensslPath'; skipping OpenSSL 3.x patch."
         }
 
+        # Apply an OpenSSL 3.5+ compatibility patch to include/net-snmp/library/scapi.h.
+        # <openssl/ossl_typ.h> was a deprecated forwarding header kept around since
+        # OpenSSL 3.0 for API compatibility; it was removed entirely in OpenSSL 3.5.
+        # <openssl/types.h> provides the same typedefs (EVP_MD, EVP_CIPHER, etc.) and
+        # is available since OpenSSL 1.1.0, so it works across the full 1.1.x-3.x range.
+        $scapiHeaderPath = Join-Path $netSnmpSource.FullName 'include' 'net-snmp' 'library' 'scapi.h'
+        if (Test-Path $scapiHeaderPath) {
+          $src = Get-Content $scapiHeaderPath -Raw
+          $src = $src -replace 'include <openssl/ossl_typ\.h>', 'include <openssl/types.h>'
+          Set-Content $scapiHeaderPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied OpenSSL 3.5+ compatibility patch to include/net-snmp/library/scapi.h'
+        } else {
+          Write-Warning "include/net-snmp/library/scapi.h not found at '$scapiHeaderPath'; skipping OpenSSL 3.5+ patch."
+        }
+
+        # Apply an export-visibility patch to include/net-snmp/library/lcd_time.h.
+        # free_enginetime() lacks the NETSNMP_IMPORT decoration that public API
+        # functions have, so it is never added to netsnmp.dll's export table on
+        # Windows (POSIX shared libraries export it implicitly, masking this).
+        # ezsnmp calls it directly from remove_v3_user_from_cache(), so it must
+        # be exported for the link to succeed.
+        $lcdTimeHeaderPath = Join-Path $netSnmpSource.FullName 'include' 'net-snmp' 'library' 'lcd_time.h'
+        if (Test-Path $lcdTimeHeaderPath) {
+          $src = Get-Content $lcdTimeHeaderPath -Raw
+          $src = $src -replace '(?m)^(\s*)void(\s+)free_enginetime\(', "`$1NETSNMP_IMPORT`n`$1void`$2free_enginetime("
+          Set-Content $lcdTimeHeaderPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied export-visibility patch to include/net-snmp/library/lcd_time.h'
+        } else {
+          Write-Warning "include/net-snmp/library/lcd_time.h not found at '$lcdTimeHeaderPath'; skipping export-visibility patch."
+        }
+
         $configureArgs = @(
           '--config=release',
           '--linktype=dynamic',
@@ -123,6 +154,27 @@ runs:
         if ($LASTEXITCODE -ne 0) {
           throw "Configuring Net-SNMP with perl Configure failed with exit code $LASTEXITCODE."
         }
+
+        # Apply a C++ compatibility patch to win32/net-snmp/net-snmp-config.h.
+        # perl Configure regenerates this file from net-snmp-config.h.in, so this
+        # must run after Configure rather than before, or Configure clobbers it.
+        # The file unconditionally does `#define inline __inline`, which is legal
+        # for the C-only net-snmp library build but illegal once MSVC's C++ standard
+        # library headers are included (xkeycheck.h forbids macroizing "inline").
+        # Guard it so the macro is only defined for C translation units.
+        $netSnmpConfigHeaderPath = Join-Path $netSnmpSource.FullName 'win32' 'net-snmp' 'net-snmp-config.h'
+        if (Test-Path $netSnmpConfigHeaderPath) {
+          $src = Get-Content $netSnmpConfigHeaderPath -Raw
+          if ($src -notmatch '(?m)^#define inline __inline\r?$') {
+            Write-Warning "Did not find the expected 'inline' macro definition in '$netSnmpConfigHeaderPath'; the C++ compatibility patch was not applied."
+          }
+          $src = $src -replace '(?m)^#define inline __inline\r?$', "#ifndef __cplusplus`n#define inline __inline`n#endif"
+          Set-Content $netSnmpConfigHeaderPath $src -NoNewline -Encoding UTF8
+          Write-Host 'Applied C++ compatibility patch to win32/net-snmp/net-snmp-config.h'
+        } else {
+          Write-Warning "win32/net-snmp/net-snmp-config.h not found at '$netSnmpConfigHeaderPath'; skipping C++ compatibility patch."
+        }
+
         $vsDevCmdFailedExitCode = 10
         $nmakeCleanFailedExitCode = 11
         $nmakeLibsFailedExitCode = 12
@@ -168,3 +220,5 @@ runs:
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_LIB_DIR=$wheelLib"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_BIN_DIR=$wheelBin"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_BIN_DIR=$opensslBin"
+        Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_INCLUDE_DIR=$opensslInclude"
+        Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_LIB_DIR=$opensslLib"

@@ -48,6 +48,7 @@ Workflow Tips
 - Study existing patterns in both Python and C++ layers
 - Always ask: "Is this secure? Does it handle SNMP errors properly? What edge cases need testing?"
 - Test on multiple platforms (Linux, macOS) when modifying C++ code
+- Validate workflow changes with ``yamllint`` and ``actionlint``
 
 Security Considerations
 -----------------------
@@ -67,6 +68,11 @@ Before submitting AI-assisted code, confirm that:
 - You understand every line (both Python and C++ if applicable)
 - All tests pass locally: ``pytest python_tests/``, C++ tests in ``cpp_tests/``
 - Code is formatted: ``black`` for Python, ``clang-format`` for C++
+- Workflow files pass ``yamllint`` and ``actionlint``
+
+Install the Python workflow linter with ``python -m pip install -r requirements.txt``.
+The official ``actionlint`` binary is versioned in ``tools/actionlint-version.txt``
+and must be installed from its upstream release for the current platform.
 - Docs are updated: README.rst, Sphinx docs, and Doxygen comments
 - Code follows existing patterns in both languages
 
