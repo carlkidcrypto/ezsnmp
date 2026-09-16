@@ -183,7 +183,9 @@ def main(argv: list[str] | None = None) -> int:
                 rel = path.relative_to(REPO_ROOT)
                 print(f"\n{rel}:")
                 for lineno, description, matched, replacement in issues:
-                    suggestion = f" → replace with '{replacement}'" if replacement else ""
+                    suggestion = (
+                        f" → replace with '{replacement}'" if replacement else ""
+                    )
                     print(f"  Line {lineno:4d}: {description}{suggestion}")
                     print(f"             found: {matched!r}")
                 total_issues += len(issues)
