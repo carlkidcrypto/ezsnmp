@@ -25,11 +25,30 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
 
       - name: Install yamllint
-        run: python -m pip install yamllint
+        run: python -m pip install yamllint==1.38.0
+
+      - name: Install actionlint
+        run: |
+          set -e
+          version=$(cat tools/actionlint-version.txt)
+          archive="actionlint_${version#v}_linux_amd64.tar.gz"
+          curl -fsSL "https://github.com/rhysd/actionlint/releases/download/${version}/${archive}" -o /tmp/actionlint.tar.gz
+          mkdir -p /tmp/actionlint
+          tar -xzf /tmp/actionlint.tar.gz -C /tmp/actionlint
+          sudo install -m 0755 /tmp/actionlint/actionlint /usr/local/bin/actionlint
+          actionlint -version
 
       - name: Lint workflow YAML files
         run: |
           set -e
           echo "Linting all workflow YAML files (excluding generated agentic lock files and agentics-maintenance.yml) in .github/workflows/ ..."
-          find .github/workflows/ -name "*.yml" ! -name "*.lock.yml" ! -name "agentics-maintenance.yml" -print0 | xargs -0 yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}"
+          find .github/workflows/ -name "*.yml" ! -name "*.lock.yml" ! -name "agentics-maintenance.yml" -print0 | xargs -0 yamllint -c .yamllint
           echo "All workflow YAML files passed linting."
+
+      - name: Validate workflow actions
+        run: |
+          set -e
+          # ShellCheck is useful for individual workflow cleanup, but existing
+          # advisory findings should not block all workflow validation.
+          find .github/workflows/ -name "*.yml" ! -name "*.lock.yml" ! -name "agentics-maintenance.yml" -print0 | xargs -0 actionlint -shellcheck=
+          echo "All workflow files passed actionlint."

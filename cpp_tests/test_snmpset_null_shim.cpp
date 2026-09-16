@@ -51,7 +51,7 @@ TEST_F(SnmpSetNullShimTest, TestHelpFlagThrowsParseErrorForSuccessExit) {
        ParseErrorBase);
 }
 
-/* Missing object name path: arg >= argc should return empty result set. */
+/* Missing object name path: arg >= argc should return an empty result set. */
 TEST_F(SnmpSetNullShimTest, TestMissingObjectNameReturnsEmptyResults) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
 

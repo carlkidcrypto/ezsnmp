@@ -114,8 +114,8 @@ RUN cd /tmp && \
 RUN yum-config-manager --enable base-debuginfo && \
     debuginfo-install -y net-snmp-libs && \
     yum clean all && \
-    LIBS=$(net-snmp-config --libs) && \
-    CFLAGS=$(net-snmp-config --cflags) && \
+    LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
+    CFLAGS=$(net-snmp-config --cflags | sed 's/[[:space:]]-Werror=declaration-after-statement//g') && \
     VERSION=$(rpm -q --queryformat '%{VERSION}' net-snmp-devel) && \
     mkdir -p /usr/lib64/pkgconfig && \
     printf "prefix=/usr\nexec_prefix=\${prefix}\nlibdir=\${exec_prefix}/lib64\nincludedir=\${prefix}/include\n\nName: netsnmp\nDescription: A collection of libraries for SNMP applications.\nVersion: %s\nLibs: %s\nCflags: %s\n" "$VERSION" "$LIBS" "$CFLAGS" > /usr/lib64/pkgconfig/netsnmp.pc
