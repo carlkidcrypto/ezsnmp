@@ -97,6 +97,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	if ! docker run -d \
 		--name "${CONTAINER_NAME}" \
 		-v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+		-v "$HOST_SOURCE_PATH/cpp_tests:$CONTAINER_WORK_DIR/cpp_tests" \
 		-v "$HOST_SOURCE_PATH/ezsnmp/src:/ezsnmp/src:ro" \
 		-v "$HOST_SOURCE_PATH/ezsnmp/include:/ezsnmp/include:ro" \
 		"${FULL_IMAGE_TAG}" \
