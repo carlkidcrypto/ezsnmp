@@ -23,7 +23,7 @@ struct Result {
    std::string index = "";              ///< Index of the retrieved data (if applicable).
    std::string type = "";               ///< Data type of the retrieved value.
    std::string value = "";              ///< Actual value of the retrieved data.
-   ConvertedValue converted_value = ""; ///< Converted value of the type,value data.
+   ConvertedValue converted_value = ""; ///< Converted value derived from the type and value data.
 
    /**
     * @brief Converts the Result object to a string representation.
