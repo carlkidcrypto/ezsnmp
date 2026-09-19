@@ -311,6 +311,45 @@ TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithNumericType) {
              "INTEGER Conversion Error: Empty value for numeric type");
 }
 
+// Ensure the "empty value" numeric-error branch is also exercised for the
+// unsigned 32-bit (stoul) and 64-bit (stoull) conversion instantiations,
+// not just the signed stoi path.
+TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithGauge32Type) {
+   auto converted = result_obj._make_converted_value("Gauge32", "");
+   EXPECT_EQ(std::get<std::string>(converted),
+             "Gauge32 Conversion Error: Empty value for numeric type");
+}
+
+TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithCounter64Type) {
+   auto converted = result_obj._make_converted_value("Counter64", "");
+   EXPECT_EQ(std::get<std::string>(converted),
+             "Counter64 Conversion Error: Empty value for numeric type");
+}
+
+// Exercise the catch(std::exception) path for out-of-range numeric values
+// across all three numeric conversion instantiations (stoi/stoul/stoull).
+TEST_F(ResultConvertedValueTest, HandlesOutOfRangeIntegerValue) {
+   auto converted = result_obj._make_converted_value("INTEGER", "99999999999999999999");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   std::string error_msg = std::get<std::string>(converted);
+   EXPECT_TRUE(error_msg.find("INTEGER Conversion Error") != std::string::npos);
+}
+
+TEST_F(ResultConvertedValueTest, HandlesOutOfRangeGauge32Value) {
+   auto converted = result_obj._make_converted_value("Gauge32", "99999999999999999999");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   std::string error_msg = std::get<std::string>(converted);
+   EXPECT_TRUE(error_msg.find("Gauge32 Conversion Error") != std::string::npos);
+}
+
+TEST_F(ResultConvertedValueTest, HandlesOutOfRangeCounter64Value) {
+   auto converted =
+       result_obj._make_converted_value("Counter64", "999999999999999999999999999999999999999999");
+   ASSERT_TRUE(std::holds_alternative<std::string>(converted));
+   std::string error_msg = std::get<std::string>(converted);
+   EXPECT_TRUE(error_msg.find("Counter64 Conversion Error") != std::string::npos);
+}
+
 TEST_F(ResultConvertedValueTest, HandlesEmptyValueWithHexString) {
    auto converted = result_obj._make_converted_value("Hex-STRING", "");
    std::vector<unsigned char> expected = {};

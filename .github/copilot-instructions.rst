@@ -53,7 +53,7 @@ Project-Specific Context
 - This is a Python/C++ SNMP library project using Net-SNMP
 - Core components:
 
-  - ``ezsnmp/``: Python API layer (session.py, datatypes.py, exceptions.py)
+  - ``ezsnmp/``: Python API layer (session.py, netsnmp.py, exceptions.py)
   - ``ezsnmp/src/``: C++ implementation (SessionBase, NetSnmpBase, etc.)
   - ``ezsnmp/interface/``: SWIG interface files (.i files)
   - ``python_tests/``: Python test suite using pytest
