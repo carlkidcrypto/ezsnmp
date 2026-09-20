@@ -12,7 +12,6 @@
 #include <string>
 #include <utility>
 
-
 #include "exceptionsbase.h"
 #include "thread_safety.h"
 

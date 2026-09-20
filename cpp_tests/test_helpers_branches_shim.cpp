@@ -8,7 +8,6 @@
 
 #include "helpers.h"
 
-
 namespace {
 
 bool g_fail_calloc = false;
@@ -62,7 +61,7 @@ extern "C" void *calloc(size_t n, size_t size) {
    void *ptr = std::malloc(total);
    if (ptr != nullptr) {
       // Use volatile to prevent compiler from optimizing malloc+memset into recursive calloc call
-      volatile unsigned char *p = static_cast<volatile unsigned char *>(ptr);
+      unsigned char volatile *p = static_cast<unsigned char volatile *>(ptr);
       for (size_t i = 0; i < total; ++i) {
          p[i] = 0;
       }
@@ -79,7 +78,7 @@ extern "C" char *strdup(char const *src) {
    auto *out = static_cast<char *>(std::malloc(length));
    if (out != nullptr) {
       // Use volatile to prevent compiler from optimizing malloc+memcpy into recursive strdup call
-      volatile char *dst = out;
+      char volatile *dst = out;
       for (size_t i = 0; i < length; ++i) {
          dst[i] = src[i];
       }
