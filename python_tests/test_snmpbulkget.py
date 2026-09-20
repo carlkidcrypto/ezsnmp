@@ -84,4 +84,3 @@ def test_non_repeaters_greater_than_names_raises_generic_error(capfd):
     captured = capfd.readouterr()
     assert captured.out == ""
     assert captured.err == ""
-

@@ -44,4 +44,3 @@ def test_invalid_version():
     args = ["-v", "999", "-c", "public", "localhost:11161", "system"]
     with pytest.raises(ParseError):
         snmpwalk(args, "testing_snmpwalk_invalid_version")
-
