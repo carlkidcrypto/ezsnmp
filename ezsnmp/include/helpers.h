@@ -107,7 +107,6 @@ struct SnmpSingleSessionCloser {
    }
 };
 
-
 /**
  * @brief Creates an array of C-style strings from a vector of strings.
  *
