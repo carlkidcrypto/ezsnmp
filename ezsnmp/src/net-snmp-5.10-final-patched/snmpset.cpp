@@ -170,8 +170,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    }
    if ((argc - arg) > 3 * SNMP_MAX_CMDLINE_OIDS) {
       std::string err_msg = "Too many assignments specified. Only " +
-                            std::to_string(SNMP_MAX_CMDLINE_OIDS) +
-                            " allowed in one request.\n";
+                            std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
       throw GenericErrorBase(err_msg);
    }
 
@@ -205,8 +204,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                types[current_type++] = *argv[arg++];
                break;
             default:
-               throw UndeterminedTypeErrorBase(std::string(argv[arg - 1]) +
-                                               ": Bad object type: " +
+               throw UndeterminedTypeErrorBase(std::string(argv[arg - 1]) + ": Bad object type: " +
                                                std::string(1, *argv[arg]) + "\n");
          }
       } else {
