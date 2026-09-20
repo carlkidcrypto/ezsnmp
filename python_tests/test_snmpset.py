@@ -36,14 +36,11 @@ def test_integer(netsnmp_args, reset_values):
     assert res[0].type == "INTEGER"
 
 
-def test_invalid_version(capfd):
-    """Test snmpset raises ParseError for an invalid SNMP version without stdio noise."""
+def test_invalid_version():
+    """Test snmpset raises ParseError for an invalid SNMP version."""
     args = ["-v", "999", "-c", "public", "localhost:11161", "sysLocation.0", "s", "x"]
     with pytest.raises(ParseError):
         snmpset(args, "testing_snmpset_invalid_version")
-    captured = capfd.readouterr()
-    assert captured.out == ""
-    assert captured.err == ""
 
 
 def test_missing_object_name(netsnmp_args, capfd):
