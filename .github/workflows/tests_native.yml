@@ -117,7 +117,7 @@ jobs:
           if ls .wheel-cache/ezsnmp-*.whl 1> /dev/null 2>&1; then
             echo "Found cached wheel in .wheel-cache. Attempting installation..."
             if python3 -m pip install .wheel-cache/ezsnmp-*.whl; then
-              if python3 -c "import ezsnmp; print('ezsnmp imported successfully from cached wheel')"; then
+              if (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from cached wheel')"); then
                 INSTALLED=1
               else
                 echo "WARNING: Cached wheel verification failed. Purging and rebuilding from source."
@@ -135,7 +135,7 @@ jobs:
             mkdir -p .wheel-cache
             python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
             python3 -m pip install .wheel-cache/ezsnmp-*.whl
-            python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')"
+            (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
           fi
 
       - name: Run Tests
