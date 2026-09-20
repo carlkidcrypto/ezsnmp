@@ -108,6 +108,30 @@ struct SnmpSingleSessionCloser {
 };
 
 /**
+ * @class StdioSilencer
+ * @brief RAII helper to temporarily redirect stdout and stderr to /dev/null (or NUL on Windows).
+ *
+ * Suppresses noisy error output printed directly to stdout/stderr by third-party
+ * C libraries (such as Net-SNMP's snmp_parse_args). Because file descriptors are redirected,
+ * this must be used within a synchronized scope (such as while holding g_netsnmp_setup_mutex).
+ */
+class StdioSilencer {
+ public:
+   StdioSilencer();
+   ~StdioSilencer();
+
+   // Non-copyable, non-movable
+   StdioSilencer(StdioSilencer const &) = delete;
+   StdioSilencer &operator=(StdioSilencer const &) = delete;
+   StdioSilencer(StdioSilencer &&) = delete;
+   StdioSilencer &operator=(StdioSilencer &&) = delete;
+
+ private:
+   int saved_stdout_;
+   int saved_stderr_;
+};
+
+/**
  * @brief Creates an array of C-style strings from a vector of strings.
  *
  * This function takes a vector of strings and creates an array of C-style strings

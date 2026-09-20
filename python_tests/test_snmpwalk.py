@@ -39,8 +39,11 @@ def test_unknown(netsnmp_args):
         snmpwalk(netsnmp_args, "testing_value")
 
 
-def test_invalid_version():
-    """Test snmpwalk raises ParseError for an invalid SNMP version."""
+def test_invalid_version(capfd):
+    """Test snmpwalk raises ParseError for an invalid SNMP version without stdio noise."""
     args = ["-v", "999", "-c", "public", "localhost:11161", "system"]
     with pytest.raises(ParseError):
         snmpwalk(args, "testing_snmpwalk_invalid_version")
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""

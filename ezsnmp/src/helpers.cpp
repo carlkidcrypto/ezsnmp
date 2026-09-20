@@ -4,12 +4,35 @@
 #include <net-snmp/library/lcd_time.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <regex>
 #include <sstream>
 #include <string>
 #include <utility>
+
+#ifdef _WIN32
+#include <fcntl.h>
+#include <io.h>
+#define EZSNMP_DUP _dup
+#define EZSNMP_DUP2 _dup2
+#define EZSNMP_CLOSE _close
+#define EZSNMP_OPEN _open
+#define EZSNMP_FILENO _fileno
+#define EZSNMP_NULL_DEV "NUL"
+#define EZSNMP_O_WRONLY _O_WRONLY
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#define EZSNMP_DUP dup
+#define EZSNMP_DUP2 dup2
+#define EZSNMP_CLOSE close
+#define EZSNMP_OPEN open
+#define EZSNMP_FILENO fileno
+#define EZSNMP_NULL_DEV "/dev/null"
+#define EZSNMP_O_WRONLY O_WRONLY
+#endif
 
 #include "exceptionsbase.h"
 #include "thread_safety.h"
@@ -361,5 +384,50 @@ void clear_net_snmp_library_data() {
 void snmp_check_null_response(netsnmp_pdu const *response) {
    if (response == NULL) {
       throw PacketErrorBase("received NULL response from snmp_sess_synch_response");
+   }
+}
+
+StdioSilencer::StdioSilencer() : saved_stdout_(-1), saved_stderr_(-1) {
+   fflush(stdout);
+   fflush(stderr);
+
+   int const stdout_fd = EZSNMP_FILENO(stdout);
+   int const stderr_fd = EZSNMP_FILENO(stderr);
+
+   if (stdout_fd >= 0) {
+      saved_stdout_ = EZSNMP_DUP(stdout_fd);
+   }
+   if (stderr_fd >= 0) {
+      saved_stderr_ = EZSNMP_DUP(stderr_fd);
+   }
+
+   int const null_fd = EZSNMP_OPEN(EZSNMP_NULL_DEV, EZSNMP_O_WRONLY);
+   if (null_fd >= 0) {
+      if (stdout_fd >= 0) {
+         EZSNMP_DUP2(null_fd, stdout_fd);
+      }
+      if (stderr_fd >= 0) {
+         EZSNMP_DUP2(null_fd, stderr_fd);
+      }
+      EZSNMP_CLOSE(null_fd);
+   }
+}
+
+StdioSilencer::~StdioSilencer() {
+   fflush(stdout);
+   fflush(stderr);
+
+   int const stdout_fd = EZSNMP_FILENO(stdout);
+   int const stderr_fd = EZSNMP_FILENO(stderr);
+
+   if (saved_stdout_ >= 0 && stdout_fd >= 0) {
+      EZSNMP_DUP2(saved_stdout_, stdout_fd);
+      EZSNMP_CLOSE(saved_stdout_);
+      saved_stdout_ = -1;
+   }
+   if (saved_stderr_ >= 0 && stderr_fd >= 0) {
+      EZSNMP_DUP2(saved_stderr_, stderr_fd);
+      EZSNMP_CLOSE(saved_stderr_);
+      saved_stderr_ = -1;
    }
 }

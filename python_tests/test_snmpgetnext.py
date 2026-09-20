@@ -13,11 +13,14 @@ def test_regular(netsnmp_args):
     assert res[0].oid != ""
 
 
-def test_invalid_version():
-    """Test snmpgetnext raises ParseError for an invalid SNMP version."""
+def test_invalid_version(capfd):
+    """Test snmpgetnext raises ParseError for an invalid SNMP version without stdio noise."""
     args = ["-v", "999", "-c", "public", "localhost:11161", "sysDescr.0"]
     with pytest.raises(ParseError):
         snmpgetnext(args, "testing_getnext_invalid_version")
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
 
 
 def test_unknown_oid(netsnmp_args):

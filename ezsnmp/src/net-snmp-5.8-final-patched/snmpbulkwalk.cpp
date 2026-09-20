@@ -210,6 +210,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
    // both modify shared Net-SNMP global state.
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+      StdioSilencer silencer;
 
       // Reset application-level walk flags for each invocation.
       netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);

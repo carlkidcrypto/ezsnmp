@@ -165,6 +165,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    // global state (option parsing, DS library settings).
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+      StdioSilencer silencer;
 
       /** parse args (also initializes session) */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
@@ -253,18 +254,14 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
 #ifndef NETSNMP_DISABLE_SNMPV1
    if (session.version == SNMP_VERSION_1) {
       if (inform) {
-         fprintf(stderr, "Cannot send INFORM as SNMPv1 PDU\n");
          goto out;
       }
       pdu = snmp_pdu_create(SNMP_MSG_TRAP);
       if (!pdu) {
-         fprintf(stderr, "Failed to create trap PDU\n");
          goto out;
       }
       pdu_in_addr_t = (in_addr_t *)pdu->agent_addr;
       if (arg == argc) {
-         fprintf(stderr, "No enterprise oid\n");
-         snmptrap_usage();
          goto out;
       }
       if (argv[arg][0] == 0) {
@@ -277,7 +274,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
             std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
             if (!snmp_parse_oid(argv[arg], name, &name_length)) {
                snmp_perror_exception(argv[arg]);
-               snmptrap_usage();
                goto out;
             }
          }
@@ -286,37 +282,28 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          pdu->enterprise_length = name_length;
       }
       if (++arg >= argc) {
-         fprintf(stderr, "Missing agent parameter\n");
-         snmptrap_usage();
          goto out;
       }
       agent = argv[arg];
       if (agent != NULL && strlen(agent) != 0) {
          int ret = netsnmp_gethostbyname_v4(agent, pdu_in_addr_t);
          if (ret < 0) {
-            fprintf(stderr, "unknown host: %s\n", agent);
             goto out;
          }
       } else {
          *pdu_in_addr_t = get_myaddr();
       }
       if (++arg == argc) {
-         fprintf(stderr, "Missing generic-trap parameter\n");
-         snmptrap_usage();
          goto out;
       }
       trap = argv[arg];
       pdu->trap_type = atoi(trap);
       if (++arg == argc) {
-         fprintf(stderr, "Missing specific-trap parameter\n");
-         snmptrap_usage();
          goto out;
       }
       specific = argv[arg];
       pdu->specific_type = atoi(specific);
       if (++arg == argc) {
-         fprintf(stderr, "Missing uptime parameter\n");
-         snmptrap_usage();
          goto out;
       }
       description = argv[arg];
@@ -333,12 +320,9 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
 
       pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
       if (!pdu) {
-         fprintf(stderr, "Failed to create notification PDU\n");
          goto out;
       }
       if (arg == argc) {
-         fprintf(stderr, "Missing up-time parameter\n");
-         snmptrap_usage();
          goto out;
       }
       trap = argv[arg];
@@ -349,8 +333,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       }
       snmp_add_var(pdu, objid_sysuptime, OID_LENGTH(objid_sysuptime), 't', trap);
       if (++arg == argc) {
-         fprintf(stderr, "Missing trap-oid parameter\n");
-         snmptrap_usage();
          goto out;
       }
       if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
@@ -363,7 +345,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    while (arg < argc) {
       arg += 3;
       if (arg > argc) {
-         fprintf(stderr, "%s: Missing type/value for variable\n", argv[arg - 3]);
          goto out;
       }
       name_length = MAX_OID_LEN;

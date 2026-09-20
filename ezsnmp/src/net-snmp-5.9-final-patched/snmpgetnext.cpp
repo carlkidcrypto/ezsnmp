@@ -120,6 +120,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    // global state (option parsing, DS library settings).
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+      StdioSilencer silencer;
 
       /*
        * get the common command line arguments

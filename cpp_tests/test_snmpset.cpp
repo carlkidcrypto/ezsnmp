@@ -123,30 +123,26 @@ TEST_F(SnmpSetTest, TestSuccessfulSet) {
 TEST_F(SnmpSetTest, TestMissingObjectName) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11161"};
 
-   auto results = snmpset(args, "testing_missing_object");
-   EXPECT_TRUE(results.empty());
+   EXPECT_THROW(snmpset(args, "testing_missing_object"), GenericErrorBase);
 }
 
 TEST_F(SnmpSetTest, TestMissingTypeAndValue) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
 
-   auto results = snmpset(args, "testing_missing_type_value");
-   EXPECT_TRUE(results.empty());
+   EXPECT_THROW(snmpset(args, "testing_missing_type_value"), GenericErrorBase);
 }
 
 TEST_F(SnmpSetTest, TestMissingValue) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0", "s"};
 
-   auto results = snmpset(args, "testing_missing_value");
-   EXPECT_TRUE(results.empty());
+   EXPECT_THROW(snmpset(args, "testing_missing_value"), GenericErrorBase);
 }
 
 TEST_F(SnmpSetTest, TestBadObjectType) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0", "z", "test"};
 
-   auto results = snmpset(args, "testing_bad_type");
-   EXPECT_TRUE(results.empty());
+   EXPECT_THROW(snmpset(args, "testing_bad_type"), UndeterminedTypeErrorBase);
 }
