@@ -136,7 +136,7 @@
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -126,45 +131,62 @@
+@@ -126,45 +131,61 @@
      oid             name[MAX_OID_LEN];
      size_t          name_length;
      int             status;
@@ -144,15 +144,16 @@
 -    int             exitval = 0;
 +   /* Reset application-local quiet flag so subsequent calls behave normally. */
 +   quiet = 0;
-+
-+   auto cleanup_and_return_empty = [&]() {
-+      clear_net_snmp_library_data();
-+      SOCK_CLEANUP;
-+      return parse_results(return_vector);
-+   };
-+
-+   SOCK_STARTUP;
  
++   SOCK_STARTUP;
++
++   struct SockCleanupGuard {
++      ~SockCleanupGuard() {
++         clear_net_snmp_library_data();
++         SOCK_CLEANUP;
++      }
++   } sock_cleanup_guard;
++
      putenv(strdup("POSIXLY_CORRECT=1"));
  
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
@@ -186,19 +187,20 @@
 +   }
  
      if (arg >= argc) {
-         fprintf(stderr, "Missing object name\n");
+-        fprintf(stderr, "Missing object name\n");
 -        usage();
 -        exit(1);
-+      snmpset_usage();
-+      return cleanup_and_return_empty();
++      std::string err_msg = "Missing object name\n";
++      throw GenericErrorBase(err_msg);
      }
      if ((argc - arg) > 3*SNMP_MAX_CMDLINE_OIDS) {
-         fprintf(stderr, "Too many assignments specified. ");
-         fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
+-        fprintf(stderr, "Too many assignments specified. ");
+-        fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
 -        usage();
 -        exit(1);
-+      snmpset_usage();
-+      return cleanup_and_return_empty();
++      std::string err_msg = "Too many assignments specified. Only " +
++                            std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
++      throw GenericErrorBase(err_msg);
      }
  
      /*
@@ -213,7 +215,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -179,6 +201,7 @@
+@@ -179,6 +200,7 @@
              case 'x':
              case 'd':
              case 'b':
@@ -221,29 +223,29 @@
  #ifdef NETSNMP_WITH_OPAQUE_SPECIAL_TYPES
              case 'I':
              case 'U':
-@@ -188,97 +211,93 @@
+@@ -188,97 +210,89 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
 -                fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1],
 -                        *argv[arg]);
 -                exit(1);
-+               fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-+               return cleanup_and_return_empty();
++               throw UndeterminedTypeErrorBase(std::string(argv[arg - 1]) + ": Bad object type: " +
++                                               std::string(1, *argv[arg]) + "\n");
              }
          } else {
-             fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
+-            fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
 -            exit(1);
-+         return cleanup_and_return_empty();
++         throw GenericErrorBase(std::string(argv[arg - 1]) + ": Needs type and value\n");
          }
 -        if (arg < argc)
 +      if (arg < argc) {
              values[current_value++] = argv[arg];
 -        else {
-+      } else {
-             fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
+-            fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
 -            exit(1);
-+         return cleanup_and_return_empty();
++      } else {
++         throw GenericErrorBase(std::string(argv[arg - 2]) + ": Needs value\n");
          }
      }
  
@@ -309,8 +311,8 @@
 +               auto const &str_value =
 +                   print_variable_to_string(vars->name, vars->name_length, vars);
 +               return_vector.push_back(str_value);
-+            }
              }
++         }
          } else {
 -            fprintf(stderr, "Error in packet.\nReason: %s\n",
 -                    snmp_errstring(response->errstat));
@@ -331,12 +333,12 @@
 +               /*EMPTY*/;
 +            if (vars) {
 +               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
-+            }
-+            err_msg = err_msg + "\n";
              }
 -            exitval = 2;
-+         throw PacketErrorBase(err_msg);
++            err_msg = err_msg + "\n";
          }
++         throw PacketErrorBase(err_msg);
++      }
      } else if (status == STAT_TIMEOUT) {
 -        fprintf(stderr, "Timeout: No Response from %s\n",
 -                session.peername);
@@ -353,13 +355,12 @@
 +   if (response) {
          snmp_free_pdu(response);
 -    snmp_close(ss);
-+   }
+-    SOCK_CLEANUP;
+-    return exitval;
+ }
 +
 +   {
 +      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
 +   }
-+   clear_net_snmp_library_data();
-     SOCK_CLEANUP;
--    return exitval;
 +   return parse_results(return_vector);
- }
++}

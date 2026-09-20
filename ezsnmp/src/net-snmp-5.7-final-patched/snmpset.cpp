@@ -136,6 +136,13 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
+   struct SockCleanupGuard {
+      ~SockCleanupGuard() {
+         clear_net_snmp_library_data();
+         SOCK_CLEANUP;
+      }
+   } sock_cleanup_guard;
+
    putenv(strdup("POSIXLY_CORRECT=1"));
 
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
@@ -287,7 +294,5 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    {
       std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
-   clear_net_snmp_library_data();
-   SOCK_CLEANUP;
    return parse_results(return_vector);
 }

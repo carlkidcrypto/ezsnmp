@@ -145,6 +145,13 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
 
    SOCK_STARTUP;
 
+   struct SockCleanupGuard {
+      ~SockCleanupGuard() {
+         clear_net_snmp_library_data();
+         SOCK_CLEANUP;
+      }
+   } sock_cleanup_guard;
+
    // Reset thread-local inform flag for each invocation.
    inform = 0;
 
@@ -405,7 +412,5 @@ close_session:
    netsnmp_thread_cleanup(init_app_name);
 
 out:
-   clear_net_snmp_library_data();
-   SOCK_CLEANUP;
    return exitval;
 }
