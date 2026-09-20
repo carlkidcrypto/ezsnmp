@@ -116,7 +116,7 @@ struct SnmpSingleSessionCloser {
  * this must be used within a synchronized scope (such as while holding g_netsnmp_setup_mutex).
  */
 class StdioSilencer {
- public:
+  public:
    StdioSilencer();
    ~StdioSilencer();
 
@@ -126,7 +126,7 @@ class StdioSilencer {
    StdioSilencer(StdioSilencer &&) = delete;
    StdioSilencer &operator=(StdioSilencer &&) = delete;
 
- private:
+  private:
    int saved_stdout_;
    int saved_stderr_;
 };
