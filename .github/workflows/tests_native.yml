@@ -109,6 +109,7 @@ jobs:
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
           pytest -v -s -n auto --dist loadfile \
+            -o junit_family=legacy \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov=ezsnmp --cov-report=term-missing \
             --cov-report=xml:coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml \
@@ -120,6 +121,7 @@ jobs:
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi
 
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
@@ -155,6 +157,17 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
           flags: python,native
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload test results to Codecov
+        if: always()
+        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./test-results_*.xml
+          flags: python,native
+          report_type: test_results
           fail_ci_if_error: false
           verbose: true
 
