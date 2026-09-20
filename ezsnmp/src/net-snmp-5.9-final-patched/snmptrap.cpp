@@ -240,6 +240,25 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
                      session.engineTime, TRUE);
    }
 
+   struct SnmpSessionCloser {
+      void operator()(netsnmp_session *s) const {
+         if (s) {
+            snmp_close(s);
+         }
+      }
+   };
+
+   struct SnmpPduDeleter {
+      void operator()(netsnmp_pdu *p) const {
+         if (p) {
+            snmp_free_pdu(p);
+         }
+      }
+   };
+
+   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard;
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard;
+
    ss = snmp_add(&session, netsnmp_transport_open_client("snmptrap", session.peername), NULL, NULL);
    if (ss == NULL) {
       /*
@@ -249,19 +268,21 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       snmp_sess_perror_exception("snmptrap", &session);
       goto out;
    }
+   ss_guard.reset(ss);
 
 #ifndef NETSNMP_DISABLE_SNMPV1
    if (session.version == SNMP_VERSION_1) {
       if (inform) {
-         goto out;
+         throw GenericErrorBase("Cannot send INFORM as SNMPv1 PDU\n");
       }
       pdu = snmp_pdu_create(SNMP_MSG_TRAP);
       if (!pdu) {
-         goto out;
+         throw GenericErrorBase("Failed to create trap PDU\n");
       }
+      pdu_guard.reset(pdu);
       pdu_in_addr_t = (in_addr_t *)pdu->agent_addr;
       if (arg == argc) {
-         goto out;
+         throw GenericErrorBase("No enterprise oid\n");
       }
       if (argv[arg][0] == 0) {
          pdu->enterprise = (oid *)malloc(sizeof(objid_enterprise));
@@ -281,29 +302,29 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          pdu->enterprise_length = name_length;
       }
       if (++arg >= argc) {
-         goto out;
+         throw GenericErrorBase("Missing agent parameter\n");
       }
       agent = argv[arg];
       if (agent != NULL && strlen(agent) != 0) {
          int ret = netsnmp_gethostbyname_v4(agent, pdu_in_addr_t);
          if (ret < 0) {
-            goto out;
+            throw GenericErrorBase(std::string("unknown host: ") + agent + "\n");
          }
       } else {
          *pdu_in_addr_t = get_myaddr();
       }
       if (++arg == argc) {
-         goto out;
+         throw GenericErrorBase("Missing generic-trap parameter\n");
       }
       trap = argv[arg];
       pdu->trap_type = atoi(trap);
       if (++arg == argc) {
-         goto out;
+         throw GenericErrorBase("Missing specific-trap parameter\n");
       }
       specific = argv[arg];
       pdu->specific_type = atoi(specific);
       if (++arg == argc) {
-         goto out;
+         throw GenericErrorBase("Missing uptime parameter\n");
       }
       description = argv[arg];
       if (description == NULL || *description == 0) {
@@ -319,10 +340,11 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
 
       pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
       if (!pdu) {
-         goto out;
+         throw GenericErrorBase("Failed to create notification PDU\n");
       }
+      pdu_guard.reset(pdu);
       if (arg == argc) {
-         goto out;
+         throw GenericErrorBase("Missing up-time parameter\n");
       }
       trap = argv[arg];
       if (*trap == 0) {
@@ -332,7 +354,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       }
       snmp_add_var(pdu, objid_sysuptime, OID_LENGTH(objid_sysuptime), 't', trap);
       if (++arg == argc) {
-         goto out;
+         throw GenericErrorBase("Missing trap-oid parameter\n");
       }
       if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
          snmp_perror_exception(argv[arg]);
@@ -344,7 +366,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    while (arg < argc) {
       arg += 3;
       if (arg > argc) {
-         goto out;
+         throw GenericErrorBase(std::string(argv[arg - 3]) + ": Missing type/value for variable\n");
       }
       name_length = MAX_OID_LEN;
       {
@@ -360,6 +382,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       }
    }
 
+   pdu_guard.release();
    if (inform) {
       status = snmp_synch_response(ss, pdu, &response);
    } else {
@@ -378,7 +401,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    exitval = 0;
 
 close_session:
-   snmp_close(ss);
+   ss_guard.reset();
    netsnmp_thread_cleanup(init_app_name);
 
 out:
