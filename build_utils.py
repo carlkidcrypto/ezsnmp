@@ -126,9 +126,12 @@ def get_homebrew_net_snmp_info():
         include_dir = next((l for l in lines if "include/net-snmp" in l), None)
         if not include_dir:
             return None
-        # Use os.path.dirname twice to get the parent include directory
-        # e.g., /path/to/formula/include/net-snmp/file.h -> /path/to/formula/include
-        incdirs = [os.path.dirname(os.path.dirname(include_dir))]
+        # Extract the parent include directory (e.g., /path/to/formula/include)
+        idx = include_dir.find("/include/net-snmp")
+        if idx != -1:
+            incdirs = [include_dir[:idx] + "/include"]
+        else:
+            incdirs = [os.path.dirname(os.path.dirname(include_dir))]
 
         # Get library directory
         libdirs = []
