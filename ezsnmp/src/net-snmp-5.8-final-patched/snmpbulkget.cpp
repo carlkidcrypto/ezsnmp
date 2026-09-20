@@ -155,7 +155,6 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    // global state (option parsing, DS library settings).
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
-      StdioSilencer silencer;
 
       /*
        * get the common command line arguments
@@ -182,7 +181,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    names = argc - arg;
    if (names < non_repeaters) {
-      return parse_results(return_vector);
+      throw GenericErrorBase("snmpbulkget: need more objects than <nonrep>\n");
    }
 
    std::vector<nameStruct> name_storage(names);

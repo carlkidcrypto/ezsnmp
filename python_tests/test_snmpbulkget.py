@@ -1,6 +1,6 @@
 import pytest
 
-from ezsnmp.exceptions import PacketError, ParseError
+from ezsnmp.exceptions import GenericError, PacketError, ParseError
 from ezsnmp.netsnmp import snmpbulkget
 
 
@@ -65,3 +65,23 @@ def test_separated_cn_raises_parse_error():
     ]
     with pytest.raises(ParseError, match="No number given for -Cn option"):
         snmpbulkget(args, "testing_separated_cn")
+
+
+def test_non_repeaters_greater_than_names_raises_generic_error(capfd):
+    """When -Cn specifies more non-repeaters than objects provided,
+    GenericError should be raised without stderr output."""
+    args = [
+        "-v",
+        "2c",
+        "-c",
+        "public",
+        "-Cn2",
+        "localhost:11161",
+        "sysDescr.0",
+    ]
+    with pytest.raises(GenericError, match="need more objects than <nonrep>"):
+        snmpbulkget(args, "testing_nonrep_too_high")
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+

@@ -8,6 +8,7 @@
 
 #include "helpers.h"
 
+
 namespace {
 
 bool g_fail_calloc = false;
@@ -60,7 +61,11 @@ extern "C" void *calloc(size_t n, size_t size) {
    size_t const total = n * size;
    void *ptr = std::malloc(total);
    if (ptr != nullptr) {
-      std::memset(ptr, 0, total);
+      // Use volatile to prevent compiler from optimizing malloc+memset into recursive calloc call
+      volatile unsigned char *p = static_cast<volatile unsigned char *>(ptr);
+      for (size_t i = 0; i < total; ++i) {
+         p[i] = 0;
+      }
    }
    return ptr;
 }
@@ -73,7 +78,11 @@ extern "C" char *strdup(char const *src) {
    size_t const length = std::strlen(src) + 1;
    auto *out = static_cast<char *>(std::malloc(length));
    if (out != nullptr) {
-      std::memcpy(out, src, length);
+      // Use volatile to prevent compiler from optimizing malloc+memcpy into recursive strdup call
+      volatile char *dst = out;
+      for (size_t i = 0; i < length; ++i) {
+         dst[i] = src[i];
+      }
    }
    return out;
 }
@@ -154,11 +163,14 @@ TEST_F(HelpersBranchesShimTest, PrintVariableToStringCoversTruncatedAndAllocFail
    netsnmp_variable_list variable{};
 
    g_fail_calloc = true;
-   EXPECT_EQ(print_variable_to_string(name, OID_LENGTH(name), &variable), "[TRUNCATED]");
-
+   auto res1 = print_variable_to_string(name, OID_LENGTH(name), &variable);
    g_fail_calloc = false;
+   EXPECT_EQ(res1, "[TRUNCATED]");
+
    g_force_sprint_variable_fail = true;
-   EXPECT_EQ(print_variable_to_string(name, OID_LENGTH(name), &variable), "partial [TRUNCATED]");
+   auto res2 = print_variable_to_string(name, OID_LENGTH(name), &variable);
+   g_force_sprint_variable_fail = false;
+   EXPECT_EQ(res2, "partial [TRUNCATED]");
 }
 
 TEST_F(HelpersBranchesShimTest, CreateArgvThrowsOnStrdupFailure) {
@@ -330,9 +342,12 @@ TEST_F(HelpersBranchesShimTest, PrintObjidToStringCoversAllocFailAndOverflow) {
    oid name[] = {1, 3, 6, 1};
 
    g_fail_calloc = true;
-   EXPECT_EQ(print_objid_to_string(name, OID_LENGTH(name)), "[TRUNCATED]\n");
-
+   auto res1 = print_objid_to_string(name, OID_LENGTH(name));
    g_fail_calloc = false;
+   EXPECT_EQ(res1, "[TRUNCATED]\n");
+
    g_force_objid_overflow = true;
-   EXPECT_EQ(print_objid_to_string(name, OID_LENGTH(name)), "obj [TRUNCATED]\n");
+   auto res2 = print_objid_to_string(name, OID_LENGTH(name));
+   g_force_objid_overflow = false;
+   EXPECT_EQ(res2, "obj [TRUNCATED]\n");
 }

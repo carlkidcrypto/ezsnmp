@@ -82,15 +82,21 @@ TEST_F(SnmpBulkGetNullShimTest, TestMaxRepeatersFlagCoversNumericParsing) {
        PacketErrorBase);
 }
 
-/* Covers names < non_repeaters early return branch in snmpbulkget(). */
-TEST_F(SnmpBulkGetNullShimTest, TestNonRepeatersGreaterThanNamesReturnsEmpty) {
+/* Covers names < non_repeaters branch in snmpbulkget(). */
+TEST_F(SnmpBulkGetNullShimTest, TestNonRepeatersGreaterThanNamesThrowsGenericError) {
    std::vector<std::string> args = {
        "-v", "2c", "-c", "public", "-C", "n2", "localhost:11161", "SNMPv2-MIB::sysORDescr"};
 
-   EXPECT_NO_THROW({
-      auto results = snmpbulkget(args, "testing_bulkget_null_shim_nonrep_too_high");
-      EXPECT_TRUE(results.empty());
-   });
+   EXPECT_THROW(
+       {
+          try {
+             auto results = snmpbulkget(args, "testing_bulkget_null_shim_nonrep_too_high");
+          } catch (GenericErrorBase const &e) {
+             EXPECT_STREQ("snmpbulkget: need more objects than <nonrep>\n", e.what());
+             throw;
+          }
+       },
+       GenericErrorBase);
 }
 
 /* Unknown -C sub-flag: snmpbulkget_optProc default case throws ParseErrorBase. */

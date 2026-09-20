@@ -165,7 +165,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    // global state (option parsing, DS library settings).
    {
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
-      StdioSilencer silencer;
 
       /** parse args (also initializes session) */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
