@@ -29,9 +29,14 @@ jobs:
         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
           files: |
+            .coveragerc
+            .github/scripts/**
             .github/workflows/tests_native.yml
+            codecov.yml
+            ezsnmp/*.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            ezsnmp/**/*.py
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
@@ -109,6 +114,8 @@ jobs:
             --cov-report=xml:coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov-config=.coveragerc \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          mv _ezsnmp ezsnmp 2>/dev/null || true
+          python3 python_tests/normalize_coverage_paths.py coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml || true
           # Generate coverage summary file
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi
 
@@ -127,7 +134,7 @@ jobs:
     needs: build-and-test
     permissions:
       contents: read
-    if: always()
+    if: always() && needs.build-and-test.result != 'skipped'
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -137,6 +144,10 @@ jobs:
         with:
           pattern: pytest-results_*
           merge-multiple: true
+
+      - name: Normalize coverage paths
+        run: |
+          python3 python_tests/normalize_coverage_paths.py ./coverage_*.xml
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
