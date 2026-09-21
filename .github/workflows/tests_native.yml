@@ -142,7 +142,7 @@ jobs:
         run: |
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
-          pytest -v -s -n auto --dist loadfile \
+          pytest -v -s \
             -o junit_family=legacy \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov=ezsnmp --cov-report=term-missing \

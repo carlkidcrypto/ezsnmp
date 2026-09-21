@@ -108,6 +108,8 @@ def test_session_set(sess, reset_values):
     res = sess.get("sysLocation.0")
     assert res[0].value == "my newer location"
 
+    sess.set(["sysLocation.0", "s", "my original location"])
+
     del sess
 
 
@@ -132,6 +134,17 @@ def test_session_set_multiple(sess, reset_values):
     res = sess.get(["sysLocation.0", "nsCacheTimeout.1.3.6.1.2.1.2.2"])
     assert res[0].value == "my newer location"
     assert res[1].value == "160"
+
+    sess.set(
+        [
+            "sysLocation.0",
+            "s",
+            "my original location",
+            "nsCacheTimeout.1.3.6.1.2.1.2.2",
+            "i",
+            "0",
+        ]
+    )
 
     del sess
 

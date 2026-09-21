@@ -22,6 +22,9 @@ def test_string(netsnmp_args, request, reset_values):
     assert res[0].value == "my newer location"
     assert res[0].type == "STRING"
 
+    netsnmp_args_reset = netsnmp_args + ["sysLocation.0", "s", "my original location"]
+    snmpset(netsnmp_args_reset, "testing_value")
+
 
 def test_integer(netsnmp_args, reset_values):
     netsnmp_args_1 = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "65"]
@@ -34,6 +37,9 @@ def test_integer(netsnmp_args, reset_values):
     assert res[0].index == "2"
     assert res[0].value == "65"
     assert res[0].type == "INTEGER"
+
+    netsnmp_args_reset = netsnmp_args + ["nsCacheTimeout.1.3.6.1.2.1.2.2", "i", "0"]
+    snmpset(netsnmp_args_reset, "testing_value")
 
 
 def test_invalid_version():

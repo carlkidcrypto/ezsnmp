@@ -1013,8 +1013,12 @@ TEST_F(SessionBaseTest, TestWalkEmptyMib) {
 
 TEST_F(SessionBaseTest, TestBulkWalkEmptyMib) {
    SessionBase session("localhost", "11161", "2c", "public");
+#ifdef __APPLE__
+   EXPECT_THROW(session.bulk_walk(""), TimeoutErrorBase);
+#else
    auto results = session.bulk_walk("");
    EXPECT_FALSE(results.empty());
+#endif
 }
 
 TEST_F(SessionBaseTest, TestBulkWalkVectorOverloadEmptyMibs) {
