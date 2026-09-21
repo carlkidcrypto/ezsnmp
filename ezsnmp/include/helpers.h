@@ -108,6 +108,26 @@ struct SnmpSingleSessionCloser {
 };
 
 /**
+ * @struct SnmpPduDeleter
+ * @brief RAII deleter for netsnmp_pdu pointers.
+ */
+struct SnmpPduDeleter {
+   void operator()(netsnmp_pdu *pdu) const {
+      if (pdu) {
+         snmp_free_pdu(pdu);
+      }
+   }
+};
+
+/**
+ * @struct SockCleanupGuard
+ * @brief RAII guard to cleanup socket and Net-SNMP library data on scope exit.
+ */
+struct SockCleanupGuard {
+   ~SockCleanupGuard();
+};
+
+/**
  * @brief Creates an array of C-style strings from a vector of strings.
  *
  * This function takes a vector of strings and creates an array of C-style strings

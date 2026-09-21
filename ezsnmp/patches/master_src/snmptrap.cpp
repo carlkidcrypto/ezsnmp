@@ -145,12 +145,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
 
    SOCK_STARTUP;
 
-   struct SockCleanupGuard {
-      ~SockCleanupGuard() {
-         clear_net_snmp_library_data();
-         SOCK_CLEANUP;
-      }
-   } sock_cleanup_guard;
+   SockCleanupGuard sock_cleanup_guard;
 
    // Reset thread-local inform flag for each invocation.
    inform = 0;
@@ -246,22 +241,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       set_enginetime(session.securityEngineID, session.securityEngineIDLen, session.engineBoots,
                      session.engineTime, TRUE);
    }
-
-   struct SnmpSessionCloser {
-      void operator()(netsnmp_session *s) const {
-         if (s) {
-            snmp_close(s);
-         }
-      }
-   };
-
-   struct SnmpPduDeleter {
-      void operator()(netsnmp_pdu *p) const {
-         if (p) {
-            snmp_free_pdu(p);
-         }
-      }
-   };
 
    std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard;
    std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard;

@@ -97,7 +97,7 @@
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -126,50 +131,61 @@
+@@ -126,50 +131,56 @@
      oid             name[MAX_OID_LEN];
      size_t          name_length;
      int             status;
@@ -111,12 +111,7 @@
  
 -    posix_env = strdup("POSIXLY_CORRECT=1");
 -    putenv(posix_env);
-+   struct SockCleanupGuard {
-+      ~SockCleanupGuard() {
-+         clear_net_snmp_library_data();
-+         SOCK_CLEANUP;
-+      }
-+   } sock_cleanup_guard;
++   SockCleanupGuard sock_cleanup_guard;
  
 +   putenv(strdup("POSIXLY_CORRECT=1"));
 +
@@ -180,7 +175,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -194,99 +210,89 @@
+@@ -194,99 +205,89 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:

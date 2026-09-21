@@ -96,16 +96,11 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -135,30 +145,50 @@
+@@ -135,30 +145,45 @@
  
      SOCK_STARTUP;
  
-+   struct SockCleanupGuard {
-+      ~SockCleanupGuard() {
-+         clear_net_snmp_library_data();
-+         SOCK_CLEANUP;
-+      }
-+   } sock_cleanup_guard;
++   SockCleanupGuard sock_cleanup_guard;
 +
 +   // Reset thread-local inform flag for each invocation.
 +   inform = 0;
@@ -156,7 +151,7 @@
  
      session.callback = snmp_input;
      session.callback_magic = NULL;
-@@ -171,10 +201,8 @@
+@@ -171,10 +196,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -169,7 +164,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -198,10 +226,8 @@
+@@ -198,10 +221,8 @@
          /*
           * pick our own engineID 
           */
@@ -182,7 +177,7 @@
          }
  
          /*
-@@ -210,100 +236,109 @@
+@@ -210,100 +231,93 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -204,22 +199,6 @@
 -    ss = snmp_add(&session,
 -                  netsnmp_transport_open_client("snmptrap", session.peername),
 -                  NULL, NULL);
-+   struct SnmpSessionCloser {
-+      void operator()(netsnmp_session *s) const {
-+         if (s) {
-+            snmp_close(s);
-+         }
-+      }
-+   };
-+
-+   struct SnmpPduDeleter {
-+      void operator()(netsnmp_pdu *p) const {
-+         if (p) {
-+            snmp_free_pdu(p);
-+         }
-+      }
-+   };
-+
 +   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard;
 +   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard;
 +
@@ -329,7 +308,7 @@
      } else
  #endif
      {
-@@ -312,31 +347,24 @@
+@@ -312,31 +326,24 @@
  
          pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
          if ( !pdu ) {
@@ -369,7 +348,7 @@
              goto out;
          }
      }
-@@ -345,44 +373,44 @@
+@@ -345,44 +352,44 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {

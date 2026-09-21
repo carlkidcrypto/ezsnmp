@@ -136,12 +136,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
 
    SOCK_STARTUP;
 
-   struct SockCleanupGuard {
-      ~SockCleanupGuard() {
-         clear_net_snmp_library_data();
-         SOCK_CLEANUP;
-      }
-   } sock_cleanup_guard;
+   SockCleanupGuard sock_cleanup_guard;
 
    putenv(strdup("POSIXLY_CORRECT=1"));
 

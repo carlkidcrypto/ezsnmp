@@ -150,7 +150,7 @@
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
      size_t          name_length;
-@@ -128,36 +137,59 @@
+@@ -128,36 +137,54 @@
      int             status;
      char           *trap = NULL;
      char           *prognam;
@@ -163,12 +163,7 @@
  
 +   SOCK_STARTUP;
 +
-+   struct SockCleanupGuard {
-+      ~SockCleanupGuard() {
-+         clear_net_snmp_library_data();
-+         SOCK_CLEANUP;
-+      }
-+   } sock_cleanup_guard;
++   SockCleanupGuard sock_cleanup_guard;
 +
 +   // Reset thread-local inform flag for each invocation.
 +   inform = 0;
@@ -221,7 +216,7 @@
      session.callback = snmp_input;
      session.callback_magic = NULL;
  
-@@ -169,10 +201,8 @@
+@@ -169,10 +196,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -234,7 +229,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -196,10 +226,8 @@
+@@ -196,10 +221,8 @@
          /*
           * pick our own engineID 
           */
@@ -247,7 +242,7 @@
          }
  
          /*
-@@ -208,106 +236,109 @@
+@@ -208,106 +231,93 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -266,22 +261,6 @@
 +      set_enginetime(session.securityEngineID, session.securityEngineIDLen, session.engineBoots,
 +                     session.engineTime, TRUE);
 +   }
-+
-+   struct SnmpSessionCloser {
-+      void operator()(netsnmp_session *s) const {
-+         if (s) {
-+            snmp_close(s);
-+         }
-+      }
-+   };
-+
-+   struct SnmpPduDeleter {
-+      void operator()(netsnmp_pdu *p) const {
-+         if (p) {
-+            snmp_free_pdu(p);
-+         }
-+      }
-+   };
 +
 +   std::unique_ptr<netsnmp_session, SnmpSessionCloser> ss_guard;
 +   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard;
@@ -403,7 +382,7 @@
      } else
  #endif
      {
-@@ -316,36 +347,25 @@
+@@ -316,36 +326,25 @@
  
          pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
          if ( !pdu ) {
@@ -449,7 +428,7 @@
          }
      }
      arg++;
-@@ -353,40 +373,44 @@
+@@ -353,40 +352,44 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
