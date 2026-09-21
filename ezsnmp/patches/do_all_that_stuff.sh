@@ -1,6 +1,26 @@
 #!/bin/bash
 set -e
 
+# Generic PATH discovery: check system defaults first, then common package managers
+# (Homebrew on macOS Apple Silicon/Intel, Linuxbrew on Linux, MacPorts)
+for bin_dir in \
+    "/opt/homebrew/bin" \
+    "/usr/local/bin" \
+    "/home/linuxbrew/.linuxbrew/bin" \
+    "/opt/local/bin"; do
+    if [[ -d "$bin_dir" && ":$PATH:" != *":$bin_dir:"* ]]; then
+        export PATH="$bin_dir:$PATH"
+    fi
+done
+
+# If brew is installed, ensure its prefix bin is in PATH as well
+if command -v brew >/dev/null 2>&1; then
+    BREW_BIN="$(brew --prefix)/bin"
+    if [[ -d "$BREW_BIN" && ":$PATH:" != *":$BREW_BIN:"* ]]; then
+        export PATH="$BREW_BIN:$PATH"
+    fi
+fi
+
 # Versions to process
 versions=("5.7" "5.8" "5.9" "5.10")
 
@@ -40,7 +60,7 @@ cp -r master_src master_src_backup
 
 echo "##### Removing netsnmp_cleanup_session(&session); from master_src... #####"
 for file in master_src/*.cpp; do
-    sed -i '/netsnmp_cleanup_session(&session);/d' "$file"
+    grep -v 'netsnmp_cleanup_session(&session);' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
 done
 
 # Step 4: Run make_patches on 5.7 and 5.8 (older versions needing the full cleanup hack)
@@ -67,6 +87,19 @@ wait  # Wait for all apply_patches jobs to finish
 # Step 7: Run clang-format
 echo "##### Running clang-format on entire repository... #####"
 cd "$(dirname "$0")/../.."
-find . -iname '*.h' -o -iname '*.cpp' | xargs clang-format-20 -i --style=file:.clang-format
+CLANG_FORMAT=""
+for cf in clang-format-20 clang-format-19 clang-format-18 clang-format-17 clang-format; do
+    if command -v "$cf" >/dev/null 2>&1; then
+        CLANG_FORMAT="$cf"
+        break
+    fi
+done
+
+if [[ -n "$CLANG_FORMAT" ]]; then
+    echo "Formatting with $CLANG_FORMAT..."
+    find . -iname '*.h' -o -iname '*.cpp' | xargs "$CLANG_FORMAT" -i --style=file:.clang-format
+else
+    echo "Notice: clang-format not found, skipping formatting." >&2
+fi
 
 echo "##### All tasks completed successfully. #####"
