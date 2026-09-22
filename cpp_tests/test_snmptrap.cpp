@@ -147,3 +147,72 @@ TEST_F(SnmpTrapTest, TestV1InformRejected) {
    };
    EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v1_inform_rejected"); }, GenericErrorBase);
 }
+
+TEST_F(SnmpTrapTest, TestV1MissingEnterprise) {
+   std::vector<std::string> args = {"-v", "1", "-c", "public", "localhost:11162"};
+   EXPECT_THROW({ snmptrap(args, "testing_v1_missing_enterprise"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV1MissingAgent) {
+   std::vector<std::string> args = {"-v", "1", "-c", "public", "localhost:11162", ""};
+   EXPECT_THROW({ snmptrap(args, "testing_v1_missing_agent"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV1MissingGenericTrap) {
+   std::vector<std::string> args = {"-v", "1", "-c", "public", "localhost:11162", "", "127.0.0.1"};
+   EXPECT_THROW({ snmptrap(args, "testing_v1_missing_generic"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV1MissingSpecificTrap) {
+   std::vector<std::string> args = {"-v", "1",         "-c", "public", "localhost:11162",
+                                    "",   "127.0.0.1", "6"};
+   EXPECT_THROW({ snmptrap(args, "testing_v1_missing_specific"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV1MissingUptime) {
+   std::vector<std::string> args = {"-v", "1",         "-c", "public", "localhost:11162",
+                                    "",   "127.0.0.1", "6",  "0"};
+   EXPECT_THROW({ snmptrap(args, "testing_v1_missing_uptime"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV2cMissingUptime) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11162"};
+   EXPECT_THROW({ snmptrap(args, "testing_v2c_missing_uptime"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV2cMissingTrapOid) {
+   std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost:11162", ""};
+   EXPECT_THROW({ snmptrap(args, "testing_v2c_missing_trap_oid"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestVarbindMissingTypeValue) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "localhost:11162",
+                                    "",
+                                    ".1.3.6.1.6.3.1.1.5.1",
+                                    "SNMPv2-MIB::sysDescr.0"};
+   EXPECT_THROW({ snmptrap(args, "testing_varbind_missing_type_val"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestVarbindMissingValue) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "localhost:11162",
+                                    "",
+                                    ".1.3.6.1.6.3.1.1.5.1",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "s"};
+   EXPECT_THROW({ snmptrap(args, "testing_varbind_missing_val"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV1InvalidEnterpriseOid) {
+   std::vector<std::string> args = {
+       "-v",        "1", "-c", "public", "localhost:11162", "INVALID-MIB::invalidOid",
+       "127.0.0.1", "6", "0",  ""};
+   EXPECT_THROW({ snmptrap(args, "testing_v1_invalid_enterprise"); }, GenericErrorBase);
+}
