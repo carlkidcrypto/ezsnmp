@@ -26,7 +26,7 @@ model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, dev-tools]
+  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, codecov.io, img.shields.io, dev-tools]
 tools:
   edit:
   bash: true
@@ -45,13 +45,21 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
+- **Do not install compiler toolchains or compile tests locally**:
+  The sandbox environment lacks sudo and required build tools for full C++ builds.
+  Do **not** attempt to install gcc, g++, meson, ninja, lcov, gdb, or create conda
+  environments to compile or run `cpp_tests` locally; doing so exhausts the workflow
+  timeout. Inspect and author C++ tests statically.
 
 ## Coverage Check Procedure
 
-1. Use Codecov to identify coverage gaps.
-   - Visit https://app.codecov.io/gh/carlkidcrypto/ezsnmp to view the current
-     coverage reports for the `main` branch.
-   - Analyze the C++ source files to find uncovered lines or branches.
+1. Use Codecov to identify coverage gaps:
+   - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - If Codecov is unreachable or does not return data, inspect the C++ source files
+     under `ezsnmp/src/` and existing tests under `cpp_tests/` directly to identify
+     untested branches, error handling paths, or missing assertions.
+   - If no actionable gaps are found or test additions cannot be safely verified,
+     call `report_incomplete` or exit cleanly without editing files.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability

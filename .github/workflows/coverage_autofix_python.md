@@ -26,7 +26,7 @@ model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, dev-tools]
+  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, codecov.io, img.shields.io, dev-tools]
 tools:
   edit:
   bash: true
@@ -48,10 +48,12 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 
 ## Coverage Check Procedure
 
-1. Use Codecov to identify coverage gaps.
-   - Visit https://app.codecov.io/gh/carlkidcrypto/ezsnmp to view the current
-     coverage reports for the `main` branch.
-   - Analyze the Python files to find uncovered lines or branches.
+1. Use Codecov to identify coverage gaps:
+   - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - If Codecov is unreachable or does not return data, inspect Python files under `ezsnmp/`
+     and tests under `python_tests/` directly to identify untested branches, error handling paths,
+     or missing test coverage.
+   - If no actionable gaps are found, call `report_incomplete` or exit cleanly without editing files.
 
 2. Determine if action is needed:
    - If Python coverage is below 99%, or tests reveal clear reliability
