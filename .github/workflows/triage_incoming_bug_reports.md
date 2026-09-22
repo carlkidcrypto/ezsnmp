@@ -1,6 +1,7 @@
 ---
 name: Triage Incoming Bug Reports
 on:
+  roles: all
   workflow_dispatch:
   issues:
     types: [opened, edited, reopened]
