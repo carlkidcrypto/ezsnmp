@@ -29,9 +29,14 @@ jobs:
         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
           files: |
+            .coveragerc
+            .github/scripts/**
             .github/workflows/tests_native.yml
+            codecov.yml
+            ezsnmp/*.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            ezsnmp/**/*.py
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
@@ -98,21 +103,59 @@ jobs:
           SNMPD=$(which snmpd)
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
 
+      - name: Cache built ezsnmp wheel
+        id: wheel-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .wheel-cache
+          key: ezsnmp-wheel-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+
+      - name: Build or install cached ezsnmp wheel
+        run: |
+          set -euo pipefail
+          INSTALLED=0
+          if ls .wheel-cache/ezsnmp-*.whl 1> /dev/null 2>&1; then
+            echo "Found cached wheel in .wheel-cache. Attempting installation..."
+            if python3 -m pip install .wheel-cache/ezsnmp-*.whl; then
+              if (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from cached wheel')"); then
+                INSTALLED=1
+              else
+                echo "WARNING: Cached wheel verification failed. Purging and rebuilding from source."
+                python3 -m pip uninstall -y ezsnmp || true
+                rm -rf .wheel-cache/*
+              fi
+            else
+              echo "WARNING: Cached wheel installation failed. Purging and rebuilding from source."
+              rm -rf .wheel-cache/*
+            fi
+          fi
+
+          if [ "$INSTALLED" -eq 0 ]; then
+            echo "Building wheel from source..."
+            mkdir -p .wheel-cache
+            python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
+            python3 -m pip install .wheel-cache/ezsnmp-*.whl
+            (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
+          fi
+
       - name: Run Tests
         run: |
-          python3 -m pip install . --verbose
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
-          pytest -v -s -n auto --dist loadfile \
+          pytest -v -s \
+            -o junit_family=legacy \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov=ezsnmp --cov-report=term-missing \
             --cov-report=xml:coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov-config=.coveragerc \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          mv _ezsnmp ezsnmp 2>/dev/null || true
+          python3 python_tests/normalize_coverage_paths.py coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml || true
           # Generate coverage summary file
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi
 
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
         with:
           name: pytest-results_${{matrix.os}}_${{matrix.python-version}}
@@ -127,7 +170,7 @@ jobs:
     needs: build-and-test
     permissions:
       contents: read
-    if: always()
+    if: always() && needs.build-and-test.result != 'skipped'
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -138,12 +181,27 @@ jobs:
           pattern: pytest-results_*
           merge-multiple: true
 
+      - name: Normalize coverage paths
+        run: |
+          python3 python_tests/normalize_coverage_paths.py ./coverage_*.xml
+
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
           flags: python,native
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload test results to Codecov
+        if: always()
+        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./test-results_*.xml
+          flags: python,native
+          report_type: test_results
           fail_ci_if_error: false
           verbose: true
 

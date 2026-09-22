@@ -104,7 +104,11 @@
 -    fprintf(stderr,
 -            "\t\t\t  f:  do not fix errors and retry the request\n");
 -}
--
++std::vector<Result> snmpget(std::vector<std::string> const &args,
++                            std::string const &init_app_name) {
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name);
+ 
 -int
 -main(int argc, char *argv[])
 -{
@@ -114,11 +118,6 @@
 -    netsnmp_variable_list *vars;
 -    int             arg;
 -    int             count;
-+std::vector<Result> snmpget(std::vector<std::string> const &args,
-+                            std::string const &init_app_name) {
-+   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name);
-+
 +   int argc = 0;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
@@ -171,14 +170,14 @@
 +
      default:
          break;
-     }
- 
++      }
++
 +      // Capture DONT_FIX_PDUS while still holding the setup mutex so no other
 +      // thread can reset it before we read its value for this invocation.
 +      dont_fix_pdus =
 +          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_APP_DONT_FIX_PDUS);
-+   }
-+
+     }
+ 
      if (arg >= argc) {
 -        fprintf(stderr, "Missing object name\n");
 -        usage();
@@ -204,11 +203,11 @@
 -    for (; arg < argc; arg++)
 +   for (; arg < argc; arg++) {
          names[current_name++] = argv[arg];
--
--    SOCK_STARTUP;
--
 +   }
  
+-    SOCK_STARTUP;
+-
+-
      /*
       * Open an SNMP session.
       */

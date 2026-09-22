@@ -63,7 +63,7 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,147 +111,171 @@
+@@ -109,147 +111,170 @@
                      /*
                       * No number given -- error.  
                       */
@@ -75,8 +75,8 @@
                      optarg = endptr;
 -                    if (isspace((unsigned char)(*optarg))) {
 -                        return;
--                    }
-                 }
+                     }
+-                }
                  break;
  
              default:
@@ -150,15 +150,15 @@
          break;
      }
 +   }
-+
+ 
 +   // Declare name/namep/names as local variables to avoid data races.
 +   int names;
- 
++
      names = argc - arg;
      if (names < non_repeaters) {
-         fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
+-        fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
 -        goto out;
-+      return parse_results(return_vector);
++      throw GenericErrorBase("snmpbulkget: need more objects than <nonrep>\n");
      }
  
 -    namep = name = (struct nameStruct *) calloc(names, sizeof(*name));
@@ -254,13 +254,13 @@
 -                    fprintf(stderr, "\n");
 +               if (vars) {
 +                  err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
-+               }
-+               err_msg = err_msg + "\n";
-+               throw PacketErrorBase(err_msg);
                  }
 -                exitval = 2;
++               err_msg = err_msg + "\n";
++               throw PacketErrorBase(err_msg);
              }
          }
++      }
      } else if (status == STAT_TIMEOUT) {
 -        fprintf(stderr, "Timeout: No Response from %s\n",
 -                session.peername);

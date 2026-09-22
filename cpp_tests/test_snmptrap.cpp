@@ -131,7 +131,7 @@ TEST_F(SnmpTrapTest, TestV1TrapWithNamedEnterpriseOid) {
 
 TEST_F(SnmpTrapTest, TestV1InformRejected) {
    // -Ci sets inform=1; combined with -v 1 triggers early exit
-   // "Cannot send INFORM as SNMPv1 PDU" -> exitval=1 (no exception)
+   // "Cannot send INFORM as SNMPv1 PDU" -> throws GenericErrorBase
    std::vector<std::string> args = {
        "-v",
        "1",
@@ -145,7 +145,5 @@ TEST_F(SnmpTrapTest, TestV1InformRejected) {
        "0",
        "",
    };
-   int result = snmptrap(args, "testing_snmptrap_v1_inform_rejected");
-   // Returns non-zero (exitval=1) without throwing.
-   EXPECT_NE(result, 0);
+   EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v1_inform_rejected"); }, GenericErrorBase);
 }

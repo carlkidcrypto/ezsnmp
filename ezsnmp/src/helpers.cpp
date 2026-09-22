@@ -4,6 +4,7 @@
 #include <net-snmp/library/lcd_time.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <regex>
@@ -356,6 +357,11 @@ void clear_net_snmp_library_data() {
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM,
                           0);                                                          // Clear -O e
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
+}
+
+SockCleanupGuard::~SockCleanupGuard() {
+   clear_net_snmp_library_data();
+   SOCK_CLEANUP;
 }
 
 void snmp_check_null_response(netsnmp_pdu const *response) {

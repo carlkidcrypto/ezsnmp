@@ -181,8 +181,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
 
    names = argc - arg;
    if (names < non_repeaters) {
-      fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
-      return parse_results(return_vector);
+      throw GenericErrorBase("snmpbulkget: need more objects than <nonrep>\n");
    }
 
    std::vector<nameStruct> name_storage(names);

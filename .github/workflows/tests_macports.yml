@@ -165,10 +165,44 @@ jobs:
           $SNMPD -C -c "$CONFIG_TMP" -r -Le $mibdir -m ALL || {
             echo "snmpd failed to start" >&2; exit 1; }
 
+      - name: Cache built ezsnmp wheel
+        id: wheel-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .wheel-cache
+          key: ezsnmp-wheel-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+
+      - name: Build or install cached ezsnmp wheel
+        run: |
+          set -euo pipefail
+          INSTALLED=0
+          if ls .wheel-cache/ezsnmp-*.whl 1> /dev/null 2>&1; then
+            echo "Found cached wheel in .wheel-cache. Attempting installation..."
+            if python3 -m pip install .wheel-cache/ezsnmp-*.whl; then
+              if (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from cached wheel')"); then
+                INSTALLED=1
+              else
+                echo "WARNING: Cached wheel verification failed. Purging and rebuilding from source."
+                python3 -m pip uninstall -y ezsnmp || true
+                rm -rf .wheel-cache/*
+              fi
+            else
+              echo "WARNING: Cached wheel installation failed. Purging and rebuilding from source."
+              rm -rf .wheel-cache/*
+            fi
+          fi
+
+          if [ "$INSTALLED" -eq 0 ]; then
+            echo "Building wheel from source..."
+            mkdir -p .wheel-cache
+            python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
+            python3 -m pip install .wheel-cache/ezsnmp-*.whl
+            (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
+          fi
+
       - name: Run Tests
         run: |
           set -euo pipefail
-          python3 -m pip install . --verbose
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
           pytest -v -s --cov=ezsnmp \

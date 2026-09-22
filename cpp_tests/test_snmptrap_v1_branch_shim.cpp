@@ -10,7 +10,7 @@
  *
  * Branches covered:
  *   - session.version == SNMP_VERSION_1 (true branch).
- *   - inform && SNMP_VERSION_1: "Cannot send INFORM as SNMPv1 PDU" early exit.
+ *   - inform && SNMP_VERSION_1: "Cannot send INFORM as SNMPv1 PDU" throws GenericErrorBase.
  *   - argv[arg][0] == 0: use default enterprise OID path.
  *   - Full V1 PDU construction and send path (success).
  *   - snmp_send failure in V1 context (snmp_sess_perror_exception called).
@@ -117,12 +117,11 @@ TEST_F(SnmpTrapV1BranchShimTest, V1TrapWithDefaultEnterpriseAndGetUptimeBranch) 
 /* -----------------------------------------------------------------------
  * Test 2: V1 inform rejected ("Cannot send INFORM as SNMPv1 PDU")
  *
- * Passing -Ci activates inform=1 inside snmptrap_optProc.  When combined
- * with -v 1 the function hits the early-exit guard on line ~255:
- *   if (inform) { fprintf(stderr, "Cannot send INFORM …"); goto out; }
- * The function returns exitval=1 without throwing.
+ * Passing -Ci activates inform=1 inside snmptrap_optProc. When combined
+ * with -v 1 the function hits the early-exit guard:
+ *   if (inform) { throw GenericErrorBase("Cannot send INFORM as SNMPv1 PDU\n"); }
  * ----------------------------------------------------------------------- */
-TEST_F(SnmpTrapV1BranchShimTest, V1InformEarlyExitReturnsNonZero) {
+TEST_F(SnmpTrapV1BranchShimTest, V1InformRejectedThrowsGenericError) {
    std::vector<std::string> args = {
        "-v",
        "1",
@@ -137,9 +136,7 @@ TEST_F(SnmpTrapV1BranchShimTest, V1InformEarlyExitReturnsNonZero) {
        "",
    };
 
-   // No exception: the function exits early via goto out and returns 1.
-   int rc = snmptrap(args, "testing_snmptrap_v1_inform_rejected");
-   EXPECT_NE(rc, 0);
+   EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v1_inform_rejected"); }, GenericErrorBase);
 }
 
 /* -----------------------------------------------------------------------

@@ -1,7 +1,7 @@
 """
 Unit tests for ezsnmp.session.Session that cover early-return branches
-in get and get_next methods, None-normalisation branches in bulk_walk /
-bulk_get / set, and the close() exception-propagation path.
+in get, get_next, and set methods, None-normalisation branches in bulk_walk /
+bulk_get, and the close() exception-propagation path.
 
 These tests verify paths that return without reaching the underlying C layer
 or that are reachable via instance-level mocking.  No live SNMP agent is
@@ -101,18 +101,20 @@ def test_session_bulk_get_none_normalisation():
 
 
 # ---------------------------------------------------------------------------
-# set() — None normalisation branch (oids = [])
+# set() — early-return paths that never reach the C layer
 # ---------------------------------------------------------------------------
 
 
-def test_session_set_none_normalisation():
-    """set(None) converts None to [] before calling the C layer."""
-    s = make_session()
-    with unittest.mock.patch.object(s, "_set", return_value=()) as set_method:
-        result = s.set(None)
-    assert result == ()
-    set_method.assert_called_once_with([])
-    s.close()
+def test_session_set_none_returns_empty_tuple():
+    """set(None) returns an empty tuple without hitting the C layer."""
+    with make_session() as s:
+        assert s.set(None) == ()
+
+
+def test_session_set_empty_list_returns_empty_tuple():
+    """set([]) returns an empty tuple without hitting the C layer."""
+    with make_session() as s:
+        assert s.set([]) == ()
 
 
 # ---------------------------------------------------------------------------
