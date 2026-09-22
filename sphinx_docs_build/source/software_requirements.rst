@@ -162,6 +162,8 @@ Testing
 
 [TEST-05] The test infrastructure shall provide coverage path normalization utilities (``python_tests/normalize_coverage_paths.py``) to reconcile differing source file paths between Docker container mount points and host workspaces prior to uploading coverage reports to Codecov.
 
+[TEST-06] Dockerized test matrices running Python test suites across supported Linux distributions and Python versions shall partition tests into consolidated logical test groups (such as session operations, walk operations, SNMP ops, and core utilities) ensuring 100% test file coverage across all test files without exceeding workflow matrix limits.
+
 Code Quality
 ~~~~~~~~~~~~
 
@@ -202,3 +204,5 @@ CI/CD and Maintenance
 [CICD-08] The system shall automatically update and deploy the official Homebrew formula (``Formula/ezsnmp.rb``) with release tags, source tarball URLs, and SHA-256 checksums upon publication of new releases.
 
 [CICD-09] CI workflows shall utilize build caching for C++ compilation artifacts and Python dependencies (pip and tox caches) with invalidation based on dependency file hashes, providing fallback mechanisms to clean builds when incremental builds fail.
+
+[CICD-10] All CI workflows utilizing matrix strategies (including Dockerized Python and C++ test matrices across distributions, Python versions, and test groups) shall maintain a total job combination count strictly under the GitHub Actions platform limit of 256 jobs per matrix strategy. Workflows shall structure and consolidate matrix dimensions (such as grouping test suites into balanced logical test groups) so that all current and future test permutations can be scheduled without dropping jobs, and downstream coverage or reporting jobs shall be guarded against execution when upstream test jobs are skipped or fail to produce artifacts.
