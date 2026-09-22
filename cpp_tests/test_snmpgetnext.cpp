@@ -4,6 +4,12 @@
 #include "exceptionsbase.h"
 #include "snmpgetnext.h"
 
+#if defined(GTEST_SKIP)
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg) GTEST_SKIP() << msg
+#else
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg) return
+#endif
+
 class SnmpGetNextTest : public ::testing::Test {
   protected:
    void SetUp() override {}
@@ -122,7 +128,7 @@ TEST_F(SnmpGetNextTest, TestDontFixPDUsOption) {
    try {
       results = snmpgetnext(args, "testing");
    } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent is not reachable in this environment";
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent is not reachable in this environment");
    }
    EXPECT_FALSE(results.empty());
 }
@@ -154,7 +160,7 @@ TEST_F(SnmpGetNextTest, TestBasicGetNext) {
    try {
       results = snmpgetnext(args, "testing");
    } catch (TimeoutErrorBase const&) {
-      GTEST_SKIP() << "SNMP agent is not reachable in this environment";
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent is not reachable in this environment");
    }
    EXPECT_FALSE(results.empty());
    // getnext of sysLocation should return sysLocation.0

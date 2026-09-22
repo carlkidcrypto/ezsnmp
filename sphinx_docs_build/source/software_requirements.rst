@@ -95,6 +95,10 @@ Error Handling
 
 [ERR-02] All exception types shall inherit from a common ``GenericError`` base class.
 
+[ERR-03] The system shall handle all internal operational, parsing, parameter validation, and Net-SNMP CLI-style errors across all core C++ operations (``snmpget``, ``snmpgetnext``, ``snmpwalk``, ``snmpbulkget``, ``snmpbulkwalk``, ``snmpset``, and ``snmptrap``) by throwing typed C++ exceptions (such as ``GenericErrorBase``, ``ParseErrorBase``, or ``PacketErrorBase``) that propagate directly into Python exceptions, eliminating calls to ``printf``, ``fprintf(stderr, ...)``, and process ``exit()``.
+
+[ERR-04] The system shall provide centralized C++ error helper functions (``throw_type_value_error``, ``throw_missing_value_error``, ``throw_generic_error_from_snmp``) to ensure consistent exception types, error messages, and exception dispatch across all Net-SNMP CLI wrapper implementations.
+
 Non-Functional Requirements
 ----------------------------
 
@@ -105,10 +109,12 @@ Thread Safety
 
 [THREAD-02] The system shall use reference counting and mutexes to initialize Net-SNMP (``init_snmp``) only on the first operation and shut it down (``snmp_shutdown``) only after all operations in all threads have completed.
 
+[THREAD-03] The system shall isolate per-session output formatting configurations across concurrent SNMP operations in multi-threaded environments, ensuring that concurrent sessions with differing formatting options (such as ``print_enums_numerically``, ``print_full_oids``, ``print_oids_numerically``, ``print_timeticks_numerically``, and ``print_hex_strings``) do not overwrite or race on global Net-SNMP output options.
+
 Build and Distribution
 ~~~~~~~~~~~~~~~~~~~~~~
 
-[BUILD-01] The C++ core shall be built as a Python extension module using SWIG 4.4.1 to auto-generate Python ↔ C++ bindings.
+[BUILD-01] The C++ core shall be built as a Python extension module using SWIG 4.5.0 to auto-generate Python ↔ C++ bindings.
 
 [BUILD-02] The build system shall support Net-SNMP versions 5.7, 5.8, 5.9, and 5.10 by applying per-version source patches to the upstream Net-SNMP CLI tool sources.
 
@@ -128,9 +134,11 @@ Build and Distribution
 
 [BUILD-08] C++ extension modules shall be declared using dotted Python package notation (for example ``ezsnmp._datatypes``), not path-separator notation, since the latter produces an invalid exported ``PyInit_`` symbol name under MSVC.
 
-[BUILD-09] The per-version Net-SNMP CLI source patches under ``ezsnmp/patches/`` shall be regenerated from ``ezsnmp/patches/master_src`` (the canonical template) whenever that template changes, using ``make_patches.sh`` to produce the diffs and ``apply_patches.sh`` to regenerate the checked-in ``ezsnmp/src/net-snmp-*-final-patched`` sources that are actually compiled.
+[BUILD-09] The per-version Net-SNMP CLI source patches under ``ezsnmp/patches/`` shall be regenerated from ``ezsnmp/patches/master_src`` (the canonical template) whenever that template changes, using cross-platform scripts (``do_all_that_stuff.sh``, ``make_patches.sh``, ``apply_patches.sh``) that detect available POSIX or GNU utilities (``sed``/``gsed``, ``patch``/``gpatch``) to generate diffs and produce the checked-in ``ezsnmp/src/net-snmp-*-final-patched`` sources on macOS, Linux, and other UNIX-like systems.
 
 [BUILD-10] The Windows Net-SNMP source build shall additionally patch ``include/net-snmp/library/lcd_time.h`` to add the ``NETSNMP_IMPORT`` decoration to the ``free_enginetime`` declaration, since that function otherwise lacks the export decoration and is silently omitted from ``netsnmp.dll``'s export table (unlike POSIX shared libraries, which export it implicitly). ezsnmp's C++ wrapper code calls this function directly when removing a cached SNMPv3 USM user.
+
+[BUILD-11] The repository shall maintain an official Homebrew formula (``Formula/ezsnmp.rb``) supporting local source builds and installation of ezsnmp into Homebrew Python environments, automatically configured against Homebrew-installed Net-SNMP and OpenSSL dependencies.
 
 Binary Wheels
 ~~~~~~~~~~~~~
@@ -146,11 +154,15 @@ Testing
 
 [TEST-01] The system shall provide a Python unit test suite (pytest) covering session operations, SNMP functional wrappers, data types, exceptions, authentication/privacy variants, multithreading, caching, logging, and platform-specific setup.
 
-[TEST-02] The system shall provide a C++ unit test suite (Google Test) covering the C++ core components.
+[TEST-02] The system shall provide a C++ unit test suite (Google Test) covering the C++ core components, incorporating backwards-compatibility fallback mechanisms (such as ``EZSNMP_SKIP_TEST_AND_RETURN``) to support older Google Test distributions (< 1.10.0, e.g. on CentOS 7 and Rocky Linux 8) where ``GTEST_SKIP()`` is not available.
 
 [TEST-03] The system shall provide integration tests that run against a live SNMP agent and validate real GET, WALK, and BULKWALK operations.
 
-[TEST-04] The system shall maintain code coverage reporting for both Python and C++ components via Codecov, with coverage data uploaded from all CI test workflows.
+[TEST-04] The system shall maintain code coverage reporting for both Python and C++ components via Codecov across all CI test workflows, including Codecov Test Analytics for tracking test suite duration and failure trends.
+
+[TEST-05] The test infrastructure shall provide coverage path normalization utilities (``python_tests/normalize_coverage_paths.py``) to reconcile differing source file paths between Docker container mount points and host workspaces prior to uploading coverage reports to Codecov.
+
+[TEST-06] Dockerized test matrices running Python test suites across supported Linux distributions and Python versions shall partition tests into consolidated logical test groups (such as session operations, walk operations, SNMP ops, and core utilities) ensuring 100% test file coverage across all test files without exceeding workflow matrix limits.
 
 Code Quality
 ~~~~~~~~~~~~
@@ -161,12 +173,16 @@ Code Quality
 
 [QUAL-03] The system shall perform static security analysis on the codebase using CodeQL in CI.
 
-[QUAL-04] The system shall perform memory safety analysis using Valgrind on macOS (Homebrew) builds as part of CI.
+[QUAL-04] The system shall perform memory safety analysis using Valgrind on Linux (Homebrew/Linuxbrew) builds as part of CI.
+
+[QUAL-05] The system shall run C++ tests compiled with LLVM/Clang sanitizers (including AddressSanitizer, UndefinedBehaviorSanitizer, and MemorySanitizer) in CI and Docker test environments to detect memory corruption, memory leaks, and undefined behavior.
 
 Documentation
 ~~~~~~~~~~~~~
 
 [DOCS-01] The system shall provide Sphinx-based HTML documentation including installation instructions, API reference, and a development guide.
+
+[DOCS-02] The documentation system shall maintain versioned documentation archives for each published release, served alongside development documentation via GitHub Pages with an automated version-selector landing page.
 
 CI/CD and Maintenance
 ~~~~~~~~~~~~~~~~~~~~~
@@ -184,3 +200,14 @@ CI/CD and Maintenance
 [CICD-06] The TestPyPI publishing workflow shall support manual triggering (``workflow_dispatch``) in addition to push-triggered builds, and shall bypass the changed-files gate when manually dispatched.
 
 [CICD-07] CI steps that run platform-specific commands through a third-party wrapper action (for example one that dispatches to a shell based on the runner OS) shall explicitly propagate the wrapped command's exit code (for example ``if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }`` on Windows/PowerShell) rather than relying on the wrapper to do so, since a PowerShell script invoked via ``pwsh -command "& '{0}'"`` does not automatically surface a failed native command's ``$LASTEXITCODE`` as the process exit code, which would otherwise let a failing build report a false-positive success.
+
+[CICD-08] The system shall automatically update and deploy the official Homebrew formula (``Formula/ezsnmp.rb``) with release tags, source tarball URLs, and SHA-256 checksums upon publication of new releases.
+
+[CICD-09] CI workflows shall utilize build caching for C++ compilation artifacts and Python dependencies (pip and tox caches) with invalidation based on dependency file hashes, providing fallback mechanisms to clean builds when incremental builds fail.
+
+[CICD-10] All CI workflows utilizing matrix strategies (including Dockerized Python and C++ test matrices, native test matrices, and integration test matrices) shall enforce that the total number of matrix job combinations remains strictly below the GitHub Actions platform limit of 256 jobs per matrix strategy:
+
+- **Matrix Dimension Upper Bound**: For every workflow matrix strategy, the total Cartesian product of all dimensions (such as ``distributions`` × ``python_versions`` × ``test_groups``, accounting for any ``include`` or ``exclude`` rules) shall not exceed 256 jobs.
+- **Future Additions & Re-Architecting**: Whenever future changes expand matrix dimensions—such as adding support for newer Python versions (e.g. Python 3.15+), new Linux distributions, or additional test suites—the workflow configuration shall be audited and kept strictly under the 256-job limit. If any future addition would cause the product to reach or exceed 256 (for example, 11 distributions × 6 Python versions × 4 test groups = 264 jobs), the workflow shall be re-partitioned (e.g. by consolidating test groups into fewer groups, splitting versions or distributions across separate workflow files, or using workflow dispatch/matrix chunking) so that all jobs can be scheduled and executed.
+- **Test Coverage Guarantee**: Consolidation of matrix dimensions or test groups shall never reduce test coverage; all test files must continue to run across all matrix targets.
+- **Downstream Safety Guards**: Downstream reporting and coverage aggregation jobs shall explicitly check for the existence of upstream test result and coverage artifacts before attempting uploads or posting comments, preventing empty coverage reports or missing JUnit XML warnings if upstream jobs are skipped or fail.

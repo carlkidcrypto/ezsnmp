@@ -122,7 +122,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 	docker exec -t -e ASAN_OPTIONS='halt_on_error=0' -e UBSAN_OPTIONS='halt_on_error=0' -e MSAN_OPTIONS='halt_on_error=0' "$CONTAINER_NAME" bash -c "
 		cd /ezsnmp/cpp_tests;
 		set -e;
-		rm -drf build/ *.info *.txt *.xml;
+		rm -f *.info *.txt *.xml;
+		find build/ -name '*.gcda' -delete 2>/dev/null || true;
 		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
 		# Ensure a known-good meson (from PyPI) is used instead of the system-installed one.
@@ -131,15 +132,27 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		# cannot find the pacman meson site-packages and segfaults. Installing meson via pip
 		# puts /opt/venv/bin/meson first on PATH, which runs cleanly under the venv Python.
 		pip install --quiet --upgrade 'meson>=1.3,<2' 2>&1 || true;
-		if ! meson setup build/ -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true; then
-		  echo 'Meson strict options not supported in this container; retrying with portable warning flags only.';
-		  rm -rf build/;
-		  meson setup build/ -Dwarning_level=3 -Dwerror=true;
-		fi;
 		BUILD_JOBS=\$(nproc);
 		if [ "\$BUILD_JOBS" -gt 1 ]; then BUILD_JOBS=\$((BUILD_JOBS - 1)); fi;
 		echo \"    - Building with \$BUILD_JOBS parallel jobs (reserving one CPU)\";
-		ninja -C build/ -j "\$BUILD_JOBS";
+		BUILD_SUCCESS=0;
+		if [ -f build/build.ninja ]; then
+		  echo \"    - Found cached build directory, verifying with ninja...\";
+		  if ninja -C build/ -j \"\$BUILD_JOBS\"; then
+		    BUILD_SUCCESS=1;
+		  else
+		    echo \"WARNING: Incremental build on cached directory failed. Re-configuring from scratch...\";
+		    rm -rf build/;
+		  fi;
+		fi;
+		if [ \"\$BUILD_SUCCESS\" -eq 0 ]; then
+		  if ! meson setup build/ -Dstrict_warnings=true -Dcheck_unreachable_code=true -Dwarning_level=3 -Dwerror=true; then
+		    echo 'Meson strict options not supported in this container; retrying with portable warning flags only.';
+		    rm -rf build/;
+		    meson setup build/ -Dwarning_level=3 -Dwerror=true;
+		  fi;
+		  ninja -C build/ -j \"\$BUILD_JOBS\";
+		fi;
 		TEST_EXIT_CODE=0
 		meson test -C build/ --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
 		if [ -f build/meson-logs/testlog.junit.xml ]; then

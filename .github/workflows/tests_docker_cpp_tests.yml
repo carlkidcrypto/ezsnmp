@@ -38,11 +38,6 @@ jobs:
             docker/**
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
-            python_tests/*.conf
-            python_tests/*.py
-            python_tests/requirements.txt
-            setup.cfg
-            setup.py
 
   test-cpp-tests:
     needs: check-changes
@@ -68,11 +63,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
+      - name: Cache Docker C++ build directory
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: cpp_tests/build
+          key: cpp-docker-build-${{ matrix.distro }}-${{ hashFiles('ezsnmp/**/*.cpp', 'ezsnmp/**/*.h', 'cpp_tests/**', 'docker/**') }}
+
       - name: Run unit tests inside the Docker container (${{ matrix.distro }})
         run: |
            cd docker/
            chmod +x run_cpp_tests_in_all_dockers.sh
            ./run_cpp_tests_in_all_dockers.sh ${{ matrix.distro }}
+
+      - name: Fix permissions for build cache
+        if: always()
+        run: sudo chown -R $USER:$USER cpp_tests/build 2>/dev/null || true
 
       - name: Upload Test Results (${{ matrix.distro }})
         if: always()
