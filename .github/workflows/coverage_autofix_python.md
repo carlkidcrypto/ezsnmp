@@ -21,12 +21,13 @@ safe-outputs:
     target: "*"
     allowed: [coverage, tests, python]
     max: 4
-timeout-minutes: 45
+timeout-minutes: 20
+max-ai-credits: 60
 model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, codecov.io, img.shields.io, dev-tools]
+  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, dev-tools]
 tools:
   edit:
   bash: true
@@ -40,20 +41,24 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 ## Hard Requirements
 
 - Focus only on this repository.
-- Keep changes scoped and low-risk.
+- Keep changes scoped and low-risk. Limit each run to at most 1 target test file (1–3 focused test cases).
 - Prefer tests first when improving coverage.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-python`.
 - If no meaningful change is needed, make no file edits and end cleanly.
+- **Bounded file reads (Token Optimization)**:
+  Files larger than 20 KB must **not** be read in full. Use targeted `grep`, `head`,
+  `tail`, or line-range views. Avoid dumping full source or test files into context.
 
 ## Coverage Check Procedure
 
 1. Use Codecov to identify coverage gaps:
    - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
    - If Codecov is unreachable or does not return data, inspect Python files under `ezsnmp/`
-     and tests under `python_tests/` directly to identify untested branches, error handling paths,
-     or missing test coverage.
-   - If no actionable gaps are found, call `report_incomplete` or exit cleanly without editing files.
+     and tests under `python_tests/` using targeted `grep` to identify untested branches,
+     error handling paths, or missing test coverage.
+   - If no actionable gaps are found or test additions cannot be safely verified within
+     10–12 turns, call `report_incomplete` or exit cleanly without editing files.
 
 2. Determine if action is needed:
    - If Python coverage is below 99%, or tests reveal clear reliability
@@ -69,31 +74,25 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
   - Small correctness fixes discovered while writing tests.
 - Avoid broad refactors or unrelated formatting churn.
 - Keep commits coherent and reviewable.
+- When creating the pull request, consult the `pull-request-guide` skill.
 
-## Formatting Step (Final, Required)
+## skill: `pull-request-guide`
+---
+description: Formatting rules, PR creation conventions, checklist items, and supplemental labels.
+---
 
-After all code and test changes are complete, run the project formatters on any
-modified files before committing. This step is mandatory and must be the last
-step before creating the PR.
-
-### Python — black
+### Formatting Step (Required before PR)
 
 Run `black` on every Python file that was added or modified:
-
-```
+```bash
 pip install black
 black <modified_python_files>
 ```
-
 If no Python files were changed, skip this sub-step.
 
-Commit any formatting changes as part of the same PR branch before opening the
-pull request.
-
-## Pull Request Output
+### Pull Request Output
 
 When changes exist, create exactly one PR using this fixed branch name:
-
 - Branch: `automation/coverage-autofix-python`
 - Base: `main`
 - Title style: `[coverage-autofix-py] <short summary>`
@@ -104,29 +103,8 @@ When changes exist, create exactly one PR using this fixed branch name:
 
 ### Human Verification Task
 
-Since local Docker-based verification is unavailable, you MUST create a task
-in the PR (e.g., as a checklist item or a comment) explicitly requesting the
-human reviewer to verify that the coverage has actually increased in the
-resulting CI run before merging.
+Since local Docker-based verification is unavailable, you MUST create a task in the PR (e.g., as a checklist item or a comment) explicitly requesting the human reviewer to verify that the coverage has actually increased in the resulting CI run before merging.
 
 After creating the PR, attempt a best-effort follow-up label step:
-
-- Add supplemental labels to the created PR when possible: `coverage`, `tests`,
-  `python`.
-- Treat this as non-critical metadata enrichment. If supplemental labeling fails,
-  do not treat the run as a primary failure and do not abandon the created PR.
-
-If no changes are required, report that coverage checks passed without actionable
-improvements.
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.
+- Add supplemental labels: `coverage`, `tests`, `python`.
+- Treat this as non-critical metadata enrichment. If labeling fails, do not treat the run as a failure.
