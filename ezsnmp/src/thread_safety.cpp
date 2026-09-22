@@ -54,3 +54,56 @@ void netsnmp_thread_cleanup(std::string const& app_name) {
       g_netsnmp_initialized.store(false, std::memory_order_release);
    }
 }
+
+namespace {
+thread_local SessionFormattingOptions t_session_formatting_options;
+} // namespace
+
+void set_thread_formatting_options(SessionFormattingOptions const& opts) {
+   t_session_formatting_options = opts;
+   t_session_formatting_options.is_set = true;
+}
+
+void clear_thread_formatting_options() {
+   t_session_formatting_options = SessionFormattingOptions{};
+}
+
+SessionFormattingOptions get_thread_formatting_options() {
+   return t_session_formatting_options;
+}
+
+void apply_current_formatting_options() {
+   if (t_session_formatting_options.is_set) {
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID,
+                             NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM,
+                             t_session_formatting_options.print_enums_numerically ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID,
+                             NETSNMP_DS_LIB_NUMERIC_TIMETICKS,
+                             t_session_formatting_options.print_timeticks_numerically ? 1 : 0);
+
+      if (t_session_formatting_options.print_oids_numerically) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID,
+                            NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                            NETSNMP_OID_OUTPUT_NUMERIC);
+      } else if (t_session_formatting_options.print_full_oids) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID,
+                            NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                            NETSNMP_OID_OUTPUT_FULL);
+      } else {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID,
+                            NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                            0);
+      }
+
+      if (t_session_formatting_options.print_hex_strings) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID,
+                            NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT,
+                            NETSNMP_STRING_OUTPUT_HEX);
+      } else {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID,
+                            NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT,
+                            0);
+      }
+   }
+}
+

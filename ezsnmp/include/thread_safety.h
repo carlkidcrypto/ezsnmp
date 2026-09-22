@@ -36,4 +36,42 @@ void netsnmp_thread_init(std::string const& app_name);
 // Decrement reference count and cleanup snmp if last thread
 void netsnmp_thread_cleanup(std::string const& app_name);
 
+// Per-session formatting configuration applied at output rendering time
+struct SessionFormattingOptions {
+   bool is_set = false;
+   bool print_enums_numerically = false;
+   bool print_full_oids = false;
+   bool print_oids_numerically = false;
+   bool print_timeticks_numerically = false;
+   bool print_hex_strings = false;
+};
+
+// Set thread-local formatting options for the calling thread
+void set_thread_formatting_options(SessionFormattingOptions const& opts);
+
+// Clear thread-local formatting options for the calling thread
+void clear_thread_formatting_options();
+
+// Retrieve current thread-local formatting options
+SessionFormattingOptions get_thread_formatting_options();
+
+// Apply current thread-local formatting options to Net-SNMP default store.
+// Must be called while holding g_netsnmp_mib_mutex.
+void apply_current_formatting_options();
+
+// RAII helper to manage thread-local formatting options lifetime during an operation
+class FormattingScope {
+  public:
+   explicit FormattingScope(SessionFormattingOptions const& opts) {
+      set_thread_formatting_options(opts);
+   }
+
+   ~FormattingScope() {
+      clear_thread_formatting_options();
+   }
+
+   FormattingScope(FormattingScope const&) = delete;
+   FormattingScope& operator=(FormattingScope const&) = delete;
+};
+
 #endif // THREAD_SAFETY_H
