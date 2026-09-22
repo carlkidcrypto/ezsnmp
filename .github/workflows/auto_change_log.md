@@ -21,7 +21,8 @@ safe-outputs:
     if-no-changes: "ignore"
     base-branch: main
     protected-files: allowed
-timeout-minutes: 30
+timeout-minutes: 15
+max-ai-credits: 25
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -92,18 +93,6 @@ Generate and open a changelog update PR only when substantive changelog content 
    - Title: `Update CHANGELOG.md`
    - Commit message: `chore(docs): update changelog`
 
-## Pull Request Body Requirements
-
-Include:
-
-- Trigger source (`release`, `push`, or `workflow_dispatch`)
-- Whether a release tag triggered this run (if available)
-- Explicit comparison range used (`<base>...<current>`)
-- Summary of notable top-level sections changed in `CHANGELOG.md`
-- A concise "What changed" summary derived from commit titles (from the single `git log` run above)
-- Mention of notable PR numbers/issues inferred from commit messages when available
-- A note that timestamp-only changes are filtered out
-
 ## Constraints
 
 - Only modify `CHANGELOG.md`.
@@ -113,15 +102,21 @@ Include:
 - Prefer meaningful, user-impacting summaries over dependency/CI churn when both are present.
 - Never fail the run solely because external commit APIs are blocked by integrity filtering; fall back to local git history and continue.
 - Never attempt to re-implement `git-chglog` in Python, shell, or any other language. If the tool cannot be installed, stop with a clear error.
+- **Bounded file reads (Token Optimization)**: Avoid dumping the entire `CHANGELOG.md` file into context. Use `head`, `tail`, or `git diff` for comparisons.
+- When creating the PR, refer to the `pull-request-guide` skill.
 
-## Scripts And Tools
+## skill: `pull-request-guide`
+---
+description: Formatting rules and required PR body contents for the changelog PR.
+---
 
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+### Pull Request Body Requirements
 
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.
+Include:
+- Trigger source (`release`, `push`, or `workflow_dispatch`)
+- Whether a release tag triggered this run (if available)
+- Explicit comparison range used (`<base>...<current>`)
+- Summary of notable top-level sections changed in `CHANGELOG.md`
+- A concise "What changed" summary derived from commit titles (from the single `git log` run above)
+- Mention of notable PR numbers/issues inferred from commit messages when available
+- A note that timestamp-only changes are filtered out

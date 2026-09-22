@@ -16,7 +16,8 @@ safe-outputs:
     draft: true
     preserve-branch-name: true
     if-no-changes: "ignore"
-timeout-minutes: 45
+timeout-minutes: 15
+max-ai-credits: 25
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -30,11 +31,17 @@ Review and improve repository documentation gradually over time.
 
 Audit and improve:
 
-- README.rst
-- docs/**
-- HOWTOAI.rst
-- inline docstrings in Python files under ezsnmp/**
+- `README.rst`
+- `docs/**`
+- `HOWTOAI.rst`
+- inline docstrings in Python files under `ezsnmp/**`
 - comments/doc text in interface/docs-related files where clearly incorrect or missing
+
+## Hard Requirements & Scope Limits (Token Optimization)
+
+- **Single-Target Scope**: Limit each run to at most 1–2 documentation files or 1 Python module's docstrings (1–3 focused improvements maximum). Do not attempt a repo-wide audit in a single run.
+- **Bounded file reads**: Files larger than 20 KB must **not** be read in full. Use targeted `grep`, `head`, `tail`, or line-range views.
+- **Turn Budget**: Complete inspection and edits within 10–12 turns. If no clear improvements are found, stop cleanly without editing.
 
 ## Goals
 
@@ -49,30 +56,21 @@ Audit and improve:
 - Do not change API behavior or runtime logic; documentation-only edits
 - Avoid changing generated artifacts
 - If no meaningful improvements are found, do not edit files
+- When opening the PR, consult the `pull-request-guide` skill.
 
-## Pull Request
+## skill: `pull-request-guide`
+---
+description: Conventions and required body contents for documentation improvement PRs.
+---
 
-If changes are made, create or update one PR:
+### Pull Request Output
 
-- Branch: automation/docs-continuous-improvement
-- Base: main
-- Title style: [docs-improvement] <short summary>
+When changes are made, create or update one PR:
+- Branch: `automation/docs-continuous-improvement`
+- Base: `main`
+- Title style: `[docs-improvement] <short summary>`
 
 PR body must include:
-
 - Files updated
 - Types of improvements (typos, clarifications, docstrings, etc.)
 - Any follow-up documentation gaps discovered
-
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.

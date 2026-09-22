@@ -16,7 +16,8 @@ safe-outputs:
     required-labels: [auto-sync]
     protected-files: fallback-to-issue
     if-no-changes: "ignore"
-timeout-minutes: 45
+timeout-minutes: 15
+max-ai-credits: 20
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -49,17 +50,5 @@ Keep open pull requests current by merging the latest main branch into PR branch
 - Only update open PR branches that have the `auto-sync` label applied by a maintainer.
 - Do not push to PRs without the `auto-sync` label — they are intentionally excluded.
 - If a merge would change protected files, do not force the push; rely on protected-file fallback handling.
-- Keep commit messages clear, e.g.:
-  - chore: merge main into PR branch
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.
+- Keep commit messages clear, e.g.: `chore: merge main into PR branch`
+- **Turn & Scope Limits (Token Optimization)**: Stop immediately after processing the first eligible PR or determining none require sync. Keep total execution within 10–12 turns.

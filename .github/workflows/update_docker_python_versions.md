@@ -17,6 +17,8 @@ safe-outputs:
     draft: false
     preserve-branch-name: true
     if-no-changes: "ignore"
+timeout-minutes: 10
+max-ai-credits: 15
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -70,15 +72,4 @@ Include this summary in the PR body:
 - Keep changes restricted to docker Python version updates from the updater
   script.
 - Do not make unrelated refactors or formatting-only edits.
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.
+- **Turn Budget (Token Optimization)**: Running the updater script and checking git diff should complete within 3–5 turns. Do not explore unrelated files.
