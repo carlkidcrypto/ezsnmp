@@ -26,7 +26,8 @@ safe-outputs:
     draft: false
     preserve-branch-name: true
     if-no-changes: "ignore"
-timeout-minutes: 45
+timeout-minutes: 15
+max-ai-credits: 25
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -56,8 +57,8 @@ with safe, track-aware rules.
 
 ## Steps
 
-1. Discover currently pinned Net-SNMP versions in repository Docker assets:
-   - Scan `docker/**/Dockerfile`, `docker/**/README.rst`, and `docker/cache/download_build_cache.sh`.
+1. Discover currently pinned Net-SNMP versions in repository Docker assets (Bounded File Reads — Token Optimization):
+   - Do **not** read Dockerfiles in full into context. Use targeted `grep -rn` to scan `docker/**/Dockerfile`, `docker/**/README.rst`, and `docker/cache/download_build_cache.sh`.
    - Extract explicit version strings from patterns like:
      - `net-snmp-<x.y.z>.tar.gz`
      - textual version mentions such as `Net-SNMP <x.y.z>`
@@ -88,31 +89,24 @@ with safe, track-aware rules.
    - Title: `Update Docker Net-SNMP patch versions`
    - Commit message: `chore(docker): update Net-SNMP patch versions in Docker assets`
 
-## Pull Request Body
+## Scope
+ 
+- Restrict edits to Net-SNMP version references in Docker-related files.
+- Keep default behavior on stable releases only unless `include_prerelease=true` was explicitly provided.
+- Do not change Python versions, distro versions, workflow logic, or unrelated code.
+- If upstream data is ambiguous or unavailable, call the `noop` safe output tool with an explanation of why no action was taken.
+- When creating the PR, refer to the `pull-request-guide` skill.
+
+## skill: `pull-request-guide`
+---
+description: Required contents and formatting for the Docker Net-SNMP patch version update PR.
+---
+
+### Pull Request Body
 
 Include:
-
 - Upstream source checked (`net-snmp/net-snmp`)
 - Selection mode used (`stable-only` or `include-prerelease`)
 - Detected tracks and old/new patch versions per track
 - Files changed
 - Explicit note that only patch-level, same-track updates were performed
-
-## Scope
-
-- Restrict edits to Net-SNMP version references in Docker-related files.
-- Keep default behavior on stable releases only unless `include_prerelease=true` was explicitly provided.
-- Do not change Python versions, distro versions, workflow logic, or unrelated code.
-- If upstream data is ambiguous or unavailable, call the `noop` safe output tool with an explanation of why no action was taken.
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.

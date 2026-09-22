@@ -19,7 +19,8 @@ safe-outputs:
     draft: true
     preserve-branch-name: true
     if-no-changes: "ignore"
-timeout-minutes: 45
+timeout-minutes: 20
+max-ai-credits: 30
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -96,16 +97,6 @@ Use the existing report tooling and docs in this repository as the source of tru
    - Base: `main`
    - Title style: `[report-tooling] <short summary>`
 
-## Pull Request Body
-
-Include:
-
-- The scripts, workflows, and docs reviewed
-- Which files changed and why
-- Whether the Valgrind history analyzer found leak signatures during the run
-- Whether Docker `test_outputs_*` data was available for a local report run
-- Any follow-up gaps that still need manual attention
-
 ## Constraints
 
 - Use the existing repository scripts and documentation; do not replace them with
@@ -113,15 +104,21 @@ Include:
 - Keep changes limited to report workflows, report scripts, and directly related
   documentation.
 - Do not manually edit generated `.lock.yml` files.
+- **Bounded file reads (Token Optimization)**: Files larger than 20 KB (such as
+  `.github/workflows/tests_homebrew.yml` or long report files) must **not** be read
+  in full. Use targeted `grep`, `head`, `tail`, or line-range views.
+- When creating the PR, refer to the `pull-request-guide` skill.
 
-## Scripts And Tools
+## skill: `pull-request-guide`
+---
+description: Required contents and formatting for the monthly report tooling maintenance PR.
+---
 
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
+### Pull Request Body
 
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.
+Include:
+- The scripts, workflows, and docs reviewed
+- Which files changed and why
+- Whether the Valgrind history analyzer found leak signatures during the run
+- Whether Docker `test_outputs_*` data was available for a local report run
+- Any follow-up gaps that still need manual attention
