@@ -66,9 +66,7 @@ class FormattingScope {
       set_thread_formatting_options(opts);
    }
 
-   ~FormattingScope() {
-      clear_thread_formatting_options();
-   }
+   ~FormattingScope() { clear_thread_formatting_options(); }
 
    FormattingScope(FormattingScope const&) = delete;
    FormattingScope& operator=(FormattingScope const&) = delete;
