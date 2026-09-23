@@ -1,85 +1,85 @@
 Session,Operation,Mode,Runs,Leak warnings,Mean FD leak,Avg Exec (s),Avg Avg/Call (s)
-V1,bulk_get,close,75,0,,0.069053,0.000691
-V1,bulk_get,no close,75,0,,0.06896,0.000689
-V1,bulk_walk,close,75,0,,0.070667,0.000707
-V1,bulk_walk,no close,75,0,,0.07296,0.000729
-V1,get,close,75,0,,4.38288,0.043829
-V1,get,no close,75,0,,4.496987,0.04497
-V1,get_next,close,75,0,,4.39,0.0439
-V1,get_next,no close,75,0,,4.357707,0.043577
-V1,set,close,75,0,,0.16604,0.001661
-V1,set,no close,75,0,,0.16784,0.001678
-V1,walk,close,75,0,,4.526227,0.045262
-V1,walk,no close,75,0,,4.509627,0.045097
-V2,bulk_get,close,75,0,,4.363413,0.043634
-V2,bulk_get,no close,75,0,,4.28748,0.042874
-V2,bulk_walk,close,75,0,,4.320773,0.043208
-V2,bulk_walk,no close,75,0,,4.35288,0.043529
-V2,get,close,75,0,,4.4086,0.044086
-V2,get,no close,75,0,,4.400813,0.044008
-V2,get_next,close,75,0,,4.33012,0.043301
-V2,get_next,no close,75,0,,4.34592,0.04346
-V2,set,close,75,0,,0.16464,0.001646
-V2,set,no close,75,0,,0.15856,0.001586
-V2,walk,close,75,0,,4.443747,0.044437
-V2,walk,no close,75,0,,4.462067,0.04462
-V3_MD5_AES,bulk_get,close,75,0,,4.785907,0.047858
-V3_MD5_AES,bulk_get,no close,75,0,,4.762187,0.047621
-V3_MD5_AES,bulk_walk,close,75,0,,4.859867,0.048599
-V3_MD5_AES,bulk_walk,no close,75,0,,4.817733,0.048177
-V3_MD5_AES,get,close,75,0,,4.842627,0.048426
-V3_MD5_AES,get,no close,75,0,,4.87444,0.048744
-V3_MD5_AES,get_next,close,75,0,,4.780973,0.04781
-V3_MD5_AES,get_next,no close,75,0,,4.823253,0.048233
-V3_MD5_AES,set,close,75,0,,1.144573,0.011446
-V3_MD5_AES,set,no close,75,0,,1.141933,0.01142
-V3_MD5_AES,walk,close,75,0,,4.920613,0.049205
-V3_MD5_AES,walk,no close,75,0,,4.9264,0.049264
-V3_MD5_DES,bulk_get,close,75,0,,4.782173,0.047821
-V3_MD5_DES,bulk_get,no close,75,0,,4.787787,0.047879
-V3_MD5_DES,bulk_walk,close,75,0,,4.813467,0.048135
-V3_MD5_DES,bulk_walk,no close,75,0,,4.828093,0.048281
-V3_MD5_DES,get,close,75,0,,4.775573,0.047756
-V3_MD5_DES,get,no close,75,0,,4.76036,0.047604
-V3_MD5_DES,get_next,close,75,0,,4.74336,0.047435
-V3_MD5_DES,get_next,no close,75,0,,4.771573,0.047715
-V3_MD5_DES,set,close,75,0,,1.15588,0.011559
-V3_MD5_DES,set,no close,75,0,,1.146,0.011459
-V3_MD5_DES,walk,close,75,0,,4.93372,0.049338
-V3_MD5_DES,walk,no close,75,0,,4.919507,0.049194
-V3_MD5_NO_PRIV,bulk_get,close,75,0,,4.5272,0.045272
-V3_MD5_NO_PRIV,bulk_get,no close,75,0,,4.537187,0.045372
-V3_MD5_NO_PRIV,bulk_walk,close,75,0,,4.53776,0.045378
-V3_MD5_NO_PRIV,bulk_walk,no close,75,0,,4.538333,0.045384
-V3_MD5_NO_PRIV,get,close,75,0,,4.502227,0.045023
-V3_MD5_NO_PRIV,get,no close,75,0,,4.554587,0.045545
-V3_MD5_NO_PRIV,get_next,close,75,0,,4.492307,0.044923
-V3_MD5_NO_PRIV,get_next,no close,75,0,,4.525933,0.04526
-V3_MD5_NO_PRIV,set,close,75,0,,0.656187,0.006561
-V3_MD5_NO_PRIV,set,no close,75,0,,0.651173,0.006511
-V3_MD5_NO_PRIV,walk,close,75,0,,4.66304,0.046631
-V3_MD5_NO_PRIV,walk,no close,75,0,,4.679147,0.046791
-V3_SHA_AES,bulk_get,close,75,0,,4.655547,0.046555
-V3_SHA_AES,bulk_get,no close,75,0,,4.675547,0.046756
-V3_SHA_AES,bulk_walk,close,75,0,,4.7006,0.047007
-V3_SHA_AES,bulk_walk,no close,75,0,,4.704387,0.047044
-V3_SHA_AES,get,close,75,0,,4.655227,0.046552
-V3_SHA_AES,get,no close,75,0,,4.69404,0.04694
-V3_SHA_AES,get_next,close,75,0,,4.66848,0.046684
-V3_SHA_AES,get_next,no close,75,0,,4.636307,0.046362
-V3_SHA_AES,set,close,75,0,,0.850587,0.008506
-V3_SHA_AES,set,no close,75,0,,0.834787,0.008347
-V3_SHA_AES,walk,close,75,0,,4.82216,0.048222
-V3_SHA_AES,walk,no close,75,0,,4.821507,0.048215
-V3_SHA_NO_PRIV,bulk_get,close,75,0,,4.47128,0.044713
-V3_SHA_NO_PRIV,bulk_get,no close,75,0,,4.50164,0.045017
-V3_SHA_NO_PRIV,bulk_walk,close,75,0,,4.49324,0.044932
-V3_SHA_NO_PRIV,bulk_walk,no close,75,0,,4.496747,0.044968
-V3_SHA_NO_PRIV,get,close,75,0,,4.478453,0.044785
-V3_SHA_NO_PRIV,get,no close,75,0,,4.532773,0.045328
-V3_SHA_NO_PRIV,get_next,close,75,0,,4.44352,0.044435
-V3_SHA_NO_PRIV,get_next,no close,75,0,,4.46252,0.044625
-V3_SHA_NO_PRIV,set,close,75,0,,0.511667,0.005117
-V3_SHA_NO_PRIV,set,no close,75,0,,0.50428,0.005042
-V3_SHA_NO_PRIV,walk,close,75,0,,4.615627,0.046157
-V3_SHA_NO_PRIV,walk,no close,75,0,,4.600227,0.046003
+V1,bulk_get,close,76,0,,0.069026,0.000691
+V1,bulk_get,no close,76,0,,0.068947,0.000689
+V1,bulk_walk,close,76,0,,0.070658,0.000707
+V1,bulk_walk,no close,76,0,,0.072921,0.000729
+V1,get,close,76,0,,4.380513,0.043805
+V1,get,no close,76,0,,4.493711,0.044937
+V1,get_next,close,76,0,,4.385592,0.043856
+V1,get_next,no close,76,0,,4.353934,0.043539
+V1,set,close,76,0,,0.165816,0.001658
+V1,set,no close,76,0,,0.167592,0.001675
+V1,walk,close,76,0,,4.521921,0.045219
+V1,walk,no close,76,0,,4.503934,0.04504
+V2,bulk_get,close,76,0,,4.359763,0.043597
+V2,bulk_get,no close,76,0,,4.285013,0.04285
+V2,bulk_walk,close,76,0,,4.320776,0.043208
+V2,bulk_walk,no close,76,0,,4.351539,0.043516
+V2,get,close,76,0,,4.404882,0.044048
+V2,get,no close,76,0,,4.398789,0.043988
+V2,get_next,close,76,0,,4.328671,0.043287
+V2,get_next,no close,76,0,,4.344184,0.043442
+V2,set,close,76,0,,0.165263,0.001653
+V2,set,no close,76,0,,0.158855,0.001589
+V2,walk,close,76,0,,4.443618,0.044436
+V2,walk,no close,76,0,,4.459474,0.044595
+V3_MD5_AES,bulk_get,close,76,0,,4.785855,0.047858
+V3_MD5_AES,bulk_get,no close,76,0,,4.761461,0.047614
+V3_MD5_AES,bulk_walk,close,76,0,,4.860355,0.048604
+V3_MD5_AES,bulk_walk,no close,76,0,,4.817526,0.048175
+V3_MD5_AES,get,close,76,0,,4.842737,0.048428
+V3_MD5_AES,get,no close,76,0,,4.877342,0.048773
+V3_MD5_AES,get_next,close,76,0,,4.779092,0.047791
+V3_MD5_AES,get_next,no close,76,0,,4.823539,0.048236
+V3_MD5_AES,set,close,76,0,,1.145342,0.011454
+V3_MD5_AES,set,no close,76,0,,1.141697,0.011417
+V3_MD5_AES,walk,close,76,0,,4.917829,0.049178
+V3_MD5_AES,walk,no close,76,0,,4.926171,0.049261
+V3_MD5_DES,bulk_get,close,76,0,,4.784092,0.047841
+V3_MD5_DES,bulk_get,no close,76,0,,4.785987,0.047861
+V3_MD5_DES,bulk_walk,close,76,0,,4.814632,0.048147
+V3_MD5_DES,bulk_walk,no close,76,0,,4.829737,0.048297
+V3_MD5_DES,get,close,76,0,,4.775961,0.04776
+V3_MD5_DES,get,no close,76,0,,4.761803,0.047618
+V3_MD5_DES,get_next,close,76,0,,4.743697,0.047438
+V3_MD5_DES,get_next,no close,76,0,,4.774421,0.047744
+V3_MD5_DES,set,close,76,0,,1.157882,0.011579
+V3_MD5_DES,set,no close,76,0,,1.146987,0.011469
+V3_MD5_DES,walk,close,76,0,,4.932355,0.049324
+V3_MD5_DES,walk,no close,76,0,,4.917526,0.049175
+V3_MD5_NO_PRIV,bulk_get,close,76,0,,4.527013,0.04527
+V3_MD5_NO_PRIV,bulk_get,no close,76,0,,4.542276,0.045423
+V3_MD5_NO_PRIV,bulk_walk,close,76,0,,4.537855,0.045379
+V3_MD5_NO_PRIV,bulk_walk,no close,76,0,,4.53825,0.045383
+V3_MD5_NO_PRIV,get,close,76,0,,4.508224,0.045083
+V3_MD5_NO_PRIV,get,no close,76,0,,4.555026,0.045549
+V3_MD5_NO_PRIV,get_next,close,76,0,,4.495658,0.044957
+V3_MD5_NO_PRIV,get_next,no close,76,0,,4.527868,0.045279
+V3_MD5_NO_PRIV,set,close,76,0,,0.656697,0.006566
+V3_MD5_NO_PRIV,set,no close,76,0,,0.652013,0.00652
+V3_MD5_NO_PRIV,walk,close,76,0,,4.663711,0.046638
+V3_MD5_NO_PRIV,walk,no close,76,0,,4.678013,0.04678
+V3_SHA_AES,bulk_get,close,76,0,,4.655171,0.046551
+V3_SHA_AES,bulk_get,no close,76,0,,4.674855,0.046749
+V3_SHA_AES,bulk_walk,close,76,0,,4.706487,0.047066
+V3_SHA_AES,bulk_walk,no close,76,0,,4.704579,0.047046
+V3_SHA_AES,get,close,76,0,,4.656539,0.046565
+V3_SHA_AES,get,no close,76,0,,4.693697,0.046936
+V3_SHA_AES,get_next,close,76,0,,4.667645,0.046676
+V3_SHA_AES,get_next,no close,76,0,,4.639461,0.046394
+V3_SHA_AES,set,close,76,0,,0.8505,0.008505
+V3_SHA_AES,set,no close,76,0,,0.835039,0.008349
+V3_SHA_AES,walk,close,76,0,,4.821211,0.048212
+V3_SHA_AES,walk,no close,76,0,,4.821079,0.048211
+V3_SHA_NO_PRIV,bulk_get,close,76,0,,4.469592,0.044696
+V3_SHA_NO_PRIV,bulk_get,no close,76,0,,4.499789,0.044998
+V3_SHA_NO_PRIV,bulk_walk,close,76,0,,4.495697,0.044957
+V3_SHA_NO_PRIV,bulk_walk,no close,76,0,,4.495342,0.044954
+V3_SHA_NO_PRIV,get,close,76,0,,4.478039,0.044781
+V3_SHA_NO_PRIV,get,no close,76,0,,4.534118,0.045342
+V3_SHA_NO_PRIV,get_next,close,76,0,,4.443934,0.044439
+V3_SHA_NO_PRIV,get_next,no close,76,0,,4.46175,0.044617
+V3_SHA_NO_PRIV,set,close,76,0,,0.511092,0.005111
+V3_SHA_NO_PRIV,set,no close,76,0,,0.503671,0.005036
+V3_SHA_NO_PRIV,walk,close,76,0,,4.615039,0.046151
+V3_SHA_NO_PRIV,walk,no close,76,0,,4.599132,0.045992

@@ -109,7 +109,9 @@ Thread Safety
 
 [THREAD-02] The system shall use reference counting and mutexes to initialize Net-SNMP (``init_snmp``) only on the first operation and shut it down (``snmp_shutdown``) only after all operations in all threads have completed.
 
-[THREAD-03] The system shall isolate per-session output formatting configurations across concurrent SNMP operations in multi-threaded environments, ensuring that concurrent sessions with differing formatting options (such as ``print_enums_numerically``, ``print_full_oids``, ``print_oids_numerically``, ``print_timeticks_numerically``, and ``print_hex_strings``) do not overwrite or race on global Net-SNMP output options.
+[THREAD-03] The system shall isolate per-session output formatting configurations across concurrent SNMP operations in multi-threaded environments using thread-local storage (``FormattingScope``). Output formatting options (such as ``print_enums_numerically``, ``print_full_oids``, ``print_oids_numerically``, ``print_timeticks_numerically``, and ``print_hex_strings``) shall be applied to Net-SNMP default store flags atomically under ``g_netsnmp_mib_mutex`` only during in-memory variable and OID string rendering (``print_variable_to_string`` and ``print_objid_to_string``). Coarse mutex locks shall not be held across network I/O (``snmp_sess_synch_response``), allowing concurrent SNMPv1 and SNMPv2c operations to execute simultaneously across threads without serialization.
+
+[THREAD-04] The system shall serialize SNMPv3 operations and setter mutations using a dedicated mutex (``g_snmp_v3_operation_mutex``) to safely remove cached USM users (``remove_v3_user_from_cache``) before and after operations, preventing race conditions and engine time cache corruption across concurrent SNMPv3 sessions without serializing SNMPv1 or SNMPv2c operations.
 
 Build and Distribution
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -163,6 +165,8 @@ Testing
 [TEST-05] The test infrastructure shall provide coverage path normalization utilities (``python_tests/normalize_coverage_paths.py``) to reconcile differing source file paths between Docker container mount points and host workspaces prior to uploading coverage reports to Codecov.
 
 [TEST-06] Dockerized test matrices running Python test suites across supported Linux distributions and Python versions shall partition tests into consolidated logical test groups (such as session operations, walk operations, SNMP ops, and core utilities) ensuring 100% test file coverage across all test files without exceeding workflow matrix limits.
+
+[TEST-07] The integration test runner (``integration_tests/run_integration_tests.sh``) shall enforce cooldown pauses (such as 1-second delays) between distinct test phases (such as between GET, WALK, and BULKWALK tests) to allow sockets and simulated SNMP agent daemons to settle, preventing false-positive socket exhaustion and timeout errors under high-concurrency multi-process and multi-threaded test runs.
 
 Code Quality
 ~~~~~~~~~~~~

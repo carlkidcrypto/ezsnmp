@@ -4,23 +4,23 @@ Integration Test Results History
 This report aggregates every currently recoverable successful PR comment tagged with
 ``<!-- integration-test-summary -->``.
 
-**Report generated:** ``2026-09-22T04:00:53Z``
+**Report generated:** ``2026-09-23T23:44:41Z``
 
 Notes
 -----
 
 * GitHub updates these PR comments in place, so older successful run bodies are overwritten.
-* Accessible successful comment summaries found: ``91``.
+* Accessible successful comment summaries found: ``92``.
 * ``Unavailable`` in the status CSV means the older comment body did not expose a file-descriptor status line.
 
 Dataset
 -------
 
-* Comments analyzed: ``91``
-* Newest PR update in sample: ``2026-09-20T15:39:59Z``
+* Comments analyzed: ``92``
+* Newest PR update in sample: ``2026-09-22T04:35:17Z``
 * Oldest PR update in sample: ``2026-02-06T08:59:13Z``
-* Performance rows parsed: ``2148`` (48 comments with tabular performance data)
-* File descriptor rows parsed: ``6300`` (48 comments with tabular FD data)
+* Performance rows parsed: ``2178`` (49 comments with tabular performance data)
+* File descriptor rows parsed: ``6384`` (49 comments with tabular FD data)
 
 CSV files
 ---------
