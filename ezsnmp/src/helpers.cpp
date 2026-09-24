@@ -4,6 +4,7 @@
 #include <net-snmp/library/lcd_time.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <regex>
@@ -28,6 +29,7 @@ std::string print_variable_to_string(oid const *objid,
       return "[TRUNCATED]";
    } else {
       std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+      apply_current_formatting_options();
       if (sprint_realloc_variable(&buf, &buf_len, &out_len, 1, objid, objidlen, variable)) {
          // Construct the formatted string
          std::string result(reinterpret_cast<char *>(buf), out_len);
@@ -334,6 +336,7 @@ std::string print_objid_to_string(oid const *objid, size_t objidlen) {
       return ss.str();
    } else {
       std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+      apply_current_formatting_options();
       netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid,
                                         objidlen);
       if (buf_overflow) {
@@ -356,6 +359,13 @@ void clear_net_snmp_library_data() {
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM,
                           0);                                                          // Clear -O e
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT,
+                      0); // Clear -O x
+}
+
+SockCleanupGuard::~SockCleanupGuard() {
+   clear_net_snmp_library_data();
+   SOCK_CLEANUP;
 }
 
 void snmp_check_null_response(netsnmp_pdu const *response) {

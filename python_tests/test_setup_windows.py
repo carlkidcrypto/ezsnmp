@@ -142,3 +142,70 @@ def test_gather_build_configuration_windows_requires_paths(monkeypatch):
 
     with pytest.raises(RuntimeError, match="EZSNMP_NETSNMP_INCLUDE_DIR"):
         build_utils.gather_build_configuration()
+
+
+def test_gather_build_configuration_windows_includes_openssl_paths(
+    tmp_path, monkeypatch
+):
+    include_dir = tmp_path / "include"
+    lib_dir = tmp_path / "lib"
+    openssl_include = tmp_path / "openssl" / "include"
+    openssl_lib = tmp_path / "openssl" / "lib"
+
+    header_path = include_dir / "net-snmp" / "net-snmp-config.h"
+    header_path.parent.mkdir(parents=True)
+    header_path.write_text('#define PACKAGE_VERSION "5.10.pre2"\n', encoding="utf-8")
+    lib_dir.mkdir()
+    openssl_include.mkdir(parents=True)
+    openssl_lib.mkdir(parents=True)
+
+    monkeypatch.setattr(build_utils, "platform", "win32")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
+    monkeypatch.setenv("EZSNMP_NETSNMP_INCLUDE_DIR", str(include_dir))
+    monkeypatch.setenv("EZSNMP_NETSNMP_LIB_DIR", str(lib_dir))
+    monkeypatch.setenv("EZSNMP_OPENSSL_INCLUDE_DIR", str(openssl_include))
+    monkeypatch.setenv("EZSNMP_OPENSSL_LIB_DIR", str(openssl_lib))
+
+    cfg = build_utils.gather_build_configuration()
+
+    assert str(openssl_include) in cfg["incdirs"]
+    assert str(openssl_lib) in cfg["libdirs"]
+    assert cfg["system_netsnmp_version"] == "5.10.pre2"
+
+
+@pytest.mark.parametrize(
+    "arch,openssl_subpath",
+    [
+        ("AMD64", "lib/VC/x64/MD"),
+        ("x86", "lib/VC/x86/MD"),
+        ("ARM64", "lib/VC/arm64/MD"),
+    ],
+)
+def test_gather_build_configuration_windows_architectures(
+    tmp_path, monkeypatch, arch, openssl_subpath
+):
+    include_dir = tmp_path / arch / "include"
+    lib_dir = tmp_path / arch / "lib"
+    openssl_include = tmp_path / arch / "openssl" / "include"
+    openssl_lib = tmp_path / arch / "openssl" / openssl_subpath
+
+    header_path = include_dir / "net-snmp" / "net-snmp-config.h"
+    header_path.parent.mkdir(parents=True)
+    header_path.write_text('#define PACKAGE_VERSION "5.10.pre2"\n', encoding="utf-8")
+    lib_dir.mkdir(parents=True)
+    openssl_include.mkdir(parents=True)
+    openssl_lib.mkdir(parents=True)
+
+    monkeypatch.setattr(build_utils, "platform", "win32")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
+    monkeypatch.setenv("EZSNMP_NETSNMP_INCLUDE_DIR", str(include_dir))
+    monkeypatch.setenv("EZSNMP_NETSNMP_LIB_DIR", str(lib_dir))
+    monkeypatch.setenv("EZSNMP_OPENSSL_INCLUDE_DIR", str(openssl_include))
+    monkeypatch.setenv("EZSNMP_OPENSSL_LIB_DIR", str(openssl_lib))
+
+    cfg = build_utils.gather_build_configuration()
+
+    assert str(include_dir) in cfg["incdirs"]
+    assert str(openssl_include) in cfg["incdirs"]
+    assert str(lib_dir) in cfg["libdirs"]
+    assert str(openssl_lib) in cfg["libdirs"]

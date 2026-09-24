@@ -54,7 +54,7 @@ def test_session_ipv6_is_not_ipv6(version):
         sess.get("sysContact.0")
 
 
-def test_session_get(sess):
+def test_session_get(sess, reset_values):
 
     for oid in ["sysUpTime.0", "sysContact.0", "sysLocation.0"]:
         res = sess.get(oid)

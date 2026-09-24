@@ -134,13 +134,9 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /* Reset application-local quiet flag so subsequent calls behave normally. */
    quiet = 0;
 
-   auto cleanup_and_return_empty = [&]() {
-      clear_net_snmp_library_data();
-      SOCK_CLEANUP;
-      return parse_results(return_vector);
-   };
-
    SOCK_STARTUP;
+
+   SockCleanupGuard sock_cleanup_guard;
 
    putenv(strdup("POSIXLY_CORRECT=1"));
 
@@ -170,15 +166,13 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    }
 
    if (arg >= argc) {
-      fprintf(stderr, "Missing object name\n");
-      snmpset_usage();
-      return cleanup_and_return_empty();
+      std::string err_msg = "Missing object name\n";
+      throw GenericErrorBase(err_msg);
    }
    if ((argc - arg) > 3 * SNMP_MAX_CMDLINE_OIDS) {
-      fprintf(stderr, "Too many assignments specified. ");
-      fprintf(stderr, "Only %d allowed in one request.\n", SNMP_MAX_CMDLINE_OIDS);
-      snmpset_usage();
-      return cleanup_and_return_empty();
+      std::string err_msg = "Too many assignments specified. Only " +
+                            std::to_string(SNMP_MAX_CMDLINE_OIDS) + " allowed in one request.\n";
+      throw GenericErrorBase(err_msg);
    }
 
    /*
@@ -211,18 +205,16 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
                types[current_type++] = *argv[arg++];
                break;
             default:
-               fprintf(stderr, "%s: Bad object type: %c\n", argv[arg - 1], *argv[arg]);
-               return cleanup_and_return_empty();
+               throw UndeterminedTypeErrorBase(std::string(argv[arg - 1]) + ": Bad object type: " +
+                                               std::string(1, *argv[arg]) + "\n");
          }
       } else {
-         fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
-         return cleanup_and_return_empty();
+         throw GenericErrorBase(std::string(argv[arg - 1]) + ": Needs type and value\n");
       }
       if (arg < argc) {
          values[current_value++] = argv[arg];
       } else {
-         fprintf(stderr, "%s: Needs value\n", argv[arg - 2]);
-         return cleanup_and_return_empty();
+         throw GenericErrorBase(std::string(argv[arg - 2]) + ": Needs value\n");
       }
    }
 
@@ -297,7 +289,5 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    {
       std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
-   clear_net_snmp_library_data();
-   SOCK_CLEANUP;
    return parse_results(return_vector);
 }

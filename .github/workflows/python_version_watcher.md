@@ -22,7 +22,8 @@ safe-outputs:
     preserve-branch-name: true
     if-no-changes: ignore
 
-timeout-minutes: 45
+timeout-minutes: 15
+max-ai-credits: 25
 
 network:
   allowed:
@@ -120,17 +121,17 @@ print(supported)
   structure may have changed).
 - Log the list of discovered supported versions before proceeding.
 
-### 3. Read current repo state
+### 3. Read current repo state (Bounded File Reads — Token Optimization)
 
-Read the following files to determine what versions are currently declared in the repository:
+Do **not** read workflow files in full (e.g., `tests_homebrew.yml` is over 1,000 lines). Use `grep -n "python-version"` to locate the line numbers, and read only the matching lines:
 
 - `setup.cfg`: read `python_requires`, `target-version`, and all
   `Programming Language :: Python :: 3.x` classifier lines.
-- `.github/workflows/tests_native.yml`: read the `python-version: [...]` matrix line.
-- `.github/workflows/tests_homebrew.yml`: read **both** occurrences of the
-  `python-version: [...]` matrix line (there are two — one near line 47, one near line 291).
-- `.github/workflows/tests_macports.yml`: read the `python-version: [...]` matrix line.
-- `.github/workflows/integration_tests.yml`: read the `python-version: [...]` matrix line.
+- `.github/workflows/tests_native.yml`: locate and read the `python-version: [...]` matrix line.
+- `.github/workflows/tests_homebrew.yml`: locate and read **both** occurrences of the
+  `python-version: [...]` matrix line using `grep -n "python-version"`.
+- `.github/workflows/tests_macports.yml`: locate and read the `python-version: [...]` matrix line.
+- `.github/workflows/integration_tests.yml`: locate and read the `python-version: [...]` matrix line.
 
 Extract the currently declared version list from these files and compare it to the
 `supported` list obtained in Step 2.
@@ -204,21 +205,17 @@ After all edits are applied, create a pull request using:
 - **Title**: `chore: sync supported Python versions`
 - **Commit message**: `chore: sync supported Python versions to devguide.python.org`
 
-Include the following information in the PR body:
+Consult the `pull-request-guide` skill for the PR body details.
 
+## skill: `pull-request-guide`
+---
+description: PR body format and details for python version watcher updates.
+---
+
+### Pull Request Body Requirements
+
+Include the following information in the PR body:
 - Source checked: https://devguide.python.org/versions/
 - Newly detected supported versions (with their statuses if available)
 - Summary of changes made per file
 - Note that this was generated automatically by the Python Version Watcher workflow
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.

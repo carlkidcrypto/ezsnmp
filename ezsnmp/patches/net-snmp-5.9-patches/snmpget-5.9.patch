@@ -67,7 +67,11 @@
 -    fprintf(stderr,
 -            "\t\t\t  f:  do not fix errors and retry the request\n");
 -}
--
++std::vector<Result> snmpget(std::vector<std::string> const &args,
++                            std::string const &init_app_name) {
++   // Reference-counted initialization: only first thread calls init_snmp
++   netsnmp_thread_init(init_app_name);
+ 
 -int
 -main(int argc, char *argv[])
 -{
@@ -77,15 +81,17 @@
 -    netsnmp_variable_list *vars;
 -    int             arg;
 -    int             count;
-+std::vector<Result> snmpget(std::vector<std::string> const &args,
-+                            std::string const &init_app_name) {
-+   // Reference-counted initialization: only first thread calls init_snmp
-+   netsnmp_thread_init(init_app_name);
-+
+-    int             current_name = 0;
+-    char           *names[SNMP_MAX_CMDLINE_OIDS];
+-    oid             name[MAX_OID_LEN];
+-    size_t          name_length;
+-    int             status;
+-    int             failures = 0;
+-    int             exitval = 1;
 +   int argc = 0;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
-+
+ 
 +   netsnmp_session session;
 +   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
 +   netsnmp_pdu *pdu = NULL;
@@ -93,14 +99,7 @@
 +   netsnmp_variable_list *vars = NULL;
 +   int arg = 0;
 +   int count = 0;
-     int             current_name = 0;
--    char           *names[SNMP_MAX_CMDLINE_OIDS];
--    oid             name[MAX_OID_LEN];
--    size_t          name_length;
--    int             status;
--    int             failures = 0;
--    int             exitval = 1;
--
++   int current_name = 0;
 +   char *names[SNMP_MAX_CMDLINE_OIDS] = {0};
 +   oid name[MAX_OID_LEN] = {0};
 +   size_t name_length = 0;

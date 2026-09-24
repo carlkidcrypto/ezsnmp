@@ -116,7 +116,7 @@ def get_homebrew_net_snmp_info():
             return None
 
         # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
-        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)?)/"
+        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)*)/"
         match = search(pattern, lines[0])
         if not match:
             return None
@@ -126,9 +126,12 @@ def get_homebrew_net_snmp_info():
         include_dir = next((l for l in lines if "include/net-snmp" in l), None)
         if not include_dir:
             return None
-        # Use os.path.dirname twice to get the parent include directory
-        # e.g., /path/to/formula/include/net-snmp/file.h -> /path/to/formula/include
-        incdirs = [os.path.dirname(os.path.dirname(include_dir))]
+        # Extract the parent include directory (e.g., /path/to/formula/include)
+        idx = include_dir.find("/include/net-snmp")
+        if idx != -1:
+            incdirs = [include_dir[:idx] + "/include"]
+        else:
+            incdirs = [os.path.dirname(os.path.dirname(include_dir))]
 
         # Get library directory
         libdirs = []
@@ -141,34 +144,49 @@ def get_homebrew_net_snmp_info():
         # Get OpenSSL dependency information
         # Look for any OpenSSL version (e.g., openssl@3, openssl@1.1, etc.)
         brew_info_output = check_output("brew info net-snmp", shell=True).decode()
-        openssl_version = next(
-            (
-                line.split()[0]
-                for line in brew_info_output.splitlines()
-                if "/openssl@" in line
-            ),
-            None,
-        )
+        openssl_version = None
+        for line in brew_info_output.splitlines():
+            if "openssl@" in line:
+                for part in line.split():
+                    if "openssl@" in part:
+                        openssl_version = part.strip(",()\"'✔")
+                        break
+                if openssl_version:
+                    break
+
         if not openssl_version:
             return None
 
-        openssl_info_output = check_output(
-            f"brew info {openssl_version}", shell=True
-        ).decode()
-        openssl_lines = openssl_info_output.splitlines()
+        # Find the installation path
+        try:
+            openssl_path = (
+                check_output(
+                    f"brew --prefix {openssl_version}", shell=True, stderr=DEVNULL
+                )
+                .decode()
+                .strip()
+            )
+        except CalledProcessError:
+            openssl_path = None
 
-        # Find the installation path by looking for lines containing /Cellar/
-        # This is more robust than using a magic index
-        openssl_path = None
-        for line in openssl_lines:
-            if "/Cellar/" in line and openssl_version in line:
-                # Extract the path before any parentheses or additional info
-                openssl_path = line.split("(")[0].strip()
-                break
+        if not openssl_path or not os.path.isdir(openssl_path):
+            openssl_info_output = check_output(
+                f"brew info {openssl_version}", shell=True
+            ).decode()
+            openssl_lines = openssl_info_output.splitlines()
 
-        # Fallback to line 4 (index 4) if pattern not found (backward compatibility)
-        if not openssl_path and len(openssl_lines) > 4:
-            openssl_path = openssl_lines[4].split("(")[0].strip()
+            # Find the installation path by looking for lines containing /Cellar/
+            # This is more robust than using a magic index
+            openssl_path = None
+            for line in openssl_lines:
+                if "/Cellar/" in line and openssl_version in line:
+                    # Extract the path before any parentheses or additional info
+                    openssl_path = line.split("(")[0].strip()
+                    break
+
+            # Fallback to line 4 (index 4) if pattern not found (backward compatibility)
+            if not openssl_path and len(openssl_lines) > 4:
+                openssl_path = openssl_lines[4].split("(")[0].strip()
 
         if openssl_path:
             libdirs.append(openssl_path + "/lib")

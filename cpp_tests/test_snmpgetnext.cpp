@@ -4,6 +4,12 @@
 #include "exceptionsbase.h"
 #include "snmpgetnext.h"
 
+#if defined(GTEST_SKIP)
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg) GTEST_SKIP() << msg
+#else
+#define EZSNMP_SKIP_TEST_AND_RETURN(msg) return
+#endif
+
 class SnmpGetNextTest : public ::testing::Test {
   protected:
    void SetUp() override {}
@@ -106,10 +112,24 @@ TEST_F(SnmpGetNextTest, TestInvalidVersion) {
 
 // Test -Cf option (don't fix PDUs)
 TEST_F(SnmpGetNextTest, TestDontFixPDUsOption) {
-   std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "-Cf", "localhost:11161", "SNMPv2-MIB::sysLocation.0"};
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "-t",
+                                    "5",
+                                    "-r",
+                                    "3",
+                                    "-Cf",
+                                    "localhost:11161",
+                                    "SNMPv2-MIB::sysLocation.0"};
 
-   auto results = snmpgetnext(args, "testing");
+   std::vector<Result> results;
+   try {
+      results = snmpgetnext(args, "testing");
+   } catch (TimeoutErrorBase const&) {
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent is not reachable in this environment");
+   }
    EXPECT_FALSE(results.empty());
 }
 
@@ -133,10 +153,15 @@ TEST_F(SnmpGetNextTest, TestUnknownCOption) {
 
 // Test basic getnext
 TEST_F(SnmpGetNextTest, TestBasicGetNext) {
-   std::vector<std::string> args = {
-       "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation"};
+   std::vector<std::string> args = {"-v", "2c", "-c", "public",          "-t",
+                                    "5",  "-r", "3",  "localhost:11161", "SNMPv2-MIB::sysLocation"};
 
-   auto results = snmpgetnext(args, "testing");
+   std::vector<Result> results;
+   try {
+      results = snmpgetnext(args, "testing");
+   } catch (TimeoutErrorBase const&) {
+      EZSNMP_SKIP_TEST_AND_RETURN("SNMP agent is not reachable in this environment");
+   }
    EXPECT_FALSE(results.empty());
    // getnext of sysLocation should return sysLocation.0
    EXPECT_TRUE(results[0].oid.find("sysLocation") != std::string::npos);

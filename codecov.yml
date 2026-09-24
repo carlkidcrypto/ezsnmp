@@ -6,7 +6,7 @@ coverage:
   precision: 2
   round: down
   range: "70...100"
-  
+
   status:
     project:
       default:
@@ -40,18 +40,19 @@ ignore:
 flags:
   python:
     paths:
+      - ezsnmp/*.py
       - ezsnmp/**/*.py
     carryforward: true
-  
+
   cpp:
     paths:
       - ezsnmp/**/*.cpp
       - ezsnmp/**/*.h
     carryforward: true
-  
+
   docker:
     carryforward: true
-  
+
   native:
     carryforward: true
 
@@ -69,6 +70,7 @@ component_management:
     - component_id: python_code
       name: "Python Code"
       paths:
+        - ezsnmp/*.py
         - ezsnmp/**/*.py
     - component_id: cpp_code
       name: "C++ Code"

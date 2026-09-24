@@ -86,14 +86,16 @@ CSV_MT_SUMMARY = (
 
 
 def _api_get(token: str, url: str) -> Any:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "ezsnmp-integration-test-history",
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     request = Request(
         url,
-        headers={
-            "Accept": "application/vnd.github+json",
-            "Authorization": f"******",
-            "X-GitHub-Api-Version": "2022-11-28",
-            "User-Agent": "ezsnmp-integration-test-history",
-        },
+        headers=headers,
     )
     try:
         with urlopen(request, timeout=30) as response:
