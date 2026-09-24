@@ -20,8 +20,11 @@ safe-outputs:
     allowed-files:
       - "cpp_tests/**"
       - "ezsnmp/src/**"
+      - ".github/scripts/**"
+      - ".github/script/**"
     excluded-files:
-      - ".github/**"
+      - ".github/workflows/**"
+    protected-files: allowed
 timeout-minutes: 20
 max-ai-credits: 60
 model: claude-sonnet-5
@@ -44,9 +47,9 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk. Limit each run to at most 1 target test file (1–3 focused test cases).
 - Prefer tests first when improving coverage.
-- **Allowed file modification paths**: Only author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`) or `ezsnmp/src/**`.
-- **Prohibited paths**: NEVER author, modify, or commit files in `.github/**` (including `.github/scripts/**` or `.github/workflows/**`), root configuration files, or any files outside `cpp_tests/` and `ezsnmp/src/`.
-- **No repository helper scripts**: Do not author or commit analysis or utility scripts to the repository. Perform analysis in-memory or using read-only terminal commands.
+- **Allowed file modification paths**: Author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`), `ezsnmp/src/**`, and reusable analysis scripts under `.github/scripts/` (or `.github/script/`).
+- **Reusable scripts and tools**: You may create or improve reusable analysis scripts under `.github/scripts/` (e.g. `analyze_cpp_coverage_gaps.py`) to identify coverage gaps so that the agent and workflow get smarter over time.
+- **Prohibited paths**: NEVER author, modify, or commit workflow files in `.github/workflows/**`, workflow lock files, root configuration files (`pyproject.toml`, `setup.py`), or repository manifests.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
@@ -61,11 +64,12 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 
 ## Coverage Check Procedure
 
-1. Use Codecov to identify coverage gaps:
+1. Use Codecov and static gap analysis to identify coverage gaps:
    - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - Leverage existing analysis scripts under `.github/scripts/` (e.g. `python3 .github/scripts/analyze_cpp_coverage_gaps.py`) to statically identify branch and shim coverage gaps.
    - If Codecov is unreachable or does not return data, inspect the C++ source files
-     under `ezsnmp/src/` and existing tests under `cpp_tests/` using targeted `grep` to
-     identify untested branches, error handling paths, or missing assertions.
+     under `ezsnmp/src/` and existing tests under `cpp_tests/` using targeted `grep` and
+     scripts under `.github/scripts/` to identify untested branches, error handling paths, or missing assertions.
    - If no actionable gaps are found or test additions cannot be safely verified within
      10–12 turns, call `report_incomplete` or exit cleanly without editing files.
 
