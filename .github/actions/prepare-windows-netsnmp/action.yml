@@ -46,17 +46,25 @@ runs:
         }
         Write-Host "Configuring Net-SNMP Windows build for architecture: $arch ($cibwArch)"
 
+        $distDir = "C:\ezsnmp-netsnmp-dist\$arch"
+        $cachedDll = Join-Path $distDir 'bin\release\netsnmp.dll'
+        $cachedLib = Join-Path $distDir 'lib\release\netsnmp.lib'
+        $cachedHeader = Join-Path $distDir 'include\net-snmp\net-snmp-config.h'
+        $isCached = (Test-Path $cachedDll) -and (Test-Path $cachedLib) -and (Test-Path $cachedHeader)
+
         $workRoot = Join-Path $env:RUNNER_TEMP 'ezsnmp-windows-wheel'
         $sourceRoot = Join-Path $workRoot 'src'
         $installRoot = Join-Path $workRoot 'net-snmp'
         $archivePath = Join-Path $workRoot "net-snmp-$netSnmpVersion.zip"
         $expectedArchiveSha256 = '${{ inputs.net-snmp-sha256 }}'.ToLowerInvariant()
 
-        Remove-Item -Recurse -Force $workRoot -ErrorAction SilentlyContinue
-        New-Item -ItemType Directory -Force -Path $workRoot, $sourceRoot, $installRoot | Out-Null
+        if (-not $isCached) {
+          Remove-Item -Recurse -Force $workRoot -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path $workRoot, $sourceRoot, $installRoot | Out-Null
 
-        if (-not (Get-Command perl -ErrorAction SilentlyContinue)) {
-          choco install strawberryperl --yes --no-progress
+          if (-not (Get-Command perl -ErrorAction SilentlyContinue)) {
+            choco install strawberryperl --yes --no-progress
+          }
         }
 
         if ($arch -eq 'x64') {
@@ -231,7 +239,13 @@ runs:
         $opensslLibShort = try { $fso.GetFolder($opensslLib).ShortPath } catch { $opensslLib }
         if (-not $opensslLibShort) { $opensslLibShort = $opensslLib }
 
-        Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
+        if ($isCached) {
+          Write-Host "Found pre-built Net-SNMP in cache for $arch at $distDir. Skipping compilation."
+          $wheelInclude = Join-Path $distDir 'include'
+          $wheelLib = Join-Path $distDir 'lib\release'
+          $wheelBin = Join-Path $distDir 'bin\release'
+        } else {
+          Invoke-WebRequest -Uri "https://github.com/net-snmp/net-snmp/archive/refs/tags/v$netSnmpVersion.zip" -OutFile $archivePath
         $actualArchiveSha256 = (Get-FileHash -Path $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actualArchiveSha256 -ne $expectedArchiveSha256) {
           throw "Net-SNMP archive checksum mismatch. Expected $expectedArchiveSha256, got $actualArchiveSha256."
@@ -382,6 +396,10 @@ runs:
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\net-snmp\*.h') -Destination (Join-Path $wheelInclude 'net-snmp') -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\lib\release\netsnmp.lib') -Destination $wheelLib -Force
         Copy-Item -Path (Join-Path $netSnmpSource.FullName 'win32\bin\release\netsnmp.dll') -Destination $wheelBin -Force
+
+          New-Item -ItemType Directory -Force -Path $distDir | Out-Null
+          Copy-Item -Path (Join-Path $installRoot '*') -Destination $distDir -Recurse -Force
+        }
 
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_VERSION=$netSnmpVersion"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_NETSNMP_INCLUDE_DIR=$wheelInclude"
