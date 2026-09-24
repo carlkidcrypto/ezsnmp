@@ -1,4 +1,3 @@
-<!-- valgrind-results -->
 <details>
 <summary>📊 Valgrind Results (click to expand)</summary>
 
