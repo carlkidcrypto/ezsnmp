@@ -3,7 +3,7 @@
 # It checks for changes in the source code and runs tests only if there are changes.
 name: Tests With Homebrew
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: tests_homebrew
   cancel-in-progress: true
 on:
   push:

@@ -2,7 +2,9 @@
 # https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 
 name: PyPI Distributions
-concurrency: build_and_publish_to_pypi
+concurrency:
+  group: build_and_publish_to_pypi
+  cancel-in-progress: true
 on:
   release:
     types: [published]
