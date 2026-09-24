@@ -13,21 +13,24 @@ permissions:
 safe-outputs:
   create-pull-request:
     title-prefix: "[coverage-autofix] "
-    labels: [automated-pr]
+    labels: [automated-pr, coverage, tests, cpp]
     draft: true
     preserve-branch-name: true
     if-no-changes: "ignore"
-  add-labels:
-    target: "*"
-    allowed: [coverage, tests, cpp]
-    max: 4
+    allowed-files:
+      - "cpp_tests/**"
+      - "ezsnmp/src/**"
+      - ".github/scripts/**"
+    excluded-files:
+      - ".github/workflows/**"
+    protected-files: allowed
 timeout-minutes: 20
 max-ai-credits: 60
 model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, dev-tools]
+  allowed: [defaults, containers, dev-tools, python]
 tools:
   edit:
   bash: true
@@ -43,6 +46,9 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk. Limit each run to at most 1 target test file (1–3 focused test cases).
 - Prefer tests first when improving coverage.
+- **Allowed file modification paths**: Author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`), `ezsnmp/src/**`, and reusable analysis scripts under `.github/scripts/`.
+- **Reusable scripts and tools**: You may create or improve reusable analysis scripts under `.github/scripts/` (e.g. `analyze_cpp_coverage_gaps.py`) to identify coverage gaps so that the agent and workflow get smarter over time.
+- **Prohibited paths**: NEVER author, modify, or commit workflow files in `.github/workflows/**`, workflow lock files, root configuration files (`pyproject.toml`, `setup.py`), or repository manifests.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
@@ -57,11 +63,12 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 
 ## Coverage Check Procedure
 
-1. Use Codecov to identify coverage gaps:
+1. Use Codecov and static gap analysis to identify coverage gaps:
    - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - Leverage existing analysis scripts under `.github/scripts/` (e.g. `python3 .github/scripts/analyze_cpp_coverage_gaps.py`) to statically identify branch and shim coverage gaps.
    - If Codecov is unreachable or does not return data, inspect the C++ source files
-     under `ezsnmp/src/` and existing tests under `cpp_tests/` using targeted `grep` to
-     identify untested branches, error handling paths, or missing assertions.
+     under `ezsnmp/src/` and existing tests under `cpp_tests/` using targeted `grep` and
+     scripts under `.github/scripts/` to identify untested branches, error handling paths, or missing assertions.
    - If no actionable gaps are found or test additions cannot be safely verified within
      10–12 turns, call `report_incomplete` or exit cleanly without editing files.
 
@@ -104,11 +111,8 @@ When changes exist, create exactly one PR using this fixed branch name:
   - Summary of tests added/updated
   - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
+- Labels (`automated-pr`, `coverage`, `tests`, `cpp`) are attached automatically by `create-pull-request`; do not make separate labeling calls.
 
 ### Human Verification Task
 
 Since local Docker-based verification is unavailable, you MUST create a task in the PR (e.g., as a checklist item or a comment) explicitly requesting the human reviewer to verify that the coverage has actually increased in the resulting CI run before merging.
-
-After creating the PR, attempt a best-effort follow-up label step:
-- Add supplemental labels: `coverage`, `tests`, `cpp`.
-- Treat this as non-critical metadata enrichment. If labeling fails, do not treat the run as a failure.
