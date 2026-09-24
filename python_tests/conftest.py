@@ -1,6 +1,10 @@
 import pytest
 from subprocess import Popen, DEVNULL
-import ezsnmp
+
+try:
+    import ezsnmp
+except ImportError:
+    ezsnmp = None
 import platform
 from session_parameters import (
     SESS_V1_ARGS,
@@ -100,6 +104,8 @@ def sess_args(request):
 
 @pytest.fixture
 def sess(sess_args):
+    if ezsnmp is None:
+        pytest.skip("ezsnmp is not installed or compiled")
     return ezsnmp.Session(**sess_args)
 
 

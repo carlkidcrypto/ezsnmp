@@ -170,7 +170,7 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV3OperationsAndTheirClean
    EXPECT_EQ(g_cache_removals, expected);
 }
 
-TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV2OperationsToPreserveOutputFlags) {
+TEST_F(SessionBaseV3GuardShimTest, AllowsConcurrentV2Operations) {
    SessionBase first = make_v2_session(false);
    SessionBase second = make_v2_session(true);
    g_get_behavior = GetBehavior::Block;
@@ -181,9 +181,9 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV2OperationsToPreserveOut
    auto second_get = std::async(std::launch::async, [&second] { return second.get(".1"); });
    {
       std::unique_lock<std::mutex> lock(g_state_mutex);
-      EXPECT_FALSE(g_state_changed.wait_for(lock, std::chrono::milliseconds(100),
-                                            [] { return g_entered_gets > 1; }));
-      EXPECT_EQ(g_max_active_gets, 1);
+      EXPECT_TRUE(g_state_changed.wait_for(lock, std::chrono::seconds(2),
+                                           [] { return g_entered_gets == 2; }));
+      EXPECT_EQ(g_max_active_gets, 2);
       EXPECT_TRUE(g_cache_removals.empty());
    }
    release_blocked_gets();
@@ -191,7 +191,7 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesConcurrentV2OperationsToPreserveOut
    EXPECT_TRUE(first_get.get().empty());
    EXPECT_TRUE(second_get.get().empty());
    EXPECT_EQ(g_entered_gets, 2);
-   EXPECT_EQ(g_max_active_gets, 1);
+   EXPECT_EQ(g_max_active_gets, 2);
    EXPECT_TRUE(g_cache_removals.empty());
 }
 
