@@ -21,7 +21,6 @@ safe-outputs:
       - "cpp_tests/**"
       - "ezsnmp/src/**"
       - ".github/scripts/**"
-      - ".github/script/**"
     excluded-files:
       - ".github/workflows/**"
     protected-files: allowed
@@ -47,7 +46,7 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk. Limit each run to at most 1 target test file (1–3 focused test cases).
 - Prefer tests first when improving coverage.
-- **Allowed file modification paths**: Author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`), `ezsnmp/src/**`, and reusable analysis scripts under `.github/scripts/` (or `.github/script/`).
+- **Allowed file modification paths**: Author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`), `ezsnmp/src/**`, and reusable analysis scripts under `.github/scripts/`.
 - **Reusable scripts and tools**: You may create or improve reusable analysis scripts under `.github/scripts/` (e.g. `analyze_cpp_coverage_gaps.py`) to identify coverage gaps so that the agent and workflow get smarter over time.
 - **Prohibited paths**: NEVER author, modify, or commit workflow files in `.github/workflows/**`, workflow lock files, root configuration files (`pyproject.toml`, `setup.py`), or repository manifests.
 - Do not open a new pull request if an open automation PR already exists for
