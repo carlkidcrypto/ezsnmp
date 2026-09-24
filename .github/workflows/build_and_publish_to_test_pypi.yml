@@ -6,6 +6,15 @@ concurrency: build_and_publish_to_test_pypi
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '.github/workflows/*.md'
+      - '.github/workflows/*.lock.yml'
+      - '.github/aw/**'
+      - '.github/*.md'
+      - '**/*.md'
+      - '**/*.rst'
+      - 'docs/**'
+      - 'sphinx_docs_build/**'
   workflow_dispatch:
 
 jobs:

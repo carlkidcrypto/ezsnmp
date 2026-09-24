@@ -3,8 +3,18 @@ name: Black
 on:
   push:
     branches: [ main ]
+    paths:
+      - '**/*.py'
+      - '*.py'
+      - 'pyproject.toml'
+      - '.github/workflows/black.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - '**/*.py'
+      - '*.py'
+      - 'pyproject.toml'
+      - '.github/workflows/black.yml'
   workflow_dispatch:
 
 permissions:
