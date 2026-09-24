@@ -50,11 +50,33 @@ When a new release is published, generate and update its release notes body on G
 
 ## Steps
 
-0. Determine the run mode:
-   - If triggered by `release: published`, process only the triggering release tag.
-   - If triggered by `workflow_dispatch` with `backfill_all: true`, fetch all releases via the GitHub API and process each one in chronological order (oldest first). For each release, follow steps 1–5 below.
-   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset, fetch all releases via the GitHub API and process only the single most-recently published release. Follow steps 1–5 for that one release.
-   - In all run modes: if the `additional_context` workflow input is non-empty, treat its value as supplemental instructions to apply when generating every release's notes (e.g. "PyPI link format was fixed — use `https://pypi.org/project/ezsnmp/<version>/`"). Incorporate it naturally into the notes; do not echo it verbatim.
+0. **Token & AIC Optimization (Helper Script)**:
+   Use the deterministic helper script `.github/scripts/generate_release_notes.py` to minimize token consumption and AI Credit (AIC) usage. The script automatically executes base tag resolution, commit range extraction, theme grouping into the 9 categories, active verb title formatting, PyPI version linking, and skip-protected checks.
+
+   - If triggered by `release: published`:
+     Determine the published tag name from the release event, then execute:
+     ```bash
+     mkdir -p /tmp/gh-aw/agent
+     python3 .github/scripts/generate_release_notes.py --tag <tag_name> --output-file /tmp/gh-aw/agent/release_notes.md
+     ```
+     (Pass `--additional-context "<context>"` if `additional_context` input is provided).
+     Review `/tmp/gh-aw/agent/release_notes.md` and use the `update_release` tool (or run with `--publish`) to update the release.
+
+   - If triggered by `workflow_dispatch` with `backfill_all: true`:
+     Execute:
+     ```bash
+     python3 .github/scripts/generate_release_notes.py --backfill --publish
+     ```
+     (Append `--additional-context "<context>"` if `additional_context` input is provided).
+
+   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset:
+     Execute:
+     ```bash
+     python3 .github/scripts/generate_release_notes.py --latest --publish
+     ```
+     (Append `--additional-context "<context>"` if `additional_context` input is provided).
+
+   The steps below document the underlying deterministic specification implemented by the helper script:
 
 1. Identify the release context:
    - Determine the tag name from the release being processed.
