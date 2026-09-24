@@ -3,7 +3,7 @@
 # It checks for changes in the C++ source code and runs tests only if there are changes.
 name: C++ Tests
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: tests_cpp_native
   cancel-in-progress: true
 on:
   push:

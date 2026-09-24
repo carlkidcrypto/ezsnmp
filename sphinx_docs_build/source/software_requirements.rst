@@ -356,3 +356,39 @@ matrix strategy:
   check for the existence of upstream test result and coverage artifacts before attempting uploads
   or posting comments, preventing empty coverage reports or missing JUnit XML warnings if upstream
   jobs are skipped or fail.
+
+[CICD-11] All GitHub Actions CI/CD workflows shall enforce concurrency groups named after their
+respective workflow file (for example ``group: build_and_publish_to_test_pypi``) with
+``cancel-in-progress: true`` enabled:
+
+- **Single Active Workflow Execution**: Concurrency groups shall be scoped directly to the workflow
+  file name (without the ``.yml`` extension) rather than per-branch or per-ref keys, ensuring that
+  only one instance of any given workflow executes at a time across the repository and preventing
+  runner queue exhaustion.
+- **Immediate Cancellation on Pull Request Pushes**: Any fresh push to an open pull request branch
+  shall immediately cancel all running or queued workflow executions for that workflow and start a
+  new run against the latest commit.
+- **Immediate Cancellation on Main Pushes**: Any push to the ``main`` branch shall likewise
+  immediately cancel any obsolete in-progress workflow runs for that workflow and execute against the
+  latest commit on ``main``.
+- **Reusable Workflow Isolation**: Reusable workflows (such as ``verify_syntax.yml``) that are
+  invoked by other workflows via ``workflow_call`` shall dynamically evaluate their concurrency
+  group using caller context (e.g.
+  ``group: ${{ github.workflow == 'Validate Workflow Files' && 'verify_syntax' || github.workflow }}``)
+  so that standalone executions are scoped to the file name while caller-invoked executions inherit
+  the parent workflow's context without cross-cancelling concurrent parent workflows.
+
+[CICD-12] Wheel building and distribution publishing across PyPI and TestPyPI workflows shall be
+modularized into shared composite GitHub Actions under ``.github/actions/``:
+
+- **Common Distribution Publishing**: The ``build-and-publish-distribution`` composite action
+  shall centralize Python environment setup, build tool installation, source tarball (``sdist``)
+  compilation, wheel artifact retrieval, and publishing dispatch to either production PyPI or
+  TestPyPI based on a target parameter (``pypi`` versus ``test_pypi``).
+- **Trusted Publishing Compliance**: Distribution publishing shall use composite actions rather
+  than GitHub reusable workflows (``workflow_call``), preserving the top-level calling workflow
+  filename identity required by PyPI OpenID Connect (OIDC) Trusted Publishing configurations.
+- **Common Wheel Building**: The ``build-wheels`` composite action shall centralize cross-platform
+  wheel building using ``cibuildwheel`` across Linux, macOS, and Windows matrix targets, including
+  dependency caching (pip, vcpkg, and compiled Net-SNMP Windows binaries) and artifact uploads.
+

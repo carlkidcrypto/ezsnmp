@@ -1,5 +1,9 @@
 name: Clang-format
 
+concurrency:
+  group: clang_format
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ]

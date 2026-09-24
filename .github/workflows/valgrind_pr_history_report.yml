@@ -1,5 +1,9 @@
 name: Valgrind PR History Report
 
+concurrency:
+  group: valgrind_pr_history_report
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
     inputs:

@@ -1,5 +1,9 @@
 name: "Sphinx Docs Build"
 
+concurrency:
+  group: sphinx_build
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ]

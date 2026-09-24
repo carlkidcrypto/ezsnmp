@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: copilot-setup-steps
   cancel-in-progress: true
 
 jobs:
