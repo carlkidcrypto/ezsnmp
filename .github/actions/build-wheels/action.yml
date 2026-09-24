@@ -1,0 +1,73 @@
+name: Build Wheels
+description: Build Python wheels across platforms using cibuildwheel and upload artifacts.
+
+inputs:
+  os:
+    description: Operating system for the wheel build runner
+    required: true
+  arch:
+    description: Target architecture (e.g. x86_64, arm64, AMD64, x86, ARM64)
+    required: true
+  job-index:
+    description: Matrix job index for unique artifact naming
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Cache pip dependencies
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Cache vcpkg installed
+      if: runner.os == 'Windows' && (inputs.arch == 'x86' || inputs.arch == 'ARM64')
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: C:\vcpkg\installed
+        key: ${{ runner.os }}-vcpkg-openssl-${{ inputs.arch }}-v1
+
+    - name: Cache compiled Net-SNMP for Windows
+      if: runner.os == 'Windows'
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: C:\ezsnmp-netsnmp-dist
+        key: ${{ runner.os }}-netsnmp-5.9.4-${{ inputs.arch }}-${{ hashFiles('.github/actions/prepare-windows-netsnmp/action.yml') }}
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: "3.11"
+
+    - name: Install cibuildwheel
+      shell: bash
+      run: |
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Prepare Net-SNMP for Windows wheels
+      if: runner.os == 'Windows'
+      uses: ./.github/actions/prepare-windows-netsnmp
+      with:
+        arch: ${{ inputs.arch }}
+
+    - name: Build wheels using cibuildwheel
+      uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
+      with:
+        linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
+        macos: |
+          MACOS_VERSION=$(sw_vers -productVersion)
+          MACOSX_DEPLOYMENT_TARGET=$(python -c "import build_utils; print(build_utils.resolve_macos_deployment_target('$MACOS_VERSION'))")
+          sed -i '' "s/\\(MACOSX_DEPLOYMENT_TARGET = \\\"\\)[^\\\"]*\\\"/\\1${MACOSX_DEPLOYMENT_TARGET}\\\"/" pyproject.toml
+          python -m cibuildwheel --output-dir wheelhouse --platform macos;
+        windows: |
+          python -m cibuildwheel --output-dir wheelhouse --platform windows --archs ${{ inputs.arch }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    - name: Upload wheel artifacts
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v5
+      with:
+        name: cibw-wheels-${{ inputs.os }}-${{ inputs.arch }}-${{ inputs.job-index }}
+        path: wheelhouse/*.whl
