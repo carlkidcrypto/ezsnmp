@@ -97,6 +97,11 @@ What Our CI Checks
 - Builds C++ extensions via ``setup.py build_ext``
 - Runs SWIG to generate Python bindings
 
+**CI Concurrency & Action Reuse:**
+
+- All workflows enforce concurrency groups named after the workflow filename with ``cancel-in-progress: true`` (cancelling obsolete runs on fresh pushes to PRs and main)
+- Wheel building and distribution publishing are modularized into composite actions under ``.github/actions/``
+
 **Key insight**: Don't flag issues that the CI checks will catch (formatting, test failures, build errors).
 
 Skip These (Low Value)

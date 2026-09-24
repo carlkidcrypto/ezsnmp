@@ -1,7 +1,7 @@
 name: Build and Publish Docker Images
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: build_and_publish_docker_images
   cancel-in-progress: true
 
 on:

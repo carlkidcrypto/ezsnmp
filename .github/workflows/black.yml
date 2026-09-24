@@ -1,5 +1,9 @@
 name: Black
 
+concurrency:
+  group: black
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ]

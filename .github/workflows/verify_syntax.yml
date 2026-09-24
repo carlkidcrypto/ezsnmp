@@ -1,5 +1,9 @@
 name: Validate Workflow Files
 
+concurrency:
+  group: ${{ github.workflow == 'Validate Workflow Files' && 'verify_syntax' || github.workflow }}
+  cancel-in-progress: true
+
 on:
   push:
     paths:
