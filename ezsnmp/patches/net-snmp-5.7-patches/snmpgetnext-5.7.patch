@@ -106,15 +106,15 @@
 +                                std::string const &init_app_name) {
 +   // Reference-counted initialization: only first thread calls init_snmp
 +   netsnmp_thread_init(init_app_name);
-+
-+   int argc;
-+   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
-+   std::vector<std::string> return_vector;
  
 -int
 -main(int argc, char *argv[])
 -{
 -    netsnmp_session session, *ss;
++   int argc;
++   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
++   std::vector<std::string> return_vector;
++
 +   netsnmp_session session;
 +   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
      netsnmp_pdu    *pdu, *response;
@@ -127,13 +127,13 @@
 -    int             failures = 0;
 -    int             exitval = 0;
 +   SOCK_STARTUP;
-+
+ 
 +   int dont_fix_pdus = 0;
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
 +   // global state (option parsing, DS library settings).
 +   {
 +      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
- 
++
      /*
       * get the common command line arguments 
       */
@@ -189,10 +189,10 @@
 -    for (; arg < argc; arg++)
 +   for (; arg < argc; arg++) {
          names[current_name++] = argv[arg];
--
--    SOCK_STARTUP;
 +   }
  
+-    SOCK_STARTUP;
+-
      /*
       * open an SNMP session 
       */
@@ -270,9 +270,9 @@
 +               /*EMPTY*/;
 +            if (vars) {
 +               err_msg = err_msg + print_objid_to_string(vars->name, vars->name_length);
-+            }
-+            err_msg = err_msg + "\n";
              }
++            err_msg = err_msg + "\n";
++         }
  
              /*
               * retry if the errored variable was successfully removed 

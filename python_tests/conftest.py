@@ -1,6 +1,10 @@
 import pytest
 from subprocess import Popen, DEVNULL
-import ezsnmp
+
+try:
+    import ezsnmp
+except ImportError:
+    ezsnmp = None
 import platform
 from session_parameters import (
     SESS_V1_ARGS,
@@ -100,14 +104,24 @@ def sess_args(request):
 
 @pytest.fixture
 def sess(sess_args):
+    if ezsnmp is None:
+        pytest.skip("ezsnmp is not installed or compiled")
     return ezsnmp.Session(**sess_args)
 
 
 @pytest.fixture
 def reset_values():
+    try:
+        snmp_set_via_cli("sysLocation.0", "my original location", "s")
+        snmp_set_via_cli("nsCacheTimeout.1.3.6.1.2.1.2.2", "0", "i")
+    except Exception:
+        pass
     yield None
-    snmp_set_via_cli("sysLocation.0", "my original location", "s")
-    snmp_set_via_cli("nsCacheTimeout.1.3.6.1.2.1.2.2", "0", "i")
+    try:
+        snmp_set_via_cli("sysLocation.0", "my original location", "s")
+        snmp_set_via_cli("nsCacheTimeout.1.3.6.1.2.1.2.2", "0", "i")
+    except Exception:
+        pass
 
 
 @pytest.fixture

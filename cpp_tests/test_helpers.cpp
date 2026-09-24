@@ -710,3 +710,38 @@ TEST_F(SnmpCheckNullResponseTest, NoThrowOnValidResponse) {
    netsnmp_pdu pdu{};
    EXPECT_NO_THROW(snmp_check_null_response(&pdu));
 }
+
+// Tests for SnmpPduDeleter
+class SnmpPduDeleterTest : public ::testing::Test {};
+
+TEST_F(SnmpPduDeleterTest, NullPduSafe) {
+   SnmpPduDeleter deleter;
+   EXPECT_NO_THROW(deleter(nullptr));
+}
+
+TEST_F(SnmpPduDeleterTest, UniquePtrDeleter) {
+   netsnmp_pdu* pdu = snmp_pdu_create(SNMP_MSG_GET);
+   ASSERT_NE(pdu, nullptr);
+   {
+      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard(pdu);
+      EXPECT_EQ(pdu_guard.get(), pdu);
+   } // pdu is freed on scope exit
+}
+
+// Tests for SockCleanupGuard
+class SockCleanupGuardTest : public ::testing::Test {};
+
+TEST_F(SockCleanupGuardTest, CleansUpOnScopeExit) {
+   // Set some default store values to non-zero
+   netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 1);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM, 1);
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 1);
+
+   {
+      SockCleanupGuard guard;
+   } // guard destructor executes clear_net_snmp_library_data() and SOCK_CLEANUP
+
+   EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM), 0);
+   EXPECT_EQ(netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS), 0);
+}

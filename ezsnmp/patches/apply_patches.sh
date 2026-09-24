@@ -13,6 +13,24 @@
 #   ./apply_patches.sh 5.9
 # --------------------------------------------------------------------
 
+# Generic PATH discovery: check system defaults first, then common package managers
+for bin_dir in \
+    "/opt/homebrew/bin" \
+    "/usr/local/bin" \
+    "/home/linuxbrew/.linuxbrew/bin" \
+    "/opt/local/bin"; do
+    if [[ -d "$bin_dir" && ":$PATH:" != *":$bin_dir:"* ]]; then
+        export PATH="$bin_dir:$PATH"
+    fi
+done
+
+if command -v brew >/dev/null 2>&1; then
+    BREW_BIN="$(brew --prefix)/bin"
+    if [[ -d "$BREW_BIN" && ":$PATH:" != *":$BREW_BIN:"* ]]; then
+        export PATH="$BREW_BIN:$PATH"
+    fi
+fi
+
 # 1. Validate that at least one version number was provided
 if [[ $# -eq 0 ]]; then
     echo "Error: No version specified." >&2
@@ -21,10 +39,21 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-# 2. Check for dos2unix command
-if ! command -v dos2unix &> /dev/null; then
-    echo "Error: 'dos2unix' command not found." >&2
+# 2. Check for required commands
+if ! command -v patch &> /dev/null; then
+    echo "Error: 'patch' command not found. Please install patch using your package manager." >&2
     exit 1
+fi
+
+# Check for dos2unix command with POSIX tr fallback
+if ! command -v dos2unix &> /dev/null; then
+    dos2unix() {
+        for f in "$@"; do
+            if [[ -f "$f" ]]; then
+                tr -d '\r' < "$f" > "${f}.tmp" && mv "${f}.tmp" "$f"
+            fi
+        done
+    }
 fi
 
 # 3. Loop over all provided versions
@@ -33,6 +62,13 @@ for VERSION in "$@"; do
     SOURCE_DIR="./net-snmp-${VERSION}"
     FINAL_DEST_DIR="../src/net-snmp-${VERSION}-final-patched"
     REJECTS_DIR="../patch-rejects"
+
+    # Create destination directories before resolving realpath to avoid errors on non-existent targets
+    echo "Ensuring destination directory exists: ${FINAL_DEST_DIR}"
+    mkdir -p "${FINAL_DEST_DIR}"
+
+    echo "Ensuring rejects directory exists: ${REJECTS_DIR}"
+    mkdir -p "${REJECTS_DIR}"
 
     # Convert paths to absolute paths before changing directories.
     FINAL_DEST_DIR=$(realpath "${FINAL_DEST_DIR}")
@@ -44,13 +80,6 @@ for VERSION in "$@"; do
         echo "Error: Source directory not found: ${SOURCE_DIR}" >&2
         continue
     fi
-
-    # Create the destination directories if they don't exist
-    echo "Ensuring destination directory exists: ${FINAL_DEST_DIR}"
-    mkdir -p "${FINAL_DEST_DIR}"
-
-    echo "Ensuring rejects directory exists: ${REJECTS_DIR}"
-    mkdir -p "${REJECTS_DIR}"
 
     # Use the same list of tools
     tools=(
@@ -108,14 +137,13 @@ for VERSION in "$@"; do
             mv "$reject_file" "$final_reject_path"
         fi
 
-        echo "   -> Moving and renaming to ${FINAL_DEST_DIR}/${tool}.cpp"
-        # 'mv' now uses the correct, absolute path for the destination
-        mv "${original_c_file}" "${FINAL_DEST_DIR}/${tool}.cpp"
+        echo "   -> Copying and renaming to ${FINAL_DEST_DIR}/${tool}.cpp"
+        cp "${original_c_file}" "${FINAL_DEST_DIR}/${tool}.cpp"
     done
 
     echo "Restoring original source files..."
     for tool in "${tools[@]}"; do
-        git restore "apps/${tool}.c"
+        git checkout -- "apps/${tool}.c" 2>/dev/null || git restore "apps/${tool}.c" 2>/dev/null || true
     done
 
     # Go back to the original directory
