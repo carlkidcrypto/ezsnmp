@@ -23,7 +23,8 @@ permissions:
   copilot-requests: write
 safe-outputs:
   update-release:
-timeout-minutes: 60
+timeout-minutes: 20
+max-ai-credits: 40
 model: claude-sonnet-5
 engine:
   id: copilot
@@ -49,11 +50,33 @@ When a new release is published, generate and update its release notes body on G
 
 ## Steps
 
-0. Determine the run mode:
-   - If triggered by `release: published`, process only the triggering release tag.
-   - If triggered by `workflow_dispatch` with `backfill_all: true`, fetch all releases via the GitHub API and process each one in chronological order (oldest first). For each release, follow steps 1–5 below.
-   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset, fetch all releases via the GitHub API and process only the single most-recently published release. Follow steps 1–5 for that one release.
-   - In all run modes: if the `additional_context` workflow input is non-empty, treat its value as supplemental instructions to apply when generating every release's notes (e.g. "PyPI link format was fixed — use `https://pypi.org/project/ezsnmp/<version>/`"). Incorporate it naturally into the notes; do not echo it verbatim.
+0. **Token & AIC Optimization (Helper Script)**:
+   Use the deterministic helper script `.github/scripts/generate_release_notes.py` to minimize token consumption and AI Credit (AIC) usage. The script automatically executes base tag resolution, commit range extraction, theme grouping into the 9 categories, active verb title formatting, PyPI version linking, and skip-protected checks.
+
+   - If triggered by `release: published`:
+     Determine the published tag name from the release event, then execute:
+     ```bash
+     mkdir -p /tmp/gh-aw/agent
+     python3 .github/scripts/generate_release_notes.py --tag <tag_name> --output-file /tmp/gh-aw/agent/release_notes.md
+     ```
+     (Pass `--additional-context "<context>"` if `additional_context` input is provided).
+     Review `/tmp/gh-aw/agent/release_notes.md` and use the `update_release` tool (or run with `--publish`) to update the release.
+
+   - If triggered by `workflow_dispatch` with `backfill_all: true`:
+     Execute:
+     ```bash
+     python3 .github/scripts/generate_release_notes.py --backfill --publish
+     ```
+     (Append `--additional-context "<context>"` if `additional_context` input is provided).
+
+   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset:
+     Execute:
+     ```bash
+     python3 .github/scripts/generate_release_notes.py --latest --publish
+     ```
+     (Append `--additional-context "<context>"` if `additional_context` input is provided).
+
+   The steps below document the underlying deterministic specification implemented by the helper script:
 
 1. Identify the release context:
    - Determine the tag name from the release being processed.
@@ -69,13 +92,12 @@ When a new release is published, generate and update its release notes body on G
   - Validate that base and current are different; if equal, walk backward one more release/tag.
   - Log the selected base clearly: `Selected base for <current_tag>: <base_tag_or_root_commit>`.
 
-2. Extract commits in the release range:
-  - Run: `git log <base_tag_or_root>..<current_tag> --pretty=format:"%H %s"` to get commit hashes and titles.
-   - For each commit, also retrieve the full message body with: `git log -1 --pretty=format:"%b" <hash>`
-  - For each commit, collect changed files with: `git show --name-only --pretty="" <hash>`.
-  - Use changed-file paths to improve categorization and to identify user-facing code changes (for example `ezsnmp/src/`, `ezsnmp/include/`, `ezsnmp/session.py`) vs process-only changes (for example `.github/workflows/`).
-   - Collect any PR numbers referenced (patterns: `(#NNN)`, `#NNN`, `Closes #NNN`, `Fixes #NNN`, `Resolves #NNN`).
-   - Collect any issue numbers referenced using the same patterns.
+2. Extract commits in the release range (Batching — Token Optimization):
+  - Run a single batched git command: `git log <base_tag_or_root>..<current_tag> --name-only --format="COMMIT:%H%x09%s"`
+  - Use the changed-file paths to improve categorization and identify user-facing changes (e.g. `ezsnmp/src/`, `ezsnmp/session.py`) vs process-only changes (`.github/workflows/`).
+  - Collect PR numbers referenced (`(#NNN)`, `#NNN`, `Closes #NNN`, `Fixes #NNN`).
+  - Collect issue numbers referenced using the same patterns.
+  - Avoid running per-commit `git log` or `git show` commands in loops.
 
 3. Group commits into themes. Use these categories (add others if clearly needed):
    - **Features / Enhancements** — new functionality or improvements to existing features.
@@ -111,9 +133,30 @@ When a new release is published, generate and update its release notes body on G
    - Endpoint: `PATCH /repos/carlkidcrypto/ezsnmp/releases/<release_id>`
    - Set the `body` field to the generated release notes. Do not carry over any previous content.
 
-## Release Notes Body Format
+## Constraints
 
-```
+- Always fully overwrite the release body. Never append to or merge with existing content.
+- Never modify a release whose body contains `<!-- PROTECTED -->`. Log the skip and move on.
+- In `release: published` mode, only update the body of the triggering release.
+- In `workflow_dispatch` backfill mode, update all releases returned by the GitHub API (except those with `<!-- PROTECTED -->`).
+- Do not push commits or open PRs.
+- Do not modify any files in the repository.
+- If tag/release history is unavailable or the commit range is empty, write a minimal note stating the release was published with the PyPI link and include the computed base context.
+- Omit empty theme sections from the output.
+- If the PyPI version string cannot be derived from the tag, skip the Install / Upgrade section for that release and note it in the job log.
+- Process backfill releases serially to avoid GitHub API rate limits; add a short delay between requests if throttling is detected.
+- Never choose a prerelease base for a stable release if an earlier stable release exists.
+- Use repository-aware language: mention concrete components (SNMP ops, session lifecycle, thread safety, Docker matrix, docs publishing) when those areas changed.
+- Consult the `release-notes-template` skill for the release notes Markdown format.
+
+## skill: `release-notes-template`
+---
+description: Layout and markdown template for generating GitHub release notes.
+---
+
+### Release Notes Body Format
+
+```markdown
 <One or two sentence summary of the release.>
 
 Compared to: <base_tag_or_root_commit>
@@ -156,30 +199,3 @@ Or browse this release on PyPI: https://pypi.org/project/ezsnmp/<pypi_version>/
 ---
 **Full Changelog**: https://github.com/carlkidcrypto/ezsnmp/compare/<base_tag>...<current_tag>
 ```
-
-## Constraints
-
-- Always fully overwrite the release body. Never append to or merge with existing content.
-- Never modify a release whose body contains `<!-- PROTECTED -->`. Log the skip and move on.
-- In `release: published` mode, only update the body of the triggering release.
-- In `workflow_dispatch` backfill mode, update all releases returned by the GitHub API (except those with `<!-- PROTECTED -->`).
-- Do not push commits or open PRs.
-- Do not modify any files in the repository.
-- If tag/release history is unavailable or the commit range is empty, write a minimal note stating the release was published with the PyPI link and include the computed base context.
-- Omit empty theme sections from the output.
-- If the PyPI version string cannot be derived from the tag, skip the Install / Upgrade section for that release and note it in the job log.
-- Process backfill releases serially to avoid GitHub API rate limits; add a short delay between requests if throttling is detected.
-- Never choose a prerelease base for a stable release if an earlier stable release exists.
-- Use repository-aware language: mention concrete components (SNMP ops, session lifecycle, thread safety, Docker matrix, docs publishing) when those areas changed.
-
-## Scripts And Tools
-
-As you develope scripts and tools to better do you job place them in the following location.
-`.github/scripts/SCRIPTS_WITH_GOOD_NAMES_GO_HERE.py`
-
-The scripts shall:
-
-- Be written in python3
-- Be maintained and updated as needed to help you better accomplish your job
-- Modular and maintainable by both a human and Agent as needed
-- Be well documented via python3 doc strings and function strings.

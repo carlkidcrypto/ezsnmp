@@ -4,7 +4,7 @@ Network tests for Session.set operations.
 
 import pytest
 
-from ezsnmp.exceptions import PacketError
+from ezsnmp.exceptions import GenericError, PacketError, UndeterminedTypeError
 import faulthandler
 
 faulthandler.enable()
@@ -108,6 +108,8 @@ def test_session_set(sess, reset_values):
     res = sess.get("sysLocation.0")
     assert res[0].value == "my newer location"
 
+    sess.set(["sysLocation.0", "s", "my original location"])
+
     del sess
 
 
@@ -133,10 +135,56 @@ def test_session_set_multiple(sess, reset_values):
     assert res[0].value == "my newer location"
     assert res[1].value == "160"
 
+    sess.set(
+        [
+            "sysLocation.0",
+            "s",
+            "my original location",
+            "nsCacheTimeout.1.3.6.1.2.1.2.2",
+            "i",
+            "0",
+        ]
+    )
+
     del sess
 
 
-def test_session_set_none_oids(sess):
-    """Test that Session.set(None) is treated same as empty list."""
+def test_session_set_none_oids(sess, capfd):
+    """Test that Session.set(None) and Session.set([]) return () without stdio noise."""
     res = sess.set(None)
-    assert res is not None
+    assert res == ()
+    res_empty = sess.set([])
+    assert res_empty == ()
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_session_set_missing_type_and_value(sess, capfd):
+    """Test that Session.set with missing type and value raises GenericError without stdio noise."""
+    with pytest.raises(GenericError) as exc_info:
+        sess.set(["sysLocation.0"])
+    assert "Needs type and value" in str(exc_info.value)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_session_set_missing_value(sess, capfd):
+    """Test that Session.set with missing value raises GenericError without stdio noise."""
+    with pytest.raises(GenericError) as exc_info:
+        sess.set(["sysLocation.0", "s"])
+    assert "Needs value" in str(exc_info.value)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_session_set_bad_object_type(sess, capfd):
+    """Test that Session.set with an invalid type raises UndeterminedTypeError without stdio noise."""
+    with pytest.raises(UndeterminedTypeError) as exc_info:
+        sess.set(["sysLocation.0", "z", "test"])
+    assert "Bad object type" in str(exc_info.value)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""

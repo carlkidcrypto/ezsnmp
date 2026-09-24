@@ -989,6 +989,8 @@ class Session(SessionBase):
         try:
             if oids is None:
                 oids = []
+            if not oids:
+                return ()
             return self._set(oids)
         except Exception as e:
             _handle_error(e)

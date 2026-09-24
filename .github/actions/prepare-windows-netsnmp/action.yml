@@ -10,6 +10,10 @@ inputs:
     description: Expected SHA256 hash for the Net-SNMP source archive.
     required: false
     default: "7a5fc63515f0477d84fb160b6e8a2aee0196117d7e4ffe7d0fba2bdf3a8d72cc"
+  arch:
+    description: Target Windows architecture (x64, x86, or arm64).
+    required: false
+    default: "x64"
 
 runs:
   using: composite
@@ -19,6 +23,29 @@ runs:
       run: |
         $ErrorActionPreference = 'Stop'
         $netSnmpVersion = '${{ inputs.net-snmp-version }}'
+        $targetArch = '${{ inputs.arch }}'.Trim().ToLowerInvariant()
+        switch ($targetArch) {
+          { $_ -in @('x64', 'amd64') } {
+            $arch = 'x64'
+            $cibwArch = 'AMD64'
+            $vsArch = 'amd64'
+          }
+          { $_ -in @('x86', 'win32', 'i386') } {
+            $arch = 'x86'
+            $cibwArch = 'x86'
+            $vsArch = 'x86'
+          }
+          { $_ -in @('arm64', 'win_arm64', 'aarch64') } {
+            $arch = 'arm64'
+            $cibwArch = 'ARM64'
+            $vsArch = 'arm64'
+          }
+          default {
+            throw "Unsupported target architecture '${{ inputs.arch }}'. Supported values: x64, x86, arm64."
+          }
+        }
+        Write-Host "Configuring Net-SNMP Windows build for architecture: $arch ($cibwArch)"
+
         $workRoot = Join-Path $env:RUNNER_TEMP 'ezsnmp-windows-wheel'
         $sourceRoot = Join-Path $workRoot 'src'
         $installRoot = Join-Path $workRoot 'net-snmp'
@@ -28,33 +55,108 @@ runs:
         Remove-Item -Recurse -Force $workRoot -ErrorAction SilentlyContinue
         New-Item -ItemType Directory -Force -Path $workRoot, $sourceRoot, $installRoot | Out-Null
 
-        choco install openssl --yes --no-progress
         if (-not (Get-Command perl -ErrorAction SilentlyContinue)) {
           choco install strawberryperl --yes --no-progress
         }
 
-        $opensslRoot = @(
-          'C:\Program Files\OpenSSL',
-          'C:\Program Files\OpenSSL-Win64',
-          'C:\OpenSSL-Win64'
-        ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if ($arch -eq 'x64') {
+          choco install openssl --yes --no-progress
+          $opensslRoot = @(
+            'C:\Program Files\OpenSSL',
+            'C:\Program Files\OpenSSL-Win64',
+            'C:\OpenSSL-Win64'
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 
-        if (-not $opensslRoot) {
-          throw 'Unable to locate the OpenSSL installation directory on the Windows runner.'
+          if (-not $opensslRoot) {
+            throw 'Unable to locate the OpenSSL installation directory on the Windows runner.'
+          }
+
+          $opensslInclude = Join-Path $opensslRoot 'include'
+          $opensslLib = @(
+            (Join-Path $opensslRoot 'lib\VC\x64\MD'),
+            (Join-Path $opensslRoot 'lib\VC\x64\MDd'),
+            (Join-Path $opensslRoot 'lib\VC\x64'),
+            (Join-Path $opensslRoot 'lib\VC'),
+            (Join-Path $opensslRoot 'lib')
+          ) | Where-Object { Test-Path (Join-Path $_ 'libcrypto.lib') } | Select-Object -First 1
+          if (-not $opensslLib) {
+            throw "Unable to locate the OpenSSL library directory containing libcrypto.lib under '$opensslRoot'."
+          }
+          $opensslBin = Join-Path $opensslRoot 'bin'
+        } elseif ($arch -eq 'x86') {
+          choco install openssl --x86 --yes --no-progress
+          $opensslRoot = @(
+            'C:\Program Files (x86)\OpenSSL-Win32',
+            'C:\Program Files (x86)\OpenSSL',
+            'C:\OpenSSL-Win32'
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+          if (-not $opensslRoot) {
+            throw 'Unable to locate 32-bit OpenSSL installation directory on the Windows runner.'
+          }
+
+          $opensslInclude = Join-Path $opensslRoot 'include'
+          $opensslLib = @(
+            (Join-Path $opensslRoot 'lib\VC\x86\MD'),
+            (Join-Path $opensslRoot 'lib\VC\x86\MDd'),
+            (Join-Path $opensslRoot 'lib\VC\x86'),
+            (Join-Path $opensslRoot 'lib\VC'),
+            (Join-Path $opensslRoot 'lib')
+          ) | Where-Object { Test-Path (Join-Path $_ 'libcrypto.lib') } | Select-Object -First 1
+          if (-not $opensslLib) {
+            throw "Unable to locate the 32-bit OpenSSL library directory containing libcrypto.lib under '$opensslRoot'."
+          }
+          $opensslBin = Join-Path $opensslRoot 'bin'
+        } else {
+          # arm64: check pre-installed OpenSSL or install via vcpkg
+          $opensslRoot = @(
+            'C:\Program Files\OpenSSL',
+            'C:\Program Files\OpenSSL-Win64',
+            'C:\Program Files\OpenSSL-ARM64',
+            'C:\OpenSSL-ARM64'
+          ) | Where-Object {
+            (Test-Path $_) -and (
+              (Test-Path (Join-Path $_ 'lib\VC\arm64\MD\libcrypto.lib')) -or
+              (Test-Path (Join-Path $_ 'lib\VC\arm64\libcrypto.lib'))
+            )
+          } | Select-Object -First 1
+
+          if (-not $opensslRoot) {
+            Write-Host 'Installing OpenSSL for arm64-windows via vcpkg...'
+            $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT -and (Test-Path $env:VCPKG_INSTALLATION_ROOT)) {
+              $env:VCPKG_INSTALLATION_ROOT
+            } elseif (Test-Path 'C:\vcpkg') {
+              'C:\vcpkg'
+            } else {
+              throw 'Unable to locate vcpkg on the Windows runner for ARM64 OpenSSL installation.'
+            }
+            & (Join-Path $vcpkgRoot 'vcpkg.exe') install openssl:arm64-windows
+            if ($LASTEXITCODE -ne 0) {
+              throw "Installing openssl:arm64-windows via vcpkg failed with exit code $LASTEXITCODE."
+            }
+            $opensslRoot = Join-Path $vcpkgRoot 'installed\arm64-windows'
+          }
+
+          if (-not $opensslRoot) {
+            throw 'Unable to locate the ARM64 OpenSSL installation directory on the Windows runner.'
+          }
+
+          $opensslInclude = Join-Path $opensslRoot 'include'
+          $opensslLib = @(
+            (Join-Path $opensslRoot 'lib\VC\arm64\MD'),
+            (Join-Path $opensslRoot 'lib\VC\arm64\MDd'),
+            (Join-Path $opensslRoot 'lib\VC\arm64'),
+            (Join-Path $opensslRoot 'lib')
+          ) | Where-Object { Test-Path (Join-Path $_ 'libcrypto.lib') } | Select-Object -First 1
+          if (-not $opensslLib) {
+            throw "Unable to locate the ARM64 OpenSSL library directory containing libcrypto.lib under '$opensslRoot'."
+          }
+          $opensslBin = Join-Path $opensslRoot 'bin'
         }
 
-        $opensslInclude = Join-Path $opensslRoot 'include'
-        $opensslLib = @(
-          (Join-Path $opensslRoot 'lib\VC\x64\MD'),
-          (Join-Path $opensslRoot 'lib\VC\x64\MDd'),
-          (Join-Path $opensslRoot 'lib\VC\x64'),
-          (Join-Path $opensslRoot 'lib\VC'),
-          (Join-Path $opensslRoot 'lib')
-        ) | Where-Object { Test-Path (Join-Path $_ 'libcrypto.lib') } | Select-Object -First 1
-        if (-not $opensslLib) {
-          throw "Unable to locate the OpenSSL library directory containing libcrypto.lib under '$opensslRoot'."
+        if (-not (Test-Path $opensslBin)) {
+          New-Item -ItemType Directory -Force -Path $opensslBin | Out-Null
         }
-        $opensslBin = Join-Path $opensslRoot 'bin'
 
         # Convert OpenSSL include/lib paths to 8.3 short form so that the
         # Net-SNMP perl Configure script can embed them in Makefiles without
@@ -175,6 +277,7 @@ runs:
           Write-Warning "win32/net-snmp/net-snmp-config.h not found at '$netSnmpConfigHeaderPath'; skipping C++ compatibility patch."
         }
 
+        $hostArch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'amd64' }
         $vsDevCmdFailedExitCode = 10
         $nmakeCleanFailedExitCode = 11
         $nmakeLibsFailedExitCode = 12
@@ -185,7 +288,7 @@ runs:
         $batFile = Join-Path $env:RUNNER_TEMP 'build-netsnmp.bat'
         @(
           '@echo off',
-          "call `"$vsDevCmd`" -arch=amd64 -host_arch=amd64",
+          "call `"$vsDevCmd`" -arch=$vsArch -host_arch=$hostArch",
           "if %ERRORLEVEL% neq 0 exit /b $vsDevCmdFailedExitCode",
           'nmake /nologo clean',
           "if %ERRORLEVEL% neq 0 exit /b $nmakeCleanFailedExitCode",
@@ -222,3 +325,4 @@ runs:
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_BIN_DIR=$opensslBin"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_INCLUDE_DIR=$opensslInclude"
         Add-Content -Path $env:GITHUB_ENV -Value "EZSNMP_OPENSSL_LIB_DIR=$opensslLib"
+        Add-Content -Path $env:GITHUB_ENV -Value "CIBW_ARCHS_WINDOWS=$cibwArch"
