@@ -2,7 +2,9 @@ name: Integration Tests
 permissions:
   pull-requests: write
   contents: read
-concurrency: integration_tests
+concurrency:
+  group: integration_tests
+  cancel-in-progress: true
 on:
   push:
     branches: [ main ]

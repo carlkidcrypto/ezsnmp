@@ -1,7 +1,7 @@
 name: Integration Tests (Docker)
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: integration_tests_docker
   cancel-in-progress: true
 
 on:

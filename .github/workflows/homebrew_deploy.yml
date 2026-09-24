@@ -5,7 +5,9 @@
 
 name: Homebrew Formula Deploy
 
-concurrency: homebrew_deploy
+concurrency:
+  group: homebrew_deploy
+  cancel-in-progress: true
 
 on:
   release:

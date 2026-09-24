@@ -1,0 +1,62 @@
+name: Build and Publish Distribution
+description: Build sdist, download built wheels, and publish to PyPI or Test PyPI.
+
+inputs:
+  target:
+    description: Target repository ('pypi' or 'test_pypi')
+    required: false
+    default: "pypi"
+  packages-dir:
+    description: Directory containing distributions to publish
+    required: false
+    default: "dist/"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python 3.11
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: "3.11"
+
+    - name: Set up dependencies
+      uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
+      with:
+        linux: |
+          sudo apt-get update;
+          sudo apt-get install -y libsnmp-dev libperl-dev;
+
+    - name: Install pypa/build
+      shell: bash
+      run: |
+        python -m pip install build --user
+
+    - name: Build a source tarball
+      shell: bash
+      run: |
+        python -m build --sdist --outdir ${{ inputs.packages-dir }} .
+
+    - name: Download Wheels
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        pattern: cibw-wheels-*
+        merge-multiple: true
+        path: ${{ inputs.packages-dir }}
+
+    - name: Publish distribution 📦 to PyPI
+      if: inputs.target == 'pypi'
+      uses: pypa/gh-action-pypi-publish@release/v1.14
+      with:
+        packages-dir: ${{ inputs.packages-dir }}
+        verify-metadata: false
+        print-hash: true
+
+    - name: Publish distribution 📦 to Test PyPI
+      if: inputs.target == 'test_pypi' || inputs.target == 'testpypi'
+      uses: pypa/gh-action-pypi-publish@release/v1.14
+      with:
+        packages-dir: ${{ inputs.packages-dir }}
+        verify-metadata: false
+        skip-existing: true
+        print-hash: true
+        repository-url: https://test.pypi.org/legacy/
