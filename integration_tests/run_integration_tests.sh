@@ -124,6 +124,9 @@ for i in 2 4 8 16 32; do
 done
 echo "[$(date +%H:%M:%S)] COMPLETED: SNMP get tests"
 
+# 1-second cooldown between test phases
+sleep 1
+
 # --- Run SNMP walk tests ---
 echo ""
 echo "[$(date +%H:%M:%S)] Running SNMP walk tests..."
@@ -143,6 +146,9 @@ for i in 2 4 8 16 32; do
 	echo "    Completed in ${DURATION}s"
 done
 echo "[$(date +%H:%M:%S)] COMPLETED: SNMP walk tests"
+
+# 1-second cooldown between test phases
+sleep 1
 
 # --- Run SNMP bulkwalk tests ---
 echo ""

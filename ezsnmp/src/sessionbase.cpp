@@ -83,33 +83,33 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
 
 namespace {
 
-// Net-SNMP stores output formatting flags globally. Serialize each SessionBase
-// operation so one thread cannot overwrite another session's formatting
-// configuration while its response is still being rendered.
-std::mutex g_snmp_operation_mutex;
+// Mutex to serialize SNMPv3 operations and USM cache manipulation.
+// Net-SNMP's USM user cache is shared and not thread-safe. Concurrent V3 operations
+// or V3 setter mutations must serialize cache clearing before and after operations.
+std::mutex g_snmp_v3_operation_mutex;
 
-class SnmpOperationGuard {
+class SnmpV3OperationGuard {
   public:
-   SnmpOperationGuard(bool clear_v3_user,
-                      std::string const& security_name,
-                      std::string const& context_engine_id)
+   SnmpV3OperationGuard(bool clear_v3_user,
+                        std::string const& security_name,
+                        std::string const& context_engine_id)
        : m_clear_v3_user(clear_v3_user),
          m_security_name(security_name),
-         m_context_engine_id(context_engine_id),
-         m_lock(g_snmp_operation_mutex) {
+         m_context_engine_id(context_engine_id) {
+      if (m_clear_v3_user) {
+         m_lock = std::unique_lock<std::mutex>(g_snmp_v3_operation_mutex);
+         remove_v3_user_from_cache(m_security_name, m_context_engine_id);
+      }
+   }
+
+   ~SnmpV3OperationGuard() {
       if (m_clear_v3_user) {
          remove_v3_user_from_cache(m_security_name, m_context_engine_id);
       }
    }
 
-   ~SnmpOperationGuard() {
-      if (m_clear_v3_user) {
-         remove_v3_user_from_cache(m_security_name, m_context_engine_id);
-      }
-   }
-
-   SnmpOperationGuard(SnmpOperationGuard const&) = delete;
-   SnmpOperationGuard& operator=(SnmpOperationGuard const&) = delete;
+   SnmpV3OperationGuard(SnmpV3OperationGuard const&) = delete;
+   SnmpV3OperationGuard& operator=(SnmpV3OperationGuard const&) = delete;
 
   private:
    bool m_clear_v3_user;
@@ -122,7 +122,7 @@ class SnmpV3SetterGuard {
   public:
    explicit SnmpV3SetterGuard(bool enabled) {
       if (enabled) {
-         m_lock = std::unique_lock<std::mutex>(g_snmp_operation_mutex);
+         m_lock = std::unique_lock<std::mutex>(g_snmp_v3_operation_mutex);
       }
    }
 
@@ -132,6 +132,21 @@ class SnmpV3SetterGuard {
   private:
    std::unique_lock<std::mutex> m_lock;
 };
+
+SessionFormattingOptions make_formatting_options(bool print_enums_numerically,
+                                                 bool print_full_oids,
+                                                 bool print_oids_numerically,
+                                                 bool print_timeticks_numerically,
+                                                 bool print_hex_strings) {
+   SessionFormattingOptions opts;
+   opts.is_set = true;
+   opts.print_enums_numerically = print_enums_numerically;
+   opts.print_full_oids = print_full_oids;
+   opts.print_oids_numerically = print_oids_numerically;
+   opts.print_timeticks_numerically = print_timeticks_numerically;
+   opts.print_hex_strings = print_hex_strings;
+   return opts;
+}
 
 } // namespace
 
@@ -388,7 +403,10 @@ void SessionBase::check_and_clear_v3_user() {
 }
 
 std::vector<Result> SessionBase::walk(std::string const& mib) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    if (!mib.empty()) {
@@ -399,7 +417,10 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    if (!mib.empty()) {
@@ -410,7 +431,10 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -421,7 +445,10 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 }
 
 std::vector<Result> SessionBase::get(std::string const& mib) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    if (!mib.empty()) {
@@ -432,7 +459,10 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -443,7 +473,10 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
 }
 
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -470,7 +503,10 @@ std::vector<Result> SessionBase::bulk_get(std::string const& mib) {
 }
 
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
@@ -481,7 +517,10 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 }
 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
-   SnmpOperationGuard guard(m_version == "3", m_security_username, m_context_engine_id);
+   FormattingScope fmt_guard(make_formatting_options(
+       m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
+       m_print_timeticks_numerically, m_print_hex_strings));
+   SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
    populate_args();
 
    for (auto const& entry : mibs) {
