@@ -382,8 +382,23 @@ def gather_build_configuration():
         )
         return windows_cfg
 
+    net_snmp_cmd = "net-snmp-config"
+    if platform == "darwin":
+        for prefix in (
+            "/opt/homebrew/opt/net-snmp",
+            "/opt/homebrew",
+            "/usr/local/opt/net-snmp",
+            "/usr/local",
+            os.path.expanduser("~/opt/local"),
+            "/opt/local",
+        ):
+            candidate = f"{prefix}/bin/net-snmp-config"
+            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+                net_snmp_cmd = candidate
+                break
+
     system_netsnmp_version = check_output(
-        "net-snmp-config --version", shell=True
+        f"{net_snmp_cmd} --version", shell=True
     ).decode()
 
     homebrew_version = None
@@ -405,7 +420,7 @@ def gather_build_configuration():
         libdirs = [flag[2:] for flag in s_split(libdirs_raw) if flag.startswith("-L")]
         incdirs = [flag[2:] for flag in s_split(incdirs_raw) if flag.startswith("-I")]
     else:
-        netsnmp_libs = check_output("net-snmp-config --libs", shell=True).decode()
+        netsnmp_libs = check_output(f"{net_snmp_cmd} --libs", shell=True).decode()
         pass_next = False
         for flag in s_split(netsnmp_libs):
             if pass_next:
@@ -431,6 +446,8 @@ def gather_build_configuration():
             ) = homebrew_info
             libdirs.extend(temp_libdirs)
             incdirs.extend(temp_incdirs)
+            if homebrew_netsnmp_version:
+                system_netsnmp_version = homebrew_netsnmp_version
         else:
             homebrew_version = get_homebrew_info()
             netsnmp_incdir = None
@@ -450,6 +467,8 @@ def gather_build_configuration():
                 if "/opt/local/lib" in directory:
                     netsnmp_incdir = directory.replace("lib", "include")
                     incdirs.append(netsnmp_incdir)
+            if not homebrew_info and macports_netsnmp_version:
+                system_netsnmp_version = macports_netsnmp_version
 
     return {
         "basedir": basedir,

@@ -17,7 +17,7 @@ before-all = """yum -y update; yum -y install net-snmp net-snmp-devel openssl op
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-environment = { PATH = "/opt/homebrew/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0" }
+environment = { PATH = "/opt/homebrew/opt/net-snmp/bin:/opt/homebrew/bin:/usr/local/opt/net-snmp/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0" }
 archs = "arm64"
 before-all = "HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@3 net-snmp"
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"

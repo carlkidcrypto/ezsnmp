@@ -137,7 +137,11 @@ def resolve_snmp_source_path(version_str: str) -> str:
 
 
 def build_extensions(cfg: dict):
-    version_str = cfg["system_netsnmp_version"]
+    version_str = (
+        cfg.get("homebrew_netsnmp_version")
+        or cfg.get("macports_netsnmp_version")
+        or cfg["system_netsnmp_version"]
+    )
     snmp_source_path = resolve_snmp_source_path(version_str)
     netsnmp_versioned_sources = [
         f"{snmp_source_path}/snmpbulkget.cpp",
