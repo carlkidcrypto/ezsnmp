@@ -143,9 +143,9 @@ Build and Distribution
 Binary Wheels
 ~~~~~~~~~~~~~
 
-[WHEELS-01] The system shall be installable on Linux (x86_64 and aarch64), macOS (arm64), and Windows (AMD64) via pre-built binary wheels distributed on PyPI.
+[WHEELS-01] The system shall be installable on Linux (x86_64 and aarch64), macOS (arm64), and Windows (AMD64, x86, and ARM64) via pre-built binary wheels distributed on PyPI.
 
-[WHEELS-02] Windows wheels shall bundle all required Net-SNMP and OpenSSL DLLs so that no separate Net-SNMP installation is required.
+[WHEELS-02] Windows wheels shall support AMD64, x86, and ARM64 native architectures and bundle all required Net-SNMP and OpenSSL DLLs so that no separate Net-SNMP installation is required.
 
 [WHEELS-03] The Windows wheel build shall pass the Net-SNMP include directory, the OpenSSL include directory, and the OpenSSL library directory to the Python extension compiler and linker, since ezsnmp's own C++ sources transitively include Net-SNMP headers that reference OpenSSL types, and the generated ``net-snmp-config.h`` embeds ``#pragma comment(lib, ...)`` directives requiring ``libcrypto.lib``/``libssl.lib`` to be resolvable on the linker's library path.
 
