@@ -8,8 +8,26 @@ concurrency:
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '.github/workflows/*.md'
+      - '.github/workflows/*.lock.yml'
+      - '.github/aw/**'
+      - '.github/*.md'
+      - '**/*.md'
+      - '**/*.rst'
+      - 'docs/**'
+      - 'sphinx_docs_build/**'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '.github/workflows/*.md'
+      - '.github/workflows/*.lock.yml'
+      - '.github/aw/**'
+      - '.github/*.md'
+      - '**/*.md'
+      - '**/*.rst'
+      - 'docs/**'
+      - 'sphinx_docs_build/**'
 
 # Added explicit permissions so the publish-unit-test-result action can create check runs
 permissions:
