@@ -13,21 +13,22 @@ permissions:
 safe-outputs:
   create-pull-request:
     title-prefix: "[coverage-autofix] "
-    labels: [automated-pr]
+    labels: [automated-pr, coverage, tests, cpp]
     draft: true
     preserve-branch-name: true
     if-no-changes: "ignore"
-  add-labels:
-    target: "*"
-    allowed: [coverage, tests, cpp]
-    max: 4
+    allowed-files:
+      - "cpp_tests/**"
+      - "ezsnmp/src/**"
+    excluded-files:
+      - ".github/**"
 timeout-minutes: 20
 max-ai-credits: 60
 model: claude-sonnet-5
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers, app.codecov.io, python, api.codecov.io, dev-tools]
+  allowed: [defaults, containers, dev-tools, python]
 tools:
   edit:
   bash: true
@@ -43,6 +44,9 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - Focus only on this repository.
 - Keep changes scoped and low-risk. Limit each run to at most 1 target test file (1–3 focused test cases).
 - Prefer tests first when improving coverage.
+- **Allowed file modification paths**: Only author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`) or `ezsnmp/src/**`.
+- **Prohibited paths**: NEVER author, modify, or commit files in `.github/**` (including `.github/scripts/**` or `.github/workflows/**`), root configuration files, or any files outside `cpp_tests/` and `ezsnmp/src/`.
+- **No repository helper scripts**: Do not author or commit analysis or utility scripts to the repository. Perform analysis in-memory or using read-only terminal commands.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
@@ -104,11 +108,8 @@ When changes exist, create exactly one PR using this fixed branch name:
   - Summary of tests added/updated
   - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
+- Labels (`automated-pr`, `coverage`, `tests`, `cpp`) are attached automatically by `create-pull-request`; do not make separate labeling calls.
 
 ### Human Verification Task
 
 Since local Docker-based verification is unavailable, you MUST create a task in the PR (e.g., as a checklist item or a comment) explicitly requesting the human reviewer to verify that the coverage has actually increased in the resulting CI run before merging.
-
-After creating the PR, attempt a best-effort follow-up label step:
-- Add supplemental labels: `coverage`, `tests`, `cpp`.
-- Treat this as non-critical metadata enrichment. If labeling fails, do not treat the run as a failure.
