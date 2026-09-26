@@ -40,7 +40,7 @@ jobs:
             .github/workflows/build_and_publish_to_test_pypi.yml
             .github/actions/prepare-windows-netsnmp/action.yml
             .github/actions/build-wheels/action.yml
-            .github/actions/build-and-publish-distribution/action.yml
+            .github/actions/build-distribution/action.yml
             pyproject.toml
             setup.cfg
             setup.py
@@ -87,7 +87,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
-      - name: Build and publish distribution
-        uses: ./.github/actions/build-and-publish-distribution
+      - name: Build distribution
+        uses: ./.github/actions/build-distribution
+
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1.14
         with:
-          target: test_pypi
+          packages-dir: dist/
+          verify-metadata: false
+          skip-existing: true
+          print-hash: true
+          repository-url: https://test.pypi.org/legacy/

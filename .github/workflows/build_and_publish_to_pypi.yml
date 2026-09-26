@@ -53,7 +53,12 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
-      - name: Build and publish distribution
-        uses: ./.github/actions/build-and-publish-distribution
+      - name: Build distribution
+        uses: ./.github/actions/build-distribution
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1.14
         with:
-          target: pypi
+          packages-dir: dist/
+          verify-metadata: false
+          print-hash: true

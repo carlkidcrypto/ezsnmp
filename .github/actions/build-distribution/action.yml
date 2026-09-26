@@ -1,11 +1,7 @@
-name: Build and Publish Distribution
-description: Build sdist, download built wheels, and publish to PyPI or Test PyPI.
+name: Build Distribution
+description: Build sdist and download built wheels.
 
 inputs:
-  target:
-    description: Target repository ('pypi' or 'test_pypi')
-    required: false
-    default: "pypi"
   packages-dir:
     description: Directory containing distributions to publish
     required: false
@@ -42,21 +38,3 @@ runs:
         pattern: cibw-wheels-*
         merge-multiple: true
         path: ${{ inputs.packages-dir }}
-
-    - name: Publish distribution 📦 to PyPI
-      if: inputs.target == 'pypi'
-      uses: pypa/gh-action-pypi-publish@release/v1.14
-      with:
-        packages-dir: ${{ inputs.packages-dir }}
-        verify-metadata: false
-        print-hash: true
-
-    - name: Publish distribution 📦 to Test PyPI
-      if: inputs.target == 'test_pypi' || inputs.target == 'testpypi'
-      uses: pypa/gh-action-pypi-publish@release/v1.14
-      with:
-        packages-dir: ${{ inputs.packages-dir }}
-        verify-metadata: false
-        skip-existing: true
-        print-hash: true
-        repository-url: https://test.pypi.org/legacy/
