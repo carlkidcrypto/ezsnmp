@@ -117,6 +117,38 @@ def test_session_set_empty_list_returns_empty_tuple():
         assert s.set([]) == ()
 
 
+def test_session_set_calls_internal_set_with_oids():
+    """set(oids) delegates to self._set(oids) when oids is non-empty."""
+    s = make_session()
+    with unittest.mock.patch.object(s, "_set", return_value=()) as mock_set:
+        result = s.set(["1.3.6.1.2.1.1.1.0", "s", "test"])
+    assert result == ()
+    mock_set.assert_called_once_with(["1.3.6.1.2.1.1.1.0", "s", "test"])
+    s.close()
+
+
+def test_session_set_propagates_known_exception():
+    """set() calls _handle_error when self._set() raises a known C++ error.
+
+    When _set() raises an exception whose class-name embeds a recognised
+    C++ base name, _handle_error() converts it to the matching Python
+    exception. This covers the ``except Exception as e: _handle_error(e)``
+    branch inside Session.set().
+    """
+
+    class ConnectionErrorBase(Exception):
+        """Mock for the C++ ConnectionErrorBase SWIG wrapper."""
+
+    s = make_session()
+    with unittest.mock.patch.object(
+        s, "_set", side_effect=ConnectionErrorBase("mock set failure")
+    ):
+        with pytest.raises(ConnectionError) as exc_info:
+            s.set(["1.3.6.1.2.1.1.1.0", "s", "test"])
+    assert "mock set failure" in str(exc_info.value)
+    s.close()
+
+
 # ---------------------------------------------------------------------------
 # close() — exception-propagation branch
 # ---------------------------------------------------------------------------
