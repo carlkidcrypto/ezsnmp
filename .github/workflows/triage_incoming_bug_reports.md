@@ -22,7 +22,7 @@ safe-outputs:
     allowed: [needs-info]
 timeout-minutes: 10
 max-ai-credits: 15
-model: gpt-5.6-sol
+model: gpt-6.1-sol
 engine:
   id: copilot
 network:

@@ -26,7 +26,7 @@ safe-outputs:
     protected-files: allowed
 timeout-minutes: 20
 max-ai-credits: 60
-model: gpt-5.6-sol
+model: gpt-6.1-sol
 engine:
   id: copilot
 network:
