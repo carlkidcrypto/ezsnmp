@@ -23,7 +23,7 @@ safe-outputs:
     max: 4
 timeout-minutes: 20
 max-ai-credits: 60
-model: claude-sonnet-5
+model: gpt-6.1-sol
 engine:
   id: copilot
 network:
