@@ -18,7 +18,7 @@ safe-outputs:
     if-no-changes: "ignore"
 timeout-minutes: 15
 max-ai-credits: 25
-model: gpt-6-sol
+model: gpt-5.6-sol
 engine:
   id: copilot
 ---
