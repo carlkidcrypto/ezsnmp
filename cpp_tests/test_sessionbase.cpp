@@ -168,6 +168,18 @@ TEST_F(SessionBaseTest, TestInvalidHostnamePortCombination) {
    EXPECT_THROW(SessionBase("localhost:162", "161", "1", "public"), ParseErrorBase);
 }
 
+TEST_F(SessionBaseTest, TestInvalidUDP6HostnamePortCombination) {
+   // `udp6:[2001:db8::]:162` already embeds a port after the closing bracket,
+   // so also supplying port_number separately must raise ParseErrorBase.
+   EXPECT_THROW(SessionBase("udp6:[2001:db8::]:162", "161", "1", "public"), ParseErrorBase);
+}
+
+TEST_F(SessionBaseTest, TestInvalidBracketedIPv6HostnamePortCombination) {
+   // `[2001:db8::]:162` (without the udp6 prefix) already embeds a port,
+   // so also supplying port_number separately must raise ParseErrorBase.
+   EXPECT_THROW(SessionBase("[2001:db8::]:162", "161", "1", "public"), ParseErrorBase);
+}
+
 TEST_F(SessionBaseTest, TestBasicV1Session) {
    SessionBase session(
        /* hostname */ "localhost",
