@@ -1,10 +1,5 @@
 {
   "entries": {
-    "github/gh-aw-actions/setup@v0.88.8": {
-      "repo": "github/gh-aw-actions/setup",
-      "version": "v0.88.8",
-      "sha": "5e508589e03a7757a7e05b26e834292f5445bfb6"
-    }
   },
   "containers": {
     "ghcr.io/github/gh-aw-firewall/agent:0.27.11": {
