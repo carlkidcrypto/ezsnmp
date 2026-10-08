@@ -344,7 +344,7 @@ jobs:
       - name: Pytest coverage comment (Dockerized Tests)
         id: pytest-coverage
         if: steps.check-outputs.outputs.has_outputs == 'true'
-        uses: MishaKav/pytest-coverage-comment@432ac90e8d345c93e1d90ee0838b35913abc9c9b # v1.12.2
+        uses: MishaKav/pytest-coverage-comment@9ee59af31bd7bcada1cc496f086b407122602dbd # v1.12.3
         continue-on-error: true
         with:
           pytest-coverage-path: ""
