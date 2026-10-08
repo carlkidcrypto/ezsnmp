@@ -18,7 +18,7 @@ safe-outputs:
     if-no-changes: "ignore"
 timeout-minutes: 15
 max-ai-credits: 25
-model: gpt-6.1-sol
+model: claude-sonnet-5
 engine:
   id: copilot
 ---
