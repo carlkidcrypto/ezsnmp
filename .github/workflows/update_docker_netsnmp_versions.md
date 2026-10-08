@@ -28,7 +28,7 @@ safe-outputs:
     if-no-changes: "ignore"
 timeout-minutes: 15
 max-ai-credits: 25
-model: claude-sonnet-5
+model: sonnet
 engine:
   id: copilot
 network:
