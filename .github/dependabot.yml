@@ -11,7 +11,7 @@ updates:
   open-pull-requests-limit: 10
   package-ecosystem: github-actions
   schedule:
-    interval: daily
+    interval: weekly
 - directory: /
   # The root scan includes setup.cfg, pyproject.toml, setup.py, and nested
   # requirements files such as python_tests/requirements.txt.
@@ -22,5 +22,5 @@ updates:
   open-pull-requests-limit: 10
   package-ecosystem: pip
   schedule:
-    interval: daily
+    interval: weekly
 version: 2
