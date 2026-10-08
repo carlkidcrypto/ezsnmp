@@ -26,7 +26,7 @@ safe-outputs:
     protected-files: allowed
 timeout-minutes: 20
 max-ai-credits: 60
-model: claude-sonnet-5
+model: sonnet
 engine:
   id: copilot
 network:
