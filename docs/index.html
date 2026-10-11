@@ -3,10 +3,22 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="EzSnmp is a fast, Pythonic SNMP library wrapping Net-SNMP via a C++ extension. Supports SNMPv1, SNMPv2c, and SNMPv3 for high-throughput network management." name="description" />
+<meta content="ezsnmp, python snmp, net-snmp python, snmp library, snmpv3, snmpv2c, python snmp get, snmp walk, python network management, carlkidcrypto" name="keywords" />
+<meta content="Carlos (&#64;carlkidcrypto)" name="author" />
+<meta content="EzSnmp — Fast, Pythonic SNMP Library" property="og:title" />
+<meta content="Fast, modern Python SNMP library wrapping Net-SNMP via a C++ extension for network management and telemetry." property="og:description" />
+<meta content="website" property="og:type" />
+<meta content="https://carlkidcrypto.github.io/ezsnmp/" property="og:url" />
+<meta content="https://raw.githubusercontent.com/carlkidcrypto/ezsnmp/master/images/ezsnmp_logo.jpeg" property="og:image" />
+<meta content="summary" name="twitter:card" />
+<meta content="EzSnmp — Fast Python SNMP Library" name="twitter:title" />
+<meta content="Fast, modern Python SNMP library wrapping Net-SNMP via C++ extension." name="twitter:description" />
 <link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html">
+        <link rel="canonical" href="https://carlkidcrypto.github.io/ezsnmp/index.html">
         <link rel="prefetch" href="_static/ezsnmp_logo.jpeg" as="image">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="_static/ezsnmp_logo.jpeg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>EzSnmp Documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
@@ -35,7 +47,40 @@
       }
     }
   }
-</style></head>
+</style>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://carlkidcrypto.github.io/ezsnmp/#software",
+        "name": "EzSnmp",
+        "alternateName": "ezsnmp",
+        "description": "A fast, Pythonic SNMP library wrapping Net-SNMP with a C++ extension for high-performance network management, device polling, and telemetry.",
+        "url": "https://carlkidcrypto.github.io/ezsnmp/",
+        "codeRepository": "https://github.com/carlkidcrypto/ezsnmp",
+        "programmingLanguage": ["Python", "C++"],
+        "operatingSystem": ["Linux", "macOS", "Windows"],
+        "author": {
+          "@type": "Person",
+          "name": "Carlos",
+          "alternateName": "carlkidcrypto",
+          "url": "https://carlkidcrypto.github.io/"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://carlkidcrypto.github.io/ezsnmp/#website",
+        "url": "https://carlkidcrypto.github.io/ezsnmp/",
+        "name": "EzSnmp Documentation",
+        "description": "Documentation and API reference for EzSnmp, the fast Python SNMP library."
+      }
+    ]
+  }
+  </script>
+</head>
   <body>
     
     <script>
@@ -173,7 +218,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -226,7 +271,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
@@ -235,6 +280,20 @@
 <h1>EzSnmp Documentation<a class="headerlink" href="#ezsnmp-documentation" title="Link to this heading">¶</a></h1>
 <a class="reference internal image-reference" href="_images/ezsnmp_logo.jpeg"><img alt="EzSnmp Logo" class="align-center" src="_images/ezsnmp_logo.jpeg" style="width: 300px;" />
 </a>
+<p><strong>EzSnmp</strong> is a blazing-fast, Pythonic SNMP client library that wraps the official
+<a class="reference external" href="http://www.net-snmp.org/">Net-SNMP</a> library using a C++ extension. It provides
+high-throughput, low-latency SNMP polling and telemetry across large fleets of network devices.</p>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Speed &amp; Concurrency:</strong> High-performance C++ core that releases Python’s GIL during network queries.</p></li>
+<li><p><strong>Protocol Support:</strong> Full support for SNMPv1, SNMPv2c, and SNMPv3 (MD5/SHA auth, DES/AES encryption).</p></li>
+<li><p><strong>Comprehensive Operations:</strong> Pythonic APIs for <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">walk</span></code>, <code class="docutils literal notranslate"><span class="pre">bulkwalk</span></code>, and <code class="docutils literal notranslate"><span class="pre">bulkget</span></code>.</p></li>
+<li><p><strong>Cross-Platform:</strong> Available for Linux, macOS, and Windows.</p></li>
+</ul>
+</section>
+<section id="select-a-version">
+<h2>Select a Version<a class="headerlink" href="#select-a-version" title="Link to this heading">¶</a></h2>
 <p>Select a version of the documentation to browse:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="./html/index.html">Latest Alpha/Beta Version</a></p></li>
@@ -248,8 +307,15 @@
 <li><p><a class="reference external" href="./html_v2.0.1/index.html">v2.0.1</a></p></li>
 <li><p><a class="reference external" href="./html_v1.1.0/index.html">v1.1.0</a></p></li>
 </ul>
-<p>For general project information, see the
-<a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp">GitHub repository</a>.</p>
+</section>
+<section id="project-links">
+<h2>Project Links<a class="headerlink" href="#project-links" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Source Code:</strong> <a class="reference external" href="https://github.com/carlkidcrypto/ezsnmp">GitHub Repository</a></p></li>
+<li><p><strong>Package:</strong> <a class="reference external" href="https://pypi.org/project/ezsnmp/">PyPI Package</a></p></li>
+<li><p><strong>Maintainer:</strong> <a class="reference external" href="https://carlkidcrypto.github.io/">Carlos (&#64;carlkidcrypto)</a></p></li>
+</ul>
+</section>
 </section>
 
         </article>
@@ -277,8 +343,29 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">EzSnmp Documentation</a><ul>
+<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#select-a-version">Select a Version</a></li>
+<li><a class="reference internal" href="#project-links">Project Links</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

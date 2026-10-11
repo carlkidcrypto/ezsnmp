@@ -1,0 +1,36 @@
+{% extends "!base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://carlkidcrypto.github.io/ezsnmp/#software",
+        "name": "EzSnmp",
+        "alternateName": "ezsnmp",
+        "description": "A fast, Pythonic SNMP library wrapping Net-SNMP with a C++ extension for high-performance network management, device polling, and telemetry.",
+        "url": "https://carlkidcrypto.github.io/ezsnmp/",
+        "codeRepository": "https://github.com/carlkidcrypto/ezsnmp",
+        "programmingLanguage": ["Python", "C++"],
+        "operatingSystem": ["Linux", "macOS", "Windows"],
+        "author": {
+          "@type": "Person",
+          "name": "Carlos",
+          "alternateName": "carlkidcrypto",
+          "url": "https://carlkidcrypto.github.io/"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://carlkidcrypto.github.io/ezsnmp/#website",
+        "url": "https://carlkidcrypto.github.io/ezsnmp/",
+        "name": "EzSnmp Documentation",
+        "description": "Documentation and API reference for EzSnmp, the fast Python SNMP library."
+      }
+    ]
+  }
+  </script>
+{% endblock %}
