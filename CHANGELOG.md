@@ -1,7 +1,88 @@
-Last Updated: 2026-09-16 03:35:17 UTC
+Last Updated: 2026-10-11 22:12:51 UTC
 
 # Changelog
 
+
+<a name="v2.5.0a2"></a>
+## [v2.5.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.5.0a1...v2.5.0a2) (2026-10-10)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: revert gh-aw workflow models from gpt-6.1-sol to claude-sonnet-5 ([#1364](https://github.com/carlkidcrypto/ezsnmp/issues/1364))
+
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2.5.0a1 ([#1334](https://github.com/carlkidcrypto/ezsnmp/issues/1334))
+
+
+#### Features
+
+- feat: use model alias sonnet across all gh-aw workflows ([#1365](https://github.com/carlkidcrypto/ezsnmp/issues/1365))
+
+- feat: Migrate gh-aw workflows from claude-sonnet-5 to gpt-6-sol ([#1357](https://github.com/carlkidcrypto/ezsnmp/issues/1357))
+
+
+#### Features
+
+- Add unit tests for Session.set() exception-propagation branch ([#1353](https://github.com/carlkidcrypto/ezsnmp/issues/1353))
+
+
+#### Maintenance
+
+- chore: bump version to 2.5.0a2 ([#1368](https://github.com/carlkidcrypto/ezsnmp/issues/1368))
+
+- chore: update Homebrew formula for v2.5.0a1 ([#1333](https://github.com/carlkidcrypto/ezsnmp/issues/1333))
+
+
+
+
+
+
+
+
+
+
+---
+
+<a name="v2.5.0a1"></a>
+## [v2.5.0a1](https://github.com/carlkidcrypto/ezsnmp/compare/v2.5.0a0...v2.5.0a1) (2026-09-24)
+
+
+### Changes
+
+#### Bug Fixes
+
+- fix: guard GTEST_SKIP for older GTest in Docker tests & add snmptrap coverage ([#1317](https://github.com/carlkidcrypto/ezsnmp/issues/1317))
+
+
+#### Bug Fixes
+
+- Fix: Issue 1268 And 1282 ([#1308](https://github.com/carlkidcrypto/ezsnmp/issues/1308))
+
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2.5.0a0 ([#1292](https://github.com/carlkidcrypto/ezsnmp/issues/1292))
+
+
+#### Features
+
+- feat: add native Windows support for x86 and ARM64 ([#1255](https://github.com/carlkidcrypto/ezsnmp/issues/1255)) ([#1324](https://github.com/carlkidcrypto/ezsnmp/issues/1324))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.5.0a0"></a>
 ## [v2.5.0a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.4.0...v2.5.0a0) (2026-09-15)
@@ -9,9 +90,38 @@ Last Updated: 2026-09-16 03:35:17 UTC
 
 ### Changes
 
+#### Align
+
+- Align Homebrew Python CI and shim tests ([#1284](https://github.com/carlkidcrypto/ezsnmp/issues/1284))
+
+
+#### Documentation Updates
+
+- docs: fix minor typos and awkward phrasing in docs ([#1280](https://github.com/carlkidcrypto/ezsnmp/issues/1280))
+
+- docs: link HOWTOAI guide from README and clarify builtin-shadowing exceptions ([#1274](https://github.com/carlkidcrypto/ezsnmp/issues/1274))
+
+
+#### Features
+
+- Feature/update some things ([#1272](https://github.com/carlkidcrypto/ezsnmp/issues/1272))
+
+
 #### GH
 
 - GH Upgrade and Compile ([#1290](https://github.com/carlkidcrypto/ezsnmp/issues/1290))
+
+
+#### Maintenance
+
+- chore: sync supported Python versions to devguide.python.org ([#1217](https://github.com/carlkidcrypto/ezsnmp/issues/1217))
+
+- chore: update Homebrew formula for v2.4.0 ([#1267](https://github.com/carlkidcrypto/ezsnmp/issues/1267))
+
+
+#### Preserve
+
+- Preserve per-session OID formatting across concurrent SNMP operations ([#1279](https://github.com/carlkidcrypto/ezsnmp/issues/1279))
 
 
 
