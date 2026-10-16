@@ -3,8 +3,8 @@ permissions:
   pull-requests: write
   contents: read
 concurrency:
-  group: integration_tests
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   push:
     branches: [ main ]
@@ -12,6 +12,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -24,6 +29,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'

@@ -1,8 +1,8 @@
 name: Run Dockerized Cpp Tests
 
 concurrency:
-  group: tests_docker_cpp_tests
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 on:
   push:
@@ -11,6 +11,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -22,6 +27,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'

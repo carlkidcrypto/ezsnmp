@@ -1,8 +1,8 @@
 name: Validate Workflow Files
 
 concurrency:
-  group: ${{ github.workflow == 'Validate Workflow Files' && 'verify_syntax' || github.workflow }}
-  cancel-in-progress: true
+  group: verify_syntax-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 on:
   push:
