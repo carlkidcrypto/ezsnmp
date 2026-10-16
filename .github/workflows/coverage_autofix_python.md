@@ -11,6 +11,8 @@ permissions:
   actions: read
   contents: read
 safe-outputs:
+  noop:
+    report-as-issue: true
   create-pull-request:
     title-prefix: "[coverage-autofix-py] "
     labels: [automated-pr]
@@ -31,6 +33,8 @@ network:
 tools:
   edit:
   bash: true
+imports:
+  - shared/codecov-coverage.md
 ---
 
 # Python Coverage Checks And Suggested Fixes
@@ -53,12 +57,22 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 ## Coverage Check Procedure
 
 1. Use Codecov to identify coverage gaps:
-   - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - Start with the pre-fetched Codecov data in `/tmp/gh-aw/agent/codecov/summary.md`
+     (see "Codecov Coverage Data" below). Use the `python` flag section; it lists every
+     Python file under `ezsnmp/` with missed lines and their line numbers
+     (dashboard: https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - The C++ extension is not built in this sandbox, so you cannot run the Python test
+     suite locally. That is expected: author tests statically for the missed lines that
+     Codecov reports (read the code with bounded `sed -n` ranges, mirror the style of the
+     closest existing test in `python_tests/`), and rely on CI to verify them.
    - If Codecov is unreachable or does not return data, inspect Python files under `ezsnmp/`
      and tests under `python_tests/` using targeted `grep` to identify untested branches,
      error handling paths, or missing test coverage.
-   - If no actionable gaps are found or test additions cannot be safely verified within
-     10–12 turns, call `report_incomplete` or exit cleanly without editing files.
+   - Inability to build the extension or run tests locally is expected and is **not** a
+     reason to skip: author the test statically and let CI/Codecov verify it. Only if Codecov
+     reports no missed lines in testable files, or no test can be reasonably authored within
+     10–12 turns, call `noop` explaining exactly which Codecov gaps you evaluated and why
+     each was not actionable.
 
 2. Determine if action is needed:
    - If Python coverage is below 99%, or tests reveal clear reliability

@@ -11,6 +11,8 @@ permissions:
   actions: read
   contents: read
 safe-outputs:
+  noop:
+    report-as-issue: true
   create-pull-request:
     title-prefix: "[coverage-autofix] "
     labels: [automated-pr, coverage, tests, cpp]
@@ -34,6 +36,8 @@ network:
 tools:
   edit:
   bash: true
+imports:
+  - shared/codecov-coverage.md
 ---
 
 # C++ Coverage Checks And Suggested Fixes
@@ -64,13 +68,24 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 ## Coverage Check Procedure
 
 1. Use Codecov and static gap analysis to identify coverage gaps:
-   - Check Codecov reports for the `main` branch (https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - Start with the pre-fetched Codecov data in `/tmp/gh-aw/agent/codecov/summary.md`
+     (see "Codecov Coverage Data" below). Use the `cpp` flag section; it lists every
+     C++ file under `ezsnmp/src/` with missed lines and their line numbers
+     (dashboard: https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
+   - Ignore missed lines in vendored `ezsnmp/src/net-snmp-5.9-final-patched/**` files unless
+     they are reachable through existing shim tests; prioritize `sessionbase.cpp`,
+     `helpers.cpp`, `thread_safety.cpp`, and other first-party sources.
+   - For each candidate missed line, read the surrounding code with a bounded
+     `sed -n` range and find the closest existing test in `cpp_tests/` to extend.
    - Leverage existing analysis scripts under `.github/scripts/` (e.g. `python3 .github/scripts/analyze_cpp_coverage_gaps.py`) to statically identify branch and shim coverage gaps.
    - If Codecov is unreachable or does not return data, inspect the C++ source files
      under `ezsnmp/src/` and existing tests under `cpp_tests/` using targeted `grep` and
      scripts under `.github/scripts/` to identify untested branches, error handling paths, or missing assertions.
-   - If no actionable gaps are found or test additions cannot be safely verified within
-     10–12 turns, call `report_incomplete` or exit cleanly without editing files.
+   - Inability to compile or run tests locally is expected and is **not** a reason to skip:
+     author the test statically and let CI/Codecov verify it. Only if Codecov reports no
+     missed lines in testable first-party files, or no test can be reasonably authored within
+     10–12 turns, call `noop` explaining exactly which Codecov gaps you evaluated and why
+     each was not actionable.
 
 2. Determine if action is needed:
    - If C++ coverage is below 99%, or tests reveal clear reliability
