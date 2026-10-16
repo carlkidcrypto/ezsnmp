@@ -11,6 +11,8 @@ permissions:
   issues: read
   copilot-requests: write
 safe-outputs:
+  noop:
+    report-as-issue: true
   add-comment:
     target: triggering
     hide-older-comments: true

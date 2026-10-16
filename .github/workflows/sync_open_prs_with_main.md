@@ -9,6 +9,8 @@ permissions:
   contents: read
   pull-requests: read
 safe-outputs:
+  noop:
+    report-as-issue: true
   create-issue:
     labels: [auto-sync]
   push-to-pull-request-branch:
