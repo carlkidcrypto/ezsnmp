@@ -13,6 +13,8 @@ permissions:
   pull-requests: read
   issues: read
 safe-outputs:
+  noop:
+    report-as-issue: true
   create-pull-request:
     title-prefix: "[report-tooling] "
     labels: [automated-pr, documentation, ci]
