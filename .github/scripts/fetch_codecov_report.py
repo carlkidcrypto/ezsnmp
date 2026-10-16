@@ -74,8 +74,12 @@ def summarize_report(report, label):
         ftotals = f.get("totals") or {}
         if not ftotals.get("lines"):
             continue
-        misses = [lc[0] for lc in f.get("line_coverage") or [] if len(lc) > 1 and lc[1] == 1]
-        partials = [lc[0] for lc in f.get("line_coverage") or [] if len(lc) > 1 and lc[1] == 2]
+        misses = [
+            lc[0] for lc in f.get("line_coverage") or [] if len(lc) > 1 and lc[1] == 1
+        ]
+        partials = [
+            lc[0] for lc in f.get("line_coverage") or [] if len(lc) > 1 and lc[1] == 2
+        ]
         if not misses and not partials:
             continue
         gaps.append((f.get("name"), ftotals.get("coverage"), misses, partials))
@@ -124,7 +128,9 @@ def main():
         return 0
 
     owner, name = repo.split("/", 1)
-    repo_url = f"{API_BASE}/{urllib.parse.quote(owner)}/repos/{urllib.parse.quote(name)}"
+    repo_url = (
+        f"{API_BASE}/{urllib.parse.quote(owner)}/repos/{urllib.parse.quote(name)}"
+    )
 
     flags_env = os.environ.get("CODECOV_FLAGS", "").strip()
     if flags_env:
@@ -133,7 +139,11 @@ def main():
         flags = []
         try:
             data = api_get(f"{repo_url}/flags/?page_size=100", token)
-            flags = [f.get("flag_name") for f in data.get("results") or [] if f.get("flag_name")]
+            flags = [
+                f.get("flag_name")
+                for f in data.get("results") or []
+                if f.get("flag_name")
+            ]
         except Exception as exc:  # noqa: BLE001
             lines.append(f"Note: could not list Codecov flags ({exc}).")
             lines.append("")
@@ -148,7 +158,12 @@ def main():
         try:
             report = api_get(url, token)
         except urllib.error.HTTPError as exc:
-            lines += [f"### {label}", "", f"Codecov API returned HTTP {exc.code} for {url}", ""]
+            lines += [
+                f"### {label}",
+                "",
+                f"Codecov API returned HTTP {exc.code} for {url}",
+                "",
+            ]
             continue
         except Exception as exc:  # noqa: BLE001
             lines += [f"### {label}", "", f"Codecov API request failed: {exc}", ""]
