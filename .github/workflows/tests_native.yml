@@ -12,6 +12,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -23,6 +28,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -48,7 +58,6 @@ jobs:
         with:
           files: |
             .coveragerc
-            .github/scripts/**
             .github/workflows/tests_native.yml
             codecov.yml
             ezsnmp/*.py
