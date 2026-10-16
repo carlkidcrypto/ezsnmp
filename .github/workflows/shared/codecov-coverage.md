@@ -19,10 +19,12 @@ steps:
 Codecov coverage for the `main` branch of this repository has already been downloaded
 for you before this run started:
 
-- `/tmp/gh-aw/agent/codecov/summary.md` — overall and per-flag totals, plus every file
-  with missed or partial lines (with line numbers). **Read this first.**
-- `/tmp/gh-aw/agent/codecov/report.json` and `report-<flag>.json` — raw Codecov report
-  API responses (`line_coverage` entries are `[line, status]` where `0` = hit, `1` = miss,
+- `/tmp/gh-aw/agent/codecov/summary.md` — overall, per-component and per-flag totals,
+  plus every file with missed or partial lines (with line numbers). **Read this first.**
+  If a section says it uses an older commit (because that scope had no data on the latest
+  commit), re-check the listed line numbers against the current source before using them.
+- `/tmp/gh-aw/agent/codecov/report.json`, `report-component-<id>.json` and
+  `report-<flag>.json` — raw Codecov report API responses (`line_coverage` entries are `[line, status]` where `0` = hit, `1` = miss,
   `2` = partial). Use `jq`/`python3` with targeted queries; do not dump them in full.
 
 Rules for using this data:
@@ -30,7 +32,7 @@ Rules for using this data:
 - Treat the Codecov summary as the primary source of coverage gaps. Map each missed line
   back to the source with targeted `sed -n '<start>,<end>p' <file>` reads before writing tests.
 - You may also query `https://api.codecov.io/api/v2/github/<owner>/repos/<repo>/report/?branch=main`
-  directly if you need fresher or more specific data (e.g. `&path=<file>` or `&flag=<flag>`).
+  directly if you need fresher or more specific data (e.g. `&path=<file>`, `&flag=<flag>` or `&component_id=<id>`).
 - Do **not** conclude "coverage could not be checked" when the summary contains data.
   If the summary lists missed lines in files you are allowed to test, you must attempt to
   cover at least one of them before deciding no change is needed.

@@ -217,7 +217,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
-          flags: python,native
+          flags: python-native
           fail_ci_if_error: false
           verbose: true
 
@@ -227,7 +227,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./test-results_*.xml
-          flags: python,native
+          flags: python-native
           report_type: test_results
           fail_ci_if_error: false
           verbose: true

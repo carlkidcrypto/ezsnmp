@@ -69,7 +69,8 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 
 1. Use Codecov and static gap analysis to identify coverage gaps:
    - Start with the pre-fetched Codecov data in `/tmp/gh-aw/agent/codecov/summary.md`
-     (see "Codecov Coverage Data" below). Use the `cpp` flag section; it lists every
+     (see "Codecov Coverage Data" below). Use the `Component cpp_code` section (C++ Code,
+     combining the `cpp-native` and `cpp-docker` flags); it lists every
      C++ file under `ezsnmp/src/` with missed lines and their line numbers
      (dashboard: https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
    - Ignore missed lines in vendored `ezsnmp/src/net-snmp-5.9-final-patched/**` files unless
