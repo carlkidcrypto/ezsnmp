@@ -196,3 +196,31 @@ def test_session_close_propagates_unknown_exception():
     ):
         with pytest.raises(SomeUnrelatedError):
             s.close()
+
+
+# ---------------------------------------------------------------------------
+# print_hex_strings setter and get_next() error path
+# ---------------------------------------------------------------------------
+
+
+def test_session_print_hex_strings_setter_roundtrip():
+    """Setting print_hex_strings is reflected by the getter."""
+    s = make_session()
+    s.print_hex_strings = True
+    assert s.print_hex_strings is True
+    s.print_hex_strings = False
+    assert s.print_hex_strings is False
+
+
+def test_session_get_next_unreachable_host_raises():
+    """get_next() routes C-layer failures through _handle_error."""
+    s = Session(
+        hostname="127.0.0.1",
+        port_number="1",
+        community="public",
+        version="2",
+        timeout="1",
+        retries="0",
+    )
+    with pytest.raises(Exception):
+        s.get_next(["1.3.6.1.2.1.1.1.0"])
