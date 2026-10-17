@@ -226,7 +226,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cpp_tests/coverage_filtered.info
-          flags: cpp,native
+          flags: cpp-native
           fail_ci_if_error: false
           verbose: true
 
@@ -236,7 +236,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cpp_tests/**/*.xml
-          flags: cpp,native
+          flags: cpp-native
           report_type: test_results
           fail_ci_if_error: false
           verbose: true
