@@ -91,6 +91,11 @@ Coverage data is collected from multiple test workflows:
 - Docker-based C++ tests
 - Native C++ tests on Ubuntu and macOS
 
+Each workflow uploads with exactly one Codecov flag (``python-native``, ``python-docker``,
+``cpp-native``, ``cpp-docker``) so carryforward keeps every environment's coverage when its
+tests are skipped on a commit. Use the **Python Code** and **C++ Code** components for
+per-language line coverage.
+
 You can view the latest coverage reports and trends at the `CodeCov dashboard <https://codecov.io/gh/carlkidcrypto/ezsnmp>`_.
 
 Operational Reports
