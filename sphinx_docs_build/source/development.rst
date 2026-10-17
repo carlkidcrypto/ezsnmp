@@ -62,6 +62,10 @@ Step 5: Run
 
     clear && rm -drf build ezsnmp.egg-info && python3 -m pip install .
 
+Build requirements, including SWIG, are declared only in ``pyproject.toml`` under
+``[build-system].requires``. Pip installs these in an isolated build environment;
+do not duplicate them in ``setup.cfg`` as ``setup_requires``.
+
 Step 6: Run it in python3
 
 .. code-block:: pycon

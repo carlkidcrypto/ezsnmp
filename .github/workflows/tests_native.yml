@@ -67,6 +67,7 @@ jobs:
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
+            pyproject.toml
             setup.cfg
             setup.py
 
@@ -123,6 +124,9 @@ jobs:
       - name: Install pip dependencies
         run: |
           if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
+
+      - name: Check build requirement declarations before building
+        run: python3 -m pytest python_tests/test_build_requirements.py
 
       - name: Start SNMP daemon
         run: |
