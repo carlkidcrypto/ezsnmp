@@ -36,25 +36,32 @@ ignore:
   - "setup.py"
   - "setup.cfg"
 
-# Flag management for different test environments
-flags:
-  python:
-    paths:
-      - ezsnmp/*.py
-      - ezsnmp/**/*.py
+# Flag management: exactly ONE flag per upload (language + environment).
+# Carryforward replaces a carried-forward session whenever ANY of its flags is
+# uploaded again. With shared flags (e.g. `cpp,native` + `python,native`), a commit
+# that only ran Python tests wiped the C++ coverage. Unique flags keep each
+# workflow's coverage carried forward independently when its tests are skipped.
+# Use the components below for per-language (Python / C++) views.
+flag_management:
+  default_rules:
     carryforward: true
-
-  cpp:
-    paths:
-      - ezsnmp/**/*.cpp
-      - ezsnmp/**/*.h
-    carryforward: true
-
-  docker:
-    carryforward: true
-
-  native:
-    carryforward: true
+  individual_flags:
+    - name: python-native
+      paths:
+        - ezsnmp/*.py
+        - ezsnmp/**/*.py
+    - name: python-docker
+      paths:
+        - ezsnmp/*.py
+        - ezsnmp/**/*.py
+    - name: cpp-native
+      paths:
+        - ezsnmp/**/*.cpp
+        - ezsnmp/**/*.h
+    - name: cpp-docker
+      paths:
+        - ezsnmp/**/*.cpp
+        - ezsnmp/**/*.h
 
 # Comment configuration for pull requests
 comment:
