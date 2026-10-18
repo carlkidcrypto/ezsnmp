@@ -1,8 +1,8 @@
 name: Run Dockerized Cpp Tests
 
 concurrency:
-  group: tests_docker_cpp_tests
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 on:
   push:
@@ -11,6 +11,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -22,6 +27,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -128,7 +138,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/lcov_coverage.info
-          flags: cpp,docker
+          flags: cpp-docker
           fail_ci_if_error: false
           verbose: true
 
@@ -138,7 +148,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/test-results.xml
-          flags: cpp,docker
+          flags: cpp-docker
           report_type: test_results
           fail_ci_if_error: false
           verbose: true
@@ -162,7 +172,7 @@ jobs:
         run: ls -Rlah artifacts/
 
       - name: Publish C++ Test Results (Dockerized Tests)
-        uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
+        uses: EnricoMi/publish-unit-test-result-action@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2
         if: needs.check-changes.outputs.any_changed == 'true'
         with:
           files: "artifacts/**/test-results.xml"

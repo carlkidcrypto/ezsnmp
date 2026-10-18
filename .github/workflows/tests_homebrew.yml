@@ -3,8 +3,8 @@
 # It checks for changes in the source code and runs tests only if there are changes.
 name: Tests With Homebrew
 concurrency:
-  group: tests_homebrew
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   push:
     branches: [ main ]
@@ -12,6 +12,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -24,6 +29,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -74,7 +84,7 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@e99025eb970cfa124b8284a35463d87426917478 # master
+        uses: Homebrew/actions/setup-homebrew@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # master
 
       - name: Enable Homebrew analytics
         run: brew analytics on

@@ -1,8 +1,8 @@
 name: Build and Publish Docker Images
 
 concurrency:
-  group: build_and_publish_docker_images
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 on:
   workflow_dispatch:
@@ -86,6 +86,21 @@ jobs:
           path: docker/cache
           key: ${{ steps.restore-cache.outputs.cache-primary-key }}
 
+      # Hand the tarballs to the build jobs via an artifact: the repo's Actions
+      # cache sits near the 10 GB limit, so the cache entry can be evicted
+      # before the matrix jobs restore it.
+      - name: Upload build cache artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docker-build-cache
+          path: |
+            docker/cache/*.tgz
+            docker/cache/*.tar.gz
+            docker/cache/*.pkg.tar.*
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+
   build-and-push:
     needs:
       - set-matrix
@@ -119,13 +134,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Restore Python tarball cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: Download build cache artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
+          name: docker-build-cache
           path: docker/cache
-          key: python-tarballs-${{ hashFiles('docker/cache/download_build_cache.sh') }}
-          restore-keys: |
-            python-tarballs-
+
+      # Safety net: the script only downloads files that are still missing.
+      - name: Ensure build cache is complete
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash docker/cache/download_build_cache.sh
 
       - name: Compute tags
         id: tags

@@ -3,8 +3,8 @@
 # It checks for changes in the source code and runs tests only if there are changes.
 name: Tests With Native Package Manager
 concurrency:
-  group: tests_native
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   push:
     branches: [ main ]
@@ -12,6 +12,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -23,6 +28,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -48,7 +58,6 @@ jobs:
         with:
           files: |
             .coveragerc
-            .github/scripts/**
             .github/workflows/tests_native.yml
             codecov.yml
             ezsnmp/*.py
@@ -208,7 +217,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
-          flags: python,native
+          flags: python-native
           fail_ci_if_error: false
           verbose: true
 
@@ -218,7 +227,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./test-results_*.xml
-          flags: python,native
+          flags: python-native
           report_type: test_results
           fail_ci_if_error: false
           verbose: true

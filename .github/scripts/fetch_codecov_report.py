@@ -6,7 +6,8 @@ workflows can use real Codecov data without needing network access to Codecov.
 
 Outputs (default directory: /tmp/gh-aw/agent/codecov):
   summary.md            Human/agent readable summary of totals and uncovered lines
-  report[-<flag>].json  Raw Codecov report API responses
+  report.json, report-<flag>.json, report-component-<id>.json
+                        Raw Codecov report API responses
 
 Environment variables:
   GITHUB_REPOSITORY   owner/repo (required)
@@ -17,6 +18,10 @@ Environment variables:
 
 This script never fails the workflow: on any error it writes a summary describing the
 problem and exits 0 so the agent can fall back to static analysis.
+
+If a flag or component has no line data on the latest branch commit (for example because
+its tests were skipped and Codecov carryforward did not apply), the newest recent commit
+that does have line data is used instead and the summary says so.
 """
 
 import json
@@ -28,6 +33,7 @@ import urllib.request
 
 API_BASE = "https://api.codecov.io/api/v2/github"
 MAX_FILES = 60
+MAX_LOOKBACK = 30
 
 
 def api_get(url, token):
@@ -102,6 +108,59 @@ def summarize_report(report, label):
     return out
 
 
+def has_line_data(report):
+    """True if the report contains at least one file with measured lines."""
+    for f in report.get("files") or []:
+        if (f.get("totals") or {}).get("lines"):
+            return True
+    return False
+
+
+def list_names(repo_url, endpoint, key, token, branch, notes):
+    try:
+        params = urllib.parse.urlencode({"branch": branch, "page_size": 100})
+        data = api_get(f"{repo_url}/{endpoint}/?{params}", token)
+    except Exception as exc:  # noqa: BLE001
+        notes.append(f"Note: could not list Codecov {endpoint} ({exc}).")
+        return []
+    items = data.get("results") if isinstance(data, dict) else data
+    return [i.get(key) for i in items or [] if i.get(key)]
+
+
+def fetch_scope(repo_url, token, branch, scope_params, commits):
+    """Fetch a report for the branch head; if it has no line data (e.g. the flag was not
+    uploaded on the latest commit and carryforward did not apply), walk back through
+    recent commits and return the newest report that has line data.
+
+    Returns (report, sha_or_None, error_or_None).
+    """
+    params = {"branch": branch, **scope_params}
+    url = f"{repo_url}/report/?{urllib.parse.urlencode(params)}"
+    try:
+        report = api_get(url, token)
+    except urllib.error.HTTPError as exc:
+        return None, None, f"Codecov API returned HTTP {exc.code} for {url}"
+    except Exception as exc:  # noqa: BLE001
+        return None, None, f"Codecov API request failed: {exc}"
+    if has_line_data(report):
+        return report, None, None
+
+    for commit in commits[1 : MAX_LOOKBACK + 1]:
+        sha = commit.get("commitid")
+        if not sha:
+            continue
+        params = {"sha": sha, **scope_params}
+        try:
+            older = api_get(
+                f"{repo_url}/report/?{urllib.parse.urlencode(params)}", token
+            )
+        except Exception:  # noqa: BLE001
+            continue
+        if has_line_data(older):
+            return older, commit, None
+    return report, None, None
+
+
 def main():
     repo = os.environ.get("GITHUB_REPOSITORY", "")
     branch = os.environ.get("CODECOV_BRANCH", "main")
@@ -116,7 +175,8 @@ def main():
         f"- Repository: `{repo}`",
         f"- Branch: `{branch}`",
         f"- Dashboard: https://app.codecov.io/gh/{repo}/tree/{branch}",
-        "- Line numbers below refer to the file as of the latest Codecov-processed commit on the branch.",
+        "- Line numbers refer to the file as of the commit noted for each section "
+        "(the latest Codecov-processed commit on the branch unless stated otherwise).",
         "",
     ]
 
@@ -131,48 +191,64 @@ def main():
     repo_url = (
         f"{API_BASE}/{urllib.parse.quote(owner)}/repos/{urllib.parse.quote(name)}"
     )
+    notes = []
 
     flags_env = os.environ.get("CODECOV_FLAGS", "").strip()
     if flags_env:
         flags = [f.strip() for f in flags_env.split(",") if f.strip()]
     else:
-        flags = []
-        try:
-            data = api_get(f"{repo_url}/flags/?page_size=100", token)
-            flags = [
-                f.get("flag_name")
-                for f in data.get("results") or []
-                if f.get("flag_name")
-            ]
-        except Exception as exc:  # noqa: BLE001
-            lines.append(f"Note: could not list Codecov flags ({exc}).")
-            lines.append("")
+        flags = list_names(repo_url, "flags", "flag_name", token, branch, notes)
+    components = list_names(
+        repo_url, "components", "component_id", token, branch, notes
+    )
 
-    scopes = [(None, "All flags (combined)")] + [(f, f"Flag `{f}`") for f in flags]
+    commits = []
+    try:
+        params = urllib.parse.urlencode(
+            {"branch": branch, "page_size": MAX_LOOKBACK + 1}
+        )
+        commits = api_get(f"{repo_url}/commits/?{params}", token).get("results") or []
+    except Exception as exc:  # noqa: BLE001
+        notes.append(
+            f"Note: could not list recent commits ({exc}); no fallback lookup."
+        )
+    if notes:
+        lines += notes + [""]
+
+    scopes = [({}, "All flags (combined)", "report.json")]
+    scopes += [
+        ({"component_id": c}, f"Component `{c}`", f"report-component-{c}.json")
+        for c in components
+    ]
+    scopes += [({"flag": f}, f"Flag `{f}`", f"report-{f}.json") for f in flags]
+
     success = False
-    for flag, label in scopes:
-        params = {"branch": branch}
-        if flag:
-            params["flag"] = flag
-        url = f"{repo_url}/report/?{urllib.parse.urlencode(params)}"
-        try:
-            report = api_get(url, token)
-        except urllib.error.HTTPError as exc:
-            lines += [
-                f"### {label}",
-                "",
-                f"Codecov API returned HTTP {exc.code} for {url}",
-                "",
-            ]
-            continue
-        except Exception as exc:  # noqa: BLE001
-            lines += [f"### {label}", "", f"Codecov API request failed: {exc}", ""]
+    for scope_params, label, raw_name in scopes:
+        report, fallback, error = fetch_scope(
+            repo_url, token, branch, scope_params, commits
+        )
+        if error:
+            lines += [f"### {label}", "", error, ""]
             continue
         success = True
-        raw_name = f"report-{flag}.json" if flag else "report.json"
         with open(os.path.join(out_dir, raw_name), "w", encoding="utf-8") as fh:
             json.dump(report, fh)
-        lines += summarize_report(report, label)
+        section = summarize_report(report, label)
+        if fallback:
+            section.insert(
+                2,
+                f"- NOTE: the latest commit on `{branch}` has no line data for this scope, "
+                f"so this section uses commit `{fallback.get('commitid', '')[:12]}` "
+                f"({(fallback.get('timestamp') or '')[:10]}), the newest commit that has it. "
+                "Line numbers refer to that commit; re-check them against the current source.",
+            )
+        elif not has_line_data(report):
+            section.insert(
+                2,
+                f"- NOTE: no line data found for this scope in the last {MAX_LOOKBACK} "
+                "commits; fall back to static gap analysis for it.",
+            )
+        lines += section
 
     if not success:
         lines.append(

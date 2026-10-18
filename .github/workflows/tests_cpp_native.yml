@@ -3,8 +3,8 @@
 # It checks for changes in the C++ source code and runs tests only if there are changes.
 name: C++ Tests
 concurrency:
-  group: tests_cpp_native
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   push:
     branches: [ main ]
@@ -12,6 +12,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -23,6 +28,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -216,7 +226,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cpp_tests/coverage_filtered.info
-          flags: cpp,native
+          flags: cpp-native
           fail_ci_if_error: false
           verbose: true
 
@@ -226,7 +236,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./cpp_tests/**/*.xml
-          flags: cpp,native
+          flags: cpp-native
           report_type: test_results
           fail_ci_if_error: false
           verbose: true
@@ -248,7 +258,7 @@ jobs:
           merge-multiple: true
 
       - name: Publish C++ Test Results
-        uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
+        uses: EnricoMi/publish-unit-test-result-action@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2
         with:
           files: test-results/**/*.xml
           check_name: C++ Test Results - Native

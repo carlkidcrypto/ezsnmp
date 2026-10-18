@@ -1,8 +1,8 @@
 name: Run Dockerized Python Tests
 
 concurrency:
-  group: tests_docker_python_tests
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 on:
   push:
@@ -11,6 +11,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -22,6 +27,11 @@ on:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
       - '.github/aw/**'
+      - '.github/workflows/agentics-maintenance.yml'
+      - '.github/workflows/shared/**'
+      - '.github/scripts/**'
+      - '.github/agents/**'
+      - '.github/skills/**'
       - '.github/*.md'
       - '**/*.md'
       - '**/*.rst'
@@ -47,7 +57,6 @@ jobs:
         with:
           files: |
             .coveragerc
-            .github/scripts/**
             .github/workflows/tests_docker_python_tests.yml
             codecov.yml
             docker/**
@@ -287,7 +296,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/coverage_*.xml,./coverage_*.xml
-          flags: python,docker
+          flags: python-docker
           fail_ci_if_error: false
           verbose: true
 
@@ -306,7 +315,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/test-results_*.xml,./test-results_*.xml
-          flags: python,docker
+          flags: python-docker
           report_type: test_results
           fail_ci_if_error: false
           verbose: true
