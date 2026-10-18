@@ -23,7 +23,7 @@ tag_exists_anywhere() {
 }
 
 # Given a tag base (without .N), return the next available incremented tag.
-# Example base: repo/image:centos8_netsnmp_5.8-latest -> repo/image:centos8_netsnmp_5.8-latest.3
+# Example base: repo/image:archlinux_netsnmp_5.10-latest -> repo/image:archlinux_netsnmp_5.10-latest.3
 get_next_incremented_tag() {
   local base_tag=$1
   local version=1

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       image:
-        description: Optional single image directory name (e.g., almalinux10_netsnmp_5.9)
+        description: Optional single image directory name (e.g., almalinux10_netsnmp_5.10)
         required: false
         type: string
   push:

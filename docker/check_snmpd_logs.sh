@@ -12,7 +12,7 @@ if [ -z "$CONTAINER_NAME" ]; then
     docker ps --filter "name=_test_container" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
     echo ""
     echo "Usage: $0 <container_name>"
-    echo "Example: $0 archlinux_netsnmp_5.7_test_container"
+    echo "Example: $0 almalinux10_netsnmp_5.10_test_container"
     exit 0
 fi
 
