@@ -1,17 +1,17 @@
-======================================
-Rocky Linux 9 with net-snmp 5.9 Docker
-======================================
+===================================================
+Rocky Linux 9 with Net-SNMP 5.10 Docker Test Environment
+===================================================
 
 Overview
 ========
 
-This Docker image provides a testing environment based on Rocky Linux 9 (latest stable) with:
+This Docker image provides a testing environment based on Rocky Linux 9 with:
 
 * **Base OS**: Rocky Linux 9
 * **GCC**: gcc-toolset-13 (g++ 13.x, exceeds g++ 9.5 minimum)
 * **Python Versions**: 3.10, 3.11, 3.12, 3.13, 3.14 (all from source builds)
 * **Virtual Environment**: /opt/venv (Python 3.14 with all project dependencies pre-installed)
-* **net-snmp**: 5.9 (latest stable version)
+* **Net-SNMP**: 5.10 (built from source)
 * **C++ Testing**: Full g++ 13 support for cpp_tests with coverage reporting
 * **Python Testing**: Full support for python_tests with coverage reporting
 * **Image Size**: Optimized to minimal size through consolidated RUN statements and cache cleanup
@@ -23,7 +23,7 @@ To build the image locally:
 
 .. code-block:: bash
 
-    cd docker/rockylinux9_netsnmp_5.9
+    cd docker/rockylinux9_netsnmp_5.10
     docker-compose build
 
 Running
@@ -33,7 +33,7 @@ To run the container with automatic setup:
 
 .. code-block:: bash
 
-    cd docker/rockylinux9_netsnmp_5.9
+    cd docker/rockylinux9_netsnmp_5.10
     ./go_docker.sh
 
 Or manually:
@@ -41,7 +41,7 @@ Or manually:
 .. code-block:: bash
 
     docker-compose up -d
-    docker exec -it rockylinux9_snmp_container /bin/bash
+    docker exec -it rockylinux9_netsnmp_5.10_snmp_container /bin/bash
 
 Testing
 =======

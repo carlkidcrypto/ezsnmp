@@ -63,15 +63,15 @@ Options:
 
 Arguments:
   IMAGE_NAME           Optional. Specify a single image tag to test only that
-                       distribution (e.g., 'almalinux10_netsnmp_5.9', 
-                       'fedora42_netsnmp_5.9', 'rockylinux9_netsnmp_5.9').
+                       distribution (e.g., 'almalinux10_netsnmp_5.10', 
+                       'archlinux_netsnmp_5.10', 'fedora42_netsnmp_5.10').
                        If omitted, all distribution directories will be tested.
 
 Examples:
   $0                                           # Test all distributions
   $0 --preserve-logs                           # Test all, preserve old logs
-  $0 almalinux10_netsnmp_5.9                   # Test only AlmaLinux 10
-  $0 rockylinux9_netsnmp_5.9 --preserve-logs   # Test Rocky Linux 9, preserve logs
+  $0 almalinux10_netsnmp_5.10                   # Test only AlmaLinux 10
+  $0 archlinux_netsnmp_5.10 --preserve-logs     # Test Arch Linux 5.10, preserve logs
 
 Available Distributions:
 EOF

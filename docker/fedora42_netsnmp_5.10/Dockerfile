@@ -1,48 +1,35 @@
-# Use Arch Linux as the base image
-FROM archlinux:latest
+# Use Fedora 42 as the base image
+FROM fedora:42
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
 ARG PYTHON_MAX_VERSION=3.14.7
-ARG PYTHON_MIN_2_VERSION=3.13.15  # Not built from source, provided by OS package manager
+ARG PYTHON_MIN_2_VERSION=3.13.15
 ARG PYTHON_MIN_1_VERSION=3.12.14
 ARG PYTHON_MIN_0_VERSION=3.11.16
 ARG PYTHON_MIN_VERSION=3.10.21
 
-# Update system and install core packages in one layer
-RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm findutils base-devel python python-pip python-setuptools \
-    pacman-contrib git go sudo gcc
+# Update system and install GCC (native GCC 14.x on Fedora 42 - no toolset needed)
+RUN dnf update -y && \
+    dnf install -y gcc gcc-c++ findutils
 
-# Install official repository dependencies
-COPY docker/archlinux_netsnmp_5.9/pacman-requirements.txt /tmp/pacman-requirements.txt
-RUN xargs pacman -S --noconfirm < /tmp/pacman-requirements.txt && \
-    rm -f /tmp/pacman-requirements.txt
+# Install remaining dependencies from requirements file
+COPY docker/fedora42_netsnmp_5.10/dnf-requirements.txt /tmp/dnf-requirements.txt
+RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# --- AUR Installation: Must be run as a non-root user ---
-ARG USERNAME=builder
-RUN useradd -m -G wheel $USERNAME && \
-    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/docker-builder
-
-WORKDIR /home/$USERNAME
-USER $USERNAME
-
-# Clone, build, and install 'yay' with parallel compilation
-RUN export MAKEFLAGS="-j$(nproc)" && \
-    git clone --depth=1 https://aur.archlinux.org/yay.git && \
-    cd yay && \
-    makepkg -si --noconfirm && \
-    cd .. && \
-    rm -rf yay
-
-# Note: All packages now available in official repos, no AUR packages needed
-
-# --- Switch back to root for final setup ---
-USER root
-WORKDIR /
-
-# Clean up package cache to reduce image size
-RUN pacman -Scc --noconfirm && \
-    rm -rf /home/$USERNAME/.cache
+# Copy and build NetSNMP 5.10.pre2 from cache
+COPY docker/cache/net-snmp-5.10.pre2.tar.gz /tmp/
+RUN cd /tmp && \
+    tar -xzf net-snmp-5.10.pre2.tar.gz && \
+    cd net-snmp-5.10.pre2 && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    cd /tmp && \
+    rm -rf net-snmp-5.10.pre2.tar.gz net-snmp-5.10.pre2 && \
+    net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
 COPY docker/cache/Python-3.10.21.tgz /tmp/
@@ -51,10 +38,7 @@ COPY docker/cache/Python-3.12.14.tgz /tmp/
 COPY docker/cache/Python-3.13.15.tgz /tmp/
 COPY docker/cache/Python-3.14.7.tgz /tmp/
 
-# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source
-# This is faster and more reliable than AUR packages
-# altinstall puts binaries as python3.X in /usr/local/bin
-# Split into separate layers for better Docker caching - only rebuilds on version changes
+# Build Python from source (all versions, split into separate layers for caching)
 
 # Build Python ${PYTHON_MIN_VERSION}
 RUN cd /tmp && \
@@ -100,16 +84,36 @@ RUN cd /tmp && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
+    echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
 
-# Ensure all Python versions are accessible by adding /usr/local/bin to PATH first
-# Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
-ENV PATH="/usr/local/bin:$PATH"
-ENV LD_LIBRARY_PATH="/usr/local/lib"
+# Create the pkg-config file for net-snmp (built from source above)
+RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
+    PREFIX=$(net-snmp-config --prefix) && \
+    EXEC_PREFIX=$(net-snmp-config --exec-prefix) && \
+    INCLUDEDIR=$(net-snmp-config --includedir | sed 's/^-I//') && \
+    LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
+    CFLAGS=$(net-snmp-config --cflags | sed 's/[[:space:]]-Werror=declaration-after-statement//g') && \
+    VERSION=$(net-snmp-config --version) && \
+    mkdir -p "${LIBDIR}/pkgconfig" && \
+    echo "prefix=${PREFIX}" > "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "exec_prefix=${EXEC_PREFIX}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "libdir=${LIBDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "includedir=${INCLUDEDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo '' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo 'Name: netsnmp' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo 'Description: A collection of libraries for SNMP applications.' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Version: ${VERSION}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Libs: ${LIBS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Cflags: ${CFLAGS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc"
 
-# Virtual Environment Setup using latest Python (3.14)
+# Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv
+
+# Create the virtual environment using Python 3.14
 RUN python3.14 -m venv $VENV_PATH
+
+# Activate the virtual environment by adding its bin directory to the PATH.
 ENV PATH="$VENV_PATH/bin:$PATH"
 
 # Install Python requirements for project and tests inside the virtualenv

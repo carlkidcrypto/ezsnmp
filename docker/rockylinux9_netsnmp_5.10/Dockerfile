@@ -1,5 +1,5 @@
-# Use Fedora 42 as the base image
-FROM fedora:42
+# Use Rocky Linux 9 as the base image
+FROM rockylinux:9
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
 ARG PYTHON_MAX_VERSION=3.14.7
@@ -8,28 +8,33 @@ ARG PYTHON_MIN_1_VERSION=3.12.14
 ARG PYTHON_MIN_0_VERSION=3.11.16
 ARG PYTHON_MIN_VERSION=3.10.21
 
-# Update system and install GCC (native GCC 14.x on Fedora 42 - no toolset needed)
+# Update system, install essential tools, and configure repositories in one layer
 RUN dnf update -y && \
-    dnf install -y gcc gcc-c++ findutils
+    dnf install -y findutils dnf-plugins-core epel-release && \
+    dnf config-manager --set-enabled crb
 
-# Install remaining dependencies from requirements file
-COPY docker/fedora42_netsnmp_5.9/dnf-requirements.txt /tmp/dnf-requirements.txt
-RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
+# Install gcc-toolset-13 (GCC 13.x, g++ 13.x) and dependencies from requirements file
+COPY docker/rockylinux9_netsnmp_5.10/dnf-requirements.txt /tmp/dnf-requirements.txt
+RUN dnf install -y gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ gcc-toolset-13-binutils && \
+    xargs dnf install -y < /tmp/dnf-requirements.txt && \
+    dnf debuginfo-install -y python3 && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Copy and build NetSNMP 5.9.5.2 from cache to ensure complete headers are available
-# Disable all Perl support to minimize image size and avoid perl-ExtUtils-MakeMaker dependency
-COPY docker/cache/net-snmp-5.9.5.2.tar.gz /tmp/
+# Set gcc-toolset-13 PATH persistently for non-login shells
+ENV PATH="/opt/rh/gcc-toolset-13/root/usr/bin:$PATH"
+
+# Copy and build NetSNMP 5.10.pre2 from cache
+COPY docker/cache/net-snmp-5.10.pre2.tar.gz /tmp/
 RUN cd /tmp && \
-    tar -xzf net-snmp-5.9.5.2.tar.gz && \
-    cd net-snmp-5.9.5.2 && \
+    tar -xzf net-snmp-5.10.pre2.tar.gz && \
+    cd net-snmp-5.10.pre2 && \
     ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
     make -j$(nproc) && \
     make install && \
     ldconfig && \
     cd /tmp && \
-    rm -rf net-snmp-5.9.5.2.tar.gz net-snmp-5.9.5.2 && \
+    rm -rf net-snmp-5.10.pre2.tar.gz net-snmp-5.10.pre2 && \
     net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
@@ -39,7 +44,8 @@ COPY docker/cache/Python-3.12.14.tgz /tmp/
 COPY docker/cache/Python-3.13.15.tgz /tmp/
 COPY docker/cache/Python-3.14.7.tgz /tmp/
 
-# Build Python from source (all versions, split into separate layers for caching)
+# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source (not available in Rocky 9 repos)
+# Split into separate layers for better Docker caching - only rebuilds on version changes
 
 # Build Python ${PYTHON_MIN_VERSION}
 RUN cd /tmp && \
@@ -89,24 +95,20 @@ RUN cd /tmp && \
     ldconfig
 
 # Create the pkg-config file for net-snmp (built from source above)
-RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
-    PREFIX=$(net-snmp-config --prefix) && \
-    EXEC_PREFIX=$(net-snmp-config --exec-prefix) && \
-    INCLUDEDIR=$(net-snmp-config --includedir | sed 's/^-I//') && \
-    LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
+RUN LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
     CFLAGS=$(net-snmp-config --cflags | sed 's/[[:space:]]-Werror=declaration-after-statement//g') && \
     VERSION=$(net-snmp-config --version) && \
-    mkdir -p "${LIBDIR}/pkgconfig" && \
-    echo "prefix=${PREFIX}" > "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo "exec_prefix=${EXEC_PREFIX}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo "libdir=${LIBDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo "includedir=${INCLUDEDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo '' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo 'Name: netsnmp' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo 'Description: A collection of libraries for SNMP applications.' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo "Version: ${VERSION}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo "Libs: ${LIBS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
-    echo "Cflags: ${CFLAGS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc"
+    mkdir -p /usr/lib64/pkgconfig && \
+    echo 'prefix=/usr' > /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo 'exec_prefix=${prefix}' >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo 'libdir=${exec_prefix}/lib64' >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo 'includedir=${prefix}/include' >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo '' >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo 'Name: netsnmp' >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo 'Description: A collection of libraries for SNMP applications.' >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Version: ${VERSION}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Libs: ${LIBS}" >> /usr/lib64/pkgconfig/netsnmp.pc && \
+    echo "Cflags: ${CFLAGS}" >> /usr/lib64/pkgconfig/netsnmp.pc
 
 # Define the path for the virtual environment
 ENV VENV_PATH=/opt/venv

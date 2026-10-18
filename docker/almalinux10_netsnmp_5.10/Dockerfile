@@ -9,13 +9,46 @@ ARG PYTHON_MIN_0_VERSION=3.11.16
 ARG PYTHON_MIN_VERSION=3.10.21
 
 # Install EPEL, update system, and install dependencies in one layer to reduce image size
-COPY docker/almalinux10_netsnmp_5.9/dnf-requirements.txt /tmp/dnf-requirements.txt
+COPY docker/almalinux10_netsnmp_5.10/dnf-requirements.txt /tmp/dnf-requirements.txt
 RUN dnf install -y epel-release && \
     dnf update -y && \
     dnf install -y findutils && \
     xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
+
+# Copy and build NetSNMP 5.10.pre2 from cache
+COPY docker/cache/net-snmp-5.10.pre2.tar.gz /tmp/
+RUN cd /tmp && \
+    tar -xzf net-snmp-5.10.pre2.tar.gz && \
+    cd net-snmp-5.10.pre2 && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    cd /tmp && \
+    rm -rf net-snmp-5.10.pre2.tar.gz net-snmp-5.10.pre2 && \
+    net-snmp-config --version
+
+# Create the pkg-config file for net-snmp (built from source above)
+RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
+    PREFIX=$(net-snmp-config --prefix) && \
+    EXEC_PREFIX=$(net-snmp-config --exec-prefix) && \
+    INCLUDEDIR=$(net-snmp-config --includedir | sed 's/^-I//') && \
+    LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
+    CFLAGS=$(net-snmp-config --cflags | sed 's/[[:space:]]-Werror=declaration-after-statement//g') && \
+    VERSION=$(net-snmp-config --version) && \
+    mkdir -p "${LIBDIR}/pkgconfig" && \
+    echo "prefix=${PREFIX}" > "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "exec_prefix=${EXEC_PREFIX}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "libdir=${LIBDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "includedir=${INCLUDEDIR}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo '' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo 'Name: netsnmp' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo 'Description: A collection of libraries for SNMP applications.' >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Version: ${VERSION}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Libs: ${LIBS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc" && \
+    echo "Cflags: ${CFLAGS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc"
 
 # Copy Python tarballs from cache to avoid repeated downloads
 COPY docker/cache/Python-3.10.21.tgz /tmp/

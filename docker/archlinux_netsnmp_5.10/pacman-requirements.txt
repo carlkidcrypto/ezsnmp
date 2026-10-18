@@ -8,7 +8,6 @@ bzip2
 xz
 zlib
 libffi
-net-snmp
 gdb
 meson
 ninja

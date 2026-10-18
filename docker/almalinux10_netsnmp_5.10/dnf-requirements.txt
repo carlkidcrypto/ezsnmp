@@ -13,9 +13,6 @@ python3.12-devel
 python3.13
 python3.13-devel
 python3-pip
-net-snmp
-net-snmp-utils
-net-snmp-devel
 gcc-c++
 gdb
 dnf-utils
@@ -23,3 +20,5 @@ meson
 ninja-build
 gtest-devel
 lcov
+perl-JSON
+perl-JSON-XS

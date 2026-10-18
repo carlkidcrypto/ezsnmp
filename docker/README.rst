@@ -7,11 +7,10 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10_netsnmp_5.9** - AlmaLinux 10 Kitten with Python 3.10-3.14, g++ 14.x, net-snmp 5.9 (3.10-3.11, 3.14 from source)
-* **archlinux_netsnmp_5.9** - Arch Linux latest with native GCC (g++ 14.x), net-snmp 5.9.x, Python 3.10-3.14 from source
-* **fedora42_netsnmp_5.9** - Fedora 42 with native GCC 14.x (g++ 14.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
-* **rockylinux9_netsnmp_5.9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
-
+* **almalinux10_netsnmp_5.10** - AlmaLinux 10 Kitten with Net-SNMP 5.10 (built from source), Python 3.10-3.14, g++ 14.x
+* **archlinux_netsnmp_5.10** - Arch Linux with Net-SNMP 5.10 (built from source), Python 3.10-3.14, g++ 14.x
+* **fedora42_netsnmp_5.10** - Fedora 42 with Net-SNMP 5.10 (built from source), native GCC 14.x (g++ 14.x), Python 3.10-3.14
+* **rockylinux9_netsnmp_5.10** - Rocky Linux 9 with Net-SNMP 5.10 (built from source), gcc-toolset-13 (g++ 13.x), Python 3.10-3.14
 
 All images support:
 
@@ -133,14 +132,14 @@ The ``DockerEntry.sh`` script accepts an optional parameter to control Python se
 
     # Full setup with Python dependencies (default behavior)
     sudo docker run -d \
-      --name "almalinux10_snmp_container" \
+      --name "almalinux10_netsnmp_5.10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
       /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh & tail -f /dev/null"
 
     # Or skip Python setup for faster startup (daemon only)
     sudo docker run -d \
-      --name "almalinux10_snmp_container" \
+      --name "almalinux10_netsnmp_5.10_snmp_container" \
       -v "$(pwd):/ezsnmp" \
       carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
       /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
@@ -157,7 +156,7 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 .. code-block:: bash
 
     # Execute pytest for a specific environment (e.g., py312 on almalinux10)
-    sudo docker exec -t almalinux10_snmp_container bash /ezsnmp/docker/run_tests_inside_container.sh \
+    sudo docker exec -t almalinux10_netsnmp_5.10_snmp_container bash /ezsnmp/docker/run_tests_inside_container.sh \
       almalinux10 py312 test-outputs_almalinux10_py312.txt
 
 **2. Copy Results to Host:**
@@ -165,7 +164,7 @@ Once the container is running in detached mode, you can use ``docker exec`` to r
 .. code-block:: bash
 
     # Copy the results back to the current directory
-    sudo docker cp almalinux10_snmp_container:/ezsnmp/test-outputs_almalinux10_py312.txt .
+    sudo docker cp almalinux10_netsnmp_5.10_snmp_container:/ezsnmp/test-outputs_almalinux10_py312.txt .
 
 **3. Cleanup:**
 
@@ -173,8 +172,8 @@ Stop and remove the container once testing is complete:
 
 .. code-block:: bash
 
-    sudo docker stop almalinux10_snmp_container
-    sudo docker rm almalinux10_snmp_container
+    sudo docker stop almalinux10_netsnmp_5.10_snmp_container
+    sudo docker rm almalinux10_netsnmp_5.10_snmp_container
 
 ----------------------------------------------------------------------
 
@@ -211,16 +210,16 @@ Builds and publishes Docker images to Docker Hub and optionally to GitHub Contai
   ./build_and_publish_images.sh <docker_user> <docker_pat>
 
   # Build and publish a single distribution
-  ./build_and_publish_images.sh <docker_user> <docker_pat> centos7
+  ./build_and_publish_images.sh <docker_user> <docker_pat> almalinux10_netsnmp_5.10
 
   # Build from scratch without using cache
-  ./build_and_publish_images.sh <docker_user> <docker_pat> centos7 --no-cache
+  ./build_and_publish_images.sh <docker_user> <docker_pat> almalinux10_netsnmp_5.10 --no-cache
 
   # Build and publish to both Docker Hub and GitHub Container Registry
   ./build_and_publish_images.sh <docker_user> <docker_pat> --ghcr-user <github_user> --ghcr-token <github_pat>
 
   # Build a single image and publish to both registries
-  ./build_and_publish_images.sh <docker_user> <docker_pat> centos7 --ghcr-user <github_user> --ghcr-token <github_pat>
+  ./build_and_publish_images.sh <docker_user> <docker_pat> almalinux10_netsnmp_5.10 --ghcr-user <github_user> --ghcr-token <github_pat>
 
 To publish to GitHub Container Registry, provide a GitHub Personal Access Token (PAT) with
 the ``write:packages`` scope via ``--ghcr-user`` and ``--ghcr-token``. Images will be pushed
@@ -236,13 +235,14 @@ Runs Python tests across all distributions in parallel or a specific distributio
   ./run_python_tests_in_all_dockers.sh
 
   # Run tests in a specific distribution only
-  ./run_python_tests_in_all_dockers.sh almalinux10
+  ./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
 
 The script creates a separate output directory for each distribution in the ``docker/`` directory. For example, after running all tests, you'll see:
 
-- ``test_outputs_almalinux10_netsnmp_5.9/``
-- ``test_outputs_fedora42_netsnmp_5.9/``
-- ``test_outputs_rockylinux9_netsnmp_5.9/``
+- ``test_outputs_almalinux10_netsnmp_5.10/``
+- ``test_outputs_archlinux_netsnmp_5.10/``
+- ``test_outputs_fedora42_netsnmp_5.10/``
+- ``test_outputs_rockylinux9_netsnmp_5.10/``
 
 Each directory contains test results and outputs for all Python versions:
 
@@ -258,8 +258,8 @@ Runs C++ tests using Meson/Ninja and generates coverage reports.
   # Run C++ tests in all distributions
   ./run_cpp_tests_in_all_dockers.sh
 
-  # Test only a specific container (useful for iterative debugging)
-  ./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
+  # Test specific Net-SNMP 5.10 containers (useful for iterative debugging)
+  ./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.10 archlinux_netsnmp_5.10
 
   # Show help
   ./run_cpp_tests_in_all_dockers.sh --help
@@ -320,7 +320,7 @@ To check logs from a running container, use the helper script:
   ./check_snmpd_logs.sh
 
   # Check logs for a specific container
-  ./check_snmpd_logs.sh almalinux10_netsnmp_5.9_test_container
+  ./check_snmpd_logs.sh almalinux10_netsnmp_5.10_test_container
 
 This script displays:
 
