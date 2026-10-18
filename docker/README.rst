@@ -8,6 +8,7 @@ Overview
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
 * **almalinux10_netsnmp_5.9** - AlmaLinux 10 Kitten with Python 3.10-3.14, g++ 14.x, net-snmp 5.9 (3.10-3.11, 3.14 from source)
+* **archlinux_netsnmp_5.9** - Arch Linux latest with native GCC (g++ 14.x), net-snmp 5.9.x, Python 3.10-3.14 from source
 * **fedora42_netsnmp_5.9** - Fedora 42 with native GCC 14.x (g++ 14.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
 * **rockylinux9_netsnmp_5.9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
 
