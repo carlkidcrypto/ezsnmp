@@ -15,37 +15,11 @@ PYTHON_VERSIONS=(
     "3.14.7"
 )
 
-# OpenSSL versions
-OPENSSL_1_1_VERSION="1.1.1w"
-OPENSSL_1_1_URL="https://www.openssl.org/source/openssl-${OPENSSL_1_1_VERSION}.tar.gz"
-OPENSSL_1_0_VERSION="1.0.2u"
-OPENSSL_1_0_URL="https://www.openssl.org/source/old/1.0.2/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
-OPENSSL_1_0_GITHUB_TAG="OpenSSL_${OPENSSL_1_0_VERSION//./_}"
-OPENSSL_1_0_FALLBACK_URL="https://github.com/openssl/openssl/releases/download/${OPENSSL_1_0_GITHUB_TAG}/openssl-${OPENSSL_1_0_VERSION}.tar.gz"
-
-# SQLite for CentOS7 (Python 3.13+ requires SQLite >= 3.15.2)
-SQLITE_VERSION="3450100"  # SQLite 3.45.1
-SQLITE_URL="https://www.sqlite.org/2024/sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
-
-# Net-SNMP versions
+# Net-SNMP versions (for test container builds)
 NETSNMP_VERSIONS=(
-    "5.7.3:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.3/net-snmp-5.7.3.tar.gz"
-    "5.8:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.8/net-snmp-5.8.tar.gz"
     "5.9.5.2:https://sourceforge.net/projects/net-snmp/files/net-snmp/5.9.5.2/net-snmp-5.9.5.2.tar.gz"
 )
 
-# GoogleTest for CentOS8
-GTEST_VERSION="1.15.2"
-GTEST_URL="https://github.com/google/googletest/archive/refs/tags/v${GTEST_VERSION}.tar.gz"
-
-# Archlinux packages for net-snmp compatibility testing
-ARCHLINUX_PACKAGES=(
-    "https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.7.3-1-x86_64.pkg.tar.xz"
-    "https://archive.archlinux.org/packages/n/net-snmp/net-snmp-5.8-1-x86_64.pkg.tar.xz"
-    "https://archive.archlinux.org/packages/p/pcre/pcre-8.43-1-x86_64.pkg.tar.xz"
-    "https://archive.archlinux.org/packages/o/openssl-1.0/openssl-1.0-1.0.2.t-1-x86_64.pkg.tar.xz"
-    "https://archive.archlinux.org/packages/o/openssl-1.1/openssl-1.1-1.1.1.w-1-x86_64.pkg.tar.zst"
-)
 
 echo "=== Docker Build Cache Downloader ==="
 echo "Cache directory: ${CACHE_DIR}"
@@ -146,48 +120,9 @@ for version in "${PYTHON_VERSIONS[@]}"; do
     fi
 done
 
-echo ""
-echo "--- OpenSSL and SQLite ---"
-# Download OpenSSL 1.1.1w (for CentOS7)
-openssl_1_1_file="openssl-${OPENSSL_1_1_VERSION}.tar.gz"
-openssl_1_1_output="${CACHE_DIR}/${openssl_1_1_file}"
-if [ -f "${openssl_1_1_output}" ]; then
-    echo "✓ ${openssl_1_1_file} already cached"
-else
-    echo "⬇ Downloading ${openssl_1_1_file}..."
-    download "${OPENSSL_1_1_URL}" "${openssl_1_1_output}"
-    echo "✓ Downloaded ${openssl_1_1_file}"
-fi
-
-# Download OpenSSL 1.0.2u (for Archlinux Net-SNMP 5.7.3)
-openssl_1_0_file="openssl-${OPENSSL_1_0_VERSION}.tar.gz"
-openssl_1_0_output="${CACHE_DIR}/${openssl_1_0_file}"
-if [ -f "${openssl_1_0_output}" ]; then
-    echo "✓ ${openssl_1_0_file} already cached"
-else
-    echo "⬇ Downloading ${openssl_1_0_file}..."
-    if ! download "${OPENSSL_1_0_URL}" "${openssl_1_0_output}"; then
-        echo "WARN: Primary download failed for ${openssl_1_0_file}. Trying GitHub release fallback..."
-        if ! download "${OPENSSL_1_0_FALLBACK_URL}" "${openssl_1_0_output}"; then
-            echo "ERROR: Failed to download ${openssl_1_0_file} from both primary and fallback URLs."
-            exit 1
-        fi
-    fi
-    echo "✓ Downloaded ${openssl_1_0_file}"
-fi
-
-# Download SQLite
-sqlite_file="sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
-sqlite_output="${CACHE_DIR}/${sqlite_file}"
-if [ -f "${sqlite_output}" ]; then
-    echo "✓ ${sqlite_file} already cached"
-else
-    echo "⬇ Downloading ${sqlite_file}..."
-    download "${SQLITE_URL}" "${sqlite_output}"
-    echo "✓ Downloaded ${sqlite_file}"
-fi
 
 echo ""
+
 echo "--- Net-SNMP Source Tarballs ---"
 for entry in "${NETSNMP_VERSIONS[@]}"; do
     version="${entry%%:*}"
@@ -241,50 +176,14 @@ for entry in "${NETSNMP_VERSIONS[@]}"; do
 done
 
 echo ""
-echo "--- GoogleTest (for CentOS8) ---"
-gtest_file="v${GTEST_VERSION}.tar.gz"
-gtest_output="${CACHE_DIR}/${gtest_file}"
-if [ -f "${gtest_output}" ]; then
-    echo "✓ ${gtest_file} already cached"
-else
-    echo "⬇ Downloading ${gtest_file}..."
-    download "${GTEST_URL}" "${gtest_output}"
-    echo "✓ Downloaded ${gtest_file}"
-fi
-
-echo ""
-echo "--- Archlinux Packages (for net-snmp 5.7/5.8 compatibility) ---"
-# Download Archlinux packages
-for pkg_url in "${ARCHLINUX_PACKAGES[@]}"; do
-    pkg_file=$(basename "${pkg_url}")
-    pkg_output="${CACHE_DIR}/${pkg_file}"
-    
-    if [ -f "${pkg_output}" ]; then
-        echo "✓ ${pkg_file} already cached"
-    else
-        echo "⬇ Downloading ${pkg_file}..."
-        download "${pkg_url}" "${pkg_output}"
-        echo "✓ Downloaded ${pkg_file}"
-    fi
-done
-
-echo ""
 echo "=== Cache Summary ==="
 echo "Python tarballs:"
 ls -lh "${CACHE_DIR}"/Python-*.tgz 2>/dev/null || echo "  No Python tarballs found"
 echo ""
-echo "OpenSSL and SQLite:"
-ls -lh "${CACHE_DIR}"/openssl-*.tar.gz "${CACHE_DIR}"/sqlite-*.tar.gz 2>/dev/null || echo "  No OpenSSL/SQLite tarballs found"
-echo ""
 echo "Net-SNMP tarballs:"
 ls -lh "${CACHE_DIR}"/net-snmp-*.tar.gz 2>/dev/null || echo "  No Net-SNMP tarballs found"
 echo ""
-echo "GoogleTest:"
-ls -lh "${CACHE_DIR}"/v*.tar.gz 2>/dev/null || echo "  No GoogleTest tarball found"
-echo ""
-echo "Archlinux packages:"
-ls -lh "${CACHE_DIR}"/*.pkg.tar.* 2>/dev/null || echo "  No Archlinux packages found"
-echo ""
 echo "Total cache size: $(du -sh "${CACHE_DIR}" | cut -f1)"
+
 echo ""
 echo "✓ Cache is ready!"

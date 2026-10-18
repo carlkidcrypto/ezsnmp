@@ -17,14 +17,14 @@ CONTAINER_WORK_DIR="/ezsnmp"
 if [ $# -eq 1 ] && [ "$1" == "--help" ]; then
 	echo "Usage: $0 [IMAGE_NAME1] [IMAGE_NAME2] ..."
 	echo ""
-	echo "  [IMAGE_NAMEx]: Optional. Specify one or more image tags (e.g., 'centos7_netsnmp_5.7 archlinux_netsnmp_5.7')"
+	echo "  [IMAGE_NAMEx]: Optional. Specify one or more image tags (e.g., 'almalinux10_netsnmp_5.9 fedora42_netsnmp_5.9')"
 	echo "                 to test only those distributions."
 	echo "                 If omitted, all distribution directories will be tested."
 	echo ""
 	echo "Examples:"
 	echo "  $0                                    # Test all distributions"
-	echo "  $0 centos7_netsnmp_5.7                # Test only CentOS 7"
-	echo "  $0 centos7_netsnmp_5.7 archlinux_netsnmp_5.7  # Test only net-snmp 5.7 containers"
+	echo "  $0 almalinux10_netsnmp_5.9            # Test only AlmaLinux 10"
+	echo "  $0 almalinux10_netsnmp_5.9 rockylinux9_netsnmp_5.9  # Test AlmaLinux 10 and Rocky Linux 9"
 	exit 0
 fi
 

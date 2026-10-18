@@ -7,16 +7,10 @@ Overview
 
 This project uses pre-built Docker images hosted on Docker Hub for running unit tests across various Linux distributions. This ensures a consistent and reproducible testing environment. The following distributions are supported:
 
-* **almalinux10** - AlmaLinux 10 Kitten (preview) with Python 3.10-3.14, g++ 14.x (3.10-3.11 from source)
-* **archlinux** - Arch Linux (latest) with Python 3.10-3.14, g++ 14.x (3.10-3.12 from source)
-* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x (3.10-3.12 from source)
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source (OpenSSL 1.1.1w built to enable SSL)
-* **centos8** - CentOS 8 (EOL) with gcc-toolset-11 (g++ 11.x), Python 3.10-3.14 all from source
+* **almalinux10_netsnmp_5.9** - AlmaLinux 10 Kitten with Python 3.10-3.14, g++ 14.x, net-snmp 5.9 (3.10-3.11, 3.14 from source)
 * **fedora42_netsnmp_5.9** - Fedora 42 with native GCC 14.x (g++ 14.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
-* **fedora42_netsnmp_5.8** - Fedora 42 with native GCC 14.x (g++ 14.x), net-snmp 5.8, Python 3.10-3.14 all from source
-* **fedora42_netsnmp_5.7** - Fedora 42 with native GCC 14.x (g++ 14.x), net-snmp 5.7.3 (OpenSSL 1.0.2u), Python 3.10-3.14 all from source
-* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14 (3.10, 3.13 from source)
-* **rockylinux9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), Python 3.10-3.14 all from source
+* **rockylinux9_netsnmp_5.9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
+
 
 All images support:
 
@@ -246,15 +240,7 @@ Runs Python tests across all distributions in parallel or a specific distributio
 The script creates a separate output directory for each distribution in the ``docker/`` directory. For example, after running all tests, you'll see:
 
 - ``test_outputs_almalinux10_netsnmp_5.9/``
-- ``test_outputs_archlinux_netsnmp_5.7/``
-- ``test_outputs_archlinux_netsnmp_5.8/``
-- ``test_outputs_archlinux_netsnmp_5.9/``
-- ``test_outputs_centos7_netsnmp_5.7/``
-- ``test_outputs_centos8_netsnmp_5.8/``
-- ``test_outputs_fedora42_netsnmp_5.7/``
-- ``test_outputs_fedora42_netsnmp_5.8/``
 - ``test_outputs_fedora42_netsnmp_5.9/``
-- ``test_outputs_rockylinux8_netsnmp_5.8/``
 - ``test_outputs_rockylinux9_netsnmp_5.9/``
 
 Each directory contains test results and outputs for all Python versions:
@@ -271,8 +257,8 @@ Runs C++ tests using Meson/Ninja and generates coverage reports.
   # Run C++ tests in all distributions
   ./run_cpp_tests_in_all_dockers.sh
 
-  # Test only net-snmp 5.7 containers (useful for iterative debugging)
-  ./run_cpp_tests_in_all_dockers.sh centos7_netsnmp_5.7 archlinux_netsnmp_5.7
+  # Test only a specific container (useful for iterative debugging)
+  ./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
 
   # Show help
   ./run_cpp_tests_in_all_dockers.sh --help
@@ -333,7 +319,7 @@ To check logs from a running container, use the helper script:
   ./check_snmpd_logs.sh
 
   # Check logs for a specific container
-  ./check_snmpd_logs.sh archlinux_netsnmp_5.7_test_container
+  ./check_snmpd_logs.sh almalinux10_netsnmp_5.9_test_container
 
 This script displays:
 

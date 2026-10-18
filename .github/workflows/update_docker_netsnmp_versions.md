@@ -72,8 +72,6 @@ with safe, track-aware rules.
   - By default, exclude pre-release tags and versions such as `.pre*`, `-rc*`, `-beta*`, `-alpha*` and release entries marked `prerelease=true`.
   - Only include pre-release channels when `workflow_dispatch` input `include_prerelease` is `true`.
    - Build a map such as:
-     - track `5.7` -> latest upstream `5.7.z`
-     - track `5.8` -> latest upstream `5.8.z`
      - track `5.9` -> latest upstream `5.9.z`
 
 3. Apply safe updates:
