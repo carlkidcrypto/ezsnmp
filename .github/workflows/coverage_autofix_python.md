@@ -58,7 +58,8 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 
 1. Use Codecov to identify coverage gaps:
    - Start with the pre-fetched Codecov data in `/tmp/gh-aw/agent/codecov/summary.md`
-     (see "Codecov Coverage Data" below). Use the `python` flag section; it lists every
+     (see "Codecov Coverage Data" below). Use the `Component python_code` section (Python
+     Code, combining the `python-native` and `python-docker` flags); it lists every
      Python file under `ezsnmp/` with missed lines and their line numbers
      (dashboard: https://app.codecov.io/gh/carlkidcrypto/ezsnmp).
    - The C++ extension is not built in this sandbox, so you cannot run the Python test
