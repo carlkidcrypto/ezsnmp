@@ -155,6 +155,12 @@ def test_parse_semver():
     assert parse_semver("v2.5.0a1") == (2, 5, 0, 0, "a1")
     assert parse_semver("1.0.0") == (1, 0, 0, 1, "")
     assert parse_semver("invalid-tag") is None
+    # CalVer test cases (SemVer-compatible YYYY.M.D and YYYY.M.DaN)
+    assert parse_semver("v2026.10.18") == (2026, 10, 18, 1, "")
+    assert parse_semver("v2026.10.18a0") == (2026, 10, 18, 0, "a0")
+    assert parse_semver("v2026.1.5") == (2026, 1, 5, 1, "")
+    assert parse_semver("2026.10.18") == (2026, 10, 18, 1, "")
+    assert parse_semver("2026.10.18rc1") == (2026, 10, 18, 0, "rc1")
 
 
 def test_determine_base_tag_priority_1_override():
@@ -197,6 +203,20 @@ def test_determine_base_tag_priority_4_semver_fallback():
     git_tags = {"v1.0.0", "v2.0.0", "v2.3.0", "v2.4.0", "v3.0.0"}
     base = determine_base_tag(current_rel, [current_rel], git_tags)
     assert base == "v2.3.0"
+
+
+def test_determine_base_tag_calver_fallback():
+    # Transition from legacy SemVer v2.5.0 to CalVer v2026.10.18
+    current_rel = {"tag_name": "v2026.10.18", "prerelease": False, "body": ""}
+    git_tags = {"v2.3.0", "v2.4.0", "v2.5.0", "v2026.10.18"}
+    base = determine_base_tag(current_rel, [current_rel], git_tags)
+    assert base == "v2.5.0"
+
+    # Multi-CalVer releases
+    current_rel_2 = {"tag_name": "v2026.10.18", "prerelease": False, "body": ""}
+    git_tags_2 = {"v2.5.0", "v2026.10.1", "v2026.10.18"}
+    base_2 = determine_base_tag(current_rel_2, [current_rel_2], git_tags_2)
+    assert base_2 == "v2026.10.1"
 
 
 def test_parse_existing_prs():
