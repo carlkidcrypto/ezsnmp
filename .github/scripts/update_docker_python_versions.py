@@ -50,7 +50,7 @@ def fetch_available_versions() -> list[str]:
         "Accept": "application/vnd.github+json",
         "User-Agent": "ezsnmp-update-docker-python-versions/1.0",
     }
-    if token := os.environ.get("GITHUB_TOKEN"):
+    if token := (os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")):
         headers["Authorization"] = f"Bearer {token}"
 
     while url:
