@@ -27,7 +27,7 @@ model: sonnet
 engine:
   id: copilot
 network:
-  allowed: [defaults, github, agy, python]
+  allowed: [defaults, github, python, api.github.com]
 tools:
   edit:
   bash: true
