@@ -6,6 +6,8 @@ concurrency:
 on:
   workflow_dispatch:
   schedule: weekly on saturday
+  skip-if-match:
+    query: 'is:pr is:open head:automation/update-docker-python-versions label:dependencies label:docker label:automated-pr'
 permissions:
   copilot-requests: write
   actions: read
@@ -25,7 +27,7 @@ model: sonnet
 engine:
   id: copilot
 network:
-  allowed: [defaults, python]
+  allowed: [defaults, github, agy, python]
 tools:
   edit:
   bash: true
