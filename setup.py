@@ -123,17 +123,14 @@ def resolve_snmp_source_path(version_str: str) -> str:
             )
         raise RuntimeError(
             f"Net-SNMP version {version_str} is no longer supported. "
-            "Please upgrade to Net-SNMP 5.7 or later."
+            "Please upgrade to Net-SNMP 5.9 or later."
         )
-    if version_str.startswith("5.7"):
-        return "ezsnmp/src/net-snmp-5.7-final-patched"
-    if version_str.startswith("5.8"):
-        return "ezsnmp/src/net-snmp-5.8-final-patched"
-    if version_str.startswith("5.9"):
-        return "ezsnmp/src/net-snmp-5.9-final-patched"
-    if version_str.startswith("5.10"):
-        return "ezsnmp/src/net-snmp-5.10-final-patched"
-    raise RuntimeError(f"Unsupported net-snmp version: {version_str}")
+    if version_str.startswith(("5.7", "5.8")):
+        raise RuntimeError(
+            f"Net-SNMP version {version_str} is no longer supported. "
+            "Please upgrade to Net-SNMP 5.9 or later."
+        )
+    return "ezsnmp/src"
 
 
 def build_extensions(cfg: dict):
