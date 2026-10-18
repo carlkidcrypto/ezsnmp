@@ -203,7 +203,7 @@ that requires it, so the same source compiles unmodified against every supported
 ``ezsnmp._datatypes``), not path-separator notation, since the latter produces an invalid exported
 ``PyInit_`` symbol name under MSVC.
 
-[BUILD-09] Standalone wheels shall be provided across platforms (Linux via auditwheel and Windows via delvewheel) with Net-SNMP 5.10 compiled from source and stripped of debug symbols, requiring no pre-installed Net-SNMP libraries on target user systems. The C++ operation sources shall reside directly in ``ezsnmp/src/``, while Net-SNMP 5.10 patches and patching scripts are maintained under ``ezsnmp/patches/`` for future version bumps.
+[BUILD-09] Standalone wheels shall be provided across platforms (Linux via auditwheel and Windows via delvewheel) with Net-SNMP 5.10 compiled from source and stripped of debug symbols, requiring no pre-installed Net-SNMP libraries on target user systems. The C++ operation sources shall reside in ``ezsnmp/src/net-snmp-5.10-final-patched/``, while Net-SNMP 5.10 patches and patching scripts are maintained under ``ezsnmp/patches/`` for future version bumps.
 
 [BUILD-10] The Windows Net-SNMP source build shall additionally patch ``include/net-
 snmp/library/lcd_time.h`` to add the ``NETSNMP_IMPORT`` decoration to the ``free_enginetime``

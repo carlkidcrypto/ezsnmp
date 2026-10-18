@@ -130,7 +130,7 @@ def resolve_snmp_source_path(version_str: str) -> str:
             f"Net-SNMP version {version_str} is no longer supported. "
             "Please upgrade to Net-SNMP 5.9 or later."
         )
-    return "ezsnmp/src"
+    return "ezsnmp/src/net-snmp-5.10-final-patched"
 
 
 def build_extensions(cfg: dict):
