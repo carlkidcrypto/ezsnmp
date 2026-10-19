@@ -79,3 +79,7 @@ integration_tests/test_results**/
 .claude/settings.local.json
 docker/TEST_SUMMARY*.md
 /.github/aw/logs
+
+# Dynamically extracted gh-aw inline skills
+/.github/skills/*
+!/.github/skills/agentic-workflows/

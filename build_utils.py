@@ -115,8 +115,8 @@ def get_homebrew_net_snmp_info():
         if not lines:
             return None
 
-        # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
-        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)*)/"
+        # Extract the upstream version, excluding Homebrew's optional revision suffix.
+        pattern = r"/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)*)(?:_\d+)?/"
         match = search(pattern, lines[0])
         if not match:
             return None

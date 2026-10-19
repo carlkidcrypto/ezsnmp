@@ -39,6 +39,7 @@ Select a version of the documentation to browse:
 .. VERSION_LIST_START
 
 * `Latest Alpha/Beta Version <./html/index.html>`_
+* `v2.5.0b0 <./html_v2.5.0b0/index.html>`_
 * `v2.5.0a2 <./html_v2.5.0a2/index.html>`_
 * `v2.5.0a1 <./html_v2.5.0a1/index.html>`_
 * `v2.5.0a0 <./html_v2.5.0a0/index.html>`_
