@@ -83,3 +83,10 @@ docker/TEST_SUMMARY*.md
 # Dynamically extracted gh-aw inline skills
 /.github/skills/*
 !/.github/skills/agentic-workflows/
+!/.github/skills/cpp-swig-development/
+!/.github/skills/cpp-testing/
+!/.github/skills/docker-test-environments/
+!/.github/skills/pull-request-guide/
+!/.github/skills/python-testing/
+!/.github/skills/release-management/
+!/.github/skills/sphinx-docs/
