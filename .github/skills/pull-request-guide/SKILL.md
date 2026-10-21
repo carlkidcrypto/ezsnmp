@@ -33,25 +33,25 @@ Use this skill when preparing code changes, running verification checks, staging
 
 ## 3. Pre-PR Verification Checklist
 
-Before pushing commits or creating a PR, run the following verification steps locally:
+Before pushing commits or creating a PR, activate your local Python virtual environment (e.g. `source .venv/bin/activate` or `./python3.12.venv/bin/activate`) and run the following verification steps:
 
 1. **Python Formatting**:
    ```bash
-   /home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/black --check .
+   black --check .
    ```
 2. **C++ Code Formatting**:
    ```bash
-   clang-format --dry-run --Werror ezsnmp/src/net-snmp-5.10-final-patched/*.cpp cpp_tests/*.cpp
+   clang-format --dry-run --Werror ezsnmp/src/*.cpp ezsnmp/src/net-snmp-*-final-patched/*.cpp cpp_tests/*.cpp
    ```
 3. **Documentation Zero-Warning Build**:
    ```bash
    cd sphinx_docs_build/landing
-   SPHINXBUILD=/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/sphinx-build make html SPHINXOPTS="-W"
+   make html SPHINXOPTS="-W"
    cd ../..
    ```
 4. **Python Unit Tests**:
    ```bash
-   /home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pytest python_tests/test_session_unit.py python_tests/test_exceptions.py
+   pytest python_tests/test_session_unit.py python_tests/test_exceptions.py
    ```
 5. **C++ Unit Tests** (if C++ or build files were modified):
    ```bash

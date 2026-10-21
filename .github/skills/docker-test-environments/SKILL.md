@@ -16,7 +16,7 @@ The `docker/` directory maintains reproducible test environments for various Lin
   - `archlinux_netsnmp_5.9` (Rolling release Arch Linux)
   - `fedora42_netsnmp_5.9` (Modern Fedora with bleeding-edge GCC)
   - `rockylinux9_netsnmp_5.9` (RHEL / Enterprise Linux 9 derivative)
-  - *(Legacy 5.7 and 5.8 containers are maintained during transition and slated for pruning/migration to 5.10)*
+  - *(Legacy 5.7 and 5.8 containers are maintained during transition; migration to 5.10 planned via issue #1388)*
 - **Docker Hub Repository**: `carlkidcrypto/ezsnmp_test_images`
 - **Compiler Requirements**: All containers must provide **g++ 9.5 or higher** supporting C++17.
 - **Python Version Matrix**: All containers must provide usable installations of **Python 3.10 through 3.14** (with associated development headers and isolated venvs).
@@ -25,27 +25,38 @@ The `docker/` directory maintains reproducible test environments for various Lin
 
 ## 2. Container Lifecycle & Execution Scripts
 
-All multi-container operations are orchestrated via bash scripts in `docker/`:
+All multi-container operations are orchestrated via bash scripts located inside `docker/`. Always change into the `docker/` directory before executing these scripts:
+
+```bash
+cd docker
+```
 
 ### Building and Publishing Images
 Builds container images, tags them incrementally (`MM-DD-YYYY.N` / `-latest`), and publishes them to Docker Hub:
 ```bash
-cd docker
 ./build_and_publish_images.sh
 ```
 
 ### Running Python Tests in All Containers
-Runs pytest across all published Docker containers, mounting the workspace and collecting individual JUnit/coverage outputs:
+Runs pytest across published Docker containers, mounting the workspace and collecting individual JUnit/coverage outputs:
 ```bash
-./docker/run_python_tests_in_all_dockers.sh
+# Run across all published containers
+./run_python_tests_in_all_dockers.sh
+
+# Run on a specific container
+./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
 ```
 - Tests run against each container's live Net-SNMP daemon launched via `docker/DockerEntry.sh`.
-- Test outputs are logged to `docker/test_outputs_<timestamp>/`.
+- Test outputs are logged to `test_outputs_<timestamp>/`.
 
 ### Running C++ Tests in All Containers
-Runs Google Test suites via Meson/Ninja inside all published containers:
+Runs Google Test suites via Meson/Ninja inside published containers:
 ```bash
-./docker/run_cpp_tests_in_all_dockers.sh
+# Run across all published containers
+./run_cpp_tests_in_all_dockers.sh
+
+# Run on a specific container
+./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
 ```
 - Meson builds the test suite in a containerized build directory.
 - Ninja executes tests and generates LCOV coverage data.
@@ -53,14 +64,14 @@ Runs Google Test suites via Meson/Ninja inside all published containers:
 ### Generating Consolidated Reports
 Generates Markdown and text summaries from container test runs:
 ```bash
-./docker/generate_test_reports.sh
+./generate_test_reports.sh
 ```
-- Summaries are placed in `docker/TEST_SUMMARY*.md`.
+- Summaries are placed in `TEST_SUMMARY*.md`.
 
 ### Diagnosing Daemon Failures
 If `snmpd` fails to start inside a container during tests, check logs using:
 ```bash
-./docker/check_snmpd_logs.sh <container_id_or_name>
+./check_snmpd_logs.sh <container_id_or_name>
 ```
 
 ---

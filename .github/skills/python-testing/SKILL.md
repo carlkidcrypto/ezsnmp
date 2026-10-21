@@ -9,13 +9,11 @@ Use this skill when developing, executing, or debugging Python unit tests and in
 
 ## 1. Environment & Prerequisites
 
-- **Shared Virtual Environment**: Use the project's shared virtual environment:
-  - Python binary: `/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/python3`
-  - Pytest binary: `/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pytest`
+- **Virtual Environment**: Use an activated Python virtual environment (`source .venv/bin/activate` or `./python3.12.venv/bin/activate` for local development).
 - **Supported Python Versions**: Python 3.10, 3.11, 3.12, 3.13, and 3.14.
 - **Dependencies**: Ensure test dependencies are installed:
   ```bash
-  /home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pip install -r python_tests/requirements.txt
+  pip install -r python_tests/requirements.txt
   ```
 
 ---
@@ -40,17 +38,17 @@ Many tests in `python_tests/` validate live SNMP operations against a local `snm
 ## 3. Running Tests
 
 ### A. Local Execution
-Run tests using the project virtual environment:
+Run tests using pytest in your active virtual environment:
 
 ```bash
 # Run a single test module
-/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pytest python_tests/test_session_unit.py
+pytest python_tests/test_session_unit.py
 
 # Run a specific test function
-/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pytest python_tests/test_session_unit.py -k "test_session_get"
+pytest python_tests/test_session_unit.py -k "test_session_get"
 
 # Run with verbose output and coverage
-/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pytest --cov=ezsnmp --cov-report=term-missing python_tests/
+pytest --cov=ezsnmp --cov-report=term-missing python_tests/
 ```
 
 ### B. Dockerized Multi-Distro Execution
@@ -58,11 +56,12 @@ To run Python tests across all supported Linux distributions (AlmaLinux 10, Arch
 
 ```bash
 cd docker
+
 # Run all distributions
 ./run_python_tests_in_all_dockers.sh
 
 # Run specific distribution
-./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
+./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
 ```
 
 ---
@@ -75,5 +74,5 @@ cd docker
 4. **Skip Rules**: Skipping tests via `@pytest.mark.skip` or `pytest.skip()` should be a last resort, used only when an OS or platform strictly lacks an underlying capability.
 5. **Formatting**: Always format test files with Black:
    ```bash
-   /home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/black python_tests/
+   black python_tests/
    ```

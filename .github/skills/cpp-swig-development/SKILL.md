@@ -21,7 +21,7 @@ ezsnmp/
     ├── helpers.cpp         # Mutex locking, GIL management, error helpers
     ├── sessionbase.cpp     # Base SNMP session management logic
     ├── thread_safety.cpp   # Multi-threading and synchronization primitives
-    └── net-snmp-5.10-final-patched/
+    └── net-snmp-5.9-final-patched/  # Primary Net-SNMP source directory (5.10 in progress)
         ├── snmpbulkget.cpp # SNMP GETBULK operation
         ├── snmpbulkwalk.cpp# SNMP BULKWALK operation
         ├── snmpget.cpp     # SNMP GET operation
@@ -49,7 +49,7 @@ ezsnmp/
 3. **Clang-Format**:
    Code must be formatted according to `.clang-format`:
    ```bash
-   clang-format -i ezsnmp/src/*.cpp ezsnmp/src/net-snmp-5.10-final-patched/*.cpp ezsnmp/include/*.h
+   clang-format -i ezsnmp/src/*.cpp ezsnmp/src/net-snmp-*-final-patched/*.cpp ezsnmp/include/*.h
    ```
 
 ---
@@ -72,15 +72,15 @@ ezsnmp/
 
 ## 4. Local Build & In-Place Verification
 
-To compile the C++ extension locally for testing:
+To compile the C++ extension locally for testing, ensure the Python virtual environment is activated (`source .venv/bin/activate` or `./python3.12.venv/bin/activate`):
 
 ```bash
 # Build C++ extension in-place within the repository
-/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/python setup.py build_ext --inplace
+python setup.py build_ext --inplace
 
 # Verify with Python test suite
-/home/carlkidcrypto/Github/ezsnmp/python3.12.venv/bin/pytest python_tests/
+pytest python_tests/
 
 # Verify with C++ unit tests
-cd cpp_tests && ninja -C build test
+cd cpp_tests && meson compile -C builddir && meson test -C builddir
 ```
