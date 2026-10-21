@@ -8,9 +8,14 @@ class SnmpSetTest : public ::testing::Test {
   protected:
    void SetUp() override {}
    void TearDown() override {
-      std::vector<std::string> reset_args = {
-          "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysLocation.0", "s",
-          "my original location"};
+      std::vector<std::string> reset_args = {"-v",
+                                             "2c",
+                                             "-c",
+                                             "public",
+                                             "localhost:11161",
+                                             "SNMPv2-MIB::sysLocation.0",
+                                             "s",
+                                             "my original location"};
       try {
          snmpset(reset_args, "testing_reset");
       } catch (...) {
