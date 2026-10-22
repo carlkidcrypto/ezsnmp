@@ -4,6 +4,9 @@
 #include <thread>
 #include <vector>
 
+#include <net-snmp/net-snmp-config.h>
+#include <net-snmp/net-snmp-includes.h>
+
 #include "thread_safety.h"
 
 class ThreadSafetyTest : public ::testing::Test {
