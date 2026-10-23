@@ -59,11 +59,13 @@ jobs:
           files: |
             .coveragerc
             .github/workflows/tests_native.yml
+            build_utils.py
             codecov.yml
             ezsnmp/*.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
             ezsnmp/**/*.py
+            pyproject.toml
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
