@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/verify_syntax.yml
   build_wheels:
     needs: verify-syntax
-    name: Build wheels on ${{ matrix.os }} (${{ matrix.arch }})
+    name: Build wheels on ${{ matrix.os }} (${{ matrix.label || matrix.arch }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -23,6 +23,12 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: x86_64
+            label: x86_64-manylinux
+            cibw-build: "*-manylinux*"
+          - os: ubuntu-latest
+            arch: x86_64
+            label: x86_64-musllinux
+            cibw-build: "*-musllinux*"
           - os: macos-latest
             arch: arm64
           - os: windows-latest
@@ -41,6 +47,8 @@ jobs:
           os: ${{ matrix.os }}
           arch: ${{ matrix.arch }}
           job-index: ${{ strategy.job-index }}
+          cibw-build: ${{ matrix.cibw-build || '*' }}
+          label: ${{ matrix.label || matrix.arch }}
 
   build-n-publish-pypi:
     name: Build and Publish To PyPi

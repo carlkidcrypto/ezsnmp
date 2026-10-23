@@ -11,6 +11,14 @@ inputs:
   job-index:
     description: Matrix job index for unique artifact naming
     required: true
+  cibw-build:
+    description: Optional CIBW_BUILD selector pattern (e.g. *-manylinux*, *-musllinux*)
+    required: false
+    default: "*"
+  label:
+    description: Optional matrix label for distinct cache keys (defaults to arch)
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -22,6 +30,23 @@ runs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+
+    - name: Cache cibuildwheel downloads and environments
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ runner.temp }}/cibw-cache
+        key: ${{ runner.os }}-cibw-cache-${{ inputs.label || inputs.arch }}-${{ hashFiles('pyproject.toml', 'requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cibw-cache-${{ inputs.label || inputs.arch }}-
+
+    - name: Cache Python-independent C++ objects
+      if: runner.os != 'Linux'
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ runner.temp }}/ezsnmp-obj-cache
+        key: ${{ runner.os }}-obj-cache-${{ inputs.arch }}-${{ hashFiles('ezsnmp/include/**', 'ezsnmp/src/**/*.cpp', 'setup.py', 'build_utils.py') }}
+        restore-keys: |
+          ${{ runner.os }}-obj-cache-${{ inputs.arch }}-
 
     - name: Cache vcpkg installed
       if: runner.os == 'Windows' && (inputs.arch == 'x86' || inputs.arch == 'ARM64')
@@ -35,7 +60,7 @@ runs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: C:\ezsnmp-netsnmp-dist
-        key: ${{ runner.os }}-netsnmp-5.9.4-${{ inputs.arch }}-${{ hashFiles('.github/actions/prepare-windows-netsnmp/action.yml') }}
+        key: ${{ runner.os }}-netsnmp-5.10.pre2-${{ inputs.arch }}-${{ hashFiles('.github/actions/prepare-windows-netsnmp/action.yml') }}
 
     - name: Set up Python 3.11
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -55,6 +80,10 @@ runs:
 
     - name: Build wheels using cibuildwheel
       uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
+      env:
+        CIBW_BUILD: ${{ inputs.cibw-build }}
+        CIBW_CACHE_PATH: ${{ runner.temp }}/cibw-cache
+        EZSNMP_OBJECT_CACHE_DIR: ${{ runner.temp }}/ezsnmp-obj-cache
       with:
         linux: python -m cibuildwheel --output-dir wheelhouse --platform linux;
         macos: |
