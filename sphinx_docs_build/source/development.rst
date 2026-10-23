@@ -71,15 +71,6 @@ Step 6: Run it in python3
     >>> retval = ezsnmp.snmpwalk(args)
     >>> print(retval)
 
-Making The Patch Files
-----------------------
-
-Within the patches directory run the following command.
-
-.. code-block:: bash
-
-    diff -Naurw ~/Downloads/net-snmp-master/apps/snmpwalk.c ../src/snmpwalk.cpp > snmpwalk.patch
-
 Running Tests
 -------------
 
@@ -145,16 +136,9 @@ Running Tests with Docker
 
 EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
 
-* **almalinux10** - AlmaLinux 10 with Python 3.10-3.14, g++ 14.x
-* **archlinux** - Arch Linux (latest) with Python 3.10-3.14, g++ 14.x
-* **archlinux_netsnmp_5.8** - Arch Linux with net-snmp 5.8 for compatibility testing, g++ 14.x
-* **centos7** - CentOS 7 with devtoolset-11 (g++ 11.2.1), Python 3.10-3.14 all from source
-* **centos8** - CentOS 8 (EOL) with gcc-toolset-11 (g++ 11.x), Python 3.10-3.14 all from source
+* **almalinux10_netsnmp_5.9** - AlmaLinux 10 with Python 3.10-3.14, g++ 14.x, net-snmp 5.9
 * **fedora42_netsnmp_5.9** - Fedora 42 with GCC 14.x, net-snmp 5.9.5.2, Python 3.10-3.14 all from source
-* **fedora42_netsnmp_5.8** - Fedora 42 with GCC 14.x, net-snmp 5.8, Python 3.10-3.14 all from source
-* **fedora42_netsnmp_5.7** - Fedora 42 with GCC 14.x, net-snmp 5.7.3, Python 3.10-3.14 all from source
-* **rockylinux8** - Rocky Linux 8 with gcc-toolset-11 (g++ 11.3.1), Python 3.10-3.14
-* **rockylinux9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), Python 3.10-3.14 all from source
+* **rockylinux9_netsnmp_5.9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
 
 Docker Python Tests
 ~~~~~~~~~~~~~~~~~~~
@@ -202,13 +186,10 @@ To run C++ tests in Docker:
     ./run_cpp_tests_in_all_dockers.sh
 
     # Run C++ tests in a specific distribution
-    ./run_cpp_tests_in_all_dockers.sh rockylinux8
+    ./run_cpp_tests_in_all_dockers.sh rockylinux9_netsnmp_5.9
 
     # Run C++ tests in multiple specific distributions
-    ./run_cpp_tests_in_all_dockers.sh rockylinux8 rockylinux9
-
-    # Test only net-snmp 5.7 containers (useful for iterative debugging)
-    ./run_cpp_tests_in_all_dockers.sh fedora42_netsnmp_5.7
+    ./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9 rockylinux9_netsnmp_5.9
 
     # Show help and usage examples
     ./run_cpp_tests_in_all_dockers.sh --help
