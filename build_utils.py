@@ -6,12 +6,147 @@ inline in setup.py) avoids the need for tests to load setup.py via importlib,
 which can trigger packaging-time side effects.
 """
 
+import hashlib
+import json
 import os
 from pathlib import Path
 from re import search
 from shlex import split as s_split
+from shutil import which
 from subprocess import check_output, CalledProcessError, DEVNULL
 from sys import argv, platform
+
+_default_check_output = check_output
+
+
+def _command_available(binary_name):
+    """Return True when *binary_name* is on PATH or ``check_output`` is patched in tests."""
+    if check_output is not _default_check_output:
+        return True
+    return which(binary_name) is not None
+
+
+# ---------------------------------------------------------------------------
+# Parallel & incremental build helpers
+# ---------------------------------------------------------------------------
+
+
+def resolve_build_jobs(explicit_jobs=None, cpu_count=None):
+    """Resolve the number of worker threads to use for C++/SWIG compilation.
+
+    Precedence:
+    1. ``EZSNMP_BUILD_JOBS`` environment variable (positive integer or ``"auto"``).
+    2. *explicit_jobs* from ``build_ext --parallel`` / ``-j`` (``True`` -> ``cpus - 1``).
+    3. Default: ``max(1, cpus - 1)`` so builds leave one core free on local and CI hosts.
+    """
+    cpus = cpu_count if cpu_count is not None else (os.cpu_count() or 1)
+    default_jobs = max(1, cpus - 1)
+
+    raw_env = os.environ.get("EZSNMP_BUILD_JOBS")
+    if raw_env is not None and raw_env.strip():
+        cleaned = raw_env.strip().lower()
+        if cleaned == "auto":
+            return default_jobs
+        try:
+            parsed = int(cleaned)
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid EZSNMP_BUILD_JOBS={raw_env!r}; expected a positive integer or 'auto'."
+            ) from exc
+        if parsed < 1:
+            raise ValueError(
+                f"Invalid EZSNMP_BUILD_JOBS={raw_env!r}; value must be >= 1."
+            )
+        return parsed
+
+    if explicit_jobs is True:
+        return default_jobs
+    if explicit_jobs not in (None, False):
+        parsed = int(explicit_jobs)
+        if parsed >= 1:
+            return parsed
+
+    return default_jobs
+
+
+def is_up_to_date(outputs, inputs):
+    """Return True when all *outputs* exist and are strictly newer than all *inputs*."""
+    if not outputs:
+        return False
+    try:
+        output_mtimes = [
+            os.path.getmtime(out) for out in outputs if os.path.isfile(out)
+        ]
+        if len(output_mtimes) != len(outputs):
+            return False
+        if not inputs:
+            return True
+        input_mtimes = [os.path.getmtime(inp) for inp in inputs if os.path.isfile(inp)]
+        if len(input_mtimes) != len(inputs):
+            return False
+        return min(output_mtimes) > max(input_mtimes)
+    except OSError:
+        return False
+
+
+def collect_files_with_suffixes(directories, suffixes):
+    """Collect sorted file paths matching *suffixes* recursively under *directories*."""
+    collected = []
+    for directory in directories:
+        root_path = Path(directory)
+        if not root_path.is_dir():
+            continue
+        for candidate in root_path.rglob("*"):
+            if candidate.is_file() and candidate.suffix in suffixes:
+                collected.append(str(candidate))
+    return sorted(set(collected))
+
+
+def is_python_independent_source(src_path):
+    """Return True for pure C++ sources that do not include Python headers (non-SWIG)."""
+    return not os.path.basename(src_path).startswith("ezsnmp_")
+
+
+def _hash_file_sha256(file_path):
+    hasher = hashlib.sha256()
+    with open(file_path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def compute_object_cache_key(
+    src_path,
+    header_files,
+    compiler_identity,
+    macros,
+    non_python_incdirs,
+    extra_args,
+    debug,
+    plat_name,
+):
+    """Compute a deterministic SHA-256 cache key for a Python-independent C++ object."""
+    payload = {
+        "plat_name": plat_name or platform,
+        "compiler_identity": compiler_identity,
+        "macros": [list(item) for item in (macros or [])],
+        "non_python_incdirs": list(non_python_incdirs or []),
+        "extra_args": list(extra_args or []),
+        "debug": bool(debug),
+        "src_path": os.path.normpath(src_path).replace("\\", "/"),
+        "src_sha256": _hash_file_sha256(src_path),
+        "headers": [
+            [
+                os.path.normpath(hdr).replace("\\", "/"),
+                _hash_file_sha256(hdr),
+            ]
+            for hdr in sorted(header_files)
+            if os.path.isfile(hdr)
+        ],
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
 
 # ---------------------------------------------------------------------------
 # macOS package-manager helpers
@@ -25,8 +160,12 @@ def is_macports_installed():
     :return: The MacPorts version if installed, ``""`` otherwise.
     :rtype: str
     """
+    if not _command_available("port"):
+        return ""
     try:
-        version_output = check_output("port version", shell=True).decode()
+        version_output = check_output(
+            "port version", shell=True, stderr=DEVNULL
+        ).decode()
         match = search(r"Version:\s+(\d+(?:\.\d+)*)", version_output)
         if match:
             return match.group(1)
@@ -43,8 +182,12 @@ def is_net_snmp_installed_macports():
     :return: The net-snmp version if installed, ``""`` otherwise.
     :rtype: str
     """
+    if not _command_available("port"):
+        return ""
     try:
-        macports_output = check_output("port installed net-snmp", shell=True).decode()
+        macports_output = check_output(
+            "port installed net-snmp", shell=True, stderr=DEVNULL
+        ).decode()
         pattern = r"net-snmp @(\d+(?:\.\d+)*[_\-+a-zA-Z0-9]*) \(active\)"
         match = search(pattern, macports_output)
         if match:
@@ -82,8 +225,12 @@ def get_homebrew_info():
     :return: Homebrew version, or ``None`` if Homebrew is not installed.
     :rtype: str or None
     """
+    if not _command_available("brew"):
+        return None
     try:
-        homebrew_version_output = check_output("brew --version", shell=True).decode()
+        homebrew_version_output = check_output(
+            "brew --version", shell=True, stderr=DEVNULL
+        ).decode()
         match = search(r"Homebrew (\d+\.\d+\.\d+)", homebrew_version_output)
         if match:
             return match.group(1)
@@ -93,7 +240,7 @@ def get_homebrew_info():
         return None
 
 
-def get_homebrew_net_snmp_info():
+def get_homebrew_net_snmp_info(homebrew_version=None):
     """
     Retrieves net-snmp and its OpenSSL dependency information from Homebrew.
 
@@ -102,7 +249,8 @@ def get_homebrew_net_snmp_info():
         ``None`` otherwise (including when Homebrew is not installed).
     :rtype: tuple or None
     """
-    homebrew_version = get_homebrew_info()
+    if homebrew_version is None:
+        homebrew_version = get_homebrew_info()
     if not homebrew_version:
         return None
 
@@ -363,7 +511,9 @@ def gather_build_configuration():
     for arg in argv:
         if arg.startswith("--debug"):
             compile_args.extend(
-                ["/W3", "/Od", "/Zi"] if platform == "win32" else ["-Wall", "-O0", "-g"]
+                ["/W3", "/Od", "/Zi", "/FS"]
+                if platform == "win32"
+                else ["-Wall", "-O0", "-g"]
             )
         elif arg.startswith("--basedir="):
             basedir = arg.split("=", 1)[1]
@@ -435,7 +585,10 @@ def gather_build_configuration():
         libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag.startswith("-L")]
         incdirs = ["ezsnmp/include/"]
 
-        homebrew_info = get_homebrew_net_snmp_info()
+        homebrew_version = get_homebrew_info()
+        homebrew_info = (
+            get_homebrew_net_snmp_info(homebrew_version) if homebrew_version else None
+        )
         if homebrew_info:
             (
                 homebrew_version,
@@ -449,7 +602,6 @@ def gather_build_configuration():
             if homebrew_netsnmp_version:
                 system_netsnmp_version = homebrew_netsnmp_version
         else:
-            homebrew_version = get_homebrew_info()
             netsnmp_incdir = None
             for directory in libdirs:
                 if "net-snmp" in directory:
@@ -460,8 +612,9 @@ def gather_build_configuration():
                     netsnmp_incdir = "/usr/include/net-snmp"
                     incdirs.append(netsnmp_incdir)
                     break
-        macports_version = is_macports_installed()
-        macports_netsnmp_version = is_net_snmp_installed_macports()
+        if platform == "darwin":
+            macports_version = is_macports_installed()
+            macports_netsnmp_version = is_net_snmp_installed_macports()
         if (macports_version and macports_netsnmp_version) or (
             platform == "darwin" and net_snmp_cmd.startswith("/opt/local")
         ):
