@@ -96,6 +96,8 @@ jobs:
         with:
           path: cpp_tests/build
           key: cpp-docker-build-${{ matrix.distro }}-${{ hashFiles('ezsnmp/**/*.cpp', 'ezsnmp/**/*.h', 'cpp_tests/**', 'docker/**') }}
+          restore-keys: |
+            cpp-docker-build-${{ matrix.distro }}-
 
       - name: Run unit tests inside the Docker container (${{ matrix.distro }})
         run: |

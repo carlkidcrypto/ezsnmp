@@ -58,12 +58,14 @@ jobs:
           files: |
             .coveragerc
             .github/workflows/tests_docker_python_tests.yml
+            build_utils.py
             codecov.yml
             docker/**
             ezsnmp/*.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
             ezsnmp/**/*.py
+            pyproject.toml
             python_tests/**
             setup.cfg
             setup.py
@@ -100,7 +102,7 @@ jobs:
           - test_group: snmp_ops
             test_files: "python_tests/test_snmpbulkget.py python_tests/test_snmpbulkwalk.py python_tests/test_snmpget.py python_tests/test_snmpgetnext.py python_tests/test_snmpset.py python_tests/test_snmptrap.py python_tests/test_snmpwalk.py python_tests/test_multithreading_v3.py"
           - test_group: core_misc
-            test_files: "python_tests/test_netsnmp_unit.py python_tests/test_exceptions.py python_tests/test_getters.py python_tests/test_helpers.py python_tests/test_datatypes.py python_tests/test_logging.py python_tests/test_auth_priv_v3.py python_tests/test_cache_v3.py python_tests/test_normalize_coverage_paths.py python_tests/test_setup_macos.py python_tests/test_setup_windows.py"
+            test_files: "python_tests/test_netsnmp_unit.py python_tests/test_exceptions.py python_tests/test_getters.py python_tests/test_helpers.py python_tests/test_datatypes.py python_tests/test_logging.py python_tests/test_auth_priv_v3.py python_tests/test_cache_v3.py python_tests/test_normalize_coverage_paths.py python_tests/test_setup_macos.py python_tests/test_setup_parallel.py python_tests/test_setup_windows.py"
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -159,18 +161,27 @@ jobs:
           # Save or refresh the tar to ensure cache captures it
           docker save "$IMAGE" -o "$TAR_PATH"
 
-      - name: Set up pip cache directory
+      - name: Set up pip and wheel cache directories
         run: |
           mkdir -p ${{ runner.temp }}/pip-cache-${{ matrix.python }}
           chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          mkdir -p ${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}
+          chmod 777 ${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}
 
       - name: Cache pip packages for tox (Docker)
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
-          key: pip-docker-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
+          key: pip-docker-${{ matrix.distribution }}-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
           restore-keys: |
+            pip-docker-${{ matrix.distribution }}-${{ matrix.python }}-
             pip-docker-${{ matrix.python }}-
+
+      - name: Cache built ezsnmp wheel (Docker)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}
+          key: ezsnmp-docker-wheel-${{ matrix.distribution }}-${{ matrix.python }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
 
       - name: Start container and SNMP daemon
         run: |
@@ -187,6 +198,8 @@ jobs:
           if ! docker run -d \
             --name "$CONTAINER_NAME" \
             -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+            -v "${{ runner.temp }}/pip-cache-${{ matrix.python }}:/pip-cache" \
+            -v "${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}:/wheel-cache" \
             "$IMAGE" \
             /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
               echo "ERROR: Docker run failed for $IMAGE" >&2
@@ -200,7 +213,7 @@ jobs:
           # Build absolute paths on the runner to avoid complex quoting inside docker exec
           TEST_FILES_ABS=$(echo "${{ matrix.test_files }}" | tr ' ' '\n' | sed 's|^|/ezsnmp/|' | tr '\n' ' ')
           echo ">>> Executing pytest (${{ matrix.test_group }}) inside container: $CONTAINER_NAME"
-          docker exec -t -e TEST_FILES_ABS="$TEST_FILES_ABS" "$CONTAINER_NAME" bash -c '
+          docker exec -t -e TEST_FILES_ABS="$TEST_FILES_ABS" -e PIP_CACHE_DIR=/pip-cache "$CONTAINER_NAME" bash -c '
             set -e
             export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
             export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-};
@@ -213,7 +226,26 @@ jobs:
             echo "    - Installing test dependencies";
             "$VENV_DIR/bin/pip" install --quiet -r /ezsnmp/python_tests/requirements.txt;
             echo "    - Installing ezsnmp";
-            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet . && mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
+            INSTALLED=0;
+            if compgen -G "/wheel-cache/ezsnmp-*.whl" > /dev/null; then
+              echo "    - Found cached wheel in /wheel-cache; installing...";
+              if "$VENV_DIR/bin/pip" install --quiet --no-deps /wheel-cache/ezsnmp-*.whl && \
+                 (cd /tmp && "$VENV_DIR/bin/python" -c "import ezsnmp" >/dev/null 2>&1); then
+                INSTALLED=1;
+              else
+                echo "    - WARNING: Cached wheel failed verification; rebuilding from source...";
+                "$VENV_DIR/bin/pip" uninstall -y ezsnmp >/dev/null 2>&1 || true;
+                rm -rf /wheel-cache/*;
+              fi;
+            fi;
+            if [ "$INSTALLED" -eq 0 ]; then
+              mkdir -p /wheel-cache;
+              cd /ezsnmp && "$VENV_DIR/bin/pip" wheel . --no-deps -w /wheel-cache --quiet;
+              "$VENV_DIR/bin/pip" install --quiet --no-deps /wheel-cache/ezsnmp-*.whl;
+              rm -rf /ezsnmp/build /ezsnmp/ezsnmp.egg-info;
+            fi;
+            chmod -R a+rwX /pip-cache /wheel-cache 2>/dev/null || true;
+            mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
             echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
             if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
               -o junit_family=legacy \
