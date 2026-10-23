@@ -4,6 +4,9 @@
 #include <thread>
 #include <vector>
 
+#include <net-snmp/net-snmp-config.h>
+#include <net-snmp/net-snmp-includes.h>
+
 #include "thread_safety.h"
 
 class ThreadSafetyTest : public ::testing::Test {
@@ -118,4 +121,20 @@ TEST_F(ThreadSafetyTest, TestFormattingScopeRAII) {
       EXPECT_TRUE(get_thread_formatting_options().print_full_oids);
    }
    EXPECT_FALSE(get_thread_formatting_options().is_set);
+}
+TEST_F(ThreadSafetyTest, TestApplyFormattingFullOidsAndHexStrings) {
+   SessionFormattingOptions opts;
+   opts.is_set = true;
+   opts.print_full_oids = true;
+   opts.print_hex_strings = true;
+   set_thread_formatting_options(opts);
+
+   apply_current_formatting_options();
+
+   EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT),
+             NETSNMP_OID_OUTPUT_FULL);
+   EXPECT_EQ(netsnmp_ds_get_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT),
+             NETSNMP_STRING_OUTPUT_HEX);
+
+   clear_thread_formatting_options();
 }
