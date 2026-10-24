@@ -2,11 +2,11 @@
 FROM centos:7
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.7
-ARG PYTHON_MIN_2_VERSION=3.13.15
-ARG PYTHON_MIN_1_VERSION=3.12.14
-ARG PYTHON_MIN_0_VERSION=3.11.16
-ARG PYTHON_MIN_VERSION=3.10.21
+ARG PYTHON_MAX_VERSION=3.14.9
+ARG PYTHON_MIN_2_VERSION=3.13.17
+ARG PYTHON_MIN_1_VERSION=3.12.15
+ARG PYTHON_MIN_0_VERSION=3.11.17
+ARG PYTHON_MIN_VERSION=3.10.22
 
 # Fix for CentOS 7 EOL and install EPEL/SCL in one layer
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
@@ -53,13 +53,13 @@ RUN cd /tmp/build && \
     echo "/usr/local/openssl/lib" > /etc/ld.so.conf.d/openssl_local.conf && ldconfig
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.21.tgz /tmp/
-COPY docker/cache/Python-3.11.16.tgz /tmp/
-COPY docker/cache/Python-3.12.14.tgz /tmp/
-COPY docker/cache/Python-3.13.15.tgz /tmp/
-COPY docker/cache/Python-3.14.7.tgz /tmp/
+COPY docker/cache/Python-3.10.22.tgz /tmp/
+COPY docker/cache/Python-3.11.17.tgz /tmp/
+COPY docker/cache/Python-3.12.15.tgz /tmp/
+COPY docker/cache/Python-3.13.17.tgz /tmp/
+COPY docker/cache/Python-3.14.9.tgz /tmp/
 
-# Build Python 3.10.21, 3.11.16, 3.12.14, 3.13.15, 3.14.7 from source with OpenSSL 1.1.1w
+# Build Python 3.10.22, 3.11.17, 3.12.15, 3.13.17, 3.14.9 from source with OpenSSL 1.1.1w
 # Note: --enable-optimizations disabled due to coverage profiling conflicts
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
