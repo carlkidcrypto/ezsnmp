@@ -83,7 +83,8 @@ jobs:
       - name: Build Python Extension
         if: matrix.language == 'c++'
         run: |
-          EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config pip install .
+          python3 -m pip install --disable-pip-version-check --no-deps --only-binary=:all: setuptools==84.0.0 wheel==0.48.0 swig==4.5.1
+          EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config python3 setup.py build_ext --inplace
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4

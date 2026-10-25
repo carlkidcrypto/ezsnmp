@@ -89,7 +89,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader;
+                 sudo apt-get install -y snmpd libperl-dev snmp-mibs-downloader;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -97,6 +97,9 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
+      - name: Install Net-SNMP 5.10
+        run: sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -135,7 +138,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .wheel-cache
-          key: ezsnmp-wheel-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+          key: ezsnmp-wheel-netsnmp-5.10-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
 
       - name: Build or install cached ezsnmp wheel
         run: |
@@ -160,7 +163,7 @@ jobs:
           if [ "$INSTALLED" -eq 0 ]; then
             echo "Building wheel from source..."
             mkdir -p .wheel-cache
-            python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
+            EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
             python3 -m pip install .wheel-cache/ezsnmp-*.whl
             (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
           fi
