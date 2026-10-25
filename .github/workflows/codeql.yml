@@ -61,10 +61,6 @@ jobs:
         language: [ 'c++', 'python' ]
 
     steps:
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # master
-
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
@@ -76,9 +72,7 @@ jobs:
       - name: Install Linux Dependencies
         if: matrix.language == 'c++'
         run: |
-          brew update;
-          brew install net-snmp;
-          brew install openssl@3;
+          sudo ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python 3.10
         if: matrix.language == 'c++'
@@ -89,7 +83,7 @@ jobs:
       - name: Build Python Extension
         if: matrix.language == 'c++'
         run: |
-          pip install .
+          EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config pip install .
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4
