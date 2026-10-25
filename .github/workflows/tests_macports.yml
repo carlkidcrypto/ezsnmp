@@ -59,6 +59,7 @@ jobs:
         with:
           files: |
             .github/workflows/tests_macports.yml
+            build_utils.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
             python_tests/*.conf
@@ -70,7 +71,7 @@ jobs:
   build-and-test:
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.13"
     if: needs.check-source-changes.outputs.run_job == 'true'
