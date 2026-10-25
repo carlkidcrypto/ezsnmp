@@ -32,7 +32,7 @@ model: sonnet
 engine:
   id: copilot
 network:
-  allowed: [defaults, containers, dev-tools, python]
+  allowed: [defaults, containers, dev-tools, python, api.github.com]
 tools:
   edit:
   bash: true
@@ -53,6 +53,7 @@ propose and implement minimal, safe fixes that improve coverage and reliability.
 - **Allowed file modification paths**: Author or modify files in `cpp_tests/**` (e.g. `cpp_tests/test_*.cpp`, `cpp_tests/meson.build`), `ezsnmp/src/**`, and reusable analysis scripts under `.github/scripts/`.
 - **Reusable scripts and tools**: You may create or improve reusable analysis scripts under `.github/scripts/` (e.g. `analyze_cpp_coverage_gaps.py`) to identify coverage gaps so that the agent and workflow get smarter over time.
 - **Prohibited paths**: NEVER author, modify, or commit workflow files in `.github/workflows/**`, workflow lock files, root configuration files (`pyproject.toml`, `setup.py`), or repository manifests.
+- **Git staging restrictions**: When staging changes, explicitly stage only the specific test, source, or script files modified (e.g. `git add cpp_tests/<target_file>.cpp`). NEVER run blanket staging commands such as `git add -A` or `git add .`, which can accidentally stage restored inline skills or temporary sandbox files outside `allowed-files`.
 - Do not open a new pull request if an open automation PR already exists for
   branch `automation/coverage-autofix-cpp`.
 - If no meaningful change is needed, make no file edits and end cleanly.
@@ -128,6 +129,7 @@ When changes exist, create exactly one PR using this fixed branch name:
   - A note that coverage verification must be performed by the reviewer via Codecov/CI.
   - Any limitations or follow-up recommendations
 - Labels (`automated-pr`, `coverage`, `tests`, `cpp`) are attached automatically by `create-pull-request`; do not make separate labeling calls.
+- When committing changes to the branch, explicitly run `git add <modified_file1> <modified_file2>`. NEVER use `git add -A` or `git add .`.
 
 ### Human Verification Task
 

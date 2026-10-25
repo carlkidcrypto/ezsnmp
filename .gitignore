@@ -79,3 +79,14 @@ integration_tests/test_results**/
 .claude/settings.local.json
 docker/TEST_SUMMARY*.md
 /.github/aw/logs
+
+# Dynamically extracted gh-aw inline skills
+/.github/skills/*
+!/.github/skills/agentic-workflows/
+!/.github/skills/cpp-swig-development/
+!/.github/skills/cpp-testing/
+!/.github/skills/docker-test-environments/
+!/.github/skills/pull-request-guide/
+!/.github/skills/python-testing/
+!/.github/skills/release-management/
+!/.github/skills/sphinx-docs/

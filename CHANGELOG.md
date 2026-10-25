@@ -1,7 +1,95 @@
-Last Updated: 2026-10-11 22:12:51 UTC
+Last Updated: 2026-10-25 02:57:46 UTC
 
 # Changelog
 
+
+<a name="V2.5.0"></a>
+## [V2.5.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.5.0b0...V2.5.0) (2026-10-23)
+
+
+### Changes
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2.5.0b0 ([#1406](https://github.com/carlkidcrypto/ezsnmp/issues/1406))
+
+
+#### Improve
+
+- Improve exception docstrings ([#1401](https://github.com/carlkidcrypto/ezsnmp/issues/1401))
+
+
+#### Maintenance
+
+- chore: bump version to 2.5.0 ([#1411](https://github.com/carlkidcrypto/ezsnmp/issues/1411))
+
+- chore: update Homebrew formula for v2.5.0b0 ([#1405](https://github.com/carlkidcrypto/ezsnmp/issues/1405))
+
+
+
+
+
+
+
+
+
+
+---
+
+<a name="v2.5.0b0"></a>
+## [v2.5.0b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.5.0a2...v2.5.0b0) (2026-10-18)
+
+
+### Changes
+
+#### Bug Fixes
+
+- Fix macOS wheel OpenSSL discovery for revisioned Homebrew Net-SNMP ([#1402](https://github.com/carlkidcrypto/ezsnmp/issues/1402))
+
+
+#### Continuous Integration
+
+- ci: skip heavy CI for gh-aw/agent-tooling-only changes ([#1384](https://github.com/carlkidcrypto/ezsnmp/issues/1384))
+
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2.5.0a2 ([#1371](https://github.com/carlkidcrypto/ezsnmp/issues/1371))
+
+
+#### Eliminate
+
+- Eliminate conflicting SWIG build requirements and prevent dependency drift ([#1389](https://github.com/carlkidcrypto/ezsnmp/issues/1389))
+
+
+#### Features
+
+- feat: add standardized release_tools for version bumping and verification ([#1397](https://github.com/carlkidcrypto/ezsnmp/issues/1397))
+
+- feat: enhance documentation SEO with metadata, OpenGraph, JSON-LD, and overview ([#1373](https://github.com/carlkidcrypto/ezsnmp/issues/1373))
+
+
+#### Features
+
+- Add tests for print_hex_strings setter and get_next error path ([#1385](https://github.com/carlkidcrypto/ezsnmp/issues/1385))
+
+
+#### Maintenance
+
+- chore: bump version to 2.5.0b0 ([#1395](https://github.com/carlkidcrypto/ezsnmp/issues/1395))
+
+- chore: update Homebrew formula for v2.5.0a2 ([#1370](https://github.com/carlkidcrypto/ezsnmp/issues/1370))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2.5.0a2"></a>
 ## [v2.5.0a2](https://github.com/carlkidcrypto/ezsnmp/compare/v2.5.0a1...v2.5.0a2) (2026-10-10)

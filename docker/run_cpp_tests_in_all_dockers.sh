@@ -154,7 +154,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  ninja -C build/ -j \"\$BUILD_JOBS\";
 		fi;
 		TEST_EXIT_CODE=0
-		meson test -C build/ --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
+		meson test -C build/ --num-processes 1 --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
 		if [ -f build/meson-logs/testlog.junit.xml ]; then
 		  cp build/meson-logs/testlog.junit.xml test-results.xml;
 		fi;

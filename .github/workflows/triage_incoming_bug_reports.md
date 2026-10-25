@@ -9,6 +9,7 @@ permissions:
   actions: read
   contents: read
   issues: read
+  pull-requests: read
   copilot-requests: write
 safe-outputs:
   noop:
@@ -28,9 +29,12 @@ model: sonnet
 engine:
   id: copilot
 network:
-  allowed: [defaults, github]
+  allowed: [defaults, github, api.github.com]
 tools:
-  bash: true
+  bash: false
+  cli-proxy: false
+  github:
+    min-integrity: none
 ---
 
 # Bug Report Intake Triage
