@@ -28,8 +28,9 @@ max-ai-credits: 25
 model: sonnet
 engine:
   id: copilot
+  args: ["--allow-all-tools"]
 network:
-  allowed: [defaults, github, github.com, releaseassets.githubusercontent.com]
+  allowed: [defaults, github, go, api.github.com]
 tools:
   bash: true
 ---

@@ -54,6 +54,8 @@ class NoSuchNameError(GenericError):
 class NoSuchObjectError(GenericError):
     """Exception raised when an SNMP operation encounters a "No Such Object" error.
 
+    This indicates that the requested object does not exist in the agent's MIB view.
+
     :param message: Explanation of the error.
     :type message: str
     """
@@ -102,6 +104,9 @@ class TimeoutError(GenericError):
 
 class UndeterminedTypeError(GenericError):
     """Exception raised when an SNMP type cannot be determined.
+
+    This typically occurs when a returned value's type cannot be identified
+    from the SNMP response.
 
     :param message: A descriptive error message.
     :type message: str

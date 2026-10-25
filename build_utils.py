@@ -27,7 +27,7 @@ def is_macports_installed():
     """
     try:
         version_output = check_output("port version", shell=True).decode()
-        match = search(r"Version:\s+(\d+\.\d+\.\d+)", version_output)
+        match = search(r"Version:\s+(\d+(?:\.\d+)*)", version_output)
         if match:
             return match.group(1)
         else:
@@ -45,7 +45,7 @@ def is_net_snmp_installed_macports():
     """
     try:
         macports_output = check_output("port installed net-snmp", shell=True).decode()
-        pattern = r"net-snmp @(\d+\.\d+\.\d+[_+a-zA-Z0-9]*) \(active\)"
+        pattern = r"net-snmp @(\d+(?:\.\d+)*[_\-+a-zA-Z0-9]*) \(active\)"
         match = search(pattern, macports_output)
         if match:
             return match.group(1)
@@ -115,8 +115,8 @@ def get_homebrew_net_snmp_info():
         if not lines:
             return None
 
-        # Extract net-snmp version (supports both /opt/homebrew and /usr/local paths)
-        pattern = r"/(?:opt/homebrew|usr/local|home/linuxbrew/\.linuxbrew)/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)*)/"
+        # Extract the upstream version, excluding Homebrew's optional revision suffix.
+        pattern = r"/Cellar/net-snmp/(\d+\.\d+(?:\.\d+)*)(?:_\d+)?/"
         match = search(pattern, lines[0])
         if not match:
             return None
@@ -462,11 +462,20 @@ def gather_build_configuration():
                     break
         macports_version = is_macports_installed()
         macports_netsnmp_version = is_net_snmp_installed_macports()
-        if macports_version and macports_netsnmp_version:
+        if (macports_version and macports_netsnmp_version) or (
+            platform == "darwin" and net_snmp_cmd.startswith("/opt/local")
+        ):
             for directory in libdirs:
                 if "/opt/local/lib" in directory:
                     netsnmp_incdir = directory.replace("lib", "include")
-                    incdirs.append(netsnmp_incdir)
+                    if netsnmp_incdir not in incdirs:
+                        incdirs.append(netsnmp_incdir)
+            if "/opt/local/include" not in incdirs and os.path.isdir(
+                "/opt/local/include"
+            ):
+                incdirs.append("/opt/local/include")
+            if "/opt/local/lib" not in libdirs and os.path.isdir("/opt/local/lib"):
+                libdirs.append("/opt/local/lib")
             if not homebrew_info and macports_netsnmp_version:
                 system_netsnmp_version = macports_netsnmp_version
 
