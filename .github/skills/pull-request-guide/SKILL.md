@@ -62,6 +62,11 @@ Before pushing commits or creating a PR, activate your local Python virtual envi
    ```bash
    yamllint -c .yamllint .github/workflows/*.yml
    ```
+7. **Shell Script Validation** (if shell scripts were modified):
+   ```bash
+   shellcheck <modified-shell-script-paths>
+   bash -n <modified-shell-script-paths>
+   ```
 
 ---
 
