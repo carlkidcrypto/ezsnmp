@@ -28,6 +28,20 @@ else
     versions=("5.10")
 fi
 
+is_supported_version() {
+    [[ "$1" =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]] || return 1
+    local major=$((10#${BASH_REMATCH[1]}))
+    local minor=$((10#${BASH_REMATCH[2]}))
+    (( major > 5 || (major == 5 && minor >= 10) ))
+}
+
+for version in "${versions[@]}"; do
+    if ! is_supported_version "$version"; then
+        echo "Error: Net-SNMP version '$version' is unsupported; use version 5.10 or newer." >&2
+        exit 1
+    fi
+done
+
 # Step 1: Download net-snmp versions in parallel
 echo "##### Downloading net-snmp versions... #####"
 for version in "${versions[@]}"; do
@@ -37,54 +51,19 @@ done
 wait  # Wait for all background jobs to finish
 
 # Step 2: Generate patches directly from master_src
-#
-# master_src tracks the net-snmp upstream master branch and is used as the template for
-# all C++ modifications. Upstream master removed netsnmp_cleanup_session() from snmpget,
-# snmpset, and snmptrap, but kept it in snmpbulkget, snmpbulkwalk, snmpgetnext, snmpwalk.
 echo "##### Making patches for versions ${versions[*]}... #####"
 for version in "${versions[@]}"; do
-    [[ "$version" == "5.7" || "$version" == "5.8" ]] && continue
     ./make_patches.sh "$version"
 done
 
-# Step 3-5: Cleanup session compatibility for legacy versions (5.7, 5.8) if processed
-has_legacy=false
-for v in "${versions[@]}"; do
-    if [[ "$v" == "5.7" || "$v" == "5.8" ]]; then
-        has_legacy=true
-        break
-    fi
-done
-
-if [[ "$has_legacy" == "true" ]]; then
-    echo "##### Backing up master_src... #####"
-    cp -r master_src master_src_backup
-
-    echo "##### Removing netsnmp_cleanup_session(&session); from master_src... #####"
-    for file in master_src/*.cpp; do
-        grep -v 'netsnmp_cleanup_session(&session);' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
-    done
-
-    echo "##### Making patches for legacy versions needing cleanup hack... #####"
-    for version in "${versions[@]}"; do
-        [[ "$version" != "5.7" && "$version" != "5.8" ]] && continue
-        ./make_patches.sh "$version" &
-    done
-    wait
-
-    echo "##### Restoring master_src from backup... #####"
-    rm -rf master_src
-    mv master_src_backup master_src
-fi
-
-# Step 6: Apply patches on all versions in parallel
+# Step 3: Apply patches on all versions in parallel
 echo "##### Applying patches for versions ${versions[*]}... #####"
 for version in "${versions[@]}"; do
     ./apply_patches.sh "$version" &
 done
 wait  # Wait for all apply_patches jobs to finish
 
-# Step 7: Run clang-format
+# Step 4: Run clang-format
 echo "##### Running clang-format on entire repository... #####"
 cd "$(dirname "$0")/../.."
 CLANG_FORMAT=""
@@ -97,7 +76,7 @@ done
 
 if [[ -n "$CLANG_FORMAT" ]]; then
     echo "Formatting with $CLANG_FORMAT..."
-    find . -iname '*.h' -o -iname '*.cpp' | xargs "$CLANG_FORMAT" -i --style=file:.clang-format
+    find . \( -iname '*.h' -o -iname '*.cpp' \) -exec "$CLANG_FORMAT" -i --style=file:.clang-format {} +
 else
     echo "Notice: clang-format not found, skipping formatting." >&2
 fi

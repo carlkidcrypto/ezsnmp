@@ -71,6 +71,35 @@ Step 6: Run it in python3
     >>> retval = ezsnmp.snmpwalk(args)
     >>> print(retval)
 
+Updating Net-SNMP Patch Files
+-----------------------------
+
+Net-SNMP 5.10 and newer are supported. The ``master_src/`` directory under
+``ezsnmp/patches/`` is the canonical C++ template used to generate the patch files
+for the seven wrapped Net-SNMP applications.
+
+To generate patches for a Net-SNMP version, fetch its source and run
+``make_patches.sh`` from the patches directory. The generated files are written
+to ``net-snmp-<version>-patches/``:
+
+.. code-block:: bash
+
+    cd ezsnmp/patches
+    ./fetch_net_snmp_versions.sh 5.10
+    ./make_patches.sh 5.10
+
+Apply the generated patches and copy the resulting C++ application sources into
+``ezsnmp/src/`` with ``apply_patches.sh``. The automation script runs these steps
+and defaults to Net-SNMP 5.10:
+
+.. code-block:: bash
+
+    ./apply_patches.sh 5.10
+    ./do_all_that_stuff.sh 5.10
+
+For a future supported release, pass its version (5.10 or newer) to the same
+scripts. See ``ezsnmp/patches/README.rst`` for the full patch workflow.
+
 Running Tests
 -------------
 
@@ -136,9 +165,12 @@ Running Tests with Docker
 
 EzSnmp provides pre-built Docker images for testing across multiple Linux distributions. This ensures consistent testing environments. The project supports the following distributions:
 
-* **almalinux10_netsnmp_5.9** - AlmaLinux 10 with Python 3.10-3.14, g++ 14.x, net-snmp 5.9
-* **fedora42_netsnmp_5.9** - Fedora 42 with GCC 14.x, net-snmp 5.9.5.2, Python 3.10-3.14 all from source
-* **rockylinux9_netsnmp_5.9** - Rocky Linux 9 with gcc-toolset-13 (g++ 13.x), net-snmp 5.9.5.2, Python 3.10-3.14 all from source
+All listed Docker test images use Net-SNMP 5.10:
+
+* **almalinux10_netsnmp_5.10** - AlmaLinux 10 with Python 3.10-3.14 and g++ 14.x
+* **archlinux_netsnmp_5.10** - Arch Linux with Python 3.10-3.14 and g++ 14.x
+* **fedora42_netsnmp_5.10** - Fedora 42 with GCC 14.x and Python 3.10-3.14
+* **rockylinux9_netsnmp_5.10** - Rocky Linux 9 with gcc-toolset-13 and Python 3.10-3.14
 
 Docker Python Tests
 ~~~~~~~~~~~~~~~~~~~
@@ -153,18 +185,18 @@ To run Python tests in Docker:
     ./run_python_tests_in_all_dockers.sh
 
     # Run tests in a specific distribution only
-    ./run_python_tests_in_all_dockers.sh almalinux10
+    ./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
 
     # Run a specific distribution image manually for Python tests
-    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10-latest
+    sudo docker pull carlkidcrypto/ezsnmp_test_images:almalinux10_netsnmp_5.10-latest
     sudo docker run -d \
-      --name "almalinux10_snmp_container" \
+      --name "almalinux10_netsnmp_5.10_test_container" \
       -v "$(pwd):/ezsnmp" \
-      carlkidcrypto/ezsnmp_test_images:almalinux10-latest \
-      /bin/bash -c "/ezsnmp/docker/almalinux10/DockerEntry.sh false & tail -f /dev/null"
+      carlkidcrypto/ezsnmp_test_images:almalinux10_netsnmp_5.10-latest \
+      /bin/bash -c "/usr/local/bin/DockerEntry.sh false & tail -f /dev/null"
 
     # Execute Python tests inside the container using pytest
-    sudo docker exec -t almalinux10_snmp_container bash -c '
+    sudo docker exec -t almalinux10_netsnmp_5.10_test_container bash -c '
       export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
       export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-};
       python3.14 -m venv /tmp/venv_test;
@@ -186,10 +218,10 @@ To run C++ tests in Docker:
     ./run_cpp_tests_in_all_dockers.sh
 
     # Run C++ tests in a specific distribution
-    ./run_cpp_tests_in_all_dockers.sh rockylinux9_netsnmp_5.9
+    ./run_cpp_tests_in_all_dockers.sh rockylinux9_netsnmp_5.10
 
     # Run C++ tests in multiple specific distributions
-    ./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9 rockylinux9_netsnmp_5.9
+    ./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.10 rockylinux9_netsnmp_5.10
 
     # Show help and usage examples
     ./run_cpp_tests_in_all_dockers.sh --help

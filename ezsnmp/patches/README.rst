@@ -8,7 +8,7 @@ Overview
 
 The patches in this directory allow ezsnmp to generate and apply custom modifications to Net-SNMP applications for use in the C++ wrapper. ezsnmp packages standalone wheels bundled with Net-SNMP 5.10.
 
-This directory retains the active patches for Net-SNMP 5.10 (in ``net-snmp-5.10-patches/``) and the canonical C++ reference template (in ``master_src/``), along with automated patching scripts so that updating to future Net-SNMP releases (e.g., Net-SNMP 5.11+) remains quick and reproducible.
+EzSnmp supports Net-SNMP 5.10 and newer. This directory retains the active patches for Net-SNMP 5.10 (in ``net-snmp-5.10-patches/``) and the canonical C++ reference template (in ``master_src/``), along with automated patching scripts so that updating to future Net-SNMP releases (e.g., Net-SNMP 5.11+) remains reproducible.
 
 Order of Operations
 -------------------

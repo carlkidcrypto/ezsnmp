@@ -8,9 +8,8 @@
 #   3. Run it with the version number(s).
 #
 # Example:
-#   ./apply_patches.sh 5.7 5.8 5.9
-#   ./apply_patches.sh 5.7 5.9
-#   ./apply_patches.sh 5.9
+#   ./apply_patches.sh 5.10
+#   ./apply_patches.sh 5.10 5.11
 # --------------------------------------------------------------------
 
 # Generic PATH discovery: check system defaults first, then common package managers
@@ -35,9 +34,22 @@ fi
 if [[ $# -eq 0 ]]; then
     echo "Error: No version specified." >&2
     echo "Usage: $0 <net-snmp-version> [<net-snmp-version> ...]" >&2
-    echo "Example: $0 5.7 5.8" >&2
+    echo "Net-SNMP 5.10 or newer is supported." >&2
     exit 1
 fi
+
+for VERSION in "$@"; do
+    if [[ ! "$VERSION" =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+        echo "Error: Invalid Net-SNMP version '$VERSION'." >&2
+        exit 1
+    fi
+    MAJOR=$((10#${BASH_REMATCH[1]}))
+    MINOR=$((10#${BASH_REMATCH[2]}))
+    if (( MAJOR < 5 || (MAJOR == 5 && MINOR < 10) )); then
+        echo "Error: Net-SNMP 5.10 or newer is supported." >&2
+        exit 1
+    fi
+done
 
 # 2. Check for required commands
 if ! command -v patch &> /dev/null; then
@@ -88,7 +100,7 @@ for VERSION in "$@"; do
     )
 
     # Change into the source directory to apply patches correctly
-    cd "${SOURCE_DIR}"
+    cd "${SOURCE_DIR}" || exit 1
 
     # --- NEW: Clean up stale reject files inside the source directory ---
     echo "Cleaning up stale rejects inside $(pwd)..."
@@ -96,7 +108,7 @@ for VERSION in "$@"; do
 
     if [[ ! -d "$PATCH_DIR" ]]; then
         echo "Error: Patch directory not found at ${PATCH_DIR}" >&2
-        cd ..
+        cd .. || exit 1
         continue
     fi
 
@@ -116,7 +128,7 @@ for VERSION in "$@"; do
 
         echo "   -> Patching ${tool}.c..."
 
-        # The -p2 flag strips the first two components (e.g., './net-snmp-5.9/')
+        # The -p2 flag strips the first two path components from the patch headers.
         patch -p2 < "${patch_file}"
 
         # Check for and move any reject files, handling potential name collisions
@@ -147,7 +159,7 @@ for VERSION in "$@"; do
     done
 
     # Go back to the original directory
-    cd ..
+    cd .. || exit 1
 
     echo "Done for version ${VERSION}."
 done
