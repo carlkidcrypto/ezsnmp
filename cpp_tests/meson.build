@@ -17,7 +17,7 @@ endif
 # Find the netsnmp dependency and make it required for the build to proceed.
 netsnmp_dep = dependency('netsnmp', required: true)
 
-# Net-SNMP sources directory (uses net-snmp-5.10-final-patched for Net-SNMP 5.9+)
+# Net-SNMP sources directory (uses net-snmp-5.10-final-patched for Net-SNMP 5.10+)
 netsnmp_version = netsnmp_dep.version()
 snmp_source_dir = '../ezsnmp/src/net-snmp-5.10-final-patched'
 

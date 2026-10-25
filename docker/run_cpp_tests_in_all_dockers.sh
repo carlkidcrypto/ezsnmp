@@ -126,6 +126,8 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		find build/ -name '*.gcda' -delete 2>/dev/null || true;
 		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location 
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
+		NETSNMP_PC=\$(pkg-config --variable=pcfiledir netsnmp)/netsnmp.pc;
+		sed -i -e 's/[[:space:]]-Werror=declaration-after-statement//g' -e 's/[[:space:]]-Wstrict-prototypes//g' \"\$NETSNMP_PC\";
 		# Ensure a known-good meson (from PyPI) is used instead of the system-installed one.
 		# On Arch Linux the pacman meson uses '#!/usr/bin/env python3' which resolves to the
 		# venv Python 3.14 (injected via ENV PATH in the Dockerfile). That custom-built Python

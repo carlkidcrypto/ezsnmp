@@ -84,7 +84,7 @@ cd docker
 ./run_cpp_tests_in_all_dockers.sh
 
 # Run in a specific distribution
-./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
+./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
 ```
 
 ---

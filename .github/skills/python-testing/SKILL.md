@@ -61,7 +61,7 @@ cd docker
 ./run_python_tests_in_all_dockers.sh
 
 # Run specific distribution
-./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
+./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
 ```
 
 ---

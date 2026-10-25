@@ -21,7 +21,7 @@ ezsnmp/
     ├── helpers.cpp         # Mutex locking, GIL management, error helpers
     ├── sessionbase.cpp     # Base SNMP session management logic
     ├── thread_safety.cpp   # Multi-threading and synchronization primitives
-    └── net-snmp-5.9-final-patched/  # Primary Net-SNMP source directory (5.10 in progress)
+    └── net-snmp-5.10-final-patched/ # Primary patched sources (Net-SNMP 5.10 and newer)
         ├── snmpbulkget.cpp # SNMP GETBULK operation
         ├── snmpbulkwalk.cpp# SNMP BULKWALK operation
         ├── snmpget.cpp     # SNMP GET operation
