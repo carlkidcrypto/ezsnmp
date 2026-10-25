@@ -76,6 +76,8 @@ Before pushing commits or creating a PR, activate your local Python virtual envi
   - Explicitly stage only intended modified target files (e.g., `git add ezsnmp/session.py python_tests/test_session.py`).
   - **Avoid blanket staging commands** like `git add -A` or `git add .`. Blanket commands can accidentally stage dynamically restored inline skills from `.github/skills/`, causing CI safe-output errors (`patch modifies files outside the allowed-files list`).
 - **SonarQube Cloud Quality Gate**:
+  - Treat a passing SonarQube Cloud Quality Gate as required for every change. Do not consider verification complete until the analysis for the current PR/revision reports a passed gate.
+  - If the gate fails, inspect the new-code findings and fix them before completing the task. If the finding details are inaccessible, request the rule and affected file/line instead of guessing or claiming success.
   - Automatic analysis reads `.sonarcloud.properties` on `main`. Ensure documentation exclusions (`sonar.exclusions=docs/**`) are respected so generated files do not fail the Quality Gate.
 
 ---
