@@ -89,13 +89,18 @@ to ``net-snmp-<version>-patches/``:
     ./make_patches.sh 5.10
 
 Apply the generated patches and copy the resulting C++ application sources into
-``ezsnmp/src/`` with ``apply_patches.sh``. The automation script runs these steps
-and defaults to Net-SNMP 5.10:
+``ezsnmp/src/`` with ``apply_patches.sh``. The manual workflow is:
 
 .. code-block:: bash
 
     ./apply_patches.sh 5.10
-    ./do_all_that_stuff.sh 5.10
+
+To run the complete fetch, patch-generation, and patch-application workflow
+automatically (defaulting to Net-SNMP 5.10), use:
+
+.. code-block:: bash
+
+    ./do_all_that_stuff.sh
 
 For a future supported release, pass its version (5.10 or newer) to the same
 scripts. See ``ezsnmp/patches/README.rst`` for the full patch workflow.
