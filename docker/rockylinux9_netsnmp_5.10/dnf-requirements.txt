@@ -2,6 +2,8 @@ wget
 unzip
 file
 make
+diffutils
+libnl3-devel
 openssl
 openssl-devel
 bzip2-devel

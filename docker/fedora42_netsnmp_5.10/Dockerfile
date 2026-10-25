@@ -23,7 +23,7 @@ COPY docker/cache/net-snmp-5.10.pre2.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.10.pre2.tar.gz && \
     cd net-snmp-5.10.pre2 && \
-    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules --with-mib-modules=mibII && \
     make -j$(nproc) && \
     make install && \
     ldconfig && \
