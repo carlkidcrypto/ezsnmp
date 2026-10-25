@@ -7,7 +7,7 @@
 #include "exceptionsbase.h"
 #include "snmpset.h"
 
-extern "C" int snmp_sess_synch_response(struct session_list *sessp,
+extern "C" int snmp_sess_synch_response(void *sessp,
                                         netsnmp_pdu *pdu,
                                         netsnmp_pdu **response) {
    (void)sessp;
