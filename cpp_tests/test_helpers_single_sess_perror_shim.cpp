@@ -19,7 +19,10 @@ static std::string g_error_message = "generic error";
 
 /* Stub for the single-session error accessor used by
  * snmp_single_sess_perror_exception(). */
-extern "C" void snmp_sess_error(struct session_list *sessp, int *p_errno, int *p_snmp_errno, char **p_str) {
+extern "C" void snmp_sess_error(struct session_list *sessp,
+                                int *p_errno,
+                                int *p_snmp_errno,
+                                char **p_str) {
    (void)sessp;
    if (p_errno) {
       *p_errno = 0;

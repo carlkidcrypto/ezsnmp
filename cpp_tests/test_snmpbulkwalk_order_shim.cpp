@@ -9,7 +9,9 @@
 static bool g_lexicographic_error_mode = false;
 static bool g_exception_value_mode = false;
 
-extern "C" int snmp_sess_synch_response(struct session_list *, netsnmp_pdu *, netsnmp_pdu **response) {
+extern "C" int snmp_sess_synch_response(struct session_list *,
+                                        netsnmp_pdu *,
+                                        netsnmp_pdu **response) {
    netsnmp_pdu *fake_response = snmp_pdu_create(SNMP_MSG_RESPONSE);
    fake_response->errstat = SNMP_ERR_NOERROR;
    fake_response->errindex = 0;

@@ -5,7 +5,9 @@
 #include "datatypes.h"
 #include "snmpbulkwalk.h"
 
-extern "C" int snmp_sess_synch_response(struct session_list *sessp, netsnmp_pdu *pdu, netsnmp_pdu **response) {
+extern "C" int snmp_sess_synch_response(struct session_list *sessp,
+                                        netsnmp_pdu *pdu,
+                                        netsnmp_pdu **response) {
    (void)sessp;
    (void)pdu;
    *response = NULL;
