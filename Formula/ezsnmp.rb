@@ -6,8 +6,12 @@ class Ezsnmp < Formula
   license "BSD-3-Clause"
   head "https://github.com/carlkidcrypto/ezsnmp.git", branch: "main"
 
+  resource "net-snmp" do
+    url "https://github.com/net-snmp/net-snmp/archive/refs/tags/v5.10.pre2.tar.gz"
+    sha256 "6bce4ef368db15ad0f400330d5a1433009d63f0a98ca8b2eca0f87abd3469bd6"
+  end
+
   depends_on "swig" => :build
-  depends_on "net-snmp"
   depends_on "openssl@3"
 
   def find_python3
@@ -19,13 +23,23 @@ class Ezsnmp < Formula
     python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
 
-    # net-snmp is keg-only; put net-snmp-config on PATH so setup.py can find it
-    ENV.prepend_path "PATH", Formula["net-snmp"].opt_bin
+    resource("net-snmp").stage do
+      system "./configure", "--prefix=#{prefix}",
+             "--enable-shared",
+             "--disable-embedded-perl",
+             "--without-perl-modules",
+             "--with-mib-modules=mibII/system_mib mibII/sysORTable",
+             "--with-openssl=#{Formula["openssl@3"].opt_prefix}"
+      system "make", "-j#{ENV.make_jobs}"
+      system "make", "install"
+    end
 
-    # Point compiler and linker at net-snmp and openssl headers/libs
-    ENV.append "LDFLAGS", "-L#{Formula["net-snmp"].opt_lib}"
+    # Build ezsnmp against the Net-SNMP 5.10 copy installed in this formula.
+    ENV.prepend_path "PATH", "#{prefix}/bin"
+    ENV["EZSNMP_NETSNMP_CONFIG"] = "#{prefix}/bin/net-snmp-config"
+    ENV.append "LDFLAGS", "-L#{prefix}/lib"
     ENV.append "LDFLAGS", "-L#{Formula["openssl@3"].opt_lib}"
-    ENV.append "CPPFLAGS", "-I#{Formula["net-snmp"].opt_include}"
+    ENV.append "CPPFLAGS", "-I#{prefix}/include"
     ENV.append "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include}"
 
     # A temporary build venv supplies setuptools and wheel without modifying
@@ -70,6 +84,7 @@ class Ezsnmp < Formula
   test do
     python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
+    assert_match "5.10", shell_output("#{bin}/net-snmp-config --version")
     ENV.prepend_path "PYTHONPATH", "#{opt_prefix}/lib/python#{python_version}/site-packages"
     system python3, "-c", "import ezsnmp"
   end

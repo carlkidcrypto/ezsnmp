@@ -127,6 +127,25 @@ def test_gather_macos_configuration_preserves_flags_and_adds_openssl(homebrew_ou
     assert cfg["system_netsnmp_version"] == "5.9.5.2"
 
 
+def test_gather_macos_configuration_uses_explicit_netsnmp_config(
+    homebrew_outputs, monkeypatch
+):
+    configured_path = "/opt/homebrew/Cellar/ezsnmp/2.5.0/bin/net-snmp-config"
+    homebrew_outputs[f"{configured_path} --version"] = "5.10.pre2\n"
+    homebrew_outputs[f"{configured_path} --libs"] = (
+        "-L/opt/homebrew/Cellar/ezsnmp/2.5.0/lib -lnetsnmp -lcrypto"
+    )
+    homebrew_outputs["brew list net-snmp"] = CalledProcessError(1, "brew list net-snmp")
+    monkeypatch.setenv("EZSNMP_NETSNMP_CONFIG", configured_path)
+
+    cfg = build_utils.gather_build_configuration()
+
+    assert cfg["libdirs"] == ["/opt/homebrew/Cellar/ezsnmp/2.5.0/lib"]
+    assert cfg["libs"] == ["netsnmp", "crypto"]
+    assert cfg["system_netsnmp_version"] == "5.10.pre2"
+    assert cfg["homebrew_netsnmp_version"] is None
+
+
 @pytest.mark.parametrize("macports", [False, True])
 def test_gather_macos_configuration_without_homebrew(
     homebrew_outputs, monkeypatch, macports
