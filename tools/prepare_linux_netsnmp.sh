@@ -12,7 +12,7 @@ PREFIX="/usr/local"
 echo "=== Preparing Net-SNMP ${NETSNMP_VERSION} for Linux ==="
 
 # Check if already installed with 5.10
-if [ -x "${PREFIX}/bin/net-snmp-config" ]; then
+if [[ -x "${PREFIX}/bin/net-snmp-config" ]]; then
     INSTALLED_VER=$("${PREFIX}/bin/net-snmp-config" --version || true)
     if [[ "${INSTALLED_VER}" == *"5.10"* ]]; then
         echo "Net-SNMP ${INSTALLED_VER} already installed at ${PREFIX}. Skipping build."
@@ -38,11 +38,11 @@ ARCHIVE_PATH="${WORK_DIR}/v${NETSNMP_VERSION}.tar.gz"
 DOWNLOAD_URL="https://github.com/net-snmp/net-snmp/archive/refs/tags/v${NETSNMP_VERSION}.tar.gz"
 
 echo "Downloading Net-SNMP from ${DOWNLOAD_URL}..."
-curl -sSL -o "${ARCHIVE_PATH}" "${DOWNLOAD_URL}"
+curl --proto '=https' --proto-redir '=https' -sSL -o "${ARCHIVE_PATH}" "${DOWNLOAD_URL}"
 
 echo "Verifying SHA256 checksum..."
 ACTUAL_SHA256=$(sha256sum "${ARCHIVE_PATH}" | awk '{print $1}')
-if [ "${ACTUAL_SHA256}" != "${EXPECTED_SHA256}" ]; then
+if [[ "${ACTUAL_SHA256}" != "${EXPECTED_SHA256}" ]]; then
     echo "ERROR: SHA256 mismatch! Expected ${EXPECTED_SHA256}, got ${ACTUAL_SHA256}" >&2
     exit 1
 fi
