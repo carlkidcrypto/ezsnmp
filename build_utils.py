@@ -463,9 +463,7 @@ def gather_build_configuration():
                     netsnmp_incdir = "/usr/include/net-snmp"
                     incdirs.append(netsnmp_incdir)
                     break
-        macports_version = (
-            None if configured_net_snmp_cmd else is_macports_installed()
-        )
+        macports_version = None if configured_net_snmp_cmd else is_macports_installed()
         macports_netsnmp_version = (
             None if configured_net_snmp_cmd else is_net_snmp_installed_macports()
         )
