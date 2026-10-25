@@ -72,7 +72,7 @@ jobs:
       - name: Install Linux Dependencies
         if: matrix.language == 'c++'
         run: |
-          sudo ./tools/prepare_linux_netsnmp.sh
+          sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python 3.10
         if: matrix.language == 'c++'
