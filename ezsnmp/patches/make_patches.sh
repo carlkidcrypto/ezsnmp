@@ -4,22 +4,34 @@
 # Usage:
 #   ./make_patches.sh <version> [<version> ...]
 # Example:
-#   ./make_patches.sh 5.7 5.8 5.9
-#   ./make_patches.sh 5.7 5.9
-#   ./make_patches.sh 5.9
+#   ./make_patches.sh 5.10
+#   ./make_patches.sh 5.10 5.11
 # ---------------------------------------------------------------
 
 # 1. Validate that at least one version number was provided
 if [[ $# -eq 0 ]]; then
     echo "Error: No version specified." >&2
     echo "Usage: $0 <net-snmp-version> [<net-snmp-version> ...]" >&2
-    echo "Example: $0 5.7 5.8 5.9" >&2
+    echo "Net-SNMP 5.10 or newer is supported." >&2
     exit 1
 fi
 
+for VERSION in "$@"; do
+    if [[ ! "$VERSION" =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+        echo "Error: Invalid Net-SNMP version '$VERSION'." >&2
+        exit 1
+    fi
+    MAJOR=$((10#${BASH_REMATCH[1]}))
+    MINOR=$((10#${BASH_REMATCH[2]}))
+    if (( MAJOR < 5 || (MAJOR == 5 && MINOR < 10) )); then
+        echo "Error: Net-SNMP 5.10 or newer is supported." >&2
+        exit 1
+    fi
+done
+
 # 2. Loop over all provided versions
 for VERSION in "$@"; do
-    # Assumes the original source code is in a folder like 'net-snmp-5.9'
+    # Assumes the original source code is in a folder like 'net-snmp-5.10'
     SOURCE_DIR="./net-snmp-${VERSION}"
     TARGET_DIR="./master_src" # The directory with your modified C++ files
 

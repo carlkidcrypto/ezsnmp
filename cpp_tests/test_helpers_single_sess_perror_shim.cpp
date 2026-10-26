@@ -1,7 +1,7 @@
 /* Shim-test for snmp_single_sess_perror_exception().
  *
  * snmp_single_sess_perror_exception() uses the single-session API
- * (snmp_sess_error / void* opaque handle) instead of the global-session API
+ * (snmp_sess_error / opaque handle) instead of the global-session API
  * (snmp_error / netsnmp_session*).  We stub out snmp_sess_error() to inject
  * controlled error messages and verify that the function maps each message to
  * the expected exception type – mirroring the approach used by
@@ -14,12 +14,16 @@
 
 #include "exceptionsbase.h"
 #include "helpers.h"
+#include "test_snmp_response_helpers.h"
 
 static std::string g_error_message = "generic error";
 
 /* Stub for the single-session error accessor used by
  * snmp_single_sess_perror_exception(). */
-extern "C" void snmp_sess_error(void *sessp, int *p_errno, int *p_snmp_errno, char **p_str) {
+extern "C" void snmp_sess_error(ezsnmp_test::error_session_handle sessp,
+                                int *p_errno,
+                                int *p_snmp_errno,
+                                char **p_str) {
    (void)sessp;
    if (p_errno) {
       *p_errno = 0;

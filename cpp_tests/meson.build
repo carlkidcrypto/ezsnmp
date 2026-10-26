@@ -1,4 +1,4 @@
-project('ezsnmp_tests', 'cpp', version: '2.5.0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
+project('ezsnmp_tests', 'cpp', version: '2026.10.18a0', default_options: ['cpp_std=c++17', 'b_coverage=true'])
 
 # Find required dependencies
 gtest_dep = dependency('gtest', main: true)
@@ -17,20 +17,9 @@ endif
 # Find the netsnmp dependency and make it required for the build to proceed.
 netsnmp_dep = dependency('netsnmp', required: true)
 
-# Conditionally select source directory based on the net-snmp version.
+# Net-SNMP sources directory (uses net-snmp-5.10-final-patched for Net-SNMP 5.10+)
 netsnmp_version = netsnmp_dep.version()
-snmp_source_dir = '' 
-
-if netsnmp_version.startswith('5.9')
-  snmp_source_dir = '../ezsnmp/src/net-snmp-5.9-final-patched'
-elif netsnmp_version.startswith('5.8')
-  snmp_source_dir = '../ezsnmp/src/net-snmp-5.8-final-patched'
-elif netsnmp_version.startswith('5.7')
-  snmp_source_dir = '../ezsnmp/src/net-snmp-5.7-final-patched'
-else
-  # Fallback for any other version (e.g., newer or unhandled older versions)
-  snmp_source_dir = '../ezsnmp/src'
-endif
+snmp_source_dir = '../ezsnmp/src/net-snmp-5.10-final-patched'
 
 message('Using Net-SNMP sources from: @0@'.format(snmp_source_dir))
 
@@ -486,13 +475,7 @@ foreach op, suffixes : new_shim_tests_map
 endforeach
 
 # Register tests
-# For net-snmp 5.7, disable malloc perturbation to avoid false positives
-# with glibc's strict malloc checking (incompatible with net-snmp 5.7's memory patterns)
 test_env = environment()
-if netsnmp_version.startswith('5.7')
-  test_env.set('MALLOC_PERTURB_', '0')
-  test_env.set('MALLOC_CHECK_', '0')
-endif
 
 # Ensure SNMP MIBs are loaded during tests so that symbolic OID names
 # (e.g. SNMPv2-MIB::sysORDescr) resolve correctly on all platforms.
