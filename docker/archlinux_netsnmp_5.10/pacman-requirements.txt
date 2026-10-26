@@ -1,6 +1,8 @@
 wget
 unzip
 file
+diffutils
+libnl
 openssl
 libxcrypt
 libxcrypt-compat

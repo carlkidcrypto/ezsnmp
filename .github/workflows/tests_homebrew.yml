@@ -66,6 +66,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/prepare_linux_netsnmp.sh
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -96,8 +97,6 @@ jobs:
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
                  brew update;
-                 brew install net-snmp;
-                 brew install openssl@3;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -115,6 +114,10 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
+      - name: Install Net-SNMP 5.10 on Linux
+        if: runner.os == 'Linux'
+        run: sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -142,6 +145,10 @@ jobs:
             SNMPD=$(which snmpd)
           elif [ "$RUNNER_OS" == "macOS" ]
           then
+            NETSNMP_PREFIX="$(brew --prefix net-snmp)"
+            export PATH="${NETSNMP_PREFIX}/bin:${NETSNMP_PREFIX}/sbin:$PATH"
+            export SNMP_PERSISTENT_DIR="${RUNNER_TEMP:-$HOME}/snmp-persistent"
+            mkdir -p "$SNMP_PERSISTENT_DIR"
             # On macOS, check for Homebrew MIB directories (both Intel and Apple Silicon)
             if [ -d "/opt/homebrew/share/snmp/mibs" ]; then
               mibdir="-M +/opt/homebrew/share/snmp/mibs"
@@ -171,10 +178,15 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
           linux: |
-                 export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/lib:${LD_LIBRARY_PATH:-}
-                 export CFLAGS="-I/home/linuxbrew/.linuxbrew/include"
-                 export LDFLAGS="-L/home/linuxbrew/.linuxbrew/lib"
-                 export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+                 set -euo pipefail
+                 export MIBS=+ALL
+                 export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/var/lib/snmp/mibs/iana:/var/lib/snmp/mibs/ietf:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf:/usr/local/share/snmp/mibs"
+                 export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
+                 export PATH="/usr/local/bin:$PATH"
+                 export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH:-}"
+                 export CFLAGS="-I/usr/local/include"
+                 export LDFLAGS="-L/usr/local/lib"
+                 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
                  mv ezsnmp _ezsnmp
@@ -195,6 +207,9 @@ jobs:
                    python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
+            set -euo pipefail
+            export MIBS=+ALL
+            export MIBDIRS="$HOME/.snmp/mibs:$(brew --prefix net-snmp)/share/snmp/mibs"
             PKG_VERSION=$(python3 -c "import re, sys; match = re.search(r'^version\s*=\s*(.+)$', open('setup.cfg').read(), re.MULTILINE); print(match.group(1).strip() if match else sys.exit('ERROR: could not find version field in setup.cfg'))")
             # Package the current checkout with a versioned filename so Homebrew
             # can infer the formula version without a temporary version stanza.

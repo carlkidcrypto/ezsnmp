@@ -6,9 +6,19 @@ class Ezsnmp < Formula
   license "BSD-3-Clause"
   head "https://github.com/carlkidcrypto/ezsnmp.git", branch: "main"
 
+  resource "net-snmp" do
+    url "https://github.com/net-snmp/net-snmp/archive/refs/tags/v5.10.pre2.tar.gz"
+    sha256 "6bce4ef368db15ad0f400330d5a1433009d63f0a98ca8b2eca0f87abd3469bd6"
+  end
+
   depends_on "swig" => :build
-  depends_on "net-snmp"
   depends_on "openssl@3"
+
+  on_arm do
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
+  end
 
   def find_python3
     candidates = ["python3"] + Dir["#{HOMEBREW_PREFIX}/opt/python@*/bin/python3"].sort.reverse
@@ -18,15 +28,49 @@ class Ezsnmp < Formula
   def install
     python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
+    default_mibs = %w[
+      IP-MIB IF-MIB TCP-MIB UDP-MIB SNMPv2-MIB RFC1213-MIB NOTIFICATION-LOG-MIB
+      DISMAN-EVENT-MIB DISMAN-SCHEDULE-MIB HOST-RESOURCES-MIB HOST-RESOURCES-TYPES
+      UCD-SNMP-MIB UCD-DEMO-MIB SNMP-TARGET-MIB NET-SNMP-AGENT-MIB NET-SNMP-EXTEND-MIB
+      SNMP-FRAMEWORK-MIB SNMP-MPD-MIB SNMP-USER-BASED-SM-MIB
+      SNMP-VIEW-BASED-ACM-MIB SNMP-COMMUNITY-MIB NET-SNMP-VACM-MIB
+    ].join(":")
 
-    # net-snmp is keg-only; put net-snmp-config on PATH so setup.py can find it
-    ENV.prepend_path "PATH", Formula["net-snmp"].opt_bin
+    openssl = Formula["openssl@3"]
+    ENV.append "LDFLAGS", "-L#{openssl.opt_lib}"
+    ENV.append "CPPFLAGS", "-I#{openssl.opt_include}"
 
-    # Point compiler and linker at net-snmp and openssl headers/libs
-    ENV.append "LDFLAGS", "-L#{Formula["net-snmp"].opt_lib}"
-    ENV.append "LDFLAGS", "-L#{Formula["openssl@3"].opt_lib}"
-    ENV.append "CPPFLAGS", "-I#{Formula["net-snmp"].opt_include}"
-    ENV.append "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include}"
+    resource("net-snmp").stage do
+      system "autoreconf", "--force", "--install", "--verbose" if Hardware::CPU.arm? && File.file?("configure.ac")
+      begin
+        system "./configure", "--prefix=#{prefix}",
+               "--with-defaults",
+               "--with-mibs=#{default_mibs}",
+               "--with-mibdirs=$HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs:#{HOMEBREW_PREFIX}/share/snmp/mibs",
+               "--enable-shared",
+               "--disable-static",
+               "--disable-agent",
+               "--disable-applications",
+               "--disable-manuals",
+               "--disable-scripts",
+               "--disable-mibs",
+               "--disable-embedded-perl",
+               "--without-perl-modules",
+               "--with-openssl=#{openssl.opt_prefix}",
+               "--enable-blumenthal-aes"
+      rescue ErrorDuringExecution
+        opoo File.readlines("config.log").last(80).join if File.exist?("config.log")
+        raise
+      end
+      system "make", "-j#{ENV.make_jobs}"
+      system "make", "install"
+    end
+
+    # Build ezsnmp against the Net-SNMP 5.10 copy installed in this formula.
+    ENV.prepend_path "PATH", "#{prefix}/bin"
+    ENV["EZSNMP_NETSNMP_CONFIG"] = "#{prefix}/bin/net-snmp-config"
+    ENV.append "LDFLAGS", "-L#{prefix}/lib"
+    ENV.append "CPPFLAGS", "-I#{prefix}/include"
 
     # A temporary build venv supplies setuptools and wheel without modifying
     # Homebrew Python's global environment.  --no-build-isolation is used so
@@ -70,6 +114,7 @@ class Ezsnmp < Formula
   test do
     python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
+    assert_match "5.10", shell_output("#{bin}/net-snmp-config --version")
     ENV.prepend_path "PYTHONPATH", "#{opt_prefix}/lib/python#{python_version}/site-packages"
     system python3, "-c", "import ezsnmp"
   end

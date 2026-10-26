@@ -23,7 +23,7 @@ COPY docker/cache/net-snmp-5.10.pre2.tar.gz /tmp/
 RUN cd /tmp && \
     tar -xzf net-snmp-5.10.pre2.tar.gz && \
     cd net-snmp-5.10.pre2 && \
-    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules && \
+    ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules --with-mib-modules="mibII/system_mib mibII/sysORTable snmpv3mibs notification notification-log-mib" && \
     make -j$(nproc) && \
     make install && \
     ldconfig && \
@@ -93,7 +93,7 @@ RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
     EXEC_PREFIX=$(net-snmp-config --exec-prefix) && \
     INCLUDEDIR=$(net-snmp-config --includedir | sed 's/^-I//') && \
     LIBS=$(net-snmp-config --libs | sed 's/[[:space:]]-lcrypto//g') && \
-    CFLAGS=$(net-snmp-config --cflags | sed 's/[[:space:]]-Werror=declaration-after-statement//g') && \
+    CFLAGS=$(net-snmp-config --cflags | sed -e 's/[[:space:]]-Werror=declaration-after-statement//g' -e 's/[[:space:]]-Wstrict-prototypes//g') && \
     VERSION=$(net-snmp-config --version) && \
     mkdir -p "${LIBDIR}/pkgconfig" && \
     echo "prefix=${PREFIX}" > "${LIBDIR}/pkgconfig/netsnmp.pc" && \
