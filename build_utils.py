@@ -637,6 +637,19 @@ def gather_build_configuration():
             if not homebrew_info and macports_netsnmp_version:
                 system_netsnmp_version = macports_netsnmp_version
 
+    openssl_include_dirs = split_env_list(
+        get_first_env("EZSNMP_OPENSSL_INCLUDE_DIR", "OPENSSL_INCLUDE_DIR")
+    )
+    openssl_library_dirs = split_env_list(
+        get_first_env("EZSNMP_OPENSSL_LIB_DIR", "OPENSSL_LIB_DIR")
+    )
+    incdirs.extend(
+        directory for directory in openssl_include_dirs if directory not in incdirs
+    )
+    libdirs.extend(
+        directory for directory in openssl_library_dirs if directory not in libdirs
+    )
+
     return {
         "basedir": basedir,
         "in_tree": in_tree,

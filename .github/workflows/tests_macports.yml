@@ -180,6 +180,8 @@ jobs:
           sudo bash tools/prepare_macos_netsnmp.sh
           echo "/usr/local/bin" >> "$GITHUB_PATH"
           echo "EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config" >> "$GITHUB_ENV"
+          echo "EZSNMP_OPENSSL_INCLUDE_DIR=/opt/local/include" >> "$GITHUB_ENV"
+          echo "EZSNMP_OPENSSL_LIB_DIR=/opt/local/lib" >> "$GITHUB_ENV"
 
       - name: Start SNMP daemon
         run: |
