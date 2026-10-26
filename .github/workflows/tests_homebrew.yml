@@ -180,7 +180,7 @@ jobs:
           linux: |
                  set -euo pipefail
                  export MIBS=+ALL
-                 export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs"
+                 export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/var/lib/snmp/mibs/iana:/var/lib/snmp/mibs/ietf:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf:/usr/local/share/snmp/mibs"
                  export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
                  export PATH="/usr/local/bin:$PATH"
                  export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH:-}"
