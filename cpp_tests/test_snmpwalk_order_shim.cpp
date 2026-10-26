@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
-#include "test_snmp_response_helpers.h"
 
 #include "exceptionsbase.h"
 #include "snmpwalk.h"
+#include "test_snmp_response_helpers.h"
 
 static bool g_lexicographic_error_mode = false;
 static bool g_exception_value_mode = false;

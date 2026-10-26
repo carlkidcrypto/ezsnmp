@@ -13,12 +13,10 @@ struct first_argument<Result (*)(First, Rest...)> {
    using type = First;
 };
 
-using session_handle =
-    typename first_argument<decltype(&snmp_sess_synch_response)>::type;
-using error_session_handle =
-    typename first_argument<decltype(&snmp_sess_error)>::type;
+using session_handle = typename first_argument<decltype(&snmp_sess_synch_response)>::type;
+using error_session_handle = typename first_argument<decltype(&snmp_sess_error)>::type;
 
-}
+} // namespace ezsnmp_test
 
 inline netsnmp_pdu *make_snmp_generr_response() {
    netsnmp_pdu *response = snmp_pdu_create(SNMP_MSG_RESPONSE);
