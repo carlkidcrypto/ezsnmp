@@ -103,7 +103,7 @@ jobs:
 
       - name: Install pip dependencies
         run: |
-          if [ -f python_tests/requirements.txt ]; then pip install -r python_tests/requirements.txt; fi
+          if [ -f python_tests/requirements.txt ]; then "$pythonLocation/bin/python" -m pip install -r python_tests/requirements.txt; fi
 
       - name: Install MacPorts
         run: |
@@ -218,12 +218,12 @@ jobs:
           INSTALLED=0
           if ls .wheel-cache/ezsnmp-*.whl 1> /dev/null 2>&1; then
             echo "Found cached wheel in .wheel-cache. Attempting installation..."
-            if python3 -m pip install .wheel-cache/ezsnmp-*.whl; then
-              if (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from cached wheel')"); then
+            if "$pythonLocation/bin/python" -m pip install .wheel-cache/ezsnmp-*.whl; then
+              if (cd "${RUNNER_TEMP:-/tmp}" && "$pythonLocation/bin/python" -c "import ezsnmp; print('ezsnmp imported successfully from cached wheel')"); then
                 INSTALLED=1
               else
                 echo "WARNING: Cached wheel verification failed. Purging and rebuilding from source."
-                python3 -m pip uninstall -y ezsnmp || true
+                "$pythonLocation/bin/python" -m pip uninstall -y ezsnmp || true
                 rm -rf .wheel-cache/*
               fi
             else
@@ -235,9 +235,9 @@ jobs:
           if [ "$INSTALLED" -eq 0 ]; then
             echo "Building wheel from source..."
             mkdir -p .wheel-cache
-            python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
-            python3 -m pip install .wheel-cache/ezsnmp-*.whl
-            (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
+            "$pythonLocation/bin/python" -m pip wheel . --no-deps -w .wheel-cache --verbose
+            "$pythonLocation/bin/python" -m pip install .wheel-cache/ezsnmp-*.whl
+            (cd "${RUNNER_TEMP:-/tmp}" && "$pythonLocation/bin/python" -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
           fi
 
       - name: Run Tests
@@ -248,7 +248,7 @@ jobs:
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
           set +e
-          python3 -m pytest -v -s --cov=ezsnmp \
+          "$pythonLocation/bin/python" -m pytest -v -s --cov=ezsnmp \
             --cov-report=term-missing \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt

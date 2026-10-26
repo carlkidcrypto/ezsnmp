@@ -646,9 +646,10 @@ def gather_build_configuration():
     incdirs.extend(
         directory for directory in openssl_include_dirs if directory not in incdirs
     )
-    libdirs.extend(
-        directory for directory in openssl_library_dirs if directory not in libdirs
-    )
+    libdirs = [
+        *openssl_library_dirs,
+        *(directory for directory in libdirs if directory not in openssl_library_dirs),
+    ]
 
     return {
         "basedir": basedir,

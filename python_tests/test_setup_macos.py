@@ -152,8 +152,8 @@ def test_gather_macos_configuration_uses_explicit_netsnmp_config(
 
     assert cfg["incdirs"] == ["ezsnmp/include/", "/custom/openssl/include"]
     assert cfg["libdirs"] == [
-        "/opt/homebrew/Cellar/ezsnmp/2.5.0/lib",
         "/custom/openssl/lib",
+        "/opt/homebrew/Cellar/ezsnmp/2.5.0/lib",
     ]
     assert cfg["libs"] == ["netsnmp", "crypto"]
     assert cfg["system_netsnmp_version"] == "5.10.pre2"
