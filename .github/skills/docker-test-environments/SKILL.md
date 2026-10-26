@@ -12,11 +12,10 @@ Use this skill when modifying Dockerfiles, running multi-OS containerized test s
 The `docker/` directory maintains reproducible test environments for various Linux distributions and Net-SNMP releases.
 
 - **Primary Container Configurations**:
-  - `almalinux10_netsnmp_5.9` (RHEL / Enterprise Linux 10 derivative)
-  - `archlinux_netsnmp_5.9` (Rolling release Arch Linux)
-  - `fedora42_netsnmp_5.9` (Modern Fedora with bleeding-edge GCC)
-  - `rockylinux9_netsnmp_5.9` (RHEL / Enterprise Linux 9 derivative)
-  - *(Legacy 5.7 and 5.8 containers are maintained during transition; migration to 5.10 planned via issue #1388)*
+  - `almalinux10_netsnmp_5.10` (RHEL / Enterprise Linux 10 derivative)
+  - `archlinux_netsnmp_5.10` (Rolling release Arch Linux)
+  - `fedora42_netsnmp_5.10` (Modern Fedora with bleeding-edge GCC)
+  - `rockylinux9_netsnmp_5.10` (RHEL / Enterprise Linux 9 derivative)
 - **Docker Hub Repository**: `carlkidcrypto/ezsnmp_test_images`
 - **Compiler Requirements**: All containers must provide **g++ 9.5 or higher** supporting C++17.
 - **Python Version Matrix**: All containers must provide usable installations of **Python 3.10 through 3.14** (with associated development headers and isolated venvs).
@@ -32,7 +31,7 @@ cd docker
 ```
 
 ### Building and Publishing Images
-Builds container images, tags them incrementally (`MM-DD-YYYY.N` / `-latest`), and publishes them to Docker Hub:
+Builds container images, tags them incrementally (`MM-DD-YYYY.N` / `-latest`), and publishes them to Docker Hub and GHCR:
 ```bash
 ./build_and_publish_images.sh
 ```
@@ -44,7 +43,7 @@ Runs pytest across published Docker containers, mounting the workspace and colle
 ./run_python_tests_in_all_dockers.sh
 
 # Run on a specific container
-./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
+./run_python_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
 ```
 - Tests run against each container's live Net-SNMP daemon launched via `docker/DockerEntry.sh`.
 - Test outputs are logged to `test_outputs_<timestamp>/`.
@@ -56,7 +55,7 @@ Runs Google Test suites via Meson/Ninja inside published containers:
 ./run_cpp_tests_in_all_dockers.sh
 
 # Run on a specific container
-./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.9
+./run_cpp_tests_in_all_dockers.sh almalinux10_netsnmp_5.10
 ```
 - Meson builds the test suite in a containerized build directory.
 - Ninja executes tests and generates LCOV coverage data.

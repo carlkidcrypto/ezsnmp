@@ -17,14 +17,14 @@ CONTAINER_WORK_DIR="/ezsnmp"
 if [ $# -eq 1 ] && [ "$1" == "--help" ]; then
 	echo "Usage: $0 [IMAGE_NAME1] [IMAGE_NAME2] ..."
 	echo ""
-	echo "  [IMAGE_NAMEx]: Optional. Specify one or more image tags (e.g., 'centos7_netsnmp_5.7 archlinux_netsnmp_5.7')"
+	echo "  [IMAGE_NAMEx]: Optional. Specify one or more image tags (e.g., 'almalinux10_netsnmp_5.10 archlinux_netsnmp_5.10')"
 	echo "                 to test only those distributions."
 	echo "                 If omitted, all distribution directories will be tested."
 	echo ""
 	echo "Examples:"
 	echo "  $0                                    # Test all distributions"
-	echo "  $0 centos7_netsnmp_5.7                # Test only CentOS 7"
-	echo "  $0 centos7_netsnmp_5.7 archlinux_netsnmp_5.7  # Test only net-snmp 5.7 containers"
+	echo "  $0 almalinux10_netsnmp_5.10           # Test only AlmaLinux 10"
+	echo "  $0 almalinux10_netsnmp_5.10 archlinux_netsnmp_5.10  # Test specific Net-SNMP 5.10 containers"
 	exit 0
 fi
 
@@ -124,8 +124,10 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		set -e;
 		rm -f *.info *.txt *.xml;
 		find build/ -name '*.gcda' -delete 2>/dev/null || true;
-		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location (e.g., archlinux_netsnmp_5.8)
+		# Set PKG_CONFIG_PATH for systems with netsnmp in non-standard location 
 		export PKG_CONFIG_PATH=\"/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:\${PKG_CONFIG_PATH}\"
+		NETSNMP_PC=\$(pkg-config --variable=pcfiledir netsnmp)/netsnmp.pc;
+		sed -i -e 's/[[:space:]]-Werror=declaration-after-statement//g' -e 's/[[:space:]]-Wstrict-prototypes//g' \"\$NETSNMP_PC\";
 		# Ensure a known-good meson (from PyPI) is used instead of the system-installed one.
 		# On Arch Linux the pacman meson uses '#!/usr/bin/env python3' which resolves to the
 		# venv Python 3.14 (injected via ENV PATH in the Dockerfile). That custom-built Python
@@ -154,7 +156,7 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		  ninja -C build/ -j \"\$BUILD_JOBS\";
 		fi;
 		TEST_EXIT_CODE=0
-		meson test -C build/ --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
+		meson test -C build/ --num-processes 1 --verbose > test-outputs.txt 2>&1 || TEST_EXIT_CODE=\$?;
 		if [ -f build/meson-logs/testlog.junit.xml ]; then
 		  cp build/meson-logs/testlog.junit.xml test-results.xml;
 		fi;

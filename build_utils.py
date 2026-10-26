@@ -27,7 +27,7 @@ def is_macports_installed():
     """
     try:
         version_output = check_output("port version", shell=True).decode()
-        match = search(r"Version:\s+(\d+\.\d+\.\d+)", version_output)
+        match = search(r"Version:\s+(\d+(?:\.\d+)*)", version_output)
         if match:
             return match.group(1)
         else:
@@ -45,7 +45,7 @@ def is_net_snmp_installed_macports():
     """
     try:
         macports_output = check_output("port installed net-snmp", shell=True).decode()
-        pattern = r"net-snmp @(\d+\.\d+\.\d+[_+a-zA-Z0-9]*) \(active\)"
+        pattern = r"net-snmp @(\d+(?:\.\d+)*[_\-+a-zA-Z0-9]*) \(active\)"
         match = search(pattern, macports_output)
         if match:
             return match.group(1)
@@ -382,8 +382,9 @@ def gather_build_configuration():
         )
         return windows_cfg
 
-    net_snmp_cmd = "net-snmp-config"
-    if platform == "darwin":
+    configured_net_snmp_cmd = os.environ.get("EZSNMP_NETSNMP_CONFIG")
+    net_snmp_cmd = configured_net_snmp_cmd or "net-snmp-config"
+    if platform == "darwin" and not configured_net_snmp_cmd:
         for prefix in (
             "/opt/homebrew/opt/net-snmp",
             "/opt/homebrew",
@@ -435,7 +436,9 @@ def gather_build_configuration():
         libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag.startswith("-L")]
         incdirs = ["ezsnmp/include/"]
 
-        homebrew_info = get_homebrew_net_snmp_info()
+        homebrew_info = (
+            None if configured_net_snmp_cmd else get_homebrew_net_snmp_info()
+        )
         if homebrew_info:
             (
                 homebrew_version,
@@ -448,7 +451,7 @@ def gather_build_configuration():
             incdirs.extend(temp_incdirs)
             if homebrew_netsnmp_version:
                 system_netsnmp_version = homebrew_netsnmp_version
-        else:
+        elif not configured_net_snmp_cmd:
             homebrew_version = get_homebrew_info()
             netsnmp_incdir = None
             for directory in libdirs:
@@ -460,13 +463,24 @@ def gather_build_configuration():
                     netsnmp_incdir = "/usr/include/net-snmp"
                     incdirs.append(netsnmp_incdir)
                     break
-        macports_version = is_macports_installed()
-        macports_netsnmp_version = is_net_snmp_installed_macports()
-        if macports_version and macports_netsnmp_version:
+        macports_version = None if configured_net_snmp_cmd else is_macports_installed()
+        macports_netsnmp_version = (
+            None if configured_net_snmp_cmd else is_net_snmp_installed_macports()
+        )
+        if (macports_version and macports_netsnmp_version) or (
+            platform == "darwin" and net_snmp_cmd.startswith("/opt/local")
+        ):
             for directory in libdirs:
                 if "/opt/local/lib" in directory:
                     netsnmp_incdir = directory.replace("lib", "include")
-                    incdirs.append(netsnmp_incdir)
+                    if netsnmp_incdir not in incdirs:
+                        incdirs.append(netsnmp_incdir)
+            if "/opt/local/include" not in incdirs and os.path.isdir(
+                "/opt/local/include"
+            ):
+                incdirs.append("/opt/local/include")
+            if "/opt/local/lib" not in libdirs and os.path.isdir("/opt/local/lib"):
+                libdirs.append("/opt/local/lib")
             if not homebrew_info and macports_netsnmp_version:
                 system_netsnmp_version = macports_netsnmp_version
 

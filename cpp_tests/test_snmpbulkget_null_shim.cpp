@@ -4,10 +4,13 @@
 
 #include "exceptionsbase.h"
 #include "snmpbulkget.h"
+#include "test_snmp_response_helpers.h"
 
 void snmpbulkget_usage(void);
 
-extern "C" int snmp_sess_synch_response(void *sessp, netsnmp_pdu *pdu, netsnmp_pdu **response) {
+extern "C" int snmp_sess_synch_response(ezsnmp_test::session_handle sessp,
+                                        netsnmp_pdu *pdu,
+                                        netsnmp_pdu **response) {
    (void)sessp;
    (void)pdu;
    *response = NULL;
