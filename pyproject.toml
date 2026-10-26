@@ -4,17 +4,10 @@ manylinux-x86_64-image = "manylinux_2_28"
 skip = "cp39-*"
 environment = { CIBW_BUILD_VERBOSITY = "1", MAKEFLAGS = "-j4" }
 
-[[tool.cibuildwheel.overrides]]
-select = "*manylinux_2_2*"
-before-all = """apt-get --assume-yes update; apt-get --assume-yes install net-snmp net-snmp-dev openssl libssl-dev;"""
-
-[[tool.cibuildwheel.overrides]]
-select = "*musllinux*"
-before-all = "apk add net-snmp-dev openssl openssl-dev;"
-
 [tool.cibuildwheel.linux]
-before-all = """yum -y update; yum -y install net-snmp net-snmp-devel openssl openssl-devel;"""
-repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+environment = { PATH = "/usr/local/bin:$PATH", LD_LIBRARY_PATH = "/usr/local/lib:$LD_LIBRARY_PATH" }
+before-all = "bash tools/prepare_linux_netsnmp.sh"
+repair-wheel-command = "auditwheel repair --strip -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
 environment = { PATH = "/opt/homebrew/opt/net-snmp/bin:/opt/homebrew/bin:/usr/local/opt/net-snmp/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0" }

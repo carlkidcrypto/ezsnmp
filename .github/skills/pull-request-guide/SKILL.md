@@ -35,6 +35,11 @@ Use this skill when preparing code changes, running verification checks, staging
 
 Before pushing commits or creating a PR, activate your local Python virtual environment (e.g. `source .venv/bin/activate` or `./python3.12.venv/bin/activate`) and run the following verification steps:
 
+### Code Reuse
+
+- Avoid duplicating logic across the repository in both production and test code. Prefer shared implementations and test helpers over repeated code, and review changes for duplication before considering them complete.
+- Net-SNMP patch files under `ezsnmp/patches/` are exempt when their repeated or similar content reflects the upstream source being patched.
+
 1. **Python Formatting**:
    ```bash
    black --check .
@@ -62,6 +67,11 @@ Before pushing commits or creating a PR, activate your local Python virtual envi
    ```bash
    yamllint -c .yamllint .github/workflows/*.yml
    ```
+7. **Shell Script Validation** (if shell scripts were modified):
+   ```bash
+   shellcheck <modified-shell-script-paths>
+   bash -n <modified-shell-script-paths>
+   ```
 
 ---
 
@@ -71,6 +81,8 @@ Before pushing commits or creating a PR, activate your local Python virtual envi
   - Explicitly stage only intended modified target files (e.g., `git add ezsnmp/session.py python_tests/test_session.py`).
   - **Avoid blanket staging commands** like `git add -A` or `git add .`. Blanket commands can accidentally stage dynamically restored inline skills from `.github/skills/`, causing CI safe-output errors (`patch modifies files outside the allowed-files list`).
 - **SonarQube Cloud Quality Gate**:
+  - Treat a passing SonarQube Cloud Quality Gate as required for every change. Do not consider verification complete until the analysis for the current PR/revision reports a passed gate.
+  - If the gate fails, inspect the new-code findings and fix them before completing the task. If the finding details are inaccessible, request the rule and affected file/line instead of guessing or claiming success.
   - Automatic analysis reads `.sonarcloud.properties` on `main`. Ensure documentation exclusions (`sonar.exclusions=docs/**`) are respected so generated files do not fail the Quality Gate.
 
 ---
