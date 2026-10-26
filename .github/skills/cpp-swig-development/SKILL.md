@@ -42,11 +42,12 @@ ezsnmp/
 ## 2. C++17 Standard & Coding Standards
 
 1. **Standard**: All code must conform strictly to **C++17** (`-std=c++17`).
-2. **Memory Safety & RAII**:
+2. **Avoid Duplication**: Do not duplicate production logic or test logic elsewhere in the repository. Extract shared behavior into common implementations or test helpers. Net-SNMP patch files under `ezsnmp/patches/` are exempt when their content matches or resembles the upstream source they patch.
+3. **Memory Safety & RAII**:
    - Wrap raw pointers and dynamically allocated structures in RAII guards or `std::unique_ptr` where possible.
    - Always free Net-SNMP PDUs via `snmp_free_pdu(pdu)` in all execution branches (including exceptions).
    - Clean up Net-SNMP session structs properly (`snmp_close(session)` or `netsnmp_cleanup_session(session)`).
-3. **Clang-Format**:
+4. **Clang-Format**:
    Code must be formatted according to `.clang-format`:
    ```bash
    clang-format -i ezsnmp/src/*.cpp ezsnmp/src/net-snmp-*-final-patched/*.cpp ezsnmp/include/*.h

@@ -69,10 +69,11 @@ cd docker
 ## 4. Test Design & Coverage Requirements
 
 1. **Target 100% Coverage**: All new or modified Python code in `ezsnmp/` must have accompanying tests in `python_tests/`.
-2. **Session Cleanup**: Always close or delete `Session` objects at the end of tests or use context fixtures to prevent socket/file descriptor leaks.
-3. **Module Size**: Keep test modules focused (~500 lines). If a test module exceeds 1,000 lines, split into thematic modules (e.g. `test_session_get.py`, `test_session_walk.py`).
-4. **Skip Rules**: Skipping tests via `@pytest.mark.skip` or `pytest.skip()` should be a last resort, used only when an OS or platform strictly lacks an underlying capability.
-5. **Formatting**: Always format test files with Black:
+2. **Avoid Duplication**: Avoid duplicated production and test logic across the repository. Reuse common implementations and test helpers; Net-SNMP patch files under `ezsnmp/patches/` are exempt when their content reflects the upstream source being patched.
+3. **Session Cleanup**: Always close or delete `Session` objects at the end of tests or use context fixtures to prevent socket/file descriptor leaks.
+4. **Module Size**: Keep test modules focused (~500 lines). If a test module exceeds 1,000 lines, split into thematic modules (e.g. `test_session_get.py`, `test_session_walk.py`).
+5. **Skip Rules**: Skipping tests via `@pytest.mark.skip` or `pytest.skip()` should be a last resort, used only when an OS or platform strictly lacks an underlying capability.
+6. **Formatting**: Always format test files with Black:
    ```bash
    black python_tests/
    ```

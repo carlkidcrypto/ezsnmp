@@ -35,6 +35,11 @@ Use this skill when preparing code changes, running verification checks, staging
 
 Before pushing commits or creating a PR, activate your local Python virtual environment (e.g. `source .venv/bin/activate` or `./python3.12.venv/bin/activate`) and run the following verification steps:
 
+### Code Reuse
+
+- Avoid duplicating logic across the repository in both production and test code. Prefer shared implementations and test helpers over repeated code, and review changes for duplication before considering them complete.
+- Net-SNMP patch files under `ezsnmp/patches/` are exempt when their repeated or similar content reflects the upstream source being patched.
+
 1. **Python Formatting**:
    ```bash
    black --check .
