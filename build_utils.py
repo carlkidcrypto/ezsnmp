@@ -589,9 +589,7 @@ def gather_build_configuration():
         if not configured_net_snmp_cmd:
             homebrew_version = get_homebrew_info()
         homebrew_info = (
-            get_homebrew_net_snmp_info(homebrew_version)
-            if homebrew_version
-            else None
+            get_homebrew_net_snmp_info(homebrew_version) if homebrew_version else None
         )
         if homebrew_info:
             (
