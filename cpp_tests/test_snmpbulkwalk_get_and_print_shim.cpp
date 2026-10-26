@@ -6,11 +6,11 @@
 #include <gtest/gtest.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
-#include "test_snmp_response_helpers.h"
 
 #include "datatypes.h"
 #include "exceptionsbase.h"
 #include "snmpbulkwalk.h"
+#include "test_snmp_response_helpers.h"
 
 static int snmpbulkwalk_call_count = 0;
 

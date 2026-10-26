@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
-#include "test_snmp_response_helpers.h"
 
 #include "exceptionsbase.h"
 #include "snmpget.h"
+#include "test_snmp_response_helpers.h"
 
 static bool g_retry_mode = false;
 static int g_call_count = 0;
