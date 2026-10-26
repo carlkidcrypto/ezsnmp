@@ -14,6 +14,12 @@ class Ezsnmp < Formula
   depends_on "swig" => :build
   depends_on "openssl@3"
 
+  on_arm do
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
+  end
+
   def find_python3
     candidates = ["python3"] + Dir["#{HOMEBREW_PREFIX}/opt/python@*/bin/python3"].sort.reverse
     candidates.find { |candidate| File.executable?(candidate) } || "python3"
@@ -35,6 +41,7 @@ class Ezsnmp < Formula
     ENV.append "CPPFLAGS", "-I#{openssl.opt_include}"
 
     resource("net-snmp").stage do
+      system "autoreconf", "--force", "--install", "--verbose" if Hardware::CPU.arm?
       system "./configure", "--prefix=#{prefix}",
              "--with-defaults",
              "--with-mibs=#{default_mibs}",
