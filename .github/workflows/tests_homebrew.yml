@@ -95,8 +95,7 @@ jobs:
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
-          linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+          linux: sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
