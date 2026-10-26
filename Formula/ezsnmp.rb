@@ -41,11 +41,8 @@ class Ezsnmp < Formula
     ENV.append "CPPFLAGS", "-I#{openssl.opt_include}"
 
     resource("net-snmp").stage do
-      configure_ac = Pathname.pwd.glob("**/configure.ac").first
-      odie "Net-SNMP configure.ac not found in staged source" unless configure_ac
-
-      cd configure_ac.dirname do
-        system "autoreconf", "--force", "--install", "--verbose" if Hardware::CPU.arm?
+      system "autoreconf", "--force", "--install", "--verbose" if Hardware::CPU.arm? && File.file?("configure.ac")
+      begin
         system "./configure", "--prefix=#{prefix}",
                "--with-defaults",
                "--with-mibs=#{default_mibs}",
@@ -61,9 +58,12 @@ class Ezsnmp < Formula
                "--without-perl-modules",
                "--with-openssl=#{openssl.opt_prefix}",
                "--enable-blumenthal-aes"
-        system "make", "-j#{ENV.make_jobs}"
-        system "make", "install"
+      rescue ErrorDuringExecution
+        opoo File.readlines("config.log").last(80).join if File.exist?("config.log")
+        raise
       end
+      system "make", "-j#{ENV.make_jobs}"
+      system "make", "install"
     end
 
     # Build ezsnmp against the Net-SNMP 5.10 copy installed in this formula.

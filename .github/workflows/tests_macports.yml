@@ -241,6 +241,8 @@ jobs:
       - name: Run Tests
         run: |
           set -euo pipefail
+          export MIBS=+ALL
+          export MIBDIRS="$HOME/.snmp/mibs:/opt/local/share/snmp/mibs:/usr/local/share/snmp/mibs"
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
           set +e

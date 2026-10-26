@@ -179,6 +179,8 @@ jobs:
         with:
           linux: |
                  set -euo pipefail
+                 export MIBS=+ALL
+                 export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs"
                  export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
                  export PATH="/usr/local/bin:$PATH"
                  export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH:-}"
@@ -206,6 +208,8 @@ jobs:
 
           macos: |
             set -euo pipefail
+            export MIBS=+ALL
+            export MIBDIRS="$HOME/.snmp/mibs:$(brew --prefix net-snmp)/share/snmp/mibs"
             PKG_VERSION=$(python3 -c "import re, sys; match = re.search(r'^version\s*=\s*(.+)$', open('setup.cfg').read(), re.MULTILINE); print(match.group(1).strip() if match else sys.exit('ERROR: could not find version field in setup.cfg'))")
             # Package the current checkout with a versioned filename so Homebrew
             # can infer the formula version without a temporary version stanza.
