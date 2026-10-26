@@ -30,6 +30,10 @@ class Ezsnmp < Formula
       SNMP-VIEW-BASED-ACM-MIB SNMP-COMMUNITY-MIB NET-SNMP-VACM-MIB
     ].join(":")
 
+    openssl = Formula["openssl@3"]
+    ENV.append "LDFLAGS", "-L#{openssl.opt_lib}"
+    ENV.append "CPPFLAGS", "-I#{openssl.opt_include}"
+
     resource("net-snmp").stage do
       system "./configure", "--prefix=#{prefix}",
              "--with-defaults",
@@ -44,7 +48,7 @@ class Ezsnmp < Formula
              "--disable-mibs",
              "--disable-embedded-perl",
              "--without-perl-modules",
-             "--with-openssl=#{Formula["openssl@3"].opt_prefix}",
+             "--with-openssl=#{openssl.opt_prefix}",
              "--enable-blumenthal-aes"
       system "make", "-j#{ENV.make_jobs}"
       system "make", "install"
@@ -54,9 +58,7 @@ class Ezsnmp < Formula
     ENV.prepend_path "PATH", "#{prefix}/bin"
     ENV["EZSNMP_NETSNMP_CONFIG"] = "#{prefix}/bin/net-snmp-config"
     ENV.append "LDFLAGS", "-L#{prefix}/lib"
-    ENV.append "LDFLAGS", "-L#{Formula["openssl@3"].opt_lib}"
     ENV.append "CPPFLAGS", "-I#{prefix}/include"
-    ENV.append "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include}"
 
     # A temporary build venv supplies setuptools and wheel without modifying
     # Homebrew Python's global environment.  --no-build-isolation is used so

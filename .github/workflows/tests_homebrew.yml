@@ -96,8 +96,6 @@ jobs:
                  sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
                  brew update;
-                 brew install net-snmp;
-                 brew install openssl@3;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -115,6 +113,10 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
+      - name: Install Net-SNMP 5.10 on Linux
+        if: runner.os == 'Linux'
+        run: sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -175,13 +177,12 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
           linux: |
-                 NETSNMP_PREFIX="$(brew --prefix net-snmp)"
-                 export EZSNMP_NETSNMP_CONFIG="${NETSNMP_PREFIX}/bin/net-snmp-config"
-                 export PATH="${NETSNMP_PREFIX}/bin:${NETSNMP_PREFIX}/sbin:$PATH"
-                 export LD_LIBRARY_PATH="${NETSNMP_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
-                 export CFLAGS="-I${NETSNMP_PREFIX}/include"
-                 export LDFLAGS="-L${NETSNMP_PREFIX}/lib"
-                 export PKG_CONFIG_PATH="${NETSNMP_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+                 export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
+                 export PATH="/usr/local/bin:$PATH"
+                 export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH:-}"
+                 export CFLAGS="-I/usr/local/include"
+                 export LDFLAGS="-L/usr/local/lib"
+                 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
                  mv ezsnmp _ezsnmp
