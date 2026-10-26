@@ -142,6 +142,10 @@ jobs:
             SNMPD=$(which snmpd)
           elif [ "$RUNNER_OS" == "macOS" ]
           then
+            NETSNMP_PREFIX="$(brew --prefix net-snmp)"
+            export PATH="${NETSNMP_PREFIX}/bin:${NETSNMP_PREFIX}/sbin:$PATH"
+            export SNMP_PERSISTENT_DIR="${RUNNER_TEMP:-$HOME}/snmp-persistent"
+            mkdir -p "$SNMP_PERSISTENT_DIR"
             # On macOS, check for Homebrew MIB directories (both Intel and Apple Silicon)
             if [ -d "/opt/homebrew/share/snmp/mibs" ]; then
               mibdir="-M +/opt/homebrew/share/snmp/mibs"
@@ -171,10 +175,13 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
           linux: |
-                 export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/lib:${LD_LIBRARY_PATH:-}
-                 export CFLAGS="-I/home/linuxbrew/.linuxbrew/include"
-                 export LDFLAGS="-L/home/linuxbrew/.linuxbrew/lib"
-                 export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+                 NETSNMP_PREFIX="$(brew --prefix net-snmp)"
+                 export EZSNMP_NETSNMP_CONFIG="${NETSNMP_PREFIX}/bin/net-snmp-config"
+                 export PATH="${NETSNMP_PREFIX}/bin:${NETSNMP_PREFIX}/sbin:$PATH"
+                 export LD_LIBRARY_PATH="${NETSNMP_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
+                 export CFLAGS="-I${NETSNMP_PREFIX}/include"
+                 export LDFLAGS="-L${NETSNMP_PREFIX}/lib"
+                 export PKG_CONFIG_PATH="${NETSNMP_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
                  mv ezsnmp _ezsnmp
