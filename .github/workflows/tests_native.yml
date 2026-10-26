@@ -170,8 +170,10 @@ jobs:
 
       - name: Run Tests
         run: |
+          set -euo pipefail
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
+          trap 'if [ -d _ezsnmp ] && [ ! -d ezsnmp ]; then mv _ezsnmp ezsnmp; fi' EXIT
           pytest -v -s \
             -o junit_family=legacy \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
@@ -179,7 +181,8 @@ jobs:
             --cov-report=xml:coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov-config=.coveragerc \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
-          mv _ezsnmp ezsnmp 2>/dev/null || true
+          mv _ezsnmp ezsnmp
+          trap - EXIT
           python3 python_tests/normalize_coverage_paths.py coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml || true
           # Generate coverage summary file
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi
