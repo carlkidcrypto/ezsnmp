@@ -22,11 +22,18 @@ class Ezsnmp < Formula
   def install
     python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
+    default_mibs = %w[
+      IP-MIB IF-MIB TCP-MIB UDP-MIB SNMPv2-MIB RFC1213-MIB NOTIFICATION-LOG-MIB
+      DISMAN-EVENT-MIB DISMAN-SCHEDULE-MIB HOST-RESOURCES-MIB HOST-RESOURCES-TYPES
+      UCD-SNMP-MIB UCD-DEMO-MIB SNMP-TARGET-MIB NET-SNMP-AGENT-MIB NET-SNMP-EXTEND-MIB
+      SNMP-FRAMEWORK-MIB SNMP-MPD-MIB SNMP-USER-BASED-SM-MIB
+      SNMP-VIEW-BASED-ACM-MIB SNMP-COMMUNITY-MIB NET-SNMP-VACM-MIB
+    ].join(":")
 
     resource("net-snmp").stage do
       system "./configure", "--prefix=#{prefix}",
              "--with-defaults",
-             "--with-mibs=IP-MIB:IF-MIB:TCP-MIB:UDP-MIB:SNMPv2-MIB:RFC1213-MIB:NOTIFICATION-LOG-MIB:DISMAN-EVENT-MIB:DISMAN-SCHEDULE-MIB:HOST-RESOURCES-MIB:HOST-RESOURCES-TYPES:UCD-SNMP-MIB:UCD-DEMO-MIB:SNMP-TARGET-MIB:NET-SNMP-AGENT-MIB:NET-SNMP-EXTEND-MIB:SNMP-FRAMEWORK-MIB:SNMP-MPD-MIB:SNMP-USER-BASED-SM-MIB:SNMP-VIEW-BASED-ACM-MIB:SNMP-COMMUNITY-MIB:NET-SNMP-VACM-MIB",
+             "--with-mibs=#{default_mibs}",
              "--with-mibdirs=$HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs",
              "--enable-shared",
              "--disable-static",

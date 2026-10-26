@@ -8,13 +8,14 @@
 #include <gtest/gtest.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
+#include "test_snmp_response_helpers.h"
 
 #include "exceptionsbase.h"
 #include "snmpwalk.h"
 
 static int snmpwalk_data_call_count = 0;
 
-extern "C" int snmp_sess_synch_response(void *sessp,
+extern "C" int snmp_sess_synch_response(ezsnmp_test::session_handle sessp,
                                         netsnmp_pdu *pdu,
                                         netsnmp_pdu **response) {
    (void)sessp;

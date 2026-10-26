@@ -14,12 +14,13 @@
 
 #include "exceptionsbase.h"
 #include "helpers.h"
+#include "test_snmp_response_helpers.h"
 
 static std::string g_error_message = "generic error";
 
 /* Stub for the single-session error accessor used by
  * snmp_single_sess_perror_exception(). */
-extern "C" void snmp_sess_error(void *sessp,
+extern "C" void snmp_sess_error(ezsnmp_test::error_session_handle sessp,
                                 int *p_errno,
                                 int *p_snmp_errno,
                                 char **p_str) {

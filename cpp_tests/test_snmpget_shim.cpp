@@ -6,7 +6,7 @@
 #include "snmpget.h"
 #include "test_snmp_response_helpers.h"
 
-extern "C" int snmp_sess_synch_response(void *sessp,
+extern "C" int snmp_sess_synch_response(ezsnmp_test::session_handle sessp,
                                         netsnmp_pdu *pdu,
                                         netsnmp_pdu **response) {
    (void)sessp;

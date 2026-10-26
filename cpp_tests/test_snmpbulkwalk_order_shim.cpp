@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
+#include "test_snmp_response_helpers.h"
 
 #include "datatypes.h"
 #include "exceptionsbase.h"
@@ -9,7 +10,7 @@
 static bool g_lexicographic_error_mode = false;
 static bool g_exception_value_mode = false;
 
-extern "C" int snmp_sess_synch_response(void *,
+extern "C" int snmp_sess_synch_response(ezsnmp_test::session_handle,
                                         netsnmp_pdu *,
                                         netsnmp_pdu **response) {
    netsnmp_pdu *fake_response = snmp_pdu_create(SNMP_MSG_RESPONSE);
