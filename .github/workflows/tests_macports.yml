@@ -67,6 +67,8 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/macports-version.txt
+            tools/prepare_macos_netsnmp.sh
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -172,6 +174,13 @@ jobs:
           mkdir -p -m 0755 ~/.snmp
           echo 'mibs +ALL' > ~/.snmp/snmp.conf
 
+      - name: Build supported Net-SNMP 5.10
+        run: |
+          set -euo pipefail
+          sudo bash tools/prepare_macos_netsnmp.sh
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
+          echo "EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config" >> "$GITHUB_ENV"
+
       - name: Start SNMP daemon
         run: |
           set -euo pipefail
@@ -199,7 +208,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .wheel-cache
-          key: ezsnmp-wheel-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+          key: ezsnmp-wheel-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py', 'tools/macports-version.txt', 'tools/prepare_macos_netsnmp.sh') }}
 
       - name: Build or install cached ezsnmp wheel
         run: |
@@ -234,12 +243,16 @@ jobs:
           set -euo pipefail
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
+          set +e
           pytest -v -s --cov=ezsnmp \
             --cov-report=term-missing \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
-            python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt || true
+            python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          TEST_EXIT_CODE=$?
+          set -e
           # Ensure a placeholder junit file exists even if pytest failed to write one
           if [ ! -f test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml ]; then echo "<testsuite></testsuite>" > test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml; fi
+          exit "$TEST_EXIT_CODE"
 
       - name: Upload Test Results
         if: always()

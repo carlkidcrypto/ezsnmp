@@ -69,6 +69,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/prepare_linux_netsnmp.sh
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -138,7 +139,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .wheel-cache
-          key: ezsnmp-wheel-netsnmp-5.10-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+          key: ezsnmp-wheel-netsnmp-5.10-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py', 'tools/prepare_linux_netsnmp.sh') }}
 
       - name: Build or install cached ezsnmp wheel
         run: |
