@@ -25,11 +25,20 @@ class Ezsnmp < Formula
 
     resource("net-snmp").stage do
       system "./configure", "--prefix=#{prefix}",
+             "--with-defaults",
+             "--with-mibs=IP-MIB:IF-MIB:TCP-MIB:UDP-MIB:SNMPv2-MIB:RFC1213-MIB:NOTIFICATION-LOG-MIB:DISMAN-EVENT-MIB:DISMAN-SCHEDULE-MIB:HOST-RESOURCES-MIB:HOST-RESOURCES-TYPES:UCD-SNMP-MIB:UCD-DEMO-MIB:SNMP-TARGET-MIB:NET-SNMP-AGENT-MIB:NET-SNMP-EXTEND-MIB:SNMP-FRAMEWORK-MIB:SNMP-MPD-MIB:SNMP-USER-BASED-SM-MIB:SNMP-VIEW-BASED-ACM-MIB:SNMP-COMMUNITY-MIB:NET-SNMP-VACM-MIB",
+             "--with-mibdirs=$HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs",
              "--enable-shared",
+             "--disable-static",
+             "--disable-agent",
+             "--disable-applications",
+             "--disable-manuals",
+             "--disable-scripts",
+             "--disable-mibs",
              "--disable-embedded-perl",
              "--without-perl-modules",
-             "--with-mib-modules=mibII/system_mib mibII/sysORTable",
-             "--with-openssl=#{Formula["openssl@3"].opt_prefix}"
+             "--with-openssl=#{Formula["openssl@3"].opt_prefix}",
+             "--enable-blumenthal-aes"
       system "make", "-j#{ENV.make_jobs}"
       system "make", "install"
     end
