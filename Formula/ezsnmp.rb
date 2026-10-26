@@ -41,22 +41,27 @@ class Ezsnmp < Formula
     ENV.append "CPPFLAGS", "-I#{openssl.opt_include}"
 
     resource("net-snmp").stage do
-      system "autoreconf", "--force", "--install", "--verbose" if Hardware::CPU.arm?
-      system "./configure", "--prefix=#{prefix}",
-             "--with-defaults",
-             "--with-mibs=#{default_mibs}",
-             "--with-mibdirs=$HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs",
-             "--enable-shared",
-             "--disable-static",
-             "--disable-agent",
-             "--disable-applications",
-             "--disable-manuals",
-             "--disable-scripts",
-             "--disable-mibs",
-             "--disable-embedded-perl",
-             "--without-perl-modules",
-             "--with-openssl=#{openssl.opt_prefix}",
-             "--enable-blumenthal-aes"
+      system "autoreconf", "--force", "--install", "--verbose" if Hardware::CPU.arm? && File.file?("configure.ac")
+      begin
+        system "./configure", "--prefix=#{prefix}",
+               "--with-defaults",
+               "--with-mibs=#{default_mibs}",
+               "--with-mibdirs=$HOME/.snmp/mibs:/usr/share/snmp/mibs:/usr/local/share/snmp/mibs:#{HOMEBREW_PREFIX}/share/snmp/mibs",
+               "--enable-shared",
+               "--disable-static",
+               "--disable-agent",
+               "--disable-applications",
+               "--disable-manuals",
+               "--disable-scripts",
+               "--disable-mibs",
+               "--disable-embedded-perl",
+               "--without-perl-modules",
+               "--with-openssl=#{openssl.opt_prefix}",
+               "--enable-blumenthal-aes"
+      rescue ErrorDuringExecution
+        opoo File.readlines("config.log").last(80).join if File.exist?("config.log")
+        raise
+      end
       system "make", "-j#{ENV.make_jobs}"
       system "make", "install"
     end

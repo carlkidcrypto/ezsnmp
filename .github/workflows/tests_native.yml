@@ -69,6 +69,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/prepare_linux_netsnmp.sh
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -138,7 +139,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .wheel-cache
-          key: ezsnmp-wheel-netsnmp-5.10-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+          key: ezsnmp-wheel-netsnmp-5.10-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py', 'tools/prepare_linux_netsnmp.sh') }}
 
       - name: Build or install cached ezsnmp wheel
         run: |
@@ -170,8 +171,12 @@ jobs:
 
       - name: Run Tests
         run: |
+          set -euo pipefail
+          export MIBS=+ALL
+          export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/var/lib/snmp/mibs/iana:/var/lib/snmp/mibs/ietf:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf:/usr/local/share/snmp/mibs"
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
+          trap 'if [ -d _ezsnmp ] && [ ! -d ezsnmp ]; then mv _ezsnmp ezsnmp; fi' EXIT
           pytest -v -s \
             -o junit_family=legacy \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
@@ -179,7 +184,8 @@ jobs:
             --cov-report=xml:coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov-config=.coveragerc \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
-          mv _ezsnmp ezsnmp 2>/dev/null || true
+          mv _ezsnmp ezsnmp
+          trap - EXIT
           python3 python_tests/normalize_coverage_paths.py coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml || true
           # Generate coverage summary file
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi

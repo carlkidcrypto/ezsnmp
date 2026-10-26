@@ -66,6 +66,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/prepare_linux_netsnmp.sh
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -177,6 +178,9 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
           linux: |
+                 set -euo pipefail
+                 export MIBS=+ALL
+                 export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/var/lib/snmp/mibs/iana:/var/lib/snmp/mibs/ietf:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf:/usr/local/share/snmp/mibs"
                  export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
                  export PATH="/usr/local/bin:$PATH"
                  export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH:-}"
@@ -203,6 +207,9 @@ jobs:
                    python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
+            set -euo pipefail
+            export MIBS=+ALL
+            export MIBDIRS="$HOME/.snmp/mibs:$(brew --prefix net-snmp)/share/snmp/mibs"
             PKG_VERSION=$(python3 -c "import re, sys; match = re.search(r'^version\s*=\s*(.+)$', open('setup.cfg').read(), re.MULTILINE); print(match.group(1).strip() if match else sys.exit('ERROR: could not find version field in setup.cfg'))")
             # Package the current checkout with a versioned filename so Homebrew
             # can infer the formula version without a temporary version stanza.
