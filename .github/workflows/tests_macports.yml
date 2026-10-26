@@ -248,7 +248,7 @@ jobs:
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
           set +e
-          pytest -v -s --cov=ezsnmp \
+          python3 -m pytest -v -s --cov=ezsnmp \
             --cov-report=term-missing \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
