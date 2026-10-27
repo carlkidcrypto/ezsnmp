@@ -90,7 +90,9 @@ SESS_TYPES_NAMES = [
     "SESS_V3_MD5_NO_PRIV_ARGS",
 ]
 
-TOTAL_CALLS = 100
+TOTAL_CALLS = int(os.environ.get("EZSNMP_FD_TEST_CALLS", "100"))
+if TOTAL_CALLS < 1:
+    raise ValueError("EZSNMP_FD_TEST_CALLS must be a positive integer")
 
 GET_OIDS = ["sysUpTime.0", "sysContact.0", "sysLocation.0"]
 GETNEXT_OIDS = ["sysUpTime.0", "sysContact.0", "sysLocation.0"]
