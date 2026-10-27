@@ -79,6 +79,16 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
         exclude:
+          # The formula selects Homebrew's Python, so the matrix version does
+          # not affect macOS test execution.
+          - os: macos-latest
+            python-version: "3.10"
+          - os: macos-latest
+            python-version: "3.11"
+          - os: macos-latest
+            python-version: "3.12"
+          - os: macos-latest
+            python-version: "3.13"
           - os: macos-latest
             python-version: "3.15"
 
@@ -267,6 +277,14 @@ jobs:
           path: |
             test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          if-no-files-found: warn
+
+      - name: Upload Homebrew build logs
+        if: ${{ failure() && runner.os == 'macOS' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v5
+        with:
+          name: homebrew-build-logs_${{ matrix.python-version }}
+          path: ~/Library/Logs/Homebrew/ezsnmp
           if-no-files-found: warn
 
       - name: Upload Valgrind Reports
