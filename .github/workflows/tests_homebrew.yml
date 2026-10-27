@@ -236,8 +236,9 @@ jobs:
             # Homebrew normally rejects formulae supplied by path. Developer mode
             # enables this intentional CI use while avoiding third-party tap trust.
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
-            sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
-            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
+            # Anchor these rewrites to the formula stanza so the nested resource is preserved.
+            sed -i '' "s|^  url \".*\"|  url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
+            sed -i '' "s|^  sha256 \".*\"|  sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
             # Remove any pre-existing ezsnmp install to prevent version conflicts.
             # Try both short name and fully-qualified name to catch all cases.
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
