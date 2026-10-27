@@ -12,7 +12,7 @@ import faulthandler
 faulthandler.enable()
 
 
-def test_session_walk(sess):
+def test_session_walk(sess, reset_values):
 
     res = sess.walk("system")
 
@@ -39,7 +39,7 @@ def test_session_walk(sess):
     del sess
 
 
-def test_session_bulkwalk(sess):
+def test_session_bulkwalk(sess, reset_values):
 
     if sess.version == "1":
         with pytest.raises(PacketError):
@@ -72,7 +72,7 @@ def test_session_bulkwalk(sess):
     del sess
 
 
-def test_session_walk_all(sess):
+def test_session_walk_all(sess, reset_values):
 
     res = sess.walk(".")
 

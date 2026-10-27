@@ -532,8 +532,9 @@ def gather_build_configuration():
         )
         return windows_cfg
 
-    net_snmp_cmd = "net-snmp-config"
-    if platform == "darwin":
+    configured_net_snmp_cmd = os.environ.get("EZSNMP_NETSNMP_CONFIG")
+    net_snmp_cmd = configured_net_snmp_cmd or "net-snmp-config"
+    if platform == "darwin" and not configured_net_snmp_cmd:
         for prefix in (
             "/opt/homebrew/opt/net-snmp",
             "/opt/homebrew",
@@ -585,7 +586,8 @@ def gather_build_configuration():
         libdirs = [flag[2:] for flag in s_split(netsnmp_libs) if flag.startswith("-L")]
         incdirs = ["ezsnmp/include/"]
 
-        homebrew_version = get_homebrew_info()
+        if not configured_net_snmp_cmd:
+            homebrew_version = get_homebrew_info()
         homebrew_info = (
             get_homebrew_net_snmp_info(homebrew_version) if homebrew_version else None
         )
@@ -601,7 +603,7 @@ def gather_build_configuration():
             incdirs.extend(temp_incdirs)
             if homebrew_netsnmp_version:
                 system_netsnmp_version = homebrew_netsnmp_version
-        else:
+        elif not configured_net_snmp_cmd:
             netsnmp_incdir = None
             for directory in libdirs:
                 if "net-snmp" in directory:
@@ -612,9 +614,12 @@ def gather_build_configuration():
                     netsnmp_incdir = "/usr/include/net-snmp"
                     incdirs.append(netsnmp_incdir)
                     break
-        if platform == "darwin":
+        if platform == "darwin" and not configured_net_snmp_cmd:
             macports_version = is_macports_installed()
             macports_netsnmp_version = is_net_snmp_installed_macports()
+        else:
+            macports_version = None
+            macports_netsnmp_version = None
         if (macports_version and macports_netsnmp_version) or (
             platform == "darwin" and net_snmp_cmd.startswith("/opt/local")
         ):
@@ -631,6 +636,20 @@ def gather_build_configuration():
                 libdirs.append("/opt/local/lib")
             if not homebrew_info and macports_netsnmp_version:
                 system_netsnmp_version = macports_netsnmp_version
+
+    openssl_include_dirs = split_env_list(
+        get_first_env("EZSNMP_OPENSSL_INCLUDE_DIR", "OPENSSL_INCLUDE_DIR")
+    )
+    openssl_library_dirs = split_env_list(
+        get_first_env("EZSNMP_OPENSSL_LIB_DIR", "OPENSSL_LIB_DIR")
+    )
+    incdirs.extend(
+        directory for directory in openssl_include_dirs if directory not in incdirs
+    )
+    libdirs = [
+        *openssl_library_dirs,
+        *(directory for directory in libdirs if directory not in openssl_library_dirs),
+    ]
 
     return {
         "basedir": basedir,

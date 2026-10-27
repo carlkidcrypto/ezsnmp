@@ -169,8 +169,7 @@ Build and Distribution
 [BUILD-01] The C++ core shall be built as a Python extension module using SWIG 4.5.0 to auto-
 generate Python ↔ C++ bindings.
 
-[BUILD-02] The build system shall support Net-SNMP versions 5.7, 5.8, 5.9, and 5.10 by applying per-
-version source patches to the upstream Net-SNMP CLI tool sources.
+[BUILD-02] The build system shall support Net-SNMP 5.10 and newer for source builds, and provide standalone pre-compiled wheels bundling Net-SNMP 5.10 for Linux and Windows.
 
 [BUILD-03] The system shall support Python versions 3.10, 3.11, 3.12, 3.13, and 3.14.
 
@@ -193,23 +192,16 @@ compilation:
   keyword. This patch shall be applied after ``perl Configure`` runs (Configure regenerates this
   file from a template) and shall tolerate CRLF line endings.
 
-[BUILD-07] The Net-SNMP single-session API (``snmp_sess_open``, ``snmp_sess_close``,
+[BUILD-07] The Net-SNMP 5.10 single-session API (``snmp_sess_open``, ``snmp_sess_close``,
 ``snmp_sess_synch_response``, ``snmp_sess_error``) shall be treated by ezsnmp's C++ wrapper code as
-returning/accepting an opaque handle whose concrete pointer type differs across supported Net-SNMP
-versions (``void *`` in 5.7-5.9, ``struct session_list *`` in 5.10). Wrapper code shall store this
-handle as ``void *`` and apply an explicit ``static_cast<struct session_list *>`` at each call site
-that requires it, so the same source compiles unmodified against every supported version.
+an opaque handle. Wrapper code shall store this handle as ``void *`` and apply an explicit
+``static_cast<struct session_list *>`` at each call site that requires it.
 
 [BUILD-08] C++ extension modules shall be declared using dotted Python package notation (for example
 ``ezsnmp._datatypes``), not path-separator notation, since the latter produces an invalid exported
 ``PyInit_`` symbol name under MSVC.
 
-[BUILD-09] The per-version Net-SNMP CLI source patches under ``ezsnmp/patches/`` shall be
-regenerated from ``ezsnmp/patches/master_src`` (the canonical template) whenever that template
-changes, using cross-platform scripts (``do_all_that_stuff.sh``, ``make_patches.sh``,
-``apply_patches.sh``) that detect available POSIX or GNU utilities (``sed``/``gsed``,
-``patch``/``gpatch``) to generate diffs and produce the checked-in ``ezsnmp/src/net-snmp-*-final-
-patched`` sources on macOS, Linux, and other UNIX-like systems.
+[BUILD-09] Standalone wheels shall be provided across platforms (Linux via auditwheel and Windows via delvewheel) with Net-SNMP 5.10 compiled from source and stripped of debug symbols, requiring no pre-installed Net-SNMP libraries on target user systems. The C++ operation sources shall reside in ``ezsnmp/src/net-snmp-5.10-final-patched/``, while Net-SNMP 5.10 patches and patching scripts are maintained under ``ezsnmp/patches/`` for future version bumps.
 
 [BUILD-10] The Windows Net-SNMP source build shall additionally patch ``include/net-
 snmp/library/lcd_time.h`` to add the ``NETSNMP_IMPORT`` decoration to the ``free_enginetime``
@@ -391,4 +383,3 @@ modularized into shared composite GitHub Actions under ``.github/actions/``:
 - **Common Wheel Building**: The ``build-wheels`` composite action shall centralize cross-platform
   wheel building using ``cibuildwheel`` across Linux, macOS, and Windows matrix targets, including
   dependency caching (pip, vcpkg, and compiled Net-SNMP Windows binaries) and artifact uploads.
-

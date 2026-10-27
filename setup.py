@@ -8,7 +8,7 @@ based on Net-SNMP. It performs the following tasks:
 1. Detects the system's Net-SNMP installation (system, Homebrew, or MacPorts)
 2. Runs SWIG to generate C++ wrapper code from interface files (.i -> .cpp)
 3. Compiles four C++ extension modules (_datatypes, _exceptionsbase, _netsnmpbase, _sessionbase)
-4. Selects version-specific Net-SNMP source files based on detected version (5.7, 5.8, 5.9, or 5.10)
+4. Selects the Net-SNMP 5.10 C++ sources for supported Net-SNMP versions (5.10 and newer)
 
 Command-line options:
     --debug         Enable debug compilation flags (-Wall -O0 -g)
@@ -23,6 +23,7 @@ Requirements:
 
 import json
 import os
+import re
 import shutil
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -446,28 +447,20 @@ class BuildEverythingWithSwig(_build_py):
 
 
 def resolve_snmp_source_path(version_str: str) -> str:
-    if version_str.startswith("5.6"):
-        if platform == "darwin":
+    version_match = re.match(r"^(\d+)\.(\d+)", version_str)
+    if version_match is None or tuple(map(int, version_match.groups())) < (5, 10):
+        if version_str.startswith("5.6") and platform == "darwin":
             raise RuntimeError(
                 f"Net-SNMP version {version_str} is no longer supported. "
-                "On macOS, the system-provided Net-SNMP (5.6.x) is not supported. "
-                "Please install a supported version via Homebrew "
-                "(`brew install net-snmp`) or MacPorts "
+                "The system-provided Net-SNMP is not supported. Install Net-SNMP "
+                "5.10 or newer via Homebrew (`brew install net-snmp`) or MacPorts "
                 "(`sudo port install net-snmp`)."
             )
         raise RuntimeError(
-            f"Net-SNMP version {version_str} is no longer supported. "
-            "Please upgrade to Net-SNMP 5.7 or later."
+            f"Net-SNMP version {version_str} is unsupported. "
+            "Please install Net-SNMP 5.10 or newer."
         )
-    if version_str.startswith("5.7"):
-        return "ezsnmp/src/net-snmp-5.7-final-patched"
-    if version_str.startswith("5.8"):
-        return "ezsnmp/src/net-snmp-5.8-final-patched"
-    if version_str.startswith("5.9"):
-        return "ezsnmp/src/net-snmp-5.9-final-patched"
-    if version_str.startswith("5.10"):
-        return "ezsnmp/src/net-snmp-5.10-final-patched"
-    raise RuntimeError(f"Unsupported net-snmp version: {version_str}")
+    return "ezsnmp/src/net-snmp-5.10-final-patched"
 
 
 def build_extensions(cfg: dict):

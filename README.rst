@@ -54,7 +54,7 @@ EzSnmp is a fork of `Easy SNMP <https://github.com/easysnmp/easysnmp>`__
 Why Another Library?
 --------------------
 
-- Simply because the maintainer of `Easy SNMP` seems to have abandoned the project or isn't actively working on it.
+- Simply because the maintainer of Easy SNMP seems to have abandoned the project or isn't actively working on it.
 - This version (EzSnmp) will attempt to remain up to date with Python versions that are supported by `Python <https://devguide.python.org/versions/>`__
   and net-snmp versions that are supported by `Net-SNMP <https://www.net-snmp.org/download.html>`__
 
@@ -104,14 +104,14 @@ Operational Reports
 EzSnmp also keeps a small set of maintenance reports and supporting scripts for
 CI diagnostics:
 
-- **Valgrind PR history report**: `.github/workflows/valgrind_pr_history_report.yml`
-  runs `.github/scripts/analyze_valgrind_pr_history.py` to scan historical
+- **Valgrind PR history report**: ``.github/workflows/valgrind_pr_history_report.yml``
+  runs ``.github/scripts/analyze_valgrind_pr_history.py`` to scan historical
   Homebrew Valgrind bot comments, then publishes markdown and JSON report
   artifacts.
-- **Docker test summary report**: `docker/generate_test_reports.sh` summarizes
-  existing `docker/test_outputs_*` results. Its usage details and prerequisites
-  are documented in `docker/README.rst`.
-- **Monthly report tooling maintenance**: `.github/workflows/monthly_report_tooling_maintenance.md`
+- **Docker test summary report**: ``docker/generate_test_reports.sh`` summarizes
+  existing ``docker/test_outputs_*`` results. Its usage details and prerequisites
+  are documented in ``docker/README.rst``.
+- **Monthly report tooling maintenance**: ``.github/workflows/monthly_report_tooling_maintenance.md``
   is the scheduled agentic workflow that reviews these report paths on the first
   day of each month and proposes fixes when their scripts or docs drift out of
   sync.

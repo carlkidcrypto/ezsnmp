@@ -86,6 +86,14 @@ def test_windows_debug_configuration_adds_fs_flag(tmp_path, monkeypatch):
 
 
 def test_linux_gather_skips_macports_and_missing_brew_shells(monkeypatch):
+    for variable in (
+        "EZSNMP_NETSNMP_CONFIG",
+        "EZSNMP_OPENSSL_INCLUDE_DIR",
+        "EZSNMP_OPENSSL_LIB_DIR",
+        "OPENSSL_INCLUDE_DIR",
+        "OPENSSL_LIB_DIR",
+    ):
+        monkeypatch.delenv(variable, raising=False)
     called_commands = []
 
     def fake_check_output(command, **kwargs):

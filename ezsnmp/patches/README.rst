@@ -6,7 +6,9 @@ This directory contains patches and scripts for modifying Net-SNMP source code t
 Overview
 --------
 
-The patches in this directory allow ezsnmp to work with different versions of Net-SNMP (5.7 through 5.10). The process involves fetching the Net-SNMP source code, applying necessary modifications, and generating version-specific patches.
+The patches in this directory allow ezsnmp to generate and apply custom modifications to Net-SNMP applications for use in the C++ wrapper. ezsnmp packages standalone wheels bundled with Net-SNMP 5.10.
+
+EzSnmp supports Net-SNMP 5.10 and newer. This directory retains the active patches for Net-SNMP 5.10 (in ``net-snmp-5.10-patches/``) and the canonical C++ reference template (in ``master_src/``), along with automated patching scripts so that updating to future Net-SNMP releases (e.g., Net-SNMP 5.11+) remains reproducible.
 
 Order of Operations
 -------------------
@@ -15,17 +17,17 @@ Follow these steps in order to prepare and apply patches for your desired Net-SN
 
 1. **Fetch Net-SNMP Versions**
 
-   Run the ``fetch_net_snmp_versions.sh`` script to download the source code for Net-SNMP versions 5.7 through 5.10:
+   Run the ``fetch_net_snmp_versions.sh`` script to download the source code for the target Net-SNMP version:
 
    .. code-block:: bash
 
-      ./fetch_net_snmp_versions.sh
+      ./fetch_net_snmp_versions.sh <version>
 
-   This script will populate the ``net-snmp-X.Y/`` directories with the respective source code.
+   This script will populate the ``net-snmp-<version>/`` directory with the respective source code from upstream git tags.
 
 2. **Tweak Master Source Code**
 
-   Modify the code in the ``master_src/`` directory as needed. This directory contains the base source code that will be used to generate patches for different Net-SNMP versions.
+   Modify the code in the ``master_src/`` directory as needed. This directory contains the base source code that will be used to generate patches for Net-SNMP.
 
 3. **Generate Patches**
 
@@ -35,7 +37,7 @@ Follow these steps in order to prepare and apply patches for your desired Net-SN
 
       ./make_patches.sh <version>
 
-   Replace ``<version>`` with the desired Net-SNMP version (e.g., 5.8, 5.9).
+   Replace ``<version>`` with the desired Net-SNMP version (e.g., ``5.10`` or future ``5.11``).
 
 4. **Apply Patches**
 
@@ -47,35 +49,16 @@ Follow these steps in order to prepare and apply patches for your desired Net-SN
 
    This will apply the patches in the ``net-snmp-<version>-patches/`` directory to the corresponding ``net-snmp-<version>/`` source code.
 
-Version-Specific Notes
-----------------------
-
-**Net-SNMP 5.8 and Lower**
-
-For Net-SNMP versions 5.8 and lower, you must use ``netsnmp_cleanup_session(&session);`` instead of the newer cleanup functions, as it does not exist in these versions.
-
 Automated Script
 ----------------
 
-The ``do_all_that_stuff.sh`` script automates the entire process of downloading Net-SNMP versions, generating patches with version-specific modifications, applying patches, and formatting the code. It handles special cases for compatibility, such as removing ``netsnmp_cleanup_session`` calls for versions 5.7-5.8.
-
-To run the automated process:
+The ``do_all_that_stuff.sh`` script automates the entire process of downloading the target Net-SNMP version, generating patches, applying patches, and formatting the code:
 
 .. code-block:: bash
 
-   ./do_all_that_stuff.sh
+   ./do_all_that_stuff.sh [version ...]
 
-This script performs the following steps in order:
-
-1. Downloads Net-SNMP versions 5.7-5.10 in parallel (with ``--no-remove`` to avoid re-downloading if directories exist).
-2. Generates patches for versions 5.9 and 5.10 first using the unmodified ``master_src``.
-3. Backs up ``master_src`` and removes ``netsnmp_cleanup_session(&session);`` calls (not available in 5.7-5.8).
-4. Generates patches for versions 5.7-5.8 in parallel.
-5. Restores ``master_src`` from backup.
-6. Applies patches to versions 5.7-5.10 in parallel, producing final patched source in ``../src/net-snmp-<version>-final-patched/``.
-7. Runs clang-format on the entire repository to ensure consistent code formatting.
-
-This script is designed for efficiency and reliability, running tasks in parallel where possible to speed up the process. It ensures that each Net-SNMP version receives the appropriate modifications without manual intervention.
+By default, it targets version 5.10.
 
 .. note::
    If you are building from source and applying patches, you may need to install `dos2unix` on your system. On Ubuntu/Debian, run `sudo apt install dos2unix`. On macOS, use `brew install dos2unix`.
