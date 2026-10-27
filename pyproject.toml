@@ -7,16 +7,16 @@ environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto" }
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
-before-all = "apk add net-snmp-dev openssl openssl-dev;"
+before-all = "apk add openssl; bash tools/prepare_linux_netsnmp.sh"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-win_arm64"
 build-frontend = "build"
 
 [tool.cibuildwheel.linux]
-environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto", EZSNMP_OBJECT_CACHE_DIR = "/tmp/ezsnmp-obj-cache" }
-before-all = "yum -y install net-snmp net-snmp-devel openssl openssl-devel;"
-repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto", EZSNMP_OBJECT_CACHE_DIR = "/tmp/ezsnmp-obj-cache", PATH = "/usr/local/bin:$PATH", LD_LIBRARY_PATH = "/usr/local/lib:$LD_LIBRARY_PATH" }
+before-all = "bash tools/prepare_linux_netsnmp.sh"
+repair-wheel-command = "auditwheel repair --strip -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
 environment = { PATH = "/opt/homebrew/opt/net-snmp/bin:/opt/homebrew/bin:/usr/local/opt/net-snmp/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0", EZSNMP_BUILD_JOBS = "auto" }
