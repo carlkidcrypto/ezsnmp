@@ -80,6 +80,16 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
         exclude:
+          # The Homebrew formula selects Homebrew's Python, so the matrix
+          # version does not affect macOS integration test execution.
+          - os: macos-latest
+            python-version: "3.10"
+          - os: macos-latest
+            python-version: "3.11"
+          - os: macos-latest
+            python-version: "3.12"
+          - os: macos-latest
+            python-version: "3.13"
           - os: macos-latest
             python-version: "3.15"
 
@@ -96,20 +106,16 @@ jobs:
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
-          linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd snmp-mibs-downloader;
+          linux: sudo apt-get install -y --no-install-recommends snmpd snmp-mibs-downloader;
                  sudo systemctl stop snmpd;
-                 sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
-          macos: brew update;
-                 brew install net-snmp;
-                 brew install openssl@3;
-                 echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> ~/.zshrc;
-                 export PATH="/usr/local/opt/net-snmp/bin:$PATH";
-                 echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> ~/.zshrc;
-                 export PATH="/usr/local/opt/net-snmp/sbin:$PATH";
+          macos: HOMEBREW_NO_AUTO_UPDATE=1 brew install net-snmp openssl@3;
+                 echo "export PATH=\"$(brew --prefix net-snmp)/bin:\$PATH\"" >> ~/.zshrc;
+                 export PATH="$(brew --prefix net-snmp)/bin:$PATH";
+                 echo "export PATH=\"$(brew --prefix net-snmp)/sbin:\$PATH\"" >> ~/.zshrc;
+                 export PATH="$(brew --prefix net-snmp)/sbin:$PATH";
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
@@ -182,6 +188,7 @@ jobs:
         with:
           linux: |
             export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH:-}
+            export EZSNMP_FD_TEST_CALLS=20
             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
             LOG_FILE="integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log"
             ./run_integration_tests.sh 2>&1 | tee "$LOG_FILE";
@@ -209,6 +216,7 @@ jobs:
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
             export PATH="$(brew --prefix python@${PYTHON_VER})/bin:${PATH}"
+            export EZSNMP_FD_TEST_CALLS=20
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
             LOG_FILE="integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log"
             ./run_integration_tests.sh 2>&1 | tee "$LOG_FILE";
