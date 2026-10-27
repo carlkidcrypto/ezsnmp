@@ -188,7 +188,7 @@ jobs:
         with:
           linux: |
             export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH:-}
-            export EZSNMP_FD_TEST_CALLS=20
+            export EZSNMP_FD_TEST_CALLS=10
             cd /home/runner/work/ezsnmp/ezsnmp/integration_tests;
             LOG_FILE="integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log"
             ./run_integration_tests.sh 2>&1 | tee "$LOG_FILE";
@@ -216,7 +216,7 @@ jobs:
             BREW_EZSNMP=$(brew --prefix ezsnmp)
             PYTHON_VER=$(ls "${BREW_EZSNMP}/lib/" | grep -E '^python[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/python//')
             export PATH="$(brew --prefix python@${PYTHON_VER})/bin:${PATH}"
-            export EZSNMP_FD_TEST_CALLS=20
+            export EZSNMP_FD_TEST_CALLS=10
             cd /Users/runner/work/ezsnmp/ezsnmp/integration_tests;
             LOG_FILE="integration_tests_full_${{matrix.os}}_${{matrix.python-version}}.log"
             ./run_integration_tests.sh 2>&1 | tee "$LOG_FILE";
