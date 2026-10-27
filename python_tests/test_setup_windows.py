@@ -3,6 +3,17 @@ import build_utils
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def clear_openssl_environment(monkeypatch):
+    for variable in (
+        "EZSNMP_OPENSSL_INCLUDE_DIR",
+        "EZSNMP_OPENSSL_LIB_DIR",
+        "OPENSSL_INCLUDE_DIR",
+        "OPENSSL_LIB_DIR",
+    ):
+        monkeypatch.delenv(variable, raising=False)
+
+
 def test_resolve_windows_netsnmp_version_from_header(tmp_path, monkeypatch):
     monkeypatch.delenv("EZSNMP_NETSNMP_VERSION", raising=False)
     monkeypatch.delenv("NETSNMP_VERSION", raising=False)

@@ -85,18 +85,18 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
+        if: runner.os == 'macOS'
         uses: Homebrew/actions/setup-homebrew@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # master
 
       - name: Enable Homebrew analytics
+        if: runner.os == 'macOS'
         run: brew analytics on
 
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
-          linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+          linux: sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
-                 brew update;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
