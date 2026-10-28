@@ -107,6 +107,8 @@ jobs:
         with:
           path: cpp_tests/build
           key: cpp-native-build-${{ matrix.os }}-${{ runner.arch }}-${{ hashFiles('ezsnmp/**/*.cpp', 'ezsnmp/**/*.h', 'cpp_tests/**') }}
+          restore-keys: |
+            cpp-native-build-${{ matrix.os }}-${{ runner.arch }}-
 
       - name: Start SNMP daemon
         run: |
@@ -154,7 +156,7 @@ jobs:
               meson setup build
               ninja -C build
             fi
-            meson test -C build --print-errorlogs \
+            meson test -C build --num-processes 1 --print-errorlogs \
               --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
             mv build/meson-logs/testlog.junit.xml cpp-test-results_${{ matrix.os }}.xml
             # Generate lcov coverage report
@@ -184,7 +186,7 @@ jobs:
               meson setup build
               ninja -C build
             fi
-            meson test -C build --print-errorlogs \
+            meson test -C build --num-processes 1 --print-errorlogs \
               --test-args="--junit=cpp-test-results_${{ matrix.os }}.xml" || true
             mv build/meson-logs/testlog.junit.xml cpp-test-results_${{ matrix.os }}.xml
             # Generate lcov coverage report
