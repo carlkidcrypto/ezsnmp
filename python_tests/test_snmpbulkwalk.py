@@ -6,7 +6,7 @@ from ezsnmp.exceptions import PacketError, ParseError
 from ezsnmp.netsnmp import snmpbulkwalk
 
 
-def test_regular(netsnmp_args):
+def test_regular(netsnmp_args, reset_values):
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]
@@ -23,7 +23,7 @@ def test_regular(netsnmp_args):
         assert res[5].value == "my original location"
 
 
-def test_res(netsnmp_args):
+def test_res(netsnmp_args, reset_values):
     if netsnmp_args[1] == "1":
         with pytest.raises(PacketError):
             netsnmp_args = netsnmp_args + ["system"]

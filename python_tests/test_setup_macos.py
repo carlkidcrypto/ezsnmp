@@ -26,6 +26,14 @@ def test_resolve_macos_deployment_target_rejects_invalid_values():
 
 @pytest.fixture
 def homebrew_outputs(monkeypatch):
+    for variable in (
+        "EZSNMP_NETSNMP_CONFIG",
+        "EZSNMP_OPENSSL_INCLUDE_DIR",
+        "EZSNMP_OPENSSL_LIB_DIR",
+        "OPENSSL_INCLUDE_DIR",
+        "OPENSSL_LIB_DIR",
+    ):
+        monkeypatch.delenv(variable, raising=False)
     outputs = {
         "brew --version": "Homebrew 7.0.9\n",
         "brew list net-snmp": (
@@ -125,6 +133,31 @@ def test_gather_macos_configuration_preserves_flags_and_adds_openssl(homebrew_ou
     assert cfg["compile_args"] == ["-std=c++17"]
     assert cfg["link_args"] == ["-flat_namespace", "-framework", "CoreFoundation"]
     assert cfg["system_netsnmp_version"] == "5.9.5.2"
+
+
+def test_gather_macos_configuration_uses_explicit_netsnmp_config(
+    homebrew_outputs, monkeypatch
+):
+    configured_path = "/opt/homebrew/Cellar/ezsnmp/2.5.0/bin/net-snmp-config"
+    homebrew_outputs[f"{configured_path} --version"] = "5.10.pre2\n"
+    homebrew_outputs[f"{configured_path} --libs"] = (
+        "-L/opt/homebrew/Cellar/ezsnmp/2.5.0/lib -lnetsnmp -lcrypto"
+    )
+    homebrew_outputs["brew list net-snmp"] = CalledProcessError(1, "brew list net-snmp")
+    monkeypatch.setenv("EZSNMP_NETSNMP_CONFIG", configured_path)
+    monkeypatch.setenv("EZSNMP_OPENSSL_INCLUDE_DIR", "/custom/openssl/include")
+    monkeypatch.setenv("EZSNMP_OPENSSL_LIB_DIR", "/custom/openssl/lib")
+
+    cfg = build_utils.gather_build_configuration()
+
+    assert cfg["incdirs"] == ["ezsnmp/include/", "/custom/openssl/include"]
+    assert cfg["libdirs"] == [
+        "/custom/openssl/lib",
+        "/opt/homebrew/Cellar/ezsnmp/2.5.0/lib",
+    ]
+    assert cfg["libs"] == ["netsnmp", "crypto"]
+    assert cfg["system_netsnmp_version"] == "5.10.pre2"
+    assert cfg["homebrew_netsnmp_version"] is None
 
 
 @pytest.mark.parametrize("macports", [False, True])
