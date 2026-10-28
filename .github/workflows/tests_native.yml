@@ -59,16 +59,19 @@ jobs:
           files: |
             .coveragerc
             .github/workflows/tests_native.yml
+            build_utils.py
             codecov.yml
             ezsnmp/*.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
             ezsnmp/**/*.py
+            pyproject.toml
             python_tests/*.conf
             python_tests/*.py
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/prepare_linux_netsnmp.sh
 
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -89,7 +92,7 @@ jobs:
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
           linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader;
+                 sudo apt-get install -y snmpd libperl-dev snmp-mibs-downloader;
                  sudo systemctl stop snmpd;
                  sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
@@ -97,6 +100,9 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+
+      - name: Install Net-SNMP 5.10
+        run: sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -135,7 +141,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .wheel-cache
-          key: ezsnmp-wheel-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+          key: ezsnmp-wheel-netsnmp-5.10-${{ github.workflow }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.python-version }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py', 'tools/prepare_linux_netsnmp.sh') }}
 
       - name: Build or install cached ezsnmp wheel
         run: |
@@ -160,15 +166,19 @@ jobs:
           if [ "$INSTALLED" -eq 0 ]; then
             echo "Building wheel from source..."
             mkdir -p .wheel-cache
-            python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
+            EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config python3 -m pip wheel . --no-deps -w .wheel-cache --verbose
             python3 -m pip install .wheel-cache/ezsnmp-*.whl
             (cd "${RUNNER_TEMP:-/tmp}" && python3 -c "import ezsnmp; print('ezsnmp imported successfully from fresh build')")
           fi
 
       - name: Run Tests
         run: |
+          set -euo pipefail
+          export MIBS=+ALL
+          export MIBDIRS="$HOME/.snmp/mibs:/var/lib/snmp/mibs:/var/lib/snmp/mibs/iana:/var/lib/snmp/mibs/ietf:/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf:/usr/local/share/snmp/mibs"
           rm -drf build/ ezsnmp.egg-info/
           mv ezsnmp _ezsnmp
+          trap 'if [ -d _ezsnmp ] && [ ! -d ezsnmp ]; then mv _ezsnmp ezsnmp; fi' EXIT
           pytest -v -s \
             -o junit_family=legacy \
             --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
@@ -176,7 +186,8 @@ jobs:
             --cov-report=xml:coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml \
             --cov-config=.coveragerc \
             python_tests/ | tee test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
-          mv _ezsnmp ezsnmp 2>/dev/null || true
+          mv _ezsnmp ezsnmp
+          trap - EXIT
           python3 python_tests/normalize_coverage_paths.py coverage_${{ matrix.os }}_${{ matrix.python-version }}.xml || true
           # Generate coverage summary file
           if [ -f .coverage ]; then coverage report > pytest-coverage_${{ matrix.os }}_${{ matrix.python-version }}.txt || true; fi

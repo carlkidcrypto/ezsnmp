@@ -4,11 +4,14 @@
 
 #include "exceptionsbase.h"
 #include "snmpgetnext.h"
+#include "test_snmp_response_helpers.h"
 
 static bool g_retry_mode = false;
 static int g_call_count = 0;
 
-extern "C" int snmp_sess_synch_response(void *sessp, netsnmp_pdu *pdu, netsnmp_pdu **response) {
+extern "C" int snmp_sess_synch_response(ezsnmp_test::session_handle sessp,
+                                        netsnmp_pdu *pdu,
+                                        netsnmp_pdu **response) {
    (void)sessp;
    (void)pdu;
 

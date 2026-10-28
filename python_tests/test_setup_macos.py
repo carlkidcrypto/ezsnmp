@@ -26,6 +26,14 @@ def test_resolve_macos_deployment_target_rejects_invalid_values():
 
 @pytest.fixture
 def homebrew_outputs(monkeypatch):
+    for variable in (
+        "EZSNMP_NETSNMP_CONFIG",
+        "EZSNMP_OPENSSL_INCLUDE_DIR",
+        "EZSNMP_OPENSSL_LIB_DIR",
+        "OPENSSL_INCLUDE_DIR",
+        "OPENSSL_LIB_DIR",
+    ):
+        monkeypatch.delenv(variable, raising=False)
     outputs = {
         "brew --version": "Homebrew 7.0.9\n",
         "brew list net-snmp": (
@@ -127,6 +135,31 @@ def test_gather_macos_configuration_preserves_flags_and_adds_openssl(homebrew_ou
     assert cfg["system_netsnmp_version"] == "5.9.5.2"
 
 
+def test_gather_macos_configuration_uses_explicit_netsnmp_config(
+    homebrew_outputs, monkeypatch
+):
+    configured_path = "/opt/homebrew/Cellar/ezsnmp/2.5.0/bin/net-snmp-config"
+    homebrew_outputs[f"{configured_path} --version"] = "5.10.pre2\n"
+    homebrew_outputs[f"{configured_path} --libs"] = (
+        "-L/opt/homebrew/Cellar/ezsnmp/2.5.0/lib -lnetsnmp -lcrypto"
+    )
+    homebrew_outputs["brew list net-snmp"] = CalledProcessError(1, "brew list net-snmp")
+    monkeypatch.setenv("EZSNMP_NETSNMP_CONFIG", configured_path)
+    monkeypatch.setenv("EZSNMP_OPENSSL_INCLUDE_DIR", "/custom/openssl/include")
+    monkeypatch.setenv("EZSNMP_OPENSSL_LIB_DIR", "/custom/openssl/lib")
+
+    cfg = build_utils.gather_build_configuration()
+
+    assert cfg["incdirs"] == ["ezsnmp/include/", "/custom/openssl/include"]
+    assert cfg["libdirs"] == [
+        "/custom/openssl/lib",
+        "/opt/homebrew/Cellar/ezsnmp/2.5.0/lib",
+    ]
+    assert cfg["libs"] == ["netsnmp", "crypto"]
+    assert cfg["system_netsnmp_version"] == "5.10.pre2"
+    assert cfg["homebrew_netsnmp_version"] is None
+
+
 @pytest.mark.parametrize("macports", [False, True])
 def test_gather_macos_configuration_without_homebrew(
     homebrew_outputs, monkeypatch, macports
@@ -165,3 +198,75 @@ def test_gather_macos_in_tree_configuration_bypasses_homebrew(
 
     assert cfg["incdirs"] == ["/custom/include"]
     assert cfg["libdirs"] == ["/custom/lib"]
+
+
+@pytest.mark.parametrize(
+    ("output", "expected"),
+    [
+        ("Version: 2.10.0\n", "2.10.0"),
+        ("Version: 2.12.7\n", "2.12.7"),
+        ("Version: 3.0.0.1\n", "3.0.0.1"),
+        ("invalid output", ""),
+    ],
+)
+def test_is_macports_installed(monkeypatch, output, expected):
+    monkeypatch.setattr(
+        build_utils, "check_output", lambda *args, **kwargs: output.encode()
+    )
+    assert build_utils.is_macports_installed() == expected
+
+
+def test_is_macports_installed_handles_error(monkeypatch):
+    def raise_error(*args, **kwargs):
+        raise CalledProcessError(1, "port version")
+
+    monkeypatch.setattr(build_utils, "check_output", raise_error)
+    assert build_utils.is_macports_installed() == ""
+
+
+@pytest.mark.parametrize(
+    ("output", "expected"),
+    [
+        ("  net-snmp @5.9.4 (active)\n", "5.9.4"),
+        ("  net-snmp @5.9.4_1 (active)\n", "5.9.4_1"),
+        (
+            "The following ports are currently installed:\n"
+            "  net-snmp @5.9.5.2_0+perl5_34+ssl (active)\n",
+            "5.9.5.2_0+perl5_34+ssl",
+        ),
+        ("  net-snmp @5.10.0_1+ssl (active)\n", "5.10.0_1+ssl"),
+        ("  net-snmp @5.9.4\n", ""),  # not active
+        ("None of the specified ports are installed.\n", ""),
+    ],
+)
+def test_is_net_snmp_installed_macports(monkeypatch, output, expected):
+    monkeypatch.setattr(
+        build_utils, "check_output", lambda *args, **kwargs: output.encode()
+    )
+    assert build_utils.is_net_snmp_installed_macports() == expected
+
+
+def test_is_net_snmp_installed_macports_handles_error(monkeypatch):
+    def raise_error(*args, **kwargs):
+        raise CalledProcessError(1, "port installed net-snmp")
+
+    monkeypatch.setattr(build_utils, "check_output", raise_error)
+    assert build_utils.is_net_snmp_installed_macports() == ""
+
+
+@pytest.mark.parametrize("macports_ver", ["5.9.4", "5.9.5.2_0+perl5_34+ssl"])
+def test_gather_macos_configuration_with_macports_versions(
+    homebrew_outputs, monkeypatch, macports_ver
+):
+    homebrew_outputs["brew --version"] = CalledProcessError(127, "brew")
+    homebrew_outputs["net-snmp-config --libs"] = "-L/opt/local/lib -lnetsnmp -lcrypto"
+    monkeypatch.setattr(build_utils, "is_macports_installed", lambda: "2.12.7")
+    monkeypatch.setattr(
+        build_utils, "is_net_snmp_installed_macports", lambda: macports_ver
+    )
+
+    cfg = build_utils.gather_build_configuration()
+
+    assert cfg["incdirs"] == ["ezsnmp/include/", "/opt/local/include"]
+    assert cfg["libdirs"] == ["/opt/local/lib"]
+    assert cfg["system_netsnmp_version"] == macports_ver

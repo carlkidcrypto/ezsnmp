@@ -369,6 +369,7 @@ runs:
           '@echo off',
           "call `"$vsDevCmd`" -arch=$vsArch -host_arch=$hostArch",
           "if %ERRORLEVEL% neq 0 exit /b $vsDevCmdFailedExitCode",
+          'set CL=/MP',
           'nmake /nologo clean',
           "if %ERRORLEVEL% neq 0 exit /b $nmakeCleanFailedExitCode",
           'nmake /nologo libs',

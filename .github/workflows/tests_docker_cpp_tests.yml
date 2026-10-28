@@ -76,17 +76,10 @@ jobs:
       fail-fast: false
       matrix:
         distro:
-          - almalinux10_netsnmp_5.9
-          - archlinux_netsnmp_5.7
-          - archlinux_netsnmp_5.8
-          - archlinux_netsnmp_5.9
-          - centos7_netsnmp_5.7
-          - centos8_netsnmp_5.8
-          - fedora42_netsnmp_5.7
-          - fedora42_netsnmp_5.8
-          - fedora42_netsnmp_5.9
-          - rockylinux8_netsnmp_5.8
-          - rockylinux9_netsnmp_5.9
+          - almalinux10_netsnmp_5.10
+          - archlinux_netsnmp_5.10
+          - fedora42_netsnmp_5.10
+          - rockylinux9_netsnmp_5.10
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -96,6 +89,8 @@ jobs:
         with:
           path: cpp_tests/build
           key: cpp-docker-build-${{ matrix.distro }}-${{ hashFiles('ezsnmp/**/*.cpp', 'ezsnmp/**/*.h', 'cpp_tests/**', 'docker/**') }}
+          restore-keys: |
+            cpp-docker-build-${{ matrix.distro }}-
 
       - name: Run unit tests inside the Docker container (${{ matrix.distro }})
         run: |

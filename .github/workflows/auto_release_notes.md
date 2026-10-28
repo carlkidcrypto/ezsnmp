@@ -33,6 +33,9 @@ engine:
 network:
   allowed: [defaults, github, python]
 tools:
+  github:
+    mode: gh-proxy
+    toolsets: [repos]
   bash: true
 ---
 
@@ -56,7 +59,7 @@ When a new release is published, generate and update its release notes body on G
    Use the deterministic helper script `.github/scripts/generate_release_notes.py` to minimize token consumption and AI Credit (AIC) usage. The script automatically executes base tag resolution, commit range extraction, theme grouping into the 9 categories, active verb title formatting, PyPI version linking, and skip-protected checks.
 
    - If triggered by `release: published`:
-     Determine the published tag name from the release event, then execute:
+     Use the published tag name from the release event (`${{ github.event.release.tag_name }}`), then execute:
      ```bash
      mkdir -p /tmp/gh-aw/agent
      python3 .github/scripts/generate_release_notes.py --tag <tag_name> --output-file /tmp/gh-aw/agent/release_notes.md
