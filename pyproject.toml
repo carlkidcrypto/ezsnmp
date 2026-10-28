@@ -1,16 +1,29 @@
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
+build-frontend = "build[uv]"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
 skip = "cp39-*"
-environment = { CIBW_BUILD_VERBOSITY = "1", MAKEFLAGS = "-j4" }
+environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto" }
+
+[[tool.cibuildwheel.overrides]]
+select = "*musllinux*"
+before-all = "apk add openssl; bash tools/prepare_linux_netsnmp.sh"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
+build-frontend = "build"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
+build-frontend = "build"
 
 [tool.cibuildwheel.linux]
-environment = { PATH = "/usr/local/bin:$PATH", LD_LIBRARY_PATH = "/usr/local/lib:$LD_LIBRARY_PATH" }
+environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto", EZSNMP_OBJECT_CACHE_DIR = "/tmp/ezsnmp-obj-cache", PATH = "/usr/local/bin:$PATH", LD_LIBRARY_PATH = "/usr/local/lib:$LD_LIBRARY_PATH" }
 before-all = "bash tools/prepare_linux_netsnmp.sh"
 repair-wheel-command = "auditwheel repair --strip -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-environment = { PATH = "/opt/homebrew/opt/net-snmp/bin:/opt/homebrew/bin:/usr/local/opt/net-snmp/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0" }
+environment = { PATH = "/opt/homebrew/opt/net-snmp/bin:/opt/homebrew/bin:/usr/local/opt/net-snmp/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0", EZSNMP_BUILD_JOBS = "auto" }
 archs = "arm64"
 before-all = "HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@3 net-snmp"
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
@@ -18,9 +31,8 @@ repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest
 [tool.cibuildwheel.windows]
 archs = ["AMD64", "x86", "ARM64"]
 test-skip = "*-win_arm64"
-before-build = "python -m pip install delvewheel"
-environment = { EZSNMP_NETSNMP_USE_DLL = "1" }
-environment-pass = ["EZSNMP_NETSNMP_INCLUDE_DIR", "EZSNMP_NETSNMP_LIB_DIR", "EZSNMP_NETSNMP_BIN_DIR", "EZSNMP_OPENSSL_BIN_DIR", "EZSNMP_OPENSSL_INCLUDE_DIR", "EZSNMP_OPENSSL_LIB_DIR"]
+environment = { EZSNMP_NETSNMP_USE_DLL = "1", EZSNMP_BUILD_JOBS = "auto" }
+environment-pass = ["EZSNMP_NETSNMP_INCLUDE_DIR", "EZSNMP_NETSNMP_LIB_DIR", "EZSNMP_NETSNMP_BIN_DIR", "EZSNMP_OPENSSL_BIN_DIR", "EZSNMP_OPENSSL_INCLUDE_DIR", "EZSNMP_OPENSSL_LIB_DIR", "EZSNMP_BUILD_JOBS", "EZSNMP_OBJECT_CACHE_DIR"]
 repair-wheel-command = [
   "delvewheel show --add-path \"%EZSNMP_NETSNMP_BIN_DIR%;%EZSNMP_OPENSSL_BIN_DIR%\" --no-dll \"msvcp140.dll;msvcp140_1.dll;msvcp140_2.dll;msvcp140_atomic_wait.dll;msvcp140_codecvt_ids.dll;vcruntime140_1.dll\" {wheel}",
   "delvewheel repair --add-path \"%EZSNMP_NETSNMP_BIN_DIR%;%EZSNMP_OPENSSL_BIN_DIR%\" --no-dll \"msvcp140.dll;msvcp140_1.dll;msvcp140_2.dll;msvcp140_atomic_wait.dll;msvcp140_codecvt_ids.dll;vcruntime140_1.dll\" -w {dest_dir} {wheel}",

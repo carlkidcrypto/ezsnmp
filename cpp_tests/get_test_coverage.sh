@@ -25,7 +25,7 @@ ninja -C "$BUILD_DIR" -j $(nproc)
 
 # Generate coverage data
 echo "Generating coverage data..."
-ninja -C "$BUILD_DIR" test -j $(nproc)
+meson test -C "$BUILD_DIR" --num-processes 1 --print-errorlogs
 
 # Capture coverage data with lcov
 echo "Capturing coverage data with lcov..."
