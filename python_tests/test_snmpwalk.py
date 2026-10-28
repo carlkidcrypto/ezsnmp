@@ -6,7 +6,7 @@ from ezsnmp.exceptions import GenericError, ParseError
 from ezsnmp.netsnmp import snmpwalk
 
 
-def test_res(netsnmp_args):
+def test_res(netsnmp_args, reset_values):
     netsnmp_args = netsnmp_args + ["system"]
     res = snmpwalk(netsnmp_args, "testing_value")
 

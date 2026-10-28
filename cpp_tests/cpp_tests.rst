@@ -38,28 +38,20 @@ Building and Running Tests
 
     ninja -C build/
 
-3. Run the tests::
+3. Run the tests serially because test binaries share the SNMP daemon and gcov files::
 
-    ninja -C build/ test
-
-Or alternatively::
-
-    meson test
-
-The test results will be displayed in the terminal. For detailed output, use::
-
-    meson test -v
+    meson test -C build/ --num-processes 1 --print-errorlogs
 
 Running Specific Tests and Coverage
 ----------------------------------
 
 1. To run a specific test suite::
 
-    clear && ninja -C build/ && ./build/test_sessionbase
+    meson test -C build/ --num-processes 1 --print-errorlogs test_sessionbase
 
 2. To run all test suites::
 
-    clear && ninja -C build/ test
+    meson test -C build/ --num-processes 1 --print-errorlogs
 
 
 Coverage Reports

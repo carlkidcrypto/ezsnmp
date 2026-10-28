@@ -79,38 +79,49 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
         exclude:
+          # The formula selects Homebrew's Python, so the matrix version does
+          # not affect macOS test execution.
+          - os: macos-latest
+            python-version: "3.10"
+          - os: macos-latest
+            python-version: "3.11"
+          - os: macos-latest
+            python-version: "3.12"
+          - os: macos-latest
+            python-version: "3.13"
           - os: macos-latest
             python-version: "3.15"
 
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
+        if: runner.os == 'macOS'
         uses: Homebrew/actions/setup-homebrew@eb02c69dbabdb66ff183c614f4ce7ab3c077592c # master
 
       - name: Enable Homebrew analytics
+        if: runner.os == 'macOS'
         run: brew analytics on
 
       - name: Set up dependencies
         uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
         with:
-          linux: sudo apt-get update;
-                 sudo apt-get install -y snmpd snmp-mibs-downloader valgrind;
+          linux: sudo apt-get install -y --no-install-recommends snmpd snmp-mibs-downloader;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
-                 brew update;
                  sudo systemctl stop snmpd;
-                 sudo download-mibs;
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
-          macos: brew update;
-                 brew install net-snmp;
-                 brew install openssl@3;
+          macos: HOMEBREW_NO_AUTO_UPDATE=1 brew install net-snmp openssl@3;
                  echo "export PATH=\"$(brew --prefix net-snmp)/bin:\$PATH\"" >> ~/.zshrc;
                  export PATH="$(brew --prefix net-snmp)/bin:$PATH";
                  echo "export PATH=\"$(brew --prefix net-snmp)/sbin:\$PATH\"" >> ~/.zshrc;
                  export PATH="$(brew --prefix net-snmp)/sbin:$PATH";
                  mkdir -p -m 0755 ~/.snmp;
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
+
+      - name: Install Valgrind for memory checks
+        if: runner.os == 'Linux' && matrix.python-version == '3.14'
+        run: sudo apt-get install -y --no-install-recommends valgrind
 
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -190,26 +201,32 @@ jobs:
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
                  mv ezsnmp _ezsnmp
-                 wget https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp;
-                 VALGRIND=(
-                   'valgrind'
-                   '--tool=memcheck'
-                   '--leak-check=full'
-                   '--show-leak-kinds=definite,indirect,possible'
-                   '--suppressions=./valgrind-python.supp'
-                   '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
-                   '--error-exitcode=0'
-                 );
-                 echo 'PYTHONMALLOC=malloc' >> $GITHUB_OUTPUT;
-                 ${VALGRIND[@]} pytest -v -s --cov=ezsnmp \
-                   --cov-report=term-missing \
-                   --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
-                   python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 if [ "${{ matrix.python-version }}" = "3.14" ]; then
+                   curl --proto '=https' --proto-redir '=https' -fsSL \
+                     https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp \
+                     -o valgrind-python.supp;
+                   VALGRIND=(
+                     'valgrind'
+                     '--tool=memcheck'
+                     '--leak-check=full'
+                     '--show-leak-kinds=definite,indirect,possible'
+                     '--suppressions=./valgrind-python.supp'
+                     '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
+                     '--error-exitcode=0'
+                   );
+                   PYTHONMALLOC=malloc "${VALGRIND[@]}" pytest -v -s --cov=ezsnmp \
+                     --cov-report=term-missing \
+                     --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
+                     python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 else
+                   pytest -v -s --cov=ezsnmp \
+                     --cov-report=term-missing \
+                     --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
+                     python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 fi
 
           macos: |
             set -euo pipefail
-            export MIBS=+ALL
-            export MIBDIRS="$HOME/.snmp/mibs:$(brew --prefix net-snmp)/share/snmp/mibs"
             PKG_VERSION=$(python3 -c "import re, sys; match = re.search(r'^version\s*=\s*(.+)$', open('setup.cfg').read(), re.MULTILINE); print(match.group(1).strip() if match else sys.exit('ERROR: could not find version field in setup.cfg'))")
             # Package the current checkout with a versioned filename so Homebrew
             # can infer the formula version without a temporary version stanza.
@@ -219,8 +236,9 @@ jobs:
             # Homebrew normally rejects formulae supplied by path. Developer mode
             # enables this intentional CI use while avoiding third-party tap trust.
             cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
-            sed -i '' "s|url \".*\"|url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
-            sed -i '' "s|sha256 \".*\"|sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
+            # Anchor these rewrites to the formula stanza so the nested resource is preserved.
+            sed -i '' "s|^  url \".*\"|  url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
+            sed -i '' "s|^  sha256 \".*\"|  sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
             # Remove any pre-existing ezsnmp install to prevent version conflicts.
             # Try both short name and fully-qualified name to catch all cases.
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
@@ -255,6 +273,8 @@ jobs:
             # (where brew link already placed the installed ezsnmp package)
             ${BREW_PYTHON} -m venv /tmp/test_venv --system-site-packages
             /tmp/test_venv/bin/pip install -r python_tests/requirements.txt
+            export MIBS=+ALL
+            export MIBDIRS="$HOME/.snmp/mibs:$(brew --prefix net-snmp)/share/snmp/mibs"
             set -o pipefail
             /tmp/test_venv/bin/pytest -v -s --cov=ezsnmp \
               --cov-report=term-missing \
@@ -269,6 +289,14 @@ jobs:
           path: |
             test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml
             test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt
+          if-no-files-found: warn
+
+      - name: Upload Homebrew build logs
+        if: ${{ failure() && runner.os == 'macOS' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v5
+        with:
+          name: homebrew-build-logs_${{ matrix.python-version }}
+          path: ~/Library/Logs/Homebrew/ezsnmp
           if-no-files-found: warn
 
       - name: Upload Valgrind Reports

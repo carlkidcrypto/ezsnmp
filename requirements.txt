@@ -2,5 +2,5 @@ black==26.10.1
 tomli==2.5.0
 urllib3==2.8.0
 build==1.6.1
-cibuildwheel==4.3.4
+cibuildwheel[uv]==4.3.4
 yamllint==1.38.0
