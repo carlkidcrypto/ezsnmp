@@ -79,7 +79,7 @@ and must be installed from its upstream release for the current platform.
 **Always get human review** for:
 
 - Security sensitive code (SNMP v3 credentials, authentication)
-- Core architecture changes to SessionBase or the snmp* command classes
+- Core architecture changes to SessionBase or the snmp* command functions
 - C++ extension modifications and SWIG interface changes
 - SNMP protocol implementations
 - Memory management in C++ code
