@@ -79,7 +79,7 @@ and must be installed from its upstream release for the current platform.
 **Always get human review** for:
 
 - Security sensitive code (SNMP v3 credentials, authentication)
-- Core architecture changes to SessionBase or NetSnmpBase
+- Core architecture changes to SessionBase or the snmp* command classes
 - C++ extension modifications and SWIG interface changes
 - SNMP protocol implementations
 - Memory management in C++ code
@@ -196,7 +196,7 @@ Ask: "I'm looking at the ezsnmp repository. Can you explain the purpose of each 
 Key insights:
 
 - **ezsnmp/**: Python API layer (session.py, netsnmp.py, exceptions.py)
-- **ezsnmp/src/**: C++ implementation (SessionBase, NetSnmpBase, etc.)
+- **ezsnmp/src/**: C++ implementation (SessionBase, the snmp* command classes, etc.)
 - **ezsnmp/interface/**: SWIG interface files (.i) that bridge Python and C++
 - **python_tests/**: Python test suite using pytest
 - **cpp_tests/**: C++ test suite using Google Test
@@ -384,7 +384,7 @@ Example 3: Adding a New Session Method
     python3 -m pip install .
 
     # Run tests
-    pytest python_tests/test_session.py::test_get_bulk_repeaters -v
+    pytest python_tests/test_session_bulk_get.py::test_session_bulk_get -v
 
     # Run full test suite
     pytest python_tests/
