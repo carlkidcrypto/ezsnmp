@@ -8,11 +8,11 @@ CACHE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Python versions to download
 PYTHON_VERSIONS=(
-    "3.10.21"
-    "3.11.16"
-    "3.12.14"
-    "3.13.15"
-    "3.14.7"
+    "3.10.22"
+    "3.11.17"
+    "3.12.15"
+    "3.13.17"
+    "3.14.9"
 )
 
 # Net-SNMP versions (for test container builds)
