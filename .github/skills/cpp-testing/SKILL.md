@@ -30,18 +30,16 @@ meson setup build -Db_coverage=true
 # 2. Compile tests using Ninja
 ninja -C build
 
-# 3. Execute tests via Ninja test runner
-ninja -C build test
-
-# Alternatively, execute the test binary directly for detailed GTest output:
-./build/run_unit_tests
+# 3. Execute tests serially; test binaries share the SNMP daemon and gcov files
+meson test -C build --num-processes 1 --print-errorlogs
 ```
 
 ### Running with Sanitizers (ASAN / UBSAN)
 When debugging memory or undefined behavior issues:
 
 ```bash
-ASAN_OPTIONS='halt_on_error=0' UBSAN_OPTIONS='halt_on_error=0' ninja -C build test
+ASAN_OPTIONS='halt_on_error=0' UBSAN_OPTIONS='halt_on_error=0' \
+  meson test -C build --num-processes 1 --print-errorlogs
 ```
 
 ### Rebuilding after Code Changes
@@ -65,7 +63,7 @@ cd cpp_tests
 
 # Or manual multi-step capture:
 find build/ -name '*.gcda' -delete 2>/dev/null || true
-ninja -C build test
+meson test -C build --num-processes 1 --print-errorlogs
 lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch,gcov
 lcov --remove coverage.info '/usr/*' '*/subprojects/*' '*/include/gtest/*' --output-file coverage_filtered.info --ignore-errors unused
 genhtml coverage_filtered.info --output-directory coverage_html
