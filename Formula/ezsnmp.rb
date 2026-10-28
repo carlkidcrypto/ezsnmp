@@ -28,6 +28,8 @@ class Ezsnmp < Formula
   def install
     python3 = find_python3
     python_version = Language::Python.major_minor_version(python3)
+    puts "Selected Python executable: #{python3}"
+    puts "Selected Python version: #{python_version}"
     default_mibs = %w[
       IP-MIB IF-MIB TCP-MIB UDP-MIB SNMPv2-MIB RFC1213-MIB NOTIFICATION-LOG-MIB
       DISMAN-EVENT-MIB DISMAN-SCHEDULE-MIB HOST-RESOURCES-MIB HOST-RESOURCES-TYPES

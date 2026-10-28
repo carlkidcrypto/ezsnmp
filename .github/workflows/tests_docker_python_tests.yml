@@ -58,12 +58,14 @@ jobs:
           files: |
             .coveragerc
             .github/workflows/tests_docker_python_tests.yml
+            build_utils.py
             codecov.yml
             docker/**
             ezsnmp/*.py
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
             ezsnmp/**/*.py
+            pyproject.toml
             python_tests/**
             setup.cfg
             setup.py
@@ -84,7 +86,16 @@ jobs:
           - fedora42_netsnmp_5.10
           - rockylinux9_netsnmp_5.10
         python: [py310, py311, py312, py313, py314]
-        test_group: [all]
+        test_group: [session_basic, session_walk, snmp_ops, core_misc]
+        include:
+          - test_group: session_basic
+            test_files: "python_tests/test_session_unit.py python_tests/test_session_get.py python_tests/test_session_set.py python_tests/test_session_parameters.py python_tests/test_session_exception_branches.py"
+          - test_group: session_walk
+            test_files: "python_tests/test_session_walk.py python_tests/test_session_bulk_get.py python_tests/test_multithreading_session_options.py"
+          - test_group: snmp_ops
+            test_files: "python_tests/test_snmpbulkget.py python_tests/test_snmpbulkwalk.py python_tests/test_snmpget.py python_tests/test_snmpgetnext.py python_tests/test_snmpset.py python_tests/test_snmptrap.py python_tests/test_snmpwalk.py python_tests/test_multithreading_v3.py"
+          - test_group: core_misc
+            test_files: "python_tests/test_netsnmp_unit.py python_tests/test_exceptions.py python_tests/test_getters.py python_tests/test_helpers.py python_tests/test_datatypes.py python_tests/test_logging.py python_tests/test_auth_priv_v3.py python_tests/test_cache_v3.py python_tests/test_normalize_coverage_paths.py python_tests/test_setup_macos.py python_tests/test_setup_parallel.py python_tests/test_setup_windows.py"
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -104,6 +115,28 @@ jobs:
             exit 1
           fi
 
+      - name: Set up pip and wheel cache directories
+        run: |
+          mkdir -p ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          chmod 777 ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          mkdir -p ${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}
+          chmod 777 ${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}
+
+      - name: Cache pip packages for tox (Docker)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/pip-cache-${{ matrix.python }}
+          key: pip-docker-${{ matrix.distribution }}-${{ matrix.python }}-${{ hashFiles('python_tests/requirements.txt') }}
+          restore-keys: |
+            pip-docker-${{ matrix.distribution }}-${{ matrix.python }}-
+            pip-docker-${{ matrix.python }}-
+
+      - name: Cache built ezsnmp wheel (Docker)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}
+          key: ezsnmp-docker-wheel-${{ matrix.distribution }}-${{ matrix.python }}-${{ hashFiles('ezsnmp/**', 'setup.py', 'setup.cfg', 'pyproject.toml', 'build_utils.py') }}
+
       - name: Start container and SNMP daemon
         run: |
           set -euo pipefail
@@ -119,6 +152,8 @@ jobs:
           if ! docker run -d \
             --name "$CONTAINER_NAME" \
             -v "$HOST_SOURCE_PATH:$CONTAINER_WORK_DIR" \
+            -v "${{ runner.temp }}/pip-cache-${{ matrix.python }}:/pip-cache" \
+            -v "${{ runner.temp }}/wheel-cache-${{ matrix.distribution }}-${{ matrix.python }}:/wheel-cache" \
             "$IMAGE" \
             /bin/bash -c "$ENTRY_SCRIPT false & tail -f /dev/null"; then
               echo "ERROR: Docker run failed for $IMAGE" >&2
@@ -129,8 +164,10 @@ jobs:
         run: |
           set -euo pipefail
           CONTAINER_NAME="${{ matrix.distribution }}_test_container"
-          echo ">>> Executing all Python test groups inside container: $CONTAINER_NAME"
-          docker exec -t "$CONTAINER_NAME" bash -c '
+          # Build absolute paths on the runner to avoid complex quoting inside docker exec
+          TEST_FILES_ABS=$(echo "${{ matrix.test_files }}" | tr ' ' '\n' | sed 's|^|/ezsnmp/|' | tr '\n' ' ')
+          echo ">>> Executing pytest (${{ matrix.test_group }}) inside container: $CONTAINER_NAME"
+          docker exec -t -e TEST_FILES_ABS="$TEST_FILES_ABS" -e PIP_CACHE_DIR=/pip-cache "$CONTAINER_NAME" bash -c '
             set -e
             export PATH=/usr/local/bin:/opt/rh/gcc-toolset-11/root/usr/bin:/opt/rh/devtoolset-11/root/usr/bin:$PATH;
             export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:${LD_LIBRARY_PATH:-};
@@ -143,38 +180,40 @@ jobs:
             echo "    - Installing test dependencies";
             "$VENV_DIR/bin/pip" install --quiet -r /ezsnmp/python_tests/requirements.txt;
             echo "    - Installing ezsnmp";
-            cd /ezsnmp && "$VENV_DIR/bin/pip" install --quiet . && mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
             PYTEST_STATUS=0;
-            for TEST_GROUP in session_basic session_walk snmp_ops core_misc; do
-              case "$TEST_GROUP" in
-                session_basic)
-                  TEST_FILES="python_tests/test_session_unit.py python_tests/test_session_get.py python_tests/test_session_set.py python_tests/test_session_parameters.py python_tests/test_session_exception_branches.py"
-                  ;;
-                session_walk)
-                  TEST_FILES="python_tests/test_session_walk.py python_tests/test_session_bulk_get.py python_tests/test_multithreading_session_options.py"
-                  ;;
-                snmp_ops)
-                  TEST_FILES="python_tests/test_snmpbulkget.py python_tests/test_snmpbulkwalk.py python_tests/test_snmpget.py python_tests/test_snmpgetnext.py python_tests/test_snmpset.py python_tests/test_snmptrap.py python_tests/test_snmpwalk.py python_tests/test_multithreading_v3.py"
-                  ;;
-                core_misc)
-                  TEST_FILES="python_tests/test_netsnmp_unit.py python_tests/test_exceptions.py python_tests/test_getters.py python_tests/test_helpers.py python_tests/test_datatypes.py python_tests/test_logging.py python_tests/test_auth_priv_v3.py python_tests/test_cache_v3.py python_tests/test_normalize_coverage_paths.py python_tests/test_setup_macos.py python_tests/test_setup_parallel.py python_tests/test_setup_windows.py"
-                  ;;
-              esac;
-              read -r -a TEST_FILES_ARRAY <<< "$TEST_FILES";
-              echo "    - Running pytest group $TEST_GROUP for $PY_KEY";
-              if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
-                -o junit_family=legacy \
-                --junitxml="/ezsnmp/test-results_${TEST_GROUP}.xml" \
-                --cov=ezsnmp --cov-report=term-missing \
-                --cov-report="xml:/ezsnmp/coverage_${TEST_GROUP}.xml" \
-                --cov-config=/ezsnmp/.coveragerc \
-                "${TEST_FILES_ARRAY[@]}" > "/ezsnmp/test-outputs_${TEST_GROUP}.txt" 2>&1; then
-                echo "    - Pytest completed for $PY_KEY ($TEST_GROUP)";
+            INSTALLED=0;
+            if compgen -G "/wheel-cache/ezsnmp-*.whl" > /dev/null; then
+              echo "    - Found cached wheel in /wheel-cache; installing...";
+              if "$VENV_DIR/bin/pip" install --quiet --no-deps /wheel-cache/ezsnmp-*.whl && \
+                 (cd /tmp && "$VENV_DIR/bin/python" -c "import ezsnmp" >/dev/null 2>&1); then
+                INSTALLED=1;
               else
-                echo "    - Pytest reported failures for $PY_KEY ($TEST_GROUP); continuing to collect artifacts";
-                PYTEST_STATUS=1;
+                echo "    - WARNING: Cached wheel failed verification; rebuilding from source...";
+                "$VENV_DIR/bin/pip" uninstall -y ezsnmp >/dev/null 2>&1 || true;
+                rm -rf /wheel-cache/*;
               fi;
-            done;
+            fi;
+            if [ "$INSTALLED" -eq 0 ]; then
+              mkdir -p /wheel-cache;
+              cd /ezsnmp && "$VENV_DIR/bin/pip" wheel . --no-deps -w /wheel-cache --quiet;
+              "$VENV_DIR/bin/pip" install --quiet --no-deps /wheel-cache/ezsnmp-*.whl;
+              rm -rf /ezsnmp/build /ezsnmp/ezsnmp.egg-info;
+            fi;
+            chmod -R a+rwX /pip-cache /wheel-cache 2>/dev/null || true;
+            mv /ezsnmp/ezsnmp /ezsnmp/_ezsnmp;
+            echo "    - Running pytest (${{ matrix.test_group }}): $TEST_FILES_ABS";
+            if "$VENV_DIR/bin/pytest" -v -s --timeout=300 \
+              -o junit_family=legacy \
+              --junitxml="/ezsnmp/test-results_${{ matrix.test_group }}.xml" \
+              --cov=ezsnmp --cov-report=term-missing \
+              --cov-report="xml:/ezsnmp/coverage_${{ matrix.test_group }}.xml" \
+              --cov-config=/ezsnmp/.coveragerc \
+              $TEST_FILES_ABS > "/ezsnmp/test-outputs_${{ matrix.test_group }}.txt" 2>&1; then
+              echo "    - Pytest completed for $PY_KEY (${{ matrix.test_group }})";
+            else
+              echo "    - Pytest reported failures for $PY_KEY (${{ matrix.test_group }}) (continuing to collect artifacts)";
+              PYTEST_STATUS=1;
+            fi;
             mv /ezsnmp/_ezsnmp /ezsnmp/ezsnmp 2>/dev/null || true;
             exit "$PYTEST_STATUS";
           '

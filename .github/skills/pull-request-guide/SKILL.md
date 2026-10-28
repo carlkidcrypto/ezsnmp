@@ -73,6 +73,13 @@ Before pushing commits or creating a PR, activate your local Python virtual envi
    bash -n <modified-shell-script-paths>
    ```
 
+### CI Failure and Timing Triage
+
+- Inspect individual workflow jobs and their conclusions; a successful workflow can contain skipped test jobs due to changed-file filters.
+- Compare job and step durations, logs, and artifacts to distinguish dependency-install time from build and test time.
+- For platform-specific failures, compare the failing job's environment and commands with a successful equivalent before changing build flags. Do not infer a root cause from truncated configure output alone.
+- When a Homebrew workflow rewrites a formula URL/checksum for a local source tarball, anchor the substitution to the top-level formula stanza so nested resource URLs/checksums remain intact.
+
 ---
 
 ## 4. Staging Files & Safe Outputs Protection
