@@ -224,3 +224,17 @@ def test_session_get_next_unreachable_host_raises():
     )
     with pytest.raises(Exception):
         s.get_next(["1.3.6.1.2.1.1.1.0"])
+
+
+def test_session_walk_unreachable_host_raises():
+    """walk() routes C-layer failures through _handle_error."""
+    s = Session(
+        hostname="127.0.0.1",
+        port_number="1",
+        community="public",
+        version="2",
+        timeout="1",
+        retries="0",
+    )
+    with pytest.raises(Exception):
+        s.walk("1.3.6.1.2.1.1")
