@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4
+        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
         with:
           languages: ${{ matrix.language }}
 
@@ -83,7 +83,7 @@ jobs:
       - name: Build Python Extension
         if: matrix.language == 'c++'
         run: |
-          python3 -m pip install --disable-pip-version-check --no-deps --only-binary=:all: setuptools==84.0.0 wheel==0.48.0 swig==4.5.1
+          python3 -m pip install --disable-pip-version-check --no-deps --only-binary=:all: setuptools==84.1.0 wheel==0.48.0 swig==4.5.1
           EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config python3 setup.py build_ext --inplace
 
       - name: Perform CodeQL Analysis
