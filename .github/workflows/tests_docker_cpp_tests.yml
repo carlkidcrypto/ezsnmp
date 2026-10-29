@@ -111,6 +111,7 @@ jobs:
             docker/test_outputs_${{ matrix.distro }}/test-results.xml
             docker/test_outputs_${{ matrix.distro }}/test-outputs.txt
             docker/test_outputs_${{ matrix.distro }}/lcov_coverage.info
+            docker/test_outputs_${{ matrix.distro }}/snmpd_logs.txt
 
   upload-cpp-coverage-dockerized:
     runs-on: ubuntu-latest

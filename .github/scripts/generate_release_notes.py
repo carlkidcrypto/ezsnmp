@@ -380,7 +380,7 @@ def categorize_item(title: str, files: list[str]) -> str:
 
 def parse_semver(tag: str) -> tuple[int, int, int, int, str] | None:
     """Parse a version tag into (major, minor, patch, is_stable, prerelease_suffix)."""
-    m = re.match(r"^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:[.-]?([a-zA-Z0-9.-]+))?$", tag)
+    m = re.match(r"^[vV]?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:[.-]?([a-zA-Z0-9.-]+))?$", tag)
     if not m:
         return None
     major = int(m.group(1))
@@ -584,7 +584,7 @@ def build_release_notes(
     """Build formatted release notes markdown adhering to the release-notes-template."""
     tag = release["tag_name"]
     is_prerelease = release.get("prerelease", False)
-    pypi_version = tag[1:] if tag.startswith("v") else tag
+    pypi_version = tag[1:] if tag.lower().startswith("v") else tag
     has_valid_pypi = bool(re.match(r"^\d+(\.\d+)*", pypi_version))
     pypi_url = f"https://pypi.org/project/ezsnmp/{pypi_version}/"
     raw_body = release.get("body") or ""

@@ -152,6 +152,7 @@ def test_categorize_item():
 
 def test_parse_semver():
     assert parse_semver("v2.4.0") == (2, 4, 0, 1, "")
+    assert parse_semver("V2.5.0") == (2, 5, 0, 1, "")
     assert parse_semver("v2.5.0a1") == (2, 5, 0, 0, "a1")
     assert parse_semver("1.0.0") == (1, 0, 0, 1, "")
     assert parse_semver("invalid-tag") is None
@@ -300,6 +301,15 @@ def test_build_release_notes():
         "**Full Changelog**:"
         " https://github.com/carlkidcrypto/ezsnmp/compare/v2.3.0...v2.4.0" in notes
     )
+
+    uppercase_release = {
+        "tag_name": "V2.5.0",
+        "prerelease": False,
+        "body": "",
+    }
+    uppercase_notes = build_release_notes(uppercase_release, "v2.4.0", git_commits)
+    assert "pip install ezsnmp==2.5.0" in uppercase_notes
+    assert "https://pypi.org/project/ezsnmp/2.5.0/" in uppercase_notes
 
 
 def test_build_release_notes_non_version_tag():
