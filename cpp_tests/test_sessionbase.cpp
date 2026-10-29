@@ -1123,6 +1123,18 @@ TEST_F(SessionBaseTest, TestPrintOptionSetters) {
    EXPECT_EQ(std::find(args.begin(), args.end(), "-O"), args.end());
 }
 
+TEST_F(SessionBaseTest, TestPrintHexStringsSetterAndGetter) {
+   SessionBase session("localhost", "161", "2c", "public");
+
+   session._set_print_hex_strings(true);
+   EXPECT_TRUE(session._get_print_hex_strings());
+   auto args_on = session._get_args();
+
+   session._set_print_hex_strings(false);
+   EXPECT_FALSE(session._get_print_hex_strings());
+   EXPECT_GT(args_on.size(), session._get_args().size());
+}
+
 TEST_F(SessionBaseTest, TestMibSetters) {
    SessionBase session("localhost", "161", "2c", "public");
 
