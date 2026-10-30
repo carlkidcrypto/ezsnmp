@@ -5,7 +5,7 @@ Introduction
 ------------
 EzSnmp provides pre-compiled standalone wheels for Linux and Windows bundling Net-SNMP 5.10.
 For source builds, systems running Net-SNMP 5.10 or newer are supported.
-All Python versions 3.10 and above are fully supported.
+All Python versions 3.11 and above are fully supported.
 
 
 Installation via Homebrew (macOS)

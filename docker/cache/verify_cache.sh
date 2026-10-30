@@ -20,11 +20,11 @@ echo ""
 
 # Define expected files
 PYTHON_TARBALLS=(
-    "Python-3.10.16.tgz"
-    "Python-3.11.11.tgz"
-    "Python-3.12.8.tgz"
-    "Python-3.13.7.tgz"
-    "Python-3.14.2.tgz"
+    "Python-3.11.17.tgz"
+    "Python-3.12.15.tgz"
+    "Python-3.13.17.tgz"
+    "Python-3.14.9.tgz"
+    "Python-3.15.2.tgz"
 )
 
 OPENSSL_FILES=(

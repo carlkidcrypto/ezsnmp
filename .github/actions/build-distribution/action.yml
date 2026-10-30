@@ -10,17 +10,16 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up Python 3.11
+    - name: Set up Python 3.14
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
-        python-version: "3.11"
+        python-version: "3.14"
 
     - name: Set up dependencies
       uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
       with:
         linux: |
-          sudo apt-get update;
-          sudo apt-get install -y libsnmp-dev libperl-dev;
+          sudo bash ./tools/prepare_linux_netsnmp.sh
 
     - name: Install pypa/build
       shell: bash
@@ -30,6 +29,8 @@ runs:
     - name: Build a source tarball
       shell: bash
       run: |
+        export PATH="/usr/local/bin:$PATH"
+        export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
         python -m build --sdist --outdir ${{ inputs.packages-dir }} .
 
     - name: Download Wheels

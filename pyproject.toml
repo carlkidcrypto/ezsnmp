@@ -2,7 +2,7 @@
 manylinux-x86_64-image = "manylinux_2_28"
 build-frontend = "build[uv]"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
-skip = "cp39-*"
+skip = "cp39-* cp310-*"
 environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto" }
 
 [[tool.cibuildwheel.overrides]]
@@ -23,9 +23,9 @@ before-all = "bash tools/prepare_linux_netsnmp.sh"
 repair-wheel-command = "auditwheel repair --strip -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-environment = { PATH = "/opt/homebrew/opt/net-snmp/bin:/opt/homebrew/bin:/usr/local/opt/net-snmp/bin:/usr/local/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0", EZSNMP_BUILD_JOBS = "auto" }
+environment = { PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH", MACOSX_DEPLOYMENT_TARGET = "15.0", EZSNMP_BUILD_JOBS = "auto", EZSNMP_NETSNMP_CONFIG = "/usr/local/bin/net-snmp-config", EZSNMP_OPENSSL_INCLUDE_DIR = "/usr/local/include:/opt/homebrew/opt/openssl@3/include:/usr/local/opt/openssl@3/include", EZSNMP_OPENSSL_LIB_DIR = "/usr/local/lib:/opt/homebrew/opt/openssl@3/lib:/usr/local/opt/openssl@3/lib", DYLD_LIBRARY_PATH = "/usr/local/lib:/opt/homebrew/opt/openssl@3/lib:/usr/local/opt/openssl@3/lib" }
 archs = "arm64"
-before-all = "HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@3 net-snmp"
+before-all = "HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@3 && sudo bash tools/prepare_macos_netsnmp.sh"
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [tool.cibuildwheel.windows]
@@ -41,7 +41,7 @@ repair-wheel-command = [
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-   "setuptools == 84.1.0",
+   "setuptools == 84.2.1",
     "wheel == 0.48.0",
     "swig==4.5.1",
 ]
