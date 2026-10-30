@@ -3,8 +3,20 @@ set -euo pipefail
 
 NETSNMP_VERSION="5.10.pre2"
 EXPECTED_SHA256="6bce4ef368db15ad0f400330d5a1433009d63f0a98ca8b2eca0f87abd3469bd6"
-PREFIX="/usr/local"
+PREFIX="${PREFIX:-/usr/local}"
 MACPORTS_PREFIX="/opt/local"
+
+if [[ -z "${OPENSSL_PREFIX:-}" ]]; then
+    if [[ -d "${MACPORTS_PREFIX}/include/openssl" ]]; then
+        OPENSSL_PREFIX="${MACPORTS_PREFIX}"
+    elif [[ -d "/opt/homebrew/opt/openssl@3" ]]; then
+        OPENSSL_PREFIX="/opt/homebrew/opt/openssl@3"
+    elif [[ -d "/usr/local/opt/openssl@3" ]]; then
+        OPENSSL_PREFIX="/usr/local/opt/openssl@3"
+    else
+        OPENSSL_PREFIX="${MACPORTS_PREFIX}"
+    fi
+fi
 
 if [[ -x "${PREFIX}/bin/net-snmp-config" ]]; then
     INSTALLED_VER=$("${PREFIX}/bin/net-snmp-config" --version || true)
@@ -36,10 +48,10 @@ cd "${SOURCE_DIR}"
 
 NPROCS=$(sysctl -n hw.ncpu 2>/dev/null || echo 2)
 DEFAULT_MIBS="IP-MIB:IF-MIB:TCP-MIB:UDP-MIB:SNMPv2-MIB:RFC1213-MIB:NOTIFICATION-LOG-MIB:DISMAN-EVENT-MIB:DISMAN-SCHEDULE-MIB:HOST-RESOURCES-MIB:HOST-RESOURCES-TYPES:UCD-SNMP-MIB:UCD-DEMO-MIB:SNMP-TARGET-MIB:NET-SNMP-AGENT-MIB:NET-SNMP-EXTEND-MIB:SNMP-FRAMEWORK-MIB:SNMP-MPD-MIB:SNMP-USER-BASED-SM-MIB:SNMP-VIEW-BASED-ACM-MIB:SNMP-COMMUNITY-MIB:NET-SNMP-VACM-MIB"
-DEFAULT_MIBDIRS="\$HOME/.snmp/mibs:${MACPORTS_PREFIX}/share/snmp/mibs:${PREFIX}/share/snmp/mibs"
+DEFAULT_MIBDIRS="\$HOME/.snmp/mibs:/opt/homebrew/share/snmp/mibs:${MACPORTS_PREFIX}/share/snmp/mibs:${PREFIX}/share/snmp/mibs"
 
-CPPFLAGS="-I${MACPORTS_PREFIX}/include ${CPPFLAGS:-}" \
-LDFLAGS="-L${MACPORTS_PREFIX}/lib ${LDFLAGS:-}" \
+CPPFLAGS="-I${OPENSSL_PREFIX}/include ${CPPFLAGS:-}" \
+LDFLAGS="-L${OPENSSL_PREFIX}/lib ${LDFLAGS:-}" \
 ./configure \
     --prefix="${PREFIX}" \
     --with-defaults \
@@ -54,7 +66,7 @@ LDFLAGS="-L${MACPORTS_PREFIX}/lib ${LDFLAGS:-}" \
     --disable-mibs \
     --without-perl-modules \
     --disable-embedded-perl \
-    --with-openssl="${MACPORTS_PREFIX}" \
+    --with-openssl="${OPENSSL_PREFIX}" \
     --enable-blumenthal-aes
 
 make -j"${NPROCS}"
