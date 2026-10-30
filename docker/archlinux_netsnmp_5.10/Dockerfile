@@ -2,11 +2,11 @@
 FROM archlinux:latest
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.9
-ARG PYTHON_MIN_2_VERSION=3.13.17  # Not built from source, provided by OS package manager
-ARG PYTHON_MIN_1_VERSION=3.12.15
-ARG PYTHON_MIN_0_VERSION=3.11.17
-ARG PYTHON_MIN_VERSION=3.10.22
+ARG PYTHON_MAX_VERSION=3.15.2
+ARG PYTHON_MIN_2_VERSION=3.14.9
+ARG PYTHON_MIN_1_VERSION=3.13.17  # Not built from source, provided by OS package manager
+ARG PYTHON_MIN_0_VERSION=3.12.15
+ARG PYTHON_MIN_VERSION=3.11.17
 
 # Update system and install core packages in one layer
 RUN pacman -Syu --noconfirm && \
@@ -78,13 +78,13 @@ RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
     echo "Cflags: ${CFLAGS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc"
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.22.tgz /tmp/
 COPY docker/cache/Python-3.11.17.tgz /tmp/
 COPY docker/cache/Python-3.12.15.tgz /tmp/
 COPY docker/cache/Python-3.13.17.tgz /tmp/
 COPY docker/cache/Python-3.14.9.tgz /tmp/
+COPY docker/cache/Python-3.15.2.tgz /tmp/
 
-# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source
+# Build Python 3.11, 3.12, 3.13, 3.14, 3.15 from source
 # This is faster and more reliable than AUR packages
 # altinstall puts binaries as python3.X in /usr/local/bin
 # Split into separate layers for better Docker caching - only rebuilds on version changes
