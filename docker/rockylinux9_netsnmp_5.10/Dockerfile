@@ -2,11 +2,11 @@
 FROM rockylinux:9
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.9
-ARG PYTHON_MIN_2_VERSION=3.13.17
-ARG PYTHON_MIN_1_VERSION=3.12.15
-ARG PYTHON_MIN_0_VERSION=3.11.17
-ARG PYTHON_MIN_VERSION=3.10.22
+ARG PYTHON_MAX_VERSION=3.15.2
+ARG PYTHON_MIN_2_VERSION=3.14.9
+ARG PYTHON_MIN_1_VERSION=3.13.17
+ARG PYTHON_MIN_0_VERSION=3.12.15
+ARG PYTHON_MIN_VERSION=3.11.17
 
 # Update system, install essential tools, and configure repositories in one layer
 RUN dnf update -y && \
@@ -38,13 +38,13 @@ RUN cd /tmp && \
     net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.22.tgz /tmp/
 COPY docker/cache/Python-3.11.17.tgz /tmp/
 COPY docker/cache/Python-3.12.15.tgz /tmp/
 COPY docker/cache/Python-3.13.17.tgz /tmp/
 COPY docker/cache/Python-3.14.9.tgz /tmp/
+COPY docker/cache/Python-3.15.2.tgz /tmp/
 
-# Build Python 3.10, 3.11, 3.12, 3.13, 3.14 from source (not available in Rocky 9 repos)
+# Build Python 3.11, 3.12, 3.13, 3.14, 3.15 from source (not available in Rocky 9 repos)
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
 # Build Python ${PYTHON_MIN_VERSION}

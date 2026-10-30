@@ -1,7 +1,59 @@
-Last Updated: 2026-10-25 02:57:46 UTC
+Last Updated: 2026-10-30 05:41:13 UTC
 
 # Changelog
 
+
+<a name="v2026.10.28a0"></a>
+## [v2026.10.28a0](https://github.com/carlkidcrypto/ezsnmp/compare/V2.5.0...v2026.10.28a0) (2026-10-29)
+
+
+### Changes
+
+#### Documentation Updates
+
+- docs: fix RST inline literals in README ([#1414](https://github.com/carlkidcrypto/ezsnmp/issues/1414))
+
+- docs: add versioned documentation for V2.5.0 ([#1425](https://github.com/carlkidcrypto/ezsnmp/issues/1425))
+
+
+#### Features
+
+- feat: standalone Python packages for Linux and repository modernization ([#1388](https://github.com/carlkidcrypto/ezsnmp/issues/1388)) ([#1394](https://github.com/carlkidcrypto/ezsnmp/issues/1394))
+
+
+#### Maintenance
+
+- chore: bump version to 2026.10.28a0 ([#1442](https://github.com/carlkidcrypto/ezsnmp/issues/1442))
+
+- chore: update Homebrew formula for V2.5.0 ([#1424](https://github.com/carlkidcrypto/ezsnmp/issues/1424))
+
+
+#### Provide
+
+- Provide authenticated GitHub CLI access to release notes workflow ([#1428](https://github.com/carlkidcrypto/ezsnmp/issues/1428))
+
+
+#### Styles
+
+- style: auto-format with clang-format ([#1433](https://github.com/carlkidcrypto/ezsnmp/issues/1433))
+
+
+#### Tests
+
+- test: cover SessionBase print_hex_strings setter/getter ([#1441](https://github.com/carlkidcrypto/ezsnmp/issues/1441))
+
+- test: cover Session.walk error path ([#1440](https://github.com/carlkidcrypto/ezsnmp/issues/1440))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="V2.5.0"></a>
 ## [V2.5.0](https://github.com/carlkidcrypto/ezsnmp/compare/v2.5.0b0...V2.5.0) (2026-10-23)

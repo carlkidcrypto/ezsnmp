@@ -172,10 +172,10 @@ EzSnmp provides pre-built Docker images for testing across multiple Linux distri
 
 All listed Docker test images use Net-SNMP 5.10:
 
-* **almalinux10_netsnmp_5.10** - AlmaLinux 10 with Python 3.10-3.14 and g++ 14.x
-* **archlinux_netsnmp_5.10** - Arch Linux with Python 3.10-3.14 and g++ 14.x
-* **fedora42_netsnmp_5.10** - Fedora 42 with GCC 14.x and Python 3.10-3.14
-* **rockylinux9_netsnmp_5.10** - Rocky Linux 9 with gcc-toolset-13 and Python 3.10-3.14
+* **almalinux10_netsnmp_5.10** - AlmaLinux 10 with Python 3.11-3.15 and g++ 14.x
+* **archlinux_netsnmp_5.10** - Arch Linux with Python 3.11-3.15 and g++ 14.x
+* **fedora42_netsnmp_5.10** - Fedora 42 with GCC 14.x and Python 3.11-3.15
+* **rockylinux9_netsnmp_5.10** - Rocky Linux 9 with gcc-toolset-13 and Python 3.11-3.15
 
 Docker Python Tests
 ~~~~~~~~~~~~~~~~~~~

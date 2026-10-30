@@ -2,11 +2,11 @@
 FROM fedora:42
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.9
-ARG PYTHON_MIN_2_VERSION=3.13.17
-ARG PYTHON_MIN_1_VERSION=3.12.15
-ARG PYTHON_MIN_0_VERSION=3.11.17
-ARG PYTHON_MIN_VERSION=3.10.22
+ARG PYTHON_MAX_VERSION=3.15.2
+ARG PYTHON_MIN_2_VERSION=3.14.9
+ARG PYTHON_MIN_1_VERSION=3.13.17
+ARG PYTHON_MIN_0_VERSION=3.12.15
+ARG PYTHON_MIN_VERSION=3.11.17
 
 # Update system and install GCC (native GCC 14.x on Fedora 42 - no toolset needed)
 RUN dnf update -y && \
@@ -32,11 +32,11 @@ RUN cd /tmp && \
     net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.22.tgz /tmp/
 COPY docker/cache/Python-3.11.17.tgz /tmp/
 COPY docker/cache/Python-3.12.15.tgz /tmp/
 COPY docker/cache/Python-3.13.17.tgz /tmp/
 COPY docker/cache/Python-3.14.9.tgz /tmp/
+COPY docker/cache/Python-3.15.2.tgz /tmp/
 
 # Build Python from source (all versions, split into separate layers for caching)
 

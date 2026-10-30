@@ -81,14 +81,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
@@ -284,7 +284,7 @@ jobs:
 
       - name: Pytest coverage comment
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@9ee59af31bd7bcada1cc496f086b407122602dbd # v1.12.3
+        uses: MishaKav/pytest-coverage-comment@9516bf7f32a9229cf18d5e1717ae387c7154f279 # v1.13.0
         with:
           title: Pytest Coverage Report - MacPorts
           unique-id-for-comment: macports
@@ -294,10 +294,6 @@ jobs:
           hide-comment: true
           report-only-changed-files: false
           multiple-files: >-
-            macos-latest - MacPorts - 3.10,
-            pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt,
-            pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-
             macos-latest - MacPorts - 3.11,
             pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt,
             pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
@@ -313,6 +309,10 @@ jobs:
             macos-latest - MacPorts - 3.14,
             pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt,
             pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
+
+            macos-latest - MacPorts - 3.15,
+            pytest-results_macos-latest_3.15/test-outputs_macos-latest_3.15.txt,
+            pytest-results_macos-latest_3.15/test-results_macos-latest_3.15.xml
 
       - name: Strip leading newlines from summaryReport
         id: clean-report
