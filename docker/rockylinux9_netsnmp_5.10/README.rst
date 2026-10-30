@@ -9,7 +9,7 @@ This Docker image provides a testing environment based on Rocky Linux 9 with:
 
 * **Base OS**: Rocky Linux 9
 * **GCC**: gcc-toolset-13 (g++ 13.x, exceeds g++ 9.5 minimum)
-* **Python Versions**: 3.10, 3.11, 3.12, 3.13, 3.14 (all from source builds)
+* **Python Versions**: 3.11, 3.12, 3.13, 3.14, 3.15 (all from source builds)
 * **Virtual Environment**: /opt/venv (Python 3.14 with all project dependencies pre-installed)
 * **Net-SNMP**: 5.10 (built from source)
 * **C++ Testing**: Full g++ 13 support for cpp_tests with coverage reporting
@@ -64,11 +64,11 @@ Python Versions
 
 All Python versions are compiled from source:
 
-* Python 3.10.22
 * Python 3.11.17
 * Python 3.12.15
 * Python 3.13.17
 * Python 3.14.9 (default venv)
+* Python 3.15.2
 
 Gcc Toolset
 ===========

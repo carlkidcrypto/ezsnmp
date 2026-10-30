@@ -81,7 +81,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     steps:
       - name: Checkout repo
@@ -294,10 +294,6 @@ jobs:
           hide-comment: true
           report-only-changed-files: false
           multiple-files: >-
-            macos-latest - MacPorts - 3.10,
-            pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt,
-            pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
-
             macos-latest - MacPorts - 3.11,
             pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt,
             pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
@@ -313,6 +309,10 @@ jobs:
             macos-latest - MacPorts - 3.14,
             pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt,
             pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
+
+            macos-latest - MacPorts - 3.15,
+            pytest-results_macos-latest_3.15/test-outputs_macos-latest_3.15.txt,
+            pytest-results_macos-latest_3.15/test-results_macos-latest_3.15.xml
 
       - name: Strip leading newlines from summaryReport
         id: clean-report

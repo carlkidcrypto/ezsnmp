@@ -18,7 +18,7 @@ The `docker/` directory maintains reproducible test environments for various Lin
   - `rockylinux9_netsnmp_5.10` (RHEL / Enterprise Linux 9 derivative)
 - **Docker Hub Repository**: `carlkidcrypto/ezsnmp_test_images`
 - **Compiler Requirements**: All containers must provide **g++ 9.5 or higher** supporting C++17.
-- **Python Version Matrix**: All containers must provide usable installations of **Python 3.10 through 3.14** (with associated development headers and isolated venvs).
+- **Python Version Matrix**: All containers must provide usable installations of **Python 3.11 through 3.15** (with associated development headers and isolated venvs).
 
 ---
 

@@ -2,7 +2,7 @@
 manylinux-x86_64-image = "manylinux_2_28"
 build-frontend = "build[uv]"
 # No PyPy for now, we are using c++17 language features that don't compile for PyPy ATM.
-skip = "cp39-*"
+skip = "cp39-* cp310-*"
 environment = { CIBW_BUILD_VERBOSITY = "1", EZSNMP_BUILD_JOBS = "auto" }
 
 [[tool.cibuildwheel.overrides]]
@@ -41,7 +41,7 @@ repair-wheel-command = [
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-   "setuptools == 84.1.0",
+   "setuptools == 84.2.1",
     "wheel == 0.48.0",
     "swig==4.5.1",
 ]

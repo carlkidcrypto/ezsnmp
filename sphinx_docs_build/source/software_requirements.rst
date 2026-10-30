@@ -171,7 +171,7 @@ generate Python ↔ C++ bindings.
 
 [BUILD-02] The build system shall support Net-SNMP 5.10 and newer for source builds, and provide standalone pre-compiled wheels bundling Net-SNMP 5.10 for Linux and Windows.
 
-[BUILD-03] The system shall support Python versions 3.10, 3.11, 3.12, 3.13, and 3.14.
+[BUILD-03] The system shall support Python versions 3.11, 3.12, 3.13, 3.14, and 3.15.
 
 [BUILD-04] The system shall support Homebrew (macOS) and MacPorts (macOS) as Net-SNMP installation
 sources for source builds.
@@ -289,6 +289,10 @@ instructions, API reference, and a development guide.
 published release, served alongside development documentation via GitHub Pages with an automated
 version-selector landing page.
 
+[DOCS-03] The documentation build system shall execute in a dedicated Python 3.14 runner
+environment (supporting dependencies requiring Python >=3.13, such as Sphinx 9.2+) to build and
+publish both release and development documentation archives.
+
 CI/CD and Maintenance
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -375,11 +379,17 @@ respective workflow file (for example ``group: build_and_publish_to_test_pypi``)
 modularized into shared composite GitHub Actions under ``.github/actions/``:
 
 - **Common Distribution Packaging**: The ``build-distribution`` composite action shall centralize
-  Python environment setup, dependency installation, source tarball (``sdist``) compilation, and
-  wheel artifact retrieval into the distribution directory for publishing.
+  Python environment setup (using Python 3.14), dependency installation, source tarball (``sdist``)
+  compilation, and wheel artifact retrieval into the distribution directory for publishing.
 - **Trusted Publishing Compliance**: Workflows shall invoke ``pypa/gh-action-pypi-publish`` directly
   at the job step level to preserve top-level action repository context required by GitHub Actions
   runner and PyPI OpenID Connect (OIDC) Trusted Publishing configurations.
 - **Common Wheel Building**: The ``build-wheels`` composite action shall centralize cross-platform
   wheel building using ``cibuildwheel`` across Linux, macOS, and Windows matrix targets, including
-  dependency caching (pip, vcpkg, and compiled Net-SNMP Windows binaries) and artifact uploads.
+  host runner Python setup (using Python 3.14), dependency caching (pip, vcpkg, and compiled Net-SNMP
+  Windows binaries) and artifact uploads.
+
+[CICD-13] CI workflow validation and automated diagnostic tooling (including workflow syntax
+validation via ``verify_syntax.yml`` and historical Valgrind reporting via
+``valgrind_pr_history_report.yml``) shall configure and execute in a dedicated Python 3.14 runner
+environment to maintain toolchain consistency and prevent unpinned runner dependency conflicts.
