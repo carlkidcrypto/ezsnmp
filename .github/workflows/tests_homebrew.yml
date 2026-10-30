@@ -77,12 +77,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
         exclude:
           # The formula selects Homebrew's Python, so the matrix version does
           # not affect macOS test execution.
-          - os: macos-latest
-            python-version: "3.10"
           - os: macos-latest
             python-version: "3.11"
           - os: macos-latest
@@ -131,7 +129,7 @@ jobs:
         run: sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
@@ -323,7 +321,7 @@ jobs:
 
       - name: Pytest coverage comment
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@9ee59af31bd7bcada1cc496f086b407122602dbd # v1.12.3
+        uses: MishaKav/pytest-coverage-comment@9516bf7f32a9229cf18d5e1717ae387c7154f279 # v1.13.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
@@ -333,16 +331,16 @@ jobs:
           hide-comment: true
           report-only-changed-files: false
           multiple-files: |
-            macos-latest - Homebrew - 3.10, pytest-results_macos-latest_3.10/test-outputs_macos-latest_3.10.txt, pytest-results_macos-latest_3.10/test-results_macos-latest_3.10.xml
             macos-latest - Homebrew - 3.11, pytest-results_macos-latest_3.11/test-outputs_macos-latest_3.11.txt, pytest-results_macos-latest_3.11/test-results_macos-latest_3.11.xml
             macos-latest - Homebrew - 3.12, pytest-results_macos-latest_3.12/test-outputs_macos-latest_3.12.txt, pytest-results_macos-latest_3.12/test-results_macos-latest_3.12.xml
             macos-latest - Homebrew - 3.13, pytest-results_macos-latest_3.13/test-outputs_macos-latest_3.13.txt, pytest-results_macos-latest_3.13/test-results_macos-latest_3.13.xml
             macos-latest - Homebrew - 3.14, pytest-results_macos-latest_3.14/test-outputs_macos-latest_3.14.txt, pytest-results_macos-latest_3.14/test-results_macos-latest_3.14.xml
-            ubuntu-latest - Homebrew - 3.10, pytest-results_ubuntu-latest_3.10/test-outputs_ubuntu-latest_3.10.txt, pytest-results_ubuntu-latest_3.10/test-results_ubuntu-latest_3.10.xml
+            macos-latest - Homebrew - 3.15, pytest-results_macos-latest_3.15/test-outputs_macos-latest_3.15.txt, pytest-results_macos-latest_3.15/test-results_macos-latest_3.15.xml
             ubuntu-latest - Homebrew - 3.11, pytest-results_ubuntu-latest_3.11/test-outputs_ubuntu-latest_3.11.txt, pytest-results_ubuntu-latest_3.11/test-results_ubuntu-latest_3.11.xml
             ubuntu-latest - Homebrew - 3.12, pytest-results_ubuntu-latest_3.12/test-outputs_ubuntu-latest_3.12.txt, pytest-results_ubuntu-latest_3.12/test-results_ubuntu-latest_3.12.xml
             ubuntu-latest - Homebrew - 3.13, pytest-results_ubuntu-latest_3.13/test-outputs_ubuntu-latest_3.13.txt, pytest-results_ubuntu-latest_3.13/test-results_ubuntu-latest_3.13.xml
             ubuntu-latest - Homebrew - 3.14, pytest-results_ubuntu-latest_3.14/test-outputs_ubuntu-latest_3.14.txt, pytest-results_ubuntu-latest_3.14/test-results_ubuntu-latest_3.14.xml
+            ubuntu-latest - Homebrew - 3.15, pytest-results_ubuntu-latest_3.15/test-outputs_ubuntu-latest_3.15.txt, pytest-results_ubuntu-latest_3.15/test-results_ubuntu-latest_3.15.xml
 
       - name: Strip leading newlines from summaryReport
         id: clean-report
@@ -413,7 +411,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     steps:
       - name: Download Artifacts
@@ -448,6 +446,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: make-stripped-valgrind-files
     if: always() && needs.make-stripped-valgrind-files.result != 'skipped'
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Download Artifacts
@@ -463,16 +464,16 @@ jobs:
            cat "valgrind-stripped_ubuntu-latest_$1/valgrind-stripped_ubuntu-latest_$1.log" 2>/dev/null \
              || echo "valgrind report unavailable"
          }
-         temp1=$(read_stripped_log 3.10);
-         temp2=$(read_stripped_log 3.11);
-         temp3=$(read_stripped_log 3.12);
-         temp4=$(read_stripped_log 3.13);
-         temp5=$(read_stripped_log 3.14);
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_10=$temp1 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp2 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp3 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp4 >> $GITHUB_OUTPUT;
-         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_14=$temp5 >> $GITHUB_OUTPUT;
+         temp1=$(read_stripped_log 3.11);
+         temp2=$(read_stripped_log 3.12);
+         temp3=$(read_stripped_log 3.13);
+         temp4=$(read_stripped_log 3.14);
+         temp5=$(read_stripped_log 3.15);
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_11=$temp1 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_12=$temp2 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_13=$temp3 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_14=$temp4 >> $GITHUB_OUTPUT;
+         echo VALGRIND_STRIPPED_UBUNTU_LATEST_3_15=$temp5 >> $GITHUB_OUTPUT;
 
       - name: Checkout Sourcecode
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
@@ -483,11 +484,11 @@ jobs:
         with:
           template: .github/comment-valgrind-template.md
           vars: |
-           py3_10: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_10 }}"
            py3_11: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_11 }}"
            py3_12: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_12 }}"
            py3_13: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_13 }}"
            py3_14: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_14 }}"
+           py3_15: "${{ steps.valgrind_stripped_vars.outputs.VALGRIND_STRIPPED_UBUNTU_LATEST_3_15 }}"
 
       - name: Find existing PR comment (Valgrind)
         id: find-valgrind-comment
