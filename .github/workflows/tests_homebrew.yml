@@ -118,7 +118,7 @@ jobs:
                  echo 'mibs +ALL' > ~/.snmp/snmp.conf;
 
       - name: Install Valgrind for memory checks
-        if: runner.os == 'Linux' && matrix.python-version == '3.14'
+        if: runner.os == 'Linux'
         run: sudo apt-get install -y --no-install-recommends valgrind
 
       - name: Checkout repo
@@ -199,29 +199,22 @@ jobs:
                  python3 -m pip install . --verbose
                  rm -drf build/ ezsnmp.egg-info/
                  mv ezsnmp _ezsnmp
-                 if [ "${{ matrix.python-version }}" = "3.14" ]; then
-                   curl --proto '=https' --proto-redir '=https' -fsSL \
-                     https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp \
-                     -o valgrind-python.supp;
-                   VALGRIND=(
-                     'valgrind'
-                     '--tool=memcheck'
-                     '--leak-check=full'
-                     '--show-leak-kinds=definite,indirect,possible'
-                     '--suppressions=./valgrind-python.supp'
-                     '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
-                     '--error-exitcode=0'
-                   );
-                   PYTHONMALLOC=malloc "${VALGRIND[@]}" pytest -v -s --cov=ezsnmp \
-                     --cov-report=term-missing \
-                     --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
-                     python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
-                 else
-                   pytest -v -s --cov=ezsnmp \
-                     --cov-report=term-missing \
-                     --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
-                     python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
-                 fi
+                 curl --proto '=https' --proto-redir '=https' -fsSL \
+                   https://raw.githubusercontent.com/python/cpython/main/Misc/valgrind-python.supp \
+                   -o valgrind-python.supp;
+                 VALGRIND=(
+                   'valgrind'
+                   '--tool=memcheck'
+                   '--leak-check=full'
+                   '--show-leak-kinds=definite,indirect,possible'
+                   '--suppressions=./valgrind-python.supp'
+                   '--log-file=./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out'
+                   '--error-exitcode=0'
+                 );
+                 PYTHONMALLOC=malloc "${VALGRIND[@]}" pytest -v -s --cov=ezsnmp \
+                   --cov-report=term-missing \
+                   --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
+                   python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
 
           macos: |
             set -euo pipefail
@@ -308,7 +301,7 @@ jobs:
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
     needs: build-and-test
-    if: always() && needs.build-and-test.result != 'skipped'
+    if: (!cancelled()) && needs.build-and-test.result != 'skipped' && needs.build-and-test.result != 'cancelled'
     permissions:
       contents: write    # For creating commit comments on push
       pull-requests: write # This is needed to create/update comments
@@ -406,7 +399,7 @@ jobs:
   make-stripped-valgrind-files:
     runs-on: ${{ matrix.os }}
     needs: build-and-test
-    if: always() && needs.build-and-test.result != 'skipped'
+    if: (!cancelled()) && needs.build-and-test.result != 'skipped' && needs.build-and-test.result != 'cancelled'
     strategy:
       fail-fast: false
       matrix:
@@ -445,7 +438,7 @@ jobs:
   comment-valgrind:
     runs-on: ubuntu-latest
     needs: make-stripped-valgrind-files
-    if: always() && needs.make-stripped-valgrind-files.result != 'skipped'
+    if: (!cancelled()) && needs.make-stripped-valgrind-files.result != 'skipped' && needs.make-stripped-valgrind-files.result != 'cancelled'
     permissions:
       contents: write
       pull-requests: write
