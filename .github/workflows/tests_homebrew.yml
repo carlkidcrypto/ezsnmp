@@ -129,7 +129,7 @@ jobs:
         run: sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
@@ -321,7 +321,7 @@ jobs:
 
       - name: Pytest coverage comment
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@9ee59af31bd7bcada1cc496f086b407122602dbd # v1.12.3
+        uses: MishaKav/pytest-coverage-comment@9516bf7f32a9229cf18d5e1717ae387c7154f279 # v1.13.0
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
