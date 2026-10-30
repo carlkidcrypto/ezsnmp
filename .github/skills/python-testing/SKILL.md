@@ -10,7 +10,7 @@ Use this skill when developing, executing, or debugging Python unit tests and in
 ## 1. Environment & Prerequisites
 
 - **Virtual Environment**: Use an activated Python virtual environment (`source .venv/bin/activate` or `./python3.12.venv/bin/activate` for local development).
-- **Supported Python Versions**: Python 3.10, 3.11, 3.12, 3.13, and 3.14.
+- **Supported Python Versions**: Python 3.11, 3.12, 3.13, 3.14, and 3.15.
 - **Dependencies**: Ensure test dependencies are installed:
   ```bash
   pip install -r python_tests/requirements.txt

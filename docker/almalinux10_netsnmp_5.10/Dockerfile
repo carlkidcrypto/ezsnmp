@@ -2,11 +2,11 @@
 FROM almalinux:10-kitten
 
 # Define Python versions - the project supports 5 versions (latest + 4 older supported)
-ARG PYTHON_MAX_VERSION=3.14.9
-ARG PYTHON_MIN_2_VERSION=3.13.17  # Not built from source, provided by OS package manager
-ARG PYTHON_MIN_1_VERSION=3.12.15  # Not built from source, provided by OS package manager
-ARG PYTHON_MIN_0_VERSION=3.11.17
-ARG PYTHON_MIN_VERSION=3.10.22
+ARG PYTHON_MAX_VERSION=3.15.2
+ARG PYTHON_MIN_2_VERSION=3.14.9
+ARG PYTHON_MIN_1_VERSION=3.13.17  # Not built from source, provided by OS package manager
+ARG PYTHON_MIN_0_VERSION=3.12.15  # Not built from source, provided by OS package manager
+ARG PYTHON_MIN_VERSION=3.11.17
 
 # Install EPEL, update system, and install dependencies in one layer to reduce image size
 COPY docker/almalinux10_netsnmp_5.10/dnf-requirements.txt /tmp/dnf-requirements.txt
@@ -51,11 +51,11 @@ RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
     echo "Cflags: ${CFLAGS}" >> "${LIBDIR}/pkgconfig/netsnmp.pc"
 
 # Copy Python tarballs from cache to avoid repeated downloads
-COPY docker/cache/Python-3.10.22.tgz /tmp/
 COPY docker/cache/Python-3.11.17.tgz /tmp/
 COPY docker/cache/Python-3.14.9.tgz /tmp/
+COPY docker/cache/Python-3.15.2.tgz /tmp/
 
-# Build Python 3.10, 3.11, 3.14 from source (not available in AlmaLinux 10 repos)
+# Build Python 3.11, 3.14, 3.15 from source (not available in AlmaLinux 10 repos)
 # AlmaLinux 10 only ships with Python 3.12 and 3.13
 # Split into separate layers for better Docker caching - only rebuilds on version changes
 
@@ -68,14 +68,14 @@ RUN cd /tmp && \
     cd /tmp && \
     rm -rf Python-${PYTHON_MIN_VERSION}.tgz Python-${PYTHON_MIN_VERSION}
 
-# Build Python ${PYTHON_MIN_0_VERSION}
+# Build Python ${PYTHON_MIN_2_VERSION}
 RUN cd /tmp && \
-    tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
-    cd Python-${PYTHON_MIN_0_VERSION} && \
+    tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
+    cd Python-${PYTHON_MIN_2_VERSION} && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
-    rm -rf Python-${PYTHON_MIN_0_VERSION}.tgz Python-${PYTHON_MIN_0_VERSION}
+    rm -rf Python-${PYTHON_MIN_2_VERSION}.tgz Python-${PYTHON_MIN_2_VERSION}
 
 # Build Python ${PYTHON_MAX_VERSION} (latest stable release)
 RUN cd /tmp && \

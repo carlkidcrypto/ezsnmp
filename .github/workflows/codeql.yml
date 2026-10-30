@@ -74,16 +74,16 @@ jobs:
         run: |
           sudo bash ./tools/prepare_linux_netsnmp.sh
 
-      - name: Set up Python 3.10
+      - name: Set up Python 3.14
         if: matrix.language == 'c++'
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.10"
+          python-version: "3.14"
 
       - name: Build Python Extension
         if: matrix.language == 'c++'
         run: |
-          python3 -m pip install --disable-pip-version-check --no-deps --only-binary=:all: setuptools==84.1.0 wheel==0.48.0 swig==4.5.1
+          python3 -m pip install --disable-pip-version-check --no-deps --only-binary=:all: setuptools==84.2.1 wheel==0.48.0 swig==4.5.1
           EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config python3 setup.py build_ext --inplace
 
       - name: Perform CodeQL Analysis

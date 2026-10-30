@@ -267,8 +267,10 @@ jobs:
 
   summary:
     needs: integration-tests-docker
-    if: always()
+    if: always() && needs.integration-tests-docker.result != 'skipped'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
