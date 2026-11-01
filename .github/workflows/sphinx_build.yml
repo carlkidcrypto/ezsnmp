@@ -8,6 +8,8 @@ on:
   push:
     branches: [ main ]
 
+  pull_request:
+
   release:
     types: [ published ]
 
@@ -19,7 +21,7 @@ jobs:
     uses: ./.github/workflows/verify_syntax.yml
   sphinx_docs_build:
     needs: verify-syntax
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -47,7 +49,8 @@ jobs:
       - name: Install Build Requirements
         run: |
           sudo apt update
-          sudo apt install -y libsnmp-dev g++ python3-dev doxygen
+          sudo apt install -y g++ python3-dev doxygen
+          sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Install Pip Requirements
         run: |
@@ -81,12 +84,13 @@ jobs:
           make html SPHINXOPTS="-W"
 
       - name: Upload artifact for GitHub Pages
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: docs/
 
   deploy_pages:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     needs: sphinx_docs_build
     runs-on: ubuntu-latest
     permissions:
@@ -132,7 +136,8 @@ jobs:
       - name: Install Build Requirements
         run: |
           sudo apt update
-          sudo apt install -y libsnmp-dev g++ python3-dev doxygen
+          sudo apt install -y g++ python3-dev doxygen
+          sudo bash ./tools/prepare_linux_netsnmp.sh
 
       - name: Install Pip Requirements
         run: |
