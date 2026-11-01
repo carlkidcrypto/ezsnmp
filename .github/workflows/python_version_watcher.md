@@ -23,10 +23,15 @@ safe-outputs:
     draft: true
     preserve-branch-name: true
     if-no-changes: ignore
+    protected-files: allowed
 
 timeout-minutes: 15
 max-ai-credits: 25
 
+model: sonnet
+engine:
+  id: copilot
+  args: ["--allow-all-tools"]
 network:
   allowed:
     - defaults
@@ -35,10 +40,6 @@ network:
 tools:
   edit:
   bash: true
-
-model: sonnet
-engine:
-  id: copilot
 ---
 
 ## Python Version Watcher and Auto-Sync
