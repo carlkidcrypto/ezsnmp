@@ -458,7 +458,9 @@ jobs:
                   report = decoded
           except (json.JSONDecodeError, ValueError):
               pass
-          report = report.lstrip('\n')
+          # Strip blank lines inside markdown table to prevent broken table rendering
+          lines = [line.strip() for line in report.splitlines() if line.strip()]
+          report = '\n'.join(lines)
           delimiter = 'GHADELIMITER'
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'report<<{delimiter}\n')
