@@ -104,6 +104,11 @@ while IFS= read -r line; do
     [[ -n "$line" ]] && files+=("$line")
 done < <(git grep -Il -F -- "$old_version" -- . "${pathspecs[@]}" || true)
 
+if [[ ${#files[@]} -eq 0 ]]; then
+    printf 'Error: No tracked files contain version "%s"\n' "$old_version" >&2
+    exit 1
+fi
+
 required_files=(
     setup.cfg
     cpp_tests/meson.build
@@ -111,16 +116,11 @@ required_files=(
 )
 
 for required_file in "${required_files[@]}"; do
-    if [[ ! " ${files[*]} " == *" $required_file "* ]]; then
+    if [[ ! " ${files[*]:-} " == *" $required_file "* ]]; then
         printf 'Error: Expected version "%s" not found in required file: %s\n' "$old_version" "$required_file" >&2
         exit 1
     fi
 done
-
-if [[ ${#files[@]} -eq 0 ]]; then
-    printf 'Error: No tracked files contain version "%s"\n' "$old_version" >&2
-    exit 1
-fi
 
 printf '%s version %s -> %s in %d file(s):\n' \
     "$([[ "$dry_run" == true ]] && printf 'Would bump' || printf 'Bumping')" \
@@ -159,11 +159,22 @@ if [[ "$verify" == true ]]; then
     # Locate shared or local python virtualenv
     venv_dir=""
     common_git_dir=$(git rev-parse --git-common-dir 2>/dev/null || true)
-    if [[ -n "$common_git_dir" && -d "$(cd "$common_git_dir/.." && pwd)/python3.12.venv" ]]; then
-        venv_dir="$(cd "$common_git_dir/.." && pwd)/python3.12.venv"
-    elif [[ -d "${repo_root}/python3.12.venv" ]]; then
-        venv_dir="${repo_root}/python3.12.venv"
-    elif [[ -n "${VIRTUAL_ENV:-}" && -d "${VIRTUAL_ENV}" ]]; then
+    shared_root=""
+    if [[ -n "$common_git_dir" ]]; then
+        shared_root="$(cd "$common_git_dir/.." && pwd)"
+    fi
+
+    for vname in python3.14.venv python3.13.venv python3.12.venv .venv; do
+        if [[ -n "$shared_root" && -d "${shared_root}/${vname}" ]]; then
+            venv_dir="${shared_root}/${vname}"
+            break
+        elif [[ -d "${repo_root}/${vname}" ]]; then
+            venv_dir="${repo_root}/${vname}"
+            break
+        fi
+    done
+
+    if [[ -z "$venv_dir" && -n "${VIRTUAL_ENV:-}" && -d "${VIRTUAL_ENV}" ]]; then
         venv_dir="${VIRTUAL_ENV}"
     fi
 
