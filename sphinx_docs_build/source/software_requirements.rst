@@ -213,6 +213,11 @@ C++ wrapper code calls this function directly when removing a cached SNMPv3 USM 
 supporting local source builds and installation of ezsnmp into Homebrew Python environments,
 automatically configured against Homebrew-installed Net-SNMP and OpenSSL dependencies.
 
+[BUILD-12] The repository versioning and release automation shall follow
+SemVer-compliant Calendar Versioning (CalSemVer) using ``YYYY.M.D`` for stable
+releases and ``YYYY.M.DaN`` for pre-releases, without leading zeroes, complying
+with PEP 440 and PyPI registry publication requirements.
+
 Binary Wheels
 ~~~~~~~~~~~~~
 
