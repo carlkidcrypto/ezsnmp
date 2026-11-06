@@ -152,7 +152,9 @@ jobs:
 
       - name: Build versioned docs
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
+          TAG="${{ github.event.release.tag_name }}"
+          CLEAN_VER=$(echo "${TAG}" | sed -E 's/^[vV]//')
+          VERSION="v${CLEAN_VER}"
           cd ${{ github.workspace }}
           rm -drf build ezsnmp.egg-info
           python3 -m pip install . --verbose
@@ -170,47 +172,72 @@ jobs:
 
       - name: Copy versioned docs into docs/
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
+          TAG="${{ github.event.release.tag_name }}"
+          CLEAN_VER=$(echo "${TAG}" | sed -E 's/^[vV]//')
+          VERSION="v${CLEAN_VER}"
+          rm -rf "${{ github.workspace }}/docs/html_${VERSION}/"
           cp -r "/tmp/html_${VERSION}/" "${{ github.workspace }}/docs/html_${VERSION}/"
 
       - name: Update landing page version list
         run: |
           python3 - <<'EOF'
-          import re, pathlib, sys
+          import re, pathlib, sys, shutil
+          from packaging.version import Version
 
           docs_dir = pathlib.Path("${{ github.workspace }}/docs")
           index_rst = pathlib.Path("${{ github.workspace }}/sphinx_docs_build/landing/source/index.rst")
 
-          # Collect all versioned dirs, newest first (parsed for SemVer and CalVer compatibility)
-          try:
-              from packaging.version import Version
+          # Normalize any legacy html_V* directory to html_v*
+          for d in list(docs_dir.iterdir()):
+              if d.is_dir() and d.name.startswith("html_V"):
+                  target = docs_dir / ("html_v" + d.name[6:])
+                  if not target.exists():
+                      d.rename(target)
+                  else:
+                      shutil.rmtree(d)
 
-              def version_sort_key(name):
-                  try:
-                      return Version(name.replace("html_v", ""))
-                  except Exception:
-                      return Version("0.0.0")
-          except ImportError:
-              def version_sort_key(name):
-                  clean = name.replace("html_v", "")
-                  parts = re.split(r"[.\-]", clean)
-                  return tuple(int(p) if p.isdigit() else p for p in parts)
+          # Helper to parse version from directory name
+          def parse_version(dir_name):
+              clean = re.sub(r"^html_[vV]", "", dir_name)
+              try:
+                  return Version(clean)
+              except Exception:
+                  return Version("0.0.0")
 
-          versions = sorted(
-              [d.name for d in docs_dir.iterdir()
-               if d.is_dir() and d.name.startswith("html_v")],
-              key=version_sort_key,
-              reverse=True,
-          )
+          # Collect all existing versioned directories
+          version_dirs = [
+              d for d in docs_dir.iterdir()
+              if d.is_dir() and d.name.lower().startswith("html_v")
+          ]
+
+          # Identify all published stable versions (not prereleases)
+          stable_base_versions = {
+              parse_version(d.name).base_version
+              for d in version_dirs
+              if not parse_version(d.name).is_prerelease and parse_version(d.name) != Version("0.0.0")
+          }
+
+          # Retire and prune prereleases if their stable release exists
+          active_dirs = []
+          for d in version_dirs:
+              v = parse_version(d.name)
+              if v.is_prerelease and v.base_version in stable_base_versions:
+                  print(f"Retiring prerelease docs {d.name} in favor of stable {v.base_version}")
+                  shutil.rmtree(d)
+              else:
+                  active_dirs.append(d)
+
+          # Sort remaining versions newest first
+          active_dirs.sort(key=lambda d: parse_version(d.name), reverse=True)
 
           # Build RST list entries (always include Latest Alpha/Beta first)
           rst_items = ["* `Latest Alpha/Beta Version <./html/index.html>`_"]
-          for v in versions:
-              ver = v.replace("html_", "")  # e.g. "v2.3.0"
-              rst_items.append(f"* `{ver} <./{v}/index.html>`_")
+          for d in active_dirs:
+              ver_str = "v" + re.sub(r"^html_[vV]", "", d.name)
+              rst_items.append(f"* `{ver_str} <./{d.name}/index.html>`_")
           versions_rst = "\n".join(rst_items)
 
-          content = index_rst.read_text()
+          content = index_rst.read_text(encoding="utf-8")
           new_content, sub_count = re.subn(
               r'\.\. VERSION_LIST_START\n.*?\.\. VERSION_LIST_END',
               f'.. VERSION_LIST_START\n\n{versions_rst}\n\n.. VERSION_LIST_END',
@@ -222,8 +249,8 @@ jobs:
               print("ERROR: VERSION_LIST_START/VERSION_LIST_END sentinels not found in index.rst", file=sys.stderr)
               sys.exit(1)
 
-          index_rst.write_text(new_content)
-          print("Updated landing/source/index.rst with versions:", versions)
+          index_rst.write_text(new_content, encoding="utf-8")
+          print("Updated landing/source/index.rst with versions:", [d.name for d in active_dirs])
           EOF
 
       - name: Build landing page with updated version list
@@ -231,7 +258,7 @@ jobs:
           cd ${{ github.workspace }}/sphinx_docs_build/landing
           mkdir -p source/_static
           mkdir -p source/_templates
-          make html
+          make clean && make html SPHINXOPTS="-W"
 
       - name: Create Pull Request with versioned docs
         id: create-pr
@@ -250,16 +277,8 @@ jobs:
           delete-branch: true
           labels: documentation, automated-pr
           add-paths: |
-            docs/html_${{ github.event.release.tag_name }}/
+            docs/
             sphinx_docs_build/landing/source/index.rst
-            docs/index.html
-            docs/.buildinfo
-            docs/_static
-            docs/_sources
-            docs/genindex.html
-            docs/search.html
-            docs/searchindex.js
-            docs/objects.inv
 
       - name: Enable Auto-merge
         if: steps.create-pr.outputs.pull-request-number != ''
