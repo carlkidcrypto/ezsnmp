@@ -53,7 +53,8 @@ make html SPHINXOPTS="-W"
 
 The `docs/` directory maintains versioned documentation snapshots for historical releases:
 - `docs/html/`: Latest current release documentation.
-- `docs/html_vX.Y.Z/`: Versioned archives (e.g., `html_v1.1.0`, `html_v2.0.1`).
+- `docs/html_vX.Y.Z/`: Versioned archives (e.g., `html_v1.1.0`, `html_v2.0.1`, `html_v2.5.0`). Directory names must always be normalized to lowercase `html_v<version>`.
+- **Prerelease Replacement**: When a new stable release (e.g., `v2.5.0` or `v2026.11.4`) is published, its documentation replaces and retires all prereleases (`alpha`, `beta`, `rc`) belonging to that version series (e.g., `html_v2.5.0a0`–`html_v2.5.0b0` are removed from `docs/` and from the landing page version selector). Prereleases remain in `docs/` only while no stable release has been published for that series.
 - `docs/versions.json`: Version manifest used by the documentation site switcher.
 - **SonarQube Exclusion**: `docs/**` must be excluded from SonarQube Cloud automatic analysis via `.sonarcloud.properties` to avoid false-positive duplicate code and security rating alerts.
 
