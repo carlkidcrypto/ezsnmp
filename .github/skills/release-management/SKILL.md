@@ -70,3 +70,11 @@ gh pr create --title "chore: bump version to <version>" --body "Automated versio
 ## 3. Strict Merge Prohibition
 
 - **Never merge the release PR**: PR merging and release tagging trigger automated PyPI publication (`build_and_publish_to_pypi.yml`) and Homebrew formula updates. Merging is strictly reserved for the repository maintainer (@carlkidcrypto).
+
+---
+
+## 4. Post-Release Versioned Documentation & Prerelease Pruning
+
+Following release publication, the `sphinx_docs_build_release` CI workflow archives the new release documentation into `docs/html_v<version>/`.
+- **Directory Normalization**: Directory names must always be normalized to lowercase `html_v<version>` regardless of git tag casing (`V2.5.0` vs `v2.5.0`).
+- **Prerelease Replacement**: When a new stable release (e.g. `v2.5.0` or `v2026.11.4`) is published, its documentation replaces and retires all prereleases (`alpha`, `beta`, `rc`) belonging to that version series (e.g. `html_v2.5.0a0`–`html_v2.5.0b0` are removed from `docs/` and from the landing page version selector). Prereleases remain in `docs/` only while no stable release has been published for that series.
