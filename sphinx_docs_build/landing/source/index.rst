@@ -40,10 +40,7 @@ Select a version of the documentation to browse:
 
 * `Latest Alpha/Beta Version <./html/index.html>`_
 * `v2026.11.4a0 <./html_v2026.11.4a0/index.html>`_
-* `v2.5.0b0 <./html_v2.5.0b0/index.html>`_
-* `v2.5.0a2 <./html_v2.5.0a2/index.html>`_
-* `v2.5.0a1 <./html_v2.5.0a1/index.html>`_
-* `v2.5.0a0 <./html_v2.5.0a0/index.html>`_
+* `v2.5.0 <./html_v2.5.0/index.html>`_
 * `v2.4.0 <./html_v2.4.0/index.html>`_
 * `v2.3.0 <./html_v2.3.0/index.html>`_
 * `v2.2.0 <./html_v2.2.0/index.html>`_

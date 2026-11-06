@@ -290,9 +290,12 @@ Documentation
 [DOCS-01] The system shall provide Sphinx-based HTML documentation including installation
 instructions, API reference, and a development guide.
 
-[DOCS-02] The documentation system shall maintain versioned documentation archives for each
-published release, served alongside development documentation via GitHub Pages with an automated
-version-selector landing page.
+[DOCS-02] The documentation system shall maintain versioned documentation
+archives for each published release, served alongside development
+documentation via GitHub Pages with an automated version-selector landing
+page. When a new stable release is published, its documentation archive shall
+replace and retire all former prerelease archives (alpha, beta, rc) of that
+version series from disk and from the landing page version list.
 
 [DOCS-03] The documentation build system shall execute in a dedicated Python 3.14 runner
 environment (supporting dependencies requiring Python >=3.13, such as Sphinx 9.2+) to build and
