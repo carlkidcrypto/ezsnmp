@@ -1,5 +1,5 @@
 ---
-name: Docs Continuous Improvement Every 3 Days
+name: Docs Continuous Improvement
 on:
   workflow_dispatch:
   schedule: every 3 days

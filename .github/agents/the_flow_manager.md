@@ -67,7 +67,7 @@ Current agentic workflow source files:
 - `auto_change_log.md`
 - `auto_release_notes.md`
 - `coverage_autofix_every_3_days.md`
-- `docs_continuous_improvement_every_3_days.md`
+- `docs_continuous_improvement.md`
 - `sync_open_prs_with_main.md`
 - `triage_incoming_bug_reports.md`
 - `update_docker_netsnmp_versions.md`
