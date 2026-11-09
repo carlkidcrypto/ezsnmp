@@ -33,7 +33,7 @@ void netsnmp_thread_init(std::string const& app_name) {
       /* completely disable logging otherwise it will default to stderr */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       init_snmp(app_name.c_str());
-      g_netsnmp_initialized.store(true, std::memory_order_release);
+      g_netsnmp_initialized.store(true);
    }
 }
 
@@ -51,7 +51,7 @@ void netsnmp_thread_cleanup(std::string const& app_name) {
       /* completely disable logging otherwise it will default to stderr */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       snmp_shutdown(app_name.c_str());
-      g_netsnmp_initialized.store(false, std::memory_order_release);
+      g_netsnmp_initialized.store(false);
    }
 }
 
