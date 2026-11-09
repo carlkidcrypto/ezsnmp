@@ -188,7 +188,7 @@ def is_net_snmp_installed_macports():
         macports_output = check_output(
             "port installed net-snmp", shell=True, stderr=DEVNULL
         ).decode()
-        pattern = r"net-snmp @(\d+(?:\.\d+)*[_\-+a-zA-Z0-9]*) \(active\)"
+        pattern = r"net-snmp @(\S+) \(active\)"
         match = search(pattern, macports_output)
         if match:
             return match.group(1)

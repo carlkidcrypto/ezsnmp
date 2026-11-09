@@ -1,6 +1,7 @@
 #include "sessionbase.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <cstddef>
 #include <cstring>
@@ -200,8 +201,8 @@ SessionBase::SessionBase(std::string const& hostname,
       m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
    populate_args();
 
-   int rand_num = 1 + (std::rand() % 100000);
-   m_init_name = "ezsnmp_" + std::to_string(rand_num);
+   static std::atomic<uint64_t> s_session_counter{1};
+   m_init_name = "ezsnmp_" + std::to_string(s_session_counter.fetch_add(1));
 }
 
 SessionBase::~SessionBase() {}
