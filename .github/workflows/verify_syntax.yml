@@ -43,7 +43,7 @@ jobs:
           set -e
           version=$(cat tools/actionlint-version.txt)
           archive="actionlint_${version#v}_linux_amd64.tar.gz"
-          curl -fsSL "https://github.com/rhysd/actionlint/releases/download/${version}/${archive}" -o /tmp/actionlint.tar.gz
+          curl -fsSL --retry 5 --retry-delay 2 --retry-all-errors "https://github.com/rhysd/actionlint/releases/download/${version}/${archive}" -o /tmp/actionlint.tar.gz
           mkdir -p /tmp/actionlint
           tar -xzf /tmp/actionlint.tar.gz -C /tmp/actionlint
           sudo install -m 0755 /tmp/actionlint/actionlint /usr/local/bin/actionlint

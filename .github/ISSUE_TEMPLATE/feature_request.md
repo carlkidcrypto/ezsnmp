@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+> [!TIP]
+> **AI-Assisted Feature Planning**: This project utilizes AI-assisted development tools to analyze, design, and implement requested enhancements. Providing clear problem statements, detailed use cases, expected behavior, and alternative approaches helps AI tooling and maintainers rapidly evaluate architectural feasibility and accelerate implementation.
+
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
