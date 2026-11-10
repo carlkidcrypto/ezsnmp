@@ -215,8 +215,9 @@ automatically configured against Homebrew-installed Net-SNMP and OpenSSL depende
 
 [BUILD-12] The repository versioning and release automation shall follow
 SemVer-compliant Calendar Versioning (CalSemVer) using ``YYYY.M.D`` for stable
-releases and ``YYYY.M.DaN`` for pre-releases, without leading zeroes, complying
-with PEP 440 and PyPI registry publication requirements.
+releases and ``YYYY.M.DaN`` / ``YYYY.M.DbN`` / ``YYYY.M.DrcN`` for pre-releases,
+without leading zeroes, complying with PEP 440 and PyPI registry publication
+requirements.
 
 Binary Wheels
 ~~~~~~~~~~~~~
