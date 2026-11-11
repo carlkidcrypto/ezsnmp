@@ -1,7 +1,35 @@
-Last Updated: 2026-11-05 19:24:23 UTC
+Last Updated: 2026-11-10 01:23:05 UTC
 
 # Changelog
 
+
+<a name="v2026.11.9b0"></a>
+## [v2026.11.9b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2026.11.4a0...v2026.11.9b0) (2026-11-09)
+
+
+### Changes
+
+#### Documentation Updates
+
+- docs: add versioned documentation for v2026.11.4a0 ([#1456](https://github.com/carlkidcrypto/ezsnmp/issues/1456))
+
+
+#### Maintenance
+
+- chore: bump version to 2026.11.9b0 ([#1463](https://github.com/carlkidcrypto/ezsnmp/issues/1463))
+
+- chore: update Homebrew formula for v2026.11.4a0 ([#1455](https://github.com/carlkidcrypto/ezsnmp/issues/1455))
+
+
+
+
+
+
+
+
+
+
+---
 
 <a name="v2026.11.4a0"></a>
 ## [v2026.11.4a0](https://github.com/carlkidcrypto/ezsnmp/compare/v2026.10.28a0...v2026.11.4a0) (2026-11-05)
