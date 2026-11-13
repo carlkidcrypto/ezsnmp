@@ -80,7 +80,7 @@ jobs:
 
     steps:
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
+        uses: carlkidcrypto/os-specific-runner@8bf8551e08c48d9b72f768392e692fad5bb169e7 # v2.5.0
         with:
           linux: sudo apt-get update;
                  sudo apt-get install -y snmpd libsnmp-dev libperl-dev snmp-mibs-downloader meson ninja-build libgtest-dev lcov;
@@ -137,7 +137,7 @@ jobs:
           done
 
       - name: Configure, Build, and Run C++ Tests
-        uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
+        uses: carlkidcrypto/os-specific-runner@8bf8551e08c48d9b72f768392e692fad5bb169e7 # v2.5.0
         with:
           linux: |
             cd cpp_tests
@@ -260,7 +260,7 @@ jobs:
           merge-multiple: true
 
       - name: Publish C++ Test Results
-        uses: EnricoMi/publish-unit-test-result-action@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2
+        uses: EnricoMi/publish-unit-test-result-action@da5b7be67623cd59bbbd1a0ce4f022050a55605f # v2
         with:
           files: test-results/**/*.xml
           check_name: C++ Test Results - Native

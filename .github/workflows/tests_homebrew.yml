@@ -94,14 +94,14 @@ jobs:
       - name: Set up Homebrew
         id: set-up-homebrew
         if: runner.os == 'macOS'
-        uses: Homebrew/actions/setup-homebrew@c262868c096d909fc278daa87ed9772967331ea3 # master
+        uses: Homebrew/actions/setup-homebrew@63a2d4d8d4193eab3e62b1b782ff3ab8408f5b29 # master
 
       - name: Enable Homebrew analytics
         if: runner.os == 'macOS'
         run: brew analytics on
 
       - name: Set up dependencies
-        uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
+        uses: carlkidcrypto/os-specific-runner@8bf8551e08c48d9b72f768392e692fad5bb169e7 # v2.5.0
         with:
           linux: sudo apt-get install -y --no-install-recommends snmpd snmp-mibs-downloader;
                  sudo apt-get purge libsnmp-dev libperl-dev -y;
@@ -184,7 +184,7 @@ jobs:
           done
 
       - name: Run Tests
-        uses: carlkidcrypto/os-specific-runner@d6494ebfd6437452a44d3f9d6633339772e95070 # v2.4.0
+        uses: carlkidcrypto/os-specific-runner@8bf8551e08c48d9b72f768392e692fad5bb169e7 # v2.5.0
         with:
           linux: |
                  set -euo pipefail
@@ -314,7 +314,7 @@ jobs:
 
       - name: Pytest coverage comment
         id: pytest-coverage
-        uses: MishaKav/pytest-coverage-comment@9516bf7f32a9229cf18d5e1717ae387c7154f279 # v1.13.0
+        uses: MishaKav/pytest-coverage-comment@4cfb48edc8f875ac019afdcfd97c48d78ad2b723 # v1.13.1
         with:
           title: Pytest Coverage Report - Homebrew
           unique-id-for-comment: homebrew
