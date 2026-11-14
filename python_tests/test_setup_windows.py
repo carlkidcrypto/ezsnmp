@@ -165,7 +165,7 @@ def test_gather_build_configuration_windows_includes_openssl_paths(
 
     header_path = include_dir / "net-snmp" / "net-snmp-config.h"
     header_path.parent.mkdir(parents=True)
-    header_path.write_text('#define PACKAGE_VERSION "5.10.pre2"\n', encoding="utf-8")
+    header_path.write_text('#define PACKAGE_VERSION "5.10.rc1"\n', encoding="utf-8")
     lib_dir.mkdir()
     openssl_include.mkdir(parents=True)
     openssl_lib.mkdir(parents=True)
@@ -181,7 +181,7 @@ def test_gather_build_configuration_windows_includes_openssl_paths(
 
     assert str(openssl_include) in cfg["incdirs"]
     assert str(openssl_lib) in cfg["libdirs"]
-    assert cfg["system_netsnmp_version"] == "5.10.pre2"
+    assert cfg["system_netsnmp_version"] == "5.10.rc1"
 
 
 @pytest.mark.parametrize(
@@ -202,7 +202,7 @@ def test_gather_build_configuration_windows_architectures(
 
     header_path = include_dir / "net-snmp" / "net-snmp-config.h"
     header_path.parent.mkdir(parents=True)
-    header_path.write_text('#define PACKAGE_VERSION "5.10.pre2"\n', encoding="utf-8")
+    header_path.write_text('#define PACKAGE_VERSION "5.10.rc1"\n', encoding="utf-8")
     lib_dir.mkdir(parents=True)
     openssl_include.mkdir(parents=True)
     openssl_lib.mkdir(parents=True)

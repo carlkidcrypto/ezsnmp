@@ -262,7 +262,7 @@
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
                  snmp_free_pdu(response);
                  response = NULL;
-@@ -230,28 +234,26 @@
+@@ -230,29 +234,26 @@
                      goto retry;
  		}
              }
@@ -298,6 +298,7 @@
  
 -out:
 -    netsnmp_cleanup_session(&session);
+-    snmp_shutdown("snmpapp");
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

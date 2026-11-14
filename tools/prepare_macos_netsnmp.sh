@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NETSNMP_VERSION="5.10.pre2"
-EXPECTED_SHA256="6bce4ef368db15ad0f400330d5a1433009d63f0a98ca8b2eca0f87abd3469bd6"
+NETSNMP_VERSION="5.10.rc1"
+EXPECTED_SHA256="009cbda7879b1c75cee01df9f4eab2797df47c6c5f90b70aed3e51dce89d8e76"
 PREFIX="${PREFIX:-/usr/local}"
 MACPORTS_PREFIX="/opt/local"
 

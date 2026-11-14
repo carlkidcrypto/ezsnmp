@@ -5,8 +5,8 @@ set -euo pipefail
 # Matches the Windows standalone strategy by building a minimal, optimized
 # shared library (libnetsnmp.so) without daemons or CLI applications.
 
-NETSNMP_VERSION="5.10.pre2"
-EXPECTED_SHA256="6bce4ef368db15ad0f400330d5a1433009d63f0a98ca8b2eca0f87abd3469bd6"
+NETSNMP_VERSION="5.10.rc1"
+EXPECTED_SHA256="009cbda7879b1c75cee01df9f4eab2797df47c6c5f90b70aed3e51dce89d8e76"
 PREFIX="/usr/local"
 
 echo "=== Preparing Net-SNMP ${NETSNMP_VERSION} for Linux ==="

@@ -36,7 +36,7 @@ fi
 
 # Net-SNMP 5.10 currently uses a prerelease tag; later versions use v<version>.
 if [[ "$VERSION" == "5.10" ]]; then
-    TAG="v5.10.pre2"
+    TAG="v5.10.rc1"
 else
     TAG="v${VERSION}"
 fi
