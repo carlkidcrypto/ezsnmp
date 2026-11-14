@@ -139,7 +139,7 @@ def test_gather_macos_configuration_uses_explicit_netsnmp_config(
     homebrew_outputs, monkeypatch
 ):
     configured_path = "/opt/homebrew/Cellar/ezsnmp/2.5.0/bin/net-snmp-config"
-    homebrew_outputs[f"{configured_path} --version"] = "5.10.pre2\n"
+    homebrew_outputs[f"{configured_path} --version"] = "5.10.rc1\n"
     homebrew_outputs[f"{configured_path} --libs"] = (
         "-L/opt/homebrew/Cellar/ezsnmp/2.5.0/lib -lnetsnmp -lcrypto"
     )
@@ -156,7 +156,7 @@ def test_gather_macos_configuration_uses_explicit_netsnmp_config(
         "/opt/homebrew/Cellar/ezsnmp/2.5.0/lib",
     ]
     assert cfg["libs"] == ["netsnmp", "crypto"]
-    assert cfg["system_netsnmp_version"] == "5.10.pre2"
+    assert cfg["system_netsnmp_version"] == "5.10.rc1"
     assert cfg["homebrew_netsnmp_version"] is None
 
 

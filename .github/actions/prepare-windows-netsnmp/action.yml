@@ -5,11 +5,11 @@ inputs:
   net-snmp-version:
     description: Net-SNMP version to build.
     required: false
-    default: "5.10.pre2"
+    default: "5.10.rc1"
   net-snmp-sha256:
     description: Expected SHA256 hash for the Net-SNMP source archive.
     required: false
-    default: "7a5fc63515f0477d84fb160b6e8a2aee0196117d7e4ffe7d0fba2bdf3a8d72cc"
+    default: "a81b239f877910af4959c16e6c71872bd10507404d00650b7cba28df9ce0bb20"
   arch:
     description: Target Windows architecture (x64, x86, or arm64).
     required: false

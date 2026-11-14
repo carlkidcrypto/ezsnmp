@@ -18,17 +18,17 @@ RUN xargs dnf install -y < /tmp/dnf-requirements.txt && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/dnf-requirements.txt
 
-# Copy and build NetSNMP 5.10.pre2 from cache
-COPY docker/cache/net-snmp-5.10.pre2.tar.gz /tmp/
+# Copy and build NetSNMP 5.10.rc1 from cache
+COPY docker/cache/net-snmp-5.10.rc1.tar.gz /tmp/
 RUN cd /tmp && \
-    tar -xzf net-snmp-5.10.pre2.tar.gz && \
-    cd net-snmp-5.10.pre2 && \
+    tar -xzf net-snmp-5.10.rc1.tar.gz && \
+    cd net-snmp-5.10.rc1 && \
     ./configure --prefix=/usr --enable-shared --disable-embedded-perl --without-perl-modules --with-mib-modules="mibII/system_mib mibII/sysORTable snmpv3mibs notification notification-log-mib" && \
     make -j$(nproc) && \
     make install && \
     ldconfig && \
     cd /tmp && \
-    rm -rf net-snmp-5.10.pre2.tar.gz net-snmp-5.10.pre2 && \
+    rm -rf net-snmp-5.10.rc1.tar.gz net-snmp-5.10.rc1 && \
     net-snmp-config --version
 
 # Copy Python tarballs from cache to avoid repeated downloads

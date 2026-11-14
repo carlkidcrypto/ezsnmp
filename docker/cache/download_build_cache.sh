@@ -16,7 +16,7 @@ PYTHON_VERSIONS=(
 )
 
 # Net-SNMP versions (for test container builds)
-NETSNMP_VERSION="5.10.pre2"
+NETSNMP_VERSION="5.10.rc1"
 NETSNMP_URL="https://github.com/net-snmp/net-snmp/archive/refs/tags/v${NETSNMP_VERSION}.tar.gz"
 NETSNMP_TARBALL="net-snmp-${NETSNMP_VERSION}.tar.gz"
 
