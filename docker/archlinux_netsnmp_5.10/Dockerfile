@@ -93,6 +93,12 @@ COPY docker/cache/Python-3.15.2.tgz /tmp/
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_VERSION} && \
+    sed -i \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -102,6 +108,12 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_0_VERSION} && \
+    sed -i \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -111,6 +123,12 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_1_VERSION} && \
+    sed -i \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -139,6 +157,9 @@ RUN cd /tmp && \
 # Also add /usr/local/lib to LD_LIBRARY_PATH for shared library loading
 ENV PATH="/usr/local/bin:$PATH"
 ENV LD_LIBRARY_PATH="/usr/local/lib"
+
+# Verify ssl and hashlib modules compiled cleanly for all Python versions
+RUN for py in python3.11 python3.12 python3.13 python3.14 python3.15; do $py -c "import ssl, hashlib"; done
 
 # Virtual Environment Setup using latest Python (3.14)
 ENV VENV_PATH=/opt/venv
