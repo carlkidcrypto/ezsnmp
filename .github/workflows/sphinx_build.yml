@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt') }}
+          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt', 'sphinx_docs_build/landing/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-sphinx-
             ${{ runner.os }}-pip-
@@ -82,6 +82,7 @@ jobs:
           mkdir -p source/_static
           mkdir -p source/_templates
           make html SPHINXOPTS="-W"
+          touch ${{ github.workspace }}/docs/.nojekyll
 
       - name: Upload artifact for GitHub Pages
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
@@ -128,7 +129,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt') }}
+          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt', 'sphinx_docs_build/landing/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-sphinx-
             ${{ runner.os }}-pip-
@@ -259,6 +260,7 @@ jobs:
           mkdir -p source/_static
           mkdir -p source/_templates
           make clean && make html SPHINXOPTS="-W"
+          touch ${{ github.workspace }}/docs/.nojekyll
 
       - name: Create Pull Request with versioned docs
         id: create-pr
