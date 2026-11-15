@@ -44,6 +44,13 @@ COPY docker/cache/Python-3.15.2.tgz /tmp/
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_VERSION} && \
+    sed -i \
+        -e '/OpenSSL API 1\.1\.0+ does not include version methods/i #if (OPENSSL_VERSION_NUMBER >= 0x40000000L)\n#define OPENSSL_NO_SSL3\n#define OPENSSL_NO_SSL3_METHOD\n#define OPENSSL_NO_TLS1_METHOD\n#define OPENSSL_NO_TLS1_1_METHOD\n#define OPENSSL_NO_TLS1_2_METHOD\n#endif' \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -53,6 +60,13 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_0_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_0_VERSION} && \
+    sed -i \
+        -e '/OpenSSL API 1\.1\.0+ does not include version methods/i #if (OPENSSL_VERSION_NUMBER >= 0x40000000L)\n#define OPENSSL_NO_SSL3\n#define OPENSSL_NO_SSL3_METHOD\n#define OPENSSL_NO_TLS1_METHOD\n#define OPENSSL_NO_TLS1_1_METHOD\n#define OPENSSL_NO_TLS1_2_METHOD\n#endif' \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -62,6 +76,13 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_1_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_1_VERSION} && \
+    sed -i \
+        -e '/OpenSSL API 1\.1\.0+ does not include version methods/i #if (OPENSSL_VERSION_NUMBER >= 0x40000000L)\n#define OPENSSL_NO_SSL3\n#define OPENSSL_NO_SSL3_METHOD\n#define OPENSSL_NO_TLS1_METHOD\n#define OPENSSL_NO_TLS1_1_METHOD\n#define OPENSSL_NO_TLS1_2_METHOD\n#endif' \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -71,6 +92,13 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     tar -xzf Python-${PYTHON_MIN_2_VERSION}.tgz && \
     cd Python-${PYTHON_MIN_2_VERSION} && \
+    sed -i \
+        -e '/OpenSSL API 1\.1\.0+ does not include version methods/i #if (OPENSSL_VERSION_NUMBER >= 0x40000000L)\n#define OPENSSL_NO_SSL3\n#define OPENSSL_NO_SSL3_METHOD\n#define OPENSSL_NO_TLS1_METHOD\n#define OPENSSL_NO_TLS1_1_METHOD\n#define OPENSSL_NO_TLS1_2_METHOD\n#endif' \
+        -e 's/name->d\.ip->length/ASN1_STRING_length(name->d.ip)/g' \
+        -e 's/name->d\.ip->data/(unsigned char *)ASN1_STRING_get0_data(name->d.ip)/g' \
+        -e 's/(char \*)uri->data/(const char *)ASN1_STRING_get0_data(uri)/g' \
+        -e 's/uri->length/ASN1_STRING_length(uri)/g' \
+        Modules/_ssl.c && \
     ./configure --enable-shared && \
     make -j$(nproc) altinstall && \
     cd /tmp && \
@@ -86,6 +114,9 @@ RUN cd /tmp && \
     rm -rf Python-${PYTHON_MAX_VERSION}.tgz Python-${PYTHON_MAX_VERSION} && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/usr_local_lib.conf && \
     ldconfig
+
+# Verify ssl and hashlib modules compiled cleanly for all Python versions
+RUN for py in python3.11 python3.12 python3.13 python3.14 python3.15; do $py -c "import ssl, hashlib"; done
 
 # Create the pkg-config file for net-snmp (built from source above)
 RUN LIBDIR=$(net-snmp-config --libdir | sed 's/^-L//') && \
