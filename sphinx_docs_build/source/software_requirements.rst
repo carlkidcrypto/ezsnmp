@@ -65,6 +65,9 @@ agent.
 
 [SNMP-09] The system shall implement SNMP TRAP sending capability.
 
+[SNMP-10] The system shall implement ``snmpdf`` disk space usage reporting
+via HOST-RESOURCES-MIB and UCD-SNMP-MIB.
+
 Python API
 ~~~~~~~~~~
 
@@ -74,9 +77,9 @@ parameters and supports GET, GETNEXT, WALK, BULKGET, BULKWALK, and SET operation
 [API-02] The ``Session`` class shall support use as a Python context manager (``with`` statement) to
 automatically release resources on exit.
 
-[API-03] The system shall expose low-level functional wrappers (``snmpget``, ``snmpgetnext``,
-``snmpwalk``, ``snmpbulkget``, ``snmpbulkwalk``, ``snmpset``, ``snmptrap``) that accept raw Net-SNMP
-CLI-style argument lists.
+[API-03] The system shall expose low-level functional wrappers (``snmpget``,
+``snmpgetnext``, ``snmpwalk``, ``snmpbulkget``, ``snmpbulkwalk``, ``snmpset``,
+``snmpdf``, ``snmptrap``) that accept raw Net-SNMP CLI-style argument lists.
 
 [API-04] Each SNMP operation shall return results as a sequence of ``Result`` objects containing the
 following fields: ``oid``, ``index``, ``type``, ``value``, and ``converted_value``.
@@ -122,12 +125,13 @@ and ``UnknownObjectIDError``.
 
 [ERR-02] All exception types shall inherit from a common ``GenericError`` base class.
 
-[ERR-03] The system shall handle all internal operational, parsing, parameter validation, and Net-
-SNMP CLI-style errors across all core C++ operations (``snmpget``, ``snmpgetnext``, ``snmpwalk``,
-``snmpbulkget``, ``snmpbulkwalk``, ``snmpset``, and ``snmptrap``) by throwing typed C++ exceptions
-(such as ``GenericErrorBase``, ``ParseErrorBase``, or ``PacketErrorBase``) that propagate directly
-into Python exceptions, eliminating calls to ``printf``, ``fprintf(stderr, ...)``, and process
-``exit()``.
+[ERR-03] The system shall handle all internal operational, parsing, parameter
+validation, and Net-SNMP CLI-style errors across all core C++ operations
+(``snmpget``, ``snmpgetnext``, ``snmpwalk``, ``snmpbulkget``, ``snmpbulkwalk``,
+``snmpset``, ``snmpdf``, and ``snmptrap``) by throwing typed C++ exceptions
+(such as ``GenericErrorBase``, ``ParseErrorBase``, or ``PacketErrorBase``) that
+propagate directly into Python exceptions, eliminating calls to ``printf``,
+``fprintf(stderr, ...)``, and process ``exit()``.
 
 [ERR-04] The system shall provide centralized C++ error helper functions
 (``throw_type_value_error``, ``throw_missing_value_error``, ``throw_generic_error_from_snmp``) to

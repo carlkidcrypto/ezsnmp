@@ -472,6 +472,7 @@ def build_extensions(cfg: dict):
     snmp_source_path = resolve_snmp_source_path(version_str)
     netsnmp_versioned_sources = [
         f"{snmp_source_path}/snmpbulkget.cpp",
+        f"{snmp_source_path}/snmpdf.cpp",
         f"{snmp_source_path}/snmpgetnext.cpp",
         f"{snmp_source_path}/snmpbulkwalk.cpp",
         f"{snmp_source_path}/snmpget.cpp",

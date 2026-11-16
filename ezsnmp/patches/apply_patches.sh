@@ -96,7 +96,7 @@ for VERSION in "$@"; do
     # Use the same list of tools
     tools=(
         "snmpwalk" "snmpget" "snmpset" "snmptrap"
-        "snmpbulkwalk" "snmpbulkget" "snmpgetnext"
+        "snmpbulkwalk" "snmpbulkget" "snmpgetnext" "snmpdf"
     )
 
     # Change into the source directory to apply patches correctly
