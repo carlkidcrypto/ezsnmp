@@ -6,6 +6,12 @@ concurrency:
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional release tag to highlight in the changelog PR"
+        required: false
+        type: string
   skip-if-match:
     query: 'is:pr is:open head:automation/update-changelog label:documentation label:automated-pr'
 permissions:
@@ -62,8 +68,13 @@ Generate and open a changelog update PR only when substantive changelog content 
    - After installation, verify it works: `git-chglog --version`
    - **If git-chglog cannot be installed by either method, stop immediately with a clear error message. Do NOT attempt to re-implement changelog generation using Python, shell, or any other scripting language.**
 
-2. Generate candidate changelog content:
+2. Generate candidate changelog content and verify the latest section is non-empty:
    - `git-chglog --config .chglog/config.yml -o CHANGELOG.tmp`
+   - Validate that the latest release section in `CHANGELOG.tmp` contains at least one entry before proceeding:
+     ```bash
+     awk '/^## /{found=1; next} found && /^---$/{exit} found && /^- /{count++} END{if (count==0) {print "ERROR: Latest changelog section is empty" > "/dev/stderr"; exit 1}}' CHANGELOG.tmp
+     ```
+   - If the section is empty, stop immediately with an error rather than opening an empty PR.
 
 3. Build commit intelligence context for summary quality:
    - Identify the current release tag from the triggering release.
@@ -95,12 +106,13 @@ Generate and open a changelog update PR only when substantive changelog content 
    - Base: `main`
    - Title: `Update CHANGELOG.md`
    - Commit message: `chore(docs): update changelog`
+   - Git staging: Explicitly run `git add CHANGELOG.md`. NEVER use blanket staging commands (`git add -A` or `git add .`).
 
 ## Constraints
 
 - Only modify `CHANGELOG.md`.
 - Do not make unrelated code or workflow edits.
-- If generation fails due to missing tags/history, report clearly and stop.
+- If generation fails due to missing tags/history or produces an empty latest section, report clearly and stop.
 - Never choose a prerelease base for a stable release if an earlier stable release exists.
 - Prefer meaningful, user-impacting summaries over dependency/CI churn when both are present.
 - Never fail the run solely because external commit APIs are blocked by integrity filtering; fall back to local git history and continue.
