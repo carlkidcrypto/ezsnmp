@@ -38,6 +38,7 @@ snmpbulkwalk_src = join_paths(snmp_source_dir, 'snmpbulkwalk.cpp')
 snmpget_src = join_paths(snmp_source_dir, 'snmpget.cpp')
 snmpgetnext_src = join_paths(snmp_source_dir, 'snmpgetnext.cpp')
 snmpset_src = join_paths(snmp_source_dir, 'snmpset.cpp')
+snmptable_src = join_paths(snmp_source_dir, 'snmptable.cpp')
 snmptrap_src = join_paths(snmp_source_dir, 'snmptrap.cpp')
 snmpwalk_src = join_paths(snmp_source_dir, 'snmpwalk.cpp')
 
@@ -77,6 +78,7 @@ ezsnmp_shared_objs = static_library(
         snmpget_src,
         snmpgetnext_src,
         snmpset_src,
+        snmptable_src,
         snmptrap_src,
         snmpwalk_src,
     ],
@@ -174,6 +176,14 @@ test_snmpset = executable(
     'test_snmpset',
     ['test_snmpset.cpp'],
     objects: ezsnmp_shared_objs.extract_objects([snmpset_src] + common_shim_sources),
+    include_directories: include_dirs,
+    dependencies: common_deps
+)
+
+test_snmptable = executable(
+    'test_snmptable',
+    ['test_snmptable.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects([snmptable_src] + common_shim_sources),
     include_directories: include_dirs,
     dependencies: common_deps
 )
@@ -385,6 +395,7 @@ test('snmpgetnext_shim_test', test_snmpgetnext_shim, env: test_env)
 test('snmpgetnext_null_shim_test', test_snmpgetnext_null_shim, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
 test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
+test('snmptable_test', test_snmptable, env: test_env)
 test('snmptrap_test', test_snmptrap, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env, timeout: 120)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
