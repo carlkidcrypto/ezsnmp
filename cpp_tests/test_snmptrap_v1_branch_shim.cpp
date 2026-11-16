@@ -54,6 +54,20 @@ extern "C" int snmp_send(netsnmp_session *session, netsnmp_pdu *pdu) {
    return g_snmp_send_fail ? 0 : 1;
 }
 
+// Override snmp_synch_response for -Ci inform tests.
+extern "C" int snmp_synch_response(netsnmp_session *session,
+                                   netsnmp_pdu *pdu,
+                                   netsnmp_pdu **response) {
+   (void)session;
+   (void)pdu;
+   if (g_snmp_send_fail) {
+      *response = nullptr;
+      return STAT_ERROR;
+   }
+   *response = snmp_pdu_create(SNMP_MSG_RESPONSE);
+   return STAT_SUCCESS;
+}
+
 // Override snmp_error so snmp_sess_perror_exception does not dereference the
 // fake session struct when snmp_send fails.
 extern "C" void snmp_error(netsnmp_session *session,
@@ -173,4 +187,58 @@ TEST_F(SnmpTrapV1BranchShimTest, V1SendFailureThrowsException) {
    };
 
    EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v1_send_fail"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapV1BranchShimTest, V1TrapEmptyAgentUsesGetMyAddr) {
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "localhost:11162", "", "", "6", "0", "",
+   };
+
+   int rc = snmptrap(args, "testing_snmptrap_v1_empty_agent");
+   EXPECT_EQ(rc, 0);
+}
+
+TEST_F(SnmpTrapV1BranchShimTest, V1TrapUnknownAgentThrowsGenericError) {
+   std::vector<std::string> args = {
+       "-v", "1", "-c", "public", "localhost:11162", "", "nonexistent.invalid.example",
+       "6",  "0", "",
+   };
+
+   EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v1_unknown_agent"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapV1BranchShimTest, V3TrapAutoGeneratesEngineIdAndBootsTime) {
+   std::vector<std::string> args = {
+       "-v",
+       "3",
+       "-u",
+       "testuser",
+       "-l",
+       "noAuthNoPriv",
+       "localhost:11162",
+       "",
+       ".1.3.6.1.6.3.1.1.5.1",
+   };
+
+   int rc = snmptrap(args, "testing_snmptrap_v3_auto_engine");
+   EXPECT_EQ(rc, 0);
+}
+
+TEST_F(SnmpTrapV1BranchShimTest, V2cInformSuccessFreesResponse) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Ci", "localhost:11162", "", ".1.3.6.1.6.3.1.1.5.1",
+   };
+
+   int rc = snmptrap(args, "testing_snmptrap_v2c_inform_ok");
+   EXPECT_EQ(rc, 0);
+}
+
+TEST_F(SnmpTrapV1BranchShimTest, V2cInformFailureThrowsGenericError) {
+   g_snmp_send_fail = true;
+
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "-Ci", "localhost:11162", "", ".1.3.6.1.6.3.1.1.5.1",
+   };
+
+   EXPECT_THROW({ snmptrap(args, "testing_snmptrap_v2c_inform_fail"); }, GenericErrorBase);
 }

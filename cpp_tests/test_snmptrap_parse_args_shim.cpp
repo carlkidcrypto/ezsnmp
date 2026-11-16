@@ -5,6 +5,9 @@
 #include "exceptionsbase.h"
 #include "snmptrap.h"
 
+void snmptrap_usage(void);
+int snmp_input(int operation, netsnmp_session *session, int reqid, netsnmp_pdu *pdu, void *magic);
+
 static int g_parse_args_result = NETSNMP_PARSE_ARGS_ERROR;
 
 extern "C" int snmp_parse_args(int argc,
@@ -71,4 +74,12 @@ TEST_F(SnmpTrapParseArgsShimTest, TestParseArgsErrorUsageThrowsParseError) {
           }
        },
        ParseErrorBase);
+}
+
+TEST_F(SnmpTrapParseArgsShimTest, TestUsageDoesNotThrow) {
+   EXPECT_NO_THROW({ snmptrap_usage(); });
+}
+
+TEST_F(SnmpTrapParseArgsShimTest, TestSnmpInputReturnsOne) {
+   EXPECT_EQ(snmp_input(0, nullptr, 0, nullptr, nullptr), 1);
 }

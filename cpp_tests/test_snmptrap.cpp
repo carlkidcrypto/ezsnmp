@@ -216,3 +216,37 @@ TEST_F(SnmpTrapTest, TestV1InvalidEnterpriseOid) {
        "127.0.0.1", "6", "0",  ""};
    EXPECT_THROW({ snmptrap(args, "testing_v1_invalid_enterprise"); }, GenericErrorBase);
 }
+
+TEST_F(SnmpTrapTest, TestV2cInvalidTrapOid) {
+   std::vector<std::string> args = {
+       "-v", "2c", "-c", "public", "localhost:11162", "", "INVALID-MIB::nonexistentTrap"};
+   EXPECT_THROW({ snmptrap(args, "testing_v2c_invalid_trap_oid"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV2cInvalidVarbindOid) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "localhost:11162",
+                                    "",
+                                    ".1.3.6.1.6.3.1.1.5.1",
+                                    "INVALID-MIB::nonexistentOid",
+                                    "s",
+                                    "value"};
+   EXPECT_THROW({ snmptrap(args, "testing_v2c_invalid_varbind_oid"); }, GenericErrorBase);
+}
+
+TEST_F(SnmpTrapTest, TestV2cInvalidVarbindType) {
+   std::vector<std::string> args = {"-v",
+                                    "2c",
+                                    "-c",
+                                    "public",
+                                    "localhost:11162",
+                                    "",
+                                    ".1.3.6.1.6.3.1.1.5.1",
+                                    "SNMPv2-MIB::sysDescr.0",
+                                    "Z",
+                                    "value"};
+   EXPECT_THROW({ snmptrap(args, "testing_v2c_invalid_varbind_type"); }, GenericErrorBase);
+}
