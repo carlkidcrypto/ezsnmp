@@ -80,6 +80,33 @@ static std::map<std::string, std::string> CML_PARAM_LOOKUP = {
     {"print_timeticks_numerically", "-O t"},
     {"print_hex_strings", "-O x"},
     {"set_max_repeaters_to_num", "-Cr"},
+    {"print_oid_suffix_only", "-O s"},
+    {"print_oid_module_name", "-O S"},
+    {"print_oid_ucd_style", "-O u"},
+    {"print_ascii_strings", "-O a"},
+    {"print_leading_zero_hex", "-O 0"},
+    {"print_hex_text", "-O T"},
+    {"dont_breakdown_oids", "-O b"},
+    {"escape_quotes_in_indexes", "-O E"},
+    {"extended_index_format", "-O X"},
+    {"dont_print_units", "-O U"},
+    {"output_precision", "-Op"},
+    {"regex_oid_matching", "-I b"},
+    {"ignore_display_hints", "-I h"},
+    {"dont_check_range", "-I r"},
+    {"random_access_oid", "-I R"},
+    {"read_ucd_style_oid", "-I u"},
+    {"oid_suffix", "-Is"},
+    {"oid_prefix", "-IS"},
+    {"mib_allow_underline", "-P u"},
+    {"mib_comment_to_eol", "-P c"},
+    {"mib_replace_with_latest", "-P R"},
+    {"non_repeaters", "-Cn"},
+    {"walk_dont_check_lexicographic", "-Cc"},
+    {"walk_include_requested", "-Ci"},
+    {"walk_dont_get_requested", "-CI"},
+    {"walk_end_oid", "-CE"},
+    {"dont_fix_pdus", "-Cf"},
 };
 
 namespace {
@@ -138,7 +165,18 @@ SessionFormattingOptions make_formatting_options(bool print_enums_numerically,
                                                  bool print_full_oids,
                                                  bool print_oids_numerically,
                                                  bool print_timeticks_numerically,
-                                                 bool print_hex_strings) {
+                                                 bool print_hex_strings,
+                                                 bool print_oid_suffix_only,
+                                                 bool print_oid_module_name,
+                                                 bool print_oid_ucd_style,
+                                                 bool print_ascii_strings,
+                                                 bool print_leading_zero_hex,
+                                                 bool print_hex_text,
+                                                 bool dont_breakdown_oids,
+                                                 bool escape_quotes_in_indexes,
+                                                 bool extended_index_format,
+                                                 bool dont_print_units,
+                                                 std::string const& output_precision) {
    SessionFormattingOptions opts;
    opts.is_set = true;
    opts.print_enums_numerically = print_enums_numerically;
@@ -146,6 +184,17 @@ SessionFormattingOptions make_formatting_options(bool print_enums_numerically,
    opts.print_oids_numerically = print_oids_numerically;
    opts.print_timeticks_numerically = print_timeticks_numerically;
    opts.print_hex_strings = print_hex_strings;
+   opts.print_oid_suffix_only = print_oid_suffix_only;
+   opts.print_oid_module_name = print_oid_module_name;
+   opts.print_oid_ucd_style = print_oid_ucd_style;
+   opts.print_ascii_strings = print_ascii_strings;
+   opts.print_leading_zero_hex = print_leading_zero_hex;
+   opts.print_hex_text = print_hex_text;
+   opts.dont_breakdown_oids = dont_breakdown_oids;
+   opts.escape_quotes_in_indexes = escape_quotes_in_indexes;
+   opts.extended_index_format = extended_index_format;
+   opts.dont_print_units = dont_print_units;
+   opts.output_precision = output_precision;
    return opts;
 }
 
@@ -174,7 +223,34 @@ SessionBase::SessionBase(std::string const& hostname,
                          bool print_oids_numerically,
                          bool print_timeticks_numerically,
                          bool print_hex_strings,
-                         std::string const& set_max_repeaters_to_num)
+                         std::string const& set_max_repeaters_to_num,
+                         bool print_oid_suffix_only,
+                         bool print_oid_module_name,
+                         bool print_oid_ucd_style,
+                         bool print_ascii_strings,
+                         bool print_leading_zero_hex,
+                         bool print_hex_text,
+                         bool dont_breakdown_oids,
+                         bool escape_quotes_in_indexes,
+                         bool extended_index_format,
+                         bool dont_print_units,
+                         std::string const& output_precision,
+                         bool regex_oid_matching,
+                         bool ignore_display_hints,
+                         bool dont_check_range,
+                         bool random_access_oid,
+                         bool read_ucd_style_oid,
+                         std::string const& oid_suffix,
+                         std::string const& oid_prefix,
+                         bool mib_allow_underline,
+                         bool mib_comment_to_eol,
+                         bool mib_replace_with_latest,
+                         std::string const& non_repeaters,
+                         bool walk_dont_check_lexicographic,
+                         bool walk_include_requested,
+                         bool walk_dont_get_requested,
+                         std::string const& walk_end_oid,
+                         bool dont_fix_pdus)
     : m_hostname(hostname),
       m_port_number(port_number),
       m_version(version),
@@ -198,7 +274,34 @@ SessionBase::SessionBase(std::string const& hostname,
       m_print_oids_numerically(print_oids_numerically),
       m_print_timeticks_numerically(print_timeticks_numerically),
       m_print_hex_strings(print_hex_strings),
-      m_set_max_repeaters_to_num(set_max_repeaters_to_num) {
+      m_set_max_repeaters_to_num(set_max_repeaters_to_num),
+      m_print_oid_suffix_only(print_oid_suffix_only),
+      m_print_oid_module_name(print_oid_module_name),
+      m_print_oid_ucd_style(print_oid_ucd_style),
+      m_print_ascii_strings(print_ascii_strings),
+      m_print_leading_zero_hex(print_leading_zero_hex),
+      m_print_hex_text(print_hex_text),
+      m_dont_breakdown_oids(dont_breakdown_oids),
+      m_escape_quotes_in_indexes(escape_quotes_in_indexes),
+      m_extended_index_format(extended_index_format),
+      m_dont_print_units(dont_print_units),
+      m_output_precision(output_precision),
+      m_regex_oid_matching(regex_oid_matching),
+      m_ignore_display_hints(ignore_display_hints),
+      m_dont_check_range(dont_check_range),
+      m_random_access_oid(random_access_oid),
+      m_read_ucd_style_oid(read_ucd_style_oid),
+      m_oid_suffix(oid_suffix),
+      m_oid_prefix(oid_prefix),
+      m_mib_allow_underline(mib_allow_underline),
+      m_mib_comment_to_eol(mib_comment_to_eol),
+      m_mib_replace_with_latest(mib_replace_with_latest),
+      m_non_repeaters(non_repeaters),
+      m_walk_dont_check_lexicographic(walk_dont_check_lexicographic),
+      m_walk_include_requested(walk_include_requested),
+      m_walk_dont_get_requested(walk_dont_get_requested),
+      m_walk_end_oid(walk_end_oid),
+      m_dont_fix_pdus(dont_fix_pdus) {
    populate_args();
 
    static std::atomic<uint64_t> s_session_counter{1};
@@ -214,7 +317,7 @@ void SessionBase::_close() {
    netsnmp_thread_cleanup(m_init_name);
 }
 
-void SessionBase::populate_args() {
+void SessionBase::populate_args(SnmpOperation op) {
    m_args.clear();
 
    // Convert arguments to m_argc and m_argv
@@ -237,7 +340,10 @@ void SessionBase::populate_args() {
        {"timeout", m_timeout},
        {"load_mibs", m_load_mibs},
        {"mib_directories", m_mib_directories},
-       {"set_max_repeaters_to_num", m_set_max_repeaters_to_num}};
+       {"output_precision", m_output_precision},
+       {"oid_suffix", m_oid_suffix},
+       {"oid_prefix", m_oid_prefix},
+   };
 
    // Handle string parameters
    for (auto const& [key, val] : input_arg_name_map) {
@@ -246,13 +352,8 @@ void SessionBase::populate_args() {
          if (key == "community" && m_version == "3") {
             continue;
          }
-         // This one is different, it does not have a space between flag and value
-         if (key == "set_max_repeaters_to_num") {
-            m_args.push_back(CML_PARAM_LOOKUP[key] + val);
-         } else {
-            m_args.push_back(CML_PARAM_LOOKUP[key]);
-            m_args.push_back(val);
-         }
+         m_args.push_back(CML_PARAM_LOOKUP[key]);
+         m_args.push_back(val);
       }
    }
 
@@ -267,41 +368,72 @@ void SessionBase::populate_args() {
       return tokens;
    };
 
-   // Handle boolean parameters
-   if (m_print_enums_numerically) {
-      auto const& enum_parts = split_string(CML_PARAM_LOOKUP["print_enums_numerically"], ' ');
-      auto const& option = enum_parts[0];
-      auto const& value = enum_parts[1];
-      m_args.push_back(option);
-      m_args.push_back(value);
+   // Handle boolean -O, -I, -P parameters
+   std::pair<bool, char const*> const bool_flags[] = {
+       {m_print_enums_numerically, "print_enums_numerically"},
+       {m_print_full_oids, "print_full_oids"},
+       {m_print_oids_numerically, "print_oids_numerically"},
+       {m_print_timeticks_numerically, "print_timeticks_numerically"},
+       {m_print_hex_strings, "print_hex_strings"},
+       {m_print_oid_suffix_only, "print_oid_suffix_only"},
+       {m_print_oid_module_name, "print_oid_module_name"},
+       {m_print_oid_ucd_style, "print_oid_ucd_style"},
+       {m_print_ascii_strings, "print_ascii_strings"},
+       {m_print_leading_zero_hex, "print_leading_zero_hex"},
+       {m_print_hex_text, "print_hex_text"},
+       {m_dont_breakdown_oids, "dont_breakdown_oids"},
+       {m_escape_quotes_in_indexes, "escape_quotes_in_indexes"},
+       {m_extended_index_format, "extended_index_format"},
+       {m_dont_print_units, "dont_print_units"},
+       {m_regex_oid_matching, "regex_oid_matching"},
+       {m_ignore_display_hints, "ignore_display_hints"},
+       {m_dont_check_range, "dont_check_range"},
+       {m_random_access_oid, "random_access_oid"},
+       {m_read_ucd_style_oid, "read_ucd_style_oid"},
+       {m_mib_allow_underline, "mib_allow_underline"},
+       {m_mib_comment_to_eol, "mib_comment_to_eol"},
+       {m_mib_replace_with_latest, "mib_replace_with_latest"},
+   };
+
+   for (auto const& [enabled, key] : bool_flags) {
+      if (enabled) {
+         auto const parts = split_string(CML_PARAM_LOOKUP[key], ' ');
+         m_args.push_back(parts[0]);
+         m_args.push_back(parts[1]);
+      }
    }
-   if (m_print_full_oids) {
-      auto const& full_parts = split_string(CML_PARAM_LOOKUP["print_full_oids"], ' ');
-      auto const& option = full_parts[0];
-      auto const& value = full_parts[1];
-      m_args.push_back(option);
-      m_args.push_back(value);
+
+   // Handle operation-scoped -C application options before host_address.
+   // *_optProc throws ParseErrorBase on unsupported -C flags, so each operation
+   // only receives the -C flags it supports.
+   bool const is_all = (op == SnmpOperation::All);
+   bool const is_bulk = (is_all || op == SnmpOperation::BulkGet || op == SnmpOperation::BulkWalk);
+   bool const is_walk_or_bulk =
+       (is_all || op == SnmpOperation::Walk || op == SnmpOperation::BulkWalk);
+   bool const is_walk_only = (is_all || op == SnmpOperation::Walk);
+   bool const is_get_or_next = (is_all || op == SnmpOperation::Get || op == SnmpOperation::GetNext);
+
+   if (is_bulk && !m_set_max_repeaters_to_num.empty()) {
+      m_args.push_back(CML_PARAM_LOOKUP["set_max_repeaters_to_num"] + m_set_max_repeaters_to_num);
    }
-   if (m_print_oids_numerically) {
-      auto const& num_parts = split_string(CML_PARAM_LOOKUP["print_oids_numerically"], ' ');
-      auto const& option = num_parts[0];
-      auto const& value = num_parts[1];
-      m_args.push_back(option);
-      m_args.push_back(value);
+   if (is_bulk && !m_non_repeaters.empty()) {
+      m_args.push_back(CML_PARAM_LOOKUP["non_repeaters"] + m_non_repeaters);
    }
-   if (m_print_timeticks_numerically) {
-      auto const& t_parts = split_string(CML_PARAM_LOOKUP["print_timeticks_numerically"], ' ');
-      auto const& option = t_parts[0];
-      auto const& value = t_parts[1];
-      m_args.push_back(option);
-      m_args.push_back(value);
+   if (is_walk_or_bulk && m_walk_dont_check_lexicographic) {
+      m_args.push_back(CML_PARAM_LOOKUP["walk_dont_check_lexicographic"]);
    }
-   if (m_print_hex_strings) {
-      auto const& x_parts = split_string(CML_PARAM_LOOKUP["print_hex_strings"], ' ');
-      auto const& option = x_parts[0];
-      auto const& value = x_parts[1];
-      m_args.push_back(option);
-      m_args.push_back(value);
+   if (is_walk_or_bulk && m_walk_include_requested) {
+      m_args.push_back(CML_PARAM_LOOKUP["walk_include_requested"]);
+   }
+   if (is_walk_only && m_walk_dont_get_requested) {
+      m_args.push_back(CML_PARAM_LOOKUP["walk_dont_get_requested"]);
+   }
+   if (is_walk_only && !m_walk_end_oid.empty()) {
+      m_args.push_back(CML_PARAM_LOOKUP["walk_end_oid"]);
+      m_args.push_back(m_walk_end_oid);
+   }
+   if (is_get_or_next && m_dont_fix_pdus) {
+      m_args.push_back(CML_PARAM_LOOKUP["dont_fix_pdus"]);
    }
 
    // Add and make the host address
@@ -406,9 +538,13 @@ void SessionBase::check_and_clear_v3_user() {
 std::vector<Result> SessionBase::walk(std::string const& mib) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::Walk);
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -420,9 +556,13 @@ std::vector<Result> SessionBase::walk(std::string const& mib) {
 std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::BulkWalk);
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -434,9 +574,13 @@ std::vector<Result> SessionBase::bulk_walk(std::string const& mib) {
 std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::BulkWalk);
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -448,9 +592,13 @@ std::vector<Result> SessionBase::bulk_walk(std::vector<std::string> const& mibs)
 std::vector<Result> SessionBase::get(std::string const& mib) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::Get);
 
    if (!mib.empty()) {
       m_args.push_back(mib);
@@ -462,9 +610,13 @@ std::vector<Result> SessionBase::get(std::string const& mib) {
 std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::Get);
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -476,9 +628,13 @@ std::vector<Result> SessionBase::get(std::vector<std::string> const& mibs) {
 std::vector<Result> SessionBase::get_next(std::vector<std::string> const& mibs) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::GetNext);
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -506,9 +662,13 @@ std::vector<Result> SessionBase::bulk_get(std::string const& mib) {
 std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::BulkGet);
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -520,9 +680,13 @@ std::vector<Result> SessionBase::bulk_get(std::vector<std::string> const& mibs) 
 std::vector<Result> SessionBase::set(std::vector<std::string> const& mibs) {
    FormattingScope fmt_guard(make_formatting_options(
        m_print_enums_numerically, m_print_full_oids, m_print_oids_numerically,
-       m_print_timeticks_numerically, m_print_hex_strings));
+       m_print_timeticks_numerically, m_print_hex_strings, m_print_oid_suffix_only,
+       m_print_oid_module_name, m_print_oid_ucd_style, m_print_ascii_strings,
+       m_print_leading_zero_hex, m_print_hex_text, m_dont_breakdown_oids,
+       m_escape_quotes_in_indexes, m_extended_index_format, m_dont_print_units,
+       m_output_precision));
    SnmpV3OperationGuard v3_guard(m_version == "3", m_security_username, m_context_engine_id);
-   populate_args();
+   populate_args(SnmpOperation::Set);
 
    for (auto const& entry : mibs) {
       m_args.push_back(entry);
@@ -558,6 +722,35 @@ bool SessionBase::_get_print_hex_strings() const { return m_print_hex_strings; }
 std::string const& SessionBase::_get_set_max_repeaters_to_num() const {
    return m_set_max_repeaters_to_num;
 }
+bool SessionBase::_get_print_oid_suffix_only() const { return m_print_oid_suffix_only; }
+bool SessionBase::_get_print_oid_module_name() const { return m_print_oid_module_name; }
+bool SessionBase::_get_print_oid_ucd_style() const { return m_print_oid_ucd_style; }
+bool SessionBase::_get_print_ascii_strings() const { return m_print_ascii_strings; }
+bool SessionBase::_get_print_leading_zero_hex() const { return m_print_leading_zero_hex; }
+bool SessionBase::_get_print_hex_text() const { return m_print_hex_text; }
+bool SessionBase::_get_dont_breakdown_oids() const { return m_dont_breakdown_oids; }
+bool SessionBase::_get_escape_quotes_in_indexes() const { return m_escape_quotes_in_indexes; }
+bool SessionBase::_get_extended_index_format() const { return m_extended_index_format; }
+bool SessionBase::_get_dont_print_units() const { return m_dont_print_units; }
+std::string const& SessionBase::_get_output_precision() const { return m_output_precision; }
+bool SessionBase::_get_regex_oid_matching() const { return m_regex_oid_matching; }
+bool SessionBase::_get_ignore_display_hints() const { return m_ignore_display_hints; }
+bool SessionBase::_get_dont_check_range() const { return m_dont_check_range; }
+bool SessionBase::_get_random_access_oid() const { return m_random_access_oid; }
+bool SessionBase::_get_read_ucd_style_oid() const { return m_read_ucd_style_oid; }
+std::string const& SessionBase::_get_oid_suffix() const { return m_oid_suffix; }
+std::string const& SessionBase::_get_oid_prefix() const { return m_oid_prefix; }
+bool SessionBase::_get_mib_allow_underline() const { return m_mib_allow_underline; }
+bool SessionBase::_get_mib_comment_to_eol() const { return m_mib_comment_to_eol; }
+bool SessionBase::_get_mib_replace_with_latest() const { return m_mib_replace_with_latest; }
+std::string const& SessionBase::_get_non_repeaters() const { return m_non_repeaters; }
+bool SessionBase::_get_walk_dont_check_lexicographic() const {
+   return m_walk_dont_check_lexicographic;
+}
+bool SessionBase::_get_walk_include_requested() const { return m_walk_include_requested; }
+bool SessionBase::_get_walk_dont_get_requested() const { return m_walk_dont_get_requested; }
+std::string const& SessionBase::_get_walk_end_oid() const { return m_walk_end_oid; }
+bool SessionBase::_get_dont_fix_pdus() const { return m_dont_fix_pdus; }
 void SessionBase::_set_hostname(std::string const& hostname) {
    m_hostname = hostname;
    populate_args();
@@ -679,5 +872,140 @@ void SessionBase::_set_print_hex_strings(bool print_hex_strings) {
 
 void SessionBase::_set_max_repeaters_to_num(std::string const& set_max_repeaters_to_num) {
    m_set_max_repeaters_to_num = set_max_repeaters_to_num;
+   populate_args();
+}
+
+void SessionBase::_set_print_oid_suffix_only(bool print_oid_suffix_only) {
+   m_print_oid_suffix_only = print_oid_suffix_only;
+   populate_args();
+}
+
+void SessionBase::_set_print_oid_module_name(bool print_oid_module_name) {
+   m_print_oid_module_name = print_oid_module_name;
+   populate_args();
+}
+
+void SessionBase::_set_print_oid_ucd_style(bool print_oid_ucd_style) {
+   m_print_oid_ucd_style = print_oid_ucd_style;
+   populate_args();
+}
+
+void SessionBase::_set_print_ascii_strings(bool print_ascii_strings) {
+   m_print_ascii_strings = print_ascii_strings;
+   populate_args();
+}
+
+void SessionBase::_set_print_leading_zero_hex(bool print_leading_zero_hex) {
+   m_print_leading_zero_hex = print_leading_zero_hex;
+   populate_args();
+}
+
+void SessionBase::_set_print_hex_text(bool print_hex_text) {
+   m_print_hex_text = print_hex_text;
+   populate_args();
+}
+
+void SessionBase::_set_dont_breakdown_oids(bool dont_breakdown_oids) {
+   m_dont_breakdown_oids = dont_breakdown_oids;
+   populate_args();
+}
+
+void SessionBase::_set_escape_quotes_in_indexes(bool escape_quotes_in_indexes) {
+   m_escape_quotes_in_indexes = escape_quotes_in_indexes;
+   populate_args();
+}
+
+void SessionBase::_set_extended_index_format(bool extended_index_format) {
+   m_extended_index_format = extended_index_format;
+   populate_args();
+}
+
+void SessionBase::_set_dont_print_units(bool dont_print_units) {
+   m_dont_print_units = dont_print_units;
+   populate_args();
+}
+
+void SessionBase::_set_output_precision(std::string const& output_precision) {
+   m_output_precision = output_precision;
+   populate_args();
+}
+
+void SessionBase::_set_regex_oid_matching(bool regex_oid_matching) {
+   m_regex_oid_matching = regex_oid_matching;
+   populate_args();
+}
+
+void SessionBase::_set_ignore_display_hints(bool ignore_display_hints) {
+   m_ignore_display_hints = ignore_display_hints;
+   populate_args();
+}
+
+void SessionBase::_set_dont_check_range(bool dont_check_range) {
+   m_dont_check_range = dont_check_range;
+   populate_args();
+}
+
+void SessionBase::_set_random_access_oid(bool random_access_oid) {
+   m_random_access_oid = random_access_oid;
+   populate_args();
+}
+
+void SessionBase::_set_read_ucd_style_oid(bool read_ucd_style_oid) {
+   m_read_ucd_style_oid = read_ucd_style_oid;
+   populate_args();
+}
+
+void SessionBase::_set_oid_suffix(std::string const& oid_suffix) {
+   m_oid_suffix = oid_suffix;
+   populate_args();
+}
+
+void SessionBase::_set_oid_prefix(std::string const& oid_prefix) {
+   m_oid_prefix = oid_prefix;
+   populate_args();
+}
+
+void SessionBase::_set_mib_allow_underline(bool mib_allow_underline) {
+   m_mib_allow_underline = mib_allow_underline;
+   populate_args();
+}
+
+void SessionBase::_set_mib_comment_to_eol(bool mib_comment_to_eol) {
+   m_mib_comment_to_eol = mib_comment_to_eol;
+   populate_args();
+}
+
+void SessionBase::_set_mib_replace_with_latest(bool mib_replace_with_latest) {
+   m_mib_replace_with_latest = mib_replace_with_latest;
+   populate_args();
+}
+
+void SessionBase::_set_non_repeaters(std::string const& non_repeaters) {
+   m_non_repeaters = non_repeaters;
+   populate_args();
+}
+
+void SessionBase::_set_walk_dont_check_lexicographic(bool walk_dont_check_lexicographic) {
+   m_walk_dont_check_lexicographic = walk_dont_check_lexicographic;
+   populate_args();
+}
+
+void SessionBase::_set_walk_include_requested(bool walk_include_requested) {
+   m_walk_include_requested = walk_include_requested;
+   populate_args();
+}
+
+void SessionBase::_set_walk_dont_get_requested(bool walk_dont_get_requested) {
+   m_walk_dont_get_requested = walk_dont_get_requested;
+   populate_args();
+}
+
+void SessionBase::_set_walk_end_oid(std::string const& walk_end_oid) {
+   m_walk_end_oid = walk_end_oid;
+   populate_args();
+}
+
+void SessionBase::_set_dont_fix_pdus(bool dont_fix_pdus) {
+   m_dont_fix_pdus = dont_fix_pdus;
    populate_args();
 }

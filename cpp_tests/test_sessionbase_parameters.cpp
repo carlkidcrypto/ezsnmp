@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <functional>
 #include <optional>
 #include <string>
 #include <tuple>
@@ -241,3 +242,103 @@ INSTANTIATE_TEST_CASE_P(
         std::make_tuple(std::string("3"), PrintOptions{false, false, false, true, false, {"t"}}),
         std::make_tuple(std::string("3"), PrintOptions{false, false, false, false, true, {"x"}})));
 #endif
+
+struct ExtendedCliOptionCase {
+   std::string name;
+   std::function<void(SessionBase&)> apply;
+   std::vector<std::string> expected_tokens;
+};
+
+class ExtendedCliOptionsParamTest : public ::testing::TestWithParam<ExtendedCliOptionCase> {};
+
+TEST_P(ExtendedCliOptionsParamTest, OptionPopulatesExpectedArgs) {
+   auto const& param = GetParam();
+   SessionBase session("localhost", "161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "", "");
+   param.apply(session);
+   auto const& args = session._get_args();
+   for (auto const& token : param.expected_tokens) {
+      EXPECT_NE(std::find(args.begin(), args.end(), token), args.end())
+          << "Missing expected token '" << token << "' for case " << param.name;
+   }
+   EXPECT_EQ(args.back(), "localhost:161");
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ExtendedCliOptions,
+    ExtendedCliOptionsParamTest,
+    testing::Values(
+        ExtendedCliOptionCase{"print_oid_suffix_only",
+                              [](SessionBase& s) { s._set_print_oid_suffix_only(true); },
+                              {"-O", "s"}},
+        ExtendedCliOptionCase{"print_oid_module_name",
+                              [](SessionBase& s) { s._set_print_oid_module_name(true); },
+                              {"-O", "S"}},
+        ExtendedCliOptionCase{"print_oid_ucd_style",
+                              [](SessionBase& s) { s._set_print_oid_ucd_style(true); },
+                              {"-O", "u"}},
+        ExtendedCliOptionCase{"print_ascii_strings",
+                              [](SessionBase& s) { s._set_print_ascii_strings(true); },
+                              {"-O", "a"}},
+        ExtendedCliOptionCase{"print_leading_zero_hex",
+                              [](SessionBase& s) { s._set_print_leading_zero_hex(true); },
+                              {"-O", "0"}},
+        ExtendedCliOptionCase{
+            "print_hex_text", [](SessionBase& s) { s._set_print_hex_text(true); }, {"-O", "T"}},
+        ExtendedCliOptionCase{"dont_breakdown_oids",
+                              [](SessionBase& s) { s._set_dont_breakdown_oids(true); },
+                              {"-O", "b"}},
+        ExtendedCliOptionCase{"escape_quotes_in_indexes",
+                              [](SessionBase& s) { s._set_escape_quotes_in_indexes(true); },
+                              {"-O", "E"}},
+        ExtendedCliOptionCase{"extended_index_format",
+                              [](SessionBase& s) { s._set_extended_index_format(true); },
+                              {"-O", "X"}},
+        ExtendedCliOptionCase{
+            "dont_print_units", [](SessionBase& s) { s._set_dont_print_units(true); }, {"-O", "U"}},
+        ExtendedCliOptionCase{"output_precision",
+                              [](SessionBase& s) { s._set_output_precision("%.2f"); },
+                              {"-Op", "%.2f"}},
+        ExtendedCliOptionCase{"regex_oid_matching",
+                              [](SessionBase& s) { s._set_regex_oid_matching(true); },
+                              {"-I", "b"}},
+        ExtendedCliOptionCase{"ignore_display_hints",
+                              [](SessionBase& s) { s._set_ignore_display_hints(true); },
+                              {"-I", "h"}},
+        ExtendedCliOptionCase{
+            "dont_check_range", [](SessionBase& s) { s._set_dont_check_range(true); }, {"-I", "r"}},
+        ExtendedCliOptionCase{"random_access_oid",
+                              [](SessionBase& s) { s._set_random_access_oid(true); },
+                              {"-I", "R"}},
+        ExtendedCliOptionCase{"read_ucd_style_oid",
+                              [](SessionBase& s) { s._set_read_ucd_style_oid(true); },
+                              {"-I", "u"}},
+        ExtendedCliOptionCase{
+            "oid_suffix", [](SessionBase& s) { s._set_oid_suffix(".0"); }, {"-Is", ".0"}},
+        ExtendedCliOptionCase{
+            "oid_prefix", [](SessionBase& s) { s._set_oid_prefix(".iso"); }, {"-IS", ".iso"}},
+        ExtendedCliOptionCase{"mib_allow_underline",
+                              [](SessionBase& s) { s._set_mib_allow_underline(true); },
+                              {"-P", "u"}},
+        ExtendedCliOptionCase{"mib_comment_to_eol",
+                              [](SessionBase& s) { s._set_mib_comment_to_eol(true); },
+                              {"-P", "c"}},
+        ExtendedCliOptionCase{"mib_replace_with_latest",
+                              [](SessionBase& s) { s._set_mib_replace_with_latest(true); },
+                              {"-P", "R"}},
+        ExtendedCliOptionCase{
+            "non_repeaters", [](SessionBase& s) { s._set_non_repeaters("3"); }, {"-Cn3"}},
+        ExtendedCliOptionCase{"walk_dont_check_lexicographic",
+                              [](SessionBase& s) { s._set_walk_dont_check_lexicographic(true); },
+                              {"-Cc"}},
+        ExtendedCliOptionCase{"walk_include_requested",
+                              [](SessionBase& s) { s._set_walk_include_requested(true); },
+                              {"-Ci"}},
+        ExtendedCliOptionCase{"walk_dont_get_requested",
+                              [](SessionBase& s) { s._set_walk_dont_get_requested(true); },
+                              {"-CI"}},
+        ExtendedCliOptionCase{
+            "walk_end_oid", [](SessionBase& s) { s._set_walk_end_oid("1.3.6"); }, {"-CE", "1.3.6"}},
+        ExtendedCliOptionCase{
+            "dont_fix_pdus", [](SessionBase& s) { s._set_dont_fix_pdus(true); }, {"-Cf"}}),
+    [](testing::TestParamInfo<ExtendedCliOptionCase> const& info) { return info.param.name; });

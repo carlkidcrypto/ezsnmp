@@ -1356,3 +1356,251 @@ TEST_F(SessionBaseTest, TestBulkGetEmptyMib) {
       // Any other error still means the empty-mib branch was exercised
    }
 }
+
+TEST_F(SessionBaseTest, TestNewCliOptionsDefaults) {
+   SessionBase session;
+
+   EXPECT_FALSE(session._get_print_oid_suffix_only());
+   EXPECT_FALSE(session._get_print_oid_module_name());
+   EXPECT_FALSE(session._get_print_oid_ucd_style());
+   EXPECT_FALSE(session._get_print_ascii_strings());
+   EXPECT_FALSE(session._get_print_leading_zero_hex());
+   EXPECT_FALSE(session._get_print_hex_text());
+   EXPECT_FALSE(session._get_dont_breakdown_oids());
+   EXPECT_FALSE(session._get_escape_quotes_in_indexes());
+   EXPECT_FALSE(session._get_extended_index_format());
+   EXPECT_FALSE(session._get_dont_print_units());
+   EXPECT_EQ(session._get_output_precision(), "");
+
+   EXPECT_FALSE(session._get_regex_oid_matching());
+   EXPECT_FALSE(session._get_ignore_display_hints());
+   EXPECT_FALSE(session._get_dont_check_range());
+   EXPECT_FALSE(session._get_random_access_oid());
+   EXPECT_FALSE(session._get_read_ucd_style_oid());
+   EXPECT_EQ(session._get_oid_suffix(), "");
+   EXPECT_EQ(session._get_oid_prefix(), "");
+
+   EXPECT_FALSE(session._get_mib_allow_underline());
+   EXPECT_FALSE(session._get_mib_comment_to_eol());
+   EXPECT_FALSE(session._get_mib_replace_with_latest());
+
+   EXPECT_EQ(session._get_non_repeaters(), "");
+   EXPECT_FALSE(session._get_walk_dont_check_lexicographic());
+   EXPECT_FALSE(session._get_walk_include_requested());
+   EXPECT_FALSE(session._get_walk_dont_get_requested());
+   EXPECT_EQ(session._get_walk_end_oid(), "");
+   EXPECT_FALSE(session._get_dont_fix_pdus());
+}
+
+TEST_F(SessionBaseTest, TestNewCliOptionsConstructorAndArgs) {
+   SessionBase session("localhost", "161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "1", "", "", false, false, false, false, false, "10", true, true, true,
+                       true, true, true, true, true, true, true, "%.2f", true, true, true, true,
+                       true, ".1", ".iso", true, true, true, "2", true, true, true, "1.3.6.1.2.1.2",
+                       true);
+
+   EXPECT_TRUE(session._get_print_oid_suffix_only());
+   EXPECT_TRUE(session._get_print_oid_module_name());
+   EXPECT_TRUE(session._get_print_oid_ucd_style());
+   EXPECT_TRUE(session._get_print_ascii_strings());
+   EXPECT_TRUE(session._get_print_leading_zero_hex());
+   EXPECT_TRUE(session._get_print_hex_text());
+   EXPECT_TRUE(session._get_dont_breakdown_oids());
+   EXPECT_TRUE(session._get_escape_quotes_in_indexes());
+   EXPECT_TRUE(session._get_extended_index_format());
+   EXPECT_TRUE(session._get_dont_print_units());
+   EXPECT_EQ(session._get_output_precision(), "%.2f");
+   EXPECT_TRUE(session._get_regex_oid_matching());
+   EXPECT_TRUE(session._get_ignore_display_hints());
+   EXPECT_TRUE(session._get_dont_check_range());
+   EXPECT_TRUE(session._get_random_access_oid());
+   EXPECT_TRUE(session._get_read_ucd_style_oid());
+   EXPECT_EQ(session._get_oid_suffix(), ".1");
+   EXPECT_EQ(session._get_oid_prefix(), ".iso");
+   EXPECT_TRUE(session._get_mib_allow_underline());
+   EXPECT_TRUE(session._get_mib_comment_to_eol());
+   EXPECT_TRUE(session._get_mib_replace_with_latest());
+   EXPECT_EQ(session._get_non_repeaters(), "2");
+   EXPECT_TRUE(session._get_walk_dont_check_lexicographic());
+   EXPECT_TRUE(session._get_walk_include_requested());
+   EXPECT_TRUE(session._get_walk_dont_get_requested());
+   EXPECT_EQ(session._get_walk_end_oid(), "1.3.6.1.2.1.2");
+   EXPECT_TRUE(session._get_dont_fix_pdus());
+
+   auto const& args = session._get_args();
+   auto has_pair = [&args](std::string const& a, std::string const& b) {
+      for (size_t i = 0; i + 1 < args.size(); ++i) {
+         if (args[i] == a && args[i + 1] == b) {
+            return true;
+         }
+      }
+      return false;
+   };
+   auto has_single = [&args](std::string const& a) {
+      return std::find(args.begin(), args.end(), a) != args.end();
+   };
+
+   EXPECT_TRUE(has_pair("-O", "s"));
+   EXPECT_TRUE(has_pair("-O", "S"));
+   EXPECT_TRUE(has_pair("-O", "u"));
+   EXPECT_TRUE(has_pair("-O", "a"));
+   EXPECT_TRUE(has_pair("-O", "0"));
+   EXPECT_TRUE(has_pair("-O", "T"));
+   EXPECT_TRUE(has_pair("-O", "b"));
+   EXPECT_TRUE(has_pair("-O", "E"));
+   EXPECT_TRUE(has_pair("-O", "X"));
+   EXPECT_TRUE(has_pair("-O", "U"));
+   EXPECT_TRUE(has_pair("-Op", "%.2f"));
+   EXPECT_TRUE(has_pair("-I", "b"));
+   EXPECT_TRUE(has_pair("-I", "h"));
+   EXPECT_TRUE(has_pair("-I", "r"));
+   EXPECT_TRUE(has_pair("-I", "R"));
+   EXPECT_TRUE(has_pair("-I", "u"));
+   EXPECT_TRUE(has_pair("-Is", ".1"));
+   EXPECT_TRUE(has_pair("-IS", ".iso"));
+   EXPECT_TRUE(has_pair("-P", "u"));
+   EXPECT_TRUE(has_pair("-P", "c"));
+   EXPECT_TRUE(has_pair("-P", "R"));
+   EXPECT_TRUE(has_single("-Cr10"));
+   EXPECT_TRUE(has_single("-Cn2"));
+   EXPECT_TRUE(has_single("-Cc"));
+   EXPECT_TRUE(has_single("-Ci"));
+   EXPECT_TRUE(has_single("-CI"));
+   EXPECT_TRUE(has_pair("-CE", "1.3.6.1.2.1.2"));
+   EXPECT_TRUE(has_single("-Cf"));
+}
+
+TEST_F(SessionBaseTest, TestNewCliOptionsSetters) {
+   SessionBase session("localhost", "161", "2c", "public");
+
+   session._set_print_oid_suffix_only(true);
+   session._set_print_oid_module_name(true);
+   session._set_print_oid_ucd_style(true);
+   session._set_print_ascii_strings(true);
+   session._set_print_leading_zero_hex(true);
+   session._set_print_hex_text(true);
+   session._set_dont_breakdown_oids(true);
+   session._set_escape_quotes_in_indexes(true);
+   session._set_extended_index_format(true);
+   session._set_dont_print_units(true);
+   session._set_output_precision("%.3f");
+   session._set_regex_oid_matching(true);
+   session._set_ignore_display_hints(true);
+   session._set_dont_check_range(true);
+   session._set_random_access_oid(true);
+   session._set_read_ucd_style_oid(true);
+   session._set_oid_suffix(".0");
+   session._set_oid_prefix(".1.3");
+   session._set_mib_allow_underline(true);
+   session._set_mib_comment_to_eol(true);
+   session._set_mib_replace_with_latest(true);
+   session._set_non_repeaters("4");
+   session._set_walk_dont_check_lexicographic(true);
+   session._set_walk_include_requested(true);
+   session._set_walk_dont_get_requested(true);
+   session._set_walk_end_oid(".1.3.6.1");
+   session._set_dont_fix_pdus(true);
+
+   EXPECT_TRUE(session._get_print_oid_suffix_only());
+   EXPECT_TRUE(session._get_print_oid_module_name());
+   EXPECT_TRUE(session._get_print_oid_ucd_style());
+   EXPECT_TRUE(session._get_print_ascii_strings());
+   EXPECT_TRUE(session._get_print_leading_zero_hex());
+   EXPECT_TRUE(session._get_print_hex_text());
+   EXPECT_TRUE(session._get_dont_breakdown_oids());
+   EXPECT_TRUE(session._get_escape_quotes_in_indexes());
+   EXPECT_TRUE(session._get_extended_index_format());
+   EXPECT_TRUE(session._get_dont_print_units());
+   EXPECT_EQ(session._get_output_precision(), "%.3f");
+   EXPECT_TRUE(session._get_regex_oid_matching());
+   EXPECT_TRUE(session._get_ignore_display_hints());
+   EXPECT_TRUE(session._get_dont_check_range());
+   EXPECT_TRUE(session._get_random_access_oid());
+   EXPECT_TRUE(session._get_read_ucd_style_oid());
+   EXPECT_EQ(session._get_oid_suffix(), ".0");
+   EXPECT_EQ(session._get_oid_prefix(), ".1.3");
+   EXPECT_TRUE(session._get_mib_allow_underline());
+   EXPECT_TRUE(session._get_mib_comment_to_eol());
+   EXPECT_TRUE(session._get_mib_replace_with_latest());
+   EXPECT_EQ(session._get_non_repeaters(), "4");
+   EXPECT_TRUE(session._get_walk_dont_check_lexicographic());
+   EXPECT_TRUE(session._get_walk_include_requested());
+   EXPECT_TRUE(session._get_walk_dont_get_requested());
+   EXPECT_EQ(session._get_walk_end_oid(), ".1.3.6.1");
+   EXPECT_TRUE(session._get_dont_fix_pdus());
+
+   auto const& args = session._get_args();
+   EXPECT_NE(std::find(args.begin(), args.end(), "-Cn4"), args.end());
+   EXPECT_NE(std::find(args.begin(), args.end(), "-Cf"), args.end());
+   EXPECT_NE(std::find(args.begin(), args.end(), "-Op"), args.end());
+}
+
+TEST_F(SessionBaseTest, TestOperationScopedCFlagsDoNotThrowParseError) {
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "0", "1");
+   session._set_max_repeaters_to_num("5");
+   session._set_non_repeaters("1");
+   session._set_walk_dont_check_lexicographic(true);
+   session._set_walk_include_requested(true);
+   session._set_walk_dont_get_requested(true);
+   session._set_walk_end_oid(".1.3.6.1.2.1.2");
+   session._set_dont_fix_pdus(true);
+
+   auto has_arg = [&session](std::string const& flag) {
+      auto const& args = session._get_args();
+      return std::find(args.begin(), args.end(), flag) != args.end();
+   };
+
+   // get() must only pass -Cf (not -Cr/-Cn/-Cc/-Ci/-CI/-CE)
+   try {
+      (void)session.get(".1.3.6.1.2.1.1.1.0");
+   } catch (ParseErrorBase const& e) {
+      FAIL() << "get() threw ParseErrorBase: " << e.what();
+   } catch (std::exception const&) {
+   }
+   EXPECT_TRUE(has_arg("-Cf"));
+   EXPECT_FALSE(has_arg("-Cr5"));
+   EXPECT_FALSE(has_arg("-Cn1"));
+   EXPECT_FALSE(has_arg("-Cc"));
+
+   // walk() must only pass -Cc/-Ci/-CI/-CE
+   try {
+      (void)session.walk(".1.3.6.1.2.1.1");
+   } catch (ParseErrorBase const& e) {
+      FAIL() << "walk() threw ParseErrorBase: " << e.what();
+   } catch (std::exception const&) {
+   }
+   EXPECT_TRUE(has_arg("-Cc"));
+   EXPECT_TRUE(has_arg("-Ci"));
+   EXPECT_TRUE(has_arg("-CI"));
+   EXPECT_TRUE(has_arg("-CE"));
+   EXPECT_FALSE(has_arg("-Cr5"));
+   EXPECT_FALSE(has_arg("-Cf"));
+
+   // bulk_get() must only pass -Cr/-Cn
+   try {
+      (void)session.bulk_get(".1.3.6.1.2.1.1.1.0");
+   } catch (ParseErrorBase const& e) {
+      FAIL() << "bulk_get() threw ParseErrorBase: " << e.what();
+   } catch (std::exception const&) {
+   }
+   EXPECT_TRUE(has_arg("-Cr5"));
+   EXPECT_TRUE(has_arg("-Cn1"));
+   EXPECT_FALSE(has_arg("-Cc"));
+   EXPECT_FALSE(has_arg("-Cf"));
+
+   // bulk_walk() must only pass -Cr/-Cn/-Cc/-Ci
+   try {
+      (void)session.bulk_walk(".1.3.6.1.2.1.1");
+   } catch (ParseErrorBase const& e) {
+      FAIL() << "bulk_walk() threw ParseErrorBase: " << e.what();
+   } catch (std::exception const&) {
+   }
+   EXPECT_TRUE(has_arg("-Cr5"));
+   EXPECT_TRUE(has_arg("-Cn1"));
+   EXPECT_TRUE(has_arg("-Cc"));
+   EXPECT_TRUE(has_arg("-Ci"));
+   EXPECT_FALSE(has_arg("-CI"));
+   EXPECT_FALSE(has_arg("-CE"));
+   EXPECT_FALSE(has_arg("-Cf"));
+}

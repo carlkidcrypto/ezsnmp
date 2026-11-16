@@ -44,6 +44,17 @@ struct SessionFormattingOptions {
    bool print_oids_numerically = false;
    bool print_timeticks_numerically = false;
    bool print_hex_strings = false;
+   bool print_oid_suffix_only = false;
+   bool print_oid_module_name = false;
+   bool print_oid_ucd_style = false;
+   bool print_ascii_strings = false;
+   bool print_leading_zero_hex = false;
+   bool print_hex_text = false;
+   bool dont_breakdown_oids = false;
+   bool escape_quotes_in_indexes = false;
+   bool extended_index_format = false;
+   bool dont_print_units = false;
+   std::string output_precision = "";
 };
 
 // Set thread-local formatting options for the calling thread
