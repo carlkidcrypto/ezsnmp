@@ -486,7 +486,7 @@ std::vector<std::string> snmpusm(std::vector<std::string> const &args,
 
    /*
     * open an SNMP session
-    * Note: this needs to obtain the engineID used below
+    * Note:  this needs to obtain the engineID used below
     */
    session.flags &= ~SNMP_FLAGS_DONT_PROBE;
    ss.reset(snmp_sess_open(&session));
@@ -560,7 +560,7 @@ std::vector<std::string> snmpusm(std::vector<std::string> const &args,
       }
 
       /*
-       * do we have a securityName? If not, copy the default
+       * do we have a securityName?  If not, copy the default
        */
       if (session.securityName == nullptr) {
          char const *default_secname =

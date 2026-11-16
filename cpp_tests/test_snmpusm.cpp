@@ -20,7 +20,7 @@ TEST_F(SnmpUsmTest, TestVersionThrowsParseError) {
 }
 
 TEST_F(SnmpUsmTest, TestInvalidOptionThrowsParseError) {
-   std::vector<std::string> args = {"-Z", "localhost", "delete", "testuser"};
+   std::vector<std::string> args = {"-@", "localhost", "delete", "testuser"};
    EXPECT_THROW(snmpusm(args, "testing_snmpusm_invalid_opt"), ParseErrorBase);
 }
 

@@ -25,7 +25,7 @@ def test_version_raises_parse_error():
 def test_invalid_option_raises_parse_error():
     """Test that an unknown option raises ParseError."""
     with pytest.raises(ParseError):
-        snmpusm(["-Z", "localhost", "delete", "testuser"])
+        snmpusm(["-@", "localhost", "delete", "testuser"])
 
 
 def test_invalid_c_flag_raises_parse_error():
