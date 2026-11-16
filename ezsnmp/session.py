@@ -57,6 +57,33 @@ class Session(SessionBase):
         print_timeticks_numerically: bool = False,
         print_hex_strings: bool = False,
         set_max_repeaters_to_num: Union[str, int] = "10",
+        print_oid_suffix_only: bool = False,
+        print_oid_module_name: bool = False,
+        print_oid_ucd_style: bool = False,
+        print_ascii_strings: bool = False,
+        print_leading_zero_hex: bool = False,
+        print_hex_text: bool = False,
+        dont_breakdown_oids: bool = False,
+        escape_quotes_in_indexes: bool = False,
+        extended_index_format: bool = False,
+        dont_print_units: bool = False,
+        output_precision: str = "",
+        regex_oid_matching: bool = False,
+        ignore_display_hints: bool = False,
+        dont_check_range: bool = False,
+        random_access_oid: bool = False,
+        read_ucd_style_oid: bool = False,
+        oid_suffix: str = "",
+        oid_prefix: str = "",
+        mib_allow_underline: bool = False,
+        mib_comment_to_eol: bool = False,
+        mib_replace_with_latest: bool = False,
+        non_repeaters: Union[str, int] = "",
+        walk_dont_check_lexicographic: bool = False,
+        walk_include_requested: bool = False,
+        walk_dont_get_requested: bool = False,
+        walk_end_oid: str = "",
+        dont_fix_pdus: bool = False,
     ):
         """Initialize the Session object with NetSNMP session parameters.
 
@@ -118,6 +145,60 @@ class Session(SessionBase):
         :type print_hex_strings: bool
         :param set_max_repeaters_to_num: The maximum number of repeaters for GETBULK PDUs. Defaults to 10. Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
         :type set_max_repeaters_to_num: Union[str, int]
+        :param print_oid_suffix_only: Whether to print only the last symbolic element of OIDs (``-O s``).
+        :type print_oid_suffix_only: bool
+        :param print_oid_module_name: Whether to print module name plus last symbolic element of OIDs (``-O S``).
+        :type print_oid_module_name: bool
+        :param print_oid_ucd_style: Whether to print OIDs in UCD-style (``-O u``).
+        :type print_oid_ucd_style: bool
+        :param print_ascii_strings: Whether to print all strings as ASCII (``-O a``).
+        :type print_ascii_strings: bool
+        :param print_leading_zero_hex: Whether to print leading zeroes in hex strings (``-O 0``).
+        :type print_leading_zero_hex: bool
+        :param print_hex_text: Whether to print ASCII text alongside hex output (``-O T``).
+        :type print_hex_text: bool
+        :param dont_breakdown_oids: Whether to disable OID index breakdown (``-O b``).
+        :type dont_breakdown_oids: bool
+        :param escape_quotes_in_indexes: Whether to escape quotes in string indexes (``-O E``).
+        :type escape_quotes_in_indexes: bool
+        :param extended_index_format: Whether to print indexes in bracketed extended format (``-O X``).
+        :type extended_index_format: bool
+        :param dont_print_units: Whether to suppress MIB units in output (``-O U``).
+        :type dont_print_units: bool
+        :param output_precision: Precision format string for float/double output (``-O p``).
+        :type output_precision: str
+        :param regex_oid_matching: Whether to enable regex OID matching (``-I b``).
+        :type regex_oid_matching: bool
+        :param ignore_display_hints: Whether to ignore MIB DISPLAY-HINTs on input (``-I h``).
+        :type ignore_display_hints: bool
+        :param dont_check_range: Whether to disable range checks on input values (``-I r``).
+        :type dont_check_range: bool
+        :param random_access_oid: Whether to enable random-access OID lookup (``-I R``).
+        :type random_access_oid: bool
+        :param read_ucd_style_oid: Whether to read OIDs relative to UCD default prefix (``-I u``).
+        :type read_ucd_style_oid: bool
+        :param oid_suffix: Suffix to append to input OIDs (``-I s``).
+        :type oid_suffix: str
+        :param oid_prefix: Prefix to prepend to input OIDs (``-I S``).
+        :type oid_prefix: str
+        :param mib_allow_underline: Whether to allow underscores in MIB labels (``-P u``).
+        :type mib_allow_underline: bool
+        :param mib_comment_to_eol: Whether to treat ``--`` MIB comments as extending to end-of-line (``-P c``).
+        :type mib_comment_to_eol: bool
+        :param mib_replace_with_latest: Whether to replace duplicate MIB objects with latest definition (``-P R``).
+        :type mib_replace_with_latest: bool
+        :param non_repeaters: Number of non-repeaters for GETBULK PDUs (``-C n``). Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
+        :type non_repeaters: Union[str, int]
+        :param walk_dont_check_lexicographic: Whether to disable lexicographical OID ordering checks during walks (``-C c``).
+        :type walk_dont_check_lexicographic: bool
+        :param walk_include_requested: Whether to include the requested OID in walk results (``-C i``).
+        :type walk_include_requested: bool
+        :param walk_dont_get_requested: Whether to skip GET fallback when walk returns nothing (``-C I``).
+        :type walk_dont_get_requested: bool
+        :param walk_end_oid: OID at which to stop walking (``-C E``).
+        :type walk_end_oid: str
+        :param dont_fix_pdus: Whether to disable PDU error fixing on GET/GETNEXT (``-C f``).
+        :type dont_fix_pdus: bool
 
         """
 
@@ -160,6 +241,33 @@ class Session(SessionBase):
                 print_timeticks_numerically,
                 print_hex_strings,
                 "",  # Set to empty string here. We will set it in the bulk methods.
+                print_oid_suffix_only,
+                print_oid_module_name,
+                print_oid_ucd_style,
+                print_ascii_strings,
+                print_leading_zero_hex,
+                print_hex_text,
+                dont_breakdown_oids,
+                escape_quotes_in_indexes,
+                extended_index_format,
+                dont_print_units,
+                output_precision,
+                regex_oid_matching,
+                ignore_display_hints,
+                dont_check_range,
+                random_access_oid,
+                read_ucd_style_oid,
+                oid_suffix,
+                oid_prefix,
+                mib_allow_underline,
+                mib_comment_to_eol,
+                mib_replace_with_latest,
+                str(non_repeaters),
+                walk_dont_check_lexicographic,
+                walk_include_requested,
+                walk_dont_get_requested,
+                walk_end_oid,
+                dont_fix_pdus,
             )
 
             # Track the closed state for __del__ and multiple closes
@@ -609,6 +717,466 @@ class Session(SessionBase):
         """
         super()._set_max_repeaters_to_num(value)
 
+    @property
+    def print_oid_suffix_only(self):
+        """Get whether to print only the last symbolic element of OIDs.
+
+        :type: bool
+        """
+        return super()._get_print_oid_suffix_only()
+
+    @print_oid_suffix_only.setter
+    def print_oid_suffix_only(self, value):
+        """Set whether to print only the last symbolic element of OIDs.
+
+        :param value: The new value for printing OID suffix only.
+        :type value: bool
+        """
+        super()._set_print_oid_suffix_only(value)
+
+    @property
+    def print_oid_module_name(self):
+        """Get whether to print module name plus last symbolic element of OIDs.
+
+        :type: bool
+        """
+        return super()._get_print_oid_module_name()
+
+    @print_oid_module_name.setter
+    def print_oid_module_name(self, value):
+        """Set whether to print module name plus last symbolic element of OIDs.
+
+        :param value: The new value for printing OID module name.
+        :type value: bool
+        """
+        super()._set_print_oid_module_name(value)
+
+    @property
+    def print_oid_ucd_style(self):
+        """Get whether to print OIDs in UCD-style.
+
+        :type: bool
+        """
+        return super()._get_print_oid_ucd_style()
+
+    @print_oid_ucd_style.setter
+    def print_oid_ucd_style(self, value):
+        """Set whether to print OIDs in UCD-style.
+
+        :param value: The new value for printing OIDs in UCD-style.
+        :type value: bool
+        """
+        super()._set_print_oid_ucd_style(value)
+
+    @property
+    def print_ascii_strings(self):
+        """Get whether to print all strings as ASCII.
+
+        :type: bool
+        """
+        return super()._get_print_ascii_strings()
+
+    @print_ascii_strings.setter
+    def print_ascii_strings(self, value):
+        """Set whether to print all strings as ASCII.
+
+        :param value: The new value for printing ASCII strings.
+        :type value: bool
+        """
+        super()._set_print_ascii_strings(value)
+
+    @property
+    def print_leading_zero_hex(self):
+        """Get whether to print leading zeroes in hex strings.
+
+        :type: bool
+        """
+        return super()._get_print_leading_zero_hex()
+
+    @print_leading_zero_hex.setter
+    def print_leading_zero_hex(self, value):
+        """Set whether to print leading zeroes in hex strings.
+
+        :param value: The new value for printing leading zeroes in hex strings.
+        :type value: bool
+        """
+        super()._set_print_leading_zero_hex(value)
+
+    @property
+    def print_hex_text(self):
+        """Get whether to print ASCII text alongside hex output.
+
+        :type: bool
+        """
+        return super()._get_print_hex_text()
+
+    @print_hex_text.setter
+    def print_hex_text(self, value):
+        """Set whether to print ASCII text alongside hex output.
+
+        :param value: The new value for printing hex text.
+        :type value: bool
+        """
+        super()._set_print_hex_text(value)
+
+    @property
+    def dont_breakdown_oids(self):
+        """Get whether to disable OID index breakdown.
+
+        :type: bool
+        """
+        return super()._get_dont_breakdown_oids()
+
+    @dont_breakdown_oids.setter
+    def dont_breakdown_oids(self, value):
+        """Set whether to disable OID index breakdown.
+
+        :param value: The new value for disabling OID index breakdown.
+        :type value: bool
+        """
+        super()._set_dont_breakdown_oids(value)
+
+    @property
+    def escape_quotes_in_indexes(self):
+        """Get whether to escape quotes in string indexes.
+
+        :type: bool
+        """
+        return super()._get_escape_quotes_in_indexes()
+
+    @escape_quotes_in_indexes.setter
+    def escape_quotes_in_indexes(self, value):
+        """Set whether to escape quotes in string indexes.
+
+        :param value: The new value for escaping quotes in string indexes.
+        :type value: bool
+        """
+        super()._set_escape_quotes_in_indexes(value)
+
+    @property
+    def extended_index_format(self):
+        """Get whether to print indexes in bracketed extended format.
+
+        :type: bool
+        """
+        return super()._get_extended_index_format()
+
+    @extended_index_format.setter
+    def extended_index_format(self, value):
+        """Set whether to print indexes in bracketed extended format.
+
+        :param value: The new value for extended index format.
+        :type value: bool
+        """
+        super()._set_extended_index_format(value)
+
+    @property
+    def dont_print_units(self):
+        """Get whether to suppress MIB units in output.
+
+        :type: bool
+        """
+        return super()._get_dont_print_units()
+
+    @dont_print_units.setter
+    def dont_print_units(self, value):
+        """Set whether to suppress MIB units in output.
+
+        :param value: The new value for suppressing MIB units.
+        :type value: bool
+        """
+        super()._set_dont_print_units(value)
+
+    @property
+    def output_precision(self):
+        """Get the precision format string for float/double output.
+
+        :type: str
+        """
+        return super()._get_output_precision()
+
+    @output_precision.setter
+    def output_precision(self, value):
+        """Set the precision format string for float/double output.
+
+        :param value: The precision format string.
+        :type value: str
+        """
+        super()._set_output_precision(value)
+
+    @property
+    def regex_oid_matching(self):
+        """Get whether to enable regex OID matching.
+
+        :type: bool
+        """
+        return super()._get_regex_oid_matching()
+
+    @regex_oid_matching.setter
+    def regex_oid_matching(self, value):
+        """Set whether to enable regex OID matching.
+
+        :param value: The new value for regex OID matching.
+        :type value: bool
+        """
+        super()._set_regex_oid_matching(value)
+
+    @property
+    def ignore_display_hints(self):
+        """Get whether to ignore MIB DISPLAY-HINTs on input.
+
+        :type: bool
+        """
+        return super()._get_ignore_display_hints()
+
+    @ignore_display_hints.setter
+    def ignore_display_hints(self, value):
+        """Set whether to ignore MIB DISPLAY-HINTs on input.
+
+        :param value: The new value for ignoring display hints.
+        :type value: bool
+        """
+        super()._set_ignore_display_hints(value)
+
+    @property
+    def dont_check_range(self):
+        """Get whether to disable range checks on input values.
+
+        :type: bool
+        """
+        return super()._get_dont_check_range()
+
+    @dont_check_range.setter
+    def dont_check_range(self, value):
+        """Set whether to disable range checks on input values.
+
+        :param value: The new value for disabling range checks.
+        :type value: bool
+        """
+        super()._set_dont_check_range(value)
+
+    @property
+    def random_access_oid(self):
+        """Get whether to enable random-access OID lookup.
+
+        :type: bool
+        """
+        return super()._get_random_access_oid()
+
+    @random_access_oid.setter
+    def random_access_oid(self, value):
+        """Set whether to enable random-access OID lookup.
+
+        :param value: The new value for random-access OID lookup.
+        :type value: bool
+        """
+        super()._set_random_access_oid(value)
+
+    @property
+    def read_ucd_style_oid(self):
+        """Get whether to read OIDs relative to UCD default prefix.
+
+        :type: bool
+        """
+        return super()._get_read_ucd_style_oid()
+
+    @read_ucd_style_oid.setter
+    def read_ucd_style_oid(self, value):
+        """Set whether to read OIDs relative to UCD default prefix.
+
+        :param value: The new value for reading UCD-style OIDs.
+        :type value: bool
+        """
+        super()._set_read_ucd_style_oid(value)
+
+    @property
+    def oid_suffix(self):
+        """Get the suffix to append to input OIDs.
+
+        :type: str
+        """
+        return super()._get_oid_suffix()
+
+    @oid_suffix.setter
+    def oid_suffix(self, value):
+        """Set the suffix to append to input OIDs.
+
+        :param value: The OID suffix to set.
+        :type value: str
+        """
+        super()._set_oid_suffix(value)
+
+    @property
+    def oid_prefix(self):
+        """Get the prefix to prepend to input OIDs.
+
+        :type: str
+        """
+        return super()._get_oid_prefix()
+
+    @oid_prefix.setter
+    def oid_prefix(self, value):
+        """Set the prefix to prepend to input OIDs.
+
+        :param value: The OID prefix to set.
+        :type value: str
+        """
+        super()._set_oid_prefix(value)
+
+    @property
+    def mib_allow_underline(self):
+        """Get whether to allow underscores in MIB labels.
+
+        :type: bool
+        """
+        return super()._get_mib_allow_underline()
+
+    @mib_allow_underline.setter
+    def mib_allow_underline(self, value):
+        """Set whether to allow underscores in MIB labels.
+
+        :param value: The new value for allowing underscores in MIB labels.
+        :type value: bool
+        """
+        super()._set_mib_allow_underline(value)
+
+    @property
+    def mib_comment_to_eol(self):
+        """Get whether to treat ``--`` MIB comments as extending to end-of-line.
+
+        :type: bool
+        """
+        return super()._get_mib_comment_to_eol()
+
+    @mib_comment_to_eol.setter
+    def mib_comment_to_eol(self, value):
+        """Set whether to treat ``--`` MIB comments as extending to end-of-line.
+
+        :param value: The new value for MIB comment to end-of-line.
+        :type value: bool
+        """
+        super()._set_mib_comment_to_eol(value)
+
+    @property
+    def mib_replace_with_latest(self):
+        """Get whether to replace duplicate MIB objects with latest definition.
+
+        :type: bool
+        """
+        return super()._get_mib_replace_with_latest()
+
+    @mib_replace_with_latest.setter
+    def mib_replace_with_latest(self, value):
+        """Set whether to replace duplicate MIB objects with latest definition.
+
+        :param value: The new value for replacing duplicate MIB objects.
+        :type value: bool
+        """
+        super()._set_mib_replace_with_latest(value)
+
+    @property
+    def non_repeaters(self):
+        """Get the number of non-repeaters for GETBULK PDUs.
+
+        :type: str
+        """
+        return super()._get_non_repeaters()
+
+    @non_repeaters.setter
+    def non_repeaters(self, value):
+        """Set the number of non-repeaters for GETBULK PDUs.
+
+        :param value: The number of non-repeaters. Only applies to bulk_walk
+            and bulk_get operations.
+        :type value: Union[str, int]
+        """
+        super()._set_non_repeaters(str(value))
+
+    @property
+    def walk_dont_check_lexicographic(self):
+        """Get whether to disable lexicographical OID ordering checks during walks.
+
+        :type: bool
+        """
+        return super()._get_walk_dont_check_lexicographic()
+
+    @walk_dont_check_lexicographic.setter
+    def walk_dont_check_lexicographic(self, value):
+        """Set whether to disable lexicographical OID ordering checks during walks.
+
+        :param value: The new value for disabling lexicographical checks.
+        :type value: bool
+        """
+        super()._set_walk_dont_check_lexicographic(value)
+
+    @property
+    def walk_include_requested(self):
+        """Get whether to include the requested OID in walk results.
+
+        :type: bool
+        """
+        return super()._get_walk_include_requested()
+
+    @walk_include_requested.setter
+    def walk_include_requested(self, value):
+        """Set whether to include the requested OID in walk results.
+
+        :param value: The new value for including the requested OID.
+        :type value: bool
+        """
+        super()._set_walk_include_requested(value)
+
+    @property
+    def walk_dont_get_requested(self):
+        """Get whether to skip GET fallback when walk returns nothing.
+
+        :type: bool
+        """
+        return super()._get_walk_dont_get_requested()
+
+    @walk_dont_get_requested.setter
+    def walk_dont_get_requested(self, value):
+        """Set whether to skip GET fallback when walk returns nothing.
+
+        :param value: The new value for skipping GET fallback.
+        :type value: bool
+        """
+        super()._set_walk_dont_get_requested(value)
+
+    @property
+    def walk_end_oid(self):
+        """Get the OID at which to stop walking.
+
+        :type: str
+        """
+        return super()._get_walk_end_oid()
+
+    @walk_end_oid.setter
+    def walk_end_oid(self, value):
+        """Set the OID at which to stop walking.
+
+        :param value: The end OID for walk operations.
+        :type value: str
+        """
+        super()._set_walk_end_oid(value)
+
+    @property
+    def dont_fix_pdus(self):
+        """Get whether to disable PDU error fixing on GET/GETNEXT.
+
+        :type: bool
+        """
+        return super()._get_dont_fix_pdus()
+
+    @dont_fix_pdus.setter
+    def dont_fix_pdus(self, value):
+        """Set whether to disable PDU error fixing on GET/GETNEXT.
+
+        :param value: The new value for disabling PDU error fixing.
+        :type value: bool
+        """
+        super()._set_dont_fix_pdus(value)
+
     def close(self):
         """Close the SNMP session and release resources."""
         if not self._closed:
@@ -675,6 +1243,33 @@ class Session(SessionBase):
             "print_timeticks_numerically",
             "print_hex_strings",
             "set_max_repeaters_to_num",
+            "print_oid_suffix_only",
+            "print_oid_module_name",
+            "print_oid_ucd_style",
+            "print_ascii_strings",
+            "print_leading_zero_hex",
+            "print_hex_text",
+            "dont_breakdown_oids",
+            "escape_quotes_in_indexes",
+            "extended_index_format",
+            "dont_print_units",
+            "output_precision",
+            "regex_oid_matching",
+            "ignore_display_hints",
+            "dont_check_range",
+            "random_access_oid",
+            "read_ucd_style_oid",
+            "oid_suffix",
+            "oid_prefix",
+            "mib_allow_underline",
+            "mib_comment_to_eol",
+            "mib_replace_with_latest",
+            "non_repeaters",
+            "walk_dont_check_lexicographic",
+            "walk_include_requested",
+            "walk_dont_get_requested",
+            "walk_end_oid",
+            "dont_fix_pdus",
         ]
 
         for prop in optional_props:

@@ -382,3 +382,106 @@ def test_session_property_setters_extended():
     assert s.set_max_repeaters_to_num == "20"
 
     del s
+
+
+def test_session_new_cli_options_defaults_and_setters():
+    s = Session(hostname="localhost", version="2c", community="public")
+
+    assert s.print_oid_suffix_only is False
+    assert s.print_oid_module_name is False
+    assert s.print_oid_ucd_style is False
+    assert s.print_ascii_strings is False
+    assert s.print_leading_zero_hex is False
+    assert s.print_hex_text is False
+    assert s.dont_breakdown_oids is False
+    assert s.escape_quotes_in_indexes is False
+    assert s.extended_index_format is False
+    assert s.dont_print_units is False
+    assert s.output_precision == ""
+    assert s.regex_oid_matching is False
+    assert s.ignore_display_hints is False
+    assert s.dont_check_range is False
+    assert s.random_access_oid is False
+    assert s.read_ucd_style_oid is False
+    assert s.oid_suffix == ""
+    assert s.oid_prefix == ""
+    assert s.mib_allow_underline is False
+    assert s.mib_comment_to_eol is False
+    assert s.mib_replace_with_latest is False
+    assert s.non_repeaters == ""
+    assert s.walk_dont_check_lexicographic is False
+    assert s.walk_include_requested is False
+    assert s.walk_dont_get_requested is False
+    assert s.walk_end_oid == ""
+    assert s.dont_fix_pdus is False
+
+    s.print_oid_suffix_only = True
+    assert s.print_oid_suffix_only is True
+    s.print_oid_module_name = True
+    assert s.print_oid_module_name is True
+    s.print_oid_ucd_style = True
+    assert s.print_oid_ucd_style is True
+    s.print_ascii_strings = True
+    assert s.print_ascii_strings is True
+    s.print_leading_zero_hex = True
+    assert s.print_leading_zero_hex is True
+    s.print_hex_text = True
+    assert s.print_hex_text is True
+    s.dont_breakdown_oids = True
+    assert s.dont_breakdown_oids is True
+    s.escape_quotes_in_indexes = True
+    assert s.escape_quotes_in_indexes is True
+    s.extended_index_format = True
+    assert s.extended_index_format is True
+    s.dont_print_units = True
+    assert s.dont_print_units is True
+    s.output_precision = "%.2f"
+    assert s.output_precision == "%.2f"
+
+    s.regex_oid_matching = True
+    assert s.regex_oid_matching is True
+    s.ignore_display_hints = True
+    assert s.ignore_display_hints is True
+    s.dont_check_range = True
+    assert s.dont_check_range is True
+    s.random_access_oid = True
+    assert s.random_access_oid is True
+    s.read_ucd_style_oid = True
+    assert s.read_ucd_style_oid is True
+    s.oid_suffix = ".0"
+    assert s.oid_suffix == ".0"
+    s.oid_prefix = ".1.3.6"
+    assert s.oid_prefix == ".1.3.6"
+
+    s.mib_allow_underline = True
+    assert s.mib_allow_underline is True
+    s.mib_comment_to_eol = True
+    assert s.mib_comment_to_eol is True
+    s.mib_replace_with_latest = True
+    assert s.mib_replace_with_latest is True
+
+    s.non_repeaters = 2
+    assert s.non_repeaters == "2"
+    s.non_repeaters = "3"
+    assert s.non_repeaters == "3"
+    s.walk_dont_check_lexicographic = True
+    assert s.walk_dont_check_lexicographic is True
+    s.walk_include_requested = True
+    assert s.walk_include_requested is True
+    s.walk_dont_get_requested = True
+    assert s.walk_dont_get_requested is True
+    s.walk_end_oid = "1.3.6.1.2.1.2"
+    assert s.walk_end_oid == "1.3.6.1.2.1.2"
+    s.dont_fix_pdus = True
+    assert s.dont_fix_pdus is True
+
+    d = s.to_dict()
+    assert d["output_precision"] == "%.2f"
+    assert d["oid_suffix"] == ".0"
+    assert d["oid_prefix"] == ".1.3.6"
+    assert d["mib_allow_underline"] is True
+    assert d["non_repeaters"] == "3"
+    assert d["walk_end_oid"] == "1.3.6.1.2.1.2"
+    assert d["dont_fix_pdus"] is True
+
+    del s
