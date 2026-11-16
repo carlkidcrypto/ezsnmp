@@ -96,7 +96,13 @@
      netsnmp_session session, *ss = NULL;
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -132,35 +142,48 @@
+@@ -126,41 +136,42 @@
+     int             arg;
+     int             status;
+     char           *trap = NULL;
+-    char           *prognam;
+     int             exitval = 1;
+ #ifndef NETSNMP_DISABLE_SNMPV1
      char           *specific = NULL, *description = NULL, *agent = NULL;
      in_addr_t      *pdu_in_addr_t;
  #endif
@@ -104,28 +110,21 @@
  
      SOCK_STARTUP;
  
-+   SockCleanupGuard sock_cleanup_guard;
-+
-+   // Reset thread-local inform flag for each invocation.
-+   inform = 0;
-+
-     prognam = strrchr(argv[0], '/');
+-    prognam = strrchr(argv[0], '/');
 -    if (prognam)
-+   if (prognam) {
-         prognam++;
+-        prognam++;
 -    else
-+   } else {
-         prognam = argv[0];
-+   }
+-        prognam = argv[0];
++   SockCleanupGuard sock_cleanup_guard;
  
 -    posix_env = strdup("POSIXLY_CORRECT=1");
 -    putenv(posix_env);
-+   putenv(strdup("POSIXLY_CORRECT=1"));
++   // Reset thread-local inform flag for each invocation.
++   inform = 0;
  
 -    if (strcmp(prognam, "snmpinform") == 0)
-+   if (strcmp(prognam, "snmpinform") == 0) {
-         inform = 1;
-+   }
+-        inform = 1;
++   putenv(strdup("POSIXLY_CORRECT=1"));
  
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
 +   // global state (option parsing, DS library settings).
@@ -157,7 +156,7 @@
  
      session.callback = snmp_input;
      session.callback_magic = NULL;
-@@ -173,10 +196,8 @@
+@@ -173,10 +184,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -170,7 +169,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -200,10 +221,8 @@
+@@ -200,10 +209,8 @@
          /*
           * pick our own engineID 
           */
@@ -183,7 +182,7 @@
          }
  
          /*
-@@ -212,100 +231,93 @@
+@@ -212,100 +219,91 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -215,8 +214,8 @@
           * the input netsnmp_session pointer
           */
 -        snmp_sess_perror("snmptrap", &session);
+-        goto out;
 +      snmp_sess_perror_exception("snmptrap", &session);
-         goto out;
      }
 +   ss_guard.reset(ss);
  
@@ -256,8 +255,8 @@
              if (!snmp_parse_oid(argv[arg], name, &name_length)) {
 -                snmp_perror(argv[arg]);
 -                usage();
+-                goto out;
 +               snmp_perror_exception(argv[arg]);
-                 goto out;
              }
 +         }
              pdu->enterprise = (oid *) malloc(name_length * sizeof(oid));
@@ -314,7 +313,7 @@
      } else
  #endif
      {
-@@ -314,13 +326,11 @@
+@@ -314,13 +312,11 @@
  
          pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
          if ( !pdu ) {
@@ -331,7 +330,7 @@
          }
          trap = argv[arg];
          if (*trap == 0) {
-@@ -328,17 +338,12 @@
+@@ -328,18 +324,12 @@
              snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
              trap = csysuptime;
          }
@@ -348,12 +347,13 @@
 -            (pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap),
 -             'o', argv[arg]) != 0) {
 -            snmp_perror(argv[arg]);
+-            goto out;
 +      if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
 +         snmp_perror_exception(argv[arg]);
-             goto out;
          }
      }
-@@ -347,44 +352,44 @@
+     arg++;
+@@ -347,44 +337,39 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {
@@ -367,19 +367,19 @@
 +         std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
          if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
 -            snmp_perror(argv[arg - 3]);
+-            goto out;
 +            snmp_perror_exception(argv[arg - 3]);
-             goto out;
          }
 -        if (snmp_add_var
 -            (pdu, name, name_length, argv[arg - 2][0],
 -             argv[arg - 1]) != 0) {
 -            snmp_perror(argv[arg - 3]);
-+      }
+-            goto out;
+         }
 +      if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
 +         snmp_perror_exception(argv[arg - 3]);
-             goto out;
-         }
      }
++   }
  
 -    if (inform)
 +   pdu_guard.release();
@@ -392,25 +392,25 @@
      if (status) {
 -        snmp_sess_perror(inform ? "snmpinform" : "snmptrap", ss);
 -        if (!inform)
-+      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
 +      if (!inform) {
              snmp_free_pdu(pdu);
-+      }
-         goto close_session;
+-        goto close_session;
 -    } else if (inform)
++      }
++      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
 +   } else if (inform) {
          snmp_free_pdu(response);
 +   }
  
      exitval = 0;
  
- close_session:
+-close_session:
 -    snmp_close(ss);
 -    snmp_shutdown(NETSNMP_APPLICATION_CONFIG_TYPE);
 +   ss_guard.reset();
 +   netsnmp_thread_cleanup(init_app_name);
  
- out:
+-out:
 -    free(posix_env);
 -    netsnmp_cleanup_session(&session);
 -    SOCK_CLEANUP;
