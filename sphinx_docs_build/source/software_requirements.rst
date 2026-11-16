@@ -402,3 +402,11 @@ modularized into shared composite GitHub Actions under ``.github/actions/``:
 validation via ``verify_syntax.yml`` and historical Valgrind reporting via
 ``valgrind_pr_history_report.yml``) shall configure and execute in a dedicated Python 3.14 runner
 environment to maintain toolchain consistency and prevent unpinned runner dependency conflicts.
+
+[CICD-14] The Docker test image workflow shall validate container image builds
+on pull requests modifying ``docker/**`` or the workflow configuration without
+pushing images to external container registries.
+
+[CICD-15] Containerized Python source builds across Docker test images shall
+verify ``ssl`` and ``hashlib`` standard library extension availability against
+system OpenSSL 3.x and 4.x libraries during image construction.
