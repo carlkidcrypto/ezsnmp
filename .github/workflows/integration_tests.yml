@@ -157,12 +157,19 @@ jobs:
             SOURCE_TARBALL="/tmp/ezsnmp-${PKG_VERSION}.tar.gz"
             git archive HEAD --format=tar.gz -o "${SOURCE_TARBALL}"
             TARBALL_SHA=$(shasum -a 256 "${SOURCE_TARBALL}" | awk '{print $1}')
-            # Homebrew normally rejects formulae supplied by path. Developer mode
-            # enables this intentional CI use while avoiding third-party tap trust.
-            cp -L Formula/ezsnmp.rb /tmp/ezsnmp.rb
-            sed -i '' "s|^  url \".*\"|  url \"file://${SOURCE_TARBALL}\"|" /tmp/ezsnmp.rb
-            sed -i '' "s|^  sha256 \".*\"|  sha256 \"${TARBALL_SHA}\"|" /tmp/ezsnmp.rb
-            HOMEBREW_DEVELOPER=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula --build-from-source /tmp/ezsnmp.rb
+            # Homebrew 7.0.14+ forbids loading formulae from arbitrary file paths even
+            # with HOMEBREW_DEVELOPER=1, so stage the rewritten formula in a local tap.
+            HOMEBREW_NO_AUTO_UPDATE=1 brew untap local/ezsnmp 2>/dev/null || true
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap-new --no-git local/ezsnmp
+            TAP_FORMULA="$(brew --repository)/Library/Taps/local/homebrew-ezsnmp/Formula/ezsnmp.rb"
+            mkdir -p "$(dirname "${TAP_FORMULA}")"
+            cp -L Formula/ezsnmp.rb "${TAP_FORMULA}"
+            sed -i '' "s|^  url \".*\"|  url \"file://${SOURCE_TARBALL}\"|" "${TAP_FORMULA}"
+            sed -i '' "s|^  sha256 \".*\"|  sha256 \"${TARBALL_SHA}\"|" "${TAP_FORMULA}"
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force carlkidcrypto/ezsnmp/ezsnmp 2>/dev/null || true
+            HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force local/ezsnmp/ezsnmp 2>/dev/null || true
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula --build-from-source local/ezsnmp/ezsnmp
           fi
 
       - name: Start SNMP daemon
