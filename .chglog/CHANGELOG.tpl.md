@@ -1,42 +1,43 @@
 # Changelog
-
 {{ range .Versions }}
 <a name="{{ .Tag.Name }}"></a>
 ## {{ if .Tag.Previous }}[{{ .Tag.Name }}]({{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }}){{ else }}{{ .Tag.Name }}{{ end }} ({{ datetime "2006-01-02" .Tag.Date }})
+{{- if .CommitGroups }}
 
-{{ if .CommitGroups }}
 ### Changes
-{{ range .CommitGroups }}
+{{- range .CommitGroups }}
+
 #### {{ .Title }}
-{{ range .Commits }}
+{{- range .Commits }}
 - {{ .Subject }}
-{{ end }}
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if .RevertCommits }}
 
-{{ if .RevertCommits }}
 ### Reverted Changes
-{{ range .RevertCommits }}
+{{- range .RevertCommits }}
 - {{ .Revert.Header }}
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
+{{- if .MergeCommits }}
 
-{{ if .MergeCommits }}
 ### Merged Pull Requests
-{{ range .MergeCommits }}
+{{- range .MergeCommits }}
 - {{ .Header }}
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
+{{- if .NoteGroups }}
 
-{{ if .NoteGroups }}
 ### Release Notes
-{{ range .NoteGroups }}
+{{- range .NoteGroups }}
+
 #### {{ .Title }}
-{{ range .Notes }}
+{{- range .Notes }}
 - {{ .Body }}
-{{ end }}
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
 
 ---
 {{ end }}
