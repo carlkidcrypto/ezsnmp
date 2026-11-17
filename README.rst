@@ -2,46 +2,49 @@
 EzSnmp
 =======
 
-.. list-table::
-   :widths: auto
+|Tests Native| |Tests Homebrew| |Black| |Clang-format| |Sphinx Docs|
 
-   * - |Python Code Style|
-     - |Clang-format Code Style|
-     - |Black|
-   * - |Clang-format|
-     - |Pull Request Sphinx Docs Check|
-     - |PyPI Distributions|
-   * - |TestPyPI Distributions|
-     - |Tests Homebrew|
-     - |Tests Native|
-   * - |CodeCov|
-     - |License|
-     - |Build and Publish Docker Images|
+|Codecov| |Quality Gate Status| |Security Rating| |Maintainability Rating|
 
-.. |Python Code Style| image:: https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square
-    :target: https://github.com/psf/black
-.. |Clang-format Code Style| image:: https://img.shields.io/badge/code%20style-clang--format-brightgreen.svg?style=flat-square
-    :target: https://clang.llvm.org/docs/ClangFormat.html
+|PyPI Version| |PyPI Downloads| |PyPI Distributions| |TestPyPI Distributions| |Build Docker Images|
+
+|Python Versions| |License|
+
+.. |Tests Native| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/tests_native.yml?style=flat-square&label=Tests+Native
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml
+.. |Tests Homebrew| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/tests_homebrew.yml?style=flat-square&label=Tests+Homebrew
+    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml
 .. |Black| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/black.yml?style=flat-square&label=Black
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/black.yml
 .. |Clang-format| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/clang_format.yml?style=flat-square&label=Clang-format
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/clang_format.yml
-.. |Pull Request Sphinx Docs Check| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/sphinx_build.yml?style=flat-square&label=Sphinx+Docs+Check
+.. |Sphinx Docs| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/sphinx_build.yml?style=flat-square&label=Sphinx+Docs
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/sphinx_build.yml
+.. |Codecov| image:: https://img.shields.io/codecov/c/github/carlkidcrypto/ezsnmp/main?style=flat-square&label=Codecov
+    :target: https://codecov.io/gh/carlkidcrypto/ezsnmp
+.. |Quality Gate Status| image:: https://sonarcloud.io/api/project_badges/measure?project=carlkidcrypto_ezsnmp&metric=alert_status
+    :target: https://sonarcloud.io/summary/new_code?id=carlkidcrypto_ezsnmp
+    :alt: Quality Gate Status
+.. |Security Rating| image:: https://sonarcloud.io/api/project_badges/measure?project=carlkidcrypto_ezsnmp&metric=security_rating
+    :target: https://sonarcloud.io/summary/new_code?id=carlkidcrypto_ezsnmp
+    :alt: Security Rating
+.. |Maintainability Rating| image:: https://sonarcloud.io/api/project_badges/measure?project=carlkidcrypto_ezsnmp&metric=sqale_rating
+    :target: https://sonarcloud.io/summary/new_code?id=carlkidcrypto_ezsnmp
+    :alt: Maintainability Rating
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/ezsnmp?style=flat-square
+    :target: https://pypi.org/project/ezsnmp/
+.. |PyPI Downloads| image:: https://img.shields.io/pypi/dm/ezsnmp?style=flat-square
+    :target: https://pypi.org/project/ezsnmp/
 .. |PyPI Distributions| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_to_pypi.yml?style=flat-square&label=PyPI+Distributions
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_pypi.yml
 .. |TestPyPI Distributions| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_to_test_pypi.yml?style=flat-square&label=TestPyPI+Distributions
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_to_test_pypi.yml
-.. |Tests Homebrew| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/tests_homebrew.yml?style=flat-square&label=Tests+Homebrew
-    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_homebrew.yml
-.. |Tests Native| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/tests_native.yml?style=flat-square&label=Tests+Native
-    :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/tests_native.yml
-.. |CodeCov| image:: https://img.shields.io/codecov/c/github/carlkidcrypto/ezsnmp/main?style=flat-square&label=CodeCov
-    :target: https://codecov.io/gh/carlkidcrypto/ezsnmp
-.. |License| image:: https://img.shields.io/badge/license-BSD-blue.svg?style=flat-square
-    :target: https://github.com/carlkidcrypto/ezsnmp/blob/main/LICENSE
-.. |Build and Publish Docker Images| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_docker_images.yml?style=flat-square&label=Build+Docker+Images
+.. |Build Docker Images| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_docker_images.yml?style=flat-square&label=Build+Docker+Images
     :target: https://github.com/carlkidcrypto/ezsnmp/actions/workflows/build_and_publish_docker_images.yml
+.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/ezsnmp?style=flat-square
+    :target: https://pypi.org/project/ezsnmp/
+.. |License| image:: https://img.shields.io/github/license/carlkidcrypto/ezsnmp?style=flat-square
+    :target: https://github.com/carlkidcrypto/ezsnmp/blob/main/LICENSE
 
 .. image:: https://raw.githubusercontent.com/carlkidcrypto/ezsnmp/main/images/ezsnmp_logo.jpeg
     :alt: EzSnmp Logo
