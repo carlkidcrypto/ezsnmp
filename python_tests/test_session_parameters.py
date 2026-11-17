@@ -927,7 +927,7 @@ def test_session_app_c_flags_constructor_and_to_dict():
     assert session.walk_end_oid == "1.3.6.1.2.1.2"
     assert session.dont_fix_pdus is True
 
-    # Default args omit operation-scoped -C flags (added per operation)
+    # Default args (SnmpOperation::All) include all configured -C flags
     assert session.args == (
         "-c",
         "public",
@@ -937,7 +937,22 @@ def test_session_app_c_flags_constructor_and_to_dict():
         "1",
         "-v",
         "2c",
+        "-Cn2",
+        "-Cc",
+        "-Ci",
+        "-CI",
+        "-CE",
+        "1.3.6.1.2.1.2",
+        "-Cf",
         "localhost:11161",
     )
+
+    session_dict = session.to_dict()
+    assert session_dict["non_repeaters"] == "2"
+    assert session_dict["walk_dont_check_lexicographic"] is True
+    assert session_dict["walk_include_requested"] is True
+    assert session_dict["walk_dont_get_requested"] is True
+    assert session_dict["walk_end_oid"] == "1.3.6.1.2.1.2"
+    assert session_dict["dont_fix_pdus"] is True
 
     del session

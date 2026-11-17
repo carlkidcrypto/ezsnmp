@@ -340,9 +340,6 @@ void SessionBase::populate_args(SnmpOperation op) {
        {"timeout", m_timeout},
        {"load_mibs", m_load_mibs},
        {"mib_directories", m_mib_directories},
-       {"output_precision", m_output_precision},
-       {"oid_suffix", m_oid_suffix},
-       {"oid_prefix", m_oid_prefix},
    };
 
    // Handle string parameters
@@ -368,8 +365,18 @@ void SessionBase::populate_args(SnmpOperation op) {
       return tokens;
    };
 
-   // Handle boolean -O, -I, -P parameters
-   std::pair<bool, char const*> const bool_flags[] = {
+   auto append_bool_flags = [&](auto const& flags) {
+      for (auto const& [enabled, key] : flags) {
+         if (enabled) {
+            auto const parts = split_string(CML_PARAM_LOOKUP[key], ' ');
+            m_args.push_back(parts[0]);
+            m_args.push_back(parts[1]);
+         }
+      }
+   };
+
+   // Handle -O output options
+   std::pair<bool, char const*> const output_bool_flags[] = {
        {m_print_enums_numerically, "print_enums_numerically"},
        {m_print_full_oids, "print_full_oids"},
        {m_print_oids_numerically, "print_oids_numerically"},
@@ -385,23 +392,38 @@ void SessionBase::populate_args(SnmpOperation op) {
        {m_escape_quotes_in_indexes, "escape_quotes_in_indexes"},
        {m_extended_index_format, "extended_index_format"},
        {m_dont_print_units, "dont_print_units"},
+   };
+   append_bool_flags(output_bool_flags);
+   if (!m_output_precision.empty()) {
+      m_args.push_back(CML_PARAM_LOOKUP["output_precision"]);
+      m_args.push_back(m_output_precision);
+   }
+
+   // Handle -I input options
+   std::pair<bool, char const*> const input_bool_flags[] = {
        {m_regex_oid_matching, "regex_oid_matching"},
        {m_ignore_display_hints, "ignore_display_hints"},
        {m_dont_check_range, "dont_check_range"},
        {m_random_access_oid, "random_access_oid"},
        {m_read_ucd_style_oid, "read_ucd_style_oid"},
+   };
+   append_bool_flags(input_bool_flags);
+   if (!m_oid_suffix.empty()) {
+      m_args.push_back(CML_PARAM_LOOKUP["oid_suffix"]);
+      m_args.push_back(m_oid_suffix);
+   }
+   if (!m_oid_prefix.empty()) {
+      m_args.push_back(CML_PARAM_LOOKUP["oid_prefix"]);
+      m_args.push_back(m_oid_prefix);
+   }
+
+   // Handle -P MIB parser options
+   std::pair<bool, char const*> const mib_bool_flags[] = {
        {m_mib_allow_underline, "mib_allow_underline"},
        {m_mib_comment_to_eol, "mib_comment_to_eol"},
        {m_mib_replace_with_latest, "mib_replace_with_latest"},
    };
-
-   for (auto const& [enabled, key] : bool_flags) {
-      if (enabled) {
-         auto const parts = split_string(CML_PARAM_LOOKUP[key], ' ');
-         m_args.push_back(parts[0]);
-         m_args.push_back(parts[1]);
-      }
-   }
+   append_bool_flags(mib_bool_flags);
 
    // Handle operation-scoped -C application options before host_address.
    // *_optProc throws ParseErrorBase on unsupported -C flags, so each operation
