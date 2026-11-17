@@ -5,12 +5,6 @@ info:
   repository_url: https://github.com/carlkidcrypto/ezsnmp
 options:
   commits:
-    # filters:
-    #   Type:
-    #     - feat
-    #     - fix
-    #     - perf
-    #     - refactor
   commit_groups:
     title_maps:
       # Lowercase conventional commits
@@ -26,28 +20,30 @@ options:
       style: Styles
       revert: Reverts
       # Capitalized word prefixes
-      Fix: Bug Fixes
-      Refactor: Code Refactoring
       Bump: Dependency Updates
+      Release: Releases
       Add: Features
+      Fix: Bug Fixes
       Update: Updates & Improvements
+      Refactor: Code Refactoring
       Document: Documentation Updates
+      Enhance: Enhancements
+      Hotfix: Critical Bug Fixes
+      Initial: Initial Setup
       Increase: Performance Improvements
       Modernize: Code Improvements
       Python: Python-related Changes
       Feature: Features
-      Hotfix: Critical Bug Fixes
-      Enhance: Enhancements
       Use: Code Refactoring
-      Initial: Initial Setup
       # Merge commits
       Merge: Merged Pull Requests
       # Fallback
       other: Other Changes
   header:
-    # Pattern matches: conventional commits (feat:, fix:), capitalized prefixes (Fix, Add),
-    # and number-prefixed commits (461 feature, 442 question)
-    pattern: "^\\s*(([\\w]+)(?:[:\\s/-].*)?)$"
+    # Pattern matches: conventional commits (feat:, feat(scope):, feat!:, feat(scope)!:),
+    # bracketed prefixes ([tag] ...), capitalized prefixes (Bump, Release, Fix, Add),
+    # and falls back to "" (routed to other) for emoji or unprefixed commits.
+    pattern: "^\\s*((?:\\[[^\\]]+\\]\\s*)?([\\w]*)(?:\\([^)]*\\))?!?.*)$"
     pattern_maps:
       - Subject
       - Type
