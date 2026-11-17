@@ -170,3 +170,12 @@ TEST_F(SnmpSetTest, TestBadObjectType) {
 
    EXPECT_THROW(snmpset(args, "testing_bad_type"), UndeterminedTypeErrorBase);
 }
+
+TEST(SnmpSetUsageTest, TestUsagePrintsToStderr) {
+   ::testing::internal::CaptureStderr();
+   snmpset_usage();
+   std::string output = ::testing::internal::GetCapturedStderr();
+   EXPECT_NE(output.find("USAGE: snmpset "), std::string::npos);
+   EXPECT_NE(output.find("OID TYPE VALUE [OID TYPE VALUE]..."), std::string::npos);
+   EXPECT_NE(output.find("TYPE: one of i, u, t, a, o, s, x, d, b"), std::string::npos);
+}
