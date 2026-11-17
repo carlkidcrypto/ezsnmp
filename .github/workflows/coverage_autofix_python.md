@@ -34,7 +34,7 @@ tools:
   edit:
   bash: true
 imports:
-  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@902d603b15a22f5b7ce4ff08b28757cb8ff468b3
+  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@1d9ff61f23b14bedea72a8ac16f0e80ebe8d1d0e
 ---
 
 # Python Coverage Checks And Suggested Fixes

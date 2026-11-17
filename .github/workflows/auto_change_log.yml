@@ -24,6 +24,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_auto_changelog.yml@902d603b15a22f5b7ce4ff08b28757cb8ff468b3
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_auto_changelog.yml@1d9ff61f23b14bedea72a8ac16f0e80ebe8d1d0e
     with:
       tag: ${{ inputs.tag || '' }}
