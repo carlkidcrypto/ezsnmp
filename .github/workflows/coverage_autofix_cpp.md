@@ -37,7 +37,7 @@ tools:
   edit:
   bash: true
 imports:
-  - shared/codecov-coverage.md
+  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@3178143deee5927b0b131bafef683efe8b2484b5
 ---
 
 # C++ Coverage Checks And Suggested Fixes

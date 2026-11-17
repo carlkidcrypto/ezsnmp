@@ -1,3 +1,4 @@
+---
 name: Validate Workflow Files
 
 concurrency:
@@ -24,42 +25,5 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-
-      - name: Set up Python
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: "3.14"
-
-      - name: Install yamllint
-        run: python -m pip install yamllint==1.38.0
-
-      - name: Install actionlint
-        run: |
-          set -e
-          version=$(cat tools/actionlint-version.txt)
-          archive="actionlint_${version#v}_linux_amd64.tar.gz"
-          curl -fsSL --retry 5 --retry-delay 2 --retry-all-errors "https://github.com/rhysd/actionlint/releases/download/${version}/${archive}" -o /tmp/actionlint.tar.gz
-          mkdir -p /tmp/actionlint
-          tar -xzf /tmp/actionlint.tar.gz -C /tmp/actionlint
-          sudo install -m 0755 /tmp/actionlint/actionlint /usr/local/bin/actionlint
-          actionlint -version
-
-      - name: Lint workflow YAML files
-        run: |
-          set -e
-          echo "Linting all workflow YAML files (excluding generated agentic lock files and agentics-maintenance.yml) in .github/workflows/ ..."
-          find .github/workflows/ -name "*.yml" ! -name "*.lock.yml" ! -name "agentics-maintenance.yml" -print0 | xargs -0 yamllint -c .yamllint
-          echo "All workflow YAML files passed linting."
-
-      - name: Validate workflow actions
-        run: |
-          set -e
-          # ShellCheck is useful for individual workflow cleanup, but existing
-          # advisory findings should not block all workflow validation.
-          find .github/workflows/ -name "*.yml" ! -name "*.lock.yml" ! -name "agentics-maintenance.yml" -print0 | xargs -0 actionlint -shellcheck=
-          echo "All workflow files passed actionlint."
+  verify:
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_verify_syntax.yml@3178143deee5927b0b131bafef683efe8b2484b5
