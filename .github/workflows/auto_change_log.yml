@@ -1,3 +1,4 @@
+---
 name: Update Changelog
 
 on:
@@ -20,120 +21,9 @@ concurrency:
 
 jobs:
   update-changelog:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Check for existing open changelog PR
-        id: check-pr
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          open_count=$(gh pr list --head automation/update-changelog --base main --state open --json number --jq 'length')
-          if [ "${open_count}" -gt 0 ]; then
-            echo "Open PR already exists from automation/update-changelog; skipping."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Install git-chglog
-        if: steps.check-pr.outputs.skip != 'true'
-        run: |
-          curl -sSfL https://github.com/git-chglog/git-chglog/releases/download/v0.15.4/git-chglog_0.15.4_linux_amd64.tar.gz \
-            | tar xz -C /usr/local/bin git-chglog
-          git-chglog --version
-
-      - name: Generate changelog and detect substantive diff
-        id: generate
-        if: steps.check-pr.outputs.skip != 'true'
-        run: |
-          git fetch --tags --force
-          git-chglog --config .chglog/config.yml -o CHANGELOG.tmp
-
-          awk '/^## /{found=1; next} found && /^---$/{exit} found && /^- /{count++} END{if (count==0) {print "ERROR: Latest changelog section is empty" > "/dev/stderr"; exit 1}}' CHANGELOG.tmp
-
-          if [ -f CHANGELOG.md ] && head -n 1 CHANGELOG.md | grep -q '^Last Updated:'; then
-            tail -n +3 CHANGELOG.md > CHANGELOG.existing.tmp
-          elif [ -f CHANGELOG.md ]; then
-            cp CHANGELOG.md CHANGELOG.existing.tmp
-          else
-            : > CHANGELOG.existing.tmp
-          fi
-
-          if diff -u CHANGELOG.existing.tmp CHANGELOG.tmp > /dev/null; then
-            echo "No substantive changelog changes detected; skipping."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            rm -f CHANGELOG.tmp CHANGELOG.existing.tmp
-            exit 0
-          fi
-
-          echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          timestamp=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          {
-            printf "Last Updated: %s\n\n" "$timestamp"
-            cat CHANGELOG.tmp
-          } > CHANGELOG.md
-          rm -f CHANGELOG.tmp CHANGELOG.existing.tmp
-
-      - name: Commit changes and open pull request
-        if: steps.check-pr.outputs.skip != 'true' && steps.generate.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          EVENT_NAME: ${{ github.event_name }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          INPUT_TAG: ${{ inputs.tag }}
-        run: |
-          if [ -n "${RELEASE_TAG}" ]; then
-            current="${RELEASE_TAG}"
-          elif [ -n "${INPUT_TAG}" ]; then
-            current="${INPUT_TAG}"
-          else
-            current=$(git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD)
-          fi
-
-          base=$(git describe --tags --abbrev=0 "${current}^" 2>/dev/null || git rev-list --max-parents=0 HEAD)
-          if [ -z "${base}" ] || [ "${base}" = "${current}" ]; then
-            base=$(git rev-list --max-parents=0 HEAD)
-          fi
-
-          range="${base}...${current}"
-          commits=$(git log --oneline "${base}..${current}" || true)
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git checkout -B automation/update-changelog
-          git add CHANGELOG.md
-          git commit -m "chore(docs): update changelog"
-          git push --force-with-lease origin automation/update-changelog
-
-          pr_body_file=$(mktemp)
-          {
-            echo "## Automated Changelog Update"
-            echo ""
-            echo "- **Trigger:** \`${EVENT_NAME}\`"
-            echo "- **Tag:** \`${current}\`"
-            echo "- **Range:** \`${range}\`"
-            echo "- **Note:** Timestamp-only (\`Last Updated:\`) changes are filtered out."
-            echo ""
-            echo "### Commits in \`${range}\`"
-            echo '```'
-            if [ -n "${commits}" ]; then
-              echo "${commits}"
-            else
-              echo "(no commits in range)"
-            fi
-            echo '```'
-          } > "${pr_body_file}"
-
-          gh pr create \
-            --base main \
-            --head automation/update-changelog \
-            --title "[changelog] Update CHANGELOG.md" \
-            --body-file "${pr_body_file}"
-          rm -f "${pr_body_file}"
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_auto_changelog.yml@902d603b15a22f5b7ce4ff08b28757cb8ff468b3
+    with:
+      tag: ${{ inputs.tag || '' }}
