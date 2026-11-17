@@ -1,5 +1,5 @@
-#ifndef SNMPUSM_H
-#define SNMPUSM_H
+#ifndef EZSNMP_SNMPUSM_H
+#define EZSNMP_SNMPUSM_H
 
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
@@ -44,4 +44,4 @@ void snmpusm_optProc(int argc, char *const *argv, int opt);
 std::vector<std::string> snmpusm(std::vector<std::string> const &args,
                                  std::string const &init_app_name);
 
-#endif // SNMPUSM_H
+#endif // EZSNMP_SNMPUSM_H

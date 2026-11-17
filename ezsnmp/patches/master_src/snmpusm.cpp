@@ -494,7 +494,7 @@ std::vector<std::string> snmpusm(std::vector<std::string> const &args,
       snmp_sess_perror_exception("snmpusm", &session);
    }
 
-   netsnmp_session *sess = snmp_sess_session(ss.get());
+   netsnmp_session *sess = snmp_sess_session(static_cast<struct session_list *>(ss.get()));
 
    /*
     * set usmUserEngineID from sess->contextEngineID

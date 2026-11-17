@@ -188,12 +188,21 @@ test_snmptrap = executable(
     dependencies: common_deps
 )
 
+snmpusm_deps = common_deps
+if host_machine.system() != 'darwin'
+    snmpusm_crypto_dep = dependency('libcrypto', required: false)
+    if not snmpusm_crypto_dep.found()
+        snmpusm_crypto_dep = meson.get_compiler('cpp').find_library('crypto', required: false)
+    endif
+    snmpusm_deps += [snmpusm_crypto_dep]
+endif
+
 test_snmpusm = executable(
     'test_snmpusm',
     ['test_snmpusm.cpp'],
     objects: ezsnmp_shared_objs.extract_objects([snmpusm_src] + common_shim_sources),
     include_directories: include_dirs,
-    dependencies: common_deps
+    dependencies: snmpusm_deps
 )
 
 test_snmpwalk = executable(
