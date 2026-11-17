@@ -7,17 +7,17 @@
  * Added more detailed (useful?) usage info.
  */
 /************************************************************************
-	Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
+        Copyright 1988, 1989, 1991, 1992 by Carnegie Mellon University
 
                       All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of CMU not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -73,7 +73,7 @@ namespace {
 std::string trim_trailing_newlines(std::string s) {
    while (!s.empty() && (s.back() == '\n' || s.back() == '\r')) {
       s.pop_back();
-}
+   }
    return s;
 }
 
@@ -109,16 +109,16 @@ std::string format_objid_no_newline(oid const *objid, size_t objidlen) {
    buf = static_cast<u_char *>(std::calloc(buf_len, 1));
    if (!buf) {
       throw GenericErrorBase("Failed to allocate buffer for OID formatting");
-        }
+   }
 
    netsnmp_sprint_realloc_objid_tree(&buf, &buf_len, &out_len, 1, &buf_overflow, objid, objidlen);
    std::string out(reinterpret_cast<char const *>(buf));
    if (buf_overflow) {
       out += " [TRUNCATED]";
-        }
+   }
    SNMP_FREE(buf);
    return out;
-        }
+}
 
 std::string snmptranslate_usage_string() {
    std::ostringstream oss;
@@ -143,7 +143,7 @@ std::string snmptranslate_usage_string() {
        << "\t\t\t  z:  enable MIB child OID report\n"
        << "\t\t\t  t:  enable alternate format symbolic suffix report\n";
    return oss.str();
-        }
+}
 
 struct TranslateDsGuard {
    ~TranslateDsGuard() {
@@ -151,7 +151,7 @@ struct TranslateDsGuard {
       netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_RANDOM_ACCESS, 0);
       netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_REGEX_ACCESS, 0);
       netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SAVE_MIB_DESCRS, 0);
-    }
+   }
 };
 
 int show_all_matched_objects_vec(std::vector<std::string> &out,
@@ -174,7 +174,7 @@ int show_all_matched_objects_vec(std::vector<std::string> &out,
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
       if (!result) {
          break;
-}
+      }
       count++;
 
       std::string entry = format_objid_no_newline(name, *name_length);
@@ -209,14 +209,14 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
    int arg = 0;
    char *current_name = nullptr;
    char const *cp = nullptr;
-    oid             name[MAX_OID_LEN];
+   oid name[MAX_OID_LEN];
    size_t name_length = 0;
-    int             description = 0;
-    int             print = 0;
-    int             find_all = 0;
-    int             width = 1000000;
+   int description = 0;
+   int print = 0;
+   int find_all = 0;
+   int width = 1000000;
 
-    SOCK_STARTUP;
+   SOCK_STARTUP;
    SockCleanupGuard sock_cleanup_guard;
    TranslateDsGuard translate_ds_guard;
 
@@ -231,11 +231,11 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
 #endif
 
    while ((arg = getopt(argc, argv.get(), "Vhm:M:w:D:P:T:O:I:L:")) != EOF) {
-        switch (arg) {
-        case 'h':
+      switch (arg) {
+         case 'h':
             throw ParseErrorBase(snmptranslate_usage_string());
 
-        case 'm':
+         case 'm':
             setenv("MIBS", optarg, 1);
             if (std::strcmp(optarg, "ALL") == 0) {
                read_all_mibs();
@@ -244,28 +244,28 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
             }
             break;
 
-        case 'M':
+         case 'M':
             setenv("MIBDIRS", optarg, 1);
             netsnmp_set_mib_directory(optarg);
             break;
 
-        case 'D':
+         case 'D':
             debug_register_tokens(optarg);
             snmp_set_do_debugging(1);
             break;
 
-        case 'V':
+         case 'V':
             return {"NET-SNMP version: " + std::string(netsnmp_get_version())};
 
-        case 'w':
+         case 'w':
             width = std::atoi(optarg);
-	    if (width <= 0) {
+            if (width <= 0) {
                throw ParseErrorBase("Invalid width specification: " + std::string(optarg));
-	    }
-	    break;
+            }
+            break;
 
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-        case 'P':
+         case 'P':
             cp = snmp_mib_toggle_options(optarg);
             if (cp != nullptr) {
                throw ParseErrorBase("Unknown parser option to -P: " + std::string(1, *cp));
@@ -273,156 +273,153 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
             break;
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
 
-        case 'O':
+         case 'O':
             cp = snmp_out_toggle_options(optarg);
             if (cp != nullptr) {
                throw ParseErrorBase("Unknown OID option to -O: " + std::string(1, *cp));
             }
             break;
 
-        case 'I':
+         case 'I':
             cp = snmp_in_toggle_options(optarg);
             if (cp != nullptr) {
                throw ParseErrorBase("Unknown OID option to -I: " + std::string(1, *cp));
             }
             break;
 
-        case 'T':
+         case 'T':
             for (cp = optarg; *cp; cp++) {
-                switch (*cp) {
+               switch (*cp) {
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-                case 'l':
-                    print = 3;
-                    print_oid_report_enable_labeledoid();
-                    break;
-                case 'o':
-                    print = 3;
-                    print_oid_report_enable_oid();
-                    break;
-                case 's':
-                    print = 3;
-                    print_oid_report_enable_symbolic();
-                    break;
-                case 't':
-                    print = 3;
-                    print_oid_report_enable_suffix();
-                    break;
-                case 'z':
-                    print = 3;
-                    print_oid_report_enable_mibchildoid();
-                    break;
+                  case 'l':
+                     print = 3;
+                     print_oid_report_enable_labeledoid();
+                     break;
+                  case 'o':
+                     print = 3;
+                     print_oid_report_enable_oid();
+                     break;
+                  case 's':
+                     print = 3;
+                     print_oid_report_enable_symbolic();
+                     break;
+                  case 't':
+                     print = 3;
+                     print_oid_report_enable_suffix();
+                     break;
+                  case 'z':
+                     print = 3;
+                     print_oid_report_enable_mibchildoid();
+                     break;
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-                case 'd':
-                    description = 1;
+                  case 'd':
+                     description = 1;
                      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SAVE_MIB_DESCRS,
                                             1);
-                    break;
-                case 'B':
-                    find_all = 1;
-                    break;
-                case 'p':
-                    print = 1;
-                    break;
-                case 'a':
-                    print = 2;
-                    break;
-                default:
+                     break;
+                  case 'B':
+                     find_all = 1;
+                     break;
+                  case 'p':
+                     print = 1;
+                     break;
+                  case 'a':
+                     print = 2;
+                     break;
+                  default:
                      throw ParseErrorBase("Invalid -T<lostpad> character: " + std::string(1, *cp));
-                }
+               }
             }
             break;
 
-        case 'L':
+         case 'L':
             if (snmp_log_options(optarg, argc, argv.get()) < 0) {
                throw ParseErrorBase("Invalid log option: " + std::string(optarg));
             }
             break;
 
-        default:
+         default:
             throw ParseErrorBase("Invalid option: -" +
                                  std::string(1, static_cast<char>(optopt ? optopt : arg)));
-        }
-    }
+      }
+   }
 
    if (optind < argc) {
-        current_name = argv[optind];
+      current_name = argv[optind];
    }
 
    if (current_name == nullptr) {
-        switch (print) {
-        default:
+      switch (print) {
+         default:
             throw ParseErrorBase("Missing object name\n" + snmptranslate_usage_string());
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-        case 1:
+         case 1:
             return_vector.push_back(
                 capture_to_string([&](FILE *fp) { print_mib_tree(fp, get_tree_head(), width); }));
             break;
-        case 2:
+         case 2:
             return_vector.push_back(capture_to_string([&](FILE *fp) { print_ascii_dump(fp); }));
             break;
-        case 3:
+         case 3:
             return_vector.push_back(capture_to_string([&](FILE *fp) { print_oid_report(fp); }));
             break;
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-        }
+      }
       return return_vector;
-    }
+   }
 
-    do {
+   do {
       if (std::strcmp(current_name, "-") == 0 && print == 0) {
          throw ParseErrorBase("Reading from stdin ('-') is not supported in ezsnmp::snmptranslate");
-        }
+      }
 
-        name_length = MAX_OID_LEN;
+      name_length = MAX_OID_LEN;
       if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_RANDOM_ACCESS)) {
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-            if (!get_node(current_name, name, &name_length)) {
+         if (!get_node(current_name, name, &name_length)) {
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
             throw UnknownObjectIDErrorBase("Unknown object identifier: " +
                                            std::string(current_name));
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-            }
+         }
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-        } else if (find_all) {
+      } else if (find_all) {
          if (0 == show_all_matched_objects_vec(return_vector, current_name, name, &name_length,
-                                              description, width)) {
-            throw UnknownObjectIDErrorBase(
-                "Unable to find a matching object identifier for \"" + std::string(current_name) +
-                "\"");
-            }
-            break;
+                                               description, width)) {
+            throw UnknownObjectIDErrorBase("Unable to find a matching object identifier for \"" +
+                                           std::string(current_name) + "\"");
+         }
+         break;
       } else if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_REGEX_ACCESS)) {
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-            if (0 == get_wild_node(current_name, name, &name_length)) {
+         if (0 == get_wild_node(current_name, name, &name_length)) {
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-            throw UnknownObjectIDErrorBase(
-                "Unable to find a matching object identifier for \"" + std::string(current_name) +
-                "\"");
+            throw UnknownObjectIDErrorBase("Unable to find a matching object identifier for \"" +
+                                           std::string(current_name) + "\"");
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-            }
+         }
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-        } else {
-            if (!read_objid(current_name, name, &name_length)) {
+      } else {
+         if (!read_objid(current_name, name, &name_length)) {
             snmp_perror_exception(current_name);
-            }
-        }
+         }
+      }
 
-        if (print == 1) {
+      if (print == 1) {
 #ifndef NETSNMP_DISABLE_MIB_LOADING
          struct tree *tp = get_tree(name, name_length, get_tree_head());
          if (tp == nullptr) {
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-            throw UnknownObjectIDErrorBase(
-                "Unable to find a matching object identifier for \"" + std::string(current_name) +
-                "\"");
+            throw UnknownObjectIDErrorBase("Unable to find a matching object identifier for \"" +
+                                           std::string(current_name) + "\"");
 #ifndef NETSNMP_DISABLE_MIB_LOADING
-            }
+         }
          return_vector.push_back(
              capture_to_string([&](FILE *fp) { print_mib_tree(fp, tp, width); }));
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-        } else {
+      } else {
          std::string entry = format_objid_no_newline(name, name_length);
-            if (description) {
+         if (description) {
 #ifndef NETSNMP_DISABLE_MIB_LOADING
             std::string desc = capture_to_string(
                 [&](FILE *fp) { fprint_description(fp, name, name_length, width); });
@@ -430,12 +427,12 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
                entry += "\n" + desc;
             }
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
-            }
+         }
          return_vector.push_back(std::move(entry));
-        }
+      }
 
-        current_name = argv[++optind];
-    } while (optind < argc);
+      current_name = argv[++optind];
+   } while (optind < argc);
 
    return return_vector;
 }
