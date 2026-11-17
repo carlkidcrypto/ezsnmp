@@ -43,7 +43,6 @@ jobs:
         with:
           files: |
             .github/workflows/build_and_publish_to_test_pypi.yml
-            .github/actions/prepare-windows-netsnmp/action.yml
             .github/actions/build-wheels/action.yml
             .github/actions/build-distribution/action.yml
             pyproject.toml
