@@ -13,7 +13,7 @@
  #include <net-snmp/net-snmp-config.h>
  
  #ifdef HAVE_STDLIB_H
-@@ -48,200 +48,245 @@
+@@ -48,200 +48,255 @@
  #ifdef HAVE_NETINET_IN_H
  #include <netinet/in.h>
  #endif
@@ -30,6 +30,8 @@
 -int             show_all_matched_objects(FILE *, const char *, oid *,
 -                                         size_t *, int, int);
 +#include <cstdio>
++#include <cstdlib>
++#include <cstring>
 +#include <functional>
 +#include <memory>
 +#include <mutex>
@@ -112,8 +114,16 @@
 -    char        buf[MAX_LINE_TEMP];
 -    oid         name[MAX_OID_LEN];
 -    size_t      name_length;
++struct FileCloser {
++   void operator()(FILE *fp) const noexcept {
++      if (fp != nullptr) {
++         std::fclose(fp);
++      }
++   }
++};
++
 +std::string capture_to_string(std::function<void(FILE *)> const &writer) {
-+   std::unique_ptr<FILE, decltype(&std::fclose)> fp(std::tmpfile(), &std::fclose);
++   std::unique_ptr<FILE, FileCloser> fp(std::tmpfile());
 +   if (!fp) {
 +      throw GenericErrorBase("Failed to create temporary file for snmptranslate output");
 +   }

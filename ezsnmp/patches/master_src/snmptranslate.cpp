@@ -56,6 +56,8 @@ SOFTWARE.
 #include <stdio.h>
 
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -77,8 +79,16 @@ std::string trim_trailing_newlines(std::string s) {
    return s;
 }
 
+struct FileCloser {
+   void operator()(FILE *fp) const noexcept {
+      if (fp != nullptr) {
+         std::fclose(fp);
+      }
+   }
+};
+
 std::string capture_to_string(std::function<void(FILE *)> const &writer) {
-   std::unique_ptr<FILE, decltype(&std::fclose)> fp(std::tmpfile(), &std::fclose);
+   std::unique_ptr<FILE, FileCloser> fp(std::tmpfile());
    if (!fp) {
       throw GenericErrorBase("Failed to create temporary file for snmptranslate output");
    }
