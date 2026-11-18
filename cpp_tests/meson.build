@@ -188,6 +188,22 @@ test_snmpstatus = executable(
     dependencies: common_deps
 )
 
+test_snmpstatus_parse_args_shim = executable(
+    'test_snmpstatus_parse_args_shim',
+    ['test_snmpstatus_parse_args_shim.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects([snmpstatus_src] + common_shim_sources),
+    include_directories: include_dirs,
+    dependencies: common_deps
+)
+
+test_snmpstatus_stat_error_shim = executable(
+    'test_snmpstatus_stat_error_shim',
+    ['test_snmpstatus_stat_error_shim.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects([snmpstatus_src] + common_shim_sources),
+    include_directories: include_dirs,
+    dependencies: common_deps
+)
+
 test_snmptrap = executable(
     'test_snmptrap',
     ['test_snmptrap.cpp'],
@@ -396,6 +412,8 @@ test('snmpgetnext_null_shim_test', test_snmpgetnext_null_shim, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
 test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
 test('snmpstatus_test', test_snmpstatus, env: test_env)
+test('snmpstatus_parse_args_shim_test', test_snmpstatus_parse_args_shim, env: test_env)
+test('snmpstatus_stat_error_shim_test', test_snmpstatus_stat_error_shim, env: test_env)
 test('snmptrap_test', test_snmptrap, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env, timeout: 120)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
