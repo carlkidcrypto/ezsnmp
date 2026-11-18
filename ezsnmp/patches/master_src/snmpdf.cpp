@@ -92,6 +92,7 @@ namespace {
 
 thread_local int g_ucd_mib = 0;
 thread_local int g_human_units = 0;
+thread_local std::string g_opt_error;
 
 void snmpdf_optProc(int, char *const *, int opt) {
    switch (opt) {
@@ -108,8 +109,11 @@ void snmpdf_optProc(int, char *const *, int opt) {
                   g_human_units = 1000;
                   break;
                default:
-                  throw ParseErrorBase("Unknown flag passed to -C: " + std::string(1, optarg[-1]) +
-                                       "\n");
+                  if (g_opt_error.empty()) {
+                     g_opt_error =
+                         "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+                  }
+                  break;
             }
          }
          break;
@@ -288,10 +292,21 @@ std::vector<std::string> snmpdf(std::vector<std::string> const &args,
       std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
       g_ucd_mib = 0;
       g_human_units = 0;
+      g_opt_error.clear();
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+      optreset = 1;
+      optind = 1;
+#else
+      optind = 0;
+#endif
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpdf_optProc)) {
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpdf_optProc);
+      if (!g_opt_error.empty()) {
+         throw ParseErrorBase(g_opt_error);
+      }
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
          case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:

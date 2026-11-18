@@ -15,7 +15,7 @@
  #ifdef TIME_WITH_SYS_TIME
  # include <sys/time.h>
  # include <time.h>
-@@ -75,84 +76,89 @@
+@@ -75,84 +76,93 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -57,6 +57,7 @@
 +
 +thread_local int g_ucd_mib = 0;
 +thread_local int g_human_units = 0;
++thread_local std::string g_opt_error;
 +
 +void snmpdf_optProc(int, char *const *, int opt) {
      switch (opt) {
@@ -79,13 +80,16 @@
 -                fprintf(stderr,
 -                        "Unknown flag passed to -C: %c\n", optarg[-1]);
 -                exit(1);
-+                  throw ParseErrorBase("Unknown flag passed to -C: " + std::string(1, optarg[-1]) +
-+                                       "\n");
++                  if (g_opt_error.empty()) {
++                     g_opt_error =
++                         "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
              }
++                  break;
          }
-+         break;
      }
++         break;
  }
++}
  
 -struct hrStorageTable {
 -    u_long          hrStorageIndex;
@@ -152,7 +156,7 @@
          base_length += indexlen;
      }
      DEBUGMSGTL(("add", "created: "));
-@@ -160,334 +166,352 @@
+@@ -160,313 +170,363 @@
      DEBUGMSG(("add", "\n"));
      snmp_add_null_var(pdu, base, base_length);
  
@@ -211,10 +215,9 @@
 +         throw PacketErrorBase(
 +             "snmpdf: Error in packet: " + std::string(snmp_errstring(response->errstat)) + "\n");
          }
--        if (!response->variables ||
--            response->variables->name_length <= base_length ||
--            snmp_oid_compare(response->variables->name,
--                             base_length,
+-        if (snmp_oid_compare(response->variables->name,
+-                             SNMP_MIN(base_length,
+-                                      response->variables->name_length),
 -                             base, base_length) != 0)
 +      if (!response->variables || response->variables->name_length <= base_length ||
 +          snmp_oid_compare(response->variables->name, base_length, base, base_length) != 0) {
@@ -339,6 +342,13 @@
 +      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
 +      g_ucd_mib = 0;
 +      g_human_units = 0;
++      g_opt_error.clear();
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
++      optreset = 1;
++      optind = 1;
++#else
++      optind = 0;
++#endif
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
  
@@ -346,7 +356,11 @@
 -     * get the common command line arguments 
 -     */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
-+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpdf_optProc)) {
++      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpdf_optProc);
++      if (!g_opt_error.empty()) {
++         throw ParseErrorBase(g_opt_error);
++      }
++      switch (arg) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
 +            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -400,7 +414,9 @@
 -        printf("%-18s %15s %15s %15s %5s\n", "Description", "Size (kB)",
 -           "Used", "Available", "Used%");
 -    }
--    if (ucd_mib == 0) {
++   return_vector.emplace_back(line_buf);
++
+     if (ucd_mib == 0) {
 -        /*
 -         * * Begin by finding all the storage pieces that are of
 -         * * type hrStorageFixedDisk, which is a standard disk.
@@ -409,18 +425,15 @@
 -        base_length =
 -            add(pdu, "HOST-RESOURCES-MIB:hrStorageIndex", NULL, 0);
 -        memcpy(base, pdu->variables->name, base_length * sizeof(oid));
-+   return_vector.emplace_back(line_buf);
- 
--        vlp = collect(ss, pdu, base, base_length);
-+   if (ucd_mib == 0) {
 +      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu(snmp_pdu_create(SNMP_MSG_GETNEXT));
 +      base_length = add(pdu.get(), "HOST-RESOURCES-MIB:hrStorageIndex", nullptr, 0);
 +      std::memcpy(base, pdu->variables->name, base_length * sizeof(oid));
  
+-        vlp = collect(ss, pdu, base, base_length);
 +      std::unique_ptr<netsnmp_variable_list, SnmpVarbindDeleter> saved(
 +          collect(ss.get(), session.peername, pdu.release(), base, base_length));
 +      netsnmp_variable_list *vlp = saved.get();
-+
+ 
          while (vlp) {
 -            size_t          units;
 -            unsigned long   hssize, hsused;
@@ -468,16 +481,13 @@
 +         snmp_check_null_response(response.get());
  
 -            vlp2 = response->variables;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
-+         netsnmp_variable_list *vlp2 = response->variables;
-+         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
 -            len = vlp2->val_len;
 -            if (len >= SPRINT_MAX_LEN) len = SPRINT_MAX_LEN-1;
--            if (vlp2->val.string && len > 0)
--                memcpy(descr, vlp2->val.string, len);
--            else
+-            memcpy(descr, vlp2->val.string, len);
++         netsnmp_variable_list *vlp2 = response->variables;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
 +         }
 +         len = static_cast<int>(vlp2->val_len);
 +         if (len >= SPRINT_MAX_LEN) {
@@ -486,34 +496,31 @@
 +         if (vlp2->val.string && len > 0) {
 +            std::memcpy(descr, vlp2->val.string, static_cast<size_t>(len));
 +         } else {
-                 len = 0;
++            len = 0;
 +         }
              descr[len] = '\0';
  
              vlp2 = vlp2->next_variable;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
-+         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
 -            units = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
 +         }
 +         units = vlp2->val.integer ? static_cast<size_t>(*(vlp2->val.integer)) : 0;
  
              vlp2 = vlp2->next_variable;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
-+         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
 -            hssize = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
 +         }
 +         hssize = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
  
              vlp2 = vlp2->next_variable;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
-+         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
 -            hsused = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
 +         }
 +         hsused = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
  
@@ -617,16 +624,13 @@
 +         snmp_check_null_response(response.get());
  
 -            vlp2 = response->variables;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
-+         netsnmp_variable_list *vlp2 = response->variables;
-+         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next2;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next2;
 -            len = vlp2->val_len;
 -            if (len >= SPRINT_MAX_LEN) len = SPRINT_MAX_LEN-1;
--            if (vlp2->val.string && len > 0)
--                memcpy(descr, vlp2->val.string, len);
--            else
+-            memcpy(descr, vlp2->val.string, len);
++         netsnmp_variable_list *vlp2 = response->variables;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next2;
 +         }
 +         len = static_cast<int>(vlp2->val_len);
 +         if (len >= SPRINT_MAX_LEN) {
@@ -635,25 +639,23 @@
 +         if (vlp2->val.string && len > 0) {
 +            std::memcpy(descr, vlp2->val.string, static_cast<size_t>(len));
 +         } else {
-                 len = 0;
++            len = 0;
 +         }
              descr[len] = '\0';
  
              vlp2 = vlp2->next_variable;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next2;
+-            hssize = *(vlp2->val.integer);
 +         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next2;
--            hssize = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++            goto next2;
 +         }
 +         hssize = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
  
              vlp2 = vlp2->next_variable;
--            if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE ||
--                vlp2->type == SNMP_NOSUCHOBJECT)
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next2;
+-            hsused = *(vlp2->val.integer);
 +         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
-                 goto next2;
--            hsused = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++            goto next2;
 +         }
 +         hsused = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
  
