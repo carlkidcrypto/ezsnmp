@@ -74,7 +74,7 @@ runs:
 
     - name: Prepare Net-SNMP for Windows wheels
       if: runner.os == 'Windows'
-      uses: carlkidcrypto/shared-workflows/actions/prepare-windows-netsnmp@3178143deee5927b0b131bafef683efe8b2484b5
+      uses: carlkidcrypto/shared-workflows/actions/prepare-windows-netsnmp@7be5e77f7d3a70d004199c6419572a61444ac714
       with:
         arch: ${{ inputs.arch }}
 
