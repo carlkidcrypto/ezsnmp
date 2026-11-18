@@ -104,3 +104,57 @@ TEST_F(SnmpUsmTest, TestUnreachableHostTimesOutOrErrors) {
        "-v", "2c", "-c", "public", "-r", "0", "-t", "1", "127.0.0.1:19999", "delete", "testuser"};
    EXPECT_THROW(snmpusm(args, "testing_snmpusm_timeout"), TimeoutErrorBase);
 }
+
+TEST_F(SnmpUsmTest, TestCreateActivateDeactivatePasswdDeleteLive) {
+   auto base_v3 = std::vector<std::string>{"-v",
+                                           "3",
+                                           "-u",
+                                           "initial_md5_aes",
+                                           "-l",
+                                           "authPriv",
+                                           "-a",
+                                           "MD5",
+                                           "-A",
+                                           "auth_pass",
+                                           "-x",
+                                           "AES",
+                                           "-X",
+                                           "priv_pass",
+                                           "localhost:11161"};
+
+   // Create cloned user
+   auto create_args = base_v3;
+   create_args.insert(create_args.end(), {"create", "ezsnmp_test_usm_cpp", "initial_md5_aes"});
+   auto res = snmpusm(create_args, "testing_snmpusm_create_live");
+   ASSERT_EQ(res.size(), 1u);
+   EXPECT_EQ(res[0], "User successfully created.");
+
+   // Deactivate user
+   auto deact_args = base_v3;
+   deact_args.insert(deact_args.end(), {"deactivate", "ezsnmp_test_usm_cpp"});
+   res = snmpusm(deact_args, "testing_snmpusm_deactivate_live");
+   ASSERT_EQ(res.size(), 1u);
+   EXPECT_EQ(res[0], "User successfully deactivated.");
+
+   // Activate user
+   auto act_args = base_v3;
+   act_args.insert(act_args.end(), {"activate", "ezsnmp_test_usm_cpp"});
+   res = snmpusm(act_args, "testing_snmpusm_activate_live");
+   ASSERT_EQ(res.size(), 1u);
+   EXPECT_EQ(res[0], "User successfully activated.");
+
+   // Change password on the temporary user
+   auto passwd_args = base_v3;
+   passwd_args.insert(passwd_args.end(),
+                      {"passwd", "auth_pass", "new_auth_pass_123", "ezsnmp_test_usm_cpp"});
+   res = snmpusm(passwd_args, "testing_snmpusm_passwd_live");
+   ASSERT_EQ(res.size(), 1u);
+   EXPECT_EQ(res[0], "SNMPv3 Key(s) successfully changed.");
+
+   // Delete temporary user
+   auto del_args = base_v3;
+   del_args.insert(del_args.end(), {"delete", "ezsnmp_test_usm_cpp"});
+   res = snmpusm(del_args, "testing_snmpusm_delete_live");
+   ASSERT_EQ(res.size(), 1u);
+   EXPECT_EQ(res[0], "User successfully deleted.");
+}

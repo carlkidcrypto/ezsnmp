@@ -146,3 +146,40 @@ def test_unreachable_host_raises_timeout_error():
                 "testuser",
             ]
         )
+
+
+def test_create_activate_deactivate_delete_live():
+    """Test live USM create, deactivate, activate, and delete operations."""
+    base_args = [
+        "-v",
+        "3",
+        "-u",
+        "initial_md5_aes",
+        "-l",
+        "authPriv",
+        "-a",
+        "MD5",
+        "-A",
+        "auth_pass",
+        "-x",
+        "AES",
+        "-X",
+        "priv_pass",
+        "localhost:11161",
+    ]
+    temp_user = "ezsnmp_test_usm_py"
+    try:
+        res = snmpusm(base_args + ["create", temp_user, "initial_md5_aes"])
+        assert res == ("User successfully created.",)
+
+        res = snmpusm(base_args + ["deactivate", temp_user])
+        assert res == ("User successfully deactivated.",)
+
+        res = snmpusm(base_args + ["activate", temp_user])
+        assert res == ("User successfully activated.",)
+    finally:
+        try:
+            res = snmpusm(base_args + ["delete", temp_user])
+            assert res == ("User successfully deleted.",)
+        except Exception:
+            pass

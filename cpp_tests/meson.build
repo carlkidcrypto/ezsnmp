@@ -205,6 +205,14 @@ test_snmpusm = executable(
     dependencies: snmpusm_deps
 )
 
+test_snmpusm_shim = executable(
+    'test_snmpusm_shim',
+    ['test_snmpusm_shim.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects([snmpusm_src] + common_shim_sources),
+    include_directories: include_dirs,
+    dependencies: snmpusm_deps
+)
+
 test_snmpwalk = executable(
     'test_snmpwalk',
     ['test_snmpwalk.cpp'],
@@ -406,6 +414,7 @@ test('snmpset_test', test_snmpset, env: test_env)
 test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
 test('snmptrap_test', test_snmptrap, env: test_env)
 test('snmpusm_test', test_snmpusm, env: test_env)
+test('snmpusm_shim_test', test_snmpusm_shim, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env, timeout: 120)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
 test('snmpwalk_null_shim_test', test_snmpwalk_null_shim, env: test_env)
