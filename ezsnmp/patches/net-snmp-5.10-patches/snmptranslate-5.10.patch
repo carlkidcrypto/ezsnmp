@@ -13,7 +13,7 @@
  #include <net-snmp/net-snmp-config.h>
  
  #ifdef HAVE_STDLIB_H
-@@ -48,200 +48,255 @@
+@@ -48,200 +48,259 @@
  #ifdef HAVE_NETINET_IN_H
  #include <netinet/in.h>
  #endif
@@ -318,10 +318,14 @@
 +   std::lock_guard<std::mutex> mib_lock(g_netsnmp_mib_mutex);
 +
 +   // Reset getopt global state before parsing arguments.
-+   optind = 1;
++   // On glibc/musl, optind = 0 is required to reinitialize internal getopt state
++   // (e.g. __nextchar) when a previous call exited early (such as -V or -h).
 +   opterr = 0;
 +#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
++   optind = 1;
 +   optreset = 1;
++#else
++   optind = 0;
 +#endif
 +
 +   while ((arg = getopt(argc, argv.get(), "Vhm:M:w:D:P:T:O:I:L:")) != EOF) {
@@ -406,7 +410,7 @@
          case 'T':
              for (cp = optarg; *cp; cp++) {
                  switch (*cp) {
-@@ -269,8 +314,8 @@
+@@ -269,8 +318,8 @@
  #endif /* NETSNMP_DISABLE_MIB_LOADING */
                  case 'd':
                      description = 1;
@@ -417,7 +421,7 @@
                      break;
                  case 'B':
                      find_all = 1;
-@@ -282,164 +327,115 @@
+@@ -282,164 +331,116 @@
                      print = 2;
                      break;
                  default:
@@ -525,6 +529,7 @@
 -					  NETSNMP_DS_LIB_REGEX_ACCESS)) {
 +      } else if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_REGEX_ACCESS)) {
  #ifndef NETSNMP_DISABLE_MIB_LOADING
++         clear_tree_flags(get_tree_head());
              if (0 == get_wild_node(current_name, name, &name_length)) {
  #endif /* NETSNMP_DISABLE_MIB_LOADING */
 -                fprintf(stderr,

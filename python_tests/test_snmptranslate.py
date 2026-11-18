@@ -121,3 +121,71 @@ def test_unknown_random_access_oid_raises_unknown_object_id_error():
     """Test that an unknown -IR OID raises UnknownObjectIDError."""
     with pytest.raises(UnknownObjectIDError):
         snmptranslate(["-IR", "nonexistentObjectIdentifierXYZ"])
+
+
+def test_version_then_help_resets_getopt():
+    """Test that calling -V (early return) followed by -h properly resets getopt."""
+    version_result = snmptranslate(["-V"])
+    assert len(version_result) == 1
+    assert "NET-SNMP version:" in version_result[0]
+    with pytest.raises(ParseError):
+        snmptranslate(["-h"])
+
+
+def test_find_all_regex_with_description():
+    """Test regex MIB object search with descriptions (-TB -Td)."""
+    result = snmptranslate(["-TB", "-Td", "sysDescr"])
+    assert len(result) >= 1
+    assert any("sysDescr" in item for item in result)
+
+
+def test_find_all_regex_not_found():
+    """Test that -TB with no match raises UnknownObjectIDError."""
+    with pytest.raises(UnknownObjectIDError):
+        snmptranslate(["-TB", "nonexistentObjectIdentifierXYZ"])
+
+
+def test_regex_access():
+    """Test regex OID lookup with -Ib and error on no match."""
+    result = snmptranslate(["-Ib", "-On", "sysDescr"])
+    assert len(result) == 1
+    assert ".1.3.6.1.2.1.1.1" in result[0]
+
+    with pytest.raises(UnknownObjectIDError):
+        snmptranslate(["-Ib", "nonexistentRegexObjectXYZ"])
+
+
+def test_width_and_parser_and_log_options():
+    """Test -w, -P, -O, -I, and -L valid and invalid options."""
+    result_w = snmptranslate(["-w", "80", "-Td", "SNMPv2-MIB::sysDescr.0"])
+    assert len(result_w) == 1
+    assert "sysDescr" in result_w[0]
+
+    result_p = snmptranslate(["-Pc", "-On", "SNMPv2-MIB::sysDescr.0"])
+    assert result_p == (".1.3.6.1.2.1.1.1.0",)
+
+    result_l = snmptranslate(["-Ln", "-On", "SNMPv2-MIB::sysDescr.0"])
+    assert result_l == (".1.3.6.1.2.1.1.1.0",)
+
+    for bad_args in (
+        ["-PX", "SNMPv2-MIB::sysDescr.0"],
+        ["-O?", "SNMPv2-MIB::sysDescr.0"],
+        ["-IX", "SNMPv2-MIB::sysDescr.0"],
+        ["-LX", "SNMPv2-MIB::sysDescr.0"],
+    ):
+        with pytest.raises(ParseError):
+            snmptranslate(bad_args)
+
+
+def test_print_reports_without_oid():
+    """Test -Tp, -Ta, -Tl, -To, -Ts, -Tt, and -Tz without an OID."""
+    for flag in ("-Tp", "-Ta", "-Tl", "-To", "-Ts", "-Tt", "-Tz"):
+        result = snmptranslate([flag])
+        assert len(result) == 1
+        assert len(result[0]) > 0
+
+
+def test_print_tree_unknown_numeric_oid():
+    """Test that -Tp with a numeric OID absent from MIB tree raises UnknownObjectIDError."""
+    with pytest.raises(UnknownObjectIDError):
+        snmptranslate(["-Tp", ".99.99.99"])

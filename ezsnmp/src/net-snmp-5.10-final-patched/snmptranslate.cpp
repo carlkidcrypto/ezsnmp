@@ -234,10 +234,14 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
    std::lock_guard<std::mutex> mib_lock(g_netsnmp_mib_mutex);
 
    // Reset getopt global state before parsing arguments.
-   optind = 1;
+   // On glibc/musl, optind = 0 is required to reinitialize internal getopt state
+   // (e.g. __nextchar) when a previous call exited early (such as -V or -h).
    opterr = 0;
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+   optind = 1;
    optreset = 1;
+#else
+   optind = 0;
 #endif
 
    while ((arg = getopt(argc, argv.get(), "Vhm:M:w:D:P:T:O:I:L:")) != EOF) {
@@ -402,6 +406,7 @@ std::vector<std::string> snmptranslate(std::vector<std::string> const &args,
          break;
       } else if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_REGEX_ACCESS)) {
 #ifndef NETSNMP_DISABLE_MIB_LOADING
+         clear_tree_flags(get_tree_head());
          if (0 == get_wild_node(current_name, name, &name_length)) {
 #endif /* NETSNMP_DISABLE_MIB_LOADING */
             throw UnknownObjectIDErrorBase("Unable to find a matching object identifier for \"" +
