@@ -110,3 +110,59 @@ def test_headers_only_brief_and_delimiter():
     assert "index," in result[0]
     assert "Index" in result[0]
     assert "ifIndex" not in result[0]
+
+
+def test_debug_flag_does_not_leak_across_calls():
+    """Test that -d output does not leak into subsequent snmptable calls."""
+    debug_result = snmptable(
+        ["-d", "-Ch", "-v", "2c", "-c", "public", "localhost:11161", "IF-MIB::ifTable"]
+    )
+    assert len(debug_result) == 1
+    assert "IF-MIB::ifIndex i" in debug_result[0]
+
+    clean_result = snmptable(
+        [
+            "-Ch",
+            "-Cb",
+            "-Ci",
+            "-Cl",
+            "-Cf",
+            ",",
+            "-v",
+            "2c",
+            "-c",
+            "public",
+            "localhost:11161",
+            "IF-MIB::ifTable",
+        ]
+    )
+    assert len(clean_result) == 1
+    assert "ifIndex" not in clean_result[0]
+
+
+def test_missing_option_args_raise_parse_error():
+    """Test that missing arguments for -Cw, -Cc, -Cf, -Cr raise ParseError."""
+    for flag in ("-Cw", "-Cc", "-Cf", "-Cr"):
+        with pytest.raises(ParseError):
+            snmptable([flag])
+
+
+def test_headers_only_width_options():
+    """Test -Ch with -Cw and -Cc formatting options."""
+    result = snmptable(
+        [
+            "-Ch",
+            "-Cc",
+            "12",
+            "-Cw",
+            "30",
+            "-v",
+            "2c",
+            "-c",
+            "public",
+            "localhost:11161",
+            "IF-MIB::ifTable",
+        ]
+    )
+    assert len(result) == 1
+    assert "ifIndex" in result[0]

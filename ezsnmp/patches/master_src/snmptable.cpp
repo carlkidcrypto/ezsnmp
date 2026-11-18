@@ -116,6 +116,7 @@ struct TableContext {
    int max_getbulk = 10;
    int extra_columns = 0;
    bool first_pass = true;
+   std::string opt_error;
 };
 
 thread_local TableContext *g_table_ctx = nullptr;
@@ -129,6 +130,7 @@ struct TableCtxGuard {
 
 struct QuickPrintGuard {
    int prev_quick_print = 0;
+   int prev_dump_packet = 0;
    bool armed = false;
    QuickPrintGuard() = default;
    ~QuickPrintGuard() {
@@ -136,6 +138,8 @@ struct QuickPrintGuard {
          std::lock_guard<std::mutex> lock(g_netsnmp_setup_mutex);
          netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_QUICK_PRINT,
                                 prev_quick_print);
+         netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DUMP_PACKET,
+                                prev_dump_packet);
       }
    }
    QuickPrintGuard(QuickPrintGuard const &) = delete;
@@ -181,9 +185,14 @@ std::string snmptable_usage_string() {
 
 void snmptable_optProc(int argc, char *const *argv, int opt) {
    if (!g_table_ctx) {
-      throw GenericErrorBase("snmptable internal context not initialized");
+      return;
    }
    TableContext &ctx = *g_table_ctx;
+   auto set_opt_error = [&ctx](std::string const &msg) {
+      if (ctx.opt_error.empty()) {
+         ctx.opt_error = msg;
+      }
+   };
 
    switch (opt) {
       case 'C':
@@ -193,12 +202,12 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                   if (optind < argc && argv[optind]) {
                      ctx.max_width = std::atoi(argv[optind]);
                      if (ctx.max_width == 0) {
-                        throw ParseErrorBase("Bad -Cw option: " + std::string(argv[optind]) + "\n" +
-                                             snmptable_usage_string());
+                        set_opt_error("Bad -Cw option: " + std::string(argv[optind]) + "\n" +
+                                      snmptable_usage_string());
                      }
                   } else {
-                     throw ParseErrorBase("Bad -Cw option: no argument given\n" +
-                                          snmptable_usage_string());
+                     set_opt_error("Bad -Cw option: no argument given\n" +
+                                   snmptable_usage_string());
                   }
                   optind++;
                   break;
@@ -207,14 +216,14 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                   if (optind < argc && argv[optind]) {
                      ctx.column_width = std::atoi(argv[optind]);
                      if (ctx.column_width <= 2) {
-                        throw ParseErrorBase("Bad -Cc option: " + std::string(argv[optind]) + "\n" +
-                                             snmptable_usage_string());
+                        set_opt_error("Bad -Cc option: " + std::string(argv[optind]) + "\n" +
+                                      snmptable_usage_string());
                      }
                      // Reduce by one for space at end of column
                      ctx.column_width -= 1;
                   } else {
-                     throw ParseErrorBase("Bad -Cc option: no argument given\n" +
-                                          snmptable_usage_string());
+                     set_opt_error("Bad -Cc option: no argument given\n" +
+                                   snmptable_usage_string());
                   }
                   optind++;
                   break;
@@ -227,8 +236,8 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                   if (optind < argc) {
                      ctx.field_separator = argv[optind];
                   } else {
-                     throw ParseErrorBase("Bad -Cf option: no argument given\n" +
-                                          snmptable_usage_string());
+                     set_opt_error("Bad -Cf option: no argument given\n" +
+                                   snmptable_usage_string());
                   }
                   optind++;
                   break;
@@ -257,19 +266,20 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                   if (optind < argc && argv[optind]) {
                      ctx.max_getbulk = std::atoi(argv[optind]);
                      if (ctx.max_getbulk == 0) {
-                        throw ParseErrorBase("Bad -Cr option: " + std::string(argv[optind]) + "\n" +
-                                             snmptable_usage_string());
+                        set_opt_error("Bad -Cr option: " + std::string(argv[optind]) + "\n" +
+                                      snmptable_usage_string());
                      }
                   } else {
-                     throw ParseErrorBase("Bad -Cr option: no argument given\n" +
-                                          snmptable_usage_string());
+                     set_opt_error("Bad -Cr option: no argument given\n" +
+                                   snmptable_usage_string());
                   }
                   optind++;
                   break;
 
                default:
-                  throw ParseErrorBase("Bad option after -C: " + std::string(1, optarg[-1]) + "\n" +
-                                       snmptable_usage_string());
+                  set_opt_error("Bad option after -C: " + std::string(1, optarg[-1]) + "\n" +
+                                snmptable_usage_string());
+                  break;
             }
          }
          break;
@@ -906,13 +916,21 @@ std::vector<std::string> snmptable(std::vector<std::string> const &args,
 
       quick_print_guard.prev_quick_print =
           netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_QUICK_PRINT);
+      quick_print_guard.prev_dump_packet =
+          netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DUMP_PACKET);
       quick_print_guard.armed = true;
       netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_QUICK_PRINT, 1);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DUMP_PACKET, 0);
 
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptable_optProc)) {
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptable_optProc);
+      if (!ctx.opt_error.empty()) {
+         throw ParseErrorBase(ctx.opt_error);
+      }
+
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 

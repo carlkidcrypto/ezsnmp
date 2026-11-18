@@ -19,6 +19,11 @@ TEST_F(SnmpTableTest, TestVersionThrowsParseError) {
    EXPECT_THROW(snmptable(args, "testing_snmptable_version"), ParseErrorBase);
 }
 
+TEST_F(SnmpTableTest, TestConfigHelpThrowsParseError) {
+   std::vector<std::string> args = {"-H"};
+   EXPECT_THROW(snmptable(args, "testing_snmptable_config_help"), ParseErrorBase);
+}
+
 TEST_F(SnmpTableTest, TestMissingTableNameThrowsParseError) {
    std::vector<std::string> args = {"-v", "2c", "-c", "public", "localhost"};
    EXPECT_THROW(snmptable(args, "testing_snmptable_missing_oid"), ParseErrorBase);
