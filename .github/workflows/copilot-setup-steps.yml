@@ -26,11 +26,5 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install gh-aw extension
-        uses: github/gh-aw-actions/setup-cli@5e508589e03a7757a7e05b26e834292f5445bfb6 # v0.88.8
-        with:
-          version: v0.88.8
+      - name: Setup Copilot gh-aw
+        uses: carlkidcrypto/shared-workflows/actions/setup-copilot-gh-aw@14e025f6c182b7b20718538f533ca467a9ff9c6c
