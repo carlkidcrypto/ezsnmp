@@ -585,11 +585,14 @@ def test_session_legacy_positional_args_and_errors():
     assert s_v3.auth_protocol == "MD5"
     s_v3.close()
 
-    with pytest.raises(TypeError, match="at most 51 positional arguments"):
-        Session(*(["x"] * 52))
+    with pytest.raises(TypeError, match="at most 24 positional arguments"):
+        Session(*(["x"] * 25))
 
     with pytest.raises(TypeError, match="unexpected keyword argument"):
         Session(nonexistent_option="bad")
+
+    with pytest.raises(TypeError, match="unexpected keyword argument"):
+        Session(dont_fix_pdus=True)
 
     with pytest.raises(TypeError, match="multiple values for argument 'hostname'"):
         Session("127.0.0.1", hostname="localhost")

@@ -865,16 +865,17 @@ def test_session_print_hex_strings_set(version):
 
 def test_session_new_output_input_mib_cli_args():
     session = Session(
-        hostname="localhost:11161",
-        version="2c",
-        print_oid_suffix_only=True,
-        print_ascii_strings=True,
-        output_precision="%.3f",
-        regex_oid_matching=True,
-        oid_suffix=".0",
-        oid_prefix=".1.3",
-        mib_allow_underline=True,
-        mib_replace_with_latest=True,
+        connection_options={"hostname": "localhost:11161", "version": "2c"},
+        mib_and_output_options={
+            "print_oid_suffix_only": True,
+            "print_ascii_strings": True,
+            "output_precision": "%.3f",
+            "regex_oid_matching": True,
+            "oid_suffix": ".0",
+            "oid_prefix": ".1.3",
+            "mib_allow_underline": True,
+            "mib_replace_with_latest": True,
+        },
     )
 
     assert session.args == (
@@ -910,14 +911,15 @@ def test_session_new_output_input_mib_cli_args():
 
 def test_session_app_c_flags_constructor_and_to_dict():
     session = Session(
-        hostname="localhost:11161",
-        version="2c",
-        non_repeaters=2,
-        walk_dont_check_lexicographic=True,
-        walk_include_requested=True,
-        walk_dont_get_requested=True,
-        walk_end_oid="1.3.6.1.2.1.2",
-        dont_fix_pdus=True,
+        connection_options={"hostname": "localhost:11161", "version": "2c"},
+        operation_options={
+            "non_repeaters": 2,
+            "walk_dont_check_lexicographic": True,
+            "walk_include_requested": True,
+            "walk_dont_get_requested": True,
+            "walk_end_oid": "1.3.6.1.2.1.2",
+            "dont_fix_pdus": True,
+        },
     )
 
     assert session.non_repeaters == "2"
