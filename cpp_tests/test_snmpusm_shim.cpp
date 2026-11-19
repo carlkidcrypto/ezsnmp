@@ -540,6 +540,98 @@ TEST_F(SnmpUsmShimTest, TestPasswdVariantsAndErrors) {
            "newpass123"};
    EXPECT_EQ(snmpusm(args, "shim"),
              std::vector<std::string>({"SNMPv3 Key(s) successfully changed."}));
+
+   // Empty oldpass -> generate_Ku fails for old Ku
+   args = {"-v",
+           "3",
+           "-e",
+           "800000020109840301",
+           "-E",
+           "800000020109840301",
+           "-u",
+           "initial_md5_aes",
+           "-l",
+           "authPriv",
+           "-a",
+           "MD5",
+           "-A",
+           "auth_pass",
+           "-x",
+           "AES",
+           "-X",
+           "priv_pass",
+           "-r",
+           "0",
+           "-t",
+           "0.05",
+           "localhost:11161",
+           "passwd",
+           "",
+           "newpass123"};
+   EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
+
+   // Empty newpass -> generate_Ku fails for new Ku
+   args = {"-v",
+           "3",
+           "-e",
+           "800000020109840301",
+           "-E",
+           "800000020109840301",
+           "-u",
+           "initial_md5_aes",
+           "-l",
+           "authPriv",
+           "-a",
+           "MD5",
+           "-A",
+           "auth_pass",
+           "-x",
+           "AES",
+           "-X",
+           "priv_pass",
+           "-r",
+           "0",
+           "-t",
+           "0.05",
+           "localhost:11161",
+           "passwd",
+           "oldpass123",
+           ""};
+   EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
+
+   // -Ck with mismatched localized key lengths -> encode_keychange fails for auth and priv
+   args = {"-Ca",
+           "-Ck",
+           "-v",
+           "3",
+           "-e",
+           "800000020109840301",
+           "-E",
+           "800000020109840301",
+           "-u",
+           "initial_md5_aes",
+           "-l",
+           "authPriv",
+           "-a",
+           "MD5",
+           "-A",
+           "auth_pass",
+           "-x",
+           "AES",
+           "-X",
+           "priv_pass",
+           "-r",
+           "0",
+           "-t",
+           "0.05",
+           "localhost:11161",
+           "passwd",
+           "0x1234",
+           "0x56789abc"};
+   EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
+
+   args[0] = "-Cx";
+   EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
 }
 
 TEST_F(SnmpUsmShimTest, TestChangekeySuccessAndErrors) {
@@ -840,5 +932,8 @@ TEST_F(SnmpUsmShimTest, TestSessOpenFailureThrows) {
 
 TEST_F(SnmpUsmShimTest, TestParseArgsErrorThrows) {
    std::vector<std::string> args = {"-v", "3", "-e", "ZZZZ", "localhost:11161", "delete", "u1"};
+   EXPECT_THROW(snmpusm(args, "shim"), ParseErrorBase);
+
+   args = {"-v", "99", "localhost:11161", "delete", "u1"};
    EXPECT_THROW(snmpusm(args, "shim"), ParseErrorBase);
 }

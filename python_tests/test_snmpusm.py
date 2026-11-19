@@ -168,6 +168,7 @@ def test_create_activate_deactivate_delete_live():
         "localhost:11161",
     ]
     temp_user = "ezsnmp_test_usm_py"
+    deleted = False
     try:
         res = snmpusm(base_args + ["create", temp_user, "initial_md5_aes"])
         assert res == ("User successfully created.",)
@@ -177,9 +178,13 @@ def test_create_activate_deactivate_delete_live():
 
         res = snmpusm(base_args + ["activate", temp_user])
         assert res == ("User successfully activated.",)
+
+        res = snmpusm(base_args + ["delete", temp_user])
+        assert res == ("User successfully deleted.",)
+        deleted = True
     finally:
-        try:
-            res = snmpusm(base_args + ["delete", temp_user])
-            assert res == ("User successfully deleted.",)
-        except Exception:
-            pass
+        if not deleted:
+            try:
+                snmpusm(base_args + ["delete", temp_user])
+            except Exception:
+                pass
