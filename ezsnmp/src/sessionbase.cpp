@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cassert>
+#include <cctype>
 #include <cstddef>
 #include <cstring>
 #include <map>
@@ -302,10 +303,128 @@ SessionBase::SessionBase(std::string const& hostname,
       m_walk_dont_get_requested(walk_dont_get_requested),
       m_walk_end_oid(walk_end_oid),
       m_dont_fix_pdus(dont_fix_pdus) {
+   init_session();
+}
+
+namespace {
+bool parse_bool_option(std::string const& key, std::string const& value) {
+   std::string lower;
+   lower.reserve(value.size());
+   for (unsigned char ch : value) {
+      lower.push_back(static_cast<char>(std::tolower(ch)));
+   }
+   if (lower == "true" || lower == "1" || lower == "yes") {
+      return true;
+   }
+   if (lower == "false" || lower == "0" || lower == "no") {
+      return false;
+   }
+   throw std::invalid_argument("Invalid boolean value '" + value + "' for option '" + key + "'");
+}
+
+void apply_option_map(std::map<std::string, std::string> const& options,
+                      std::map<std::string, std::string*> const& string_fields,
+                      std::map<std::string, bool*> const& bool_fields,
+                      std::string const& group_name) {
+   for (auto const& [key, value] : options) {
+      if (auto it = string_fields.find(key); it != string_fields.end()) {
+         *(it->second) = value;
+      } else if (auto bit = bool_fields.find(key); bit != bool_fields.end()) {
+         *(bit->second) = parse_bool_option(key, value);
+      } else {
+         throw std::invalid_argument("Unknown option '" + key + "' in " + group_name);
+      }
+   }
+}
+} // namespace
+
+void SessionBase::init_session() {
    populate_args();
 
    static std::atomic<uint64_t> s_session_counter{1};
    m_init_name = "ezsnmp_" + std::to_string(s_session_counter.fetch_add(1));
+}
+
+void SessionBase::apply_connection_options(std::map<std::string, std::string> const& options) {
+   apply_option_map(options,
+                    {{"hostname", &m_hostname},
+                     {"port_number", &m_port_number},
+                     {"version", &m_version},
+                     {"community", &m_community},
+                     {"retries", &m_retries},
+                     {"timeout", &m_timeout}},
+                    {}, "connection_options");
+}
+
+void SessionBase::apply_v3_options(std::map<std::string, std::string> const& options) {
+   apply_option_map(options,
+                    {{"auth_protocol", &m_auth_protocol},
+                     {"auth_passphrase", &m_auth_passphrase},
+                     {"security_engine_id", &m_security_engine_id},
+                     {"context_engine_id", &m_context_engine_id},
+                     {"security_level", &m_security_level},
+                     {"context", &m_context},
+                     {"security_username", &m_security_username},
+                     {"privacy_protocol", &m_privacy_protocol},
+                     {"privacy_passphrase", &m_privacy_passphrase},
+                     {"boots_time", &m_boots_time}},
+                    {}, "v3_options");
+}
+
+void SessionBase::apply_mib_and_output_options(std::map<std::string, std::string> const& options) {
+   apply_option_map(options,
+                    {{"load_mibs", &m_load_mibs},
+                     {"mib_directories", &m_mib_directories},
+                     {"output_precision", &m_output_precision},
+                     {"oid_suffix", &m_oid_suffix},
+                     {"oid_prefix", &m_oid_prefix}},
+                    {{"print_enums_numerically", &m_print_enums_numerically},
+                     {"print_full_oids", &m_print_full_oids},
+                     {"print_oids_numerically", &m_print_oids_numerically},
+                     {"print_timeticks_numerically", &m_print_timeticks_numerically},
+                     {"print_hex_strings", &m_print_hex_strings},
+                     {"print_oid_suffix_only", &m_print_oid_suffix_only},
+                     {"print_oid_module_name", &m_print_oid_module_name},
+                     {"print_oid_ucd_style", &m_print_oid_ucd_style},
+                     {"print_ascii_strings", &m_print_ascii_strings},
+                     {"print_leading_zero_hex", &m_print_leading_zero_hex},
+                     {"print_hex_text", &m_print_hex_text},
+                     {"dont_breakdown_oids", &m_dont_breakdown_oids},
+                     {"escape_quotes_in_indexes", &m_escape_quotes_in_indexes},
+                     {"extended_index_format", &m_extended_index_format},
+                     {"dont_print_units", &m_dont_print_units},
+                     {"regex_oid_matching", &m_regex_oid_matching},
+                     {"ignore_display_hints", &m_ignore_display_hints},
+                     {"dont_check_range", &m_dont_check_range},
+                     {"random_access_oid", &m_random_access_oid},
+                     {"read_ucd_style_oid", &m_read_ucd_style_oid},
+                     {"mib_allow_underline", &m_mib_allow_underline},
+                     {"mib_comment_to_eol", &m_mib_comment_to_eol},
+                     {"mib_replace_with_latest", &m_mib_replace_with_latest}},
+                    "mib_and_output_options");
+}
+
+void SessionBase::apply_operation_options(std::map<std::string, std::string> const& options) {
+   apply_option_map(options,
+                    {{"set_max_repeaters_to_num", &m_set_max_repeaters_to_num},
+                     {"non_repeaters", &m_non_repeaters},
+                     {"walk_end_oid", &m_walk_end_oid}},
+                    {{"walk_dont_check_lexicographic", &m_walk_dont_check_lexicographic},
+                     {"walk_include_requested", &m_walk_include_requested},
+                     {"walk_dont_get_requested", &m_walk_dont_get_requested},
+                     {"dont_fix_pdus", &m_dont_fix_pdus}},
+                    "operation_options");
+}
+
+SessionBase::SessionBase(std::map<std::string, std::string> const& connection_options,
+                         std::map<std::string, std::string> const& v3_options,
+                         std::map<std::string, std::string> const& mib_and_output_options,
+                         std::map<std::string, std::string> const& operation_options) {
+   apply_connection_options(connection_options);
+   apply_v3_options(v3_options);
+   apply_mib_and_output_options(mib_and_output_options);
+   apply_operation_options(operation_options);
+   init_session();
 }
 
 SessionBase::~SessionBase() {}

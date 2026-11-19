@@ -485,3 +485,63 @@ def test_session_new_cli_options_defaults_and_setters():
     assert d["dont_fix_pdus"] is True
 
     del s
+
+
+def test_session_grouped_options_constructor():
+    import warnings
+    import pytest
+    from ezsnmp import Session
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", DeprecationWarning)
+        s = Session(
+            connection_options={
+                "hostname": "127.0.0.1",
+                "port_number": 1161,
+                "version": 2,
+                "community": "private",
+                "retries": 4,
+                "timeout": 2,
+            },
+            v3_options={
+                "security_username": "bert",
+                "context": "ctx1",
+            },
+            mib_and_output_options={
+                "print_oids_numerically": True,
+                "output_precision": "%.2f",
+                "mib_allow_underline": True,
+            },
+            operation_options={
+                "set_max_repeaters_to_num": 25,
+                "non_repeaters": 2,
+                "walk_end_oid": "1.3.6.1.2.1.2",
+                "dont_fix_pdus": True,
+            },
+        )
+
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert s.hostname == "127.0.0.1"
+    assert s.port_number == "1161"
+    assert s.version == "2c"
+    assert s.community == "private"
+    assert s.retries == "4"
+    assert s.timeout == "2"
+    assert s.security_username == "bert"
+    assert s.context == "ctx1"
+    assert s.print_oids_numerically is True
+    assert s.output_precision == "%.2f"
+    assert s.mib_allow_underline is True
+    assert s._Session__set_max_repeaters_to_num == "25"
+    assert s.set_max_repeaters_to_num == ""
+    assert s.non_repeaters == "2"
+    assert s.walk_end_oid == "1.3.6.1.2.1.2"
+    assert s.dont_fix_pdus is True
+    s.close()
+
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        legacy = Session(hostname="localhost", version=2, retries=5)
+    assert legacy.hostname == "localhost"
+    assert legacy.version == "2c"
+    assert legacy.retries == "5"
+    legacy.close()

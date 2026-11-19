@@ -1,6 +1,26 @@
+import warnings
+from typing import Any, Dict, Optional, Union
+
 from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
-from typing import Union
+
+_UNSET: Any = object()
+
+
+def _normalize_option_value(key: str, value: Any) -> str:
+    """Convert a Python option value into the string representation expected by SessionBase."""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if key == "version" and value == 2:
+        return "2c"
+    return str(value)
+
+
+def _normalize_option_map(options: Optional[Dict[str, Any]]) -> Dict[str, str]:
+    """Normalize an optional dict of session options into ``dict[str, str]``."""
+    if not options:
+        return {}
+    return {str(k): _normalize_option_value(str(k), v) for k, v in options.items()}
 
 
 class Session(SessionBase):
@@ -33,57 +53,61 @@ class Session(SessionBase):
 
     def __init__(
         self,
-        hostname: str = "localhost",
-        port_number: Union[str, int] = "",
-        version: Union[str, int] = "3",
-        community: str = "public",
-        auth_protocol: str = "",
-        auth_passphrase: str = "",
-        security_engine_id: str = "",
-        context_engine_id: str = "",
-        security_level: str = "",
-        context: str = "",
-        security_username: str = "",
-        privacy_protocol: str = "",
-        privacy_passphrase: str = "",
-        boots_time: str = "",
-        retries: Union[str, int] = "3",
-        timeout: Union[str, int] = "1",
-        load_mibs: str = "",
-        mib_directories: str = "",
-        print_enums_numerically: bool = False,
-        print_full_oids: bool = False,
-        print_oids_numerically: bool = False,
-        print_timeticks_numerically: bool = False,
-        print_hex_strings: bool = False,
-        set_max_repeaters_to_num: Union[str, int] = "10",
-        print_oid_suffix_only: bool = False,
-        print_oid_module_name: bool = False,
-        print_oid_ucd_style: bool = False,
-        print_ascii_strings: bool = False,
-        print_leading_zero_hex: bool = False,
-        print_hex_text: bool = False,
-        dont_breakdown_oids: bool = False,
-        escape_quotes_in_indexes: bool = False,
-        extended_index_format: bool = False,
-        dont_print_units: bool = False,
-        output_precision: str = "",
-        regex_oid_matching: bool = False,
-        ignore_display_hints: bool = False,
-        dont_check_range: bool = False,
-        random_access_oid: bool = False,
-        read_ucd_style_oid: bool = False,
-        oid_suffix: str = "",
-        oid_prefix: str = "",
-        mib_allow_underline: bool = False,
-        mib_comment_to_eol: bool = False,
-        mib_replace_with_latest: bool = False,
-        non_repeaters: Union[str, int] = "",
-        walk_dont_check_lexicographic: bool = False,
-        walk_include_requested: bool = False,
-        walk_dont_get_requested: bool = False,
-        walk_end_oid: str = "",
-        dont_fix_pdus: bool = False,
+        hostname: Union[str, Any] = _UNSET,
+        port_number: Union[str, int, Any] = _UNSET,
+        version: Union[str, int, Any] = _UNSET,
+        community: Union[str, Any] = _UNSET,
+        auth_protocol: Union[str, Any] = _UNSET,
+        auth_passphrase: Union[str, Any] = _UNSET,
+        security_engine_id: Union[str, Any] = _UNSET,
+        context_engine_id: Union[str, Any] = _UNSET,
+        security_level: Union[str, Any] = _UNSET,
+        context: Union[str, Any] = _UNSET,
+        security_username: Union[str, Any] = _UNSET,
+        privacy_protocol: Union[str, Any] = _UNSET,
+        privacy_passphrase: Union[str, Any] = _UNSET,
+        boots_time: Union[str, Any] = _UNSET,
+        retries: Union[str, int, Any] = _UNSET,
+        timeout: Union[str, int, Any] = _UNSET,
+        load_mibs: Union[str, Any] = _UNSET,
+        mib_directories: Union[str, Any] = _UNSET,
+        print_enums_numerically: Union[bool, Any] = _UNSET,
+        print_full_oids: Union[bool, Any] = _UNSET,
+        print_oids_numerically: Union[bool, Any] = _UNSET,
+        print_timeticks_numerically: Union[bool, Any] = _UNSET,
+        print_hex_strings: Union[bool, Any] = _UNSET,
+        set_max_repeaters_to_num: Union[str, int, Any] = _UNSET,
+        print_oid_suffix_only: Union[bool, Any] = _UNSET,
+        print_oid_module_name: Union[bool, Any] = _UNSET,
+        print_oid_ucd_style: Union[bool, Any] = _UNSET,
+        print_ascii_strings: Union[bool, Any] = _UNSET,
+        print_leading_zero_hex: Union[bool, Any] = _UNSET,
+        print_hex_text: Union[bool, Any] = _UNSET,
+        dont_breakdown_oids: Union[bool, Any] = _UNSET,
+        escape_quotes_in_indexes: Union[bool, Any] = _UNSET,
+        extended_index_format: Union[bool, Any] = _UNSET,
+        dont_print_units: Union[bool, Any] = _UNSET,
+        output_precision: Union[str, Any] = _UNSET,
+        regex_oid_matching: Union[bool, Any] = _UNSET,
+        ignore_display_hints: Union[bool, Any] = _UNSET,
+        dont_check_range: Union[bool, Any] = _UNSET,
+        random_access_oid: Union[bool, Any] = _UNSET,
+        read_ucd_style_oid: Union[bool, Any] = _UNSET,
+        oid_suffix: Union[str, Any] = _UNSET,
+        oid_prefix: Union[str, Any] = _UNSET,
+        mib_allow_underline: Union[bool, Any] = _UNSET,
+        mib_comment_to_eol: Union[bool, Any] = _UNSET,
+        mib_replace_with_latest: Union[bool, Any] = _UNSET,
+        non_repeaters: Union[str, int, Any] = _UNSET,
+        walk_dont_check_lexicographic: Union[bool, Any] = _UNSET,
+        walk_include_requested: Union[bool, Any] = _UNSET,
+        walk_dont_get_requested: Union[bool, Any] = _UNSET,
+        walk_end_oid: Union[str, Any] = _UNSET,
+        dont_fix_pdus: Union[bool, Any] = _UNSET,
+        connection_options: Optional[Dict[str, Any]] = None,
+        v3_options: Optional[Dict[str, Any]] = None,
+        mib_and_output_options: Optional[Dict[str, Any]] = None,
+        operation_options: Optional[Dict[str, Any]] = None,
     ):
         """Initialize the Session object with NetSNMP session parameters.
 
@@ -206,73 +230,112 @@ class Session(SessionBase):
         # This is the case, since at the end of the day we are building a command line string
         # to pass to the NetSNMP command line tool.
         try:
+            conn_opts = _normalize_option_map(connection_options)
+            v3_opts = _normalize_option_map(v3_options)
+            mib_opts = _normalize_option_map(mib_and_output_options)
+            op_opts = _normalize_option_map(operation_options)
 
-            temp_version = ""
-            if version == 2:
-                temp_version = "2c"
-            else:
-                temp_version = str(version)
+            legacy_groups = (
+                (
+                    conn_opts,
+                    {
+                        "hostname": hostname,
+                        "port_number": port_number,
+                        "version": version,
+                        "community": community,
+                        "retries": retries,
+                        "timeout": timeout,
+                    },
+                ),
+                (
+                    v3_opts,
+                    {
+                        "auth_protocol": auth_protocol,
+                        "auth_passphrase": auth_passphrase,
+                        "security_engine_id": security_engine_id,
+                        "context_engine_id": context_engine_id,
+                        "security_level": security_level,
+                        "context": context,
+                        "security_username": security_username,
+                        "privacy_protocol": privacy_protocol,
+                        "privacy_passphrase": privacy_passphrase,
+                        "boots_time": boots_time,
+                    },
+                ),
+                (
+                    mib_opts,
+                    {
+                        "load_mibs": load_mibs,
+                        "mib_directories": mib_directories,
+                        "print_enums_numerically": print_enums_numerically,
+                        "print_full_oids": print_full_oids,
+                        "print_oids_numerically": print_oids_numerically,
+                        "print_timeticks_numerically": print_timeticks_numerically,
+                        "print_hex_strings": print_hex_strings,
+                        "print_oid_suffix_only": print_oid_suffix_only,
+                        "print_oid_module_name": print_oid_module_name,
+                        "print_oid_ucd_style": print_oid_ucd_style,
+                        "print_ascii_strings": print_ascii_strings,
+                        "print_leading_zero_hex": print_leading_zero_hex,
+                        "print_hex_text": print_hex_text,
+                        "dont_breakdown_oids": dont_breakdown_oids,
+                        "escape_quotes_in_indexes": escape_quotes_in_indexes,
+                        "extended_index_format": extended_index_format,
+                        "dont_print_units": dont_print_units,
+                        "output_precision": output_precision,
+                        "regex_oid_matching": regex_oid_matching,
+                        "ignore_display_hints": ignore_display_hints,
+                        "dont_check_range": dont_check_range,
+                        "random_access_oid": random_access_oid,
+                        "read_ucd_style_oid": read_ucd_style_oid,
+                        "oid_suffix": oid_suffix,
+                        "oid_prefix": oid_prefix,
+                        "mib_allow_underline": mib_allow_underline,
+                        "mib_comment_to_eol": mib_comment_to_eol,
+                        "mib_replace_with_latest": mib_replace_with_latest,
+                    },
+                ),
+                (
+                    op_opts,
+                    {
+                        "set_max_repeaters_to_num": set_max_repeaters_to_num,
+                        "non_repeaters": non_repeaters,
+                        "walk_dont_check_lexicographic": walk_dont_check_lexicographic,
+                        "walk_include_requested": walk_include_requested,
+                        "walk_dont_get_requested": walk_dont_get_requested,
+                        "walk_end_oid": walk_end_oid,
+                        "dont_fix_pdus": dont_fix_pdus,
+                    },
+                ),
+            )
+
+            used_legacy_params = False
+            for target_dict, legacy_params in legacy_groups:
+                for key, val in legacy_params.items():
+                    if val is not _UNSET:
+                        used_legacy_params = True
+                        target_dict[key] = _normalize_option_value(key, val)
+
+            if used_legacy_params:
+                warnings.warn(
+                    "Passing individual flat parameters to Session.__init__() is deprecated and "
+                    "will be removed in a future release. Pass grouped dictionaries "
+                    "(connection_options, v3_options, mib_and_output_options, operation_options) "
+                    "instead.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+
+            max_repeaters = op_opts.pop("set_max_repeaters_to_num", "10")
 
             # Initialize the SWIG-wrapped C++ SessionBase via super().__init__().
             # This ensures that calling inherited methods like _get_context() directly
             # on the Session object works correctly (fixes GitHub issue #656).
-            super().__init__(
-                hostname,
-                str(port_number),
-                temp_version,
-                community,
-                auth_protocol,
-                auth_passphrase,
-                security_engine_id,
-                context_engine_id,
-                security_level,
-                context,
-                security_username,
-                privacy_protocol,
-                privacy_passphrase,
-                boots_time,
-                str(retries),
-                str(timeout),
-                load_mibs,
-                mib_directories,
-                print_enums_numerically,
-                print_full_oids,
-                print_oids_numerically,
-                print_timeticks_numerically,
-                print_hex_strings,
-                "",  # Set to empty string here. We will set it in the bulk methods.
-                print_oid_suffix_only,
-                print_oid_module_name,
-                print_oid_ucd_style,
-                print_ascii_strings,
-                print_leading_zero_hex,
-                print_hex_text,
-                dont_breakdown_oids,
-                escape_quotes_in_indexes,
-                extended_index_format,
-                dont_print_units,
-                output_precision,
-                regex_oid_matching,
-                ignore_display_hints,
-                dont_check_range,
-                random_access_oid,
-                read_ucd_style_oid,
-                oid_suffix,
-                oid_prefix,
-                mib_allow_underline,
-                mib_comment_to_eol,
-                mib_replace_with_latest,
-                str(non_repeaters),
-                walk_dont_check_lexicographic,
-                walk_include_requested,
-                walk_dont_get_requested,
-                walk_end_oid,
-                dont_fix_pdus,
-            )
+            super().__init__(conn_opts, v3_opts, mib_opts, op_opts)
 
             # Track the closed state for __del__ and multiple closes
             self._closed = False
-            self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
+            self.__set_max_repeaters_to_num = max_repeaters
 
         except Exception as e:
             _handle_error(e)

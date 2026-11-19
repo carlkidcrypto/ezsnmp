@@ -342,3 +342,77 @@ INSTANTIATE_TEST_SUITE_P(
         ExtendedCliOptionCase{
             "dont_fix_pdus", [](SessionBase& s) { s._set_dont_fix_pdus(true); }, {"-Cf"}}),
     [](testing::TestParamInfo<ExtendedCliOptionCase> const& info) { return info.param.name; });
+
+TEST(SessionBaseGroupedConstructorTest, DefaultsPreservedWithEmptyMaps) {
+   SessionBase session(std::map<std::string, std::string>{});
+   EXPECT_EQ(session._get_hostname(), "localhost");
+   EXPECT_EQ(session._get_port_number(), "");
+   EXPECT_EQ(session._get_version(), "3");
+   EXPECT_EQ(session._get_community(), "public");
+   EXPECT_EQ(session._get_retries(), "3");
+   EXPECT_EQ(session._get_timeout(), "1");
+   EXPECT_FALSE(session._get_print_enums_numerically());
+   EXPECT_FALSE(session._get_dont_fix_pdus());
+}
+
+TEST(SessionBaseGroupedConstructorTest, PopulatesAllFourOptionGroups) {
+   SessionBase session({{"hostname", "127.0.0.1"},
+                        {"port_number", "1161"},
+                        {"version", "3"},
+                        {"community", "private"},
+                        {"retries", "5"},
+                        {"timeout", "2"}},
+                       {{"auth_protocol", "SHA"},
+                        {"auth_passphrase", "authpass"},
+                        {"security_engine_id", "800000020109840301"},
+                        {"context_engine_id", "800000020109840302"},
+                        {"security_level", "authPriv"},
+                        {"context", "ctx1"},
+                        {"security_username", "bert"},
+                        {"privacy_protocol", "AES"},
+                        {"privacy_passphrase", "privpass"},
+                        {"boots_time", "10,20"}},
+                       {{"load_mibs", "IF-MIB"},
+                        {"mib_directories", "/usr/share/snmp/mibs"},
+                        {"print_enums_numerically", "true"},
+                        {"print_full_oids", "1"},
+                        {"print_oids_numerically", "yes"},
+                        {"output_precision", "%.2f"},
+                        {"mib_allow_underline", "TRUE"},
+                        {"dont_print_units", "false"}},
+                       {{"set_max_repeaters_to_num", "25"},
+                        {"non_repeaters", "2"},
+                        {"walk_dont_check_lexicographic", "true"},
+                        {"walk_end_oid", "1.3.6.1.2.1.2"},
+                        {"dont_fix_pdus", "1"}});
+
+   EXPECT_EQ(session._get_hostname(), "127.0.0.1");
+   EXPECT_EQ(session._get_port_number(), "1161");
+   EXPECT_EQ(session._get_version(), "3");
+   EXPECT_EQ(session._get_community(), "private");
+   EXPECT_EQ(session._get_retries(), "5");
+   EXPECT_EQ(session._get_timeout(), "2");
+   EXPECT_EQ(session._get_auth_protocol(), "SHA");
+   EXPECT_EQ(session._get_security_username(), "bert");
+   EXPECT_EQ(session._get_privacy_protocol(), "AES");
+   EXPECT_EQ(session._get_load_mibs(), "IF-MIB");
+   EXPECT_TRUE(session._get_print_enums_numerically());
+   EXPECT_TRUE(session._get_print_full_oids());
+   EXPECT_TRUE(session._get_print_oids_numerically());
+   EXPECT_FALSE(session._get_dont_print_units());
+   EXPECT_EQ(session._get_output_precision(), "%.2f");
+   EXPECT_TRUE(session._get_mib_allow_underline());
+   EXPECT_EQ(session._get_set_max_repeaters_to_num(), "25");
+   EXPECT_EQ(session._get_non_repeaters(), "2");
+   EXPECT_TRUE(session._get_walk_dont_check_lexicographic());
+   EXPECT_EQ(session._get_walk_end_oid(), "1.3.6.1.2.1.2");
+   EXPECT_TRUE(session._get_dont_fix_pdus());
+}
+
+TEST(SessionBaseGroupedConstructorTest, ThrowsOnUnknownKeyOrInvalidBool) {
+   EXPECT_THROW((SessionBase{std::map<std::string, std::string>{{"unknown_key", "val"}}}),
+                std::invalid_argument);
+   EXPECT_THROW((SessionBase{{}, {{"not_a_v3_key", "val"}}}), std::invalid_argument);
+   EXPECT_THROW((SessionBase{{}, {}, {{"print_full_oids", "not_a_bool"}}}), std::invalid_argument);
+   EXPECT_THROW((SessionBase{{}, {}, {}, {{"bad_op_key", "1"}}}), std::invalid_argument);
+}

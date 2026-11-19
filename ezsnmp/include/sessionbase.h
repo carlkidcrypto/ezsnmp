@@ -1,6 +1,7 @@
 #ifndef SESSIONBASE_H
 #define SESSIONBASE_H
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -15,11 +16,11 @@
  */
 class SessionBase {
   private:
-   std::vector<std::string> m_args; ///< Vector to store SNMP command arguments.
-   std::string m_hostname = "";     ///< Hostname or IP address of the SNMP agent [AGENT].
-   std::string m_port_number = "";  ///< Port number for the SNMP agent.
-   std::string m_version = "";      ///< SNMP version (1|2c|3).
-   std::string m_community = "";    ///< Community string (COMMUNITY).
+   std::vector<std::string> m_args;      ///< Vector to store SNMP command arguments.
+   std::string m_hostname = "localhost"; ///< Hostname or IP address of the SNMP agent [AGENT].
+   std::string m_port_number = "";       ///< Port number for the SNMP agent.
+   std::string m_version = "3";          ///< SNMP version (1|2c|3).
+   std::string m_community = "public";   ///< Community string (COMMUNITY).
    std::string m_auth_protocol =
        ""; ///< Authentication protocol (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512).
    std::string m_auth_passphrase = ""; ///< Authentication protocol pass phrase (PASSPHRASE).
@@ -32,8 +33,8 @@ class SessionBase {
    std::string m_privacy_protocol = "";  ///< Privacy protocol (DES|AES|AES-192|AES-256).
    std::string m_privacy_passphrase = "";  ///< Privacy protocol pass phrase (PASSPHRASE).
    std::string m_boots_time = "";          ///< Destination engine boots/time (BOOTS,TIME).
-   std::string m_retries = "";             ///< Number of retries (RETRIES).
-   std::string m_timeout = "";             ///< Request timeout in seconds (TIMEOUT).
+   std::string m_retries = "3";            ///< Number of retries (RETRIES).
+   std::string m_timeout = "1";            ///< Request timeout in seconds (TIMEOUT).
    std::string m_load_mibs = "";           ///< Load given list of MIBs (MIB[:...]).
    std::string m_mib_directories = "";     ///< Directories to search for MIBs (DIR[:...]).
    bool m_print_enums_numerically = false; ///< Print enums numerically (-O e).
@@ -95,6 +96,16 @@ class SessionBase {
     * @brief Clears the cached SNMPv3 user for the current session parameters.
     */
    void check_and_clear_v3_user();
+
+   /**
+    * @brief Initializes session arguments and unique Net-SNMP application identifier.
+    */
+   void init_session();
+
+   void apply_connection_options(std::map<std::string, std::string> const& options);
+   void apply_v3_options(std::map<std::string, std::string> const& options);
+   void apply_mib_and_output_options(std::map<std::string, std::string> const& options);
+   void apply_operation_options(std::map<std::string, std::string> const& options);
 
   public:
    /**
@@ -161,6 +172,10 @@ class SessionBase {
     * @param walk_end_oid Stop walk at specified OID (-C E) (default: "").
     * @param dont_fix_pdus Do not fix PDUs on errors (-C f) (default: false).
     */
+#ifndef SWIG
+   [[deprecated(
+       "Use the grouped std::map<std::string, std::string> SessionBase constructor instead.")]]
+#endif
    SessionBase(std::string const& hostname = "localhost",
                std::string const& port_number = "",
                std::string const& version = "3",
@@ -212,6 +227,24 @@ class SessionBase {
                bool walk_dont_get_requested = false,
                std::string const& walk_end_oid = "",
                bool dont_fix_pdus = false);
+
+   /**
+    * @brief Construct a new SessionBase object using grouped option maps.
+    *
+    * @param connection_options Connection settings (hostname, port_number, version, community,
+    * retries, timeout).
+    * @param v3_options SNMPv3 security settings (auth_protocol, auth_passphrase,
+    * security_engine_id, context_engine_id, security_level, context, security_username,
+    * privacy_protocol, privacy_passphrase, boots_time).
+    * @param mib_and_output_options MIB loading, output (-O), input (-I), and parser (-P) options.
+    * @param operation_options Operation-specific options (set_max_repeaters_to_num, non_repeaters,
+    * walk_dont_check_lexicographic, walk_include_requested, walk_dont_get_requested, walk_end_oid,
+    * dont_fix_pdus).
+    */
+   SessionBase(std::map<std::string, std::string> const& connection_options,
+               std::map<std::string, std::string> const& v3_options = {},
+               std::map<std::string, std::string> const& mib_and_output_options = {},
+               std::map<std::string, std::string> const& operation_options = {});
 
    /**
     * @brief Destructor for SessionBase.
