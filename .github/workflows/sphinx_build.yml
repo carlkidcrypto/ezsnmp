@@ -19,90 +19,22 @@ jobs:
   verify-syntax:
     permissions: { contents: read }
     uses: ./.github/workflows/verify_syntax.yml
-  sphinx_docs_build:
+  sphinx-build:
     needs: verify-syntax
     if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
     permissions:
-      contents: write
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Set up Python 3.14 env for sphinx...
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: "3.14"
-
-      - name: Cache pip dependencies
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-sphinx-${{ hashFiles('sphinx_docs_build/requirements.txt', 'sphinx_docs_build/landing/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-sphinx-
-            ${{ runner.os }}-pip-
-
-      - name: Install Build Requirements
-        run: |
-          sudo apt update
-          sudo apt install -y g++ python3-dev doxygen
-          sudo bash ./tools/prepare_linux_netsnmp.sh
-
-      - name: Install Pip Requirements
-        run: |
-          cd ${{ github.workspace }}/sphinx_docs_build
-          # Try to install requirements, if it fails then purge cache and retry
-          if ! pip install -r requirements.txt; then
-            echo "Installation failed, purging pip cache and retrying..."
-            pip install --upgrade pip || true
-            pip cache purge || true
-            pip install -r requirements.txt
-          fi
-          pip install -r ${{ github.workspace }}/sphinx_docs_build/landing/requirements.txt
-
-      - name: Run sphinx (latest)
-        run: |
-          cd ${{ github.workspace }}
-          rm -drf build ezsnmp.egg-info
-          python3 -m pip install . --verbose
-          mkdir -p doxygen_docs_build
-          doxygen .doxygen
-          cd ${{ github.workspace }}/sphinx_docs_build
-          mkdir -p source/_static
-          mkdir -p source/_templates
-          make clean && make html SPHINXOPTS="-W"
-
-      - name: Build landing page
-        run: |
-          cd ${{ github.workspace }}/sphinx_docs_build/landing
-          mkdir -p source/_static
-          mkdir -p source/_templates
-          make html SPHINXOPTS="-W"
-          touch ${{ github.workspace }}/docs/.nojekyll
-
-      - name: Upload artifact for GitHub Pages
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
-        with:
-          path: docs/
-
-  deploy_pages:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
-    needs: sphinx_docs_build
-    runs-on: ubuntu-latest
-    permissions:
+      contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_sphinx_build.yml@14e025f6c182b7b20718538f533ca467a9ff9c6c
+    with:
+      requirements-file: 'sphinx_docs_build/requirements.txt'
+      extra-requirements-file: 'sphinx_docs_build/landing/requirements.txt'
+      landing-dir: 'sphinx_docs_build/landing'
+      run-doxygen: true
+      versioned-docs: true
+      deploy-pages: true
+      pre-build-cmd: 'sudo apt-get update && sudo apt-get install -y g++ python3-dev && sudo bash ./tools/prepare_linux_netsnmp.sh && rm -rf build ezsnmp.egg-info && python3 -m pip install . --verbose'
 
   # ── Build versioned docs on release and commit back to main ───────────────
   sphinx_docs_build_release:
