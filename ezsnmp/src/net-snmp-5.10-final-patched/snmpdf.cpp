@@ -296,8 +296,16 @@ std::vector<std::string> snmpdf(std::vector<std::string> const &args,
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
       optreset = 1;
       optind = 1;
+#elif defined(_WIN32)
+      optind = 1;
 #else
+      // On glibc, snmp_parse_args overwrites optind = 1 before calling getopt(),
+      // so setting optind = 0 alone never reaches glibc's getopt() to clear nextchar.
+      // Force glibc getopt() to re-initialize (clearing any dangling nextchar) first.
       optind = 0;
+      char empty[] = "";
+      char *dummy_argv[] = {empty, nullptr};
+      getopt(1, dummy_argv, "");
 #endif
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
