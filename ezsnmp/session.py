@@ -1,10 +1,63 @@
 import warnings
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
 
-_UNSET: Any = object()
+_LEGACY_PARAM_SPECS = (
+    ("hostname", "connection"),
+    ("port_number", "connection"),
+    ("version", "connection"),
+    ("community", "connection"),
+    ("auth_protocol", "v3"),
+    ("auth_passphrase", "v3"),
+    ("security_engine_id", "v3"),
+    ("context_engine_id", "v3"),
+    ("security_level", "v3"),
+    ("context", "v3"),
+    ("security_username", "v3"),
+    ("privacy_protocol", "v3"),
+    ("privacy_passphrase", "v3"),
+    ("boots_time", "v3"),
+    ("retries", "connection"),
+    ("timeout", "connection"),
+    ("load_mibs", "mib"),
+    ("mib_directories", "mib"),
+    ("print_enums_numerically", "mib"),
+    ("print_full_oids", "mib"),
+    ("print_oids_numerically", "mib"),
+    ("print_timeticks_numerically", "mib"),
+    ("print_hex_strings", "mib"),
+    ("set_max_repeaters_to_num", "operation"),
+    ("print_oid_suffix_only", "mib"),
+    ("print_oid_module_name", "mib"),
+    ("print_oid_ucd_style", "mib"),
+    ("print_ascii_strings", "mib"),
+    ("print_leading_zero_hex", "mib"),
+    ("print_hex_text", "mib"),
+    ("dont_breakdown_oids", "mib"),
+    ("escape_quotes_in_indexes", "mib"),
+    ("extended_index_format", "mib"),
+    ("dont_print_units", "mib"),
+    ("output_precision", "mib"),
+    ("regex_oid_matching", "mib"),
+    ("ignore_display_hints", "mib"),
+    ("dont_check_range", "mib"),
+    ("random_access_oid", "mib"),
+    ("read_ucd_style_oid", "mib"),
+    ("oid_suffix", "mib"),
+    ("oid_prefix", "mib"),
+    ("mib_allow_underline", "mib"),
+    ("mib_comment_to_eol", "mib"),
+    ("mib_replace_with_latest", "mib"),
+    ("non_repeaters", "operation"),
+    ("walk_dont_check_lexicographic", "operation"),
+    ("walk_include_requested", "operation"),
+    ("walk_dont_get_requested", "operation"),
+    ("walk_end_oid", "operation"),
+    ("dont_fix_pdus", "operation"),
+)
+_LEGACY_PARAM_GROUPS = dict(_LEGACY_PARAM_SPECS)
 
 
 def _normalize_option_value(key: str, value: Any) -> str:
@@ -45,287 +98,192 @@ class Session(SessionBase):
 
         from ezsnmp import Session
 
-        with Session(hostname='localhost', community='public', version=2) as session:
-            results = session.get(['sysDescr.0', 'sysLocation.0'])
+        with Session(
+            connection_options={
+                "hostname": "localhost",
+                "community": "public",
+                "version": 2,
+            }
+        ) as session:
+            results = session.get(["sysDescr.0", "sysLocation.0"])
             for item in results:
                 print(item.oid, item.value)
     """
 
     def __init__(
         self,
-        hostname: Union[str, Any] = _UNSET,
-        port_number: Union[str, int, Any] = _UNSET,
-        version: Union[str, int, Any] = _UNSET,
-        community: Union[str, Any] = _UNSET,
-        auth_protocol: Union[str, Any] = _UNSET,
-        auth_passphrase: Union[str, Any] = _UNSET,
-        security_engine_id: Union[str, Any] = _UNSET,
-        context_engine_id: Union[str, Any] = _UNSET,
-        security_level: Union[str, Any] = _UNSET,
-        context: Union[str, Any] = _UNSET,
-        security_username: Union[str, Any] = _UNSET,
-        privacy_protocol: Union[str, Any] = _UNSET,
-        privacy_passphrase: Union[str, Any] = _UNSET,
-        boots_time: Union[str, Any] = _UNSET,
-        retries: Union[str, int, Any] = _UNSET,
-        timeout: Union[str, int, Any] = _UNSET,
-        load_mibs: Union[str, Any] = _UNSET,
-        mib_directories: Union[str, Any] = _UNSET,
-        print_enums_numerically: Union[bool, Any] = _UNSET,
-        print_full_oids: Union[bool, Any] = _UNSET,
-        print_oids_numerically: Union[bool, Any] = _UNSET,
-        print_timeticks_numerically: Union[bool, Any] = _UNSET,
-        print_hex_strings: Union[bool, Any] = _UNSET,
-        set_max_repeaters_to_num: Union[str, int, Any] = _UNSET,
-        print_oid_suffix_only: Union[bool, Any] = _UNSET,
-        print_oid_module_name: Union[bool, Any] = _UNSET,
-        print_oid_ucd_style: Union[bool, Any] = _UNSET,
-        print_ascii_strings: Union[bool, Any] = _UNSET,
-        print_leading_zero_hex: Union[bool, Any] = _UNSET,
-        print_hex_text: Union[bool, Any] = _UNSET,
-        dont_breakdown_oids: Union[bool, Any] = _UNSET,
-        escape_quotes_in_indexes: Union[bool, Any] = _UNSET,
-        extended_index_format: Union[bool, Any] = _UNSET,
-        dont_print_units: Union[bool, Any] = _UNSET,
-        output_precision: Union[str, Any] = _UNSET,
-        regex_oid_matching: Union[bool, Any] = _UNSET,
-        ignore_display_hints: Union[bool, Any] = _UNSET,
-        dont_check_range: Union[bool, Any] = _UNSET,
-        random_access_oid: Union[bool, Any] = _UNSET,
-        read_ucd_style_oid: Union[bool, Any] = _UNSET,
-        oid_suffix: Union[str, Any] = _UNSET,
-        oid_prefix: Union[str, Any] = _UNSET,
-        mib_allow_underline: Union[bool, Any] = _UNSET,
-        mib_comment_to_eol: Union[bool, Any] = _UNSET,
-        mib_replace_with_latest: Union[bool, Any] = _UNSET,
-        non_repeaters: Union[str, int, Any] = _UNSET,
-        walk_dont_check_lexicographic: Union[bool, Any] = _UNSET,
-        walk_include_requested: Union[bool, Any] = _UNSET,
-        walk_dont_get_requested: Union[bool, Any] = _UNSET,
-        walk_end_oid: Union[str, Any] = _UNSET,
-        dont_fix_pdus: Union[bool, Any] = _UNSET,
         connection_options: Optional[Dict[str, Any]] = None,
         v3_options: Optional[Dict[str, Any]] = None,
         mib_and_output_options: Optional[Dict[str, Any]] = None,
         operation_options: Optional[Dict[str, Any]] = None,
+        *legacy_args: Any,
+        **legacy_kwargs: Any,
     ):
-        """Initialize the Session object with NetSNMP session parameters.
+        """Initialize the Session object with grouped NetSNMP session options.
 
-        :param hostname: The hostname or IP address of the SNMP agent.
-        :type hostname: str
-        :param port_number: The port number of the SNMP agent.
-        :type port_number: Union[str, int]
-        :param version: The SNMP version to use. All of the following forms are
-            accepted and equivalent for SNMPv2c:
+        :param connection_options: Connection and transport options dictionary.
+            Supported keys:
 
-            - Integer ``2`` — automatically converted to ``"2c"`` internally.
-            - String ``"2"`` — passed through as-is; net-snmp accepts ``-v 2``.
-            - String ``"2c"`` — the canonical form; passed through as-is.
+            - ``hostname`` (``str``): Hostname or IP address of the SNMP agent.
+            - ``port_number`` (``Union[str, int]``): Port number of the SNMP agent.
+            - ``version`` (``Union[str, int]``): SNMP version (``1`` / ``"1"``,
+              ``2`` / ``"2"`` / ``"2c"`` where integer ``2`` is converted to
+              ``"2c"``, or ``3`` / ``"3"``).
+            - ``community`` (``str``): Community string for SNMPv1/v2c.
+            - ``retries`` (``Union[str, int]``): Number of retries.
+            - ``timeout`` (``Union[str, int]``): Timeout value in seconds.
+        :type connection_options: Optional[Dict[str, Any]]
+        :param v3_options: SNMPv3 authentication, privacy, and context options
+            dictionary. Supported keys:
 
-            For other versions use ``1`` / ``"1"`` (SNMPv1) or ``3`` / ``"3"``
-            (SNMPv3).
-        :type version: Union[str, int]
-        :param community: The community string for SNMPv1/v2c.
-        :type community: str
-        :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
-        :type auth_protocol: str
-        :param auth_passphrase: The authentication passphrase.
-        :type auth_passphrase: str
-        :param security_engine_id: The security engine ID.
-        :type security_engine_id: str
-        :param context_engine_id: The context engine ID.
-        :type context_engine_id: str
-        :param security_level: The security level (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
-        :type security_level: str
-        :param context: The SNMPv3 context name used to identify a collection of management information (SNMPv3 only).
-        :type context: str
-        :param security_username: The security username.
-        :type security_username: str
-        :param privacy_protocol: The privacy protocol (e.g., "DES", "AES").
-        :type privacy_protocol: str
-        :param privacy_passphrase: The privacy passphrase.
-        :type privacy_passphrase: str
-        :param boots_time: The SNMPv3 authoritative engine boots and time, formatted
-            as "BOOTS,TIME" (e.g., "1,100"). Used to synchronize with the agent's
-            time window.
-        :type boots_time: str
-        :param retries: The number of retries.
-        :type retries: Union[str, int]
-        :param timeout: The timeout value in seconds.
-        :type timeout: Union[str, int]
-        :param load_mibs: Comma-separated string of MIB modules to load.
-        :type load_mibs: str
-        :param mib_directories: Comma-separated string of directories to search for MIB files.
-        :type mib_directories: str
-        :param print_enums_numerically: Whether to print enums numerically.
-        :type print_enums_numerically: bool
-        :param print_full_oids: Whether to print full OIDs.
-        :type print_full_oids: bool
-        :param print_oids_numerically: Whether to print OIDs numerically.
-        :type print_oids_numerically: bool
-        :param print_timeticks_numerically: Whether to print timeticks numerically.
-        :type print_timeticks_numerically: bool
-        :param print_hex_strings: Whether to print OCTET STRING values in hex format.
-        :type print_hex_strings: bool
-        :param set_max_repeaters_to_num: The maximum number of repeaters for GETBULK PDUs. Defaults to 10. Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
-        :type set_max_repeaters_to_num: Union[str, int]
-        :param print_oid_suffix_only: Whether to print only the last symbolic element of OIDs (``-O s``).
-        :type print_oid_suffix_only: bool
-        :param print_oid_module_name: Whether to print module name plus last symbolic element of OIDs (``-O S``).
-        :type print_oid_module_name: bool
-        :param print_oid_ucd_style: Whether to print OIDs in UCD-style (``-O u``).
-        :type print_oid_ucd_style: bool
-        :param print_ascii_strings: Whether to print all strings as ASCII (``-O a``).
-        :type print_ascii_strings: bool
-        :param print_leading_zero_hex: Whether to print leading zeroes in hex strings (``-O 0``).
-        :type print_leading_zero_hex: bool
-        :param print_hex_text: Whether to print ASCII text alongside hex output (``-O T``).
-        :type print_hex_text: bool
-        :param dont_breakdown_oids: Whether to disable OID index breakdown (``-O b``).
-        :type dont_breakdown_oids: bool
-        :param escape_quotes_in_indexes: Whether to escape quotes in string indexes (``-O E``).
-        :type escape_quotes_in_indexes: bool
-        :param extended_index_format: Whether to print indexes in bracketed extended format (``-O X``).
-        :type extended_index_format: bool
-        :param dont_print_units: Whether to suppress MIB units in output (``-O U``).
-        :type dont_print_units: bool
-        :param output_precision: Precision format string for float/double output (``-O p``).
-        :type output_precision: str
-        :param regex_oid_matching: Whether to enable regex OID matching (``-I b``).
-        :type regex_oid_matching: bool
-        :param ignore_display_hints: Whether to ignore MIB DISPLAY-HINTs on input (``-I h``).
-        :type ignore_display_hints: bool
-        :param dont_check_range: Whether to disable range checks on input values (``-I r``).
-        :type dont_check_range: bool
-        :param random_access_oid: Whether to enable random-access OID lookup (``-I R``).
-        :type random_access_oid: bool
-        :param read_ucd_style_oid: Whether to read OIDs relative to UCD default prefix (``-I u``).
-        :type read_ucd_style_oid: bool
-        :param oid_suffix: Suffix to append to input OIDs (``-I s``).
-        :type oid_suffix: str
-        :param oid_prefix: Prefix to prepend to input OIDs (``-I S``).
-        :type oid_prefix: str
-        :param mib_allow_underline: Whether to allow underscores in MIB labels (``-P u``).
-        :type mib_allow_underline: bool
-        :param mib_comment_to_eol: Whether to treat ``--`` MIB comments as extending to end-of-line (``-P c``).
-        :type mib_comment_to_eol: bool
-        :param mib_replace_with_latest: Whether to replace duplicate MIB objects with latest definition (``-P R``).
-        :type mib_replace_with_latest: bool
-        :param non_repeaters: Number of non-repeaters for GETBULK PDUs (``-C n``). Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
-        :type non_repeaters: Union[str, int]
-        :param walk_dont_check_lexicographic: Whether to disable lexicographical OID ordering checks during walks (``-C c``).
-        :type walk_dont_check_lexicographic: bool
-        :param walk_include_requested: Whether to include the requested OID in walk results (``-C i``).
-        :type walk_include_requested: bool
-        :param walk_dont_get_requested: Whether to skip GET fallback when walk returns nothing (``-C I``).
-        :type walk_dont_get_requested: bool
-        :param walk_end_oid: OID at which to stop walking (``-C E``).
-        :type walk_end_oid: str
-        :param dont_fix_pdus: Whether to disable PDU error fixing on GET/GETNEXT (``-C f``).
-        :type dont_fix_pdus: bool
+            - ``auth_protocol`` (``str``): Authentication protocol (e.g., ``"MD5"``, ``"SHA"``).
+            - ``auth_passphrase`` (``str``): Authentication passphrase.
+            - ``security_engine_id`` (``str``): Security engine ID.
+            - ``context_engine_id`` (``str``): Context engine ID.
+            - ``security_level`` (``str``): Security level (e.g., ``"noAuthNoPriv"``, ``"authNoPriv"``, ``"authPriv"``).
+            - ``context`` (``str``): SNMPv3 context name.
+            - ``security_username`` (``str``): Security username.
+            - ``privacy_protocol`` (``str``): Privacy protocol (e.g., ``"DES"``, ``"AES"``).
+            - ``privacy_passphrase`` (``str``): Privacy passphrase.
+            - ``boots_time`` (``str``): Authoritative engine boots and time (``"BOOTS,TIME"``).
+        :type v3_options: Optional[Dict[str, Any]]
+        :param mib_and_output_options: MIB loading, input parsing, and output
+            formatting options dictionary. Supported keys:
 
+            - ``load_mibs`` (``str``): Comma-separated MIB modules to load.
+            - ``mib_directories`` (``str``): Comma-separated MIB search directories.
+            - ``print_enums_numerically`` (``bool``): Print enums numerically.
+            - ``print_full_oids`` (``bool``): Print full OIDs.
+            - ``print_oids_numerically`` (``bool``): Print OIDs numerically.
+            - ``print_timeticks_numerically`` (``bool``): Print timeticks numerically.
+            - ``print_hex_strings`` (``bool``): Print OCTET STRING values in hex.
+            - ``print_oid_suffix_only`` (``bool``): Print only the last symbolic OID element (``-O s``).
+            - ``print_oid_module_name`` (``bool``): Print module name plus last symbolic element (``-O S``).
+            - ``print_oid_ucd_style`` (``bool``): Print OIDs in UCD-style (``-O u``).
+            - ``print_ascii_strings`` (``bool``): Print strings as ASCII (``-O a``).
+            - ``print_leading_zero_hex`` (``bool``): Print leading zeroes in hex strings (``-O 0``).
+            - ``print_hex_text`` (``bool``): Print ASCII text alongside hex output (``-O T``).
+            - ``dont_breakdown_oids`` (``bool``): Disable OID index breakdown (``-O b``).
+            - ``escape_quotes_in_indexes`` (``bool``): Escape quotes in string indexes (``-O E``).
+            - ``extended_index_format`` (``bool``): Print indexes in bracketed extended format (``-O X``).
+            - ``dont_print_units`` (``bool``): Suppress MIB units in output (``-O U``).
+            - ``output_precision`` (``str``): Precision format string for float/double output (``-O p``).
+            - ``regex_oid_matching`` (``bool``): Enable regex OID matching (``-I b``).
+            - ``ignore_display_hints`` (``bool``): Ignore MIB DISPLAY-HINTs on input (``-I h``).
+            - ``dont_check_range`` (``bool``): Disable range checks on input values (``-I r``).
+            - ``random_access_oid`` (``bool``): Enable random-access OID lookup (``-I R``).
+            - ``read_ucd_style_oid`` (``bool``): Read OIDs relative to UCD default prefix (``-I u``).
+            - ``oid_suffix`` (``str``): Suffix to append to input OIDs (``-I s``).
+            - ``oid_prefix`` (``str``): Prefix to prepend to input OIDs (``-I S``).
+            - ``mib_allow_underline`` (``bool``): Allow underscores in MIB labels (``-P u``).
+            - ``mib_comment_to_eol`` (``bool``): Treat ``--`` MIB comments as extending to EOL (``-P c``).
+            - ``mib_replace_with_latest`` (``bool``): Replace duplicate MIB objects with latest definition (``-P R``).
+        :type mib_and_output_options: Optional[Dict[str, Any]]
+        :param operation_options: SNMP operation behavior options dictionary.
+            Supported keys:
+
+            - ``set_max_repeaters_to_num`` (``Union[str, int]``): Max repeaters for GETBULK PDUs (defaults to ``10``; applies to :meth:`bulk_get` and :meth:`bulk_walk`).
+            - ``non_repeaters`` (``Union[str, int]``): Non-repeaters for GETBULK PDUs (``-C n``).
+            - ``walk_dont_check_lexicographic`` (``bool``): Disable lexicographical OID checks during walks (``-C c``).
+            - ``walk_include_requested`` (``bool``): Include requested OID in walk results (``-C i``).
+            - ``walk_dont_get_requested`` (``bool``): Skip GET fallback when walk returns nothing (``-C I``).
+            - ``walk_end_oid`` (``str``): OID at which to stop walking (``-C E``).
+            - ``dont_fix_pdus`` (``bool``): Disable PDU error fixing on GET/GETNEXT (``-C f``).
+        :type operation_options: Optional[Dict[str, Any]]
+        :param legacy_args: Deprecated legacy flat positional arguments.
+        :param legacy_kwargs: Deprecated legacy flat keyword arguments.
+
+        .. deprecated::
+            Passing individual flat positional or keyword parameters to
+            ``Session.__init__()`` is deprecated and will be removed in a
+            future release. Pass grouped dictionaries (``connection_options``,
+            ``v3_options``, ``mib_and_output_options``, ``operation_options``)
+            instead.
         """
 
-        # Note that underlying SessionBase object depends on all parameters to be strings.
-        # This is the case, since at the end of the day we are building a command line string
-        # to pass to the NetSNMP command line tool.
-        try:
+        first_four = (
+            connection_options,
+            v3_options,
+            mib_and_output_options,
+            operation_options,
+        )
+        is_legacy_positional = bool(legacy_args) or any(
+            arg is not None and not isinstance(arg, dict) for arg in first_four
+        )
+
+        if is_legacy_positional:
+            if legacy_args:
+                positional_legacy = first_four + legacy_args
+            else:
+                end = len(first_four)
+                while end > 0 and first_four[end - 1] is None:
+                    end -= 1
+                positional_legacy = first_four[:end]
+
+            if len(positional_legacy) > len(_LEGACY_PARAM_SPECS):
+                raise TypeError(
+                    f"Session.__init__() takes at most {len(_LEGACY_PARAM_SPECS)} positional "
+                    f"arguments ({len(positional_legacy)} given)"
+                )
+
+            conn_opts: Dict[str, str] = {}
+            v3_opts: Dict[str, str] = {}
+            mib_opts: Dict[str, str] = {}
+            op_opts: Dict[str, str] = {}
+        else:
+            positional_legacy = ()
             conn_opts = _normalize_option_map(connection_options)
             v3_opts = _normalize_option_map(v3_options)
             mib_opts = _normalize_option_map(mib_and_output_options)
             op_opts = _normalize_option_map(operation_options)
 
-            legacy_groups = (
-                (
-                    conn_opts,
-                    {
-                        "hostname": hostname,
-                        "port_number": port_number,
-                        "version": version,
-                        "community": community,
-                        "retries": retries,
-                        "timeout": timeout,
-                    },
-                ),
-                (
-                    v3_opts,
-                    {
-                        "auth_protocol": auth_protocol,
-                        "auth_passphrase": auth_passphrase,
-                        "security_engine_id": security_engine_id,
-                        "context_engine_id": context_engine_id,
-                        "security_level": security_level,
-                        "context": context,
-                        "security_username": security_username,
-                        "privacy_protocol": privacy_protocol,
-                        "privacy_passphrase": privacy_passphrase,
-                        "boots_time": boots_time,
-                    },
-                ),
-                (
-                    mib_opts,
-                    {
-                        "load_mibs": load_mibs,
-                        "mib_directories": mib_directories,
-                        "print_enums_numerically": print_enums_numerically,
-                        "print_full_oids": print_full_oids,
-                        "print_oids_numerically": print_oids_numerically,
-                        "print_timeticks_numerically": print_timeticks_numerically,
-                        "print_hex_strings": print_hex_strings,
-                        "print_oid_suffix_only": print_oid_suffix_only,
-                        "print_oid_module_name": print_oid_module_name,
-                        "print_oid_ucd_style": print_oid_ucd_style,
-                        "print_ascii_strings": print_ascii_strings,
-                        "print_leading_zero_hex": print_leading_zero_hex,
-                        "print_hex_text": print_hex_text,
-                        "dont_breakdown_oids": dont_breakdown_oids,
-                        "escape_quotes_in_indexes": escape_quotes_in_indexes,
-                        "extended_index_format": extended_index_format,
-                        "dont_print_units": dont_print_units,
-                        "output_precision": output_precision,
-                        "regex_oid_matching": regex_oid_matching,
-                        "ignore_display_hints": ignore_display_hints,
-                        "dont_check_range": dont_check_range,
-                        "random_access_oid": random_access_oid,
-                        "read_ucd_style_oid": read_ucd_style_oid,
-                        "oid_suffix": oid_suffix,
-                        "oid_prefix": oid_prefix,
-                        "mib_allow_underline": mib_allow_underline,
-                        "mib_comment_to_eol": mib_comment_to_eol,
-                        "mib_replace_with_latest": mib_replace_with_latest,
-                    },
-                ),
-                (
-                    op_opts,
-                    {
-                        "set_max_repeaters_to_num": set_max_repeaters_to_num,
-                        "non_repeaters": non_repeaters,
-                        "walk_dont_check_lexicographic": walk_dont_check_lexicographic,
-                        "walk_include_requested": walk_include_requested,
-                        "walk_dont_get_requested": walk_dont_get_requested,
-                        "walk_end_oid": walk_end_oid,
-                        "dont_fix_pdus": dont_fix_pdus,
-                    },
-                ),
+        group_targets = {
+            "connection": conn_opts,
+            "v3": v3_opts,
+            "mib": mib_opts,
+            "operation": op_opts,
+        }
+
+        used_legacy_params = False
+        seen_legacy_names = set()
+
+        for (param_name, group_name), val in zip(
+            _LEGACY_PARAM_SPECS, positional_legacy
+        ):
+            used_legacy_params = True
+            seen_legacy_names.add(param_name)
+            group_targets[group_name][param_name] = _normalize_option_value(
+                param_name, val
             )
 
-            used_legacy_params = False
-            for target_dict, legacy_params in legacy_groups:
-                for key, val in legacy_params.items():
-                    if val is not _UNSET:
-                        used_legacy_params = True
-                        target_dict[key] = _normalize_option_value(key, val)
-
-            if used_legacy_params:
-                warnings.warn(
-                    "Passing individual flat parameters to Session.__init__() is deprecated and "
-                    "will be removed in a future release. Pass grouped dictionaries "
-                    "(connection_options, v3_options, mib_and_output_options, operation_options) "
-                    "instead.",
-                    DeprecationWarning,
-                    stacklevel=2,
+        for key, val in legacy_kwargs.items():
+            group_name = _LEGACY_PARAM_GROUPS.get(key)
+            if group_name is None:
+                raise TypeError(
+                    f"Session.__init__() got an unexpected keyword argument '{key}'"
                 )
+            if key in seen_legacy_names:
+                raise TypeError(
+                    f"Session.__init__() got multiple values for argument '{key}'"
+                )
+            used_legacy_params = True
+            seen_legacy_names.add(key)
+            group_targets[group_name][key] = _normalize_option_value(key, val)
 
+        if used_legacy_params:
+            warnings.warn(
+                "Passing individual flat parameters to Session.__init__() is deprecated and "
+                "will be removed in a future release. Pass grouped dictionaries "
+                "(connection_options, v3_options, mib_and_output_options, operation_options) "
+                "instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+        # Note that underlying SessionBase object depends on all parameters to be strings.
+        # This is the case, since at the end of the day we are building a command line string
+        # to pass to the NetSNMP command line tool.
+        try:
             max_repeaters = op_opts.pop("set_max_repeaters_to_num", "10")
 
             # Initialize the SWIG-wrapped C++ SessionBase via super().__init__().

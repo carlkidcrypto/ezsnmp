@@ -545,3 +545,51 @@ def test_session_grouped_options_constructor():
     assert legacy.version == "2c"
     assert legacy.retries == "5"
     legacy.close()
+
+
+def test_session_zero_arg_and_positional_dicts_no_warning():
+    import warnings
+    from ezsnmp import Session
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", DeprecationWarning)
+        empty = Session()
+        positional_dicts = Session(
+            {"hostname": "127.0.0.1", "version": 2},
+            {"context": "ctx-pos"},
+        )
+
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert positional_dicts.hostname == "127.0.0.1"
+    assert positional_dicts.version == "2c"
+    assert positional_dicts.context == "ctx-pos"
+    empty.close()
+    positional_dicts.close()
+
+
+def test_session_legacy_positional_args_and_errors():
+    import pytest
+    from ezsnmp import Session
+
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        s = Session("127.0.0.1", 1161, 2, "private")
+
+    assert s.hostname == "127.0.0.1"
+    assert s.port_number == "1161"
+    assert s.version == "2c"
+    assert s.community == "private"
+    s.close()
+
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        s_v3 = Session("127.0.0.1", 1161, 3, "", "MD5")
+    assert s_v3.auth_protocol == "MD5"
+    s_v3.close()
+
+    with pytest.raises(TypeError, match="at most 51 positional arguments"):
+        Session(*(["x"] * 52))
+
+    with pytest.raises(TypeError, match="unexpected keyword argument"):
+        Session(nonexistent_option="bad")
+
+    with pytest.raises(TypeError, match="multiple values for argument 'hostname'"):
+        Session("127.0.0.1", hostname="localhost")
