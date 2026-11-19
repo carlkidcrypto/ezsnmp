@@ -447,14 +447,16 @@ TEST_F(SessionBaseOperationsTest, BulkGetEmptyMibs) {
 }
 
 TEST_F(SessionBaseOperationsTest, BulkWalkVectorOverloadEmptyMibs) {
-   SessionBase session("localhost", "11161", "2c", "public");
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "5");
    std::vector<std::string> mibs;
    auto results = session.bulk_walk(mibs);
    EXPECT_FALSE(results.empty());
 }
 
 TEST_F(SessionBaseOperationsTest, BulkWalkVectorOverloadSingleMib) {
-   SessionBase session("localhost", "11161", "2c", "public");
+   SessionBase session("localhost", "11161", "2c", "public", "", "", "", "", "", "", "", "", "", "",
+                       "3", "5");
    std::vector<std::string> mibs = {"SNMPv2-MIB::sysORDescr"};
    auto results = session.bulk_walk(mibs);
    EXPECT_FALSE(results.empty());
