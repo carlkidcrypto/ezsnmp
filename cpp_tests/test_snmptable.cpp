@@ -144,3 +144,8 @@ TEST_F(SnmpTableTest, TestHeadersOnlyColumnWidth) {
    ASSERT_EQ(result.size(), 1u);
    EXPECT_NE(result[0].find("ifIndex"), std::string::npos);
 }
+
+TEST_F(SnmpTableTest, TestInvalidSnmpVersionThrowsParseError) {
+   std::vector<std::string> args = {"-v", "99", "-c", "public", "localhost", "IF-MIB::ifTable"};
+   EXPECT_THROW(snmptable(args, "testing_snmptable_bad_version"), ParseErrorBase);
+}

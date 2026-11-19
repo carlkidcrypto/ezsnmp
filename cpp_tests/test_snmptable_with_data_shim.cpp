@@ -219,7 +219,7 @@ TEST_F(SnmpTableWithDataShimTest, TestGetBulkShowIndexWithoutSeparator) {
 }
 
 TEST_F(SnmpTableWithDataShimTest, TestGetBulkOutputFormatsForExtractIndex) {
-   for (std::string const &opt : {"-Os", "-Of", "-Ou", "-OS", "-OX"}) {
+   for (char const *opt : {"-Os", "-Of", "-Ou", "-OS", "-OX"}) {
       g_call_count = 0;
       std::vector<std::string> args = {
           opt, "-Ci", "-v", "2c", "-c", "public", "localhost:11161", "SNMPv2-MIB::sysORTable"};
