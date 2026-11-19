@@ -40,6 +40,8 @@ network:
 tools:
   edit:
   bash: true
+imports:
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@873e1fea29bbd9dc73651d85a28920cb0797cb85
 ---
 
 ## Python Version Watcher and Auto-Sync
