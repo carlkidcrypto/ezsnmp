@@ -1,13 +1,16 @@
+---
 # Refer to the following link for help
 # https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 
 name: TestPyPI Distributions
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   push:
-    branches: [ main, refactor/common-publish-action ]
+    branches: [main, refactor/common-publish-action]
     paths-ignore:
       - '.github/workflows/*.md'
       - '.github/workflows/*.lock.yml'
@@ -24,90 +27,31 @@ on:
       - 'sphinx_docs_build/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
-  verify-syntax:
-    permissions: { contents: read }
-    uses: ./.github/workflows/verify_syntax.yml
-  check-source-changes:
-    needs: verify-syntax
-    runs-on: ubuntu-latest
-    outputs:
-      run_job: ${{ steps.changed-files.outputs.any_changed }}
-    steps:
-      - name: Checkout Sourcecode
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
-
-      - name: Check for changes in setup.py/cfg
-        id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
-        with:
-          files: |
-            .github/workflows/build_and_publish_to_test_pypi.yml
-            .github/actions/build-wheels/action.yml
-            .github/actions/build-distribution/action.yml
-            pyproject.toml
-            setup.cfg
-            setup.py
-            build_utils.py
-            requirements.txt
-
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }} (${{ matrix.label || matrix.arch }})
-    runs-on: ${{ matrix.os }}
-    needs: check-source-changes
-    if: needs.check-source-changes.outputs.run_job == 'true' || github.event_name == 'workflow_dispatch'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            arch: x86_64
-            label: x86_64-manylinux
-            cibw-build: "*-manylinux*"
-          - os: ubuntu-latest
-            arch: x86_64
-            label: x86_64-musllinux
-            cibw-build: "*-musllinux*"
-          - os: macos-latest
-            arch: arm64
-          - os: windows-latest
-            arch: AMD64
-          - os: windows-latest
-            arch: x86
-          - os: windows-latest
-            arch: ARM64
-
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
-
-      - name: Build and upload wheels
-        uses: ./.github/actions/build-wheels
-        with:
-          os: ${{ matrix.os }}
-          arch: ${{ matrix.arch }}
-          job-index: ${{ strategy.job-index }}
-          cibw-build: ${{ matrix.cibw-build || '*' }}
-          label: ${{ matrix.label || matrix.arch }}
-
-  build-n-publish-test-pypi:
-    name: Build and Publish To Test PyPi
-    runs-on: ubuntu-latest
-    environment: build_and_publish_to_test_pypi
+  test-pypi-publish:
     permissions:
+      contents: read
       id-token: write
-    needs: build_wheels
-
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
-
-      - name: Build distribution
-        uses: ./.github/actions/build-distribution
-
-      - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1.14
-        with:
-          packages-dir: dist/
-          verify-metadata: false
-          skip-existing: true
-          print-hash: true
-          repository-url: https://test.pypi.org/legacy/
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_pypi_publish.yml@14e025f6c182b7b20718538f533ca467a9ff9c6c
+    with:
+      target: 'testpypi'
+      environment-name: 'build_and_publish_to_test_pypi'
+      use-local-wheel-action: true
+      python-version: '3.14'
+      check-changes: true
+      changed-files-patterns: |
+        .github/workflows/build_and_publish_to_test_pypi.yml
+        .github/actions/build-wheels/action.yml
+        .github/actions/build-distribution/action.yml
+        pyproject.toml
+        setup.cfg
+        setup.py
+        build_utils.py
+        requirements.txt
+      sdist-setup-cmd: 'sudo bash ./tools/prepare_linux_netsnmp.sh'
+      skip-existing: true
+      verify-metadata: false
