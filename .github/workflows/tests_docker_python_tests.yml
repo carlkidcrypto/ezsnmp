@@ -53,7 +53,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@873e1fea29bbd9dc73651d85a28920cb0797cb85
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           files: |
             .coveragerc
@@ -289,7 +289,7 @@ jobs:
 
       - name: Upload coverage to CodeCov
         if: steps.check-coverage.outputs.has_coverage == 'true'
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@873e1fea29bbd9dc73651d85a28920cb0797cb85
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/coverage_*.xml,./coverage_*.xml
@@ -307,14 +307,13 @@ jobs:
 
       - name: Upload test results to Codecov
         if: steps.check-results.outputs.has_results == 'true'
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/test-results_*.xml,./test-results_*.xml
           flags: python-docker
-          report_type: test_results
-          fail_ci_if_error: false
-          verbose: true
+          report-type: test_results
+          fail-ci-if-error: false
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest

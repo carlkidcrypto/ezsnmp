@@ -32,15 +32,14 @@ safe-outputs:
 timeout-minutes: 20
 max-ai-credits: 30
 model: sonnet
-engine:
-  id: copilot
 network:
   allowed: [defaults, github]
 tools:
   edit:
   bash: true
 imports:
-  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@873e1fea29bbd9dc73651d85a28920cb0797cb85
+  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 ---
 
 # Monthly Report Tooling Maintenance

@@ -54,7 +54,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@873e1fea29bbd9dc73651d85a28920cb0797cb85
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           files: |
             .coveragerc
@@ -102,7 +102,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
       - name: Install Net-SNMP 5.10
-        run: sudo bash ./tools/prepare_linux_netsnmp.sh
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -224,7 +224,7 @@ jobs:
           python3 python_tests/normalize_coverage_paths.py ./coverage_*.xml
 
       - name: Upload coverage to CodeCov
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@873e1fea29bbd9dc73651d85a28920cb0797cb85
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
@@ -233,14 +233,13 @@ jobs:
 
       - name: Upload test results to Codecov
         if: always()
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./test-results_*.xml
           flags: python-native
-          report_type: test_results
-          fail_ci_if_error: false
-          verbose: true
+          report-type: test_results
+          fail-ci-if-error: false
 
   comment-pytest-coverage-report:
     runs-on: ubuntu-latest
