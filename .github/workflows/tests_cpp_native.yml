@@ -77,6 +77,13 @@ jobs:
       build-dir: cpp_tests/build
       install-netsnmp: true
       start-snmpd: true
+      pre-build-cmd: |
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          sudo apt-get install -y snmp-mibs-downloader
+          sudo download-mibs
+        fi
+        mkdir -p -m 0755 ~/.snmp
+        echo 'mibs +ALL' > ~/.snmp/snmp.conf
       codecov-flags: cpp-native
       coverage-files: ./cpp_tests/build/meson-logs/coverage.xml,./coverage.xml
       junit-files: ./cpp_tests/build/meson-logs/testlog.junit.xml
