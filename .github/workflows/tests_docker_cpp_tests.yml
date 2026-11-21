@@ -58,7 +58,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           files: |
             .github/workflows/tests_docker_cpp_tests.yml
@@ -130,24 +130,22 @@ jobs:
           path: artifacts/
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/lcov_coverage.info
           flags: cpp-docker
-          fail_ci_if_error: false
-          verbose: true
+          fail-ci-if-error: false
 
       - name: Upload test results to Codecov
         if: always()
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/test-results.xml
           flags: cpp-docker
-          report_type: test_results
-          fail_ci_if_error: false
-          verbose: true
+          report-type: test_results
+          fail-ci-if-error: false
 
   comment-cpp-test-report:
     runs-on: ubuntu-latest
