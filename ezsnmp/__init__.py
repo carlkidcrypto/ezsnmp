@@ -37,6 +37,7 @@ from .netsnmp import (
     snmpgetnext,
     snmpset,
     snmptrap,
+    snmpusm,
     snmpwalk,
 )
 from .session import Session
