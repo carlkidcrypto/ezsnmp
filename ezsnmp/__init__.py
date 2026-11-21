@@ -36,6 +36,7 @@ from .netsnmp import (
     snmpget,
     snmpgetnext,
     snmpset,
+    snmptranslate,
     snmptrap,
     snmpwalk,
 )
