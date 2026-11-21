@@ -382,3 +382,217 @@ def test_session_property_setters_extended():
     assert s.set_max_repeaters_to_num == "20"
 
     del s
+
+
+def test_session_new_cli_options_defaults_and_setters():
+    s = Session(hostname="localhost", version="2c", community="public")
+
+    assert s.print_oid_suffix_only is False
+    assert s.print_oid_module_name is False
+    assert s.print_oid_ucd_style is False
+    assert s.print_ascii_strings is False
+    assert s.print_leading_zero_hex is False
+    assert s.print_hex_text is False
+    assert s.dont_breakdown_oids is False
+    assert s.escape_quotes_in_indexes is False
+    assert s.extended_index_format is False
+    assert s.dont_print_units is False
+    assert s.output_precision == ""
+    assert s.regex_oid_matching is False
+    assert s.ignore_display_hints is False
+    assert s.dont_check_range is False
+    assert s.random_access_oid is False
+    assert s.read_ucd_style_oid is False
+    assert s.oid_suffix == ""
+    assert s.oid_prefix == ""
+    assert s.mib_allow_underline is False
+    assert s.mib_comment_to_eol is False
+    assert s.mib_replace_with_latest is False
+    assert s.non_repeaters == ""
+    assert s.walk_dont_check_lexicographic is False
+    assert s.walk_include_requested is False
+    assert s.walk_dont_get_requested is False
+    assert s.walk_end_oid == ""
+    assert s.dont_fix_pdus is False
+
+    s.print_oid_suffix_only = True
+    assert s.print_oid_suffix_only is True
+    s.print_oid_module_name = True
+    assert s.print_oid_module_name is True
+    s.print_oid_ucd_style = True
+    assert s.print_oid_ucd_style is True
+    s.print_ascii_strings = True
+    assert s.print_ascii_strings is True
+    s.print_leading_zero_hex = True
+    assert s.print_leading_zero_hex is True
+    s.print_hex_text = True
+    assert s.print_hex_text is True
+    s.dont_breakdown_oids = True
+    assert s.dont_breakdown_oids is True
+    s.escape_quotes_in_indexes = True
+    assert s.escape_quotes_in_indexes is True
+    s.extended_index_format = True
+    assert s.extended_index_format is True
+    s.dont_print_units = True
+    assert s.dont_print_units is True
+    s.output_precision = "%.2f"
+    assert s.output_precision == "%.2f"
+
+    s.regex_oid_matching = True
+    assert s.regex_oid_matching is True
+    s.ignore_display_hints = True
+    assert s.ignore_display_hints is True
+    s.dont_check_range = True
+    assert s.dont_check_range is True
+    s.random_access_oid = True
+    assert s.random_access_oid is True
+    s.read_ucd_style_oid = True
+    assert s.read_ucd_style_oid is True
+    s.oid_suffix = ".0"
+    assert s.oid_suffix == ".0"
+    s.oid_prefix = ".1.3.6"
+    assert s.oid_prefix == ".1.3.6"
+
+    s.mib_allow_underline = True
+    assert s.mib_allow_underline is True
+    s.mib_comment_to_eol = True
+    assert s.mib_comment_to_eol is True
+    s.mib_replace_with_latest = True
+    assert s.mib_replace_with_latest is True
+
+    s.non_repeaters = 2
+    assert s.non_repeaters == "2"
+    s.non_repeaters = "3"
+    assert s.non_repeaters == "3"
+    s.walk_dont_check_lexicographic = True
+    assert s.walk_dont_check_lexicographic is True
+    s.walk_include_requested = True
+    assert s.walk_include_requested is True
+    s.walk_dont_get_requested = True
+    assert s.walk_dont_get_requested is True
+    s.walk_end_oid = "1.3.6.1.2.1.2"
+    assert s.walk_end_oid == "1.3.6.1.2.1.2"
+    s.dont_fix_pdus = True
+    assert s.dont_fix_pdus is True
+
+    d = s.to_dict()
+    assert d["output_precision"] == "%.2f"
+    assert d["oid_suffix"] == ".0"
+    assert d["oid_prefix"] == ".1.3.6"
+    assert d["mib_allow_underline"] is True
+    assert d["non_repeaters"] == "3"
+    assert d["walk_end_oid"] == "1.3.6.1.2.1.2"
+    assert d["dont_fix_pdus"] is True
+
+    del s
+
+
+def test_session_grouped_options_constructor():
+    import warnings
+    import pytest
+    from ezsnmp import Session
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", DeprecationWarning)
+        s = Session(
+            connection_options={
+                "hostname": "127.0.0.1",
+                "port_number": 1161,
+                "version": 2,
+                "community": "private",
+                "retries": 4,
+                "timeout": 2,
+            },
+            v3_options={
+                "security_username": "bert",
+                "context": "ctx1",
+            },
+            mib_and_output_options={
+                "print_oids_numerically": True,
+                "output_precision": "%.2f",
+                "mib_allow_underline": True,
+            },
+            operation_options={
+                "set_max_repeaters_to_num": 25,
+                "non_repeaters": 2,
+                "walk_end_oid": "1.3.6.1.2.1.2",
+                "dont_fix_pdus": True,
+            },
+        )
+
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert s.hostname == "127.0.0.1"
+    assert s.port_number == "1161"
+    assert s.version == "2c"
+    assert s.community == "private"
+    assert s.retries == "4"
+    assert s.timeout == "2"
+    assert s.security_username == "bert"
+    assert s.context == "ctx1"
+    assert s.print_oids_numerically is True
+    assert s.output_precision == "%.2f"
+    assert s.mib_allow_underline is True
+    assert s._Session__set_max_repeaters_to_num == "25"
+    assert s.set_max_repeaters_to_num == ""
+    assert s.non_repeaters == "2"
+    assert s.walk_end_oid == "1.3.6.1.2.1.2"
+    assert s.dont_fix_pdus is True
+    s.close()
+
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        legacy = Session(hostname="localhost", version=2, retries=5)
+    assert legacy.hostname == "localhost"
+    assert legacy.version == "2c"
+    assert legacy.retries == "5"
+    legacy.close()
+
+
+def test_session_zero_arg_and_positional_dicts_no_warning():
+    import warnings
+    from ezsnmp import Session
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", DeprecationWarning)
+        empty = Session()
+        positional_dicts = Session(
+            {"hostname": "127.0.0.1", "version": 2},
+            {"context": "ctx-pos"},
+        )
+
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert positional_dicts.hostname == "127.0.0.1"
+    assert positional_dicts.version == "2c"
+    assert positional_dicts.context == "ctx-pos"
+    empty.close()
+    positional_dicts.close()
+
+
+def test_session_legacy_positional_args_and_errors():
+    import pytest
+    from ezsnmp import Session
+
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        s = Session("127.0.0.1", 1161, 2, "private")
+
+    assert s.hostname == "127.0.0.1"
+    assert s.port_number == "1161"
+    assert s.version == "2c"
+    assert s.community == "private"
+    s.close()
+
+    with pytest.warns(DeprecationWarning, match="deprecated"):
+        s_v3 = Session("127.0.0.1", 1161, 3, "", "MD5")
+    assert s_v3.auth_protocol == "MD5"
+    s_v3.close()
+
+    with pytest.raises(TypeError, match="at most 24 positional arguments"):
+        Session(*(["x"] * 25))
+
+    with pytest.raises(TypeError, match="unexpected keyword argument"):
+        Session(nonexistent_option="bad")
+
+    with pytest.raises(TypeError, match="unexpected keyword argument"):
+        Session(dont_fix_pdus=True)
+
+    with pytest.raises(TypeError, match="multiple values for argument 'hostname'"):
+        Session("127.0.0.1", hostname="localhost")

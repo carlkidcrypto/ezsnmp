@@ -1,6 +1,52 @@
+import warnings
+from typing import Any, Dict, Optional
+
 from .sessionbase import SessionBase
 from .exceptions import _handle_error, GenericError
-from typing import Union
+
+_LEGACY_PARAM_SPECS = (
+    ("hostname", "connection"),
+    ("port_number", "connection"),
+    ("version", "connection"),
+    ("community", "connection"),
+    ("auth_protocol", "v3"),
+    ("auth_passphrase", "v3"),
+    ("security_engine_id", "v3"),
+    ("context_engine_id", "v3"),
+    ("security_level", "v3"),
+    ("context", "v3"),
+    ("security_username", "v3"),
+    ("privacy_protocol", "v3"),
+    ("privacy_passphrase", "v3"),
+    ("boots_time", "v3"),
+    ("retries", "connection"),
+    ("timeout", "connection"),
+    ("load_mibs", "mib"),
+    ("mib_directories", "mib"),
+    ("print_enums_numerically", "mib"),
+    ("print_full_oids", "mib"),
+    ("print_oids_numerically", "mib"),
+    ("print_timeticks_numerically", "mib"),
+    ("print_hex_strings", "mib"),
+    ("set_max_repeaters_to_num", "operation"),
+)
+_LEGACY_PARAM_GROUPS = dict(_LEGACY_PARAM_SPECS)
+
+
+def _normalize_option_value(key: str, value: Any) -> str:
+    """Convert a Python option value into the string representation expected by SessionBase."""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if key == "version" and value == 2:
+        return "2c"
+    return str(value)
+
+
+def _normalize_option_map(options: Optional[Dict[str, Any]]) -> Dict[str, str]:
+    """Normalize an optional dict of session options into ``dict[str, str]``."""
+    if not options:
+        return {}
+    return {str(k): _normalize_option_value(str(k), v) for k, v in options.items()}
 
 
 class Session(SessionBase):
@@ -25,146 +71,202 @@ class Session(SessionBase):
 
         from ezsnmp import Session
 
-        with Session(hostname='localhost', community='public', version=2) as session:
-            results = session.get(['sysDescr.0', 'sysLocation.0'])
+        with Session(
+            connection_options={
+                "hostname": "localhost",
+                "community": "public",
+                "version": 2,
+            }
+        ) as session:
+            results = session.get(["sysDescr.0", "sysLocation.0"])
             for item in results:
                 print(item.oid, item.value)
     """
 
     def __init__(
         self,
-        hostname: str = "localhost",
-        port_number: Union[str, int] = "",
-        version: Union[str, int] = "3",
-        community: str = "public",
-        auth_protocol: str = "",
-        auth_passphrase: str = "",
-        security_engine_id: str = "",
-        context_engine_id: str = "",
-        security_level: str = "",
-        context: str = "",
-        security_username: str = "",
-        privacy_protocol: str = "",
-        privacy_passphrase: str = "",
-        boots_time: str = "",
-        retries: Union[str, int] = "3",
-        timeout: Union[str, int] = "1",
-        load_mibs: str = "",
-        mib_directories: str = "",
-        print_enums_numerically: bool = False,
-        print_full_oids: bool = False,
-        print_oids_numerically: bool = False,
-        print_timeticks_numerically: bool = False,
-        print_hex_strings: bool = False,
-        set_max_repeaters_to_num: Union[str, int] = "10",
+        connection_options: Optional[Dict[str, Any]] = None,
+        v3_options: Optional[Dict[str, Any]] = None,
+        mib_and_output_options: Optional[Dict[str, Any]] = None,
+        operation_options: Optional[Dict[str, Any]] = None,
+        *legacy_args: Any,
+        **legacy_kwargs: Any,
     ):
-        """Initialize the Session object with NetSNMP session parameters.
+        """Initialize the Session object with grouped NetSNMP session options.
 
-        :param hostname: The hostname or IP address of the SNMP agent.
-        :type hostname: str
-        :param port_number: The port number of the SNMP agent.
-        :type port_number: Union[str, int]
-        :param version: The SNMP version to use. All of the following forms are
-            accepted and equivalent for SNMPv2c:
+        :param connection_options: Connection and transport options dictionary.
+            Supported keys:
 
-            - Integer ``2`` — automatically converted to ``"2c"`` internally.
-            - String ``"2"`` — passed through as-is; net-snmp accepts ``-v 2``.
-            - String ``"2c"`` — the canonical form; passed through as-is.
+            - ``hostname`` (``str``): Hostname or IP address of the SNMP agent.
+            - ``port_number`` (``Union[str, int]``): Port number of the SNMP agent.
+            - ``version`` (``Union[str, int]``): SNMP version (``1`` / ``"1"``,
+              ``2`` / ``"2"`` / ``"2c"`` where integer ``2`` is converted to
+              ``"2c"``, or ``3`` / ``"3"``).
+            - ``community`` (``str``): Community string for SNMPv1/v2c.
+            - ``retries`` (``Union[str, int]``): Number of retries.
+            - ``timeout`` (``Union[str, int]``): Timeout value in seconds.
+        :type connection_options: Optional[Dict[str, Any]]
+        :param v3_options: SNMPv3 authentication, privacy, and context options
+            dictionary. Supported keys:
 
-            For other versions use ``1`` / ``"1"`` (SNMPv1) or ``3`` / ``"3"``
-            (SNMPv3).
-        :type version: Union[str, int]
-        :param community: The community string for SNMPv1/v2c.
-        :type community: str
-        :param auth_protocol: The authentication protocol (e.g., "MD5", "SHA").
-        :type auth_protocol: str
-        :param auth_passphrase: The authentication passphrase.
-        :type auth_passphrase: str
-        :param security_engine_id: The security engine ID.
-        :type security_engine_id: str
-        :param context_engine_id: The context engine ID.
-        :type context_engine_id: str
-        :param security_level: The security level (e.g., "noAuthNoPriv", "authNoPriv", "authPriv").
-        :type security_level: str
-        :param context: The SNMPv3 context name used to identify a collection of management information (SNMPv3 only).
-        :type context: str
-        :param security_username: The security username.
-        :type security_username: str
-        :param privacy_protocol: The privacy protocol (e.g., "DES", "AES").
-        :type privacy_protocol: str
-        :param privacy_passphrase: The privacy passphrase.
-        :type privacy_passphrase: str
-        :param boots_time: The SNMPv3 authoritative engine boots and time, formatted
-            as "BOOTS,TIME" (e.g., "1,100"). Used to synchronize with the agent's
-            time window.
-        :type boots_time: str
-        :param retries: The number of retries.
-        :type retries: Union[str, int]
-        :param timeout: The timeout value in seconds.
-        :type timeout: Union[str, int]
-        :param load_mibs: Comma-separated string of MIB modules to load.
-        :type load_mibs: str
-        :param mib_directories: Comma-separated string of directories to search for MIB files.
-        :type mib_directories: str
-        :param print_enums_numerically: Whether to print enums numerically.
-        :type print_enums_numerically: bool
-        :param print_full_oids: Whether to print full OIDs.
-        :type print_full_oids: bool
-        :param print_oids_numerically: Whether to print OIDs numerically.
-        :type print_oids_numerically: bool
-        :param print_timeticks_numerically: Whether to print timeticks numerically.
-        :type print_timeticks_numerically: bool
-        :param print_hex_strings: Whether to print OCTET STRING values in hex format.
-        :type print_hex_strings: bool
-        :param set_max_repeaters_to_num: The maximum number of repeaters for GETBULK PDUs. Defaults to 10. Only applies to :meth:`bulk_get` and :meth:`bulk_walk`.
-        :type set_max_repeaters_to_num: Union[str, int]
+            - ``auth_protocol`` (``str``): Authentication protocol (e.g., ``"MD5"``, ``"SHA"``).
+            - ``auth_passphrase`` (``str``): Authentication passphrase.
+            - ``security_engine_id`` (``str``): Security engine ID.
+            - ``context_engine_id`` (``str``): Context engine ID.
+            - ``security_level`` (``str``): Security level (e.g., ``"noAuthNoPriv"``, ``"authNoPriv"``, ``"authPriv"``).
+            - ``context`` (``str``): SNMPv3 context name.
+            - ``security_username`` (``str``): Security username.
+            - ``privacy_protocol`` (``str``): Privacy protocol (e.g., ``"DES"``, ``"AES"``).
+            - ``privacy_passphrase`` (``str``): Privacy passphrase.
+            - ``boots_time`` (``str``): Authoritative engine boots and time (``"BOOTS,TIME"``).
+        :type v3_options: Optional[Dict[str, Any]]
+        :param mib_and_output_options: MIB loading, input parsing, and output
+            formatting options dictionary. Supported keys:
 
+            - ``load_mibs`` (``str``): Comma-separated MIB modules to load.
+            - ``mib_directories`` (``str``): Comma-separated MIB search directories.
+            - ``print_enums_numerically`` (``bool``): Print enums numerically.
+            - ``print_full_oids`` (``bool``): Print full OIDs.
+            - ``print_oids_numerically`` (``bool``): Print OIDs numerically.
+            - ``print_timeticks_numerically`` (``bool``): Print timeticks numerically.
+            - ``print_hex_strings`` (``bool``): Print OCTET STRING values in hex.
+            - ``print_oid_suffix_only`` (``bool``): Print only the last symbolic OID element (``-O s``).
+            - ``print_oid_module_name`` (``bool``): Print module name plus last symbolic element (``-O S``).
+            - ``print_oid_ucd_style`` (``bool``): Print OIDs in UCD-style (``-O u``).
+            - ``print_ascii_strings`` (``bool``): Print strings as ASCII (``-O a``).
+            - ``print_leading_zero_hex`` (``bool``): Print leading zeroes in hex strings (``-O 0``).
+            - ``print_hex_text`` (``bool``): Print ASCII text alongside hex output (``-O T``).
+            - ``dont_breakdown_oids`` (``bool``): Disable OID index breakdown (``-O b``).
+            - ``escape_quotes_in_indexes`` (``bool``): Escape quotes in string indexes (``-O E``).
+            - ``extended_index_format`` (``bool``): Print indexes in bracketed extended format (``-O X``).
+            - ``dont_print_units`` (``bool``): Suppress MIB units in output (``-O U``).
+            - ``output_precision`` (``str``): Precision format string for float/double output (``-O p``).
+            - ``regex_oid_matching`` (``bool``): Enable regex OID matching (``-I b``).
+            - ``ignore_display_hints`` (``bool``): Ignore MIB DISPLAY-HINTs on input (``-I h``).
+            - ``dont_check_range`` (``bool``): Disable range checks on input values (``-I r``).
+            - ``random_access_oid`` (``bool``): Enable random-access OID lookup (``-I R``).
+            - ``read_ucd_style_oid`` (``bool``): Read OIDs relative to UCD default prefix (``-I u``).
+            - ``oid_suffix`` (``str``): Suffix to append to input OIDs (``-I s``).
+            - ``oid_prefix`` (``str``): Prefix to prepend to input OIDs (``-I S``).
+            - ``mib_allow_underline`` (``bool``): Allow underscores in MIB labels (``-P u``).
+            - ``mib_comment_to_eol`` (``bool``): Treat ``--`` MIB comments as extending to EOL (``-P c``).
+            - ``mib_replace_with_latest`` (``bool``): Replace duplicate MIB objects with latest definition (``-P R``).
+        :type mib_and_output_options: Optional[Dict[str, Any]]
+        :param operation_options: SNMP operation behavior options dictionary.
+            Supported keys:
+
+            - ``set_max_repeaters_to_num`` (``Union[str, int]``): Max repeaters for GETBULK PDUs (defaults to ``10``; applies to :meth:`bulk_get` and :meth:`bulk_walk`).
+            - ``non_repeaters`` (``Union[str, int]``): Non-repeaters for GETBULK PDUs (``-C n``).
+            - ``walk_dont_check_lexicographic`` (``bool``): Disable lexicographical OID checks during walks (``-C c``).
+            - ``walk_include_requested`` (``bool``): Include requested OID in walk results (``-C i``).
+            - ``walk_dont_get_requested`` (``bool``): Skip GET fallback when walk returns nothing (``-C I``).
+            - ``walk_end_oid`` (``str``): OID at which to stop walking (``-C E``).
+            - ``dont_fix_pdus`` (``bool``): Disable PDU error fixing on GET/GETNEXT (``-C f``).
+        :type operation_options: Optional[Dict[str, Any]]
+        :param legacy_args: Deprecated legacy flat positional arguments.
+        :param legacy_kwargs: Deprecated legacy flat keyword arguments.
+
+        .. deprecated::
+            Passing individual flat positional or keyword parameters to
+            ``Session.__init__()`` is deprecated and will be removed in a
+            future release. Pass grouped dictionaries (``connection_options``,
+            ``v3_options``, ``mib_and_output_options``, ``operation_options``)
+            instead.
         """
+
+        first_four = (
+            connection_options,
+            v3_options,
+            mib_and_output_options,
+            operation_options,
+        )
+        is_legacy_positional = bool(legacy_args) or any(
+            arg is not None and not isinstance(arg, dict) for arg in first_four
+        )
+
+        if is_legacy_positional:
+            if legacy_args:
+                positional_legacy = first_four + legacy_args
+            else:
+                end = len(first_four)
+                while end > 0 and first_four[end - 1] is None:
+                    end -= 1
+                positional_legacy = first_four[:end]
+
+            if len(positional_legacy) > len(_LEGACY_PARAM_SPECS):
+                raise TypeError(
+                    f"Session.__init__() takes at most {len(_LEGACY_PARAM_SPECS)} positional "
+                    f"arguments ({len(positional_legacy)} given)"
+                )
+
+            conn_opts: Dict[str, str] = {}
+            v3_opts: Dict[str, str] = {}
+            mib_opts: Dict[str, str] = {}
+            op_opts: Dict[str, str] = {}
+        else:
+            positional_legacy = ()
+            conn_opts = _normalize_option_map(connection_options)
+            v3_opts = _normalize_option_map(v3_options)
+            mib_opts = _normalize_option_map(mib_and_output_options)
+            op_opts = _normalize_option_map(operation_options)
+
+        group_targets = {
+            "connection": conn_opts,
+            "v3": v3_opts,
+            "mib": mib_opts,
+            "operation": op_opts,
+        }
+
+        used_legacy_params = False
+        seen_legacy_names = set()
+
+        for (param_name, group_name), val in zip(
+            _LEGACY_PARAM_SPECS, positional_legacy
+        ):
+            used_legacy_params = True
+            seen_legacy_names.add(param_name)
+            group_targets[group_name][param_name] = _normalize_option_value(
+                param_name, val
+            )
+
+        for key, val in legacy_kwargs.items():
+            group_name = _LEGACY_PARAM_GROUPS.get(key)
+            if group_name is None:
+                raise TypeError(
+                    f"Session.__init__() got an unexpected keyword argument '{key}'"
+                )
+            if key in seen_legacy_names:
+                raise TypeError(
+                    f"Session.__init__() got multiple values for argument '{key}'"
+                )
+            used_legacy_params = True
+            seen_legacy_names.add(key)
+            group_targets[group_name][key] = _normalize_option_value(key, val)
+
+        if used_legacy_params:
+            warnings.warn(
+                "Passing individual flat parameters to Session.__init__() is deprecated and "
+                "will be removed in a future release. Pass grouped dictionaries "
+                "(connection_options, v3_options, mib_and_output_options, operation_options) "
+                "instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         # Note that underlying SessionBase object depends on all parameters to be strings.
         # This is the case, since at the end of the day we are building a command line string
         # to pass to the NetSNMP command line tool.
         try:
-
-            temp_version = ""
-            if version == 2:
-                temp_version = "2c"
-            else:
-                temp_version = str(version)
+            max_repeaters = op_opts.pop("set_max_repeaters_to_num", "10")
 
             # Initialize the SWIG-wrapped C++ SessionBase via super().__init__().
             # This ensures that calling inherited methods like _get_context() directly
             # on the Session object works correctly (fixes GitHub issue #656).
-            super().__init__(
-                hostname,
-                str(port_number),
-                temp_version,
-                community,
-                auth_protocol,
-                auth_passphrase,
-                security_engine_id,
-                context_engine_id,
-                security_level,
-                context,
-                security_username,
-                privacy_protocol,
-                privacy_passphrase,
-                boots_time,
-                str(retries),
-                str(timeout),
-                load_mibs,
-                mib_directories,
-                print_enums_numerically,
-                print_full_oids,
-                print_oids_numerically,
-                print_timeticks_numerically,
-                print_hex_strings,
-                "",  # Set to empty string here. We will set it in the bulk methods.
-            )
+            super().__init__(conn_opts, v3_opts, mib_opts, op_opts)
 
             # Track the closed state for __del__ and multiple closes
             self._closed = False
-            self.__set_max_repeaters_to_num = str(set_max_repeaters_to_num)
+            self.__set_max_repeaters_to_num = max_repeaters
 
         except Exception as e:
             _handle_error(e)
@@ -609,6 +711,466 @@ class Session(SessionBase):
         """
         super()._set_max_repeaters_to_num(value)
 
+    @property
+    def print_oid_suffix_only(self):
+        """Get whether to print only the last symbolic element of OIDs.
+
+        :type: bool
+        """
+        return super()._get_print_oid_suffix_only()
+
+    @print_oid_suffix_only.setter
+    def print_oid_suffix_only(self, value):
+        """Set whether to print only the last symbolic element of OIDs.
+
+        :param value: The new value for printing OID suffix only.
+        :type value: bool
+        """
+        super()._set_print_oid_suffix_only(value)
+
+    @property
+    def print_oid_module_name(self):
+        """Get whether to print module name plus last symbolic element of OIDs.
+
+        :type: bool
+        """
+        return super()._get_print_oid_module_name()
+
+    @print_oid_module_name.setter
+    def print_oid_module_name(self, value):
+        """Set whether to print module name plus last symbolic element of OIDs.
+
+        :param value: The new value for printing OID module name.
+        :type value: bool
+        """
+        super()._set_print_oid_module_name(value)
+
+    @property
+    def print_oid_ucd_style(self):
+        """Get whether to print OIDs in UCD-style.
+
+        :type: bool
+        """
+        return super()._get_print_oid_ucd_style()
+
+    @print_oid_ucd_style.setter
+    def print_oid_ucd_style(self, value):
+        """Set whether to print OIDs in UCD-style.
+
+        :param value: The new value for printing OIDs in UCD-style.
+        :type value: bool
+        """
+        super()._set_print_oid_ucd_style(value)
+
+    @property
+    def print_ascii_strings(self):
+        """Get whether to print all strings as ASCII.
+
+        :type: bool
+        """
+        return super()._get_print_ascii_strings()
+
+    @print_ascii_strings.setter
+    def print_ascii_strings(self, value):
+        """Set whether to print all strings as ASCII.
+
+        :param value: The new value for printing ASCII strings.
+        :type value: bool
+        """
+        super()._set_print_ascii_strings(value)
+
+    @property
+    def print_leading_zero_hex(self):
+        """Get whether to print leading zeroes in hex strings.
+
+        :type: bool
+        """
+        return super()._get_print_leading_zero_hex()
+
+    @print_leading_zero_hex.setter
+    def print_leading_zero_hex(self, value):
+        """Set whether to print leading zeroes in hex strings.
+
+        :param value: The new value for printing leading zeroes in hex strings.
+        :type value: bool
+        """
+        super()._set_print_leading_zero_hex(value)
+
+    @property
+    def print_hex_text(self):
+        """Get whether to print ASCII text alongside hex output.
+
+        :type: bool
+        """
+        return super()._get_print_hex_text()
+
+    @print_hex_text.setter
+    def print_hex_text(self, value):
+        """Set whether to print ASCII text alongside hex output.
+
+        :param value: The new value for printing hex text.
+        :type value: bool
+        """
+        super()._set_print_hex_text(value)
+
+    @property
+    def dont_breakdown_oids(self):
+        """Get whether to disable OID index breakdown.
+
+        :type: bool
+        """
+        return super()._get_dont_breakdown_oids()
+
+    @dont_breakdown_oids.setter
+    def dont_breakdown_oids(self, value):
+        """Set whether to disable OID index breakdown.
+
+        :param value: The new value for disabling OID index breakdown.
+        :type value: bool
+        """
+        super()._set_dont_breakdown_oids(value)
+
+    @property
+    def escape_quotes_in_indexes(self):
+        """Get whether to escape quotes in string indexes.
+
+        :type: bool
+        """
+        return super()._get_escape_quotes_in_indexes()
+
+    @escape_quotes_in_indexes.setter
+    def escape_quotes_in_indexes(self, value):
+        """Set whether to escape quotes in string indexes.
+
+        :param value: The new value for escaping quotes in string indexes.
+        :type value: bool
+        """
+        super()._set_escape_quotes_in_indexes(value)
+
+    @property
+    def extended_index_format(self):
+        """Get whether to print indexes in bracketed extended format.
+
+        :type: bool
+        """
+        return super()._get_extended_index_format()
+
+    @extended_index_format.setter
+    def extended_index_format(self, value):
+        """Set whether to print indexes in bracketed extended format.
+
+        :param value: The new value for extended index format.
+        :type value: bool
+        """
+        super()._set_extended_index_format(value)
+
+    @property
+    def dont_print_units(self):
+        """Get whether to suppress MIB units in output.
+
+        :type: bool
+        """
+        return super()._get_dont_print_units()
+
+    @dont_print_units.setter
+    def dont_print_units(self, value):
+        """Set whether to suppress MIB units in output.
+
+        :param value: The new value for suppressing MIB units.
+        :type value: bool
+        """
+        super()._set_dont_print_units(value)
+
+    @property
+    def output_precision(self):
+        """Get the precision format string for float/double output.
+
+        :type: str
+        """
+        return super()._get_output_precision()
+
+    @output_precision.setter
+    def output_precision(self, value):
+        """Set the precision format string for float/double output.
+
+        :param value: The precision format string.
+        :type value: str
+        """
+        super()._set_output_precision(value)
+
+    @property
+    def regex_oid_matching(self):
+        """Get whether to enable regex OID matching.
+
+        :type: bool
+        """
+        return super()._get_regex_oid_matching()
+
+    @regex_oid_matching.setter
+    def regex_oid_matching(self, value):
+        """Set whether to enable regex OID matching.
+
+        :param value: The new value for regex OID matching.
+        :type value: bool
+        """
+        super()._set_regex_oid_matching(value)
+
+    @property
+    def ignore_display_hints(self):
+        """Get whether to ignore MIB DISPLAY-HINTs on input.
+
+        :type: bool
+        """
+        return super()._get_ignore_display_hints()
+
+    @ignore_display_hints.setter
+    def ignore_display_hints(self, value):
+        """Set whether to ignore MIB DISPLAY-HINTs on input.
+
+        :param value: The new value for ignoring display hints.
+        :type value: bool
+        """
+        super()._set_ignore_display_hints(value)
+
+    @property
+    def dont_check_range(self):
+        """Get whether to disable range checks on input values.
+
+        :type: bool
+        """
+        return super()._get_dont_check_range()
+
+    @dont_check_range.setter
+    def dont_check_range(self, value):
+        """Set whether to disable range checks on input values.
+
+        :param value: The new value for disabling range checks.
+        :type value: bool
+        """
+        super()._set_dont_check_range(value)
+
+    @property
+    def random_access_oid(self):
+        """Get whether to enable random-access OID lookup.
+
+        :type: bool
+        """
+        return super()._get_random_access_oid()
+
+    @random_access_oid.setter
+    def random_access_oid(self, value):
+        """Set whether to enable random-access OID lookup.
+
+        :param value: The new value for random-access OID lookup.
+        :type value: bool
+        """
+        super()._set_random_access_oid(value)
+
+    @property
+    def read_ucd_style_oid(self):
+        """Get whether to read OIDs relative to UCD default prefix.
+
+        :type: bool
+        """
+        return super()._get_read_ucd_style_oid()
+
+    @read_ucd_style_oid.setter
+    def read_ucd_style_oid(self, value):
+        """Set whether to read OIDs relative to UCD default prefix.
+
+        :param value: The new value for reading UCD-style OIDs.
+        :type value: bool
+        """
+        super()._set_read_ucd_style_oid(value)
+
+    @property
+    def oid_suffix(self):
+        """Get the suffix to append to input OIDs.
+
+        :type: str
+        """
+        return super()._get_oid_suffix()
+
+    @oid_suffix.setter
+    def oid_suffix(self, value):
+        """Set the suffix to append to input OIDs.
+
+        :param value: The OID suffix to set.
+        :type value: str
+        """
+        super()._set_oid_suffix(value)
+
+    @property
+    def oid_prefix(self):
+        """Get the prefix to prepend to input OIDs.
+
+        :type: str
+        """
+        return super()._get_oid_prefix()
+
+    @oid_prefix.setter
+    def oid_prefix(self, value):
+        """Set the prefix to prepend to input OIDs.
+
+        :param value: The OID prefix to set.
+        :type value: str
+        """
+        super()._set_oid_prefix(value)
+
+    @property
+    def mib_allow_underline(self):
+        """Get whether to allow underscores in MIB labels.
+
+        :type: bool
+        """
+        return super()._get_mib_allow_underline()
+
+    @mib_allow_underline.setter
+    def mib_allow_underline(self, value):
+        """Set whether to allow underscores in MIB labels.
+
+        :param value: The new value for allowing underscores in MIB labels.
+        :type value: bool
+        """
+        super()._set_mib_allow_underline(value)
+
+    @property
+    def mib_comment_to_eol(self):
+        """Get whether to treat ``--`` MIB comments as extending to end-of-line.
+
+        :type: bool
+        """
+        return super()._get_mib_comment_to_eol()
+
+    @mib_comment_to_eol.setter
+    def mib_comment_to_eol(self, value):
+        """Set whether to treat ``--`` MIB comments as extending to end-of-line.
+
+        :param value: The new value for MIB comment to end-of-line.
+        :type value: bool
+        """
+        super()._set_mib_comment_to_eol(value)
+
+    @property
+    def mib_replace_with_latest(self):
+        """Get whether to replace duplicate MIB objects with latest definition.
+
+        :type: bool
+        """
+        return super()._get_mib_replace_with_latest()
+
+    @mib_replace_with_latest.setter
+    def mib_replace_with_latest(self, value):
+        """Set whether to replace duplicate MIB objects with latest definition.
+
+        :param value: The new value for replacing duplicate MIB objects.
+        :type value: bool
+        """
+        super()._set_mib_replace_with_latest(value)
+
+    @property
+    def non_repeaters(self):
+        """Get the number of non-repeaters for GETBULK PDUs.
+
+        :type: str
+        """
+        return super()._get_non_repeaters()
+
+    @non_repeaters.setter
+    def non_repeaters(self, value):
+        """Set the number of non-repeaters for GETBULK PDUs.
+
+        :param value: The number of non-repeaters. Only applies to bulk_walk
+            and bulk_get operations.
+        :type value: Union[str, int]
+        """
+        super()._set_non_repeaters(str(value))
+
+    @property
+    def walk_dont_check_lexicographic(self):
+        """Get whether to disable lexicographical OID ordering checks during walks.
+
+        :type: bool
+        """
+        return super()._get_walk_dont_check_lexicographic()
+
+    @walk_dont_check_lexicographic.setter
+    def walk_dont_check_lexicographic(self, value):
+        """Set whether to disable lexicographical OID ordering checks during walks.
+
+        :param value: The new value for disabling lexicographical checks.
+        :type value: bool
+        """
+        super()._set_walk_dont_check_lexicographic(value)
+
+    @property
+    def walk_include_requested(self):
+        """Get whether to include the requested OID in walk results.
+
+        :type: bool
+        """
+        return super()._get_walk_include_requested()
+
+    @walk_include_requested.setter
+    def walk_include_requested(self, value):
+        """Set whether to include the requested OID in walk results.
+
+        :param value: The new value for including the requested OID.
+        :type value: bool
+        """
+        super()._set_walk_include_requested(value)
+
+    @property
+    def walk_dont_get_requested(self):
+        """Get whether to skip GET fallback when walk returns nothing.
+
+        :type: bool
+        """
+        return super()._get_walk_dont_get_requested()
+
+    @walk_dont_get_requested.setter
+    def walk_dont_get_requested(self, value):
+        """Set whether to skip GET fallback when walk returns nothing.
+
+        :param value: The new value for skipping GET fallback.
+        :type value: bool
+        """
+        super()._set_walk_dont_get_requested(value)
+
+    @property
+    def walk_end_oid(self):
+        """Get the OID at which to stop walking.
+
+        :type: str
+        """
+        return super()._get_walk_end_oid()
+
+    @walk_end_oid.setter
+    def walk_end_oid(self, value):
+        """Set the OID at which to stop walking.
+
+        :param value: The end OID for walk operations.
+        :type value: str
+        """
+        super()._set_walk_end_oid(value)
+
+    @property
+    def dont_fix_pdus(self):
+        """Get whether to disable PDU error fixing on GET/GETNEXT.
+
+        :type: bool
+        """
+        return super()._get_dont_fix_pdus()
+
+    @dont_fix_pdus.setter
+    def dont_fix_pdus(self, value):
+        """Set whether to disable PDU error fixing on GET/GETNEXT.
+
+        :param value: The new value for disabling PDU error fixing.
+        :type value: bool
+        """
+        super()._set_dont_fix_pdus(value)
+
     def close(self):
         """Close the SNMP session and release resources."""
         if not self._closed:
@@ -675,6 +1237,33 @@ class Session(SessionBase):
             "print_timeticks_numerically",
             "print_hex_strings",
             "set_max_repeaters_to_num",
+            "print_oid_suffix_only",
+            "print_oid_module_name",
+            "print_oid_ucd_style",
+            "print_ascii_strings",
+            "print_leading_zero_hex",
+            "print_hex_text",
+            "dont_breakdown_oids",
+            "escape_quotes_in_indexes",
+            "extended_index_format",
+            "dont_print_units",
+            "output_precision",
+            "regex_oid_matching",
+            "ignore_display_hints",
+            "dont_check_range",
+            "random_access_oid",
+            "read_ucd_style_oid",
+            "oid_suffix",
+            "oid_prefix",
+            "mib_allow_underline",
+            "mib_comment_to_eol",
+            "mib_replace_with_latest",
+            "non_repeaters",
+            "walk_dont_check_lexicographic",
+            "walk_include_requested",
+            "walk_dont_get_requested",
+            "walk_end_oid",
+            "dont_fix_pdus",
         ]
 
         for prop in optional_props:

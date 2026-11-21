@@ -861,3 +861,100 @@ def test_session_print_hex_strings_set(version):
         )
 
     del session
+
+
+def test_session_new_output_input_mib_cli_args():
+    session = Session(
+        connection_options={"hostname": "localhost:11161", "version": "2c"},
+        mib_and_output_options={
+            "print_oid_suffix_only": True,
+            "print_ascii_strings": True,
+            "output_precision": "%.3f",
+            "regex_oid_matching": True,
+            "oid_suffix": ".0",
+            "oid_prefix": ".1.3",
+            "mib_allow_underline": True,
+            "mib_replace_with_latest": True,
+        },
+    )
+
+    assert session.args == (
+        "-c",
+        "public",
+        "-r",
+        "3",
+        "-t",
+        "1",
+        "-v",
+        "2c",
+        "-O",
+        "s",
+        "-O",
+        "a",
+        "-Op",
+        "%.3f",
+        "-I",
+        "b",
+        "-Is",
+        ".0",
+        "-IS",
+        ".1.3",
+        "-P",
+        "u",
+        "-P",
+        "R",
+        "localhost:11161",
+    )
+
+    del session
+
+
+def test_session_app_c_flags_constructor_and_to_dict():
+    session = Session(
+        connection_options={"hostname": "localhost:11161", "version": "2c"},
+        operation_options={
+            "non_repeaters": 2,
+            "walk_dont_check_lexicographic": True,
+            "walk_include_requested": True,
+            "walk_dont_get_requested": True,
+            "walk_end_oid": "1.3.6.1.2.1.2",
+            "dont_fix_pdus": True,
+        },
+    )
+
+    assert session.non_repeaters == "2"
+    assert session.walk_dont_check_lexicographic is True
+    assert session.walk_include_requested is True
+    assert session.walk_dont_get_requested is True
+    assert session.walk_end_oid == "1.3.6.1.2.1.2"
+    assert session.dont_fix_pdus is True
+
+    # Default args (SnmpOperation::All) include all configured -C flags
+    assert session.args == (
+        "-c",
+        "public",
+        "-r",
+        "3",
+        "-t",
+        "1",
+        "-v",
+        "2c",
+        "-Cn2",
+        "-Cc",
+        "-Ci",
+        "-CI",
+        "-CE",
+        "1.3.6.1.2.1.2",
+        "-Cf",
+        "localhost:11161",
+    )
+
+    session_dict = session.to_dict()
+    assert session_dict["non_repeaters"] == "2"
+    assert session_dict["walk_dont_check_lexicographic"] is True
+    assert session_dict["walk_include_requested"] is True
+    assert session_dict["walk_dont_get_requested"] is True
+    assert session_dict["walk_end_oid"] == "1.3.6.1.2.1.2"
+    assert session_dict["dont_fix_pdus"] is True
+
+    del session
