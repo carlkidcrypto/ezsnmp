@@ -54,7 +54,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           files: |
             .github/workflows/tests_homebrew.yml
@@ -94,7 +94,7 @@ jobs:
       - name: Set up Homebrew
         id: set-up-homebrew
         if: runner.os == 'macOS'
-        uses: Homebrew/actions/setup-homebrew@63a2d4d8d4193eab3e62b1b782ff3ab8408f5b29 # master
+        uses: Homebrew/actions/setup-homebrew@ceec4e8419bb3c97ce96e9dda7738499ed5f869d # master
 
       - name: Enable Homebrew analytics
         if: runner.os == 'macOS'
@@ -127,7 +127,7 @@ jobs:
 
       - name: Install Net-SNMP 5.10 on Linux
         if: runner.os == 'Linux'
-        run: sudo bash ./tools/prepare_linux_netsnmp.sh
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
