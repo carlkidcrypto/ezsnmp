@@ -16,5 +16,6 @@
 %include "snmpget.i"
 %include "snmpgetnext.i"
 %include "snmpset.i"
+%include "snmptable.i"
 %include "snmptrap.i"
 %include "snmpwalk.i"
