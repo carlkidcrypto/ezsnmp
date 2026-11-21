@@ -54,7 +54,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@873e1fea29bbd9dc73651d85a28920cb0797cb85
         with:
           files: |
             .coveragerc
@@ -224,13 +224,12 @@ jobs:
           python3 python_tests/normalize_coverage_paths.py ./coverage_*.xml
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@873e1fea29bbd9dc73651d85a28920cb0797cb85
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
           flags: python-native
-          fail_ci_if_error: false
-          verbose: true
+          fail-ci-if-error: false
 
       - name: Upload test results to Codecov
         if: always()

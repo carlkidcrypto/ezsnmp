@@ -71,8 +71,8 @@ Before submitting AI-assisted code, confirm that:
 - Workflow files pass ``yamllint`` and ``actionlint``
 
 Install the Python workflow linter with ``python -m pip install -r requirements.txt``.
-The official ``actionlint`` binary is versioned in ``tools/actionlint-version.txt``
-and must be installed from its upstream release for the current platform.
+The official ``actionlint`` binary is managed via ``carlkidcrypto/shared-workflows``
+(``reusable_verify_syntax.yml`` / ``actions/setup-actionlint``).
 - Docs are updated: README.rst, Sphinx docs, and Doxygen comments
 - Code follows existing patterns in both languages
 

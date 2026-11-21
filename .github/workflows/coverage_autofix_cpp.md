@@ -38,6 +38,7 @@ tools:
   bash: true
 imports:
   - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@88de7dd78ef1a992d2509818afcf0c76a2c631eb
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@873e1fea29bbd9dc73651d85a28920cb0797cb85
 ---
 
 # C++ Coverage Checks And Suggested Fixes
