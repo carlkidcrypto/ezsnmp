@@ -6,6 +6,8 @@
 #include "exceptionsbase.h"
 #include "snmpset.h"
 
+void snmpset_usage(void);
+
 static int g_parse_args_result = NETSNMP_PARSE_ARGS_ERROR;
 
 extern "C" int snmp_parse_args(int argc,
@@ -55,4 +57,8 @@ TEST_F(SnmpSetParseArgsShimTest, TestParseArgsSuccessExitThrowsParseError) {
           }
        },
        ParseErrorBase);
+}
+
+TEST_F(SnmpSetParseArgsShimTest, TestUsageDoesNotThrow) {
+   EXPECT_NO_THROW({ snmpset_usage(); });
 }

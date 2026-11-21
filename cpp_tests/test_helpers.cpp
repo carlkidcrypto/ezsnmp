@@ -728,6 +728,14 @@ TEST_F(SnmpPduDeleterTest, UniquePtrDeleter) {
    } // pdu is freed on scope exit
 }
 
+// Tests for SnmpSessionCloser
+class SnmpSessionCloserTest : public ::testing::Test {};
+
+TEST_F(SnmpSessionCloserTest, NullSessionSafe) {
+   SnmpSessionCloser closer;
+   EXPECT_NO_THROW(closer(nullptr));
+}
+
 // Tests for SockCleanupGuard
 class SockCleanupGuardTest : public ::testing::Test {};
 

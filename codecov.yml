@@ -35,6 +35,10 @@ ignore:
   - "conftest.py"
   - "setup.py"
   - "setup.cfg"
+  # Exclude legacy Net-SNMP 5.7-5.9 directories removed from main (stale Codecov carryforward)
+  - "ezsnmp/src/net-snmp-5.7-final-patched/**"
+  - "ezsnmp/src/net-snmp-5.8-final-patched/**"
+  - "ezsnmp/src/net-snmp-5.9-final-patched/**"
 
 # Flag management: exactly ONE flag per upload (language + environment).
 # Carryforward replaces a carried-forward session whenever ANY of its flags is
