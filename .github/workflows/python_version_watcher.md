@@ -13,33 +13,13 @@ permissions:
   contents: read
   copilot-requests: write
 
-safe-outputs:
-  noop:
-    report-as-issue: true
-  create-pull-request:
-    title-prefix: "[python-version]"
-    labels:
-      - automated-pr
-    draft: true
-    preserve-branch-name: true
-    if-no-changes: ignore
-    protected-files: allowed
-
 timeout-minutes: 15
 max-ai-credits: 25
 
 model: sonnet
-engine:
-  id: copilot
-  args: ["--allow-all-tools"]
-network:
-  allowed:
-    - defaults
-    - devguide.python.org
-
-tools:
-  edit:
-  bash: true
+imports:
+  - carlkidcrypto/shared-workflows/shared/python-version-watcher-core.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 ---
 
 ## Python Version Watcher and Auto-Sync
