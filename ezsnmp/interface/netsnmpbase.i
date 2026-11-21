@@ -13,6 +13,7 @@
 
 %include "snmpbulkget.i"
 %include "snmpbulkwalk.i"
+%include "snmpdf.i"
 %include "snmpget.i"
 %include "snmpgetnext.i"
 %include "snmpset.i"

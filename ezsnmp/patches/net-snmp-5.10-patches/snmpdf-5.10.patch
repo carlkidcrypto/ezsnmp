@@ -1,0 +1,708 @@
+--- a/net-snmp-5.10/apps/snmpdf.c
++++ b/net-snmp-5.10/apps/snmpdf.cpp
+@@ -1,3 +1,4 @@
++/* straight copy from https://github.com/net-snmp/net-snmp/tree/master/apps */
+ /*
+  * snmpdf.c - display disk space usage on a network entity via SNMP.
+  *
+@@ -51,8 +52,8 @@
+ #ifdef HAVE_NETINET_IN_H
+ #include <netinet/in.h>
+ #endif
+-#include <stdio.h>
+ #include <ctype.h>
++#include <stdio.h>
+ #ifdef TIME_WITH_SYS_TIME
+ # include <sys/time.h>
+ # include <time.h>
+@@ -75,84 +76,93 @@
+ 
+ #include <net-snmp/net-snmp-includes.h>
+ 
+-void
+-usage(void)
+-{
+-    fprintf(stderr, "Usage: snmpdf [-Cu] ");
+-    snmp_parse_args_usage(stderr);
+-    fprintf(stderr, "\n\n");
+-    snmp_parse_args_descriptions(stderr);
+-    fprintf(stderr, "\nsnmpdf options:\n");
+-    fprintf(stderr,
+-            "\t-Cu\tUse UCD-SNMP dskTable to do the calculations.\n");
+-    fprintf(stderr,
+-            "\t\t[Normally the HOST-RESOURCES-MIB is consulted first.]\n");
+-    fprintf(stderr,
+-            "\t-Ch\tPrint using human readable format (MiB, GiB, TiB)\n");
+-    fprintf(stderr,
+-            "\t-CH\tPrint using human readable SI format (MB, GB, TB)\n");
+-}
++#include <cstdio>
++#include <cstring>
++#include <memory>
++#include <mutex>
++#include <string>
++#include <vector>
+ 
+-int             ucd_mib = 0;
+-int             human_units = 0;
++#include "exceptionsbase.h"
++#include "helpers.h"
++#include "snmpdf.h"
++#include "thread_safety.h"
+ 
+-static void
+-optProc(int argc, char *const *argv, int opt)
+-{
++namespace {
++
++thread_local int g_ucd_mib = 0;
++thread_local int g_human_units = 0;
++thread_local std::string g_opt_error;
++
++void snmpdf_optProc(int, char *const *, int opt) {
+     switch (opt) {
+     case 'C':
+         while (*optarg) {
+             switch (*optarg++) {
+             case 'u':
+-                ucd_mib = 1;
++                  g_ucd_mib = 1;
+                 break;
+             case 'h':
+-                human_units = 1024;
++                  g_human_units = 1024;
+                 break;
+             case 'H':
+-                human_units = 1000;
++                  g_human_units = 1000;
+                 break;
+             default:
+-                fprintf(stderr,
+-                        "Unknown flag passed to -C: %c\n", optarg[-1]);
+-                exit(1);
++                  if (g_opt_error.empty()) {
++                     g_opt_error =
++                         "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
+             }
++                  break;
+         }
+     }
++         break;
+ }
++}
+ 
+-struct hrStorageTable {
+-    u_long          hrStorageIndex;
+-    oid            *hrStorageType;
+-    char           *hrStorageDescr;
+-    u_long          hrStorageAllocationUnits;
+-    u_long          hrStorageSize;
+-    u_long          hrStorageUsed;
++struct SnmpVarbindDeleter {
++   void operator()(netsnmp_variable_list *vl) const {
++      if (vl) {
++         snmp_free_varbind(vl);
++      }
++   }
+ };
+ 
+-int
+-add(netsnmp_pdu *pdu, const char *mibnodename,
+-    oid * index, size_t indexlen)
+-{
++struct SnmpdfLibraryCleanupGuard {
++   ~SnmpdfLibraryCleanupGuard() {
++      clear_net_snmp_library_data();
++      SOCK_CLEANUP;
++   }
++};
++
++struct SnmpdfSessionCleanupGuard {
++   netsnmp_session *session = nullptr;
++   ~SnmpdfSessionCleanupGuard() {
++      if (session) {
++         netsnmp_cleanup_session(session);
++      }
++   }
++};
++
++int add(netsnmp_pdu *pdu, char const *mibnodename, oid *index, size_t indexlen) {
+     oid             base[MAX_OID_LEN];
+     size_t          base_length = MAX_OID_LEN;
+ 
+-    memset(base, 0, MAX_OID_LEN * sizeof(oid));
++   std::memset(base, 0, MAX_OID_LEN * sizeof(oid));
+ 
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+     if (!snmp_parse_oid(mibnodename, base, &base_length)) {
+-        snmp_perror(mibnodename);
+-        fprintf(stderr, "couldn't find mib node %s, giving up\n",
+-                mibnodename);
+-        exit(1);
++         snmp_perror_exception(mibnodename);
+     }
++   }
+ 
+     if (base_length + indexlen > sizeof(base) / sizeof(base[0])) {
+-        fprintf(stderr, "internal error for %s, giving up\n", mibnodename);
+-        exit(1);
++      throw GenericErrorBase("internal error for " + std::string(mibnodename) + ", giving up\n");
+     }
+ 
+     if (index && indexlen) {
+-        memcpy(&(base[base_length]), index, indexlen * sizeof(oid));
++      std::memcpy(&(base[base_length]), index, indexlen * sizeof(oid));
+         base_length += indexlen;
+     }
+     DEBUGMSGTL(("add", "created: "));
+@@ -160,313 +170,363 @@
+     DEBUGMSG(("add", "\n"));
+     snmp_add_null_var(pdu, base, base_length);
+ 
+-    return base_length;
++   return static_cast<int>(base_length);
+ }
+ 
+-netsnmp_variable_list *
+-collect(netsnmp_session * ss, netsnmp_pdu *pdu,
+-        oid * base, size_t base_length)
+-{
+-    netsnmp_pdu    *response;
++netsnmp_variable_list *collect(
++    void *sessp, char const *peername, netsnmp_pdu *pdu, oid *base, size_t base_length) {
+     int             running = 1;
+-    netsnmp_variable_list *saved = NULL, **vlpp = &saved;
+-    int             status;
++   netsnmp_variable_list *saved = nullptr;
++   netsnmp_variable_list **vlpp = &saved;
++   struct VarbindListGuard {
++      netsnmp_variable_list *&head;
++      bool released = false;
++      ~VarbindListGuard() {
++         if (!released && head) {
++            snmp_free_varbind(head);
++         }
++      }
++   } saved_guard{saved};
+ 
++   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard(pdu);
++
+     while (running) {
+-        /*
+-         * gotta catch em all, gotta catch em all! 
+-         */
+-        status = snmp_synch_response(ss, pdu, &response);
+-        if (status != STAT_SUCCESS || !response) {
+-            snmp_sess_perror("snmpdf", ss);
+-            exit(1);
++      netsnmp_pdu *response_raw = nullptr;
++      int status = snmp_sess_synch_response(static_cast<struct session_list *>(sessp),
++                                            pdu_guard.release(), &response_raw);
++      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response(response_raw);
++      if (status == STAT_TIMEOUT) {
++         throw TimeoutErrorBase("Timeout: No Response from " +
++                                std::string(peername ? peername : "") + ".\n");
+         }
++      if (status != STAT_SUCCESS) {
++         snmp_single_sess_perror_exception("snmpdf", sessp);
++      }
++      snmp_check_null_response(response.get());
+         if (response->errstat != SNMP_ERR_NOERROR) {
+-            fprintf(stderr, "snmpdf: Error in packet: %s\n",
+-                    snmp_errstring(response->errstat));
+-            exit(1);
++         throw PacketErrorBase(
++             "snmpdf: Error in packet: " + std::string(snmp_errstring(response->errstat)) + "\n");
+         }
+-        if (snmp_oid_compare(response->variables->name,
+-                             SNMP_MIN(base_length,
+-                                      response->variables->name_length),
+-                             base, base_length) != 0)
++      if (!response->variables || response->variables->name_length <= base_length ||
++          snmp_oid_compare(response->variables->name, base_length, base, base_length) != 0) {
+             running = 0;
+-        else if (response->variables->type == SNMP_NOSUCHINSTANCE ||
++      } else if (response->variables->type == SNMP_NOSUCHINSTANCE ||
+                  response->variables->type == SNMP_NOSUCHOBJECT ||
+-                 response->variables->type == SNMP_ENDOFMIBVIEW)
++                 response->variables->type == SNMP_ENDOFMIBVIEW) {
+             running = 0;
+-        else {
++      } else {
+             /*
+              * get response 
+              */
+             *vlpp = response->variables;
+-            (*vlpp)->next_variable = NULL;      /* shouldn't be any, but just in case */
++         (*vlpp)->next_variable = nullptr; /* shouldn't be any, but just in case */
+ 
+             /*
+              * create the next request 
+              */
+-            pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+-            snmp_add_null_var(pdu, (*vlpp)->name, (*vlpp)->name_length);
++         pdu_guard.reset(snmp_pdu_create(SNMP_MSG_GETNEXT));
++         snmp_add_null_var(pdu_guard.get(), (*vlpp)->name, (*vlpp)->name_length);
+ 
+             /*
+              * finish loop setup 
+              */
+             vlpp = &((*vlpp)->next_variable);
+-            response->variables = NULL; /* ahh, forget about it */
++         response->variables = nullptr; /* ahh, forget about it */
+         }
+-        snmp_free_pdu(response);
+     }
++   saved_guard.released = true;
+     return saved;
+ }
+ 
+-
+-
+-char *format_human(char *buf, size_t len, unsigned long mem, unsigned long scale)
+-{
+-    if (mem >= scale*scale*scale*scale)
+-        snprintf(buf, len, "%4.2fP%sB", (float)mem/(scale*scale*scale*scale),
++char *format_human(char *buf, size_t len, unsigned long mem, unsigned long scale) {
++   if (mem >= scale * scale * scale * scale) {
++      std::snprintf(buf, len, "%4.2fP%sB",
++                    static_cast<double>(mem) / (scale * scale * scale * scale),
+ 		scale == 1024 ? "i" : "");
+-    else if (mem >= scale*scale*scale)
+-        snprintf(buf, len, "%4.2fT%sB", (float)mem/(scale*scale*scale),
++   } else if (mem >= scale * scale * scale) {
++      std::snprintf(buf, len, "%4.2fT%sB", static_cast<double>(mem) / (scale * scale * scale),
+ 		scale == 1024 ? "i" : "");
+-    else if (mem >= scale*scale)
+-        snprintf(buf, len, "%4.2fG%sB", (float)mem/(scale*scale),
++   } else if (mem >= scale * scale) {
++      std::snprintf(buf, len, "%4.2fG%sB", static_cast<double>(mem) / (scale * scale),
+ 		scale == 1024 ? "i" : "");
+-    else if (mem >= scale)
+-        snprintf(buf, len, "%4.2fM%sB", (float)mem/scale,
++   } else if (mem >= scale) {
++      std::snprintf(buf, len, "%4.2fM%sB", static_cast<double>(mem) / scale,
+ 		scale == 1024 ? "i" : "");
+-    else
+-        snprintf(buf, len, "%4.2fkB", (float)mem);
++   } else {
++      std::snprintf(buf, len, "%4.2fkB", static_cast<double>(mem));
++   }
+     return buf;
+ }
+ 
+ /* Computes value*units/divisor in an overflow-proof way.
+  */
+-unsigned long
+-convert_units(unsigned long value, size_t units, size_t divisor)
+-{
+-    return (unsigned long)((double)value * units / (double)divisor);
++unsigned long convert_units(unsigned long value, size_t units, size_t divisor) {
++   return static_cast<unsigned long>(static_cast<double>(value) * units /
++                                     static_cast<double>(divisor));
+ }
+ 
++} // namespace
+ 
+-int
+-main(int argc, char *argv[])
+-{
+-    netsnmp_session session, *ss;
+-    netsnmp_pdu    *pdu;
+-    netsnmp_pdu    *response;
+-    int             arg;
++std::vector<std::string> snmpdf(std::vector<std::string> const &args,
++                                std::string const &init_app_name) {
++   netsnmp_thread_init(init_app_name);
++   SOCK_STARTUP;
++   SnmpdfLibraryCleanupGuard lib_guard;
++
++   int argc = 0;
++   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
++   std::vector<std::string> return_vector;
++
++   netsnmp_session session;
++   SnmpdfSessionCleanupGuard sess_cleanup_guard;
++   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
++
++   int arg = 0;
+     oid             base[MAX_OID_LEN];
+-    size_t          base_length;
+-    int             status;
+-    netsnmp_variable_list *saved = NULL, *vlp = saved, *vlp2;
+-    int             count = 0, exit_code = 1;
++   size_t base_length = 0;
++   int count = 0;
++   int ucd_mib = 0;
++   int human_units = 0;
+ 
+-    SOCK_STARTUP;
++   {
++      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
++      g_ucd_mib = 0;
++      g_human_units = 0;
++      g_opt_error.clear();
++#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
++      optreset = 1;
++      optind = 1;
++#else
++      optind = 0;
++#endif
++      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
++      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+ 
+-    /*
+-     * get the common command line arguments 
+-     */
+-    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
++      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpdf_optProc);
++      if (!g_opt_error.empty()) {
++         throw ParseErrorBase(g_opt_error);
++      }
++      switch (arg) {
+     case NETSNMP_PARSE_ARGS_ERROR:
+-        goto out;
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
+     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+-        exit_code = 0;
+-        goto out;
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
+     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+-        usage();
+-        goto out;
++            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
+     default:
+         break;
+     }
++      sess_cleanup_guard.session = &session;
++      ucd_mib = g_ucd_mib;
++      human_units = g_human_units;
++   }
+ 
+     if (arg != argc) {
+-	fprintf(stderr, "snmpdf: extra argument: %s\n", argv[arg]);
+-	goto out;
++      throw ParseErrorBase("snmpdf: extra argument: " + std::string(argv[arg]) + "\n");
+     }
+ 
+-    /*
+-     * Open an SNMP session.
+-     */
+-    ss = snmp_open(&session);
+-    if (ss == NULL) {
+-        /*
+-         * diagnose snmp_open errors with the input netsnmp_session pointer 
+-         */
+-        snmp_sess_perror("snmpdf", &session);
+-        goto out;
++   ss.reset(snmp_sess_open(&session));
++   if (!ss) {
++      snmp_sess_perror_exception("snmpdf", &session);
+     }
+ 
++   char line_buf[SPRINT_MAX_LEN + 256];
+     if (human_units) {
+-        printf("%-18s %10s %10s %10s %5s\n", "Description", "Size",
++      std::snprintf(line_buf, sizeof(line_buf), "%-18s %10s %10s %10s %5s", "Description", "Size",
+            "Used", "Available", "Used%");
++   } else {
++      std::snprintf(line_buf, sizeof(line_buf), "%-18s %15s %15s %15s %5s", "Description",
++                    "Size (kB)", "Used", "Available", "Used%");
+     }
+-    else {
+-        printf("%-18s %15s %15s %15s %5s\n", "Description", "Size (kB)",
+-           "Used", "Available", "Used%");
+-    }
++   return_vector.emplace_back(line_buf);
++
+     if (ucd_mib == 0) {
+-        /*
+-         * * Begin by finding all the storage pieces that are of
+-         * * type hrStorageFixedDisk, which is a standard disk.
+-         */
+-        pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+-        base_length =
+-            add(pdu, "HOST-RESOURCES-MIB:hrStorageIndex", NULL, 0);
+-        memcpy(base, pdu->variables->name, base_length * sizeof(oid));
++      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu(snmp_pdu_create(SNMP_MSG_GETNEXT));
++      base_length = add(pdu.get(), "HOST-RESOURCES-MIB:hrStorageIndex", nullptr, 0);
++      std::memcpy(base, pdu->variables->name, base_length * sizeof(oid));
+ 
+-        vlp = collect(ss, pdu, base, base_length);
++      std::unique_ptr<netsnmp_variable_list, SnmpVarbindDeleter> saved(
++          collect(ss.get(), session.peername, pdu.release(), base, base_length));
++      netsnmp_variable_list *vlp = saved.get();
+ 
+         while (vlp) {
+-            size_t          units;
+-            unsigned long   hssize, hsused;
++         size_t units = 0;
++         unsigned long hssize = 0;
++         unsigned long hsused = 0;
+             char            descr[SPRINT_MAX_LEN];
+-            int             len;
++         int len = 0;
+ 
+-            pdu = snmp_pdu_create(SNMP_MSG_GET);
++         std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> get_pdu(snmp_pdu_create(SNMP_MSG_GET));
+ 
+-            add(pdu, "HOST-RESOURCES-MIB:hrStorageDescr",
++         add(get_pdu.get(), "HOST-RESOURCES-MIB:hrStorageDescr", &(vlp->name[base_length]),
++             vlp->name_length - base_length);
++         add(get_pdu.get(), "HOST-RESOURCES-MIB:hrStorageAllocationUnits",
+                 &(vlp->name[base_length]), vlp->name_length - base_length);
+-            add(pdu, "HOST-RESOURCES-MIB:hrStorageAllocationUnits",
+-                &(vlp->name[base_length]), vlp->name_length - base_length);
+-            add(pdu, "HOST-RESOURCES-MIB:hrStorageSize",
+-                &(vlp->name[base_length]), vlp->name_length - base_length);
+-            add(pdu, "HOST-RESOURCES-MIB:hrStorageUsed",
+-                &(vlp->name[base_length]), vlp->name_length - base_length);
++         add(get_pdu.get(), "HOST-RESOURCES-MIB:hrStorageSize", &(vlp->name[base_length]),
++             vlp->name_length - base_length);
++         add(get_pdu.get(), "HOST-RESOURCES-MIB:hrStorageUsed", &(vlp->name[base_length]),
++             vlp->name_length - base_length);
+ 
+-            status = snmp_synch_response(ss, pdu, &response);
+-            if (status != STAT_SUCCESS || !response) {
+-                snmp_sess_perror("snmpdf", ss);
+-                goto close_session;
++         netsnmp_pdu *response_raw = nullptr;
++         int status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()),
++                                               get_pdu.release(), &response_raw);
++         std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response(response_raw);
++         if (status == STAT_TIMEOUT) {
++            throw TimeoutErrorBase("Timeout: No Response from " +
++                                   std::string(session.peername ? session.peername : "") + ".\n");
+             }
++         if (status != STAT_SUCCESS) {
++            snmp_single_sess_perror_exception("snmpdf", ss.get());
++         }
++         snmp_check_null_response(response.get());
+ 
+-            vlp2 = response->variables;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
+-            len = vlp2->val_len;
+-            if (len >= SPRINT_MAX_LEN) len = SPRINT_MAX_LEN-1;
+-            memcpy(descr, vlp2->val.string, len);
++         netsnmp_variable_list *vlp2 = response->variables;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
++         }
++         len = static_cast<int>(vlp2->val_len);
++         if (len >= SPRINT_MAX_LEN) {
++            len = SPRINT_MAX_LEN - 1;
++         }
++         if (vlp2->val.string && len > 0) {
++            std::memcpy(descr, vlp2->val.string, static_cast<size_t>(len));
++         } else {
++            len = 0;
++         }
+             descr[len] = '\0';
+ 
+             vlp2 = vlp2->next_variable;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
+-            units = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
++         }
++         units = vlp2->val.integer ? static_cast<size_t>(*(vlp2->val.integer)) : 0;
+ 
+             vlp2 = vlp2->next_variable;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
+-            hssize = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
++         }
++         hssize = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
+ 
+             vlp2 = vlp2->next_variable;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next;
+-            hsused = vlp2->val.integer ? *(vlp2->val.integer) : 0;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next;
++         }
++         hsused = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
+ 
+             if (human_units) {
+-                char size[10], used[10], avail[10];
+-                printf("%-18s %10s %10s %10s %4lu%%\n", descr,
+-                    format_human(size, sizeof size,
++            char size[32], used[32], avail[32];
++            std::snprintf(
++                line_buf, sizeof(line_buf), "%-18s %10s %10s %10s %4lu%%", descr,
++                format_human(size, sizeof(size),
+                         units ? convert_units(hssize, units, 1024) : hssize, human_units),
+-                    format_human(used, sizeof used,
++                format_human(used, sizeof(used),
+                         units ? convert_units(hsused, units, 1024) : hsused, human_units),
+-                    format_human(avail, sizeof avail,
+-                        units ? convert_units(hssize-hsused, units, 1024) : hssize -
+-                    hsused, human_units),
++                format_human(avail, sizeof(avail),
++                             units ? convert_units(hssize - hsused, units, 1024) : hssize - hsused,
++                             human_units),
+                     hssize ? convert_units(hsused, 100, hssize) : hsused);
+-            }
+-            else {
+-                printf("%-18s %15lu %15lu %15lu %4lu%%\n", descr,
++         } else {
++            std::snprintf(line_buf, sizeof(line_buf), "%-18s %15lu %15lu %15lu %4lu%%", descr,
+                     units ? convert_units(hssize, units, 1024) : hssize,
+                     units ? convert_units(hsused, units, 1024) : hsused,
+-                    units ? convert_units(hssize-hsused, units, 1024) : hssize -
+-                    hsused,
++                          units ? convert_units(hssize - hsused, units, 1024) : hssize - hsused,
+                     hssize ? convert_units(hsused, 100, hssize) : hsused);
+             }
++         return_vector.emplace_back(line_buf);
+ 
+         next:
+             vlp = vlp->next_variable;
+-            snmp_free_pdu(response);
+             count++;
+         }
+     }
+ 
+     if (count == 0) {
+-        /*
+-         * the host resources mib must not be supported.  Lets try the
+-         * UCD-SNMP-MIB and its dskTable 
+-         */
++      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu(snmp_pdu_create(SNMP_MSG_GETNEXT));
++      base_length = add(pdu.get(), "UCD-SNMP-MIB:dskIndex", nullptr, 0);
++      std::memcpy(base, pdu->variables->name, base_length * sizeof(oid));
+ 
+-        pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+-        base_length = add(pdu, "UCD-SNMP-MIB:dskIndex", NULL, 0);
+-        memcpy(base, pdu->variables->name, base_length * sizeof(oid));
++      std::unique_ptr<netsnmp_variable_list, SnmpVarbindDeleter> saved(
++          collect(ss.get(), session.peername, pdu.release(), base, base_length));
++      netsnmp_variable_list *vlp = saved.get();
+ 
+-        vlp = collect(ss, pdu, base, base_length);
+-
+         while (vlp) {
+-            unsigned long   hssize, hsused;
++         unsigned long hssize = 0;
++         unsigned long hsused = 0;
+             char            descr[SPRINT_MAX_LEN];
+-            int             len;
++         int len = 0;
+ 
+-            pdu = snmp_pdu_create(SNMP_MSG_GET);
++         std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> get_pdu(snmp_pdu_create(SNMP_MSG_GET));
+ 
+-            add(pdu, "UCD-SNMP-MIB:dskPath",
+-                &(vlp->name[base_length]), vlp->name_length - base_length);
+-            add(pdu, "UCD-SNMP-MIB:dskTotal",
+-                &(vlp->name[base_length]), vlp->name_length - base_length);
+-            add(pdu, "UCD-SNMP-MIB:dskUsed",
+-                &(vlp->name[base_length]), vlp->name_length - base_length);
++         add(get_pdu.get(), "UCD-SNMP-MIB:dskPath", &(vlp->name[base_length]),
++             vlp->name_length - base_length);
++         add(get_pdu.get(), "UCD-SNMP-MIB:dskTotal", &(vlp->name[base_length]),
++             vlp->name_length - base_length);
++         add(get_pdu.get(), "UCD-SNMP-MIB:dskUsed", &(vlp->name[base_length]),
++             vlp->name_length - base_length);
+ 
+-            status = snmp_synch_response(ss, pdu, &response);
+-            if (status != STAT_SUCCESS || !response) {
+-                snmp_sess_perror("snmpdf", ss);
+-                goto close_session;
++         netsnmp_pdu *response_raw = nullptr;
++         int status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()),
++                                               get_pdu.release(), &response_raw);
++         std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response(response_raw);
++         if (status == STAT_TIMEOUT) {
++            throw TimeoutErrorBase("Timeout: No Response from " +
++                                   std::string(session.peername ? session.peername : "") + ".\n");
+             }
++         if (status != STAT_SUCCESS) {
++            snmp_single_sess_perror_exception("snmpdf", ss.get());
++         }
++         snmp_check_null_response(response.get());
+ 
+-            vlp2 = response->variables;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next2;
+-            len = vlp2->val_len;
+-            if (len >= SPRINT_MAX_LEN) len = SPRINT_MAX_LEN-1;
+-            memcpy(descr, vlp2->val.string, len);
++         netsnmp_variable_list *vlp2 = response->variables;
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next2;
++         }
++         len = static_cast<int>(vlp2->val_len);
++         if (len >= SPRINT_MAX_LEN) {
++            len = SPRINT_MAX_LEN - 1;
++         }
++         if (vlp2->val.string && len > 0) {
++            std::memcpy(descr, vlp2->val.string, static_cast<size_t>(len));
++         } else {
++            len = 0;
++         }
+             descr[len] = '\0';
+ 
+             vlp2 = vlp2->next_variable;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next2;
+-            hssize = *(vlp2->val.integer);
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next2;
++         }
++         hssize = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
+ 
+             vlp2 = vlp2->next_variable;
+-            if (vlp2->type == SNMP_NOSUCHINSTANCE) goto next2;
+-            hsused = *(vlp2->val.integer);
++         if (!vlp2 || vlp2->type == SNMP_NOSUCHINSTANCE || vlp2->type == SNMP_NOSUCHOBJECT) {
++            goto next2;
++         }
++         hsused = vlp2->val.integer ? static_cast<unsigned long>(*(vlp2->val.integer)) : 0;
+ 
+             if (human_units) {
+-                char size[10], used[10], avail[10];
+-                printf("%-18s %10s %10s %10s %4lu%%\n", descr,
+-                    format_human(size, sizeof size, hssize, human_units),
+-                    format_human(used, sizeof used, hsused, human_units),
+-                    format_human(avail, sizeof avail, hssize - hsused, human_units),
++            char size[32], used[32], avail[32];
++            std::snprintf(line_buf, sizeof(line_buf), "%-18s %10s %10s %10s %4lu%%", descr,
++                          format_human(size, sizeof(size), hssize, human_units),
++                          format_human(used, sizeof(used), hsused, human_units),
++                          format_human(avail, sizeof(avail), hssize - hsused, human_units),
+                     hssize ? convert_units(hsused, 100, hssize) : hsused);
+-            }
+-            else {
+-                printf("%-18s %15lu %15lu %15lu %4lu%%\n", descr,
++         } else {
++            std::snprintf(line_buf, sizeof(line_buf), "%-18s %15lu %15lu %15lu %4lu%%", descr,
+                      hssize, hsused, hssize - hsused,
+                      hssize ? convert_units(hsused, 100, hssize) : hsused);
+             }
++         return_vector.emplace_back(line_buf);
+ 
+         next2:
+             vlp = vlp->next_variable;
+-            snmp_free_pdu(response);
+             count++;
+         }
+     }
+ 
+     if (count == 0) {
+-        fprintf(stderr, "Failed to locate any partitions.\n");
+-        goto close_session;
++      throw GenericErrorBase("Failed to locate any partitions.\n");
+     }
+ 
+-    exit_code = 0;
+-
+-close_session:
+-    snmp_close(ss);
+-
+-out:
+-    netsnmp_cleanup_session(&session);
+-    SOCK_CLEANUP;
+-    return exit_code;
+-}                               /* end main() */
++   return return_vector;
++} /* end snmpdf() */

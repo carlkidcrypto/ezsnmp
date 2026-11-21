@@ -1,6 +1,7 @@
 from .netsnmpbase import (
     snmpbulkget as netsnmp_snmpbulkget,
     snmpbulkwalk as netsnmp_snmpbulkwalk,
+    snmpdf as netsnmp_snmpdf,
     snmpget as netsnmp_snmpget,
     snmpgetnext as netsnmp_snmpgetnext,
     snmpset as netsnmp_snmpset,
@@ -311,6 +312,45 @@ def snmptrap(netsnmp_args=[], init_app_name="ezsnmp_snmptrap"):
     """
     try:
         result = netsnmp_snmptrap(netsnmp_args, init_app_name)
+        return result
+    except Exception as e:
+        _handle_error(e)
+
+
+def snmpdf(netsnmp_args=[], init_app_name="ezsnmp_snmpdf"):
+    """
+    Display disk space usage on a network entity via SNMP.
+
+    This function uses the `netsnmp_snmpdf` function to query disk space usage
+    from HOST-RESOURCES-MIB::hrStorageTable or UCD-SNMP-MIB::dskTable (with ``-Cu``)
+    and returns a tuple of formatted table lines.
+
+    :param netsnmp_args: The arguments required for the snmpdf operation
+    :type netsnmp_args: list
+    :param init_app_name: The name of the application initializing the SNMP request
+    :type init_app_name: str
+    :return: A tuple of formatted disk usage table lines
+    :rtype: tuple[str, ...]
+
+    :raises ConnectionError: If the exception type is `ConnectionErrorBase`
+    :raises GenericError: If the exception type is `GenericErrorBase`
+    :raises NoSuchInstanceError: If the exception type is `NoSuchInstanceErrorBase`
+    :raises NoSuchNameError: If the exception type is `NoSuchNameErrorBase`
+    :raises NoSuchObjectError: If the exception type is `NoSuchObjectErrorBase`
+    :raises PacketError: If the exception type is `PacketErrorBase`
+    :raises ParseError: If the exception type is `ParseErrorBase`
+    :raises TimeoutError: If the exception type is `TimeoutErrorBase`
+    :raises UndeterminedTypeError: If the exception type is `UndeterminedTypeErrorBase`
+    :raises UnknownObjectIDError: If the exception type is `UnknownObjectIDErrorBase`
+    :raises Exception: If the exception type does not match any of the above
+
+    Example:
+        >>> from ezsnmp.netsnmp import snmpdf
+        >>> snmpdf(["-v", "2c", "-c", "public", "localhost:11161"])
+        ('Description              Size (kB)            Used       Available Used%', ...)
+    """
+    try:
+        result = netsnmp_snmpdf(netsnmp_args, init_app_name)
         return result
     except Exception as e:
         _handle_error(e)
