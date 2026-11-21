@@ -10,32 +10,12 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up Python 3.14
-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+    - name: Build distribution via shared-workflows
+      uses: carlkidcrypto/shared-workflows/actions/build-distribution@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
       with:
+        packages-dir: ${{ inputs.packages-dir }}
         python-version: "3.14"
-
-    - name: Set up dependencies
-      uses: carlkidcrypto/os-specific-runner@6bfb32d4934b42e6817f3f4109c9f3c26abc9fab # v2.3.1
-      with:
-        linux: |
+        setup-cmd: |
           sudo bash ./tools/prepare_linux_netsnmp.sh
-
-    - name: Install pypa/build
-      shell: bash
-      run: |
-        python -m pip install build --user
-
-    - name: Build a source tarball
-      shell: bash
-      run: |
-        export PATH="/usr/local/bin:$PATH"
-        export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
-        python -m build --sdist --outdir ${{ inputs.packages-dir }} .
-
-    - name: Download Wheels
-      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-      with:
-        pattern: cibw-wheels-*
-        merge-multiple: true
-        path: ${{ inputs.packages-dir }}
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
+          echo "EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config" >> "$GITHUB_ENV"
