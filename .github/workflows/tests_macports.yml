@@ -55,7 +55,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           files: |
             .github/workflows/tests_macports.yml
@@ -134,7 +134,8 @@ jobs:
           set -euo pipefail
           sudo mkdir -p /opt/local/var/macports/distfiles
           sudo mkdir -p /opt/local/var/macports/software
-          sudo chown -R $(id -un) /opt/local/var/macports/distfiles /opt/local/var/macports/software
+          sudo mkdir -p /usr/local
+          sudo chown -R $(id -un) /opt/local/var/macports/distfiles /opt/local/var/macports/software /usr/local
 
       - name: Cache MacPorts distfiles
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -175,11 +176,12 @@ jobs:
           echo 'mibs +ALL' > ~/.snmp/snmp.conf
 
       - name: Build supported Net-SNMP 5.10
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+        with:
+          openssl-prefix: /opt/local
+
+      - name: Configure MacPorts OpenSSL environment
         run: |
-          set -euo pipefail
-          sudo bash tools/prepare_macos_netsnmp.sh
-          echo "/usr/local/bin" >> "$GITHUB_PATH"
-          echo "EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config" >> "$GITHUB_ENV"
           echo "EZSNMP_OPENSSL_INCLUDE_DIR=/opt/local/include" >> "$GITHUB_ENV"
           echo "EZSNMP_OPENSSL_LIB_DIR=/opt/local/lib" >> "$GITHUB_ENV"
 
