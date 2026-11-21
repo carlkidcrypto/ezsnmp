@@ -32,13 +32,14 @@ safe-outputs:
 timeout-minutes: 15
 max-ai-credits: 25
 model: sonnet
-engine:
-  id: copilot
 network:
   allowed: [defaults, github, api.github.com]
 tools:
   edit:
   bash: true
+imports:
+  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 ---
 
 # Update Net-SNMP Versions

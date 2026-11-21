@@ -21,67 +21,26 @@ permissions:
   actions: read
   contents: read
   copilot-requests: write
-safe-outputs:
-  noop:
-    report-as-issue: true
-  update-release:
 timeout-minutes: 20
 max-ai-credits: 40
 model: sonnet
-engine:
-  id: copilot
-network:
-  allowed: [defaults, github, python]
-tools:
-  github:
-    mode: gh-proxy
-    toolsets: [repos]
-  bash: true
+imports:
+  - carlkidcrypto/shared-workflows/shared/auto-release-notes-core.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 ---
 
 # Auto Update Release Notes
 
-When a new release is published, generate and update its release notes body on GitHub using commit history, PR references, and grouped themes.
+When a new release is published, generate and update its release notes body on GitHub using commit history, PR references, and grouped themes following the shared auto-release-notes core rules.
 
-## Goals
+## Repository-Specific Details
 
-- Produce high-signal, human-readable release notes for every tagged release.
-- Group changes into themes (bug fixes, features, CI/workflows, docs, dependencies, tests, etc.).
-- Reference PR numbers and issue numbers where discoverable from commit messages.
-- Include a PyPI install link for the released version.
-- Fully overwrite the release body with the generated notes — no content from the previous body is preserved.
-- Skip any release whose body contains the exact marker `<!-- PROTECTED -->` — these are manually curated and must never be touched.
-- When triggered manually with `backfill_all: true`, reformat ALL existing releases to the same standard (respecting the skip marker).
-
-## Steps
-
-0. **Token & AIC Optimization (Helper Script)**:
-   Use the deterministic helper script `.github/scripts/generate_release_notes.py` to minimize token consumption and AI Credit (AIC) usage. The script automatically executes base tag resolution, commit range extraction, theme grouping into the 9 categories, active verb title formatting, PyPI version linking, and skip-protected checks.
-
-   - If triggered by `release: published`:
-     Use the published tag name from the release event (`${{ github.event.release.tag_name }}`), then execute:
-     ```bash
-     mkdir -p /tmp/gh-aw/agent
-     python3 .github/scripts/generate_release_notes.py --tag <tag_name> --output-file /tmp/gh-aw/agent/release_notes.md
-     ```
-     (Pass `--additional-context "<context>"` if `additional_context` input is provided).
-     Review `/tmp/gh-aw/agent/release_notes.md` and use the `update_release` tool (or run with `--publish`) to update the release.
-
-   - If triggered by `workflow_dispatch` with `backfill_all: true`:
-     Execute:
-     ```bash
-     python3 .github/scripts/generate_release_notes.py --backfill --publish
-     ```
-     (Append `--additional-context "<context>"` if `additional_context` input is provided).
-
-   - If triggered by `workflow_dispatch` with `backfill_all: false` or unset:
-     Execute:
-     ```bash
-     python3 .github/scripts/generate_release_notes.py --latest --publish
-     ```
-     (Append `--additional-context "<context>"` if `additional_context` input is provided).
-
-   The steps below document the underlying deterministic specification implemented by the helper script:
+- If triggered by `workflow_dispatch` with `backfill_all: false` or unset:
+  ```bash
+  python3 .github/scripts/generate_release_notes.py --latest --publish
+  ```
+  (Append `--additional-context "<context>"` if `additional_context` input is provided).
+- PyPI project URL: `https://pypi.org/project/ezsnmp/<pypi_version>/`
+- Full Changelog URL: `https://github.com/carlkidcrypto/ezsnmp/compare/<base_tag>...<current_tag>`
 
 1. Identify the release context:
    - Determine the tag name from the release being processed.

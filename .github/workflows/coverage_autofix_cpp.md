@@ -29,15 +29,16 @@ safe-outputs:
 timeout-minutes: 20
 max-ai-credits: 60
 model: sonnet
-engine:
-  id: copilot
 network:
   allowed: [defaults, containers, dev-tools, python, api.github.com]
 tools:
   edit:
   bash: true
 imports:
-  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@88de7dd78ef1a992d2509818afcf0c76a2c631eb
+  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+  - carlkidcrypto/shared-workflows/shared/supplemental-labels.md@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 ---
 
 # C++ Coverage Checks And Suggested Fixes
