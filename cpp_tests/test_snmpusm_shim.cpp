@@ -1,12 +1,19 @@
 #ifndef OPENSSL_SUPPRESS_DEPRECATED
 #define OPENSSL_SUPPRESS_DEPRECATED
 #endif
+#if !defined(_WIN32) && !defined(_GNU_SOURCE)
+#define _GNU_SOURCE
+#endif
 
 #include <gtest/gtest.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 #include <openssl/bn.h>
 #include <openssl/dh.h>
+
+#if !defined(_WIN32)
+#include <dlfcn.h>
+#endif
 
 #include <cstring>
 #include <string>
@@ -28,6 +35,7 @@ enum class DhGetMode {
    kWrongPeerPubLen,
    kBadPrivPeerPub,
    kSmallDhParams,
+   kComputeKeyFail,
 };
 
 enum class SetMode {
@@ -41,6 +49,18 @@ enum class SetMode {
 
 DhGetMode g_dh_get_mode = DhGetMode::kSuccess;
 SetMode g_set_mode = SetMode::kSuccess;
+#if !defined(_WIN32)
+int g_fail_pdu_create_type = -1;
+bool g_fail_pdu_get_after_set = false;
+int g_fail_dh_size_on_call = 0;
+int g_dh_size_call_count = 0;
+bool g_fail_default_authtype = false;
+int g_fail_generate_ku_on_call = 0;
+int g_generate_ku_call_count = 0;
+int g_fail_extend_kul_on_call = 0;
+int g_extend_kul_call_count = 0;
+bool g_fail_parse_args = false;
+#endif
 
 void add_octet_var(
     netsnmp_pdu *pdu, oid const *name, size_t name_len, u_char const *data, size_t data_len) {
@@ -69,9 +89,11 @@ netsnmp_pdu *make_dh_get_response(DhGetMode mode) {
    }
 
    if (mode == DhGetMode::kSmallDhParams) {
-      // 8-byte prime (< outkey_len of 16) to hit key_len < outkey_len
+      // 32-byte (256-bit) safe prime (< outkey_len of 64 for SHA-512) to hit key_len < outkey_len
       DH *small_dh = DH_new();
-      u_char p_bytes[8] = {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0b};
+      u_char p_bytes[32] = {0xCD, 0x98, 0xF5, 0x44, 0x7B, 0xE7, 0x69, 0xB3, 0x6D, 0xF1, 0x52,
+                            0x4B, 0x5F, 0x88, 0x9F, 0x71, 0xC2, 0xFA, 0x1E, 0xF6, 0xFB, 0x74,
+                            0xCD, 0x60, 0x80, 0xAB, 0xA1, 0x40, 0x28, 0xCF, 0x3D, 0x9F};
       u_char g_bytes[1] = {0x02};
       DH_set0_pqg(small_dh, BN_bin2bn(p_bytes, sizeof(p_bytes), nullptr), nullptr,
                   BN_bin2bn(g_bytes, sizeof(g_bytes), nullptr));
@@ -81,7 +103,7 @@ netsnmp_pdu *make_dh_get_response(DhGetMode mode) {
                     static_cast<size_t>(der_len));
       OPENSSL_free(der_buf);
       DH_free(small_dh);
-      u_char peer_pub[8] = {0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09};
+      u_char peer_pub[32] = {0x02};
       add_octet_var(resp, dh_auth_oid, OID_LENGTH(dh_auth_oid), peer_pub, sizeof(peer_pub));
       return resp;
    }
@@ -115,6 +137,17 @@ netsnmp_pdu *make_dh_get_response(DhGetMode mode) {
 
    if (mode == DhGetMode::kBadPrivPeerPub) {
       snmp_add_null_var(resp, dh_priv_oid, OID_LENGTH(dh_priv_oid));
+      return resp;
+   }
+
+   if (mode == DhGetMode::kComputeKeyFail) {
+      // Peer public key = 1 causes DH_compute_key() to return -1 (< outkey_len)
+      std::vector<u_char> invalid_pub(static_cast<size_t>(dh_bytes), 0);
+      invalid_pub.back() = 0x01;
+      add_octet_var(resp, dh_auth_oid, OID_LENGTH(dh_auth_oid), invalid_pub.data(),
+                    invalid_pub.size());
+      add_octet_var(resp, dh_priv_oid, OID_LENGTH(dh_priv_oid), invalid_pub.data(),
+                    invalid_pub.size());
       return resp;
    }
 
@@ -632,6 +665,44 @@ TEST_F(SnmpUsmShimTest, TestPasswdVariantsAndErrors) {
 
    args[0] = "-Cx";
    EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
+
+   // -Ca -Ck with mismatched key lengths (16-byte old vs 8-byte new) triggers
+   // encode_keychange failure (auth)
+   args = {"-Ca",
+           "-Ck",
+           "-v",
+           "3",
+           "-e",
+           "800000020109840301",
+           "-E",
+           "800000020109840301",
+           "-u",
+           "initial_md5_aes",
+           "-l",
+           "authPriv",
+           "-a",
+           "MD5",
+           "-A",
+           "auth_pass",
+           "-x",
+           "AES",
+           "-X",
+           "priv_pass",
+           "-r",
+           "0",
+           "-t",
+           "0.05",
+           "localhost:11161",
+           "passwd",
+           "0x0123456789abcdef0123456789abcdef",
+           "0x0123456789abcdef",
+           "targetu"};
+   EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
+
+   // -Cx -Ck with mismatched priv key lengths (16-byte old vs 8-byte new) triggers
+   // encode_keychange failure (priv)
+   args[0] = "-Cx";
+   EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
 }
 
 TEST_F(SnmpUsmShimTest, TestChangekeySuccessAndErrors) {
@@ -817,16 +888,60 @@ TEST_F(SnmpUsmShimTest, TestChangekeySuccessAndErrors) {
            "targetu"};
    EXPECT_THROW(snmpusm(args, "shim"), GenericErrorBase);
 
-   // Small DH params (key_len < outkey_len)
+   // Small DH params
    g_dh_get_mode = DhGetMode::kSmallDhParams;
+   args = {"-Cx",
+           "-v",
+           "3",
+           "-e",
+           "800000020109840301",
+           "-E",
+           "800000020109840301",
+           "-u",
+           "initial_sha512_aes",
+           "-l",
+           "authPriv",
+           "-a",
+           "SHA-512",
+           "-A",
+           "auth_pass",
+           "-x",
+           "AES",
+           "-X",
+           "priv_pass",
+           "-r",
+           "0",
+           "-t",
+           "0.05",
+           "localhost:11161",
+           "changekey",
+           "targetu"};
    for (int attempt = 0; attempt < 8; ++attempt) {
       try {
          snmpusm(args, "shim");
-         break;
+         FAIL() << "Expected GenericErrorBase";
       } catch (GenericErrorBase const &e) {
-         if (std::string(e.what()).find("Failed to compute Diffie-Hellman") != std::string::npos ||
-             attempt == 7) {
+         if (std::string(e.what()).find("Failed to compute Diffie-Hellman") != std::string::npos) {
             break;
+         }
+         if (attempt == 7) {
+            throw;
+         }
+      }
+   }
+
+   // DH_compute_key failure (computed_len < outkey_len)
+   g_dh_get_mode = DhGetMode::kComputeKeyFail;
+   for (int attempt = 0; attempt < 3; ++attempt) {
+      try {
+         snmpusm(args, "shim");
+         FAIL() << "Expected GenericErrorBase";
+      } catch (GenericErrorBase const &e) {
+         if (std::string(e.what()).find("Failed to compute Diffie-Hellman") != std::string::npos) {
+            break;
+         }
+         if (attempt == 2) {
+            throw;
          }
       }
    }
@@ -936,4 +1051,269 @@ TEST_F(SnmpUsmShimTest, TestParseArgsErrorThrows) {
 
    args = {"-v", "99", "localhost:11161", "delete", "u1"};
    EXPECT_THROW(snmpusm(args, "shim"), ParseErrorBase);
+
+   args = {"-v", "3", "-a", "INVALID", "localhost:11161", "delete", "u1"};
+   EXPECT_THROW(snmpusm(args, "shim"), ParseErrorBase);
+
+   args = {"-v", "3", "-Z", "bad", "localhost:11161", "delete", "u1"};
+   EXPECT_THROW(snmpusm(args, "shim"), ParseErrorBase);
+
+   args = {"-v", "3", "-3k", "ZZZZ", "localhost:11161", "delete", "u1"};
+   EXPECT_THROW(snmpusm(args, "shim"), ParseErrorBase);
 }
+
+#if !defined(_WIN32)
+extern "C" netsnmp_pdu *snmp_pdu_create(int type) {
+   using fn_t = netsnmp_pdu *(*)(int);
+   static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "snmp_pdu_create"));
+   if (type == g_fail_pdu_create_type) {
+      return nullptr;
+   }
+   if (g_fail_pdu_get_after_set && type == SNMP_MSG_SET) {
+      g_fail_pdu_create_type = SNMP_MSG_GET;
+      g_fail_pdu_get_after_set = false;
+   }
+   return real_fn(type);
+}
+
+extern "C" int DH_size(DH const *dh) {
+   using fn_t = int (*)(DH const *);
+   static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "DH_size"));
+   ++g_dh_size_call_count;
+   if (g_fail_dh_size_on_call > 0 && g_dh_size_call_count == g_fail_dh_size_on_call) {
+      return 0;
+   }
+   return real_fn(dh);
+}
+
+extern "C" oid const *get_default_authtype(size_t *len) {
+   using fn_t = oid const *(*)(size_t *);
+   static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "get_default_authtype"));
+   if (g_fail_default_authtype) {
+      if (len != nullptr) {
+         *len = 0;
+      }
+      return nullptr;
+   }
+   return real_fn(len);
+}
+
+extern "C" int generate_Ku(oid const *hashtype,
+                           u_int hashtype_len,
+                           u_char const *P,
+                           size_t pplen,
+                           u_char *Ku,
+                           size_t *kulen) {
+   using fn_t = int (*)(oid const *, u_int, u_char const *, size_t, u_char *, size_t *);
+   static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "generate_Ku"));
+   ++g_generate_ku_call_count;
+   if (g_fail_generate_ku_on_call > 0 && g_generate_ku_call_count == g_fail_generate_ku_on_call) {
+      return SNMPERR_GENERR;
+   }
+   return real_fn(hashtype, hashtype_len, P, pplen, Ku, kulen);
+}
+
+extern "C" int netsnmp_extend_kul(u_int needKeyLen,
+                                  oid *hashoid,
+                                  u_int hashoid_len,
+                                  int privType,
+                                  u_char *engineID,
+                                  u_int engineIDLen,
+                                  u_char **kulBuf,
+                                  size_t *kulBufLen,
+                                  u_int kulBufSize) {
+   using fn_t = int (*)(u_int, oid *, u_int, int, u_char *, u_int, u_char **, size_t *, u_int);
+   static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "netsnmp_extend_kul"));
+   ++g_extend_kul_call_count;
+   if (g_fail_extend_kul_on_call > 0 && g_extend_kul_call_count == g_fail_extend_kul_on_call) {
+      return SNMPERR_GENERR;
+   }
+   return real_fn(needKeyLen, hashoid, hashoid_len, privType, engineID, engineIDLen, kulBuf,
+                  kulBufLen, kulBufSize);
+}
+
+extern "C" int snmp_parse_args(int argc,
+                               char **argv,
+                               netsnmp_session *session,
+                               char const *localOpts,
+                               void (*proc)(int, char *const *, int)) {
+   using fn_t =
+       int (*)(int, char **, netsnmp_session *, char const *, void (*)(int, char *const *, int));
+   static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "snmp_parse_args"));
+   if (g_fail_parse_args) {
+      return NETSNMP_PARSE_ARGS_ERROR;
+   }
+   return real_fn(argc, argv, session, localOpts, proc);
+}
+
+TEST_F(SnmpUsmShimTest, TestFaultInjectionErrorPaths) {
+   struct Guard {
+      ~Guard() {
+         g_fail_pdu_create_type = -1;
+         g_fail_pdu_get_after_set = false;
+         g_fail_dh_size_on_call = 0;
+         g_dh_size_call_count = 0;
+         g_fail_default_authtype = false;
+         g_fail_generate_ku_on_call = 0;
+         g_generate_ku_call_count = 0;
+         g_fail_extend_kul_on_call = 0;
+         g_extend_kul_call_count = 0;
+         g_fail_parse_args = false;
+         g_dh_get_mode = DhGetMode::kSuccess;
+         g_set_mode = SetMode::kSuccess;
+      }
+   } guard;
+
+   // snmp_parse_args returning NETSNMP_PARSE_ARGS_ERROR
+   g_fail_parse_args = true;
+   EXPECT_THROW(snmpusm({"-v", "2c", "-c", "public", "localhost:11161", "delete", "u1"}, "shim"),
+                ParseErrorBase);
+   g_fail_parse_args = false;
+
+   // snmp_pdu_create(SNMP_MSG_SET) returning nullptr
+   g_fail_pdu_create_type = SNMP_MSG_SET;
+   EXPECT_THROW(snmpusm({"-v", "2c", "-c", "public", "-r", "0", "-t", "0.05", "localhost:11161",
+                         "delete", "u1"},
+                        "shim"),
+                GenericErrorBase);
+   g_fail_pdu_create_type = -1;
+
+   // snmp_pdu_create(SNMP_MSG_GET) returning nullptr in changekey
+   g_fail_pdu_get_after_set = true;
+   std::vector<std::string> ck_args = {"-Ca",
+                                       "-v",
+                                       "3",
+                                       "-e",
+                                       "800000020109840301",
+                                       "-E",
+                                       "800000020109840301",
+                                       "-u",
+                                       "initial_md5_aes",
+                                       "-l",
+                                       "authPriv",
+                                       "-a",
+                                       "MD5",
+                                       "-A",
+                                       "auth_pass",
+                                       "-x",
+                                       "AES",
+                                       "-X",
+                                       "priv_pass",
+                                       "-r",
+                                       "0",
+                                       "-t",
+                                       "0.05",
+                                       "localhost:11161",
+                                       "changekey",
+                                       "targetu"};
+   EXPECT_THROW(snmpusm(ck_args, "shim"), GenericErrorBase);
+   g_fail_pdu_create_type = -1;
+   g_fail_pdu_get_after_set = false;
+
+   // DH_size returning 0 (< outkey_len) in get_USM_DH_key (call 1 is in make_dh_get_response)
+   g_dh_get_mode = DhGetMode::kSuccess;
+   for (int attempt = 0; attempt < 3; ++attempt) {
+      g_dh_size_call_count = 0;
+      g_fail_dh_size_on_call = 2;
+      try {
+         snmpusm(ck_args, "shim");
+         FAIL() << "Expected GenericErrorBase";
+      } catch (GenericErrorBase const &e) {
+         if (std::string(e.what()).find("Failed to compute Diffie-Hellman") != std::string::npos) {
+            break;
+         }
+         if (attempt == 2) {
+            throw;
+         }
+      }
+   }
+   g_fail_dh_size_on_call = 0;
+
+   // get_default_authtype returning nullptr (fallback to default auth proto) in passwd
+   g_fail_default_authtype = true;
+   std::vector<std::string> pw_args = {
+       "-v",     "2c",         "-c",         "public", "-r", "0", "-t", "0.05", "localhost:11161",
+       "passwd", "oldpass123", "newpass123", "targetu"};
+   // Will fail at generate_kul due to empty v2c engineID, after exercising lines 596-604
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SECNAME, "initial_md5_aes");
+   EXPECT_THROW(snmpusm(pw_args, "shim"), GenericErrorBase);
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SECNAME, nullptr);
+   g_fail_default_authtype = false;
+
+   // generate_Ku failure on oldpass (call 1) and newpass (call 2)
+   std::vector<std::string> v3_pw_args = {"-v",
+                                          "3",
+                                          "-e",
+                                          "800000020109840301",
+                                          "-E",
+                                          "800000020109840301",
+                                          "-u",
+                                          "initial_md5_aes",
+                                          "-l",
+                                          "authPriv",
+                                          "-a",
+                                          "MD5",
+                                          "-A",
+                                          "auth_pass",
+                                          "-x",
+                                          "AES",
+                                          "-X",
+                                          "priv_pass",
+                                          "-r",
+                                          "0",
+                                          "-t",
+                                          "0.05",
+                                          "localhost:11161",
+                                          "passwd",
+                                          "oldpass123",
+                                          "newpass123",
+                                          "targetu"};
+   g_generate_ku_call_count = 0;
+   g_fail_generate_ku_on_call = 1;
+   EXPECT_THROW(snmpusm(v3_pw_args, "shim"), GenericErrorBase);
+
+   g_generate_ku_call_count = 0;
+   g_fail_generate_ku_on_call = 2;
+   EXPECT_THROW(snmpusm(v3_pw_args, "shim"), GenericErrorBase);
+   g_fail_generate_ku_on_call = 0;
+
+   // netsnmp_extend_kul failure on oldkulpriv (call 1) and newkulpriv (call 2)
+   // Use -Ck with 8-byte key and AES (16-byte priv key) so oldkulpriv_len < properlength
+   std::vector<std::string> extend_args = {"-Cx",
+                                           "-Ck",
+                                           "-v",
+                                           "3",
+                                           "-e",
+                                           "800000020109840301",
+                                           "-E",
+                                           "800000020109840301",
+                                           "-u",
+                                           "initial_md5_aes",
+                                           "-l",
+                                           "authPriv",
+                                           "-a",
+                                           "MD5",
+                                           "-A",
+                                           "auth_pass",
+                                           "-x",
+                                           "AES",
+                                           "-X",
+                                           "priv_pass",
+                                           "-r",
+                                           "0",
+                                           "-t",
+                                           "0.05",
+                                           "localhost:11161",
+                                           "passwd",
+                                           "0x0123456789abcdef",
+                                           "0x0123456789abcdef",
+                                           "targetu"};
+   g_extend_kul_call_count = 0;
+   g_fail_extend_kul_on_call = 1;
+   EXPECT_THROW(snmpusm(extend_args, "shim"), GenericErrorBase);
+
+   g_extend_kul_call_count = 0;
+   g_fail_extend_kul_on_call = 2;
+   EXPECT_THROW(snmpusm(extend_args, "shim"), GenericErrorBase);
+}
+#endif
