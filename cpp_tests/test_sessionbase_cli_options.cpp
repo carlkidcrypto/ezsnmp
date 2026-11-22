@@ -8,6 +8,11 @@
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 class SessionBaseCliOptionsTest : public ::testing::Test {};
 
 TEST_F(SessionBaseCliOptionsTest, PrintOptionsConstructor) {
@@ -404,3 +409,7 @@ INSTANTIATE_TEST_SUITE_P(
                          {"-Cr5", "-Cn1", "-Cc", "-Ci"},
                          {"-CI", "-CE", "-Cf"}}),
     [](testing::TestParamInfo<ScopedCFlagsCase> const& info) { return info.param.name; });
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

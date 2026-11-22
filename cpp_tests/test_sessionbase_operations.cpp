@@ -9,6 +9,11 @@
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #if defined(GTEST_SKIP)
 #define EZSNMP_SKIP_TEST_AND_RETURN(msg) GTEST_SKIP() << msg
 #else
@@ -566,3 +571,7 @@ INSTANTIATE_TEST_SUITE_P(
                       EmptyMibFallbackCase{"BulkGet",
                                            [](SessionBase& s) { (void)s.bulk_get(""); }}),
     [](testing::TestParamInfo<EmptyMibFallbackCase> const& info) { return info.param.name; });
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

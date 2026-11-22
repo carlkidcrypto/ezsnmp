@@ -10,6 +10,11 @@
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 struct PrintOptions {
    bool print_enums_numerically;
    bool print_full_oids;
@@ -416,3 +421,7 @@ TEST(SessionBaseGroupedConstructorTest, ThrowsOnUnknownKeyOrInvalidBool) {
    EXPECT_THROW((SessionBase{{}, {}, {{"print_full_oids", "not_a_bool"}}}), std::invalid_argument);
    EXPECT_THROW((SessionBase{{}, {}, {}, {{"bad_op_key", "1"}}}), std::invalid_argument);
 }
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

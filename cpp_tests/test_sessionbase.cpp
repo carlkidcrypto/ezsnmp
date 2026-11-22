@@ -8,6 +8,11 @@
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 class SessionBaseTest : public ::testing::Test {};
 
 TEST_F(SessionBaseTest, TestGetters) {
@@ -273,3 +278,7 @@ TEST_F(SessionBaseTest, TestCloseMethod) {
                        "1", "1");
    EXPECT_NO_THROW(session._close());
 }
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

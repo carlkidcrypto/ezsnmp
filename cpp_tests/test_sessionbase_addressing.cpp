@@ -6,6 +6,11 @@
 #include "exceptionsbase.h"
 #include "sessionbase.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 struct AddressingCase {
    std::string name;
    std::string hostname;
@@ -118,3 +123,7 @@ INSTANTIATE_TEST_SUITE_P(
                       InvalidAddressingCase{"BracketedIPv6WithEmbeddedPort", "[2001:db8::]:162",
                                             "161"}),
     [](testing::TestParamInfo<InvalidAddressingCase> const& info) { return info.param.name; });
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
