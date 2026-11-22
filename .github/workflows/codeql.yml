@@ -71,7 +71,7 @@ jobs:
 
       - name: Install Linux Dependencies
         if: matrix.language == 'c++'
-        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@22f04e222fa07048891327e4d34bb174d36e7bfa
 
       - name: Set up Python 3.14
         if: matrix.language == 'c++'
