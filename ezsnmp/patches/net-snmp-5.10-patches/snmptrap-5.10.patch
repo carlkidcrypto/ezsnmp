@@ -129,7 +129,7 @@
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
 +   // global state (option parsing, DS library settings).
 +   {
-+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
++      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
 +
      /** parse args (also initializes session) */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {

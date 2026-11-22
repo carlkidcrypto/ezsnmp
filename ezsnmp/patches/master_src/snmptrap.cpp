@@ -154,7 +154,7 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
    // global state (option parsing, DS library settings).
    {
-      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
 
       /** parse args (also initializes session) */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);

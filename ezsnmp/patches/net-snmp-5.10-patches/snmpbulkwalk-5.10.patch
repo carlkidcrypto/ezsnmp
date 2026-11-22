@@ -194,7 +194,7 @@
 +   // Serialize Net-SNMP global setup: resetting DS flags and parsing arguments
 +   // both modify shared Net-SNMP global state.
 +   {
-+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
++      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
 +
 +      // Reset application-level walk flags for each invocation.
 +      netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_INCLUDE_REQUESTED, 0);
@@ -240,7 +240,7 @@
      /*
       * get the initial object and subtree 
       */
-@@ -224,28 +254,29 @@
+@@ -224,28 +254,32 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -250,8 +250,8 @@
 -            snmp_perror(argv[arg]);
 -            goto out;
 +            snmp_perror_exception(argv[arg]);
-+         }
          }
++      }
      } else {
          /*
           * use default value 
@@ -267,7 +267,10 @@
       */
 -    ss = snmp_open(&session);
 -    if (ss == NULL) {
-+   ss.reset(snmp_sess_open(&session));
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
++      ss.reset(snmp_sess_open(&session));
++   }
 +   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
@@ -278,7 +281,7 @@
      }
  
      /*
-@@ -256,72 +287,67 @@
+@@ -256,72 +290,67 @@
  
      running = 1;
  
@@ -380,7 +383,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -337,55 +363,59 @@
+@@ -337,55 +366,59 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {
