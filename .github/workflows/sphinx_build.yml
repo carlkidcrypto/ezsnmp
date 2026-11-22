@@ -26,7 +26,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_sphinx_build.yml@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_sphinx_build.yml@22f04e222fa07048891327e4d34bb174d36e7bfa
     with:
       requirements-file: 'sphinx_docs_build/requirements.txt'
       extra-requirements-file: 'sphinx_docs_build/landing/requirements.txt'
@@ -72,7 +72,7 @@ jobs:
           sudo apt install -y g++ python3-dev doxygen
 
       - name: Prepare Net-SNMP 5.10
-        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@22f04e222fa07048891327e4d34bb174d36e7bfa
 
       - name: Install Pip Requirements
         run: |
