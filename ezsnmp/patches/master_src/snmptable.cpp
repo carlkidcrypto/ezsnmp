@@ -205,11 +205,11 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                         set_opt_error("Bad -Cw option: " + std::string(argv[optind]) + "\n" +
                                       snmptable_usage_string());
                      }
+                     optind++;
                   } else {
                      set_opt_error("Bad -Cw option: no argument given\n" +
                                    snmptable_usage_string());
                   }
-                  optind++;
                   break;
 
                case 'c':
@@ -221,11 +221,11 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                      }
                      // Reduce by one for space at end of column
                      ctx.column_width -= 1;
+                     optind++;
                   } else {
                      set_opt_error("Bad -Cc option: no argument given\n" +
                                    snmptable_usage_string());
                   }
-                  optind++;
                   break;
 
                case 'l':
@@ -233,13 +233,13 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                   break;
 
                case 'f':
-                  if (optind < argc) {
+                  if (optind < argc && argv[optind]) {
                      ctx.field_separator = argv[optind];
+                     optind++;
                   } else {
                      set_opt_error("Bad -Cf option: no argument given\n" +
                                    snmptable_usage_string());
                   }
-                  optind++;
                   break;
 
                case 'h':
@@ -269,11 +269,11 @@ void snmptable_optProc(int argc, char *const *argv, int opt) {
                         set_opt_error("Bad -Cr option: " + std::string(argv[optind]) + "\n" +
                                       snmptable_usage_string());
                      }
+                     optind++;
                   } else {
                      set_opt_error("Bad -Cr option: no argument given\n" +
                                    snmptable_usage_string());
                   }
-                  optind++;
                   break;
 
                default:

@@ -199,6 +199,7 @@
 +                                      snmptable_usage_string());
  			}
 -		    }
++                     optind++;
  		} else {
 -		    usage();
 -                    fprintf(stderr, "Bad -Cw option: no argument given\n");
@@ -206,7 +207,7 @@
 +                     set_opt_error("Bad -Cw option: no argument given\n" +
 +                                   snmptable_usage_string());
  		}
- 		optind++;
+-		optind++;
                  break;
 +
              case 'c':
@@ -229,6 +230,7 @@
 -		    }
 +                     // Reduce by one for space at end of column
 +                     ctx.column_width -= 1;
++                     optind++;
  		} else {
 -		    usage();
 -                    fprintf(stderr, "Bad -Cc option: no argument given\n");
@@ -236,7 +238,7 @@
 +                     set_opt_error("Bad -Cc option: no argument given\n" +
 +                                   snmptable_usage_string());
  		}
- 		optind++;
+-		optind++;
                  break;
 +
              case 'l':
@@ -245,9 +247,11 @@
                  break;
 +
              case 'f':
- 		if (optind < argc) {
+-		if (optind < argc) {
 -		    field_separator = argv[optind];
++                  if (optind < argc && argv[optind]) {
 +                     ctx.field_separator = argv[optind];
++                     optind++;
  		} else {
 -                    usage();
 -		    fprintf(stderr, "Bad -Cf option: no argument given\n");
@@ -255,7 +259,7 @@
 +                     set_opt_error("Bad -Cf option: no argument given\n" +
 +                                   snmptable_usage_string());
  		}
- 		optind++;
+-		optind++;
                  break;
 +
              case 'h':
@@ -299,6 +303,7 @@
 +                                      snmptable_usage_string());
  			}
 -		    }
++                     optind++;
  		} else {
 -		    usage();
 -                    fprintf(stderr, "Bad -Cr option: no argument given\n");
@@ -306,7 +311,7 @@
 +                     set_opt_error("Bad -Cr option: no argument given\n" +
 +                                   snmptable_usage_string());
  		}
- 		optind++;
+-		optind++;
                  break;
 +
              default:
