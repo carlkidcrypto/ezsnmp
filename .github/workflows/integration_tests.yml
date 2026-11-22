@@ -55,7 +55,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
         with:
           files: |
             .github/workflows/integration_tests.yml
@@ -122,7 +122,7 @@ jobs:
 
       - name: Install Net-SNMP 5.10
         if: runner.os == 'Linux'
-        run: sudo bash ./tools/prepare_linux_netsnmp.sh
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@3538efdfabdbcf0ae956cfc5685fd4c21a59696b
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
