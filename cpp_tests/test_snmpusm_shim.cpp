@@ -60,6 +60,7 @@ int g_generate_ku_call_count = 0;
 int g_fail_extend_kul_on_call = 0;
 int g_extend_kul_call_count = 0;
 bool g_fail_parse_args = false;
+bool g_in_snmp_parse_args = false;
 #endif
 
 void add_octet_var(
@@ -1073,6 +1074,9 @@ extern "C" netsnmp_pdu *snmp_pdu_create(int type) {
       g_fail_pdu_create_type = SNMP_MSG_GET;
       g_fail_pdu_get_after_set = false;
    }
+   if (real_fn == nullptr) {
+      return nullptr;
+   }
    return real_fn(type);
 }
 
@@ -1083,13 +1087,16 @@ extern "C" int DH_size(DH const *dh) {
    if (g_fail_dh_size_on_call > 0 && g_dh_size_call_count == g_fail_dh_size_on_call) {
       return 0;
    }
+   if (real_fn == nullptr) {
+      return 0;
+   }
    return real_fn(dh);
 }
 
 extern "C" oid const *get_default_authtype(size_t *len) {
    using fn_t = oid const *(*)(size_t *);
    static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "get_default_authtype"));
-   if (g_fail_default_authtype) {
+   if (g_fail_default_authtype || real_fn == nullptr) {
       if (len != nullptr) {
          *len = 0;
       }
@@ -1106,8 +1113,14 @@ extern "C" int generate_Ku(oid const *hashtype,
                            size_t *kulen) {
    using fn_t = int (*)(oid const *, u_int, u_char const *, size_t, u_char *, size_t *);
    static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "generate_Ku"));
-   ++g_generate_ku_call_count;
-   if (g_fail_generate_ku_on_call > 0 && g_generate_ku_call_count == g_fail_generate_ku_on_call) {
+   if (!g_in_snmp_parse_args) {
+      ++g_generate_ku_call_count;
+      if (g_fail_generate_ku_on_call > 0 &&
+          g_generate_ku_call_count == g_fail_generate_ku_on_call) {
+         return SNMPERR_GENERR;
+      }
+   }
+   if (real_fn == nullptr) {
       return SNMPERR_GENERR;
    }
    return real_fn(hashtype, hashtype_len, P, pplen, Ku, kulen);
@@ -1128,6 +1141,9 @@ extern "C" int netsnmp_extend_kul(u_int needKeyLen,
    if (g_fail_extend_kul_on_call > 0 && g_extend_kul_call_count == g_fail_extend_kul_on_call) {
       return SNMPERR_GENERR;
    }
+   if (real_fn == nullptr) {
+      return SNMPERR_SUCCESS;
+   }
    return real_fn(needKeyLen, hashoid, hashoid_len, privType, engineID, engineIDLen, kulBuf,
                   kulBufLen, kulBufSize);
 }
@@ -1140,9 +1156,13 @@ extern "C" int snmp_parse_args(int argc,
    using fn_t =
        int (*)(int, char **, netsnmp_session *, char const *, void (*)(int, char *const *, int));
    static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "snmp_parse_args"));
-   if (g_fail_parse_args) {
+   if (g_fail_parse_args || real_fn == nullptr) {
       return NETSNMP_PARSE_ARGS_ERROR;
    }
+   struct ParseArgsScope {
+      ParseArgsScope() { g_in_snmp_parse_args = true; }
+      ~ParseArgsScope() { g_in_snmp_parse_args = false; }
+   } scope;
    return real_fn(argc, argv, session, localOpts, proc);
 }
 
@@ -1159,6 +1179,7 @@ TEST_F(SnmpUsmShimTest, TestFaultInjectionErrorPaths) {
          g_fail_extend_kul_on_call = 0;
          g_extend_kul_call_count = 0;
          g_fail_parse_args = false;
+         g_in_snmp_parse_args = false;
          g_dh_get_mode = DhGetMode::kSuccess;
          g_set_mode = SetMode::kSuccess;
       }
