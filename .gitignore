@@ -46,8 +46,8 @@ wheelhouse/**
 cpp_tests/coverage.info
 **/master.zip/**
 
-# Downloaded net-snmp source and shallow sub-repo
-third_party/
+# Downloaded net-snmp source and compiled local prefix
+third_party/net-snmp-install/
 ezsnmp/patches/net-snmp-5.9/
 ezsnmp/patches/net-snmp-5.8/
 ezsnmp/patches/net-snmp-5.7/

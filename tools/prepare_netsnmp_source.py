@@ -82,6 +82,28 @@ def ensure_netsnmp_source(
     dest.parent.mkdir(parents=True, exist_ok=True)
     git_bin = shutil.which("git")
     if git_bin:
+        gitmodules_file = REPO_ROOT / ".gitmodules"
+        if dest == vendored and gitmodules_file.is_file():
+            try:
+                subprocess.run(
+                    [
+                        git_bin,
+                        "-C",
+                        str(REPO_ROOT),
+                        "submodule",
+                        "update",
+                        "--init",
+                        "--depth",
+                        "1",
+                        "third_party/net-snmp",
+                    ],
+                    check=True,
+                )
+                if _is_valid_netsnmp_tree(dest):
+                    return dest
+            except subprocess.CalledProcessError:
+                pass
+
         max_retries = 3
         for attempt in range(1, max_retries + 1):
             try:
