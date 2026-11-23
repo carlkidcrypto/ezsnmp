@@ -192,3 +192,15 @@ def test_string_values_no_surrounding_quotes(sess):
     ), f"Value should not end with quote: {res[0].value}"
 
     del sess
+
+
+def test_session_per_request_open_close_cycles_issue_1519(sess_args):
+    """Regression test for issue #1519: repeated single-request Session open/close cycles."""
+    for _ in range(5):
+        with Session(**sess_args) as s:
+            res = s.get("sysContact.0")
+            assert len(res) == 1
+            assert res[0].oid == "SNMPv2-MIB::sysContact"
+        with Session(**sess_args) as s:
+            walk_res = s.walk("system")
+            assert len(walk_res) >= 1

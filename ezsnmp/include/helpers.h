@@ -120,6 +120,29 @@ struct SnmpPduDeleter {
 };
 
 /**
+ * @struct SnmpSessionCleanupGuard
+ * @brief RAII guard that calls netsnmp_cleanup_session() on scope exit.
+ *
+ * Frees heap memory allocated into a stack-allocated netsnmp_session template
+ * struct by snmp_parse_args() (peername, community, securityName, contextName,
+ * engine IDs, auth/priv OIDs, transport config) on both normal return and
+ * exception unwinding.
+ */
+struct SnmpSessionCleanupGuard {
+   explicit SnmpSessionCleanupGuard(netsnmp_session *session) : m_session(session) {}
+   ~SnmpSessionCleanupGuard() {
+      if (m_session) {
+         netsnmp_cleanup_session(m_session);
+      }
+   }
+   SnmpSessionCleanupGuard(SnmpSessionCleanupGuard const &) = delete;
+   SnmpSessionCleanupGuard &operator=(SnmpSessionCleanupGuard const &) = delete;
+
+  private:
+   netsnmp_session *m_session;
+};
+
+/**
  * @struct SockCleanupGuard
  * @brief RAII guard to cleanup socket and Net-SNMP library data on scope exit.
  */

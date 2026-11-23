@@ -129,7 +129,8 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
-   netsnmp_session session, *ss = NULL;
+   netsnmp_session session = {}, *ss = NULL;
+   SnmpSessionCleanupGuard session_cleanup_guard(&session);
    netsnmp_pdu *pdu, *response;
    oid name[MAX_OID_LEN];
    size_t name_length;
@@ -157,7 +158,8 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       prognam = argv[0];
    }
 
-   putenv(strdup("POSIXLY_CORRECT=1"));
+   static char posixly_correct_env[] = "POSIXLY_CORRECT=1";
+   putenv(posixly_correct_env);
 
    if (strcmp(prognam, "snmpinform") == 0) {
       inform = 1;

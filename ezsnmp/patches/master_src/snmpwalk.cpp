@@ -170,7 +170,8 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session;
+   netsnmp_session session = {};
+   SnmpSessionCleanupGuard session_cleanup_guard(&session);
    std::unique_ptr<void, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
