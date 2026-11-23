@@ -72,7 +72,7 @@ jobs:
   build-and-integration-test:
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    timeout-minutes: 15
+    timeout-minutes: 30
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false

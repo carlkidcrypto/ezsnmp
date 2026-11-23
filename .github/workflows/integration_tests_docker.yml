@@ -144,7 +144,7 @@ jobs:
           set -euo pipefail
           IMAGE="carlkidcrypto/ezsnmp_test_images:${{ matrix.distribution }}-latest"
           CONTAINER_NAME="${{ matrix.distribution }}_integration_container"
-          ENTRY_SCRIPT="/usr/local/bin/DockerEntry.sh"
+          ENTRY_SCRIPT="/ezsnmp/docker/DockerEntry.sh"
           HOST_SOURCE_PATH="$PWD"
           CONTAINER_WORK_DIR="/ezsnmp"
           echo ">>> Starting container: $CONTAINER_NAME"
@@ -160,7 +160,16 @@ jobs:
               exit 1
           fi
           echo ">>> Waiting for SNMP daemon to start..."
-          sleep 10
+          docker exec "$CONTAINER_NAME" bash -c '
+            for attempt in {1..120}; do
+              if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
+                exit 0
+              fi
+              sleep 1
+            done
+            echo "SNMP daemon did not become ready on 127.0.0.1:11161" >&2
+            exit 1
+          '
 
       - name: Build and install ezsnmp in container
         run: |
