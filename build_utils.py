@@ -153,51 +153,6 @@ def compute_object_cache_key(
 # ---------------------------------------------------------------------------
 
 
-def is_macports_installed():
-    """
-    Checks if MacPorts is installed on the system.
-
-    :return: The MacPorts version if installed, ``""`` otherwise.
-    :rtype: str
-    """
-    if not _command_available("port"):
-        return ""
-    try:
-        version_output = check_output(
-            "port version", shell=True, stderr=DEVNULL
-        ).decode()
-        match = search(r"Version:\s+(\d+(?:\.\d+)*)", version_output)
-        if match:
-            return match.group(1)
-        else:
-            return ""
-    except CalledProcessError:
-        return ""
-
-
-def is_net_snmp_installed_macports():
-    """
-    Checks if any version of net-snmp is installed via MacPorts.
-
-    :return: The net-snmp version if installed, ``""`` otherwise.
-    :rtype: str
-    """
-    if not _command_available("port"):
-        return ""
-    try:
-        macports_output = check_output(
-            "port installed net-snmp", shell=True, stderr=DEVNULL
-        ).decode()
-        pattern = r"net-snmp @(\S+) \(active\)"
-        match = search(pattern, macports_output)
-        if match:
-            return match.group(1)
-        else:
-            return ""
-    except CalledProcessError:
-        return ""
-
-
 def resolve_macos_deployment_target(product_version):
     """Return the wheel deployment target that matches the active macOS runner.
 
@@ -489,8 +444,6 @@ def gather_windows_build_configuration():
         "homebrew_version": None,
         "homebrew_netsnmp_version": None,
         "homebrew_openssl_version": None,
-        "macports_version": None,
-        "macports_netsnmp_version": None,
     }
 
 
@@ -540,8 +493,6 @@ def gather_build_configuration():
             "/opt/homebrew",
             "/usr/local/opt/net-snmp",
             "/usr/local",
-            os.path.expanduser("~/opt/local"),
-            "/opt/local",
         ):
             candidate = f"{prefix}/bin/net-snmp-config"
             if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
@@ -555,8 +506,6 @@ def gather_build_configuration():
     homebrew_version = None
     homebrew_netsnmp_version = None
     homebrew_openssl_version = None
-    macports_version = None
-    macports_netsnmp_version = None
 
     if in_tree:
         base_cmd = f"{basedir}/net-snmp-config {{}}"
@@ -614,28 +563,6 @@ def gather_build_configuration():
                     netsnmp_incdir = "/usr/include/net-snmp"
                     incdirs.append(netsnmp_incdir)
                     break
-        if platform == "darwin" and not configured_net_snmp_cmd:
-            macports_version = is_macports_installed()
-            macports_netsnmp_version = is_net_snmp_installed_macports()
-        else:
-            macports_version = None
-            macports_netsnmp_version = None
-        if (macports_version and macports_netsnmp_version) or (
-            platform == "darwin" and net_snmp_cmd.startswith("/opt/local")
-        ):
-            for directory in libdirs:
-                if "/opt/local/lib" in directory:
-                    netsnmp_incdir = directory.replace("lib", "include")
-                    if netsnmp_incdir not in incdirs:
-                        incdirs.append(netsnmp_incdir)
-            if "/opt/local/include" not in incdirs and os.path.isdir(
-                "/opt/local/include"
-            ):
-                incdirs.append("/opt/local/include")
-            if "/opt/local/lib" not in libdirs and os.path.isdir("/opt/local/lib"):
-                libdirs.append("/opt/local/lib")
-            if not homebrew_info and macports_netsnmp_version:
-                system_netsnmp_version = macports_netsnmp_version
 
     openssl_include_dirs = split_env_list(
         get_first_env("EZSNMP_OPENSSL_INCLUDE_DIR", "OPENSSL_INCLUDE_DIR")
@@ -663,6 +590,4 @@ def gather_build_configuration():
         "homebrew_version": homebrew_version,
         "homebrew_netsnmp_version": homebrew_netsnmp_version,
         "homebrew_openssl_version": homebrew_openssl_version,
-        "macports_version": macports_version,
-        "macports_netsnmp_version": macports_netsnmp_version,
     }
