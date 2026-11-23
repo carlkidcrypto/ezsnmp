@@ -4,8 +4,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    file \
     g++ \
-    libsnmp-dev \
+    gcc \
+    git \
+    libssl-dev \
+    make \
+    perl \
     pkg-config \
     snmpd \
     swig \

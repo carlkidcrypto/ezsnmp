@@ -54,4 +54,12 @@ addopts = [
 norecursedirs = [
 "docker",
 "integration_tests",
+"third_party",
 ]
+
+[tool.black]
+extend-exclude = '''
+/(
+    third_party
+)/
+'''

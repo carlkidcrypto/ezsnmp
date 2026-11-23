@@ -287,3 +287,84 @@ def test_swig_build_ext_reuses_python_independent_object_cache(tmp_path, monkeyp
     # Second Python ABI in a fresh build_temp reuses datatypes.o from cache and only compiles SWIG wrapper!
     second_compiled = run_for_abi("cpython-312")
     assert second_compiled == ["ezsnmp/src/ezsnmp_datatypes.cpp"]
+
+
+def test_is_netsnmp_5_10_or_newer():
+    assert not build_utils.is_netsnmp_5_10_or_newer("")
+    assert not build_utils.is_netsnmp_5_10_or_newer("5.8")
+    assert not build_utils.is_netsnmp_5_10_or_newer("5.9.4.pre2")
+    assert not build_utils.is_netsnmp_5_10_or_newer("5.9.5.2")
+    assert build_utils.is_netsnmp_5_10_or_newer("5.10.rc1")
+    assert build_utils.is_netsnmp_5_10_or_newer("5.10")
+    assert build_utils.is_netsnmp_5_10_or_newer("5.11.0")
+
+
+def test_ensure_netsnmp_5_10_configuration_upgrades_older_system_netsnmp(
+    tmp_path, monkeypatch
+):
+    prefix = tmp_path / "third_party" / "net-snmp-install"
+    bin_dir = prefix / "bin"
+    inc_dir = prefix / "include"
+    lib_dir = prefix / "lib"
+    bin_dir.mkdir(parents=True)
+    inc_dir.mkdir(parents=True)
+    lib_dir.mkdir(parents=True)
+    cfg_bin = bin_dir / "net-snmp-config"
+    cfg_bin.write_text("#!/bin/sh\n", encoding="utf-8")
+    cfg_bin.chmod(0o755)
+
+    monkeypatch.setattr(build_utils, "platform", "linux")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
+    monkeypatch.delenv("EZSNMP_AUTO_BUILD_NETSNMP", raising=False)
+    monkeypatch.setattr(
+        build_utils,
+        "ensure_vendored_netsnmp_install",
+        lambda repo_root=None: str(cfg_bin),
+    )
+
+    def fake_check_output(command, **kwargs):
+        if command == f"{cfg_bin} --version":
+            return b"5.10.rc1\n"
+        if command == f"{cfg_bin} --libs":
+            return f"-L{lib_dir} -lnetsnmp -lcrypto\n".encode()
+        raise AssertionError(f"Unexpected command: {command}")
+
+    monkeypatch.setattr(build_utils, "check_output", fake_check_output)
+
+    old_cfg = {
+        "in_tree": False,
+        "compile_args": ["-std=c++17"],
+        "link_args": [],
+        "libs": ["netsnmp"],
+        "libdirs": ["/usr/lib"],
+        "incdirs": ["ezsnmp/include/"],
+        "system_netsnmp_version": "5.9.4.pre2",
+        "homebrew_version": None,
+        "homebrew_netsnmp_version": None,
+        "homebrew_openssl_version": None,
+    }
+
+    upgraded = build_utils.ensure_netsnmp_5_10_configuration(
+        old_cfg, repo_root=tmp_path
+    )
+    assert upgraded["system_netsnmp_version"] == "5.10.rc1"
+    assert str(inc_dir) in upgraded["incdirs"]
+    assert str(lib_dir) in upgraded["libdirs"]
+    assert f"-Wl,-rpath,{lib_dir}" in upgraded["link_args"]
+
+
+def test_prepare_netsnmp_source_reuses_existing_valid_tree(tmp_path, monkeypatch):
+    import sys
+
+    tools_dir = str(Path(build_utils.__file__).resolve().parent / "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import prepare_netsnmp_source
+
+    vendored = tmp_path / "net-snmp"
+    (vendored / "include" / "net-snmp").mkdir(parents=True)
+    (vendored / "configure").write_text("#!/bin/sh\n", encoding="utf-8")
+
+    monkeypatch.setenv("EZSNMP_NETSNMP_SOURCE_DIR", str(vendored))
+    resolved = prepare_netsnmp_source.ensure_netsnmp_source()
+    assert resolved == vendored.resolve()

@@ -13,8 +13,8 @@ from pathlib import Path
 from re import search
 from shlex import split as s_split
 from shutil import which
-from subprocess import check_output, CalledProcessError, DEVNULL
-from sys import argv, platform
+from subprocess import check_output, CalledProcessError, DEVNULL, run
+from sys import argv, executable, platform
 
 _default_check_output = check_output
 
@@ -448,6 +448,107 @@ def gather_windows_build_configuration():
 
 
 # ---------------------------------------------------------------------------
+# Shallow Net-SNMP 5.10 sub-repo provisioning & local build helpers
+# ---------------------------------------------------------------------------
+
+
+def is_netsnmp_5_10_or_newer(version_str):
+    """Return True when *version_str* represents Net-SNMP 5.10 or newer."""
+    if not version_str:
+        return False
+    match = search(r"(\d+)\.(\d+)", str(version_str))
+    if not match:
+        return False
+    return (int(match.group(1)), int(match.group(2))) >= (5, 10)
+
+
+def ensure_vendored_netsnmp_install(repo_root=None):
+    """Ensure Net-SNMP 5.10 is built from the shallow third_party/net-snmp sub-repo.
+
+    Returns the path to the local ``net-snmp-config`` binary under
+    ``third_party/net-snmp-install/bin/net-snmp-config``.
+    """
+    root = Path(repo_root).resolve() if repo_root else Path(__file__).resolve().parent
+    install_prefix = root / "third_party" / "net-snmp-install"
+    config_bin = install_prefix / "bin" / "net-snmp-config"
+
+    if config_bin.is_file() and os.access(config_bin, os.X_OK):
+        try:
+            ver = (
+                _default_check_output([str(config_bin), "--version"], stderr=DEVNULL)
+                .decode()
+                .strip()
+            )
+            if is_netsnmp_5_10_or_newer(ver):
+                return str(config_bin)
+        except (CalledProcessError, OSError):
+            pass
+
+    prepare_py = root / "tools" / "prepare_netsnmp_source.py"
+    if prepare_py.is_file():
+        run([executable, str(prepare_py)], check=True)
+
+    if platform == "darwin":
+        script = root / "tools" / "prepare_macos_netsnmp.sh"
+    else:
+        script = root / "tools" / "prepare_linux_netsnmp.sh"
+
+    if not script.is_file():
+        raise RuntimeError(f"Net-SNMP build helper script not found: {script}")
+
+    env = os.environ.copy()
+    env["PREFIX"] = str(install_prefix)
+    if hasattr(os, "geteuid") and os.geteuid() != 0:
+        env["SKIP_PKG_INSTALL"] = "1"
+
+    run(["bash", str(script)], env=env, check=True)
+
+    if not (config_bin.is_file() and os.access(config_bin, os.X_OK)):
+        raise RuntimeError(f"Vendored Net-SNMP 5.10 build did not produce {config_bin}")
+    return str(config_bin)
+
+
+def ensure_netsnmp_5_10_configuration(cfg, repo_root=None):
+    """Upgrade *cfg* to use the shallow vendored Net-SNMP 5.10 build when system Net-SNMP < 5.10."""
+    if cfg.get("in_tree") or platform == "win32":
+        return cfg
+
+    version_str = (
+        cfg.get("homebrew_netsnmp_version") or cfg.get("system_netsnmp_version") or ""
+    )
+    if is_netsnmp_5_10_or_newer(version_str):
+        return cfg
+
+    if os.environ.get("EZSNMP_AUTO_BUILD_NETSNMP", "1").strip() == "0":
+        return cfg
+
+    config_bin = ensure_vendored_netsnmp_install(repo_root=repo_root)
+    install_prefix = str(Path(config_bin).resolve().parent.parent)
+    include_dir = os.path.join(install_prefix, "include")
+    lib_dir = os.path.join(install_prefix, "lib")
+
+    prev_env = os.environ.get("EZSNMP_NETSNMP_CONFIG")
+    os.environ["EZSNMP_NETSNMP_CONFIG"] = config_bin
+    try:
+        updated_cfg = gather_build_configuration()
+    finally:
+        if prev_env is None:
+            os.environ.pop("EZSNMP_NETSNMP_CONFIG", None)
+        else:
+            os.environ["EZSNMP_NETSNMP_CONFIG"] = prev_env
+
+    if include_dir not in updated_cfg["incdirs"]:
+        updated_cfg["incdirs"].append(include_dir)
+    if lib_dir not in updated_cfg["libdirs"]:
+        updated_cfg["libdirs"].insert(0, lib_dir)
+    rpath_flag = f"-Wl,-rpath,{lib_dir}"
+    if rpath_flag not in updated_cfg["link_args"]:
+        updated_cfg["link_args"].append(rpath_flag)
+
+    return updated_cfg
+
+
+# ---------------------------------------------------------------------------
 # Top-level build configuration
 # ---------------------------------------------------------------------------
 
@@ -499,9 +600,23 @@ def gather_build_configuration():
                 net_snmp_cmd = candidate
                 break
 
-    system_netsnmp_version = check_output(
-        f"{net_snmp_cmd} --version", shell=True
-    ).decode()
+    try:
+        system_netsnmp_version = check_output(
+            f"{net_snmp_cmd} --version", shell=True
+        ).decode()
+    except (CalledProcessError, FileNotFoundError, OSError):
+        if (
+            not in_tree
+            and check_output is _default_check_output
+            and os.environ.get("EZSNMP_AUTO_BUILD_NETSNMP", "1").strip() != "0"
+        ):
+            net_snmp_cmd = ensure_vendored_netsnmp_install()
+            configured_net_snmp_cmd = net_snmp_cmd
+            system_netsnmp_version = check_output(
+                f"{net_snmp_cmd} --version", shell=True
+            ).decode()
+        else:
+            raise
 
     homebrew_version = None
     homebrew_netsnmp_version = None
@@ -563,6 +678,20 @@ def gather_build_configuration():
                     netsnmp_incdir = "/usr/include/net-snmp"
                     incdirs.append(netsnmp_incdir)
                     break
+        elif (
+            configured_net_snmp_cmd
+            and "third_party/net-snmp-install" in configured_net_snmp_cmd
+        ):
+            install_prefix = str(Path(configured_net_snmp_cmd).resolve().parent.parent)
+            vendored_inc = os.path.join(install_prefix, "include")
+            vendored_lib = os.path.join(install_prefix, "lib")
+            if vendored_inc not in incdirs:
+                incdirs.append(vendored_inc)
+            if vendored_lib not in libdirs:
+                libdirs.insert(0, vendored_lib)
+            rpath_flag = f"-Wl,-rpath,{vendored_lib}"
+            if rpath_flag not in link_args:
+                link_args.append(rpath_flag)
 
     openssl_include_dirs = split_env_list(
         get_first_env("EZSNMP_OPENSSL_INCLUDE_DIR", "OPENSSL_INCLUDE_DIR")

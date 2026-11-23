@@ -4,31 +4,40 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 IMAGE_NAME="${EZSNMP_VALGRIND_IMAGE:-ezsnmp-valgrind-trixie:latest}"
+CACHE_VOLUME="${EZSNMP_VALGRIND_CACHE_VOLUME:-ezsnmp-valgrind-netsnmp-510-cache}"
 ITERS="${EZSNMP_VALGRIND_ITERS:-50}"
 RSS_ITERS="${EZSNMP_RSS_ITERS:-1000}"
+
+echo "Ensuring shallow Net-SNMP 5.10 sub-repo (third_party/net-snmp) is populated..."
+python3 "${REPO_ROOT}/tools/prepare_netsnmp_source.py"
 
 echo "Building Docker image ${IMAGE_NAME}..."
 docker build -t "${IMAGE_NAME}" "${SCRIPT_DIR}"
 
-echo "Running Valgrind + RSS leak check inside ${IMAGE_NAME}..."
+echo "Running Valgrind + RSS leak check with Net-SNMP 5.10 inside ${IMAGE_NAME}..."
 docker run --rm \
   -v "${REPO_ROOT}:/ezsnmp:ro" \
+  -v "${CACHE_VOLUME}:/netsnmp_cache" \
   -e "ITERS=${ITERS}" \
   -e "RSS_ITERS=${RSS_ITERS}" \
   "${IMAGE_NAME}" bash -c '
 set -euo pipefail
 
-cp -a /ezsnmp /tmp/ezsnmp_src
+mkdir -p /tmp/ezsnmp_src
+tar -C /ezsnmp --exclude="./third_party" --exclude="./.git" --exclude="./build" -cf - . | tar -C /tmp/ezsnmp_src -xf -
 cd /tmp/ezsnmp_src
 rm -rf build dist ezsnmp.egg-info ezsnmp/*.so
+mkdir -p third_party
+ln -s /netsnmp_cache third_party/net-snmp-install
+export EZSNMP_NETSNMP_SOURCE_DIR=/ezsnmp/third_party/net-snmp
 
-echo "=== System Net-SNMP version ==="
-snmpd -v
+echo "=== Building and installing ezsnmp from source (auto-provisioning Net-SNMP 5.10 from third_party/net-snmp) ==="
+SKIP_PKG_INSTALL=1 python3 -m pip install --no-build-isolation --no-deps .
 
-echo "=== Building and installing ezsnmp from source ==="
-# Allow building against Debian trixie libnetsnmp.so.40 (5.9.4) as well as 5.10+
-sed -i "s/tuple(map(int, version_match.groups())) < (5, 10)/tuple(map(int, version_match.groups())) < (5, 9)/" setup.py
-python3 -m pip install --no-build-isolation --no-deps .
+cd /tmp
+echo "=== Active Net-SNMP library version linked into ezsnmp ==="
+/tmp/ezsnmp_src/third_party/net-snmp-install/bin/net-snmp-config --version
+ldd "$(python3 -c "import ezsnmp._sessionbase as s; print(s.__file__)")" | grep netsnmp
 
 printf "rocommunity public 127.0.0.1\nagentaddress udp:127.0.0.1:16101\n" > /tmp/snmpd.conf
 snmpd -f -C -c /tmp/snmpd.conf -Lo >/tmp/snmpd.log 2>&1 &
@@ -36,7 +45,6 @@ SNMPD_PID=$!
 trap "kill ${SNMPD_PID} 2>/dev/null || true" EXIT
 sleep 1
 
-cd /tmp
 echo "=== 1. RSS Growth Check (${RSS_ITERS} iterations per mode) ==="
 for mode in open get walk shared; do
   python3 /tmp/ezsnmp_src/docker/valgrind_leak_check/leak_repro.py "${mode}" "${RSS_ITERS}"
