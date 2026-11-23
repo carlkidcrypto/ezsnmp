@@ -6,7 +6,7 @@ EzSnmp
 
 |Codecov| |Quality Gate Status| |Security Rating| |Maintainability Rating|
 
-|PyPI Version| |PyPI Downloads| |PyPI Distributions| |TestPyPI Distributions| |Build Docker Images|
+|PyPI Version| |TestPyPI Version| |PyPI Downloads| |PyPI Distributions| |TestPyPI Distributions| |Build Docker Images|
 
 |Python Versions| |License|
 
@@ -33,6 +33,8 @@ EzSnmp
     :alt: Maintainability Rating
 .. |PyPI Version| image:: https://img.shields.io/pypi/v/ezsnmp?style=flat-square
     :target: https://pypi.org/project/ezsnmp/
+.. |TestPyPI Version| image:: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ftest.pypi.org%2Fpypi%2Fezsnmp%2Fjson&query=%24.info.version&label=TestPyPI&style=flat-square&color=blue
+    :target: https://test.pypi.org/project/ezsnmp/
 .. |PyPI Downloads| image:: https://img.shields.io/pypi/dm/ezsnmp?style=flat-square
     :target: https://pypi.org/project/ezsnmp/
 .. |PyPI Distributions| image:: https://img.shields.io/github/actions/workflow/status/carlkidcrypto/ezsnmp/build_and_publish_to_pypi.yml?style=flat-square&label=PyPI+Distributions
