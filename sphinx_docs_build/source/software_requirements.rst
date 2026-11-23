@@ -178,8 +178,8 @@ generate Python ↔ C++ bindings.
 
 [BUILD-03] The system shall support Python versions 3.11, 3.12, 3.13, 3.14, and 3.15.
 
-[BUILD-04] The system shall support Homebrew (macOS) and MacPorts (macOS) as Net-SNMP installation
-sources for source builds.
+[BUILD-04] The system shall support Homebrew (macOS) as a Net-SNMP installation source for source
+builds.
 
 [BUILD-05] Windows wheel builds shall build Net-SNMP from source via a dedicated composite GitHub
 Action (``perl Configure`` + ``nmake``) rather than relying on a pre-packaged Net-SNMP distribution,
