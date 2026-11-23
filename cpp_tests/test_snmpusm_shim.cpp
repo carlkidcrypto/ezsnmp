@@ -1166,40 +1166,36 @@ extern "C" int snmp_parse_args(int argc,
    return real_fn(argc, argv, session, localOpts, proc);
 }
 
-TEST_F(SnmpUsmShimTest, TestFaultInjectionErrorPaths) {
+TEST_F(SnmpUsmShimTest, TestFaultInjectionParseArgsErrorThrows) {
    struct Guard {
-      ~Guard() {
-         g_fail_pdu_create_type = -1;
-         g_fail_pdu_get_after_set = false;
-         g_fail_dh_size_on_call = 0;
-         g_dh_size_call_count = 0;
-         g_fail_default_authtype = false;
-         g_fail_generate_ku_on_call = 0;
-         g_generate_ku_call_count = 0;
-         g_fail_extend_kul_on_call = 0;
-         g_extend_kul_call_count = 0;
-         g_fail_parse_args = false;
-         g_in_snmp_parse_args = false;
-         g_dh_get_mode = DhGetMode::kSuccess;
-         g_set_mode = SetMode::kSuccess;
-      }
+      ~Guard() { g_fail_parse_args = false; }
    } guard;
 
-   // snmp_parse_args returning NETSNMP_PARSE_ARGS_ERROR
    g_fail_parse_args = true;
    EXPECT_THROW(snmpusm({"-v", "2c", "-c", "public", "localhost:11161", "delete", "u1"}, "shim"),
                 ParseErrorBase);
-   g_fail_parse_args = false;
+}
 
-   // snmp_pdu_create(SNMP_MSG_SET) returning nullptr
+TEST_F(SnmpUsmShimTest, TestFaultInjectionPduCreateSetFailureThrows) {
+   struct Guard {
+      ~Guard() { g_fail_pdu_create_type = -1; }
+   } guard;
+
    g_fail_pdu_create_type = SNMP_MSG_SET;
    EXPECT_THROW(snmpusm({"-v", "2c", "-c", "public", "-r", "0", "-t", "0.05", "localhost:11161",
                          "delete", "u1"},
                         "shim"),
                 GenericErrorBase);
-   g_fail_pdu_create_type = -1;
+}
 
-   // snmp_pdu_create(SNMP_MSG_GET) returning nullptr in changekey
+TEST_F(SnmpUsmShimTest, TestFaultInjectionPduCreateGetFailureInChangekeyThrows) {
+   struct Guard {
+      ~Guard() {
+         g_fail_pdu_create_type = -1;
+         g_fail_pdu_get_after_set = false;
+      }
+   } guard;
+
    g_fail_pdu_get_after_set = true;
    std::vector<std::string> ck_args = {"-Ca",
                                        "-v",
@@ -1228,10 +1224,43 @@ TEST_F(SnmpUsmShimTest, TestFaultInjectionErrorPaths) {
                                        "changekey",
                                        "targetu"};
    EXPECT_THROW(snmpusm(ck_args, "shim"), GenericErrorBase);
-   g_fail_pdu_create_type = -1;
-   g_fail_pdu_get_after_set = false;
+}
 
-   // DH_size returning 0 (< outkey_len) in get_USM_DH_key (call 1 is in make_dh_get_response)
+TEST_F(SnmpUsmShimTest, TestFaultInjectionDhSizeZeroThrows) {
+   struct Guard {
+      ~Guard() {
+         g_fail_dh_size_on_call = 0;
+         g_dh_size_call_count = 0;
+         g_dh_get_mode = DhGetMode::kSuccess;
+      }
+   } guard;
+
+   std::vector<std::string> ck_args = {"-Ca",
+                                       "-v",
+                                       "3",
+                                       "-e",
+                                       "800000020109840301",
+                                       "-E",
+                                       "800000020109840301",
+                                       "-u",
+                                       "initial_md5_aes",
+                                       "-l",
+                                       "authPriv",
+                                       "-a",
+                                       "MD5",
+                                       "-A",
+                                       "auth_pass",
+                                       "-x",
+                                       "AES",
+                                       "-X",
+                                       "priv_pass",
+                                       "-r",
+                                       "0",
+                                       "-t",
+                                       "0.05",
+                                       "localhost:11161",
+                                       "changekey",
+                                       "targetu"};
    g_dh_get_mode = DhGetMode::kSuccess;
    for (int attempt = 0; attempt < 3; ++attempt) {
       g_dh_size_call_count = 0;
@@ -1248,20 +1277,30 @@ TEST_F(SnmpUsmShimTest, TestFaultInjectionErrorPaths) {
          }
       }
    }
-   g_fail_dh_size_on_call = 0;
+}
 
-   // get_default_authtype returning nullptr (fallback to default auth proto) in passwd
+TEST_F(SnmpUsmShimTest, TestFaultInjectionDefaultAuthTypeNullThrows) {
+   struct Guard {
+      ~Guard() { g_fail_default_authtype = false; }
+   } guard;
+
    g_fail_default_authtype = true;
    std::vector<std::string> pw_args = {
        "-v",     "2c",         "-c",         "public", "-r", "0", "-t", "0.05", "localhost:11161",
        "passwd", "oldpass123", "newpass123", "targetu"};
    // Will fail at generate_kul due to empty v2c engineID, after exercising lines 596-604
-   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SECNAME, "initial_md5_aes");
    EXPECT_THROW(snmpusm(pw_args, "shim"), GenericErrorBase);
-   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_SECNAME, nullptr);
-   g_fail_default_authtype = false;
+}
 
-   // generate_Ku failure on oldpass (call 1) and newpass (call 2)
+TEST_F(SnmpUsmShimTest, TestFaultInjectionGenerateKuFailureThrows) {
+   struct Guard {
+      ~Guard() {
+         g_fail_generate_ku_on_call = 0;
+         g_generate_ku_call_count = 0;
+         g_in_snmp_parse_args = false;
+      }
+   } guard;
+
    std::vector<std::string> v3_pw_args = {"-v",
                                           "3",
                                           "-e",
@@ -1296,9 +1335,16 @@ TEST_F(SnmpUsmShimTest, TestFaultInjectionErrorPaths) {
    g_generate_ku_call_count = 0;
    g_fail_generate_ku_on_call = 2;
    EXPECT_THROW(snmpusm(v3_pw_args, "shim"), GenericErrorBase);
-   g_fail_generate_ku_on_call = 0;
+}
 
-   // netsnmp_extend_kul failure on oldkulpriv (call 1) and newkulpriv (call 2)
+TEST_F(SnmpUsmShimTest, TestFaultInjectionExtendKulFailureThrows) {
+   struct Guard {
+      ~Guard() {
+         g_fail_extend_kul_on_call = 0;
+         g_extend_kul_call_count = 0;
+      }
+   } guard;
+
    // Use -Ck with 8-byte key and AES (16-byte priv key) so oldkulpriv_len < properlength
    std::vector<std::string> extend_args = {"-Cx",
                                            "-Ck",
