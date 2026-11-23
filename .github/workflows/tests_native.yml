@@ -82,8 +82,8 @@ jobs:
       fail-fast: false
       matrix:
         # macOS is intentionally excluded: the macOS system net-snmp (5.6.x) is no longer
-        # supported. macOS testing is covered by tests_homebrew.yml and tests_macports.yml,
-        # where a supported version of net-snmp is installed via Homebrew or MacPorts.
+        # supported. macOS testing is covered by tests_homebrew.yml,
+        # where a supported version of net-snmp is installed via Homebrew.
         os: [ubuntu-latest]
         python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
