@@ -50,29 +50,6 @@ cp /ezsnmp/configs/snmpd.conf /etc/snmp/snmpd.conf
 
 echo "Starting SNMP daemon..."
 
-# On Debian-based images built before libnl-route-3-dev was added, ensure
-# libnl-route-3-dev is installed and snmpd includes the mibII/ifTable module.
-if command -v apt-get >/dev/null 2>&1 && ! dpkg -s libnl-route-3-dev >/dev/null 2>&1; then
-    echo "Installing libnl-route-3-dev and rebuilding Net-SNMP 5.10 with full mibII/ifTable support..."
-    apt-get update && apt-get install -y --no-install-recommends libnl-route-3-dev
-    NETSNMP_SRC="/tmp/netsnmp-5.10-agent-rebuild"
-    rm -rf "$NETSNMP_SRC"
-    if [ -f "/ezsnmp/third_party/net-snmp/configure" ]; then
-        cp -a /ezsnmp/third_party/net-snmp "$NETSNMP_SRC"
-    else
-        mkdir -p "$NETSNMP_SRC"
-        curl --proto '=https' --proto-redir '=https' -fsSL https://github.com/net-snmp/net-snmp/archive/refs/tags/v5.10.rc1.tar.gz | tar -xz -C "$NETSNMP_SRC" --strip-components=1
-    fi
-    (
-        cd "$NETSNMP_SRC"
-        ./configure --prefix=/usr --with-defaults --enable-shared --disable-embedded-perl --without-perl-modules --with-mib-modules="mibII/system_mib mibII/sysORTable snmpv3mibs notification notification-log-mib"
-        make -j"$(nproc)"
-        make install
-        ldconfig
-    )
-    rm -rf "$NETSNMP_SRC"
-fi
-
 # Disable glibc malloc checking to avoid false positives with Net-SNMP
 export MALLOC_CHECK_=0
 export MALLOC_PERTURB_=0

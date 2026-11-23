@@ -101,12 +101,12 @@ for DISTRO_NAME in "${DISTROS_TO_TEST[@]}"; do
 		-v "$HOST_SOURCE_PATH/ezsnmp/src:/ezsnmp/src:ro" \
 		-v "$HOST_SOURCE_PATH/ezsnmp/include:/ezsnmp/include:ro" \
 		"${FULL_IMAGE_TAG}" \
-		/bin/bash -c "/ezsnmp/docker/DockerEntry.sh false & tail -f /dev/null"; then
+		/bin/bash -c "${ENTRY_SCRIPT_PATH} false & tail -f /dev/null"; then
 		echo "ERROR: Docker run failed for ${DISTRO_NAME}. Skipping tests."
 		continue
 	fi
 	docker exec "$CONTAINER_NAME" bash -c '
-		for attempt in {1..120}; do
+		for attempt in {1..15}; do
 			if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
 				exit 0
 			fi
