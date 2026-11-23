@@ -11,7 +11,17 @@ Supports four modes matching GitHub issue #1519:
 from __future__ import annotations
 
 import sys
-from ezsnmp import Session
+from ezsnmp import (
+    GenericError,
+    ParseError,
+    Session,
+    snmpbulkget,
+    snmpbulkwalk,
+    snmpget,
+    snmpgetnext,
+    snmpset,
+    snmptrap,
+)
 
 
 def rss_kib() -> int:
@@ -48,6 +58,23 @@ def main() -> int:
         elif mode == "get":
             with Session(**kwargs) as s:
                 results = s.get([".1.3.6.1.2.1.1.1.0"])
+        elif mode == "errors":
+            base_args = ["-v", "2c", "-c", "public", f"127.0.0.1:{port}"]
+            for fn in (snmpget, snmpgetnext):
+                try:
+                    fn(base_args + ["nonExistentInvalidOid.0"])
+                except GenericError:
+                    pass
+            try:
+                snmpset(base_args + ["nonExistentInvalidOid.0", "s", "val"])
+            except GenericError:
+                pass
+            for fn in (snmpbulkget, snmpbulkwalk, snmptrap):
+                try:
+                    fn(["-v", "2c", "-c", "public", "-Cr", f"127.0.0.1:{port}"])
+                except (ParseError, GenericError):
+                    pass
+            results = ()
         else:
             with Session(**kwargs):
                 results = ()

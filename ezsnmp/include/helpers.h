@@ -4,6 +4,7 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
+#include <cstring>
 #include <memory>
 #include <regex>
 #include <string>
@@ -133,6 +134,7 @@ struct SnmpSessionCleanupGuard {
    ~SnmpSessionCleanupGuard() {
       if (m_session) {
          netsnmp_cleanup_session(m_session);
+         std::memset(m_session, 0, sizeof(*m_session));
       }
    }
    SnmpSessionCleanupGuard(SnmpSessionCleanupGuard const &) = delete;

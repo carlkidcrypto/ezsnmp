@@ -42,7 +42,7 @@ fi
 if [[ ! -f "${VENDORED_SRC}/configure" ]]; then
     if command -v python3 >/dev/null 2>&1 && [[ -f "${SCRIPT_DIR}/prepare_netsnmp_source.py" ]]; then
         echo "Provisioning shallow Net-SNMP ${NETSNMP_VERSION} sub-repo via prepare_netsnmp_source.py..."
-        python3 "${SCRIPT_DIR}/prepare_netsnmp_source.py" --tag "v${NETSNMP_VERSION}" --target-dir "${VENDORED_SRC}" || true
+        EZSNMP_NETSNMP_SOURCE_DIR="${VENDORED_SRC}" python3 "${SCRIPT_DIR}/prepare_netsnmp_source.py" --tag "v${NETSNMP_VERSION}" || true
     elif command -v git >/dev/null 2>&1; then
         echo "Shallow-cloning Net-SNMP v${NETSNMP_VERSION} into ${VENDORED_SRC}..."
         mkdir -p "$(dirname "${VENDORED_SRC}")"

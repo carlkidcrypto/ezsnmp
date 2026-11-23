@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Provision the pinned Net-SNMP 5.10 source tree via shallow git clone or verified archive."""
+"""Provision the pinned Net-SNMP 5.10 source tree via shallow git submodule/clone or verified archive."""
 
 from __future__ import annotations
 
@@ -24,10 +24,35 @@ NETSNMP_ARCHIVE_URL = (
 NETSNMP_EXPECTED_SHA256 = (
     "009cbda7879b1c75cee01df9f4eab2797df47c6c5f90b70aed3e51dce89d8e76"
 )
+ALLOWED_TAGS: dict[str, tuple[str, str, str]] = {
+    NETSNMP_TAG: (NETSNMP_TAG, NETSNMP_VERSION, NETSNMP_EXPECTED_SHA256),
+    NETSNMP_VERSION: (NETSNMP_TAG, NETSNMP_VERSION, NETSNMP_EXPECTED_SHA256),
+}
 
 
 def _is_valid_netsnmp_tree(path: Path) -> bool:
     return (path / "configure").is_file() and (path / "include" / "net-snmp").is_dir()
+
+
+def _resolve_safe_tag(tag: str) -> tuple[str, str, str]:
+    resolved = ALLOWED_TAGS.get(tag.strip())
+    if resolved is None:
+        raise ValueError(
+            f"Unsupported Net-SNMP tag {tag!r}; allowed values: {sorted(ALLOWED_TAGS)}"
+        )
+    return resolved
+
+
+def _resolve_safe_dest(target_dir: Path | None) -> Path:
+    vendored = (REPO_ROOT / "third_party" / "net-snmp").resolve()
+    if target_dir is None:
+        return vendored
+    resolved = target_dir.resolve()
+    if not resolved.is_relative_to(REPO_ROOT.resolve()):
+        raise ValueError(
+            f"Target directory {resolved} must remain within repository root {REPO_ROOT.resolve()}"
+        )
+    return resolved
 
 
 def _download_and_extract_archive(
@@ -74,8 +99,9 @@ def ensure_netsnmp_source(
         if _is_valid_netsnmp_tree(cand):
             return cand
 
+    safe_tag, safe_version, default_sha256 = _resolve_safe_tag(tag)
     vendored = (REPO_ROOT / "third_party" / "net-snmp").resolve()
-    dest = (target_dir or vendored).resolve()
+    dest = _resolve_safe_dest(target_dir)
     if _is_valid_netsnmp_tree(dest):
         return dest
 
@@ -95,6 +121,7 @@ def ensure_netsnmp_source(
                         "--init",
                         "--depth",
                         "1",
+                        "--",
                         "third_party/net-snmp",
                     ],
                     check=True,
@@ -115,8 +142,8 @@ def ensure_netsnmp_source(
                         "clone",
                         "--depth",
                         "1",
-                        "--branch",
-                        tag,
+                        f"--branch={safe_tag}",
+                        "--",
                         NETSNMP_REPO_URL,
                         str(dest),
                     ],
@@ -129,11 +156,10 @@ def ensure_netsnmp_source(
                     break
                 time.sleep(2 * attempt)
 
-    version = tag[1:] if tag.startswith("v") else tag
     return _download_and_extract_archive(
         dest=dest,
-        version=version,
-        expected_sha256=expected_sha256 if version == NETSNMP_VERSION else "",
+        version=safe_version,
+        expected_sha256=expected_sha256 or default_sha256,
     )
 
 
@@ -141,12 +167,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Ensure pinned Net-SNMP 5.10 source tree is available under third_party/net-snmp."
     )
-    parser.add_argument("--tag", default=NETSNMP_TAG)
-    parser.add_argument("--target-dir", default="")
+    parser.add_argument(
+        "--tag",
+        default=NETSNMP_TAG,
+        choices=sorted(ALLOWED_TAGS.keys()),
+    )
     args = parser.parse_args(argv)
 
-    target = Path(args.target_dir).resolve() if args.target_dir else None
-    resolved = ensure_netsnmp_source(target_dir=target, tag=args.tag)
+    resolved = ensure_netsnmp_source(tag=args.tag)
     print(f"Net-SNMP 5.10 source ready ({args.tag}): {resolved}")
     return 0
 

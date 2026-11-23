@@ -368,3 +368,10 @@ def test_prepare_netsnmp_source_reuses_existing_valid_tree(tmp_path, monkeypatch
     monkeypatch.setenv("EZSNMP_NETSNMP_SOURCE_DIR", str(vendored))
     resolved = prepare_netsnmp_source.ensure_netsnmp_source()
     assert resolved == vendored.resolve()
+
+    assert prepare_netsnmp_source._resolve_safe_tag("v5.10.rc1")[0] == "v5.10.rc1"
+    assert prepare_netsnmp_source._resolve_safe_tag("5.10.rc1")[0] == "v5.10.rc1"
+    with pytest.raises(ValueError, match="Unsupported Net-SNMP tag"):
+        prepare_netsnmp_source._resolve_safe_tag("--upload-pack=evil")
+    with pytest.raises(ValueError, match="must remain within repository root"):
+        prepare_netsnmp_source._resolve_safe_dest(Path("/tmp/outside-repo"))

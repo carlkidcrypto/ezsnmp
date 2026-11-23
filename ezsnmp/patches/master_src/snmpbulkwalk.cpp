@@ -81,6 +81,8 @@ thread_local int snmpbulkwalk_reps = 10, snmpbulkwalk_non_reps = 0;
 #include "snmpbulkwalk.h"
 #include "thread_safety.h"
 
+thread_local std::string snmpbulkwalk_optproc_error;
+
 void snmpbulkwalk_usage(void) {
    fprintf(stderr, "USAGE: snmpbulkwalk ");
    snmp_parse_args_usage(stderr);
@@ -105,6 +107,7 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(void *ss, oid *theoid, 
    snmp_add_null_var(pdu, theoid, theoid_len);
 
    status = snmp_sess_synch_response(static_cast<struct session_list *>(ss), pdu, &response);
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -115,9 +118,7 @@ std::vector<std::string> snmpbulkwalk_snmp_get_and_print(void *ss, oid *theoid, 
          }
       }
    }
-   if (response) {
-      snmp_free_pdu(response);
-   }
+   response_guard.reset();
 
    return str_values;
 }
@@ -151,8 +152,9 @@ void snmpbulkwalk_optProc(int, char *const *, int opt) {
                      /*
                       * No number given -- error.
                       */
-                     throw ParseErrorBase("No number given for -C" + std::string(1, *(optarg - 1)) +
-                                          " option\n");
+                     snmpbulkwalk_optproc_error =
+                         "No number given for -C" + std::string(1, *(optarg - 1)) + " option\n";
+                     return;
                   } else {
                      optarg = endptr;
                   }
@@ -164,9 +166,9 @@ void snmpbulkwalk_optProc(int, char *const *, int opt) {
                   break;
 
                default:
-                  std::string err_msg =
+                  snmpbulkwalk_optproc_error =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
+                  return;
             }
          }
          break;
@@ -223,7 +225,12 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
+      snmpbulkwalk_optproc_error.clear();
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc);
+      if (!snmpbulkwalk_optproc_error.empty()) {
+         throw ParseErrorBase(snmpbulkwalk_optproc_error);
+      }
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -311,6 +318,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
        */
       status =
           snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
+      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
       if (status == STAT_SUCCESS) {
          snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -389,9 +397,7 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       } else { /* status == STAT_ERROR */
          snmp_single_sess_perror_exception("snmpbulkwalk", ss.get());
       }
-      if (response) {
-         snmp_free_pdu(response);
-      }
+      response_guard.reset();
    }
 
    if (snmpbulkwalk_numprinted == 0 && status == STAT_SUCCESS) {

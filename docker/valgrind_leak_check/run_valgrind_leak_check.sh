@@ -51,7 +51,7 @@ for mode in open get walk shared; do
 done
 
 echo "=== 2. Valgrind Memcheck (${ITERS} iterations per mode) ==="
-for mode in get walk; do
+for mode in get walk errors; do
   LOG="/tmp/valgrind_${mode}.out"
   PYTHONMALLOC=malloc valgrind \
     --tool=memcheck \

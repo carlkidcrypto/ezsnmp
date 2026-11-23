@@ -84,6 +84,8 @@ thread_local char *end_name = NULL;
 #include "snmpwalk.h"
 #include "thread_safety.h"
 
+thread_local std::string snmpwalk_optproc_error;
+
 std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss, oid *theoid, size_t theoid_len) {
    std::vector<std::string> str_values;
 
@@ -95,6 +97,7 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss, oid *theoid, size
    snmp_add_null_var(pdu, theoid, theoid_len);
 
    status = snmp_sess_synch_response(static_cast<struct session_list *>(ss), pdu, &response);
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -105,9 +108,7 @@ std::vector<std::string> snmpwalk_snmp_get_and_print(void *ss, oid *theoid, size
          }
       }
    }
-   if (response) {
-      snmp_free_pdu(response);
-   }
+   response_guard.reset();
 
    return str_values;
 }
@@ -152,9 +153,9 @@ void snmpwalk_optProc(int, char *const *argv, int opt) {
                   break;
 
                default:
-                  std::string err_msg =
+                  snmpwalk_optproc_error =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
+                  return;
             }
          }
          break;
@@ -217,7 +218,12 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
        */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc)) {
+      snmpwalk_optproc_error.clear();
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpwalk_optProc);
+      if (!snmpwalk_optproc_error.empty()) {
+         throw ParseErrorBase(snmpwalk_optproc_error);
+      }
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -335,6 +341,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       }
       status =
           snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
+      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
       if (status == STAT_SUCCESS) {
          if (time_results_single) {
             netsnmp_get_monotonic_clock(&tv_b);
@@ -417,9 +424,7 @@ std::vector<Result> snmpwalk(std::vector<std::string> const &args,
       } else { /* status == STAT_ERROR */
          snmp_single_sess_perror_exception("snmpwalk", ss.get());
       }
-      if (response) {
-         snmp_free_pdu(response);
-      }
+      response_guard.reset();
    }
    if (time_results) {
       netsnmp_get_monotonic_clock(&tv2);

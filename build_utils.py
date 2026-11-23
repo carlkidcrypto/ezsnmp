@@ -456,10 +456,14 @@ def is_netsnmp_5_10_or_newer(version_str):
     """Return True when *version_str* represents Net-SNMP 5.10 or newer."""
     if not version_str:
         return False
-    match = search(r"(\d+)\.(\d+)", str(version_str))
-    if not match:
-        return False
-    return (int(match.group(1)), int(match.group(2))) >= (5, 10)
+    cleaned = "".join(
+        ch if (ch.isdigit() or ch == ".") else " " for ch in str(version_str)
+    )
+    for token in cleaned.split():
+        parts = [part for part in token.split(".") if part.isdigit()]
+        if len(parts) >= 2:
+            return (int(parts[0]), int(parts[1])) >= (5, 10)
+    return False
 
 
 def ensure_vendored_netsnmp_install(repo_root=None):
