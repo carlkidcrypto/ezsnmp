@@ -375,3 +375,36 @@ def test_prepare_netsnmp_source_reuses_existing_valid_tree(tmp_path, monkeypatch
         prepare_netsnmp_source._resolve_safe_tag("--upload-pack=evil")
     with pytest.raises(ValueError, match="must remain within repository root"):
         prepare_netsnmp_source._resolve_safe_dest(Path("/tmp/outside-repo"))
+
+
+def test_check_valgrind_leaks_filters_pyinit_and_detects_runtime_leaks(tmp_path):
+    import sys
+
+    tools_dir = str(Path(build_utils.__file__).resolve().parent / "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import check_valgrind_leaks
+
+    clean_log = tmp_path / "valgrind_clean.out"
+    clean_log.write_text(
+        "==100== Memcheck\n"
+        "==100== \n"
+        "==100== 53 bytes in 1 blocks are definitely lost in loss record 1 of 10\n"
+        "==100==    at 0x484F888: malloc (vg_replace_malloc.c:447)\n"
+        "==100==    by 0xACBDD32: PyInit__netsnmpbase (ezsnmp_netsnmpbase.cpp:19000)\n"
+        "==100== \n",
+        encoding="utf-8",
+    )
+    assert check_valgrind_leaks.check_valgrind_log_files([str(clean_log)]) == 0
+
+    leak_log = tmp_path / "valgrind_leak.out"
+    leak_log.write_text(
+        "==101== Memcheck\n"
+        "==101== \n"
+        "==101== 4,800 bytes in 1 blocks are definitely lost in loss record 2 of 10\n"
+        "==101==    at 0x4856FD3: calloc (vg_replace_malloc.c:1678)\n"
+        "==101==    by 0xAD12345: netsnmp_init_mib_internals (parse.c:4618)\n"
+        "==101== \n",
+        encoding="utf-8",
+    )
+    assert check_valgrind_leaks.check_valgrind_log_files([str(leak_log)]) == 1

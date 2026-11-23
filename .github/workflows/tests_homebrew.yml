@@ -66,6 +66,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/check_valgrind_leaks.py
             tools/prepare_linux_netsnmp.sh
 
   build-and-test:
@@ -216,35 +217,7 @@ jobs:
                    --cov-report=term-missing \
                    --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
                    python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
-                 python3 - << 'PY'
-                 import pathlib, re, sys
-                 log_files = list(pathlib.Path(".").glob("valgrind_*.out"))
-                 if not log_files:
-                     sys.exit("ERROR: Valgrind log file not found")
-                 text = log_files[0].read_text(errors="replace")
-                 # Split into individual Valgrind record blocks and flag any
-                 # definitely/indirectly lost leak originating from ezsnmp or
-                 # Net-SNMP request/MIB initialization (GitHub issue #1519).
-                 blocks = re.split(r"\n==\d+==\s*\n", text)
-                 leaked_blocks = []
-                 markers = (
-                     "netsnmp_init_mib_internals",
-                     "netsnmp_parse_args",
-                     "_sessionbase",
-                     "_netsnmpbase",
-                     "SessionBase::",
-                 )
-                 for b in blocks:
-                     if re.search(r"bytes in \d+ blocks are (?:definitely|indirectly) lost", b):
-                         if "PyInit_" not in b and any(m in b for m in markers):
-                             leaked_blocks.append(b.strip())
-                 if leaked_blocks:
-                     print("ERROR: Valgrind detected native ezsnmp/Net-SNMP memory leaks:", file=sys.stderr)
-                     for lb in leaked_blocks[:10]:
-                         print(lb, "\n---", file=sys.stderr)
-                     sys.exit(1)
-                 print("Valgrind ezsnmp/Net-SNMP native leak check: PASS (0 matching leak blocks)")
-                 PY
+                 python3 tools/check_valgrind_leaks.py "./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out";
 
           macos: |
             set -euo pipefail

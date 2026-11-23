@@ -310,12 +310,12 @@ supported Python versions).
 [QUAL-03] The system shall perform static security analysis on the codebase using CodeQL in CI.
 
 [QUAL-04] The system shall perform memory safety analysis using Valgrind on Linux builds in CI
-(``tests_homebrew.yml``) and provide a self-contained Debian ``trixie`` Docker Valgrind verification
-environment (``docker/valgrind_leak_check/``) built against Net-SNMP 5.10. Both checks shall inspect
-Valgrind ``memcheck`` output and fail the build if any runtime ``definitely lost`` or
-``indirectly lost`` blocks originate from ``ezsnmp`` extensions (``_sessionbase``, ``_netsnmpbase``,
-``SessionBase::``) or Net-SNMP lifecycle/argument parsing (``netsnmp_init_mib_internals``,
-``netsnmp_parse_args``).
+(``tests_homebrew.yml``) via ``tools/check_valgrind_leaks.py`` and provide a Debian 13 (Trixie)
+Docker test environment (``docker/debian13_netsnmp_5.10/``) built against Net-SNMP 5.10 with
+Valgrind installed. The Valgrind check shall inspect ``memcheck`` output and fail the build if any
+runtime ``definitely lost`` or ``indirectly lost`` blocks originate from ``ezsnmp`` extensions
+(``_sessionbase``, ``_netsnmpbase``, ``SessionBase::``) or Net-SNMP lifecycle/argument parsing
+(``netsnmp_init_mib_internals``, ``netsnmp_parse_args``).
 
 [QUAL-05] The system shall run C++ tests compiled with LLVM/Clang sanitizers (including
 AddressSanitizer, UndefinedBehaviorSanitizer, and MemorySanitizer) in CI and Docker test
