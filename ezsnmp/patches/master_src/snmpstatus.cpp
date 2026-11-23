@@ -148,6 +148,20 @@ std::string format_packet_error(netsnmp_pdu const *response) {
    return err_msg;
 }
 
+void reset_getopt() {
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+   optreset = 1;
+   optind = 1;
+#elif defined(__GLIBC__)
+   // Setting optind = 0 forces glibc getopt() to reinitialize internal state
+   // (such as __nextchar), preventing dangling reads into freed argv buffers
+   // when a previous snmp_parse_args() call exited early or threw.
+   optind = 0;
+#else
+   optind = 1;
+#endif
+}
+
 } // namespace
 
 std::vector<std::string> snmpstatus(std::vector<std::string> const &args,
@@ -183,6 +197,7 @@ std::vector<std::string> snmpstatus(std::vector<std::string> const &args,
 
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
+      reset_getopt();
       switch (snmp_parse_args(argc, argv.get(), &session, "C:", snmpstatus_optProc)) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
