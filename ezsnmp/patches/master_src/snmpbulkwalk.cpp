@@ -421,7 +421,6 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
 
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);

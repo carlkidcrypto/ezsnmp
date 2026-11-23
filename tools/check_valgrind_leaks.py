@@ -25,12 +25,13 @@ def find_native_leaks(
     log_text: str,
     markers: tuple[str, ...] = DEFAULT_MARKERS,
 ) -> list[str]:
-    """Return all Valgrind record blocks matching *markers* (excluding one-time PyInit_ imports)."""
+    """Return all Valgrind record blocks matching *markers* (excluding one-time PyInit_/SWIG_mod_exec imports)."""
     leaked_blocks: list[str] = []
     for block in _BLOCK_SPLIT_RE.split(log_text):
         if (
             _LOST_RE.search(block)
             and "PyInit_" not in block
+            and "SWIG_mod_exec" not in block
             and any(marker in block for marker in markers)
         ):
             leaked_blocks.append(block.strip())

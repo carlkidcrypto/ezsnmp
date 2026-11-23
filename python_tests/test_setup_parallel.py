@@ -392,6 +392,10 @@ def test_check_valgrind_leaks_filters_pyinit_and_detects_runtime_leaks(tmp_path)
         "==100== 53 bytes in 1 blocks are definitely lost in loss record 1 of 10\n"
         "==100==    at 0x484F888: malloc (vg_replace_malloc.c:447)\n"
         "==100==    by 0xACBDD32: PyInit__netsnmpbase (ezsnmp_netsnmpbase.cpp:19000)\n"
+        "==100== \n"
+        "==100== 53 bytes in 1 blocks are definitely lost in loss record 2 of 10\n"
+        "==100==    at 0x484F888: malloc (vg_replace_malloc.c:447)\n"
+        "==100==    by 0xADABE2F: SWIG_mod_exec(_object*) (ezsnmp_netsnmpbase.cpp:21384)\n"
         "==100== \n",
         encoding="utf-8",
     )
