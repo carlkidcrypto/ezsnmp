@@ -925,6 +925,11 @@ std::vector<std::string> snmptable(std::vector<std::string> const &args,
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 
+#ifdef __GLIBC__
+      // Reset GNU getopt internal state before snmp_parse_args, because prior
+      // invocations (e.g., -h/-V/-H) may exit early before getopt returns -1.
+      optind = 0;
+#endif
       arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptable_optProc);
       if (!ctx.opt_error.empty()) {
          throw ParseErrorBase(ctx.opt_error);
