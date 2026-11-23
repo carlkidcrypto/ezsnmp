@@ -33,11 +33,10 @@ versions and automatically update the repository to stay in sync.
   "prerelease") vs. end-of-life (status = "end-of-life").
 - Update `setup.cfg` (`python_requires` range, `[tool:black]` `target-version` list, and
   `Programming Language :: Python :: 3.x` classifier lines) to reflect the current supported set.
-- Update all four workflow files that declare a `python-version: [...]` matrix list (five
+- Update all three workflow files that declare a `python-version: [...]` matrix list (four
   occurrences total, because `tests_homebrew.yml` has two):
   - `.github/workflows/tests_native.yml`
   - `.github/workflows/tests_homebrew.yml` (has **two** occurrences of the matrix line)
-  - `.github/workflows/tests_macports.yml`
   - `.github/workflows/integration_tests.yml`
 - Open a draft PR only when changes are actually needed.
 ## Steps
@@ -113,7 +112,6 @@ Do **not** read workflow files in full (e.g., `tests_homebrew.yml` is over 1,000
 - `.github/workflows/tests_native.yml`: locate and read the `python-version: [...]` matrix line.
 - `.github/workflows/tests_homebrew.yml`: locate and read **both** occurrences of the
   `python-version: [...]` matrix line using `grep -n "python-version"`.
-- `.github/workflows/tests_macports.yml`: locate and read the `python-version: [...]` matrix line.
 - `.github/workflows/integration_tests.yml`: locate and read the `python-version: [...]` matrix line.
 
 Extract the currently declared version list from these files and compare it to the
@@ -123,7 +121,7 @@ Extract the currently declared version list from these files and compare it to t
 
 Compute the expected new values:
 
-- **`python-version` matrix list** (for all five workflow files):
+- **`python-version` matrix list** (for all three workflow files):
   A JSON-style array of the supported versions, e.g. `["3.10", "3.11", "3.12", "3.13"]`.
   The line format is: `        python-version: ["3.10", "3.11", ...]`
   (8 spaces of indentation, versions as double-quoted strings, separated by `, `).
@@ -159,9 +157,9 @@ Apply the following edits to `setup.cfg`:
    `Programming Language :: Python :: 3.x` classifier lines with the new set of classifier
    lines (one per supported version, in ascending order, each indented with 4 spaces).
 
-### 6. Update the four workflow files (five occurrences total)
+### 6. Update the three workflow files (four occurrences total)
 
-For each of the four workflow files listed in the Goals section, replace every occurrence of the
+For each of the three workflow files listed in the Goals section, replace every occurrence of the
 `python-version: [...]` matrix definition line with the new version list.
 
 The exact pattern to match and replace is the line:
