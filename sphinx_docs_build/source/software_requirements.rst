@@ -191,11 +191,13 @@ Build and Distribution
 [BUILD-01] The C++ core shall be built as a Python extension module using SWIG 4.5.0 to auto-
 generate Python ↔ C++ bindings.
 
-[BUILD-02] The build system shall support Net-SNMP 5.10 and newer for source builds, pin Net-SNMP
-5.10 (``v5.10.rc1``) as a shallow Git submodule at ``third_party/net-snmp``, automatically build
-Net-SNMP 5.10 out-of-tree into ``third_party/net-snmp-install`` when Net-SNMP 5.10+ is not already
-installed on the host, and provide self-contained pre-compiled wheels bundling Net-SNMP 5.10 across
-Linux (``manylinux`` and ``musllinux``), macOS, and Windows.
+[BUILD-02] The build system and all CI test workflows (including Python, C++ Meson, Homebrew,
+Docker, and integration test suites) shall strictly require and link against Net-SNMP 5.10 and
+newer, pin Net-SNMP 5.10 (``v5.10.rc1``) as a shallow Git submodule at ``third_party/net-snmp``,
+automatically build Net-SNMP 5.10 out-of-tree into ``third_party/net-snmp-install`` (including a
+``netsnmp.pc`` pkg-config manifest) when Net-SNMP 5.10+ is not already installed on the host, and
+provide self-contained pre-compiled wheels bundling Net-SNMP 5.10 across Linux (``manylinux`` and
+``musllinux``), macOS, and Windows.
 
 [BUILD-03] The system shall support Python versions 3.11, 3.12, 3.13, 3.14, and 3.15.
 

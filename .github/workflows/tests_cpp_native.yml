@@ -66,6 +66,9 @@ jobs:
             cpp_tests/**
             ezsnmp/**/*.cpp
             ezsnmp/**/*.h
+            tools/prepare_linux_netsnmp.sh
+            tools/prepare_macos_netsnmp.sh
+            tools/prepare_netsnmp_source.py
 
   build-and-test:
     needs: check-source-changes
@@ -81,6 +84,16 @@ jobs:
         if [ "$RUNNER_OS" = "Linux" ]; then
           sudo apt-get install -y snmp-mibs-downloader
           sudo download-mibs
+          sudo apt-get purge -y libsnmp-dev
+          sudo bash ./tools/prepare_linux_netsnmp.sh
+          echo "PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH:-}" >> "$GITHUB_ENV"
+          echo "LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH:-}" >> "$GITHUB_ENV"
+          echo "/usr/local/bin" >> "$GITHUB_PATH"
+        elif [ "$RUNNER_OS" = "macOS" ]; then
+          PREFIX="${RUNNER_TEMP:-/tmp}/netsnmp-5.10" bash ./tools/prepare_macos_netsnmp.sh
+          cp -f "${RUNNER_TEMP:-/tmp}/netsnmp-5.10/lib/pkgconfig/netsnmp.pc" "$(brew --prefix net-snmp)/lib/pkgconfig/netsnmp.pc"
+          echo "PKG_CONFIG_PATH=${RUNNER_TEMP:-/tmp}/netsnmp-5.10/lib/pkgconfig:${PKG_CONFIG_PATH:-}" >> "$GITHUB_ENV"
+          echo "${RUNNER_TEMP:-/tmp}/netsnmp-5.10/bin" >> "$GITHUB_PATH"
         fi
         mkdir -p -m 0755 ~/.snmp
         echo 'mibs +ALL' > ~/.snmp/snmp.conf

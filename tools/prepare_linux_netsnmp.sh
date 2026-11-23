@@ -17,7 +17,7 @@ VENDORED_SRC="${EZSNMP_NETSNMP_SOURCE_DIR:-${REPO_ROOT}/third_party/net-snmp}"
 echo "=== Preparing Net-SNMP ${NETSNMP_VERSION} for Linux (PREFIX=${PREFIX}) ==="
 
 # Check if already installed with 5.10
-if [[ -x "${PREFIX}/bin/net-snmp-config" ]]; then
+if [[ -x "${PREFIX}/bin/net-snmp-config" ]] && [[ -f "${PREFIX}/lib/pkgconfig/netsnmp.pc" ]]; then
     INSTALLED_VER=$("${PREFIX}/bin/net-snmp-config" --version || true)
     if [[ "${INSTALLED_VER}" == *"5.10"* ]]; then
         echo "Net-SNMP ${INSTALLED_VER} already installed at ${PREFIX}. Skipping build."
@@ -96,7 +96,6 @@ echo "Configuring Net-SNMP ${NETSNMP_VERSION} with minimal shared-library option
     --disable-applications \
     --disable-manuals \
     --disable-scripts \
-    --disable-mibs \
     --without-perl-modules \
     --disable-embedded-perl \
     --with-openssl \
@@ -107,6 +106,26 @@ make -j"${NPROCS}"
 
 echo "Installing Net-SNMP to ${PREFIX}..."
 make install
+
+LIBDIR=$("${PREFIX}/bin/net-snmp-config" --libdir | sed 's/^-L//')
+INCLUDEDIR=$("${PREFIX}/bin/net-snmp-config" --includedir | sed 's/^-I//')
+EXEC_PREFIX=$("${PREFIX}/bin/net-snmp-config" --exec-prefix)
+LIBS=$("${PREFIX}/bin/net-snmp-config" --libs)
+CFLAGS=$("${PREFIX}/bin/net-snmp-config" --cflags | sed -e 's/[[:space:]]-Werror=declaration-after-statement//g' -e 's/[[:space:]]-Wstrict-prototypes//g')
+VERSION=$("${PREFIX}/bin/net-snmp-config" --version)
+mkdir -p "${LIBDIR}/pkgconfig"
+cat > "${LIBDIR}/pkgconfig/netsnmp.pc" <<EOF
+prefix=${PREFIX}
+exec_prefix=${EXEC_PREFIX}
+libdir=${LIBDIR}
+includedir=${INCLUDEDIR}
+
+Name: netsnmp
+Description: A collection of libraries for SNMP applications.
+Version: ${VERSION}
+Libs: -Wl,-rpath,${LIBDIR} ${LIBS}
+Cflags: ${CFLAGS}
+EOF
 
 if [[ "$(id -u)" -eq 0 ]] && command -v ldconfig >/dev/null 2>&1; then
     ldconfig "${PREFIX}/lib" 2>/dev/null || true

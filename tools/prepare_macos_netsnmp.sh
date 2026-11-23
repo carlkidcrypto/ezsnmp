@@ -22,7 +22,7 @@ if [[ -z "${OPENSSL_PREFIX:-}" ]]; then
     fi
 fi
 
-if [[ -x "${PREFIX}/bin/net-snmp-config" ]]; then
+if [[ -x "${PREFIX}/bin/net-snmp-config" ]] && [[ -f "${PREFIX}/lib/pkgconfig/netsnmp.pc" ]]; then
     INSTALLED_VER=$("${PREFIX}/bin/net-snmp-config" --version || true)
     if [[ "${INSTALLED_VER}" == *"5.10"* ]]; then
         echo "Net-SNMP ${INSTALLED_VER} already installed at ${PREFIX}. Skipping build."
@@ -73,7 +73,7 @@ cd "${SOURCE_DIR}"
 
 NPROCS=$(sysctl -n hw.ncpu 2>/dev/null || echo 2)
 DEFAULT_MIBS="IP-MIB:IF-MIB:TCP-MIB:UDP-MIB:SNMPv2-MIB:RFC1213-MIB:NOTIFICATION-LOG-MIB:DISMAN-EVENT-MIB:DISMAN-SCHEDULE-MIB:HOST-RESOURCES-MIB:HOST-RESOURCES-TYPES:UCD-SNMP-MIB:UCD-DEMO-MIB:SNMP-TARGET-MIB:NET-SNMP-AGENT-MIB:NET-SNMP-EXTEND-MIB:SNMP-FRAMEWORK-MIB:SNMP-MPD-MIB:SNMP-USER-BASED-SM-MIB:SNMP-VIEW-BASED-ACM-MIB:SNMP-COMMUNITY-MIB:NET-SNMP-VACM-MIB"
-DEFAULT_MIBDIRS="\$HOME/.snmp/mibs:/opt/homebrew/share/snmp/mibs:${MACPORTS_PREFIX}/share/snmp/mibs:${PREFIX}/share/snmp/mibs"
+DEFAULT_MIBDIRS="\$HOME/.snmp/mibs:/opt/homebrew/share/snmp/mibs:/opt/homebrew/opt/net-snmp/share/snmp/mibs:/usr/local/opt/net-snmp/share/snmp/mibs:${MACPORTS_PREFIX}/share/snmp/mibs:${PREFIX}/share/snmp/mibs"
 
 CPPFLAGS="-I${OPENSSL_PREFIX}/include ${CPPFLAGS:-}" \
 LDFLAGS="-L${OPENSSL_PREFIX}/lib ${LDFLAGS:-}" \
@@ -88,7 +88,6 @@ LDFLAGS="-L${OPENSSL_PREFIX}/lib ${LDFLAGS:-}" \
     --disable-applications \
     --disable-manuals \
     --disable-scripts \
-    --disable-mibs \
     --without-perl-modules \
     --disable-embedded-perl \
     --with-openssl="${OPENSSL_PREFIX}" \
@@ -96,6 +95,26 @@ LDFLAGS="-L${OPENSSL_PREFIX}/lib ${LDFLAGS:-}" \
 
 make -j"${NPROCS}"
 make install
+
+LIBDIR=$("${PREFIX}/bin/net-snmp-config" --libdir | sed 's/^-L//')
+INCLUDEDIR=$("${PREFIX}/bin/net-snmp-config" --includedir | sed 's/^-I//')
+EXEC_PREFIX=$("${PREFIX}/bin/net-snmp-config" --exec-prefix)
+LIBS=$("${PREFIX}/bin/net-snmp-config" --libs)
+CFLAGS=$("${PREFIX}/bin/net-snmp-config" --cflags | sed -e 's/[[:space:]]-Werror=declaration-after-statement//g' -e 's/[[:space:]]-Wstrict-prototypes//g')
+VERSION=$("${PREFIX}/bin/net-snmp-config" --version)
+mkdir -p "${LIBDIR}/pkgconfig"
+cat > "${LIBDIR}/pkgconfig/netsnmp.pc" <<EOF
+prefix=${PREFIX}
+exec_prefix=${EXEC_PREFIX}
+libdir=${LIBDIR}
+includedir=${INCLUDEDIR}
+
+Name: netsnmp
+Description: A collection of libraries for SNMP applications.
+Version: ${VERSION}
+Libs: -Wl,-rpath,${LIBDIR} ${LIBS}
+Cflags: ${CFLAGS}
+EOF
 
 echo "Net-SNMP ${NETSNMP_VERSION} installed at ${PREFIX}."
 "${PREFIX}/bin/net-snmp-config" --version
