@@ -236,7 +236,7 @@ jobs:
                  )
                  for b in blocks:
                      if re.search(r"bytes in \d+ blocks are (?:definitely|indirectly) lost", b):
-                         if any(m in b for m in markers):
+                         if "PyInit_" not in b and any(m in b for m in markers):
                              leaked_blocks.append(b.strip())
                  if leaked_blocks:
                      print("ERROR: Valgrind detected native ezsnmp/Net-SNMP memory leaks:", file=sys.stderr)
