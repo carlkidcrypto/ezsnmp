@@ -85,7 +85,7 @@ def test_windows_debug_configuration_adds_fs_flag(tmp_path, monkeypatch):
     assert "/FS" in cfg["compile_args"]
 
 
-def test_linux_gather_skips_macports_and_missing_brew_shells(monkeypatch):
+def test_linux_gather_skips_missing_brew_shells(monkeypatch):
     for variable in (
         "EZSNMP_NETSNMP_CONFIG",
         "EZSNMP_OPENSSL_INCLUDE_DIR",
@@ -113,7 +113,6 @@ def test_linux_gather_skips_macports_and_missing_brew_shells(monkeypatch):
     cfg = build_utils.gather_build_configuration()
     assert cfg["system_netsnmp_version"] == "5.9.4"
     assert cfg["homebrew_version"] is None
-    assert cfg["macports_version"] is None
     assert called_commands == ["net-snmp-config --version", "net-snmp-config --libs"]
 
 
