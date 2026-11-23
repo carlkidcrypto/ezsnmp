@@ -16,8 +16,7 @@
 for bin_dir in \
     "/opt/homebrew/bin" \
     "/usr/local/bin" \
-    "/home/linuxbrew/.linuxbrew/bin" \
-    "/opt/local/bin"; do
+    "/home/linuxbrew/.linuxbrew/bin"; do
     if [[ -d "$bin_dir" && ":$PATH:" != *":$bin_dir:"* ]]; then
         export PATH="$bin_dir:$PATH"
     fi
