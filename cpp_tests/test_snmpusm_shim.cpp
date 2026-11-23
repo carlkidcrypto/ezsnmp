@@ -49,6 +49,7 @@ enum class SetMode {
 
 DhGetMode g_dh_get_mode = DhGetMode::kSuccess;
 SetMode g_set_mode = SetMode::kSuccess;
+bool g_in_make_dh_get_response = false;
 #if !defined(_WIN32)
 int g_fail_pdu_create_type = -1;
 bool g_fail_pdu_get_after_set = false;
@@ -69,6 +70,12 @@ void add_octet_var(
 }
 
 netsnmp_pdu *make_dh_get_response(DhGetMode mode) {
+   struct DhHelperGuard {
+      bool prev;
+      DhHelperGuard() : prev(g_in_make_dh_get_response) { g_in_make_dh_get_response = true; }
+      ~DhHelperGuard() { g_in_make_dh_get_response = prev; }
+   } dh_guard;
+
    netsnmp_pdu *resp = snmp_pdu_create(SNMP_MSG_RESPONSE);
    resp->errstat = SNMP_ERR_NOERROR;
    resp->errindex = 0;
@@ -1083,11 +1090,14 @@ extern "C" netsnmp_pdu *snmp_pdu_create(int type) {
 extern "C" int DH_size(DH const *dh) {
    using fn_t = int (*)(DH const *);
    static fn_t real_fn = reinterpret_cast<fn_t>(dlsym(RTLD_NEXT, "DH_size"));
-   ++g_dh_size_call_count;
-   if (g_fail_dh_size_on_call > 0 && g_dh_size_call_count == g_fail_dh_size_on_call) {
+   if (real_fn == nullptr) {
       return 0;
    }
-   if (real_fn == nullptr) {
+   if (g_in_make_dh_get_response) {
+      return real_fn(dh);
+   }
+   ++g_dh_size_call_count;
+   if (g_fail_dh_size_on_call > 0 && g_dh_size_call_count == g_fail_dh_size_on_call) {
       return 0;
    }
    return real_fn(dh);
@@ -1264,7 +1274,7 @@ TEST_F(SnmpUsmShimTest, TestFaultInjectionDhSizeZeroThrows) {
    g_dh_get_mode = DhGetMode::kSuccess;
    for (int attempt = 0; attempt < 3; ++attempt) {
       g_dh_size_call_count = 0;
-      g_fail_dh_size_on_call = 2;
+      g_fail_dh_size_on_call = 1;
       try {
          snmpusm(ck_args, "shim");
          FAIL() << "Expected GenericErrorBase";
