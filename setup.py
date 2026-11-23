@@ -5,7 +5,7 @@
 This script configures and builds the ezsnmp package, a blazingly fast Python SNMP library
 based on Net-SNMP. It performs the following tasks:
 
-1. Detects the system's Net-SNMP installation (system, Homebrew, or MacPorts)
+1. Detects the system's Net-SNMP installation (system or Homebrew)
 2. Runs SWIG to generate C++ wrapper code from interface files (.i -> .cpp)
 3. Compiles four C++ extension modules (_datatypes, _exceptionsbase, _netsnmpbase, _sessionbase)
 4. Selects the Net-SNMP 5.10 C++ sources for supported Net-SNMP versions (5.10 and newer)
@@ -15,7 +15,7 @@ Command-line options:
     --basedir=PATH  Use in-tree Net-SNMP build from specified directory
 
 Requirements:
-    - Net-SNMP library and headers (via system package manager, Homebrew, or MacPorts)
+    - Net-SNMP library and headers (via system package manager or Homebrew)
     - SWIG 4.x for generating Python bindings
     - C++17 compatible compiler
     - setuptools and wheel
@@ -453,8 +453,7 @@ def resolve_snmp_source_path(version_str: str) -> str:
             raise RuntimeError(
                 f"Net-SNMP version {version_str} is no longer supported. "
                 "The system-provided Net-SNMP is not supported. Install Net-SNMP "
-                "5.10 or newer via Homebrew (`brew install net-snmp`) or MacPorts "
-                "(`sudo port install net-snmp`)."
+                "5.10 or newer via Homebrew (`brew install net-snmp`)."
             )
         raise RuntimeError(
             f"Net-SNMP version {version_str} is unsupported. "
@@ -464,11 +463,7 @@ def resolve_snmp_source_path(version_str: str) -> str:
 
 
 def build_extensions(cfg: dict):
-    version_str = (
-        cfg.get("homebrew_netsnmp_version")
-        or cfg.get("macports_netsnmp_version")
-        or cfg["system_netsnmp_version"]
-    )
+    version_str = cfg.get("homebrew_netsnmp_version") or cfg["system_netsnmp_version"]
     snmp_source_path = resolve_snmp_source_path(version_str)
     netsnmp_versioned_sources = [
         f"{snmp_source_path}/snmpbulkget.cpp",
