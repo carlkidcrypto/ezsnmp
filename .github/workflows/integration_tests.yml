@@ -68,11 +68,13 @@ jobs:
             setup.cfg
             setup.py
             tools/prepare_linux_netsnmp.sh
+            tools/prepare_macos_netsnmp.sh
+            tools/prepare_netsnmp_source.py
 
   build-and-integration-test:
     runs-on: ${{ matrix.os }}
     needs: check-source-changes
-    timeout-minutes: 30
+    timeout-minutes: 15
     if: needs.check-source-changes.outputs.run_job == 'true'
     strategy:
       fail-fast: false
@@ -120,9 +122,48 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
+      - name: Cache Net-SNMP 5.10 build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            /tmp/netsnmp-5.10-brew-prefix
+            /tmp/netsnmp-5.10-linux
+          key: netsnmp-5.10-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Formula/ezsnmp.rb', 'setup.cfg', 'tools/prepare_linux_netsnmp.sh', 'tools/prepare_macos_netsnmp.sh', 'tools/prepare_netsnmp_source.py') }}
+
+      - name: Cache ezsnmp compiled object files
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/ezsnmp-object-cache
+          key: ezsnmp-objcache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('ezsnmp/**/*.cpp', 'ezsnmp/**/*.h', 'ezsnmp/interface/*.i', 'setup.py', 'build_utils.py', 'Formula/ezsnmp.rb') }}
+          restore-keys: |
+            ezsnmp-objcache-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Restore cached Net-SNMP 5.10 on Linux
+        if: runner.os == 'Linux'
+        run: |
+          if [ -x /tmp/netsnmp-5.10-linux/bin/net-snmp-config ] && [ -f /tmp/netsnmp-5.10-linux/lib/pkgconfig/netsnmp.pc ]; then
+            echo "Restoring cached Net-SNMP 5.10 to /usr/local..."
+            sudo cp -a /tmp/netsnmp-5.10-linux/. /usr/local/
+            sudo ldconfig /usr/local/lib || true
+          fi
+
       - name: Install Net-SNMP 5.10
         if: runner.os == 'Linux'
         uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@22f04e222fa07048891327e4d34bb174d36e7bfa
+
+      - name: Save Net-SNMP 5.10 to Linux cache directory
+        if: runner.os == 'Linux'
+        run: |
+          if [ ! -x /tmp/netsnmp-5.10-linux/bin/net-snmp-config ] && [ -x /usr/local/bin/net-snmp-config ]; then
+            mkdir -p /tmp/netsnmp-5.10-linux/bin /tmp/netsnmp-5.10-linux/include /tmp/netsnmp-5.10-linux/lib/pkgconfig /tmp/netsnmp-5.10-linux/share
+            cp -a /usr/local/bin/net-snmp-config /tmp/netsnmp-5.10-linux/bin/
+            cp -a /usr/local/include/net-snmp /tmp/netsnmp-5.10-linux/include/
+            cp -a /usr/local/lib/libnetsnmp* /tmp/netsnmp-5.10-linux/lib/
+            cp -a /usr/local/lib/pkgconfig/netsnmp.pc /tmp/netsnmp-5.10-linux/lib/pkgconfig/
+            if [ -d /usr/local/share/snmp ]; then
+              cp -a /usr/local/share/snmp /tmp/netsnmp-5.10-linux/share/
+            fi
+          fi
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -147,6 +188,7 @@ jobs:
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             export EZSNMP_NETSNMP_CONFIG=/usr/local/bin/net-snmp-config
+            export EZSNMP_OBJECT_CACHE_DIR=/tmp/ezsnmp-object-cache
             export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH:-}
             python3 -m pip install . --verbose;
             rm -drf build/ ezsnmp.egg-info/;
@@ -166,6 +208,58 @@ jobs:
             cp -L Formula/ezsnmp.rb "${TAP_FORMULA}"
             sed -i '' "s|^  url \".*\"|  url \"file://${SOURCE_TARBALL}\"|" "${TAP_FORMULA}"
             sed -i '' "s|^  sha256 \".*\"|  sha256 \"${TARBALL_SHA}\"|" "${TAP_FORMULA}"
+            TAP_FORMULA="${TAP_FORMULA}" python3 - <<'PYEOF'
+          import os
+          import re
+          from pathlib import Path
+
+          formula_path = Path(os.environ["TAP_FORMULA"])
+          content = formula_path.read_text(encoding="utf-8")
+
+          def wrap_stage(match: re.Match) -> str:
+              indented = "\n".join(
+                  "  " + line if line.strip() else line
+                  for line in match.group(1).splitlines()
+              )
+              return (
+                  '    netsnmp_cache = "/tmp/netsnmp-5.10-brew-prefix"\n'
+                  '    if File.executable?("#{netsnmp_cache}/bin/net-snmp-config")\n'
+                  '      ohai "Restoring cached Net-SNMP 5.10 into #{prefix}"\n'
+                  '      mkdir_p prefix\n'
+                  '      cp_r Dir["#{netsnmp_cache}/*"], "#{prefix}/"\n'
+                  '    else\n'
+                  f'{indented}\n'
+                  '      rm_rf netsnmp_cache\n'
+                  '      mkdir_p netsnmp_cache\n'
+                  '      cp_r Dir["#{prefix}/*"], "#{netsnmp_cache}/"\n'
+                  '    end'
+              )
+
+          content, count = re.subn(
+              r'(    resource\("net-snmp"\)\.stage do\n.*?\n    end)',
+              wrap_stage,
+              content,
+              count=1,
+              flags=re.DOTALL,
+          )
+          assert count == 1, "Failed to wrap net-snmp stage block in TAP_FORMULA"
+          if os.path.isfile("/tmp/netsnmp-5.10-brew-prefix/bin/net-snmp-config"):
+              content = re.sub(
+                  r'\n  on_arm do\n.*?\n  end\n',
+                  '\n',
+                  content,
+                  count=1,
+                  flags=re.DOTALL,
+              )
+          target_env = '    ENV["EZSNMP_NETSNMP_CONFIG"] = "#{prefix}/bin/net-snmp-config"'
+          assert target_env in content, "Failed to locate EZSNMP_NETSNMP_CONFIG in TAP_FORMULA"
+          content = content.replace(
+              target_env,
+              target_env + '\n    ENV["EZSNMP_OBJECT_CACHE_DIR"] = "/tmp/ezsnmp-object-cache"',
+              1,
+          )
+          formula_path.write_text(content, encoding="utf-8")
+          PYEOF
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force ezsnmp 2>/dev/null || true
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force carlkidcrypto/ezsnmp/ezsnmp 2>/dev/null || true
             HOMEBREW_NO_AUTO_UPDATE=1 brew uninstall --force local/ezsnmp/ezsnmp 2>/dev/null || true
@@ -180,13 +274,33 @@ jobs:
             SNMPD=$(which snmpd)
           elif [ "$RUNNER_OS" == "macOS" ]
           then
-            mibdir=""
+            NETSNMP_PREFIX="$(brew --prefix net-snmp)"
+            export PATH="${NETSNMP_PREFIX}/bin:${NETSNMP_PREFIX}/sbin:$PATH"
+            export SNMP_PERSISTENT_DIR="${RUNNER_TEMP:-$HOME}/snmp-persistent"
+            mkdir -p "$SNMP_PERSISTENT_DIR"
+            if [ -d "/opt/homebrew/share/snmp/mibs" ]; then
+              mibdir="-M +/opt/homebrew/share/snmp/mibs"
+            elif [ -d "/usr/local/share/snmp/mibs" ]; then
+              mibdir="-M +/usr/local/share/snmp/mibs"
+            else
+              mibdir=""
+            fi
             SNMPD=$(which snmpd)
           else
             mibdir=""
             SNMPD=$(which.exe snmpd)
           fi
           $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
+          for attempt in {1..15}; do
+            if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
+              break
+            fi
+            if [ "$attempt" -eq 15 ]; then
+              echo "SNMP daemon did not become ready on 127.0.0.1:11161" >&2
+              exit 1
+            fi
+            sleep 1
+          done
 
       - name: Run Integration Tests (single)
         uses: carlkidcrypto/os-specific-runner@8bf8551e08c48d9b72f768392e692fad5bb169e7 # v2.5.0
