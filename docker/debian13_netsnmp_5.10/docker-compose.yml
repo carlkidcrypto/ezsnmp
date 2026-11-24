@@ -1,0 +1,10 @@
+services:
+  debian13_netsnmp_5.10_snmp_container:
+    build:
+      context: ../../
+      dockerfile: docker/debian13_netsnmp_5.10/Dockerfile
+    container_name: debian13_netsnmp_5.10_snmp_container
+    volumes:
+      - ../../:/ezsnmp
+    working_dir: /ezsnmp
+    entrypoint: ["/usr/local/bin/DockerEntry.sh"]

@@ -9,6 +9,7 @@ This project uses pre-built Docker images hosted on Docker Hub for running unit 
 
 * **almalinux10_netsnmp_5.10** - AlmaLinux 10 Kitten with Net-SNMP 5.10 (built from source), Python 3.11-3.15, g++ 14.x
 * **archlinux_netsnmp_5.10** - Arch Linux with Net-SNMP 5.10 (built from source), Python 3.11-3.15, g++ 14.x
+* **debian13_netsnmp_5.10** - Debian 13 (Trixie) with Net-SNMP 5.10 (built from source), Python 3.11-3.15, g++ 14.x, Valgrind
 * **fedora42_netsnmp_5.10** - Fedora 42 with Net-SNMP 5.10 (built from source), native GCC 14.x (g++ 14.x), Python 3.11-3.15
 * **rockylinux9_netsnmp_5.10** - Rocky Linux 9 with Net-SNMP 5.10 (built from source), gcc-toolset-13 (g++ 13.x), Python 3.11-3.15
 
