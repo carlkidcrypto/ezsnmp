@@ -78,6 +78,7 @@ jobs:
         distro:
           - almalinux10_netsnmp_5.10
           - archlinux_netsnmp_5.10
+          - debian13_netsnmp_5.10
           - fedora42_netsnmp_5.10
           - rockylinux9_netsnmp_5.10
     steps:

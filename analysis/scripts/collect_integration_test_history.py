@@ -143,6 +143,8 @@ def _iter_issue_comments(
         if not isinstance(comments, list) or not comments:
             break
         yield from comments
+        if len(comments) < 100:
+            break
         page += 1
 
 
@@ -612,6 +614,12 @@ def main() -> int:
         pr_title = pr.get("title", "")
         pr_url = pr.get("html_url", "")
         pr_count += 1
+        if pr_count % 25 == 0:
+            print(
+                f"Progress: scanned {pr_count}/{args.max_prs} PRs "
+                f"(found {comment_count} new comments so far)...",
+                flush=True,
+            )
 
         for comment in _iter_issue_comments(args.token, args.repo, pr_number):
             author = ((comment.get("user") or {}).get("login") or "").strip()
