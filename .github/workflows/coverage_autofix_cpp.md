@@ -35,10 +35,10 @@ tools:
   edit:
   bash: true
 imports:
-  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@22f04e222fa07048891327e4d34bb174d36e7bfa
-  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@22f04e222fa07048891327e4d34bb174d36e7bfa
-  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@22f04e222fa07048891327e4d34bb174d36e7bfa
-  - carlkidcrypto/shared-workflows/shared/supplemental-labels.md@22f04e222fa07048891327e4d34bb174d36e7bfa
+  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/codecov-coverage.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/supplemental-labels.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
 ---
 
 # C++ Coverage Checks And Suggested Fixes

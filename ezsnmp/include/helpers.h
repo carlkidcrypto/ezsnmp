@@ -4,6 +4,7 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
+#include <cstring>
 #include <memory>
 #include <regex>
 #include <string>
@@ -117,6 +118,30 @@ struct SnmpPduDeleter {
          snmp_free_pdu(pdu);
       }
    }
+};
+
+/**
+ * @struct SnmpSessionCleanupGuard
+ * @brief RAII guard that calls netsnmp_cleanup_session() on scope exit.
+ *
+ * Frees heap memory allocated into a stack-allocated netsnmp_session template
+ * struct by snmp_parse_args() (peername, community, securityName, contextName,
+ * engine IDs, auth/priv OIDs, transport config) on both normal return and
+ * exception unwinding.
+ */
+struct SnmpSessionCleanupGuard {
+   explicit SnmpSessionCleanupGuard(netsnmp_session *session) : m_session(session) {}
+   ~SnmpSessionCleanupGuard() {
+      if (m_session) {
+         netsnmp_cleanup_session(m_session);
+         std::memset(m_session, 0, sizeof(*m_session));
+      }
+   }
+   SnmpSessionCleanupGuard(SnmpSessionCleanupGuard const &) = delete;
+   SnmpSessionCleanupGuard &operator=(SnmpSessionCleanupGuard const &) = delete;
+
+  private:
+   netsnmp_session *m_session;
 };
 
 /**
