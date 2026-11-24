@@ -15,7 +15,7 @@
  #ifdef TIME_WITH_SYS_TIME
  # include <sys/time.h>
  # include <time.h>
-@@ -62,15 +63,19 @@
+@@ -62,15 +63,21 @@
  #include <arpa/inet.h>
  #endif
  
@@ -35,20 +35,22 @@
 +#include "snmpget.h"
 +#include "thread_safety.h"
 +
++thread_local std::string snmpget_optproc_error;
++
 +void snmpget_optProc(int, char *const *, int opt) {
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -80,113 +85,114 @@
+@@ -80,113 +87,122 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
 -                fprintf(stderr, "Unknown flag passed to -C: %c\n",
 -                        optarg[-1]);
 -                exit(1);
-+                  std::string err_msg =
++                  snmpget_optproc_error =
 +                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-+                  throw ParseErrorBase(err_msg);
++                  return;
              }
          }
          break;
@@ -92,7 +94,8 @@
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +   std::vector<std::string> return_vector;
  
-+   netsnmp_session session;
++   netsnmp_session session = {};
++   SnmpSessionCleanupGuard session_cleanup_guard(&session);
 +   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
 +   netsnmp_pdu *pdu = NULL;
 +   netsnmp_pdu *response = NULL;
@@ -118,7 +121,12 @@
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc)) {
++      snmpget_optproc_error.clear();
++      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpget_optProc);
++      if (!snmpget_optproc_error.empty()) {
++         throw ParseErrorBase(snmpget_optproc_error);
++      }
++      switch (arg) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
 +            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -190,6 +198,7 @@
       * Create PDU for GET request and add object names to request.
       */
      pdu = snmp_pdu_create(SNMP_MSG_GET);
++   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard(pdu);
 +   {
 +      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
      for (count = 0; count < current_name; count++) {
@@ -210,15 +219,17 @@
 -    exitval = 0;
 -
 +   }
++   pdu_guard.release();
      /*
       * Perform the request.
       *
-@@ -194,35 +200,33 @@
+@@ -194,65 +210,59 @@
       * "fix" the PDU (removing the error-prone OID) and retry.
       */
    retry:
 -    status = snmp_synch_response(ss, pdu, &response);
 +   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
++   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
      if (status == STAT_SUCCESS) {
 +      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -260,9 +271,10 @@
 -					NETSNMP_DS_APP_DONT_FIX_PDUS)) {
 +         if (!dont_fix_pdus) {
                  pdu = snmp_fix_pdu(response, SNMP_MSG_GET);
-                 snmp_free_pdu(response);
+-                snmp_free_pdu(response);
++            response_guard.reset();
                  response = NULL;
-@@ -230,29 +234,26 @@
+                 if (pdu != NULL) {
                      goto retry;
  		}
              }
@@ -284,18 +296,17 @@
  
      }                           /* endif -- STAT_SUCCESS */
  
--
--    if (response)
-+   if (response) {
-         snmp_free_pdu(response);
-+   }
++   response_guard.reset();
  
--close_session:
--    snmp_close(ss);
+-    if (response)
+-        snmp_free_pdu(response);
 +   {
 +      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
 +   }
  
+-close_session:
+-    snmp_close(ss);
+-
 -out:
 -    netsnmp_cleanup_session(&session);
 -    snmp_shutdown("snmpapp");
