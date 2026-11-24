@@ -287,3 +287,128 @@ def test_swig_build_ext_reuses_python_independent_object_cache(tmp_path, monkeyp
     # Second Python ABI in a fresh build_temp reuses datatypes.o from cache and only compiles SWIG wrapper!
     second_compiled = run_for_abi("cpython-312")
     assert second_compiled == ["ezsnmp/src/ezsnmp_datatypes.cpp"]
+
+
+def test_is_netsnmp_5_10_or_newer():
+    assert not build_utils.is_netsnmp_5_10_or_newer("")
+    assert not build_utils.is_netsnmp_5_10_or_newer("5.8")
+    assert not build_utils.is_netsnmp_5_10_or_newer("5.9.4.pre2")
+    assert not build_utils.is_netsnmp_5_10_or_newer("5.9.5.2")
+    assert build_utils.is_netsnmp_5_10_or_newer("5.10.rc1")
+    assert build_utils.is_netsnmp_5_10_or_newer("5.10")
+    assert build_utils.is_netsnmp_5_10_or_newer("5.11.0")
+
+
+def test_ensure_netsnmp_5_10_configuration_upgrades_older_system_netsnmp(
+    tmp_path, monkeypatch
+):
+    prefix = tmp_path / "third_party" / "net-snmp-install"
+    bin_dir = prefix / "bin"
+    inc_dir = prefix / "include"
+    lib_dir = prefix / "lib"
+    bin_dir.mkdir(parents=True)
+    inc_dir.mkdir(parents=True)
+    lib_dir.mkdir(parents=True)
+    cfg_bin = bin_dir / "net-snmp-config"
+    cfg_bin.write_text("#!/bin/sh\n", encoding="utf-8")
+    cfg_bin.chmod(0o755)
+
+    monkeypatch.setattr(build_utils, "platform", "linux")
+    monkeypatch.setattr(build_utils, "argv", ["setup.py"])
+    monkeypatch.delenv("EZSNMP_AUTO_BUILD_NETSNMP", raising=False)
+    monkeypatch.setattr(
+        build_utils,
+        "ensure_vendored_netsnmp_install",
+        lambda repo_root=None: str(cfg_bin),
+    )
+
+    def fake_check_output(command, **kwargs):
+        if command == f"{cfg_bin} --version":
+            return b"5.10.rc1\n"
+        if command == f"{cfg_bin} --libs":
+            return f"-L{lib_dir} -lnetsnmp -lcrypto\n".encode()
+        raise AssertionError(f"Unexpected command: {command}")
+
+    monkeypatch.setattr(build_utils, "check_output", fake_check_output)
+
+    old_cfg = {
+        "in_tree": False,
+        "compile_args": ["-std=c++17"],
+        "link_args": [],
+        "libs": ["netsnmp"],
+        "libdirs": ["/usr/lib"],
+        "incdirs": ["ezsnmp/include/"],
+        "system_netsnmp_version": "5.9.4.pre2",
+        "homebrew_version": None,
+        "homebrew_netsnmp_version": None,
+        "homebrew_openssl_version": None,
+    }
+
+    upgraded = build_utils.ensure_netsnmp_5_10_configuration(
+        old_cfg, repo_root=tmp_path
+    )
+    assert upgraded["system_netsnmp_version"] == "5.10.rc1"
+    assert str(inc_dir) in upgraded["incdirs"]
+    assert str(lib_dir) in upgraded["libdirs"]
+    assert f"-Wl,-rpath,{lib_dir}" in upgraded["link_args"]
+
+
+def test_prepare_netsnmp_source_reuses_existing_valid_tree(tmp_path, monkeypatch):
+    import sys
+
+    tools_dir = str(Path(build_utils.__file__).resolve().parent / "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import prepare_netsnmp_source
+
+    vendored = tmp_path / "net-snmp"
+    (vendored / "include" / "net-snmp").mkdir(parents=True)
+    (vendored / "configure").write_text("#!/bin/sh\n", encoding="utf-8")
+
+    monkeypatch.setenv("EZSNMP_NETSNMP_SOURCE_DIR", str(vendored))
+    resolved = prepare_netsnmp_source.ensure_netsnmp_source()
+    assert resolved == vendored.resolve()
+
+    assert prepare_netsnmp_source._resolve_safe_tag("v5.10.rc1")[0] == "v5.10.rc1"
+    assert prepare_netsnmp_source._resolve_safe_tag("5.10.rc1")[0] == "v5.10.rc1"
+    with pytest.raises(ValueError, match="Unsupported Net-SNMP tag"):
+        prepare_netsnmp_source._resolve_safe_tag("--upload-pack=evil")
+    with pytest.raises(ValueError, match="must remain within repository root"):
+        prepare_netsnmp_source._resolve_safe_dest(Path("/tmp/outside-repo"))
+
+
+def test_check_valgrind_leaks_filters_pyinit_and_detects_runtime_leaks(tmp_path):
+    import sys
+
+    tools_dir = str(Path(build_utils.__file__).resolve().parent / "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import check_valgrind_leaks
+
+    clean_log = tmp_path / "valgrind_clean.out"
+    clean_log.write_text(
+        "==100== Memcheck\n"
+        "==100== \n"
+        "==100== 53 bytes in 1 blocks are definitely lost in loss record 1 of 10\n"
+        "==100==    at 0x484F888: malloc (vg_replace_malloc.c:447)\n"
+        "==100==    by 0xACBDD32: PyInit__netsnmpbase (ezsnmp_netsnmpbase.cpp:19000)\n"
+        "==100== \n"
+        "==100== 53 bytes in 1 blocks are definitely lost in loss record 2 of 10\n"
+        "==100==    at 0x484F888: malloc (vg_replace_malloc.c:447)\n"
+        "==100==    by 0xADABE2F: SWIG_mod_exec(_object*) (ezsnmp_netsnmpbase.cpp:21384)\n"
+        "==100== \n",
+        encoding="utf-8",
+    )
+    assert check_valgrind_leaks.check_valgrind_log_files([str(clean_log)]) == 0
+
+    leak_log = tmp_path / "valgrind_leak.out"
+    leak_log.write_text(
+        "==101== Memcheck\n"
+        "==101== \n"
+        "==101== 4,800 bytes in 1 blocks are definitely lost in loss record 2 of 10\n"
+        "==101==    at 0x4856FD3: calloc (vg_replace_malloc.c:1678)\n"
+        "==101==    by 0xAD12345: netsnmp_init_mib_internals (parse.c:4618)\n"
+        "==101== \n",
+        encoding="utf-8",
+    )
+    assert check_valgrind_leaks.check_valgrind_log_files([str(leak_log)]) == 1
