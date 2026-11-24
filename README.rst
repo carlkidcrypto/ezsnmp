@@ -74,10 +74,11 @@ How to Support This Project?
 
 Getting Started
 ---------------
-Please check out the `EzSnmp documentation <https://carlkidcrypto.github.io/ezsnmp/>`_. This includes installation
-instructions for various operating systems, including self-contained Windows wheels (AMD64, x86, and ARM64)
-that bundle Net-SNMP for ``pip install ezsnmp`` and source-build instructions when
-you want to link against an existing Net-SNMP installation.
+Please check out the `EzSnmp documentation <https://carlkidcrypto.github.io/ezsnmp/>`_. Published Python wheels for
+Linux (``manylinux`` and ``musllinux``), macOS, and Windows (AMD64, x86, and ARM64) are completely self-contained and
+bundle Net-SNMP 5.10 so ``pip install ezsnmp`` works out of the box without requiring users to install Net-SNMP. For
+source builds (``pip install .``), EzSnmp automatically shallow-clones and builds Net-SNMP 5.10 under
+``third_party/net-snmp`` when Net-SNMP 5.10+ is not already installed on the system.
 
 Code Coverage
 -------------
