@@ -5,7 +5,7 @@
  /*
   * snmptrap.c - send snmp traps to a network entity.
   *
-@@ -66,39 +67,44 @@
+@@ -66,39 +67,46 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -24,6 +24,8 @@
 +#include "helpers.h"
 +#include "snmptrap.h"
 +#include "thread_safety.h"
++
++thread_local std::string snmptrap_optproc_error;
 +
 +void snmptrap_usage(void) {
      fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
@@ -67,16 +69,16 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -107,18 +113,22 @@
+@@ -107,19 +115,24 @@
                  inform = 1;
                  break;
              default:
 -                fprintf(stderr,
 -                        "Unknown flag passed to -C: %c\n", optarg[-1]);
 -                exit(1);
-+                  std::string err_msg =
++                  snmptrap_optproc_error =
 +                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-+                  throw ParseErrorBase(err_msg);
++                  return;
              }
          }
          break;
@@ -86,6 +88,7 @@
 -int
 -main(int argc, char *argv[])
 -{
+-    netsnmp_session session, *ss = NULL;
 +int snmptrap(std::vector<std::string> const &args, std::string const &init_app_name) {
 +   // Reference-counted initialization: only first thread calls init_snmp
 +   netsnmp_thread_init(init_app_name);
@@ -93,10 +96,12 @@
 +   int argc;
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +
-     netsnmp_session session, *ss = NULL;
++   netsnmp_session session = {}, *ss = NULL;
++   SnmpSessionCleanupGuard session_cleanup_guard(&session);
      netsnmp_pdu    *pdu, *response;
      oid             name[MAX_OID_LEN];
-@@ -132,35 +142,48 @@
+     size_t          name_length;
+@@ -132,35 +145,54 @@
      char           *specific = NULL, *description = NULL, *agent = NULL;
      in_addr_t      *pdu_in_addr_t;
  #endif
@@ -120,7 +125,8 @@
  
 -    posix_env = strdup("POSIXLY_CORRECT=1");
 -    putenv(posix_env);
-+   putenv(strdup("POSIXLY_CORRECT=1"));
++   static char posixly_correct_env[] = "POSIXLY_CORRECT=1";
++   putenv(posixly_correct_env);
  
 -    if (strcmp(prognam, "snmpinform") == 0)
 +   if (strcmp(prognam, "snmpinform") == 0) {
@@ -136,7 +142,12 @@
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
++      snmptrap_optproc_error.clear();
++      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc);
++      if (!snmptrap_optproc_error.empty()) {
++         throw ParseErrorBase(snmptrap_optproc_error);
++      }
++      switch (arg) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
 +            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -157,7 +168,7 @@
  
      session.callback = snmp_input;
      session.callback_magic = NULL;
-@@ -173,10 +196,8 @@
+@@ -173,10 +205,8 @@
  
      /* if we don't have a contextEngineID set via command line
         arguments, use our internal engineID as the context. */
@@ -170,7 +181,7 @@
      }
  
      if (session.version == SNMP_VERSION_3 && !inform) {
-@@ -200,10 +221,8 @@
+@@ -200,10 +230,8 @@
          /*
           * pick our own engineID 
           */
@@ -183,7 +194,7 @@
          }
  
          /*
-@@ -212,100 +231,93 @@
+@@ -212,100 +240,93 @@
           * boots and time...  I'll cause a not-in-time-window report to
           * be sent back to this machine. 
           */
@@ -314,7 +325,7 @@
      } else
  #endif
      {
-@@ -314,13 +326,11 @@
+@@ -314,13 +335,11 @@
  
          pdu = snmp_pdu_create(inform ? SNMP_MSG_INFORM : SNMP_MSG_TRAP2);
          if ( !pdu ) {
@@ -331,7 +342,7 @@
          }
          trap = argv[arg];
          if (*trap == 0) {
-@@ -328,17 +338,12 @@
+@@ -328,17 +347,12 @@
              snprintf(csysuptime, sizeof csysuptime, "%ld", sysuptime);
              trap = csysuptime;
          }
@@ -353,7 +364,7 @@
              goto out;
          }
      }
-@@ -347,44 +352,44 @@
+@@ -347,44 +361,44 @@
      while (arg < argc) {
          arg += 3;
          if (arg > argc) {

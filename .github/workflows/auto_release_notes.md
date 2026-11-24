@@ -25,7 +25,7 @@ timeout-minutes: 20
 max-ai-credits: 40
 model: sonnet
 imports:
-  - carlkidcrypto/shared-workflows/shared/auto-release-notes-core.md@22f04e222fa07048891327e4d34bb174d36e7bfa
+  - carlkidcrypto/shared-workflows/shared/auto-release-notes-core.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
 ---
 
 # Auto Update Release Notes
