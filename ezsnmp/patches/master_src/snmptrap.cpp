@@ -79,6 +79,8 @@ thread_local int inform = 0;
 #include "snmptrap.h"
 #include "thread_safety.h"
 
+thread_local std::string snmptrap_optproc_error;
+
 void snmptrap_usage(void) {
    fprintf(stderr, "USAGE: %s ", inform ? "snmpinform" : "snmptrap");
    snmp_parse_args_usage(stderr);
@@ -113,9 +115,9 @@ void snmptrap_optProc(int argc, char *const *argv, int opt) {
                   inform = 1;
                   break;
                default:
-                  std::string err_msg =
+                  snmptrap_optproc_error =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
+                  return;
             }
          }
          break;
@@ -129,7 +131,8 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    int argc;
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 
-   netsnmp_session session, *ss = NULL;
+   netsnmp_session session = {}, *ss = NULL;
+   SnmpSessionCleanupGuard session_cleanup_guard(&session);
    netsnmp_pdu *pdu, *response;
    oid name[MAX_OID_LEN];
    size_t name_length;
@@ -149,7 +152,8 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    // Reset thread-local inform flag for each invocation.
    inform = 0;
 
-   putenv(strdup("POSIXLY_CORRECT=1"));
+   static char posixly_correct_env[] = "POSIXLY_CORRECT=1";
+   putenv(posixly_correct_env);
 
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
    // global state (option parsing, DS library settings).
@@ -159,7 +163,12 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       /** parse args (also initializes session) */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc)) {
+      snmptrap_optproc_error.clear();
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc);
+      if (!snmptrap_optproc_error.empty()) {
+         throw ParseErrorBase(snmptrap_optproc_error);
+      }
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 

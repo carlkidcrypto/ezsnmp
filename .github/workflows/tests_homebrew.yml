@@ -54,7 +54,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@22f04e222fa07048891327e4d34bb174d36e7bfa
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
         with:
           files: |
             .github/workflows/tests_homebrew.yml
@@ -66,6 +66,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/check_valgrind_leaks.py
             tools/prepare_linux_netsnmp.sh
             tools/prepare_macos_netsnmp.sh
             tools/prepare_netsnmp_source.py
@@ -154,7 +155,7 @@ jobs:
 
       - name: Install Net-SNMP 5.10 on Linux
         if: runner.os == 'Linux'
-        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@22f04e222fa07048891327e4d34bb174d36e7bfa
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
 
       - name: Save Net-SNMP 5.10 to Linux cache directory
         if: runner.os == 'Linux'
@@ -258,6 +259,7 @@ jobs:
                    --cov-report=term-missing \
                    --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
                    python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 python3 tools/check_valgrind_leaks.py "./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out";
 
           macos: |
             set -euo pipefail

@@ -15,7 +15,7 @@
  #ifdef HAVE_NETDB_H
  #include <netdb.h>
  #endif
-@@ -65,36 +66,37 @@
+@@ -65,36 +66,39 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -39,6 +39,8 @@
 +#include "helpers.h"
 +#include "snmpbulkwalk.h"
 +#include "thread_safety.h"
++
++thread_local std::string snmpbulkwalk_optproc_error;
 +
 +void snmpbulkwalk_usage(void) {
      fprintf(stderr, "USAGE: snmpbulkwalk ");
@@ -70,13 +72,14 @@
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             status;
-@@ -102,22 +104,25 @@
+@@ -102,22 +106,24 @@
      pdu = snmp_pdu_create(SNMP_MSG_GET);
      snmp_add_null_var(pdu, theoid, theoid_len);
  
 -    status = snmp_synch_response(ss, pdu, &response);
 -    if (status == STAT_SUCCESS && response->errstat == SNMP_ERR_NOERROR) {
 +   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss), pdu, &response);
++   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
 +   if (status == STAT_SUCCESS) {
 +      snmp_check_null_response(response);
 +      if (response->errstat == SNMP_ERR_NOERROR) {
@@ -88,10 +91,10 @@
 +            str_values.push_back(str_value);
          }
      }
-+   }
-     if (response) {
-         snmp_free_pdu(response);
+-    if (response) {
+-        snmp_free_pdu(response);
      }
++   response_guard.reset();
 +
 +   return str_values;
  }
@@ -104,7 +107,7 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -137,23 +142,20 @@
+@@ -137,23 +143,21 @@
              case 'n':
              case 'r':
                  if (*(optarg - 1) == 'r') {
@@ -121,8 +124,9 @@
                       */
 -                    usage();
 -                    exit(1);
-+                     throw ParseErrorBase("No number given for -C" + std::string(1, *(optarg - 1)) +
-+                                          " option\n");
++                     snmpbulkwalk_optproc_error =
++                         "No number given for -C" + std::string(1, *(optarg - 1)) + " option\n";
++                     return;
                  } else {
                      optarg = endptr;
 -                    if (isspace((unsigned char)(*optarg))) {
@@ -132,16 +136,16 @@
                  break;
  
              case 'p':
-@@ -162,19 +164,26 @@
+@@ -162,19 +166,27 @@
                  break;
  
              default:
 -                fprintf(stderr, "Unknown flag passed to -C: %c\n",
 -                        optarg[-1]);
 -                exit(1);
-+                  std::string err_msg =
++                  snmpbulkwalk_optproc_error =
 +                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-+                  throw ParseErrorBase(err_msg);
++                  return;
              }
          }
          break;
@@ -161,12 +165,13 @@
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +
 +   std::vector<std::string> return_vector;
-+   netsnmp_session session;
++   netsnmp_session session = {};
++   SnmpSessionCleanupGuard session_cleanup_guard(&session);
 +   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -186,36 +195,57 @@
+@@ -186,36 +198,62 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -208,7 +213,12 @@
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc)) {
++      snmpbulkwalk_optproc_error.clear();
++      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc);
++      if (!snmpbulkwalk_optproc_error.empty()) {
++         throw ParseErrorBase(snmpbulkwalk_optproc_error);
++      }
++      switch (arg) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
 +            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -240,7 +250,7 @@
      /*
       * get the initial object and subtree 
       */
-@@ -224,28 +254,32 @@
+@@ -224,28 +262,32 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -281,7 +291,7 @@
      }
  
      /*
-@@ -256,72 +290,67 @@
+@@ -256,72 +298,68 @@
  
      running = 1;
  
@@ -318,6 +328,7 @@
 -        status = snmp_synch_response(ss, pdu, &response);
 +      status =
 +          snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
++      std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
          if (status == STAT_SUCCESS) {
 +         snmp_check_null_response(response);
              if (response->errstat == SNMP_ERR_NOERROR) {
@@ -383,7 +394,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -337,55 +366,59 @@
+@@ -337,55 +375,56 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {
@@ -431,10 +442,9 @@
 +         snmp_single_sess_perror_exception("snmpbulkwalk", ss.get());
          }
 -        if (response)
-+      if (response) {
-             snmp_free_pdu(response);
+-            snmp_free_pdu(response);
++      response_guard.reset();
      }
-+   }
  
 -    if (numprinted == 0 && status == STAT_SUCCESS) {
 +   if (snmpbulkwalk_numprinted == 0 && status == STAT_SUCCESS) {
@@ -460,11 +470,11 @@
      }
  
 -out:
+-    netsnmp_cleanup_session(&session);
 +   {
 +      std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
 +   }
 +
-     netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;
