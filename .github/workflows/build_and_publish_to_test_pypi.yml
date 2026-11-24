@@ -52,6 +52,12 @@ jobs:
         setup.py
         build_utils.py
         requirements.txt
+        tools/prepare_netsnmp_source.py
+        tools/prepare_linux_netsnmp.sh
+        tools/prepare_macos_netsnmp.sh
+      third-party-repo: 'net-snmp/net-snmp'
+      third-party-ref: 'v5.10.rc1'
+      third-party-path: 'third_party/net-snmp'
       sdist-setup-cmd: 'sudo bash ./tools/prepare_linux_netsnmp.sh'
       skip-existing: true
       verify-metadata: false
