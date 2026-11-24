@@ -144,8 +144,12 @@ Thread Safety
 shall not corrupt Net-SNMP global state.
 
 [THREAD-02] The system shall use reference counting and mutexes to initialize Net-SNMP
-(``init_snmp``) only on the first operation and shut it down (``snmp_shutdown``) only after all
-operations in all threads have completed.
+(``init_snmp``) once per process on the first operation (tracked via ``g_netsnmp_library_active``)
+and register a process-exit shutdown handler (``std::atexit`` invoking ``snmp_shutdown``), while
+maintaining per-session/request reference counts (``g_netsnmp_init_count``) without calling
+``snmp_shutdown`` during runtime ``1 -> 0`` transitions, eliminating repeated ``init_snmp`` /
+``snmp_shutdown`` lifecycle leaks (such as ``tclist`` allocations in Net-SNMP 5.9.x) and avoiding
+MIB re-initialization churn across per-request ``Session`` open/close cycles.
 
 [THREAD-03] The system shall isolate per-session output formatting configurations across concurrent
 SNMP operations in multi-threaded environments using thread-local storage (``FormattingScope``).
@@ -163,13 +167,37 @@ mutex (``g_snmp_v3_operation_mutex``) to safely remove cached USM users
 time cache corruption across concurrent SNMPv3 sessions without serializing SNMPv1 or SNMPv2c
 operations.
 
+[THREAD-05] All C++ Net-SNMP CLI wrapper functions (``snmpget``, ``snmpgetnext``, ``snmpwalk``,
+``snmpbulkget``, ``snmpbulkwalk``, ``snmpset``, and ``snmptrap``) shall guarantee deterministic,
+leak-free native resource cleanup across both normal execution and C++ exception unwinding:
+
+- Stack-allocated ``netsnmp_session`` template structures shall be zero-initialized and guarded by
+  ``SnmpSessionCleanupGuard`` (which calls ``netsnmp_cleanup_session`` and zeroes the structure via
+  ``std::memset`` on scope exit), ensuring ``peername``, ``community``, and SNMPv3 heap fields
+  allocated by ``snmp_parse_args`` are always freed.
+- Request and response ``netsnmp_pdu`` pointers allocated via ``snmp_pdu_create`` or returned by
+  ``snmp_sess_synch_response`` shall be guarded by ``std::unique_ptr<netsnmp_pdu, SnmpPduDeleter>``
+  so PDUs are freed even when OID parsing, variable binding, or packet error handling throws.
+- Environment mutations (``putenv("POSIXLY_CORRECT=1")``) shall use static storage rather than
+  heap-allocated ``strdup`` buffers.
+- Option parser callbacks (``*_optProc``) invoked by C ``netsnmp_parse_args`` shall record parse
+  errors in thread-local storage and defer throwing ``ParseErrorBase`` until ``snmp_parse_args``
+  returns to C++, allowing ``netsnmp_parse_args`` to execute its internal ``out:`` cleanup of
+  temporary option buffers (``Cpsz``, ``Apsz``, ``Xpsz``).
+
 Build and Distribution
 ~~~~~~~~~~~~~~~~~~~~~~
 
 [BUILD-01] The C++ core shall be built as a Python extension module using SWIG 4.5.0 to auto-
 generate Python ↔ C++ bindings.
 
-[BUILD-02] The build system shall support Net-SNMP 5.10 and newer for source builds, and provide standalone pre-compiled wheels bundling Net-SNMP 5.10 for Linux and Windows.
+[BUILD-02] The build system and all CI test workflows (including Python, C++ Meson, Homebrew,
+Docker, and integration test suites) shall strictly require and link against Net-SNMP 5.10 and
+newer, pin Net-SNMP 5.10 (``v5.10.rc1``) as a shallow Git submodule at ``third_party/net-snmp``,
+automatically build Net-SNMP 5.10 out-of-tree into ``third_party/net-snmp-install`` (including a
+``netsnmp.pc`` pkg-config manifest) when Net-SNMP 5.10+ is not already installed on the host, and
+provide self-contained pre-compiled wheels bundling Net-SNMP 5.10 across Linux (``manylinux`` and
+``musllinux``), macOS, and Windows.
 
 [BUILD-03] The system shall support Python versions 3.11, 3.12, 3.13, 3.14, and 3.15.
 
@@ -201,7 +229,12 @@ an opaque handle. Wrapper code shall store this handle as ``void *`` and apply a
 ``ezsnmp._datatypes``), not path-separator notation, since the latter produces an invalid exported
 ``PyInit_`` symbol name under MSVC.
 
-[BUILD-09] Standalone wheels shall be provided across platforms (Linux via auditwheel and Windows via delvewheel) with Net-SNMP 5.10 compiled from source and stripped of debug symbols, requiring no pre-installed Net-SNMP libraries on target user systems. The C++ operation sources shall reside in ``ezsnmp/src/net-snmp-5.10-final-patched/``, while Net-SNMP 5.10 patches and patching scripts are maintained under ``ezsnmp/patches/`` for future version bumps.
+[BUILD-09] Standalone wheels shall be provided across platforms (Linux via ``auditwheel``, macOS via
+``delocate-wheel``, and Windows via ``delvewheel``) with Net-SNMP 5.10 compiled from the shallow
+``third_party/net-snmp`` sub-repo and stripped of debug symbols, requiring no pre-installed Net-SNMP
+libraries on target user systems. The C++ operation sources shall reside in
+``ezsnmp/src/net-snmp-5.10-final-patched/``, while Net-SNMP 5.10 patches and patching scripts are
+maintained under ``ezsnmp/patches/`` for future version bumps.
 
 [BUILD-10] The Windows Net-SNMP source build shall additionally patch ``include/net-
 snmp/library/lcd_time.h`` to add the ``NETSNMP_IMPORT`` decoration to the ``free_enginetime``
@@ -278,8 +311,13 @@ supported Python versions).
 
 [QUAL-03] The system shall perform static security analysis on the codebase using CodeQL in CI.
 
-[QUAL-04] The system shall perform memory safety analysis using Valgrind on Linux
-(Homebrew/Linuxbrew) builds as part of CI.
+[QUAL-04] The system shall perform memory safety analysis using Valgrind on Linux builds in CI
+(``tests_homebrew.yml``) via ``tools/check_valgrind_leaks.py`` and provide a Debian 13 (Trixie)
+Docker test environment (``docker/debian13_netsnmp_5.10/``) built against Net-SNMP 5.10 with
+Valgrind installed. The Valgrind check shall inspect ``memcheck`` output and fail the build if any
+runtime ``definitely lost`` or ``indirectly lost`` blocks originate from ``ezsnmp`` extensions
+(``_sessionbase``, ``_netsnmpbase``, ``SessionBase::``) or Net-SNMP lifecycle/argument parsing
+(``netsnmp_init_mib_internals``, ``netsnmp_parse_args``).
 
 [QUAL-05] The system shall run C++ tests compiled with LLVM/Clang sanitizers (including
 AddressSanitizer, UndefinedBehaviorSanitizer, and MemorySanitizer) in CI and Docker test

@@ -66,6 +66,7 @@ jobs:
             python_tests/requirements.txt
             setup.cfg
             setup.py
+            tools/check_valgrind_leaks.py
             tools/prepare_linux_netsnmp.sh
             tools/prepare_macos_netsnmp.sh
             tools/prepare_netsnmp_source.py
@@ -258,6 +259,7 @@ jobs:
                    --cov-report=term-missing \
                    --junitxml=test-results_${{ matrix.os }}_${{ matrix.python-version }}.xml \
                    python_tests/ | tee ./test-outputs_${{ matrix.os }}_${{ matrix.python-version }}.txt;
+                 python3 tools/check_valgrind_leaks.py "./valgrind_${{ matrix.os }}_${{ matrix.python-version }}.out";
 
           macos: |
             set -euo pipefail
