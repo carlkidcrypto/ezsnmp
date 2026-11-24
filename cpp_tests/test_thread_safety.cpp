@@ -3,9 +3,11 @@
 #include <net-snmp/net-snmp-includes.h>
 
 #include <atomic>
+#include <cstring>
 #include <thread>
 #include <vector>
 
+#include "helpers.h"
 #include "thread_safety.h"
 
 class ThreadSafetyTest : public ::testing::Test {
@@ -136,4 +138,29 @@ TEST_F(ThreadSafetyTest, TestApplyFormattingFullOidsAndHexStrings) {
              NETSNMP_STRING_OUTPUT_HEX);
 
    clear_thread_formatting_options();
+}
+
+TEST_F(ThreadSafetyTest, TestRepeatedSingleRequestCyclesAndSessionCleanupGuard) {
+   // Simulate opening and closing 10 sessions where each makes 1 request
+   // (0 -> 1 -> 0 cycle for g_netsnmp_init_count, issue #1519).
+   for (int i = 0; i < 10; ++i) {
+      netsnmp_thread_init("test_app_cycle");
+      EXPECT_EQ(g_netsnmp_init_count.load(), 1);
+      EXPECT_TRUE(g_netsnmp_initialized.load());
+
+      netsnmp_session session = {};
+      {
+         SnmpSessionCleanupGuard guard(&session);
+         session.peername = strdup("127.0.0.1:11161");
+         session.community = reinterpret_cast<u_char*>(strdup("public"));
+         session.community_len = 6;
+      }
+      // SnmpSessionCleanupGuard zeroes the session struct after freeing heap fields
+      EXPECT_EQ(session.peername, nullptr);
+      EXPECT_EQ(session.community, nullptr);
+
+      netsnmp_thread_cleanup("test_app_cycle");
+      EXPECT_EQ(g_netsnmp_init_count.load(), 0);
+      EXPECT_FALSE(g_netsnmp_initialized.load());
+   }
 }

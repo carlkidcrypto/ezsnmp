@@ -5,7 +5,9 @@
 This script configures and builds the ezsnmp package, a blazingly fast Python SNMP library
 based on Net-SNMP. It performs the following tasks:
 
-1. Detects the system's Net-SNMP installation (system or Homebrew)
+1. Detects the system's Net-SNMP installation (system or Homebrew), or automatically
+   provisions and builds Net-SNMP 5.10 from the shallow third_party/net-snmp sub-repo
+   when Net-SNMP 5.10+ is not already installed on the host
 2. Runs SWIG to generate C++ wrapper code from interface files (.i -> .cpp)
 3. Compiles four C++ extension modules (_datatypes, _exceptionsbase, _netsnmpbase, _sessionbase)
 4. Selects the Net-SNMP 5.10 C++ sources for supported Net-SNMP versions (5.10 and newer)
@@ -15,7 +17,7 @@ Command-line options:
     --basedir=PATH  Use in-tree Net-SNMP build from specified directory
 
 Requirements:
-    - Net-SNMP library and headers (via system package manager or Homebrew)
+    - Net-SNMP 5.10+ library and headers (auto-built from shallow sub-repo when missing)
     - SWIG 4.x for generating Python bindings
     - C++17 compatible compiler
     - setuptools and wheel
@@ -42,6 +44,7 @@ if setup_dir not in path:
 from build_utils import (
     collect_files_with_suffixes,
     compute_object_cache_key,
+    ensure_netsnmp_5_10_configuration,
     gather_build_configuration,
     is_python_independent_source,
     is_up_to_date,
@@ -548,7 +551,7 @@ def debug_print(cfg: dict):
 
 
 def main():
-    cfg = gather_build_configuration()
+    cfg = ensure_netsnmp_5_10_configuration(gather_build_configuration())
     debug_print(cfg)
     extensions = build_extensions(cfg)
     print(

@@ -13,8 +13,8 @@ timeout-minutes: 15
 max-ai-credits: 25
 model: sonnet
 imports:
-  - carlkidcrypto/shared-workflows/shared/docs-continuous-improvement-core.md@22f04e222fa07048891327e4d34bb174d36e7bfa
-  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@22f04e222fa07048891327e4d34bb174d36e7bfa
+  - carlkidcrypto/shared-workflows/shared/docs-continuous-improvement-core.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
 ---
 
 # Documentation Continuous Improvement

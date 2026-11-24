@@ -74,6 +74,8 @@ SOFTWARE.
 #include "snmpgetnext.h"
 #include "thread_safety.h"
 
+thread_local std::string snmpgetnext_optproc_error;
+
 void snmpgetnext_optProc(int, char *const *, int opt) {
    switch (opt) {
       case 'C':
@@ -84,9 +86,9 @@ void snmpgetnext_optProc(int, char *const *, int opt) {
                                             NETSNMP_DS_APP_DONT_FIX_PDUS);
                   break;
                default:
-                  std::string err_msg =
+                  snmpgetnext_optproc_error =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
+                  return;
             }
          }
          break;
@@ -102,7 +104,8 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session;
+   netsnmp_session session = {};
+   SnmpSessionCleanupGuard session_cleanup_guard(&session);
    std::unique_ptr<void, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response;
    netsnmp_variable_list *vars;
@@ -126,7 +129,12 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
        */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc)) {
+      snmpgetnext_optproc_error.clear();
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", &snmpgetnext_optProc);
+      if (!snmpgetnext_optproc_error.empty()) {
+         throw ParseErrorBase(snmpgetnext_optproc_error);
+      }
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -180,6 +188,7 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
     * create PDU for GET request and add object names to request
     */
    pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard(pdu);
 
    {
       std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
@@ -192,11 +201,13 @@ std::vector<Result> snmpgetnext(std::vector<std::string> const &args,
          }
       }
    }
+   pdu_guard.release();
    /*
     * do the request
     */
 retry:
    status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -224,7 +235,7 @@ retry:
           */
          if (!dont_fix_pdus) {
             pdu = snmp_fix_pdu(response, SNMP_MSG_GETNEXT);
-            snmp_free_pdu(response);
+            response_guard.reset();
             response = NULL;
             if (pdu != NULL) {
                goto retry;
@@ -239,14 +250,11 @@ retry:
       snmp_single_sess_perror_exception("snmpgetnext", ss.get());
    }
 
-   if (response) {
-      snmp_free_pdu(response);
-   }
+   response_guard.reset();
 
    {
       std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
    }
-   netsnmp_cleanup_session(&session);
    clear_net_snmp_library_data();
    SOCK_CLEANUP;
    return parse_results(return_vector);
