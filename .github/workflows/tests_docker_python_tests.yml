@@ -83,6 +83,7 @@ jobs:
         distribution:
           - almalinux10_netsnmp_5.10
           - archlinux_netsnmp_5.10
+          - debian13_netsnmp_5.10
           - fedora42_netsnmp_5.10
           - rockylinux9_netsnmp_5.10
         python: [py311, py312, py313, py314, py315]
@@ -400,6 +401,26 @@ jobs:
             archlinux_netsnmp_5.10_py315_session_walk, test-outputs_archlinux_netsnmp_5.10_test_container_py315_session_walk.txt, test-results_archlinux_netsnmp_5.10_test_container_py315_session_walk.xml
             archlinux_netsnmp_5.10_py315_snmp_ops, test-outputs_archlinux_netsnmp_5.10_test_container_py315_snmp_ops.txt, test-results_archlinux_netsnmp_5.10_test_container_py315_snmp_ops.xml
             archlinux_netsnmp_5.10_py315_core_misc, test-outputs_archlinux_netsnmp_5.10_test_container_py315_core_misc.txt, test-results_archlinux_netsnmp_5.10_test_container_py315_core_misc.xml
+            debian13_netsnmp_5.10_py311_session_basic, test-outputs_debian13_netsnmp_5.10_test_container_py311_session_basic.txt, test-results_debian13_netsnmp_5.10_test_container_py311_session_basic.xml
+            debian13_netsnmp_5.10_py311_session_walk, test-outputs_debian13_netsnmp_5.10_test_container_py311_session_walk.txt, test-results_debian13_netsnmp_5.10_test_container_py311_session_walk.xml
+            debian13_netsnmp_5.10_py311_snmp_ops, test-outputs_debian13_netsnmp_5.10_test_container_py311_snmp_ops.txt, test-results_debian13_netsnmp_5.10_test_container_py311_snmp_ops.xml
+            debian13_netsnmp_5.10_py311_core_misc, test-outputs_debian13_netsnmp_5.10_test_container_py311_core_misc.txt, test-results_debian13_netsnmp_5.10_test_container_py311_core_misc.xml
+            debian13_netsnmp_5.10_py312_session_basic, test-outputs_debian13_netsnmp_5.10_test_container_py312_session_basic.txt, test-results_debian13_netsnmp_5.10_test_container_py312_session_basic.xml
+            debian13_netsnmp_5.10_py312_session_walk, test-outputs_debian13_netsnmp_5.10_test_container_py312_session_walk.txt, test-results_debian13_netsnmp_5.10_test_container_py312_session_walk.xml
+            debian13_netsnmp_5.10_py312_snmp_ops, test-outputs_debian13_netsnmp_5.10_test_container_py312_snmp_ops.txt, test-results_debian13_netsnmp_5.10_test_container_py312_snmp_ops.xml
+            debian13_netsnmp_5.10_py312_core_misc, test-outputs_debian13_netsnmp_5.10_test_container_py312_core_misc.txt, test-results_debian13_netsnmp_5.10_test_container_py312_core_misc.xml
+            debian13_netsnmp_5.10_py313_session_basic, test-outputs_debian13_netsnmp_5.10_test_container_py313_session_basic.txt, test-results_debian13_netsnmp_5.10_test_container_py313_session_basic.xml
+            debian13_netsnmp_5.10_py313_session_walk, test-outputs_debian13_netsnmp_5.10_test_container_py313_session_walk.txt, test-results_debian13_netsnmp_5.10_test_container_py313_session_walk.xml
+            debian13_netsnmp_5.10_py313_snmp_ops, test-outputs_debian13_netsnmp_5.10_test_container_py313_snmp_ops.txt, test-results_debian13_netsnmp_5.10_test_container_py313_snmp_ops.xml
+            debian13_netsnmp_5.10_py313_core_misc, test-outputs_debian13_netsnmp_5.10_test_container_py313_core_misc.txt, test-results_debian13_netsnmp_5.10_test_container_py313_core_misc.xml
+            debian13_netsnmp_5.10_py314_session_basic, test-outputs_debian13_netsnmp_5.10_test_container_py314_session_basic.txt, test-results_debian13_netsnmp_5.10_test_container_py314_session_basic.xml
+            debian13_netsnmp_5.10_py314_session_walk, test-outputs_debian13_netsnmp_5.10_test_container_py314_session_walk.txt, test-results_debian13_netsnmp_5.10_test_container_py314_session_walk.xml
+            debian13_netsnmp_5.10_py314_snmp_ops, test-outputs_debian13_netsnmp_5.10_test_container_py314_snmp_ops.txt, test-results_debian13_netsnmp_5.10_test_container_py314_snmp_ops.xml
+            debian13_netsnmp_5.10_py314_core_misc, test-outputs_debian13_netsnmp_5.10_test_container_py314_core_misc.txt, test-results_debian13_netsnmp_5.10_test_container_py314_core_misc.xml
+            debian13_netsnmp_5.10_py315_session_basic, test-outputs_debian13_netsnmp_5.10_test_container_py315_session_basic.txt, test-results_debian13_netsnmp_5.10_test_container_py315_session_basic.xml
+            debian13_netsnmp_5.10_py315_session_walk, test-outputs_debian13_netsnmp_5.10_test_container_py315_session_walk.txt, test-results_debian13_netsnmp_5.10_test_container_py315_session_walk.xml
+            debian13_netsnmp_5.10_py315_snmp_ops, test-outputs_debian13_netsnmp_5.10_test_container_py315_snmp_ops.txt, test-results_debian13_netsnmp_5.10_test_container_py315_snmp_ops.xml
+            debian13_netsnmp_5.10_py315_core_misc, test-outputs_debian13_netsnmp_5.10_test_container_py315_core_misc.txt, test-results_debian13_netsnmp_5.10_test_container_py315_core_misc.xml
             fedora42_netsnmp_5.10_py311_session_basic, test-outputs_fedora42_netsnmp_5.10_test_container_py311_session_basic.txt, test-results_fedora42_netsnmp_5.10_test_container_py311_session_basic.xml
             fedora42_netsnmp_5.10_py311_session_walk, test-outputs_fedora42_netsnmp_5.10_test_container_py311_session_walk.txt, test-results_fedora42_netsnmp_5.10_test_container_py311_session_walk.xml
             fedora42_netsnmp_5.10_py311_snmp_ops, test-outputs_fedora42_netsnmp_5.10_test_container_py311_snmp_ops.txt, test-results_fedora42_netsnmp_5.10_test_container_py311_snmp_ops.xml
