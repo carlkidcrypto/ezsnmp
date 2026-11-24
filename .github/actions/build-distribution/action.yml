@@ -11,7 +11,7 @@ runs:
   using: composite
   steps:
     - name: Build distribution via shared-workflows
-      uses: carlkidcrypto/shared-workflows/actions/build-distribution@22f04e222fa07048891327e4d34bb174d36e7bfa
+      uses: carlkidcrypto/shared-workflows/actions/build-distribution@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
       with:
         packages-dir: ${{ inputs.packages-dir }}
         python-version: "3.14"

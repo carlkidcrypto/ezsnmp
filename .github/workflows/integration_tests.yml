@@ -55,7 +55,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@22f04e222fa07048891327e4d34bb174d36e7bfa
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
         with:
           files: |
             .github/workflows/integration_tests.yml
@@ -149,7 +149,7 @@ jobs:
 
       - name: Install Net-SNMP 5.10
         if: runner.os == 'Linux'
-        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@22f04e222fa07048891327e4d34bb174d36e7bfa
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
 
       - name: Save Net-SNMP 5.10 to Linux cache directory
         if: runner.os == 'Linux'

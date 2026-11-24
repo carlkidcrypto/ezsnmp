@@ -15,8 +15,8 @@ timeout-minutes: 10
 max-ai-credits: 15
 model: sonnet
 imports:
-  - carlkidcrypto/shared-workflows/shared/triage-bug-reports-core.md@22f04e222fa07048891327e4d34bb174d36e7bfa
-  - carlkidcrypto/shared-workflows/shared/supplemental-labels.md@22f04e222fa07048891327e4d34bb174d36e7bfa
+  - carlkidcrypto/shared-workflows/shared/triage-bug-reports-core.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/supplemental-labels.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
 ---
 
 # Bug Report Intake Triage

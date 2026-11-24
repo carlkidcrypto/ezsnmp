@@ -38,6 +38,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_python_black.yml@22f04e222fa07048891327e4d34bb174d36e7bfa
+    uses: carlkidcrypto/shared-workflows/.github/workflows/reusable_python_black.yml@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
     with:
       auto-fix-pr: true
