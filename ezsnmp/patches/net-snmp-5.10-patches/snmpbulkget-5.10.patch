@@ -15,7 +15,7 @@
  #ifdef HAVE_NETDB_H
  #include <netdb.h>
  #endif
-@@ -65,32 +66,33 @@
+@@ -65,32 +66,35 @@
  
  #include <net-snmp/net-snmp-includes.h>
  
@@ -43,6 +43,8 @@
 +#include "snmpbulkget.h"
 +#include "thread_safety.h"
 +
++thread_local std::string snmpbulkget_optproc_error;
++
 +void snmpbulkget_usage(void) {
      fprintf(stderr, "USAGE: snmpbulkget ");
      snmp_parse_args_usage(stderr);
@@ -63,14 +65,15 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,147 +111,170 @@
+@@ -109,147 +113,175 @@
                      /*
                       * No number given -- error.  
                       */
 -                    usage();
 -                    exit(1);
-+                     throw ParseErrorBase("No number given for -C" + std::string(1, *(optarg - 1)) +
-+                                          " option\n");
++                     snmpbulkget_optproc_error =
++                         "No number given for -C" + std::string(1, *(optarg - 1)) + " option\n";
++                     return;
                  } else {
                      optarg = endptr;
 -                    if (isspace((unsigned char)(*optarg))) {
@@ -83,9 +86,9 @@
 -                fprintf(stderr, "Unknown flag passed to -C: %c\n",
 -                        optarg[-1]);
 -                exit(1);
-+                  std::string err_msg =
++                  snmpbulkget_optproc_error =
 +                      "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-+                  throw ParseErrorBase(err_msg);
++                  return;
              }
          }
      }
@@ -104,7 +107,8 @@
 +   std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
 +
 +   std::vector<std::string> return_vector;
-+   netsnmp_session session;
++   netsnmp_session session = {};
++   SnmpSessionCleanupGuard session_cleanup_guard(&session);
 +   std::unique_ptr<void, SnmpSingleSessionCloser> ss;
      netsnmp_pdu    *pdu;
      netsnmp_pdu    *response;
@@ -131,7 +135,12 @@
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-+      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc)) {
++      snmpbulkget_optproc_error.clear();
++      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc);
++      if (!snmpbulkget_optproc_error.empty()) {
++         throw ParseErrorBase(snmpbulkget_optproc_error);
++      }
++      switch (arg) {
      case NETSNMP_PARSE_ARGS_ERROR:
 -        goto out;
 +            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
@@ -150,10 +159,10 @@
          break;
      }
 +   }
- 
++
 +   // Declare name/namep/names as local variables to avoid data races.
 +   int names;
-+
+ 
      names = argc - arg;
      if (names < non_repeaters) {
 -        fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");
@@ -214,6 +223,7 @@
       */
 -    status = snmp_synch_response(ss, pdu, &response);
 +   status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
++   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
      if (status == STAT_SUCCESS) {
 +      snmp_check_null_response(response);
          if (response->errstat == SNMP_ERR_NOERROR) {
@@ -275,9 +285,8 @@
      }
  
 -    if (response)
-+   if (response) {
-         snmp_free_pdu(response);
-+   }
+-        snmp_free_pdu(response);
++   response_guard.reset();
  
 -    snmp_close(ss);
 +   {
@@ -285,7 +294,7 @@
 +   }
  
 -out:
-     netsnmp_cleanup_session(&session);
+-    netsnmp_cleanup_session(&session);
 +   clear_net_snmp_library_data();
      SOCK_CLEANUP;
 -    return exitval;

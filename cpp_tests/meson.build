@@ -13,15 +13,44 @@ if host_machine.system() == 'darwin'
     openssl_dep = dependency('openssl', required: true)
 endif
 
-# MACOS with homebrew needs this: export PKG_CONFIG_PATH="/opt/homebrew/opt/net-snmp/lib/pkgconfig:$PKG_CONFIG_PATH"
-# Find the netsnmp dependency and make it required for the build to proceed.
-netsnmp_dep = dependency('netsnmp', required: true)
+# Find the netsnmp >= 5.10 dependency (auto-provisioning from the shallow
+# third_party/net-snmp 5.10 sub-repo into third_party/net-snmp-install when the
+# host pkg-config only provides Net-SNMP < 5.10).
+netsnmp_dep = dependency('netsnmp', version: '>=5.10', required: false)
+if not netsnmp_dep.found()
+    repo_root = meson.project_source_root() / '..'
+    vendored_prefix = repo_root / 'third_party/net-snmp-install'
+    if host_machine.system() == 'darwin'
+        prepare_script = repo_root / 'tools/prepare_macos_netsnmp.sh'
+    else
+        prepare_script = repo_root / 'tools/prepare_linux_netsnmp.sh'
+    endif
+    message('Host Net-SNMP < 5.10; provisioning Net-SNMP 5.10 via @0@ into @1@'.format(prepare_script, vendored_prefix))
+    prep_env = environment()
+    prep_env.set('PREFIX', vendored_prefix)
+    prep_env.set('SKIP_PKG_INSTALL', '1')
+    run_command('bash', prepare_script, env: prep_env, check: true)
+
+    ns_cfg = vendored_prefix / 'bin/net-snmp-config'
+    ns_ver = run_command(ns_cfg, '--version', check: true).stdout().strip()
+    ns_libs = run_command(ns_cfg, '--libs', check: true).stdout().strip().split()
+    ns_libdir = vendored_prefix / 'lib'
+    ns_incdir = vendored_prefix / 'include'
+    netsnmp_dep = declare_dependency(
+        compile_args: ['-I' + ns_incdir],
+        link_args: ['-Wl,-rpath,' + ns_libdir, '-L' + ns_libdir] + ns_libs,
+        version: ns_ver,
+    )
+    netsnmp_config_bin = ns_cfg
+else
+    netsnmp_config_bin = 'net-snmp-config'
+endif
 
 # Net-SNMP sources directory (uses net-snmp-5.10-final-patched for Net-SNMP 5.10+)
 netsnmp_version = netsnmp_dep.version()
 snmp_source_dir = '../ezsnmp/src/net-snmp-5.10-final-patched'
 
-message('Using Net-SNMP sources from: @0@'.format(snmp_source_dir))
+message('Using Net-SNMP @0@ with sources from: @1@'.format(netsnmp_version, snmp_source_dir))
 
 # Include parent directory for ezsnmp headers
 include_dirs = include_directories('..', '../ezsnmp/include')
@@ -374,7 +403,7 @@ test_env = environment()
 # Ensure SNMP MIBs are loaded during tests so that symbolic OID names
 # (e.g. SNMPv2-MIB::sysORDescr) resolve correctly on all platforms.
 test_env.set('MIBS', 'ALL')
-mibdirs_cmd = run_command('net-snmp-config', '--default-mibdirs', check: false)
+mibdirs_cmd = run_command(netsnmp_config_bin, '--default-mibdirs', check: false)
 if mibdirs_cmd.returncode() == 0 and mibdirs_cmd.stdout().strip() != ''
   test_env.set('MIBDIRS', mibdirs_cmd.stdout().strip())
 else

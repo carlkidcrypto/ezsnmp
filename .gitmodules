@@ -1,0 +1,4 @@
+[submodule "third_party/net-snmp"]
+	path = third_party/net-snmp
+	url = https://github.com/net-snmp/net-snmp.git
+	shallow = true

@@ -88,6 +88,7 @@ void snmpset_usage(void) {
 }
 
 thread_local int quiet = 0;
+thread_local std::string snmpset_optproc_error;
 
 void snmpset_optProc(int, char *const *, int opt) {
    switch (opt) {
@@ -99,9 +100,9 @@ void snmpset_optProc(int, char *const *, int opt) {
                   break;
 
                default:
-                  std::string err_msg =
+                  snmpset_optproc_error =
                       "Unknown flag passed to -C: " + std::string(1, optarg[-1]) + "\n";
-                  throw ParseErrorBase(err_msg);
+                  return;
             }
          }
    }
@@ -116,7 +117,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    std::unique_ptr<char *[], Deleter> argv = create_argv(args, argc);
    std::vector<std::string> return_vector;
 
-   netsnmp_session session;
+   netsnmp_session session = {};
+   SnmpSessionCleanupGuard session_cleanup_guard(&session);
    std::unique_ptr<void, SnmpSingleSessionCloser> ss;
    netsnmp_pdu *pdu, *response = NULL;
    netsnmp_variable_list *vars;
@@ -138,7 +140,8 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
 
    SockCleanupGuard sock_cleanup_guard;
 
-   putenv(strdup("POSIXLY_CORRECT=1"));
+   static char posixly_correct_env[] = "POSIXLY_CORRECT=1";
+   putenv(posixly_correct_env);
 
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
    // global state (option parsing, DS library settings).
@@ -150,7 +153,12 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
        */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
-      switch (arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc)) {
+      snmpset_optproc_error.clear();
+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc);
+      if (!snmpset_optproc_error.empty()) {
+         throw ParseErrorBase(snmpset_optproc_error);
+      }
+      switch (arg) {
          case NETSNMP_PARSE_ARGS_ERROR:
             throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
 
@@ -233,6 +241,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
     * create PDU for SET request and add object names and values to request
     */
    pdu = snmp_pdu_create(SNMP_MSG_SET);
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> pdu_guard(pdu);
    {
       std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
       for (count = 0; count < current_name; count++) {
@@ -248,7 +257,9 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
    /*
     * do the request
     */
+   pdu_guard.release();
    status = snmp_sess_synch_response(static_cast<struct session_list *>(ss.get()), pdu, &response);
+   std::unique_ptr<netsnmp_pdu, SnmpPduDeleter> response_guard(response);
    if (status == STAT_SUCCESS) {
       snmp_check_null_response(response);
       if (response->errstat == SNMP_ERR_NOERROR) {
@@ -282,9 +293,7 @@ std::vector<Result> snmpset(std::vector<std::string> const &args,
       snmp_single_sess_perror_exception("snmpset", ss.get());
    }
 
-   if (response) {
-      snmp_free_pdu(response);
-   }
+   response_guard.reset();
 
    {
       std::unique_ptr<void, SnmpSingleSessionCloser> ss_guard(ss.release());
