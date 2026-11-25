@@ -1,6 +1,40 @@
-Last Updated: 2026-11-23 02:13:34 UTC
+Last Updated: 2026-11-25 03:31:16 UTC
 
 # Changelog
+
+<a name="v2026.11.24b0"></a>
+## [v2026.11.24b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2026.11.22b0...v2026.11.24b0) (2026-11-24)
+
+### Changes
+
+#### Bug Fixes
+- fix(memory): initialize Net-SNMP once per process and RAII-clean netsnmp_session ([#1519](https://github.com/carlkidcrypto/ezsnmp/issues/1519)) ([#1530](https://github.com/carlkidcrypto/ezsnmp/issues/1530))
+- fix(docker): add libnl-route-3-dev to debian13_netsnmp_5.10 for mibII/ifTable agent support ([#1535](https://github.com/carlkidcrypto/ezsnmp/issues/1535))
+- fix(ci): prevent C++ JUnit XML artifact collision on download ([#1529](https://github.com/carlkidcrypto/ezsnmp/issues/1529))
+
+#### Continuous Integration
+- ci: enforce Net-SNMP 5.10, add build caching, and enable debian13_netsnmp_5.10 across workflows ([#1537](https://github.com/carlkidcrypto/ezsnmp/issues/1537))
+
+#### Documentation Updates
+- docs(readme): add TestPyPI version badge ([#1528](https://github.com/carlkidcrypto/ezsnmp/issues/1528))
+- docs: add versioned documentation for v2026.11.22b0 ([#1526](https://github.com/carlkidcrypto/ezsnmp/issues/1526))
+
+#### Features
+- feat(docker): add debian13_netsnmp_5.10 test container environment ([#1531](https://github.com/carlkidcrypto/ezsnmp/issues/1531))
+
+#### Maintenance
+- chore(release): prepare beta release v2026.11.24b0 ([#1541](https://github.com/carlkidcrypto/ezsnmp/issues/1541))
+- chore(ci): bump shared-workflows to eeefdd5 ([#1540](https://github.com/carlkidcrypto/ezsnmp/issues/1540))
+- chore(analysis): update integration-test history with 45 new PR runs (through [#1530](https://github.com/carlkidcrypto/ezsnmp/issues/1530)) and optimize pagination ([#1539](https://github.com/carlkidcrypto/ezsnmp/issues/1539))
+- chore(deps): bump coverage ([#1507](https://github.com/carlkidcrypto/ezsnmp/issues/1507))
+- chore(build): remove MacPorts detection, setup, and test support ([#1522](https://github.com/carlkidcrypto/ezsnmp/issues/1522))
+- chore: update Homebrew formula for v2026.11.22b0 ([#1525](https://github.com/carlkidcrypto/ezsnmp/issues/1525))
+- chore(ci): remove MacPorts workflow, version file, and docs references ([#1521](https://github.com/carlkidcrypto/ezsnmp/issues/1521))
+
+#### Updates & Improvements
+- [changelog] Update CHANGELOG.md ([#1524](https://github.com/carlkidcrypto/ezsnmp/issues/1524))
+
+---
 
 <a name="v2026.11.22b0"></a>
 ## [v2026.11.22b0](https://github.com/carlkidcrypto/ezsnmp/compare/v2026.11.15b0...v2026.11.22b0) (2026-11-22)
