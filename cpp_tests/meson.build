@@ -68,6 +68,7 @@ snmpget_src = join_paths(snmp_source_dir, 'snmpget.cpp')
 snmpgetnext_src = join_paths(snmp_source_dir, 'snmpgetnext.cpp')
 snmpset_src = join_paths(snmp_source_dir, 'snmpset.cpp')
 snmptrap_src = join_paths(snmp_source_dir, 'snmptrap.cpp')
+snmpusm_src = join_paths(snmp_source_dir, 'snmpusm.cpp')
 snmpwalk_src = join_paths(snmp_source_dir, 'snmpwalk.cpp')
 
 common_shim_sources = [
@@ -107,6 +108,7 @@ ezsnmp_shared_objs = static_library(
         snmpgetnext_src,
         snmpset_src,
         snmptrap_src,
+        snmpusm_src,
         snmpwalk_src,
     ],
     include_directories: include_dirs,
@@ -213,6 +215,31 @@ test_snmptrap = executable(
     objects: ezsnmp_shared_objs.extract_objects([snmptrap_src] + common_shim_sources),
     include_directories: include_dirs,
     dependencies: common_deps
+)
+
+snmpusm_deps = common_deps
+if host_machine.system() != 'darwin'
+    snmpusm_crypto_dep = dependency('libcrypto', required: false)
+    if not snmpusm_crypto_dep.found()
+        snmpusm_crypto_dep = meson.get_compiler('cpp').find_library('crypto', required: false)
+    endif
+    snmpusm_deps += [snmpusm_crypto_dep]
+endif
+
+test_snmpusm = executable(
+    'test_snmpusm',
+    ['test_snmpusm.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects([snmpusm_src] + common_shim_sources),
+    include_directories: include_dirs,
+    dependencies: snmpusm_deps
+)
+
+test_snmpusm_shim = executable(
+    'test_snmpusm_shim',
+    ['test_snmpusm_shim.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects([snmpusm_src] + common_shim_sources),
+    include_directories: include_dirs,
+    dependencies: snmpusm_deps
 )
 
 test_snmpwalk = executable(
@@ -415,6 +442,8 @@ test('snmpgetnext_null_shim_test', test_snmpgetnext_null_shim, env: test_env)
 test('snmpset_test', test_snmpset, env: test_env)
 test('snmpset_null_shim_test', test_snmpset_null_shim, env: test_env)
 test('snmptrap_test', test_snmptrap, env: test_env)
+test('snmpusm_test', test_snmpusm, env: test_env)
+test('snmpusm_shim_test', test_snmpusm_shim, env: test_env)
 test('snmpwalk_test', test_snmpwalk, env: test_env, timeout: 120)
 test('snmpwalk_shim_test', test_snmpwalk_shim, env: test_env)
 test('snmpwalk_null_shim_test', test_snmpwalk_null_shim, env: test_env)
