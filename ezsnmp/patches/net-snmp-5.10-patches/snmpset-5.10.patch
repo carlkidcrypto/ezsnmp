@@ -99,7 +99,7 @@
      netsnmp_pdu    *pdu, *response = NULL;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -126,50 +133,62 @@
+@@ -126,50 +133,47 @@
      oid             name[MAX_OID_LEN];
      size_t          name_length;
      int             status;
@@ -127,32 +127,22 @@
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
+-    case NETSNMP_PARSE_ARGS_ERROR:
+-        goto out;
+-    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+-        exitval = 0;
+-        goto out;
+-    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+-        usage();
+-        goto out;
+-    default:
+-        break;
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +      snmpset_optproc_error.clear();
-+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc);
-+      if (!snmpset_optproc_error.empty()) {
-+         throw ParseErrorBase(snmpset_optproc_error);
-+      }
-+      switch (arg) {
-     case NETSNMP_PARSE_ARGS_ERROR:
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-+
-     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
--        exitval = 0;
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-+
-     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
--        usage();
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-+
-     default:
-         break;
++      arg = ezsnmp_parse_args(argc, argv.get(), &session, "C:", snmpset_optProc,
++                              snmpset_optproc_error);
      }
-+   }
  
      if (arg >= argc) {
 -        fprintf(stderr, "Missing object name\n");
@@ -183,7 +173,7 @@
          names[current_name++] = argv[arg++];
          if (arg < argc) {
              switch (*argv[arg]) {
-@@ -194,99 +213,90 @@
+@@ -194,99 +198,90 @@
                  types[current_type++] = *argv[arg++];
                  break;
              default:
@@ -196,9 +186,10 @@
          } else {
 -            fprintf(stderr, "%s: Needs type and value\n", argv[arg - 1]);
 -            goto out;
-+         throw GenericErrorBase(std::string(argv[arg - 1]) + ": Needs type and value\n");
-         }
+-        }
 -        if (arg < argc)
++         throw GenericErrorBase(std::string(argv[arg - 1]) + ": Needs type and value\n");
++      }
 +      if (arg < argc) {
              values[current_value++] = argv[arg];
 -        else {

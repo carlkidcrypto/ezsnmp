@@ -12,6 +12,13 @@
 #include <string>
 #include <utility>
 
+#ifdef _WIN32
+#include <fcntl.h>
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+
 #include "exceptionsbase.h"
 #include "thread_safety.h"
 
@@ -397,5 +404,161 @@ SockCleanupGuard::~SockCleanupGuard() {
 void snmp_check_null_response(netsnmp_pdu const *response) {
    if (response == NULL) {
       throw PacketErrorBase("received NULL response from snmp_sess_synch_response");
+   }
+}
+
+namespace {
+
+class StderrCaptureGuard {
+  public:
+   StderrCaptureGuard() {
+      std::fflush(stderr);
+#ifdef _WIN32
+      if (_pipe(m_pipe, 16384, _O_BINARY) == 0) {
+         m_saved_fd = _dup(_fileno(stderr));
+         if (m_saved_fd >= 0 && _dup2(m_pipe[1], _fileno(stderr)) == 0) {
+            _close(m_pipe[1]);
+            m_pipe[1] = -1;
+            m_active = true;
+         } else {
+            cleanup_fds();
+         }
+      }
+#else
+      if (pipe(m_pipe) == 0) {
+         m_saved_fd = dup(STDERR_FILENO);
+         if (m_saved_fd >= 0 && dup2(m_pipe[1], STDERR_FILENO) >= 0) {
+            close(m_pipe[1]);
+            m_pipe[1] = -1;
+            m_active = true;
+         } else {
+            cleanup_fds();
+         }
+      }
+#endif
+   }
+
+   ~StderrCaptureGuard() { restore_and_read(); }
+
+   std::string finish() { return restore_and_read(); }
+
+   StderrCaptureGuard(StderrCaptureGuard const &) = delete;
+   StderrCaptureGuard &operator=(StderrCaptureGuard const &) = delete;
+
+  private:
+   int m_pipe[2] = {-1, -1};
+   int m_saved_fd = -1;
+   bool m_active = false;
+
+   void cleanup_fds() {
+#ifdef _WIN32
+      if (m_pipe[0] >= 0) {
+         _close(m_pipe[0]);
+         m_pipe[0] = -1;
+      }
+      if (m_pipe[1] >= 0) {
+         _close(m_pipe[1]);
+         m_pipe[1] = -1;
+      }
+      if (m_saved_fd >= 0) {
+         _close(m_saved_fd);
+         m_saved_fd = -1;
+      }
+#else
+      if (m_pipe[0] >= 0) {
+         close(m_pipe[0]);
+         m_pipe[0] = -1;
+      }
+      if (m_pipe[1] >= 0) {
+         close(m_pipe[1]);
+         m_pipe[1] = -1;
+      }
+      if (m_saved_fd >= 0) {
+         close(m_saved_fd);
+         m_saved_fd = -1;
+      }
+#endif
+   }
+
+   std::string restore_and_read() {
+      if (!m_active) {
+         return "";
+      }
+      m_active = false;
+      std::fflush(stderr);
+#ifdef _WIN32
+      _dup2(m_saved_fd, _fileno(stderr));
+      _close(m_saved_fd);
+      m_saved_fd = -1;
+#else
+      dup2(m_saved_fd, STDERR_FILENO);
+      close(m_saved_fd);
+      m_saved_fd = -1;
+#endif
+      std::string captured;
+      char buf[512];
+#ifdef _WIN32
+      int n = 0;
+      while ((n = _read(m_pipe[0], buf, sizeof(buf))) > 0) {
+         captured.append(buf, static_cast<size_t>(n));
+      }
+      _close(m_pipe[0]);
+#else
+      ssize_t n = 0;
+      while ((n = read(m_pipe[0], buf, sizeof(buf))) > 0) {
+         captured.append(buf, static_cast<size_t>(n));
+      }
+      close(m_pipe[0]);
+#endif
+      m_pipe[0] = -1;
+      while (!captured.empty() &&
+             (captured.back() == '\n' || captured.back() == '\r' || captured.back() == ' ')) {
+         captured.pop_back();
+      }
+      return captured;
+   }
+};
+
+std::string format_parse_args_error(char const *code, std::string const &captured_stderr) {
+   if (captured_stderr.empty()) {
+      return code;
+   }
+   return std::string(code) + ": " + captured_stderr;
+}
+
+} // namespace
+
+int ezsnmp_parse_args(int argc,
+                      char *const *argv,
+                      netsnmp_session *session,
+                      char const *localOpts,
+                      void (*proc)(int, char *const *, int),
+                      std::string const &optproc_error) {
+   int arg = 0;
+   std::string captured_stderr;
+   {
+      StderrCaptureGuard capture;
+      arg = snmp_parse_args(argc, const_cast<char **>(argv), session, localOpts, proc);
+      captured_stderr = capture.finish();
+   }
+
+   if (!optproc_error.empty()) {
+      throw ParseErrorBase(optproc_error);
+   }
+
+   switch (arg) {
+      case NETSNMP_PARSE_ARGS_ERROR:
+         throw ParseErrorBase(format_parse_args_error("NETSNMP_PARSE_ARGS_ERROR", captured_stderr));
+
+      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+         throw ParseErrorBase(
+             format_parse_args_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT", captured_stderr));
+
+      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+         throw ParseErrorBase(
+             format_parse_args_error("NETSNMP_PARSE_ARGS_ERROR_USAGE", captured_stderr));
+
+      default:
+         return arg;
    }
 }
