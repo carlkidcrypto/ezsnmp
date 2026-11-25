@@ -191,6 +191,7 @@ jobs:
 
       - name: Start SNMP daemon
         run: |
+          snmpd_extra_args=()
           if [ "$RUNNER_OS" == "Linux" ]
           then
             mibdir="-M +/var/lib/snmp/mibs"
@@ -210,11 +211,18 @@ jobs:
               mibdir=""
             fi
             SNMPD=$(which snmpd)
+            # Exclude HOST-RESOURCES-MIB modules on macOS to prevent intermittent
+            # Homebrew snmpd 5.9.5.2 hangs during full-tree walks (test_session_walk_all).
+            excluded_mibs="hrSWRunTable,hrSWRunPerfTable,hrSWInstalledTable"
+            excluded_mibs+=",hrh_storage,hrh_filesys,hr_storage,hr_filesys"
+            excluded_mibs+=",hr_device,hr_disk,hr_network,hr_other,hr_partition"
+            excluded_mibs+=",hr_print,hr_proc,hr_system,hr_swinst,hr_swrun"
+            snmpd_extra_args=(-I "-${excluded_mibs}")
           else
             mibdir=""
             SNMPD=$(which.exe snmpd)
           fi
-          $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL
+          $SNMPD -C -c configs/snmpd.conf -r -Le $mibdir -m ALL "${snmpd_extra_args[@]}"
           for attempt in {1..15}; do
             if snmpget -v2c -c public -t 1 -r 0 udp:127.0.0.1:11161 .1.3.6.1.2.1.1.1.0 >/dev/null 2>&1; then
               break
