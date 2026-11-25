@@ -226,23 +226,8 @@ std::vector<Result> snmpbulkwalk(std::vector<std::string> const &args,
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
       snmpbulkwalk_optproc_error.clear();
-      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc);
-      if (!snmpbulkwalk_optproc_error.empty()) {
-         throw ParseErrorBase(snmpbulkwalk_optproc_error);
-      }
-      switch (arg) {
-         case NETSNMP_PARSE_ARGS_ERROR:
-            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-
-         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-
-         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-
-         default:
-            break;
-      }
+      arg = ezsnmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc,
+                              snmpbulkwalk_optproc_error);
 
       // Capture flags while still holding the setup mutex so no other thread
       // can reset them before we read their values for this invocation.

@@ -65,7 +65,7 @@
      char           *endptr = NULL;
  
      switch (opt) {
-@@ -109,147 +113,175 @@
+@@ -109,147 +113,160 @@
                      /*
                       * No number given -- error.  
                       */
@@ -133,36 +133,26 @@
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
+-    case NETSNMP_PARSE_ARGS_ERROR:
+-        goto out;
+-    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+-        exitval = 0;
+-        goto out;
+-    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+-        usage();
+-        goto out;
+-    default:
+-        break;
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +      snmpbulkget_optproc_error.clear();
-+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc);
-+      if (!snmpbulkget_optproc_error.empty()) {
-+         throw ParseErrorBase(snmpbulkget_optproc_error);
-+      }
-+      switch (arg) {
-     case NETSNMP_PARSE_ARGS_ERROR:
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-+
-     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
--        exitval = 0;
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-+
-     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
--        usage();
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-+
-     default:
-         break;
++      arg = ezsnmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkget_optProc,
++                              snmpbulkget_optproc_error);
      }
-+   }
-+
+ 
 +   // Declare name/namep/names as local variables to avoid data races.
 +   int names;
- 
++
      names = argc - arg;
      if (names < non_repeaters) {
 -        fprintf(stderr, "snmpbulkget: need more objects than <nonrep>\n");

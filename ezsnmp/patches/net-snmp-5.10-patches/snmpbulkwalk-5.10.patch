@@ -171,7 +171,7 @@
      netsnmp_pdu    *pdu, *response;
      netsnmp_variable_list *vars;
      int             arg;
-@@ -186,36 +198,62 @@
+@@ -186,34 +198,45 @@
      int             running;
      int             status = STAT_ERROR;
      int             check;
@@ -211,32 +211,22 @@
       * get the common command line arguments 
       */
 -    switch (arg = snmp_parse_args(argc, argv, &session, "C:", optProc)) {
+-    case NETSNMP_PARSE_ARGS_ERROR:
+-        goto out;
+-    case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+-        exitval = 0;
+-        goto out;
+-    case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+-        usage();
+-        goto out;
+-    default:
+-        break;
 +      netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
 +      netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
 +      snmpbulkwalk_optproc_error.clear();
-+      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc);
-+      if (!snmpbulkwalk_optproc_error.empty()) {
-+         throw ParseErrorBase(snmpbulkwalk_optproc_error);
-+      }
-+      switch (arg) {
-     case NETSNMP_PARSE_ARGS_ERROR:
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
++      arg = ezsnmp_parse_args(argc, argv.get(), &session, "C:", snmpbulkwalk_optProc,
++                              snmpbulkwalk_optproc_error);
 +
-     case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
--        exitval = 0;
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-+
-     case NETSNMP_PARSE_ARGS_ERROR_USAGE:
--        usage();
--        goto out;
-+            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-+
-     default:
-         break;
-     }
- 
 +      // Capture flags while still holding the setup mutex so no other thread
 +      // can reset them before we read their values for this invocation.
 +      include_requested =
@@ -245,12 +235,10 @@
 +          netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_WALK_PRINT_STATISTICS);
 +      dont_check_lexicographic = netsnmp_ds_get_boolean(NETSNMP_DS_APPLICATION_ID,
 +                                                        NETSNMP_DS_WALK_DONT_CHECK_LEXICOGRAPHIC);
-+   }
-+
+     }
+ 
      /*
-      * get the initial object and subtree 
-      */
-@@ -224,28 +262,29 @@
+@@ -224,28 +247,29 @@
           * specified on the command line 
           */
          rootlen = MAX_OID_LEN;
@@ -288,7 +276,7 @@
      }
  
      /*
-@@ -256,72 +295,68 @@
+@@ -256,72 +280,68 @@
  
      running = 1;
  
@@ -391,7 +379,7 @@
                              name_length = vars->name_length;
                          }
                      } else {
-@@ -337,55 +372,56 @@
+@@ -337,55 +357,56 @@
                   */
                  running = 0;
                  if (response->errstat == SNMP_ERR_NOSUCHNAME) {

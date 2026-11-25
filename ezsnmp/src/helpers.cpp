@@ -12,6 +12,13 @@
 #include <string>
 #include <utility>
 
+#ifdef _WIN32
+#include <fcntl.h>
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+
 #include "exceptionsbase.h"
 #include "thread_safety.h"
 
@@ -354,13 +361,39 @@ void clear_net_snmp_library_data() {
    std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
    // From:
    // https://github.com/net-snmp/net-snmp/blob/be3f27119346acbcc2e200bb6e33e98677a47b2d/include/net-snmp/library/default_store.h#
+   // -O Output Display Options
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
-                      0); // Clear -O n && Clear -O f
+                      0); // Clear -O n, -O f, -O s, -O S, -O u
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_NUMERIC_ENUM,
                           0);                                                          // Clear -O e
    netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS, 0); // Clear -O t
    netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT,
-                      0); // Clear -O x
+                      0); // Clear -O x, -O a
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_2DIGIT_HEX_OUTPUT,
+                          0);                                                       // Clear -O 0
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_HEX_TEXT, 0); // Clear -O T
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_BREAKDOWN_OIDS,
+                          0);                                                         // Clear -O b
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_ESCAPE_QUOTES, 0);    // Clear -O E
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_EXTENDED_INDEX, 0);   // Clear -O X
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_PRINT_UNITS, 0); // Clear -O U
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OUTPUT_PRECISION,
+                         nullptr); // Clear -O p
+
+   // -I Input Parsing Options
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_REGEX_ACCESS, 0);     // Clear -I b
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NO_DISPLAY_HINT, 0);  // Clear -I h
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_CHECK_RANGE, 0); // Clear -I r
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_RANDOM_ACCESS, 0);    // Clear -I R
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_READ_UCD_STYLE_OID,
+                          0);                                                       // Clear -I u
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OIDSUFFIX, nullptr); // Clear -I s
+   netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OIDPREFIX, nullptr); // Clear -I S
+
+   // -P MIB Parsing Options
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_PARSE_LABEL, 0);  // Clear -P u
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_COMMENT_TERM, 0); // Clear -P c
+   netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_REPLACE, 0);      // Clear -P R
 }
 
 SockCleanupGuard::~SockCleanupGuard() {
@@ -371,5 +404,161 @@ SockCleanupGuard::~SockCleanupGuard() {
 void snmp_check_null_response(netsnmp_pdu const *response) {
    if (response == NULL) {
       throw PacketErrorBase("received NULL response from snmp_sess_synch_response");
+   }
+}
+
+namespace {
+
+class StderrCaptureGuard {
+  public:
+   StderrCaptureGuard() {
+      std::fflush(stderr);
+#ifdef _WIN32
+      if (_pipe(m_pipe, 16384, _O_BINARY) == 0) {
+         m_saved_fd = _dup(_fileno(stderr));
+         if (m_saved_fd >= 0 && _dup2(m_pipe[1], _fileno(stderr)) == 0) {
+            _close(m_pipe[1]);
+            m_pipe[1] = -1;
+            m_active = true;
+         } else {
+            cleanup_fds();
+         }
+      }
+#else
+      if (pipe(m_pipe) == 0) {
+         m_saved_fd = dup(STDERR_FILENO);
+         if (m_saved_fd >= 0 && dup2(m_pipe[1], STDERR_FILENO) >= 0) {
+            close(m_pipe[1]);
+            m_pipe[1] = -1;
+            m_active = true;
+         } else {
+            cleanup_fds();
+         }
+      }
+#endif
+   }
+
+   ~StderrCaptureGuard() { restore_and_read(); }
+
+   std::string finish() { return restore_and_read(); }
+
+   StderrCaptureGuard(StderrCaptureGuard const &) = delete;
+   StderrCaptureGuard &operator=(StderrCaptureGuard const &) = delete;
+
+  private:
+   int m_pipe[2] = {-1, -1};
+   int m_saved_fd = -1;
+   bool m_active = false;
+
+   void cleanup_fds() {
+#ifdef _WIN32
+      if (m_pipe[0] >= 0) {
+         _close(m_pipe[0]);
+         m_pipe[0] = -1;
+      }
+      if (m_pipe[1] >= 0) {
+         _close(m_pipe[1]);
+         m_pipe[1] = -1;
+      }
+      if (m_saved_fd >= 0) {
+         _close(m_saved_fd);
+         m_saved_fd = -1;
+      }
+#else
+      if (m_pipe[0] >= 0) {
+         close(m_pipe[0]);
+         m_pipe[0] = -1;
+      }
+      if (m_pipe[1] >= 0) {
+         close(m_pipe[1]);
+         m_pipe[1] = -1;
+      }
+      if (m_saved_fd >= 0) {
+         close(m_saved_fd);
+         m_saved_fd = -1;
+      }
+#endif
+   }
+
+   std::string restore_and_read() {
+      if (!m_active) {
+         return "";
+      }
+      m_active = false;
+      std::fflush(stderr);
+#ifdef _WIN32
+      _dup2(m_saved_fd, _fileno(stderr));
+      _close(m_saved_fd);
+      m_saved_fd = -1;
+#else
+      dup2(m_saved_fd, STDERR_FILENO);
+      close(m_saved_fd);
+      m_saved_fd = -1;
+#endif
+      std::string captured;
+      char buf[512];
+#ifdef _WIN32
+      int n = 0;
+      while ((n = _read(m_pipe[0], buf, sizeof(buf))) > 0) {
+         captured.append(buf, static_cast<size_t>(n));
+      }
+      _close(m_pipe[0]);
+#else
+      ssize_t n = 0;
+      while ((n = read(m_pipe[0], buf, sizeof(buf))) > 0) {
+         captured.append(buf, static_cast<size_t>(n));
+      }
+      close(m_pipe[0]);
+#endif
+      m_pipe[0] = -1;
+      while (!captured.empty() &&
+             (captured.back() == '\n' || captured.back() == '\r' || captured.back() == ' ')) {
+         captured.pop_back();
+      }
+      return captured;
+   }
+};
+
+std::string format_parse_args_error(char const *code, std::string const &captured_stderr) {
+   if (captured_stderr.empty()) {
+      return code;
+   }
+   return std::string(code) + ": " + captured_stderr;
+}
+
+} // namespace
+
+int ezsnmp_parse_args(int argc,
+                      char *const *argv,
+                      netsnmp_session *session,
+                      char const *localOpts,
+                      void (*proc)(int, char *const *, int),
+                      std::string const &optproc_error) {
+   int arg = 0;
+   std::string captured_stderr;
+   {
+      StderrCaptureGuard capture;
+      arg = snmp_parse_args(argc, const_cast<char **>(argv), session, localOpts, proc);
+      captured_stderr = capture.finish();
+   }
+
+   if (!optproc_error.empty()) {
+      throw ParseErrorBase(optproc_error);
+   }
+
+   switch (arg) {
+      case NETSNMP_PARSE_ARGS_ERROR:
+         throw ParseErrorBase(format_parse_args_error("NETSNMP_PARSE_ARGS_ERROR", captured_stderr));
+
+      case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
+         throw ParseErrorBase(
+             format_parse_args_error("NETSNMP_PARSE_ARGS_SUCCESS_EXIT", captured_stderr));
+
+      case NETSNMP_PARSE_ARGS_ERROR_USAGE:
+         throw ParseErrorBase(
+             format_parse_args_error("NETSNMP_PARSE_ARGS_ERROR_USAGE", captured_stderr));
+
+      default:
+         return arg;
    }
 }

@@ -176,22 +176,8 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
       netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_MIB_WARNINGS, 0);
       snmptrap_optproc_error.clear();
-      arg = snmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc);
-      if (!snmptrap_optproc_error.empty()) {
-         throw ParseErrorBase(snmptrap_optproc_error);
-      }
-      switch (arg) {
-         case NETSNMP_PARSE_ARGS_ERROR:
-            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR");
-
-         case NETSNMP_PARSE_ARGS_SUCCESS_EXIT:
-            throw ParseErrorBase("NETSNMP_PARSE_ARGS_SUCCESS_EXIT");
-
-         case NETSNMP_PARSE_ARGS_ERROR_USAGE:
-            throw ParseErrorBase("NETSNMP_PARSE_ARGS_ERROR_USAGE");
-         default:
-            break;
-      }
+      arg = ezsnmp_parse_args(argc, argv.get(), &session, "C:", snmptrap_optProc,
+                              snmptrap_optproc_error);
    }
 
    session.callback = snmp_input;

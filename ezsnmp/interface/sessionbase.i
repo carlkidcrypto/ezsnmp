@@ -11,6 +11,7 @@
 // Tell SWIG how to handle our special return type(s) from C++
 %template(_string_list) std::vector<std::string>;
 %template(_result_list) std::vector<Result>;
+%template(_string_map) std::map<std::string, std::string>;
 
 %{
 #include "sessionbase.h"

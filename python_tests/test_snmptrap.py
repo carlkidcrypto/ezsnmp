@@ -59,8 +59,8 @@ def test_unknown_host():
         snmptrap(args)
 
 
-def test_invalid_version():
-    """Test that snmptrap raises ParseError for an invalid SNMP version."""
+def test_invalid_version(capfd):
+    """Test that snmptrap raises ParseError for an invalid SNMP version without stderr noise."""
     args = [
         "-v",
         "999",
@@ -70,8 +70,12 @@ def test_invalid_version():
         "",
         ".1.3.6.1.6.3.1.1.5.1",
     ]
-    with pytest.raises(ParseError):
+    with pytest.raises(ParseError) as exc_info:
         snmptrap(args)
+    assert "Invalid version specified after -v flag: 999" in str(exc_info.value)
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
 
 
 def test_v2c_with_varbind():

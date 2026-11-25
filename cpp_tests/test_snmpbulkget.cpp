@@ -53,7 +53,9 @@ TEST_F(SnmpBulkGetTest, TestInvalidVersion) {
           try {
              auto results = snmpbulkget(args, "testing");
           } catch (ParseErrorBase const& e) {
-             EXPECT_STREQ(e.what(), "NETSNMP_PARSE_ARGS_ERROR_USAGE");
+             std::string msg(e.what());
+             EXPECT_NE(msg.find("NETSNMP_PARSE_ARGS_ERROR_USAGE"), std::string::npos);
+             EXPECT_NE(msg.find("Invalid version specified after -v flag: 999"), std::string::npos);
              throw;
           }
        },

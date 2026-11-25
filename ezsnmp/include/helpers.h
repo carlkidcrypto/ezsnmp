@@ -233,4 +233,30 @@ void clear_net_snmp_library_data();
  */
 void snmp_check_null_response(netsnmp_pdu const *response);
 
+/**
+ * @brief Invokes snmp_parse_args() while capturing stderr into ParseErrorBase.
+ *
+ * Redirects stderr to an internal pipe for the duration of snmp_parse_args() so
+ * Net-SNMP CLI parse diagnostics (such as invalid -v version messages) are not
+ * printed to the console and are instead included in the raised ParseErrorBase.
+ * Callers must hold g_netsnmp_setup_mutex.
+ *
+ * @param argc Argument count.
+ * @param argv Argument vector.
+ * @param session Net-SNMP session struct to populate.
+ * @param localOpts Application-specific option string (e.g. "C:").
+ * @param proc Application-specific option callback.
+ * @param optproc_error Error string populated by @p proc on failure.
+ * @return Index of the first non-option argument returned by snmp_parse_args().
+ * @throws ParseErrorBase if @p optproc_error is non-empty or snmp_parse_args()
+ *         returns NETSNMP_PARSE_ARGS_ERROR, NETSNMP_PARSE_ARGS_SUCCESS_EXIT, or
+ *         NETSNMP_PARSE_ARGS_ERROR_USAGE.
+ */
+int ezsnmp_parse_args(int argc,
+                      char *const *argv,
+                      netsnmp_session *session,
+                      char const *localOpts,
+                      void (*proc)(int, char *const *, int),
+                      std::string const &optproc_error);
+
 #endif // HELPERS_H

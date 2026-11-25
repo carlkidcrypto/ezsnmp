@@ -104,6 +104,22 @@ void apply_current_formatting_options() {
                              t_session_formatting_options.print_enums_numerically ? 1 : 0);
       netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_NUMERIC_TIMETICKS,
                              t_session_formatting_options.print_timeticks_numerically ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_2DIGIT_HEX_OUTPUT,
+                             t_session_formatting_options.print_leading_zero_hex ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_PRINT_HEX_TEXT,
+                             t_session_formatting_options.print_hex_text ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_BREAKDOWN_OIDS,
+                             t_session_formatting_options.dont_breakdown_oids ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_ESCAPE_QUOTES,
+                             t_session_formatting_options.escape_quotes_in_indexes ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_EXTENDED_INDEX,
+                             t_session_formatting_options.extended_index_format ? 1 : 0);
+      netsnmp_ds_set_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_DONT_PRINT_UNITS,
+                             t_session_formatting_options.dont_print_units ? 1 : 0);
+      netsnmp_ds_set_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OUTPUT_PRECISION,
+                            t_session_formatting_options.output_precision.empty()
+                                ? nullptr
+                                : t_session_formatting_options.output_precision.c_str());
 
       if (t_session_formatting_options.print_oids_numerically) {
          netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
@@ -111,6 +127,15 @@ void apply_current_formatting_options() {
       } else if (t_session_formatting_options.print_full_oids) {
          netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
                             NETSNMP_OID_OUTPUT_FULL);
+      } else if (t_session_formatting_options.print_oid_suffix_only) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                            NETSNMP_OID_OUTPUT_SUFFIX);
+      } else if (t_session_formatting_options.print_oid_module_name) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                            NETSNMP_OID_OUTPUT_MODULE);
+      } else if (t_session_formatting_options.print_oid_ucd_style) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT,
+                            NETSNMP_OID_OUTPUT_UCD);
       } else {
          netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_OID_OUTPUT_FORMAT, 0);
       }
@@ -118,6 +143,9 @@ void apply_current_formatting_options() {
       if (t_session_formatting_options.print_hex_strings) {
          netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT,
                             NETSNMP_STRING_OUTPUT_HEX);
+      } else if (t_session_formatting_options.print_ascii_strings) {
+         netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT,
+                            NETSNMP_STRING_OUTPUT_ASCII);
       } else {
          netsnmp_ds_set_int(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_STRING_OUTPUT_FORMAT, 0);
       }

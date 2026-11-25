@@ -12,6 +12,11 @@
 
 #include "sessionbase.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace {
 
 enum class GetBehavior { Return, Throw, Block };
@@ -232,3 +237,7 @@ TEST_F(SessionBaseV3GuardShimTest, SerializesContextEngineIdSetterAndCleanup) {
        {"alice", "engine-old"}, {"alice", "engine-old"}, {"alice", "engine-new"}};
    EXPECT_EQ(g_cache_removals, expected);
 }
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

@@ -112,6 +112,27 @@ operations.
 [CFG-07] The system shall support loading custom MIB files and searching user-specified MIB
 directory paths at session creation time.
 
+[CFG-08] The system shall support extended Net-SNMP output formatting options
+(``-O``) on ``Session``, including suffix-only, module-name, and UCD-style OID
+printing, ASCII string output, leading-zero hex, hex+text output, index
+breakdown/quoting/extended formatting, unit suppression, and float precision.
+
+[CFG-09] The system shall support Net-SNMP input OID parsing options (``-I``)
+on ``Session``, including regex OID matching, ignoring display hints, skipping
+range checks, random-access OID lookup, UCD-style OID input, and OID
+prefix/suffix settings.
+
+[CFG-10] The system shall support Net-SNMP MIB parsing options (``-P``) on
+``Session``, including allowing underscores in MIB labels, treating ``--``
+comments to end-of-line, and replacing duplicate MIB objects with the latest
+definition.
+
+[CFG-11] The system shall support operation-scoped Net-SNMP application options
+(``-C``) on ``Session``, including ``non_repeaters`` (``bulk_get`` /
+``bulk_walk``), walk control flags (``walk_dont_check_lexicographic``,
+``walk_include_requested``, ``walk_dont_get_requested``, ``walk_end_oid``), and
+``dont_fix_pdus`` (``get`` / ``get_next``).
+
 Error Handling
 ~~~~~~~~~~~~~~
 

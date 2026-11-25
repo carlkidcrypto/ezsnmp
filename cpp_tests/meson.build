@@ -147,6 +147,30 @@ test_sessionbase = executable(
     dependencies: common_deps
 )
 
+test_sessionbase_addressing = executable(
+    'test_sessionbase_addressing',
+    ['test_sessionbase_addressing.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects(sessionbase_all_sources),
+    include_directories: include_dirs,
+    dependencies: common_deps
+)
+
+test_sessionbase_cli_options = executable(
+    'test_sessionbase_cli_options',
+    ['test_sessionbase_cli_options.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects(sessionbase_all_sources),
+    include_directories: include_dirs,
+    dependencies: common_deps
+)
+
+test_sessionbase_operations = executable(
+    'test_sessionbase_operations',
+    ['test_sessionbase_operations.cpp'],
+    objects: ezsnmp_shared_objs.extract_objects(sessionbase_all_sources),
+    include_directories: include_dirs,
+    dependencies: common_deps
+)
+
 test_sessionbase_parameters = executable(
     'test_sessionbase_parameters',
     ['test_sessionbase_parameters.cpp'],
@@ -404,6 +428,9 @@ test('datatypes_test', test_datatypes, env: test_env)
 test('helpers_test', test_helpers, env: test_env)
 test('thread_safety_test', test_thread_safety, env: test_env)
 test('sessionbase_test', test_sessionbase, env: test_env)
+test('sessionbase_addressing_test', test_sessionbase_addressing, env: test_env)
+test('sessionbase_cli_options_test', test_sessionbase_cli_options, env: test_env)
+test('sessionbase_operations_test', test_sessionbase_operations, env: test_env)
 test('sessionbase_parameters_test', test_sessionbase_parameters, env: test_env)
 test('sessionbase_v3_guard_shim_test', test_sessionbase_v3_guard_shim, env: test_env)
 test('snmpget_test', test_snmpget, env: test_env)
