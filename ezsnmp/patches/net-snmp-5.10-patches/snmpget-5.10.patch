@@ -41,7 +41,7 @@
      switch (opt) {
      case 'C':
          while (*optarg) {
-@@ -80,113 +87,122 @@
+@@ -80,113 +87,125 @@
  					  NETSNMP_DS_APP_DONT_FIX_PDUS);
                  break;
              default:
@@ -113,7 +113,7 @@
 +   // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
 +   // global state (option parsing, DS library settings).
 +   {
-+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
++      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
 +
      /*
       * get the common command line arguments 
@@ -183,7 +183,10 @@
       */
 -    ss = snmp_open(&session);
 -    if (ss == NULL) {
-+   ss.reset(snmp_sess_open(&session));
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
++      ss.reset(snmp_sess_open(&session));
++   }
 +   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
@@ -223,7 +226,7 @@
      /*
       * Perform the request.
       *
-@@ -194,65 +210,59 @@
+@@ -194,65 +213,59 @@
       * "fix" the PDU (removing the error-prone OID) and retry.
       */
    retry:

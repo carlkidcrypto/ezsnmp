@@ -6,6 +6,8 @@
 
 #include "datatypes.h"
 
+struct SessionFormattingOptions;
+
 /**
  * @brief Base class for managing SNMP sessions.
  *
@@ -60,6 +62,11 @@ class SessionBase {
     * @brief Clears the cached SNMPv3 user for the current session parameters.
     */
    void check_and_clear_v3_user();
+
+   /**
+    * @brief Builds SessionFormattingOptions from the session's current output flags.
+    */
+   SessionFormattingOptions formatting_options() const;
 
   public:
    /**

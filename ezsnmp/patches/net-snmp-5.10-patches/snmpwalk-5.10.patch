@@ -161,7 +161,7 @@
 +   // Serialize Net-SNMP global setup: resetting DS flags and parsing arguments
 +   // both modify shared Net-SNMP global state.
 +   {
-+      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
++      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
  
 -    netsnmp_ds_register_config(ASN_BOOLEAN, "snmpwalk", "timeResults",
 -                               NETSNMP_DS_APPLICATION_ID,
@@ -258,13 +258,16 @@
      } else {
          memmove(end_oid, root, rootlen*sizeof(oid));
          end_len = rootlen;
-@@ -272,13 +297,12 @@
+@@ -272,13 +297,15 @@
      /*
       * open an SNMP session 
       */
 -    ss = snmp_open(&session);
 -    if (ss == NULL) {
-+   ss.reset(snmp_sess_open(&session));
++   {
++      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
++      ss.reset(snmp_sess_open(&session));
++   }
 +   if (!ss) {
          /*
           * diagnose snmp_open errors with the input netsnmp_session pointer 
@@ -275,7 +278,7 @@
      }
  
      /*
-@@ -289,17 +313,19 @@
+@@ -289,17 +316,19 @@
  
      running = 1;
  
@@ -303,7 +306,7 @@
      while (running) {
          /*
           * create PDU for GETNEXT request and add object name to request 
-@@ -310,20 +336,23 @@
+@@ -310,20 +339,23 @@
          /*
           * do the request 
           */
@@ -334,7 +337,7 @@
                          /*
                           * not part of this subtree 
                           */
-@@ -331,80 +360,75 @@
+@@ -331,80 +363,75 @@
                          continue;
                      }
                      numprinted++;
@@ -452,7 +455,7 @@
  
      if (numprinted == 0 && status == STAT_SUCCESS) {
          /*
-@@ -412,26 +436,28 @@
+@@ -412,26 +439,28 @@
           * pointed at an only existing instance.  Attempt a GET, just
           * for get measure. 
           */

@@ -158,7 +158,7 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
    // global state (option parsing, DS library settings).
    {
-      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
 
       /*
        * get the common command line arguments
@@ -211,7 +211,10 @@ std::vector<Result> snmpbulkget(std::vector<std::string> const &args,
    /*
     * open an SNMP session
     */
-   ss.reset(snmp_sess_open(&session));
+   {
+      std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
+      ss.reset(snmp_sess_open(&session));
+   }
    if (!ss) {
       /*
        * diagnose snmp_open errors with the input netsnmp_session pointer

@@ -139,7 +139,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    int arg;
    int status;
    char *trap = NULL;
-   char *prognam;
    int exitval = 1;
 #ifndef NETSNMP_DISABLE_SNMPV1
    char *specific = NULL, *description = NULL, *agent = NULL;
@@ -153,24 +152,13 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
    // Reset thread-local inform flag for each invocation.
    inform = 0;
 
-   prognam = strrchr(argv[0], '/');
-   if (prognam) {
-      prognam++;
-   } else {
-      prognam = argv[0];
-   }
-
    static char posixly_correct_env[] = "POSIXLY_CORRECT=1";
    putenv(posixly_correct_env);
-
-   if (strcmp(prognam, "snmpinform") == 0) {
-      inform = 1;
-   }
 
    // Serialize Net-SNMP global setup: snmp_parse_args modifies shared Net-SNMP
    // global state (option parsing, DS library settings).
    {
-      std::lock_guard<std::mutex> setup_lock(g_netsnmp_setup_mutex);
+      std::scoped_lock setup_lock(g_netsnmp_setup_mutex, g_netsnmp_mib_mutex);
 
       /** parse args (also initializes session) */
       netsnmp_register_loghandler(NETSNMP_LOGHANDLER_NONE, 0);
@@ -261,7 +249,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
        * the input netsnmp_session pointer
        */
       snmp_sess_perror_exception("snmptrap", &session);
-      goto out;
    }
    ss_guard.reset(ss);
 
@@ -289,7 +276,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
             std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
             if (!snmp_parse_oid(argv[arg], name, &name_length)) {
                snmp_perror_exception(argv[arg]);
-               goto out;
             }
          }
          pdu->enterprise = (oid *)malloc(name_length * sizeof(oid));
@@ -353,7 +339,6 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       }
       if (snmp_add_var(pdu, objid_snmptrap, OID_LENGTH(objid_snmptrap), 'o', argv[arg]) != 0) {
          snmp_perror_exception(argv[arg]);
-         goto out;
       }
    }
    arg++;
@@ -368,12 +353,10 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
          std::lock_guard<std::mutex> lock(g_netsnmp_mib_mutex);
          if (!snmp_parse_oid(argv[arg - 3], name, &name_length)) {
             snmp_perror_exception(argv[arg - 3]);
-            goto out;
          }
       }
       if (snmp_add_var(pdu, name, name_length, argv[arg - 2][0], argv[arg - 1]) != 0) {
          snmp_perror_exception(argv[arg - 3]);
-         goto out;
       }
    }
 
@@ -384,21 +367,18 @@ int snmptrap(std::vector<std::string> const &args, std::string const &init_app_n
       status = snmp_send(ss, pdu) == 0;
    }
    if (status) {
-      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
       if (!inform) {
          snmp_free_pdu(pdu);
       }
-      goto close_session;
+      snmp_sess_perror_exception(inform ? "snmpinform" : "snmptrap", ss);
    } else if (inform) {
       snmp_free_pdu(response);
    }
 
    exitval = 0;
 
-close_session:
    ss_guard.reset();
    netsnmp_thread_cleanup(init_app_name);
 
-out:
    return exitval;
 }

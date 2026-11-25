@@ -154,19 +154,6 @@ std::unique_ptr<char *[], Deleter> create_argv(std::vector<std::string> const &a
    return argv;
 }
 
-// This regular expression is used to extract the index from an OID
-// We attempt to extract the index from an OID (e.g. sysDescr.0
-// or .iso.org.dod.internet.mgmt.mib-2.system.sysContact.0)
-std::regex const OID_INDEX_RE(R"((
-        \.?\d+(?:\.\d+)* # numeric OID
-        |                        # or
-        (?:\w+(?:[-:]*\w+)+)     # regular OID
-        |                        # or
-        \.?iso(?:\.\w+[-:]*\w+)+ # fully qualified OID
-    )
-    \.?(.*)                      # OID index
-)");
-
 // This regular expression takes an OID string and splits it into
 // the base OID and the index. It works for OIDs with formats like:
 //  - 'SNMPv2::mib-2.17.7.1.4.3.1.2.300'
@@ -195,8 +182,7 @@ Result parse_result(std::string const &input) {
    std::getline(ss, result.oid, '=');
    result.oid = result.oid.substr(0, result.oid.find_last_not_of(' ') + 1);
 
-   // Extract OID index using regexes (matching Python logic)
-   std::smatch first_match;
+   // Extract OID index using regexes
    std::smatch second_match;
    std::smatch third_match;
    std::smatch fourth_match;
@@ -218,11 +204,6 @@ Result parse_result(std::string const &input) {
    } else if (std::regex_match(result.oid, second_match, OID_INDEX_RE2)) {
       std::string temp_oid = second_match[1].str();
       std::string temp_index = second_match[2].str();
-      result.oid = std::move(temp_oid);
-      result.index = std::move(temp_index);
-   } else if (std::regex_match(result.oid, first_match, OID_INDEX_RE)) {
-      std::string temp_oid = first_match[1].str();
-      std::string temp_index = first_match[2].str();
       result.oid = std::move(temp_oid);
       result.index = std::move(temp_index);
    } else if (result.oid == ".") {
