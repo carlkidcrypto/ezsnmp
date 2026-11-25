@@ -475,6 +475,7 @@ def build_extensions(cfg: dict):
         f"{snmp_source_path}/snmpget.cpp",
         f"{snmp_source_path}/snmpwalk.cpp",
         f"{snmp_source_path}/snmpset.cpp",
+        f"{snmp_source_path}/snmpstatus.cpp",
         f"{snmp_source_path}/snmptrap.cpp",
     ]
     netsnmpbase_sources = [
