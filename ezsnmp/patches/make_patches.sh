@@ -51,6 +51,7 @@ for VERSION in "$@"; do
         "snmpbulkwalk"
         "snmpbulkget"
         "snmpgetnext"
+        "snmptranslate"
     )
 
     # 4. Loop through the tools and generate a versioned patch file for each
