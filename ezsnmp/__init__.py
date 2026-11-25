@@ -33,6 +33,7 @@ from .exceptions import (
 from .netsnmp import (
     snmpbulkget,
     snmpbulkwalk,
+    snmpdf,
     snmpget,
     snmpgetnext,
     snmpset,
