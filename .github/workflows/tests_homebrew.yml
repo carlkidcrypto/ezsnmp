@@ -97,7 +97,7 @@ jobs:
       - name: Set up Homebrew
         id: set-up-homebrew
         if: runner.os == 'macOS'
-        uses: Homebrew/actions/setup-homebrew@ceec4e8419bb3c97ce96e9dda7738499ed5f869d # master
+        uses: Homebrew/actions/setup-homebrew@61b401267256bb9c047d6d1481b176d5772a0ba7 # master
 
       - name: Enable Homebrew analytics
         if: runner.os == 'macOS'
@@ -585,7 +585,7 @@ jobs:
 
       - name: Render Valgrind Comment Template
         id: template
-        uses: chuhlomin/render-template@a7c644e341797d050d1cb24332d83791b9a46dae # v1.12
+        uses: chuhlomin/render-template@c7bbd9cfdcdfe6ad595c5185286862c6f22567b4 # v1.13
         with:
           template: .github/comment-valgrind-template.md
           vars: |
