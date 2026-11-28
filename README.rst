@@ -6,7 +6,7 @@ EzSnmp
 
 |Codecov| |Quality Gate Status| |Security Rating| |Maintainability Rating|
 
-|PyPI Version| |TestPyPI Version| |PyPI Downloads| |PyPI Distributions| |TestPyPI Distributions| |Build Docker Images|
+|PyPI Version| |PyPI Downloads| |PyPI Distributions| |TestPyPI Version| |TestPyPI Distributions| |Build Docker Images|
 
 |Python Versions| |License|
 
