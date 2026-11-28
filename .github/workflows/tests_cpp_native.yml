@@ -59,7 +59,7 @@ jobs:
 
       - name: Check for changes in C++ source or test files
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           files: |
             .github/workflows/tests_cpp_native.yml

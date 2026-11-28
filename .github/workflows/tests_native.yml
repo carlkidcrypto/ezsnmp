@@ -54,7 +54,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           files: |
             .coveragerc
@@ -102,7 +102,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
 
       - name: Install Net-SNMP 5.10
-        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/prepare-netsnmp@f1f9056d69addcc7b59be128e417a9e7338cbdab
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -224,7 +224,7 @@ jobs:
           python3 python_tests/normalize_coverage_paths.py ./coverage_*.xml
 
       - name: Upload coverage to CodeCov
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage_*.xml
@@ -233,7 +233,7 @@ jobs:
 
       - name: Upload test results to Codecov
         if: always()
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./test-results_*.xml

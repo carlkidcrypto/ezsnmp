@@ -53,7 +53,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           files: |
             .coveragerc
@@ -290,7 +290,7 @@ jobs:
 
       - name: Upload coverage to CodeCov
         if: steps.check-coverage.outputs.has_coverage == 'true'
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/coverage_*.xml,./coverage_*.xml
@@ -308,7 +308,7 @@ jobs:
 
       - name: Upload test results to Codecov
         if: steps.check-results.outputs.has_results == 'true'
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./docker/test-results_*.xml,./test-results_*.xml

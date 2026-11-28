@@ -27,4 +27,4 @@ jobs:
 
     steps:
       - name: Setup Copilot gh-aw
-        uses: carlkidcrypto/shared-workflows/actions/setup-copilot-gh-aw@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/setup-copilot-gh-aw@f1f9056d69addcc7b59be128e417a9e7338cbdab

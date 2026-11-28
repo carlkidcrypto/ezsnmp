@@ -58,7 +58,7 @@ jobs:
 
       - name: Check for changes in source code
         id: changed-files
-        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/check-source-changes@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           files: |
             .github/workflows/tests_docker_cpp_tests.yml
@@ -131,7 +131,7 @@ jobs:
           path: artifacts/
 
       - name: Upload coverage to CodeCov
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/lcov_coverage.info
@@ -140,7 +140,7 @@ jobs:
 
       - name: Upload test results to Codecov
         if: always()
-        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+        uses: carlkidcrypto/shared-workflows/actions/upload-codecov@f1f9056d69addcc7b59be128e417a9e7338cbdab
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./artifacts/**/test-results.xml

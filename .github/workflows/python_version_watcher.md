@@ -18,8 +18,8 @@ max-ai-credits: 25
 
 model: sonnet
 imports:
-  - carlkidcrypto/shared-workflows/shared/python-version-watcher-core.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
-  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/python-version-watcher-core.md@f1f9056d69addcc7b59be128e417a9e7338cbdab
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@f1f9056d69addcc7b59be128e417a9e7338cbdab
 ---
 
 ## Python Version Watcher and Auto-Sync

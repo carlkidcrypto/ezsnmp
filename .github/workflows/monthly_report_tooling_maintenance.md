@@ -38,8 +38,8 @@ tools:
   edit:
   bash: true
 imports:
-  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
-  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@eeefdd5c0a594d59ae86a09437b2de9bb57618a3
+  - carlkidcrypto/shared-workflows/shared/copilot-defaults.md@f1f9056d69addcc7b59be128e417a9e7338cbdab
+  - carlkidcrypto/shared-workflows/shared/pr-preflight-checklist.md@f1f9056d69addcc7b59be128e417a9e7338cbdab
 ---
 
 # Monthly Report Tooling Maintenance
